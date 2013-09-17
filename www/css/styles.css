@@ -178,4 +178,6 @@ ul.btns {
 	height: 64px;
 	background-image: url("../img/adaptit.png");
 }
-		
+.ui-field-contain .ui-controlgroup-controls {
+	width:100%;
+}	
