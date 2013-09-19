@@ -14,11 +14,11 @@
    height="256"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="adaptit-it-mobile.svg"
-   inkscape:export-filename="C:\Users\eb1\Documents\GitHub\adapt-it-mobile\www\res\screen\webos\screen-64.png"
-   inkscape:export-xdpi="22.5"
-   inkscape:export-ydpi="22.5">
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="adaptit-it-mobile-nomask.svg"
+   inkscape:export-filename="/Users/erik/dev/adapt-it-mobile/www/res/icon/ios/iTunesArtwork.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
   <title
      id="title3023">adaptit</title>
   <defs
@@ -354,16 +354,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.34"
-     inkscape:cx="973.09718"
-     inkscape:cy="-221.51875"
+     inkscape:zoom="1.03"
+     inkscape:cx="271.6699"
+     inkscape:cy="34.033005"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1612"
-     inkscape:window-height="945"
-     inkscape:window-x="39"
-     inkscape:window-y="31"
+     inkscape:window-width="921"
+     inkscape:window-height="933"
+     inkscape:window-x="80"
+     inkscape:window-y="122"
      inkscape:window-maximized="0"
      objecttolerance="5" />
   <metadata
@@ -414,11 +414,11 @@
        height="256"
        x="0"
        y="796.36224"
-       rx="31.00732"
-       ry="31.549435" />
+       rx="0"
+       ry="0" />
     <g
        id="g4180"
-       transform="matrix(1.0011933,0,0,1.0032011,29.071294,-2.406054)"
+       transform="matrix(0.89191986,0,0,0.89370852,28.918946,94.968475)"
        style="fill:#ffffff;fill-opacity:1;stroke:none">
       <path
          inkscape:connector-curvature="0"
