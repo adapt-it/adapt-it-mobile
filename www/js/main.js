@@ -45,7 +45,6 @@ var watchID = null;
 function init() {
 	$("#loginForm").on("submit",handleLogin);
 	  console.log("Entering init");
-	  alert("init");
 
 	  var purgeStatus, purgeInterval;
 
@@ -243,6 +242,8 @@ function handleLogin() {
     //var u = $("#username", form).val();
     //var p = $("#password", form).val();
     //console.log("click");
+    console.log("Entering handleLogin");
+
 	$.mobile.changePage("#indexPage");
 	/*
     if(u != '' && p!= '') {
