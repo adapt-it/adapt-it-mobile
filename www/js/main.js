@@ -42,6 +42,13 @@ function check_network() {
 
 var watchID = null;
 
+function checkLanguage() {
+    navigator.globalization.getPreferredLanguage(
+        function (language) {alert('language: ' + language.value + '\n');},
+        function () {alert('Error getting language\n');}
+    );
+}
+    
 function init() {
 	$("#loginForm").on("submit",handleLogin);
 	  console.log("Entering init");

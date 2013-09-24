@@ -14,7 +14,7 @@
    height="256"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="adaptit-it-mobile.svg"
    inkscape:export-filename="C:\Users\eb1\Documents\GitHub\adapt-it-mobile\www\res\screen\webos\screen-64.png"
    inkscape:export-xdpi="22.5"
@@ -354,22 +354,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.55"
-     inkscape:cx="129.53696"
-     inkscape:cy="133.1586"
+     inkscape:zoom="0.34"
+     inkscape:cx="973.09718"
+     inkscape:cy="-221.51875"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="853"
-     inkscape:window-height="899"
-     inkscape:window-x="92"
-     inkscape:window-y="16"
+     inkscape:window-width="1612"
+     inkscape:window-height="945"
+     inkscape:window-x="39"
+     inkscape:window-y="31"
      inkscape:window-maximized="0"
-     objecttolerance="5">
-    <inkscape:grid
-       type="xygrid"
-       id="grid3123" />
-  </sodipodi:namedview>
+     objecttolerance="5" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -418,11 +414,11 @@
        height="256"
        x="0"
        y="796.36224"
-       rx="51"
-       ry="55.999958" />
+       rx="31.00732"
+       ry="31.549435" />
     <g
        id="g4180"
-       transform="matrix(0.88928034,0,0,0.89106371,29.29542,97.707053)"
+       transform="matrix(1.0011933,0,0,1.0032011,29.071294,-2.406054)"
        style="fill:#ffffff;fill-opacity:1;stroke:none">
       <path
          inkscape:connector-curvature="0"
