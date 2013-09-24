@@ -1,123 +1,42 @@
 <!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-		<link rel="stylesheet" href="js/jquery.mobile-1.3.2.min.css" />
-        <link rel="stylesheet" href="css/styles.css" />
-        <link rel="stylesheet" href="css/aimobile-icons.css" />
-        <title>Adapt It Mobile</title>
-		<script src="js/jquery-2.0.3.min.js"></script>
-		<script src="js/jquery.mobile-1.3.2.min.js"></script>    	
-		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-		<script type="text/javascript" charset="utf-8" src="js/main.js"></script>
-		<script src="js/selectlist.js"></script>
-		<script src="js/boxes.js"> </script>
-		<script>
-			var source_text = {
-				verses: 4,
-				1: "Then I saw 'a new heaven and a new earth,' for the first heaven and the first earth had passed away, and there was no longer any sea.",
-				2: "I saw the Holy City, the new Jerusalem, coming down out of heaven from God, prepared as a bride beautifully dressed for her husband.",
-				3: "And I heard a loud voice from the throne saying, 'Look! God�s dwelling place is now among the people, and he will dwell with them. They will be his people, and God himself will be with them and be their God.",
-				4: "He will wipe every tear from their eyes. There will be no more death or mourning or crying or pain, for the old order of things has passed away.'"};
-
-		</script>
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
     </head>
-    <body onload="init()">
-    	<div data-role="page" id="loginPage">
-    		<div data-role="header">
-    			<p align="center"><img align="middle" src="img/image.png" /></p>
-       		</div>
-			<div data-role="content" data-inset="true">   
-			    <p id="output"></p>
-		        <form method="post" id="loginForm">
-		            Username: <input type="text" id="username" name="username"><br />
-		            Password: <input type="password" id="password" name="password"><br />
-		            <input type="submit" value="Login" data-role="button" data-inline="true" data-theme="b" id="submitButton" />
-		            <p>
-		            	<a href="pwrecover.html">Forgot your password?</a>
-		            </p>
-		        </form>
-			</div><!-- /content -->
-
-			<div data-role="footer" data-position="fixed">
-				<p align="center">&copy; SIL International</p>
-			</div>
-
-		</div>
-    	<div data-role="page" id="indexPage">
-    		<div data-role="header">
-    			<p align="center"><img align="middle" src="img/image.png" /></p>
-       		</div>
-    		<div data-role="content">
-			<nav>
-				<ul class="btns">
-					<li><a class="btn-settings" href="#settingsPage"><span class="sprite">&nbsp;</span><span class="txt">Settings</span></a></li>
-					<li><a class="btn-adapt" href="#adaptPage"><span class="sprite">&nbsp;</span><span class="txt">Adapt</span></a></li>
-				</ul>
-			</nav>
-    		</div>
-			<div data-role="footer" data-position="fixed">
-				<p align="center">&copy; SIL International</p>
-			</div>
-		</div>
-    	<div data-role="page" id="settingsPage">
-    		<div data-role="header">
-				<a href="#indexPage" class="ui-btn-left">Done</a>
-    			<p align="center"><img align="middle" src="img/image.png" /></p>
-       		</div>
-    		<div data-role="content">
-				<h4>Project Settings</h4>
-				<div class="ui-grid-a ui-responsive">
-					<div class="ui-block-a"><div class="ui-body ui-body-d">Project URL:</div></div>
-					<div class="ui-block-b"><div class="ui-body ui-body-d">http:something...</div></div>
-				</div>
-				<div class="ui-grid-a ui-responsive">
-					<div class="ui-block-a"><div class="ui-body ui-body-d">Source Language:</div></div>
-					<div class="ui-block-b"><div class="ui-body ui-body-d">xxx</div></div>
-				</div>
-				<div class="ui-grid-a ui-responsive">
-					<div class="ui-block-a"><div class="ui-body ui-body-d">Target Language:</div></div>
-					<div class="ui-block-b"><div class="ui-body ui-body-d">yyy</div></div>
-				</div>
-				<div class="ui-grid-a ui-responsive">
-					<div class="ui-block-a"><div class="ui-body ui-body-d">Currently adapting:</div></div>
-					<div class="ui-block-b"><div class="ui-body ui-body-d">Revelation 22:1</div></div>
-				</div>
-				<p><button type="submit" data-role="button" data-inline="true" data-theme="b">Switch Project...</button></p>
-    		</div>
-			<div data-role="footer" data-position="fixed">
-				<p align="center">&copy; SIL International</p>
-			</div>
-		</div>
-		<div id="adaptPage" data-role="page">
-			<div data-role="header" data-position="fixed">
-				<a href="#indexPage" class="ui-btn-left">Done</a>
-				<h1>Revelation 22</h1>
-				<a href="index.html" class="ui-btn-right">Options</a>
-			</div>
-			<div data-role="content"> 
-				<div id="chapter">
-				</div>
-			</div>
-			<div data-role="footer" data-position="fixed">
-				<div style="display:inline-block;" data-role="controlgroup" data-inline="true" data-mini="true" data-type="horizontal" >
-					<a href="#" id="tb-undo" data-role="button" data-icon="back" data-iconpos="notext">Undo</a>
-					<a href="#" id="tb-goback" data-role="button" data-icon="arrow-l" data-iconpos="notext">Go Back</a>
-					<a href="#" id="tb-goforward" data-role="button" data-icon="arrow-r" data-iconpos="notext">Go Forward</a>
-				</div>			
-				<div style="display:inline-block;" data-role="fieldcontain"> 
-					<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-						<input type="checkbox" data-mini="true" data-iconpos="notext" data-icon="ai-placeholder" name="tb-placeholder" id="tb-placeholder" />
-						<label for="tb-placeholder" data-icon="ai-placeholder">Placeholder</label>
-						<input type="checkbox" data-mini="true" data-iconpos="notext" data-icon="ai-phrase" name="tb-phrase" id="tb-phrase" />
-						<label for="tb-phrase" data-icon="ai-phrase">Phrase</label>
-						<input type="checkbox" data-mini="true" data-iconpos="notext" data-icon="ai-retranslation" name="tb-retranslation" id="tb-retranslation" />
-						<label for="tb-retranslation" data-icon="ai-retranslation">Retranslation</label>    
-					</fieldset>
-				</div>
-			</div>
-		</div>		
-	</body>
+    <body>
+        <div class="app">
+            <h1>Apache Cordova</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
 </html>

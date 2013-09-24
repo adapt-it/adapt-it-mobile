@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget>
+    <access origin="*" />
+    <feature name="Battery">
+        <param name="wp-package" value="Battery" />
+    </feature>
+    <feature name="Console">
+        <param name="wp-package" value="DebugConsole" />
+    </feature>
+    <feature name="Device">
+        <param name="wp-package" value="Device" />
+    </feature>
+    <feature name="File">
+        <param name="wp-package" value="File" />
+    </feature>
+    <feature name="FileTransfer">
+        <param name="wp-package" value="FileTransfer" />
+    </feature>
+    <feature name="Globalization">
+        <param name="wp-package" value="Globalization" />
+    </feature>
+    <feature name="NetworkStatus">
+        <param name="wp-package" value="NetworkStatus" />
+    </feature>
+</widget>
