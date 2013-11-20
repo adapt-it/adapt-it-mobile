@@ -1,0 +1,31 @@
+.ui-icon-ai-placeholder {
+	background: url("../img/placeholder-new.png") no-repeat rgba(0, 0, 0, 0.4) !important;
+}
+
+.ui-icon-ai-phrase {
+	-moz-border-radius: 9px 9px 9px 9px;
+	background: url("../img/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+.ui-icon-ai-retranslation {
+	-moz-border-radius: 9px 9px 9px 9px;
+	background: url("../img/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-ai-placeholder {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("../img/placeholder-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+	.ui-icon-ai-phrase {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("../img/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+	.ui-icon-ai-retranslation {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("../img/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+}
