@@ -4,15 +4,8 @@
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
-<<<<<<< HEAD
     <access origin="*" />
     <preference name="loglevel" value="DEBUG" />
-=======
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
-    </author>
-    <content src="index.html" />
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79
     <feature name="App">
         <param name="android-package" value="org.apache.cordova.App" />
     </feature>
@@ -34,16 +27,10 @@
     <feature name="NetworkStatus">
         <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
     </feature>
-<<<<<<< HEAD
     <author email="developers@adapt-it.org" href="http://adapt-it.org/">
         Adapt It Team
     </author>
     <content src="index.html" />
-=======
-    <access origin="*" />
-    <preference name="useBrowserHistory" value="true" />
-    <preference name="exit-on-suspend" value="false" />
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="true" />
 </widget>

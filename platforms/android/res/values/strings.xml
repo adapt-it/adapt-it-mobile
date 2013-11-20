@@ -1,8 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-<<<<<<< HEAD
-    <string name="app_name">Adapt It</string>
-=======
     <string name="app_name">AdaptIt</string>
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79
 </resources>

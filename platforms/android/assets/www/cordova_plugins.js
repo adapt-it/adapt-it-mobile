@@ -134,20 +134,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/org.apache.cordova.core.file-transfer/www/FileTransferError.js",
-        "id": "org.apache.cordova.core.file-transfer.FileTransferError",
-        "clobbers": [
-            "window.FileTransferError"
-        ]
-    },
-    {
-        "file": "plugins/org.apache.cordova.core.file-transfer/www/FileTransfer.js",
-        "id": "org.apache.cordova.core.file-transfer.FileTransfer",
-        "clobbers": [
-            "window.FileTransfer"
-        ]
-    },
-    {
         "file": "plugins/org.apache.cordova.core.globalization/www/GlobalizationError.js",
         "id": "org.apache.cordova.core.globalization.GlobalizationError",
         "clobbers": [
@@ -174,6 +160,20 @@ module.exports = [
         "id": "org.apache.cordova.core.network-information.Connection",
         "clobbers": [
             "Connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.core.file-transfer/www/FileTransferError.js",
+        "id": "org.apache.cordova.core.file-transfer.FileTransferError",
+        "clobbers": [
+            "window.FileTransferError"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.core.file-transfer/www/FileTransfer.js",
+        "id": "org.apache.cordova.core.file-transfer.FileTransfer",
+        "clobbers": [
+            "window.FileTransfer"
         ]
     }
 ]

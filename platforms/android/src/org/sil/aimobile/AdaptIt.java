@@ -22,11 +22,7 @@ package org.sil.aimobile;
 import android.os.Bundle;
 import org.apache.cordova.*;
 
-<<<<<<< HEAD:platforms/android/src/org/sil/aimobile/AdaptIt.java
 public class AdaptIt extends CordovaActivity 
-=======
-public class AdaptIt extends DroidGap
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79:platforms/android/src/org/sil/aimobile/AdaptIt.java
 {
     @Override
     public void onCreate(Bundle savedInstanceState)

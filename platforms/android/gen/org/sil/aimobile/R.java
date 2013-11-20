@@ -11,7 +11,6 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-<<<<<<< HEAD
         public static final int icon=0x7f020000;
     }
     public static final class string {
@@ -19,18 +18,5 @@ public final class R {
     }
     public static final class xml {
         public static final int config=0x7f030000;
-=======
-        public static final int ic_launcher=0x7f020000;
-        public static final int icon=0x7f020001;
-    }
-    public static final class layout {
-        public static final int main=0x7f030000;
-    }
-    public static final class string {
-        public static final int app_name=0x7f050000;
-    }
-    public static final class xml {
-        public static final int config=0x7f040000;
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79
     }
 }
