@@ -1,6 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.sil.aimobile" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<<<<<<< HEAD
     <name>Adapt It</name>
+=======
+    <name>AdaptIt</name>
+>>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79
     <description>
         An open source application for translating between related languages.
     </description>

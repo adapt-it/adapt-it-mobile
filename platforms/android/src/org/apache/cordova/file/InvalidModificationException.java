@@ -15,27 +15,15 @@
        KIND, either express or implied.  See the License for the
        specific language governing permissions and limitations
        under the License.
- */
+*/
 
-package org.sil.aimobile;
 
-import android.os.Bundle;
-import org.apache.cordova.*;
+package org.apache.cordova.file;
 
-<<<<<<< HEAD:platforms/android/src/org/sil/aimobile/AdaptIt.java
-public class AdaptIt extends CordovaActivity 
-=======
-public class AdaptIt extends DroidGap
->>>>>>> 27a1c5d9f056d2f23abc3f2cb3be8b6597bf6e79:platforms/android/src/org/sil/aimobile/AdaptIt.java
-{
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        super.init();
-        // Set by <content src="index.html" /> in config.xml
-        super.loadUrl(Config.getStartUrl());
-        //super.loadUrl("file:///android_asset/www/index.html")
+public class InvalidModificationException extends Exception {
+
+    public InvalidModificationException(String message) {
+        super(message);
     }
-}
 
+}
