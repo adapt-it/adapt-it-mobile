@@ -1,0 +1,77 @@
+<div class="topcoat-navigation-bar">
+    <div class="topcoat-navigation-bar__item left quarter">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item center half">
+        <h1 class="topcoat-navigation-bar__title">{{this.name}}</h1>
+    </div>
+    <div class="topcoat-navigation-bar__item right half">
+        <div class="topcoat-button-bar">
+           <label class="topcoat-button-bar__item">
+             <input type="checkbox">
+             <button class="topcoat-button-bar__button">Placeholder</button>
+           </label>
+           <label class="topcoat-button-bar__item">
+             <input type="checkbox">
+             <button class="topcoat-button-bar__button">Phrase</button>
+           </label>
+           <label class="topcoat-button-bar__item">
+             <input type="checkbox">
+             <button class="topcoat-button-bar__button">Retranslation</button>
+           </label>
+        </div>
+    </div>
+</div>
+
+<div class="topcoat-list chapter" id="strip-{{this.id}}">
+{{#each strips}}
+{{! nested ifConds -- a hacked case statement }}
+{{#ifCond this.markers 'contains' 'mt'}}
+<div class="strip specialtext para" id="strip-{{this.id}}">
+{{else}}
+{{#ifCond this.markers 'contains' 'id'}}
+<div class="strip specialtext para" id="strip-{{this.id}}">
+{{else}}
+{{#ifCond this.markers 'contains' 'hdr'}}
+<div class="strip specialtext para" id="strip-{{this.id}}">
+{{else}}
+{{#ifCond this.markers 'contains' 's'}}
+<div class="strip specialtext para" id="strip-{{this.id}}">
+{{else}}
+{{#ifCond this.markers 'contains' 'f +'}}
+    {{! footnotes are displayed inline; no para class applied }}
+<div class="strip specialtext" id="strip-{{this.id}}">
+{{else}}
+{{#ifCond this.markers 'contains' 'p'}}
+    {{! paragraph has no special color, but para class is applied }}
+<div class="strip newpara" id="strip-{{this.id}}">
+{{else}}
+<div class="strip" id="strip-{{this.id}}">
+{{/ifCond}}
+{{/ifCond}}
+{{/ifCond}}
+{{/ifCond}}
+{{/ifCond}}
+{{/ifCond}}
+{{! end nested ifConds }}
+
+    <div id="header-{{this.id}}" class="strip-header">{{this.markers}}</div>
+    {{#each this.piles}} 
+    <div id="pile-{{../this.id}}-{{@index}}" class="pile">
+        <div class="marker">{{#if @first }}{{../../this.markers}}{{/if}}&nbsp;</div>
+        <div class="source">{{this.source}}</div>
+    {{#ifCond this.source '!=' this.target}}
+        <div class="target differences">{{this.target}}
+    {{else}}
+        <div class="target">{{this.target}}
+    {{/ifCond}}
+        </div>
+        <input type="text" class="topcoat-text-input" placeholder="" value="{{this.target}}">
+    </div>
+    {{/each}}
+</div>
+{{/each}}
+</div>
+

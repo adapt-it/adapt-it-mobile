@@ -1,0 +1,298 @@
+a {
+    text-decoration: none;
+    color: inherit;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.search-bar {
+    padding:8px 14px 12px 8px;
+}
+
+.search-key {
+    width: 100%;
+}
+
+.topcoat-list li p:nth-of-type(2) {
+    color:  #58C0FF ;
+}
+
+.small-pic {
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+}
+
+.large-pic-bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: none;
+    background: rgba(0,0,0,.8);
+}
+
+.large-pic {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-size: contain;
+    display: none;
+}
+
+.page-body {
+    padding: 14px 10px;
+}
+
+.page-body h1 {
+    margin: 0px;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    overflow: hidden;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.page-body h2 {
+    margin: 0px;
+    font: inherit;
+    color: inherit;
+    font-size: 1.1rem;
+    width: 100%;
+}
+
+.page-body h3 {
+    margin: 0px;
+}
+
+.action-button {
+    display: block;
+    margin: 4px 0px;
+    text-align: center;
+}
+
+.scroller {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    top: 70px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.hscroller {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    top: 80px;
+    height: 200px;
+    left: 10px;
+    right: 10px;
+    white-space: nowrap;
+}
+
+.topcoat-icon--back {
+    background: url("images/back_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
+.topcoat-list__container {
+    border-bottom: none;
+    clear: both;
+}
+
+.topcoat-icon-button--large--quiet {
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.topcoat-icon,
+.topcoat-icon--large {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  width: 1.62rem;
+  height: 1.62rem;
+  vertical-align: middle;
+  top: -1px;
+}
+
+.topcoat-icon--large {
+  width: 2.499999998125rem;
+  height: 2.499999998125rem;
+  top: -2px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.topcoat-list {
+    list-style: none;
+}
+
+.topcoat-icon--back {
+    background: url("images/back_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
+ul {
+    clear:both;
+    border-top: none !important;
+}
+
+.chapter-list li {
+    position: relative;
+    text-align: left;
+    clear: both;
+}
+
+.chevron {
+    background: transparent url(images/next_blue.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 12px;
+    top: 15px;
+    height: 40px;
+    width: 28px;
+}
+
+#map {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+h3 {
+    clear: both;
+    padding-top: 12px;
+}
+
+/* AI mobile icons */
+.ui-icon-ai-placeholder {
+	background: url("images/placeholder-new.png") no-repeat rgba(0, 0, 0, 0.4) !important;
+}
+
+.ui-icon-ai-phrase {
+	-moz-border-radius: 9px 9px 9px 9px;
+	background: url("images/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+.ui-icon-ai-retranslation {
+	-moz-border-radius: 9px 9px 9px 9px;
+	background: url("images/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-ai-placeholder {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("images/placeholder-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+	.ui-icon-ai-phrase {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("images/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+	.ui-icon-ai-retranslation {
+		-moz-border-radius: 9px 9px 9px 9px;
+		background: url("images/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+		background-size: 18px 18px;
+	}
+}
+
+/* Modified from Joel's POC */
+.marker {
+	display: block;
+	color: #009900; /*green*/
+}
+.strip {
+    display: block; 
+}
+.strip-header {
+    color: black;
+    text-align: center;
+}
+.strip .strip-header {
+    float: left;
+    padding: 0.2em;
+    padding-top: 1.5em;
+}
+.strip .pile {
+    float: left;
+}
+.pile .ui-selecting {
+    background-color: silver;
+}
+.pile .ui-selected {
+    background-color: gray;
+}
+.pile {
+    color: black;
+    white-space: nowrap;
+    height: 6em;
+}
+.pile .marker {
+	white-space: nowrap;
+	padding: 0.1em;
+}
+.pile .source {
+    white-space: nowrap;
+    padding: 0.1em;
+}
+.pile .target {
+    white-space: nowrap;
+    padding: 0.1em;
+}
+.topcoat-text-input {
+    display: none;
+}
+/* force a paragraph break */
+div.strip.para {
+    clear: both;
+    overflow: auto;
+    width: 100%;
+}
+/* new paragraph */
+.newpara {
+    clear: left;
+}
+/* text colors */
+div.strip div.source {
+	color: #0000aa; /* blue */
+}
+div.strip.specialtext div.source {
+	color: #aa0000; /* red */
+}
+.retranslation {
+	color: #996633; /* brown */
+}
+.differences {
+	color: rgb(40, 100, 40); /* green */
+}
+.marker {
+    color: #00cc00; /* light green */
+}
