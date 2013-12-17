@@ -244,11 +244,11 @@ h3 {
 .strip .pile {
     float: left;
 }
-.pile .ui-selecting {
+.ui-selecting {
     background-color: silver;
 }
-.pile .ui-selected {
-    background-color: gray;
+.ui-selected {
+    background-color: hsl(208, 82%, 85%);
 }
 .pile {
     color: black;

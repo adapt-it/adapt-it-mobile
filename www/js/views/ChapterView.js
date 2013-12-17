@@ -20,9 +20,7 @@ define(function (require) {
             return this;
         },
         events: {
-            "click .pile": "selectingPiles",
-            "keydown .pile": "selectingPiles",
-            "keyup .pile": "selectedPile",
+            "click .pile": "selectedPiles",
             "click .target": "selectedAdaptation",
             "keydown .topcoat-text-input": "editAdaptation",
             "blur .topcoat-text-input": "unselectedAdaptation"
@@ -33,8 +31,20 @@ define(function (require) {
         },
         // user has finished selecting one or more piles
         selectedPiles: function (event) {
-            // Button clicked, you can access the element that was clicked with event.currentTarget
-            $(event.currentTarget).addClass("ui-selected");
+            if (event.currentTarget != selected) {
+                if (selected != null) {
+                    // there was an old selection -- remove the ui-selected class
+                    $("div").removeClass("ui-selecting ui-selected");
+                }
+                selected = event.currentTarget; // pile
+                // try to find the pile element (this could be a child of that element)
+                if (event.currentTarget.className != "pile") {
+                    event.currentTarget.parentElement.addClass("ui-selected");
+                }
+                else {
+                    $(event.currentTarget).addClass("ui-selected");
+                }
+            }
         },
         // user has moved the adaptation input field
         selectedAdaptation: function (event) {
@@ -97,6 +107,10 @@ define(function (require) {
         unselectedAdaptation: function (event) {
             $(event.currentTarget).hide();
             $(event.currentTarget.previousElementSibling).show();
+            if (selected != null) {
+                // there was an old selection -- remove the ui-selected class
+                $("div").removeClass("ui-selecting ui-selected");
+            }
         }
     });
 
