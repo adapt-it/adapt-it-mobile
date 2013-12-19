@@ -245,7 +245,7 @@ h3 {
     float: left;
 }
 .ui-selecting {
-    background-color: silver;
+    background-color: #00cc00;
 }
 .ui-selected {
     background-color: hsl(208, 82%, 85%);
