@@ -73,6 +73,7 @@ define(function (require) {
                     $("div").removeClass("ui-selecting ui-selected");
                 }
                 selected = event.currentTarget; // pile
+                $("#Placeholder").prop('disabled', false);
                 // try to find the pile element (this could be a child of that element)
                 if (event.currentTarget.className !== "pile") {
                     event.currentTarget.parentElement.addClass("ui-selected");
@@ -135,6 +136,12 @@ define(function (require) {
         // user has moved out of the current adaptation input field
         unselectedAdaptation: function (event) {
             $(event.currentTarget).hide();
+            //var newValue = $(event.currentTarget).val();
+            if ($(event.currentTarget.previousElementSibling).html() != $(event.currentTarget).val())
+            {
+                // value has changed -- update
+            }
+            $(event.currentTarget.previousElementSibling).html($(event.currentTarget).val());
             $(event.currentTarget.previousElementSibling).show();
             if (selected !== null) {
                 // there was an old selection -- remove the ui-selected class
