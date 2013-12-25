@@ -11,20 +11,27 @@
         <div class="topcoat-button-bar">
            <label class="topcoat-button-bar__item">
              <input type="checkbox">
-             <button class="topcoat-button-bar__button">Placeholder</button>
+             <button id="Placeholder" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">alert</span>
+             </button>
            </label>
            <label class="topcoat-button-bar__item">
              <input type="checkbox">
-             <button class="topcoat-button-bar__button">Phrase</button>
+             <button id="Phrase" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">brush</span>
+             </button>
            </label>
            <label class="topcoat-button-bar__item">
              <input type="checkbox">
-             <button class="topcoat-button-bar__button">Retranslation</button>
+             <button id="Retranslation" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">build</span>
+             </button>
            </label>
         </div>
     </div>
 </div>
 
+<div class="topcoat-list__container scroller">
 <div class="topcoat-list chapter" id="strip-{{this.id}}">
 {{#each strips}}
 {{! nested ifConds -- a hacked case statement }}
@@ -74,4 +81,4 @@
 </div>
 {{/each}}
 </div>
-
+</div>

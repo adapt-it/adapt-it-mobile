@@ -63,6 +63,8 @@ define(function (require) {
                 chapter.fetch({
                     success: function (data) {
                         slider.slidePage(new ChapterView({model: data}).$el);
+                        // TODO: this call takes a long time and selects too much...
+                        //$(".strip").selectable();
                     }
                 });
             });

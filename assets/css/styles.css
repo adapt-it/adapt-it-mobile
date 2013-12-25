@@ -185,10 +185,42 @@ ul {
     bottom: 0;
     overflow: hidden;
 }
-
 h3 {
     clear: both;
     padding-top: 12px;
+}
+
+/* icomatic icon font */
+@font-face {
+font-family: 'Icomatic';
+src: url('icomatic.eot');
+src: url('icomatic.eot?#iefix') format("embedded-opentype"),
+     url('icomatic.woff') format("woff"),
+     url('icomatic.ttf') format("truetype"),
+     url('icomatic.svg#icomatic') format('svg');
+}
+.icomatic {
+    font-family: 'Icomatic','sans-serif';
+    line-height: 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "liga", "dlig";
+    -ms-font-feature-settings: "liga", "dlig";
+    -moz-font-feature-settings: "liga", "dlig";
+    -o-font-feature-settings: "liga", "dlig";
+    font-feature-settings: "liga", "dlig";
+    -webkit-font-smoothing: antialiased;
+}
+.icomatic-alt {
+    margin: -1px;
+    border:0;
+    padding: 0;
+    width: 1px; height: 1px;
+    clip: rect(0 0 0 0);
+    position: absolute;
+    overflow: hidden;
+}
+.icomatic {
+    font-size: 22pt;
 }
 
 /* AI mobile icons */
@@ -245,7 +277,7 @@ h3 {
     float: left;
 }
 .ui-selecting {
-    background-color: #00cc00;
+    background-color: hsl(208, 82%, 70%);
 }
 .ui-selected {
     background-color: hsl(208, 82%, 85%);

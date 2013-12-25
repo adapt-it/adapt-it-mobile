@@ -23,9 +23,10 @@
           <string>icon@2x</string>
           <string>icon-72</string>
           <string>icon-72@2x</string>
+          <string>icon@2x.png</string>
         </array>
         <key>UIPrerenderedIcon</key>
-        <false/>
+        <true/>
       </dict>
     </dict>
     <key>CFBundleIcons~ipad</key>
@@ -66,6 +67,8 @@
     <string></string>
     <key>NSMainNibFile~ipad</key>
     <string></string>
+    <key>UIPrerenderedIcon</key>
+    <true/>
     <key>UISupportedInterfaceOrientations</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
