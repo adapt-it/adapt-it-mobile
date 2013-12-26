@@ -37,8 +37,11 @@ define(function (require) {
             "click #Phrase": "togglePhrase",
             "click #Retranslation": "toggleRetranslation",
             "mousedown .pile": "selectingPilesStart",
-            "mouseup .pile": "selectingPilesEnd",
+            "touchstart .pile": "selectingPilesStart",
             "mousemove .pile": "selectingPilesMove",
+            "touchmove .pile": "selectingPilesMove",
+            "mouseup .pile": "selectingPilesEnd",
+            "touchend .pile": "selectingPilesEnd",
             "selected .strip": "selectedStrip",
             "click .pile": "selectedPiles",
             "click .target": "selectedAdaptation",
@@ -95,7 +98,7 @@ define(function (require) {
         // user is starting to select one or more piles
         selectingPilesMove: function (event) {
             var tmpEnd = null;
-            if (event.currentTarget.className !== "pile") {
+            if (event.currentTarget.className.indexOf("pile") === -1) {
                 tmpEnd = event.currentTarget.parentElement; // pile
             } else {
                 tmpEnd = event.currentTarget; // pile
@@ -110,10 +113,10 @@ define(function (require) {
                 $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
                 if (idxStart === idxEnd) {
                     // try to find the pile element (this could be a child of that element)
-                    if (event.currentTarget.className !== "pile") {
-                        event.currentTarget.parentElement.addClass("ui-selected");
+                    if (event.currentTarget.className.indexOf("pile") === -1) {
+                        event.currentTarget.parentElement.addClass("ui-selecting");
                     } else {
-                        $(event.currentTarget).addClass("ui-selected");
+                        $(event.currentTarget).addClass("ui-selecting");
                     }
                 } else if (idxStart < idxEnd) {
                     $(selectedStart.parentElement).children(".pile").each(function(index, value) {
