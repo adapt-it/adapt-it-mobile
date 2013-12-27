@@ -7,9 +7,20 @@
     <author email="developers@adapt-it.org" href="http://adapt-it.org/">
         Adapt It Team
     </author>
-    <icon src="../assets/svg/adapt-it-mobile-nomask.svg"/>
     <content src="index.html" />
     <access origin="*" />
     <preference name="fullscreen" value="true" />
     <preference name="webviewbounce" value="true" />
+    <!-- icons for PG build -->
+    <icon src="icon.png"/>
+    <icon src="../assets/icon/ios/icon.png" gap:platform="ios" width="57" height="57" />
+    <icon src="../assets/icon/ios/icon-72.png" gap:platform="ios" width="72" height="72" />
+    <icon src="../assets/icon/ios/icon_at_2x.png" gap:platform="ios" width="114" height="114" />
+    <icon src="../assets/icon/ios/icon-72_at_2x.png" gap:platform="ios" width="144" height="144" />
+    <icon src="../assets/icon/android/ldpi.png" gap:platform="android" gap:density="ldpi" />
+    <icon src="../assets/icon/android/mdpi.png" gap:platform="android" gap:density="mdpi" />
+    <icon src="../assets/icon/android/hdpi.png" gap:platform="android" gap:density="hdpi" />
+    <icon src="../assets/icon/android/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
+    <icon src="../assets/icon/windows-phone/icon.png" gap:platform="winphone" />
+    <icon src="../assets/icon/windows-phone/tileicon.png" gap:platform="winphone" gap:role="background" />    
 </widget>
