@@ -320,7 +320,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="6.1091087"
      inkscape:cx="6.1190618"
-     inkscape:cy="7.0344517"
+     inkscape:cy="7.3016725"
      inkscape:current-layer="layer6"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -368,11 +368,10 @@
      style="display:inline"
      transform="translate(0,-8)">
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.7442075px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;display:inline"
-       d="m 2.8721037,32.872104 0,12.255793 34.2557933,0 0,-12.255793 z"
-       id="path3848"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;display:inline;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 2.875 24.875 L 2.875 37.125 L 37.125 37.125 L 37.125 24.875 L 2.875 24.875 z M 8.40625 25.4375 L 19.125 29.34375 L 32.5 25.4375 L 36.5 26.59375 L 22.75 30.53125 L 36.5 34.8125 L 32.5 36.375 L 19.125 32.0625 L 7.09375 36.375 L 3.0625 34.8125 L 15.09375 30.53125 L 3.0625 26.59375 L 8.40625 25.4375 z "
+       transform="translate(0,8)"
+       id="path3848" />
   </g>
   <g
      id="layer1"
