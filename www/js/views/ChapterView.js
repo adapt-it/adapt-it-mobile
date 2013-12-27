@@ -88,11 +88,53 @@ define(function (require) {
         togglePhrase: function (event) {
             // if the current selection is a phrase, remove it; if not,
             // combine the selection into a new phrase
+            var next_edit = null;
+            if (isPhrase === false) {
+                // update the toolbar UI
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#Placeholder").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+                // start adapting the new Phrase
+                if (next_edit !== null) {
+                    next_edit.childNodes[5].click();
+                }
+            } else {
+                // selection is a phrase -- delete it from the model and the DOM
+                // update the toolbar UI
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#Phrase").prop('title', "New Phrase");
+                $("#Phrase .icomatic").html("phrasenew");
+                $("#Placeholder").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+            }
         },
         // User clicked on the Retranslation button
         toggleRetranslation: function (event) {
             // if the current selection is a retranslation, remove it; if not,
             // combine the selection into a new retranslation
+            var next_edit = null;
+            if (isRetranslation === false) {
+                // update the toolbar UI
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#Placeholder").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+                // start adapting the new Phrase
+                if (next_edit !== null) {
+                    next_edit.childNodes[5].click();
+                }
+            } else {
+                // selection is a phrase -- delete it from the model and the DOM
+                // update the toolbar UI
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#Retranslation").prop('title', "New Retranslation");
+                $("#Retranslation .icomatic").html("retranslationnew");
+                $("#Placeholder").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+            }
         },
         // user is starting to select one or more piles
         selectingPilesStart: function (event) {
