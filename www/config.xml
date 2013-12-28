@@ -1,5 +1,9 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="org.sil.aimobile" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns   = "http://www.w3.org/ns/widgets"
+        xmlns:gap   = "http://phonegap.com/ns/1.0"
+        id          = "org.sil.aimobile"
+        versionCode = "10" 
+        version     = "1.0.0" >
     <name>adapt-it-mobile</name>
     <description>
         An open source application for translating between related languages.
@@ -10,7 +14,6 @@
     <content src="index.html" />
     <access origin="*" />
     <preference name="fullscreen" value="true" />
-    <preference name="webviewbounce" value="true" />
     <!-- icons for PG build -->
     <icon src="icon.png"/>
     <icon src="../assets/icon/ios/icon.png" gap:platform="ios" width="57" height="57" />
