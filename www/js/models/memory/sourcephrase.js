@@ -1,3 +1,8 @@
+/* 
+* models / memory / SourcePhrase.js
+* in-memory version of the sourcephrase object. Asynchronously returns the
+* SourcePhrases for Ruth 1
+*/
 define(function (require) {
 
     "use strict";
@@ -6,2824 +11,4554 @@ define(function (require) {
         Backbone    = require('backbone'),
 
         findById = function (id) {
-            var deferred = $.Deferred(),
-                chapter = null,
-                l = chapters.length;
-            for (var i = 0; i < l; i++) {
-                if (chapters[i].id === id) {
-                    chapter = chapters[i];
+            var i = 0,
+                deferred = $.Deferred(),
+                sourcephrase = null,
+                l = sourcephrases.length;
+            for (i = 0; i < l; i++) {
+                if (sourcephrases[i].id === id) {
+                    sourcephrase = sourcephrases[i];
                     break;
                 }
             }
-            deferred.resolve(chapter);
+            deferred.resolve(sourcephrase);
             return deferred.promise();
         },
 
         findByName = function (searchKey) {
             var deferred = $.Deferred();
-            var results = chapters.filter(function (element) {
+            var results = sourcephrases.filter(function (element) {
                 return element.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();
         },
 
-        /* WEB Bible text from http://ebible.org/web/ 
+        /* WEB Bible text for Ruth chapter 1 from http://ebible.org/web/ from 2008
         */
-        chapters = [
-            {   "id": "RUT1",
-                "name": "Ruth 1",
-                "lastAdapted": 2,
-                "verseCount": 22,
-                "strips": [
-                    {
-                        "id": 0.0,
-                        "markers": "\\id",
-                        "piles": [
-                            {
-                                "source": "RUT",
-                                "target": "RUT"
-                            },
-                            {
-                                "source": "08-RUT-web.sfm",
-                                "target": "08-RUT-web.sfm"
-                            },
-                            {
-                                "source": "World",
-                                "target": "Amazing"
-                            },
-                            {
-                                "source": "English",
-                                "target": "American"
-                            },
-                            {
-                                "source": "Bible",
-                                "target": "Bible"
-                            },
-                            {
-                                "source": "Tuesday",
-                                "target": "Friday"
-                            },
-                            {
-                                "source": "19",
-                                "target": "13"
-                            },
-                            {
-                                "source": "August",
-                                "target": "December"
-                            },
-                            {
-                                "source": "2008",
-                                "target": "2013"
-                            }
-                        ]
-                    },
-                    {
-                        "id": 0.1,
-                        "markers": "\\hdr",
-                        "piles": [
-                            {
-                                "source": "Ruth",
-                                "target": "Ruth"
-                            }
-                        ]
-                    },
-                    {
-                        "id": 0.2,
-                        "markers": "\\mt",
-                        "piles": [
-                            {
-                                "source": "Ruth",
-                                "target": "Ruth"
-                            }
-                        ]
-                    },
-                    {
-                        "id": 1,
-                        "markers": "\\c 1 \\p \\v 1",
-                        "piles": [
-                            {
-                                "source": "It",
-                                "target": "It"
-                            },
-                            {
-                                "source": "happened",
-                                "target": "came about"
-                            },
-                            {
-                                "source": "in",
-                                "target": "during"
-                            },
-                            {
-                                "source": "the",
-                                "target": "the"
-                            },
-                            {
-                                "source": "days",
-                                "target": "days"
-                            },
-                            {
-                                "source": "when",
-                                "target": "when"
-                            },
-                            {
-                                "source": "the",
-                                "target": "the"
-                            },
-                            {
-                                "source": "judges",
-                                "target": "judges"
-                            },
-                            {
-                                "source": "judged,",
-                                "target": "judged"
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "there",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "a",
-                                "target": ""
-                            },
-                            {
-                                "source": "famine",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "land.",
-                                "target": ""
-                            },
-                            {
-                                "source": "A",
-                                "target": ""
-                            },
-                            {
-                                "source": "certain",
-                                "target": ""
-                            },
-                            {
-                                "source": "man",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Bethlehem",
-                                "target": ""
-                            },
-                            {
-                                "source": "Judah",
-                                "target": ""
-                            },
-                            {
-                                "source": "went",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "live",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "country",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab,",
-                                "target": ""
-                            },
-                            {
-                                "source": "he,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "his",
-                                "target": ""
-                            },
-                            {
-                                "source": "wife,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "his",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "sons.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 2,
-                        "markers": "\\v 2",
-                        "piles": [
-                            {
-                                "source": "The",
-                                "target": ""
-                            },
-                            {
-                                "source": "name",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "man",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "Elimelech,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "name",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "his",
-                                "target": ""
-                            },
-                            {
-                                "source": "wife",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "name",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "his",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "sons",
-                                "target": ""
-                            },
-                            {
-                                "source": "Mahlon",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "Chilion,",
-                                "target": ""
-                            },
-                            {
-                                "source": "Ephrathites",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Bethlehem",
-                                "target": ""
-                            },
-                            {
-                                "source": "Judah.",
-                                "target": ""
-                            },
-                            {
-                                "source": "They",
-                                "target": ""
-                            },
-                            {
-                                "source": "came",
-                                "target": ""
-                            },
-                            {
-                                "source": "into",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "country",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "continued",
-                                "target": ""
-                            },
-                            {
-                                "source": "there.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 3,
-                        "markers": "\\v 3",
-                        "piles": [
-                            {
-                                "source": "Elimilech,",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi's",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband,",
-                                "target": ""
-                            },
-                            {
-                                "source": "died;",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "left,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "sons.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 4,
-                        "markers": "\\v 4",
-                        "piles": [
-                            {
-                                "source": "They",
-                                "target": ""
-                            },
-                            {
-                                "source": "took",
-                                "target": ""
-                            },
-                            {
-                                "source": "them",
-                                "target": ""
-                            },
-                            {
-                                "source": "wives",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "women",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab;",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "name",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "one",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "Orpah,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "name",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "other",
-                                "target": ""
-                            },
-                            {
-                                "source": "Ruth:",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "lived",
-                                "target": ""
-                            },
-                            {
-                                "source": "there",
-                                "target": ""
-                            },
-                            {
-                                "source": "about",
-                                "target": ""
-                            },
-                            {
-                                "source": "ten",
-                                "target": ""
-                            },
-                            {
-                                "source": "years.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 5,
-                        "markers": "\\v 5",
-                        "piles": [
-                            {
-                                "source": "Mahlon",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "Chilion",
-                                "target": ""
-                            },
-                            {
-                                "source": "both",
-                                "target": ""
-                            },
-                            {
-                                "source": "died,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "woman",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "bereaved",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "children",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 6,
-                        "markers": "\\v 6",
-                        "piles": [
-                            {
-                                "source": "Then",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "arose",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughters-in-law,",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "might",
-                                "target": ""
-                            },
-                            {
-                                "source": "return",
-                                "target": ""
-                            },
-                            {
-                                "source": "from",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "country",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab;",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "had",
-                                "target": ""
-                            },
-                            {
-                                "source": "heard",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "country",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab",
-                                "target": ""
-                            },
-                            {
-                                "source": "how",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 6.0,
-                        "markers": "\\f +",
-                        "piles": [
-                            {
-                                "source": "\"Yahweh\"",
-                                "target": ""
-                            },
-                            {
-                                "source": "is",
-                                "target": ""
-                            },
-                            {
-                                "source": "God\'s",
-                                "target": ""
-                            },
-                            {
-                                "source": "proper",
-                                "target": ""
-                            },
-                            {
-                                "source": "Name,",
-                                "target": ""
-                            },
-                            {
-                                "source": "sometimes",
-                                "target": ""
-                            },
-                            {
-                                "source": "rendered",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"LORD\"",
-                                "target": ""
-                            },
-                            {
-                                "source": "(all",
-                                "target": ""
-                            },
-                            {
-                                "source": "caps)",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "other",
-                                "target": ""
-                            },
-                            {
-                                "source": "translations.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 6.1,
-                        "markers": "\\f*",
-                        "piles": [
-                            {
-                                "source": "had",
-                                "target": ""
-                            },
-                            {
-                                "source": "visited",
-                                "target": ""
-                            },
-                            {
-                                "source": "his",
-                                "target": ""
-                            },
-                            {
-                                "source": "people",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "giving",
-                                "target": ""
-                            },
-                            {
-                                "source": "them",
-                                "target": ""
-                            },
-                            {
-                                "source": "bread.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 7,
-                        "markers": "\\v 7",
-                        "piles": [
-                            {
-                                "source": "She",
-                                "target": ""
-                            },
-                            {
-                                "source": "went",
-                                "target": ""
-                            },
-                            {
-                                "source": "forth",
-                                "target": ""
-                            },
-                            {
-                                "source": "out",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "place",
-                                "target": ""
-                            },
-                            {
-                                "source": "where",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "was,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughters-in-law",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "her;",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "went",
-                                "target": ""
-                            },
-                            {
-                                "source": "on",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "way",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "return",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "land",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Judah.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 8,
-                        "markers": "\\v 8",
-                        "piles": [
-                            {
-                                "source": "Naomi",
-                                "target": ""
-                            },
-                            {
-                                "source": "said",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughters-in-law,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Go,",
-                                "target": ""
-                            },
-                            {
-                                "source": "return",
-                                "target": ""
-                            },
-                            {
-                                "source": "each",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "mother\'s",
-                                "target": ""
-                            },
-                            {
-                                "source": "house:",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "deal",
-                                "target": ""
-                            },
-                            {
-                                "source": "kindly",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "you,",
-                                "target": ""
-                            },
-                            {
-                                "source": "as",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "have",
-                                "target": ""
-                            },
-                            {
-                                "source": "dealt",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "dead,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "me.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 9,
-                        "markers": "\\v 9",
-                        "piles": [
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "grant",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "may",
-                                "target": ""
-                            },
-                            {
-                                "source": "find",
-                                "target": ""
-                            },
-                            {
-                                "source": "rest,",
-                                "target": ""
-                            },
-                            {
-                                "source": "each",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "house",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 9.0,
-                        "markers": "\\p",
-                        "piles": [
-                            {
-                                "source": "Then",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "kissed",
-                                "target": ""
-                            },
-                            {
-                                "source": "them,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "lifted",
-                                "target": ""
-                            },
-                            {
-                                "source": "up",
-                                "target": ""
-                            },
-                            {
-                                "source": "their",
-                                "target": ""
-                            },
-                            {
-                                "source": "voice,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "wept.",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "house",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband.\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 10,
-                        "markers": "\\v 10",
-                        "piles": [
-                            {
-                                "source": "They",
-                                "target": ""
-                            },
-                            {
-                                "source": "said",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"No,",
-                                "target": ""
-                            },
-                            {
-                                "source": "but",
-                                "target": ""
-                            },
-                            {
-                                "source": "we",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "return",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "people.\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 11,
-                        "markers": "\\p \\v 11",
-                        "piles": [
-                            {
-                                "source": "Naomi",
-                                "target": ""
-                            },
-                            {
-                                "source": "said,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Go",
-                                "target": ""
-                            },
-                            {
-                                "source": "back,",
-                                "target": ""
-                            },
-                            {
-                                "source": "my",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughters.",
-                                "target": ""
-                            },
-                            {
-                                "source": "Why",
-                                "target": ""
-                            },
-                            {
-                                "source": "do",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "want",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "go",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "me?",
-                                "target": ""
-                            },
-                            {
-                                "source": "Do",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "still",
-                                "target": ""
-                            },
-                            {
-                                "source": "have",
-                                "target": ""
-                            },
-                            {
-                                "source": "sons",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "my",
-                                "target": ""
-                            },
-                            {
-                                "source": "womb,",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "may",
-                                "target": ""
-                            },
-                            {
-                                "source": "be",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "husbands?",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 12,
-                        "markers": "\\v 12",
-                        "piles": [
-                            {
-                                "source": "Go",
-                                "target": ""
-                            },
-                            {
-                                "source": "back,",
-                                "target": ""
-                            },
-                            {
-                                "source": "go",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "way;",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "am",
-                                "target": ""
-                            },
-                            {
-                                "source": "too",
-                                "target": ""
-                            },
-                            {
-                                "source": "old",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "have",
-                                "target": ""
-                            },
-                            {
-                                "source": "a",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband.",
-                                "target": ""
-                            },
-                            {
-                                "source": "If",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "should",
-                                "target": ""
-                            },
-                            {
-                                "source": "say,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\'I",
-                                "target": ""
-                            },
-                            {
-                                "source": "have",
-                                "target": ""
-                            },
-                            {
-                                "source": "hope,\'",
-                                "target": ""
-                            },
-                            {
-                                "source": "if",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "should",
-                                "target": ""
-                            },
-                            {
-                                "source": "even",
-                                "target": ""
-                            },
-                            {
-                                "source": "have",
-                                "target": ""
-                            },
-                            {
-                                "source": "a",
-                                "target": ""
-                            },
-                            {
-                                "source": "husband",
-                                "target": ""
-                            },
-                            {
-                                "source": "tonight,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "should",
-                                "target": ""
-                            },
-                            {
-                                "source": "also",
-                                "target": ""
-                            },
-                            {
-                                "source": "bear",
-                                "target": ""
-                            },
-                            {
-                                "source": "sons;",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 13,
-                        "markers": "\\v 13",
-                        "piles": [
-                            {
-                                "source": "would",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "then",
-                                "target": ""
-                            },
-                            {
-                                "source": "wait",
-                                "target": ""
-                            },
-                            {
-                                "source": "until",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "were",
-                                "target": ""
-                            },
-                            {
-                                "source": "grown?",
-                                "target": ""
-                            },
-                            {
-                                "source": "Would",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "then",
-                                "target": ""
-                            },
-                            {
-                                "source": "refrain",
-                                "target": ""
-                            },
-                            {
-                                "source": "from",
-                                "target": ""
-                            },
-                            {
-                                "source": "having",
-                                "target": ""
-                            },
-                            {
-                                "source": "husbands?",
-                                "target": ""
-                            },
-                            {
-                                "source": "No,",
-                                "target": ""
-                            },
-                            {
-                                "source": "my",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughters,",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "it",
-                                "target": ""
-                            },
-                            {
-                                "source": "grieves",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "much",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "sakes,",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "hand",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "gone",
-                                "target": ""
-                            },
-                            {
-                                "source": "out",
-                                "target": ""
-                            },
-                            {
-                                "source": "against",
-                                "target": ""
-                            },
-                            {
-                                "source": "me.\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 14,
-                        "markers": "\\p \\v 14",
-                        "piles": [
-                            {
-                                "source": "They",
-                                "target": ""
-                            },
-                            {
-                                "source": "lifted",
-                                "target": ""
-                            },
-                            {
-                                "source": "up",
-                                "target": ""
-                            },
-                            {
-                                "source": "their",
-                                "target": ""
-                            },
-                            {
-                                "source": "voice,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "wept",
-                                "target": ""
-                            },
-                            {
-                                "source": "again:",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "Orpah",
-                                "target": ""
-                            },
-                            {
-                                "source": "kissed",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "mother-in-law,",
-                                "target": ""
-                            },
-                            {
-                                "source": "but",
-                                "target": ""
-                            },
-                            {
-                                "source": "Ruth",
-                                "target": ""
-                            },
-                            {
-                                "source": "joined",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "her.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 15,
-                        "markers": "\\v 15",
-                        "piles": [
-                            {
-                                "source": "She",
-                                "target": ""
-                            },
-                            {
-                                "source": "said,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Behold,",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "sister-in-law",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "gone",
-                                "target": ""
-                            },
-                            {
-                                "source": "back",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "people,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "god.",
-                                "target": ""
-                            },
-                            {
-                                "source": "Follow",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "sister-in-law.\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 16,
-                        "markers": "\\p \\v 16",
-                        "piles": [
-                            {
-                                "source": "Ruth",
-                                "target": ""
-                            },
-                            {
-                                "source": "said,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Don\'t",
-                                "target": ""
-                            },
-                            {
-                                "source": "entreat",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "leave",
-                                "target": ""
-                            },
-                            {
-                                "source": "you,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "return",
-                                "target": ""
-                            },
-                            {
-                                "source": "from",
-                                "target": ""
-                            },
-                            {
-                                "source": "following",
-                                "target": ""
-                            },
-                            {
-                                "source": "after",
-                                "target": ""
-                            },
-                            {
-                                "source": "you,",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "where",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "go,",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "go;",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "where",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "lodge,",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "lodge;",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "people",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "be",
-                                "target": ""
-                            },
-                            {
-                                "source": "my",
-                                "target": ""
-                            },
-                            {
-                                "source": "people,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "your",
-                                "target": ""
-                            },
-                            {
-                                "source": "God",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 16.0,
-                        "markers": "\\f +",
-                        "piles": [
-                            {
-                                "source": "The",
-                                "target": ""
-                            },
-                            {
-                                "source": "Hebrew",
-                                "target": ""
-                            },
-                            {
-                                "source": "word",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"God\"",
-                                "target": ""
-                            },
-                            {
-                                "source": "is",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Elohim\".",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 16.1,
-                        "markers": "\\f*",
-                        "piles": [
-                            {
-                                "source": "my",
-                                "target": ""
-                            },
-                            {
-                                "source": "God;",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 17,
-                        "markers": "\\v 17",
-                        "piles": [
-                            {
-                                "source": "where",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "die,",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "die,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "there",
-                                "target": ""
-                            },
-                            {
-                                "source": "will",
-                                "target": ""
-                            },
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "be",
-                                "target": ""
-                            },
-                            {
-                                "source": "buried.",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "do",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "me,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "more",
-                                "target": ""
-                            },
-                            {
-                                "source": "also,",
-                                "target": ""
-                            },
-                            {
-                                "source": "if",
-                                "target": ""
-                            },
-                            {
-                                "source": "anything",
-                                "target": ""
-                            },
-                            {
-                                "source": "but",
-                                "target": ""
-                            },
-                            {
-                                "source": "death",
-                                "target": ""
-                            },
-                            {
-                                "source": "part",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "me.\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 18,
-                        "markers": "\\p \\v 18",
-                        "piles": [
-                            {
-                                "source": "When",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "saw",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "steadfastly",
-                                "target": ""
-                            },
-                            {
-                                "source": "minded",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "go",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "her,",
-                                "target": ""
-                            },
-                            {
-                                "source": "she",
-                                "target": ""
-                            },
-                            {
-                                "source": "left",
-                                "target": ""
-                            },
-                            {
-                                "source": "off",
-                                "target": ""
-                            },
-                            {
-                                "source": "speaking",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "her.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 19,
-                        "markers": "\\p \\v 19",
-                        "piles": [
-                            {
-                                "source": "So",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "two",
-                                "target": ""
-                            },
-                            {
-                                "source": "went",
-                                "target": ""
-                            },
-                            {
-                                "source": "until",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "came",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "Bethlehem.",
-                                "target": ""
-                            },
-                            {
-                                "source": "It",
-                                "target": ""
-                            },
-                            {
-                                "source": "Happened,",
-                                "target": ""
-                            },
-                            {
-                                "source": "when",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "had",
-                                "target": ""
-                            },
-                            {
-                                "source": "come",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "Bethlehem,",
-                                "target": ""
-                            },
-                            {
-                                "source": "that",
-                                "target": ""
-                            },
-                            {
-                                "source": "all",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "city",
-                                "target": ""
-                            },
-                            {
-                                "source": "was",
-                                "target": ""
-                            },
-                            {
-                                "source": "moved",
-                                "target": ""
-                            },
-                            {
-                                "source": "about",
-                                "target": ""
-                            },
-                            {
-                                "source": "them,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "asked,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Is",
-                                "target": ""
-                            },
-                            {
-                                "source": "this",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi?\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 20,
-                        "markers": "\\p \\v 20",
-                        "piles": [
-                            {
-                                "source": "She",
-                                "target": ""
-                            },
-                            {
-                                "source": "said",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "them,",
-                                "target": ""
-                            },
-                            {
-                                "source": "\"Don\'t",
-                                "target": ""
-                            },
-                            {
-                                "source": "call",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi.",
-                                "target": ""
-                            },
-                            {
-                                "source": "Call",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "Mara;",
-                                "target": ""
-                            },
-                            {
-                                "source": "for",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "Almighty",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "dealt",
-                                "target": ""
-                            },
-                            {
-                                "source": "very",
-                                "target": ""
-                            },
-                            {
-                                "source": "bitterly",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "me.",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 21,
-                        "markers": "\\v 21",
-                        "piles": [
-                            {
-                                "source": "I",
-                                "target": ""
-                            },
-                            {
-                                "source": "went",
-                                "target": ""
-                            },
-                            {
-                                "source": "out",
-                                "target": ""
-                            },
-                            {
-                                "source": "full,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "brought",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "back",
-                                "target": ""
-                            },
-                            {
-                                "source": "empty;",
-                                "target": ""
-                            },
-                            {
-                                "source": "why",
-                                "target": ""
-                            },
-                            {
-                                "source": "do",
-                                "target": ""
-                            },
-                            {
-                                "source": "you",
-                                "target": ""
-                            },
-                            {
-                                "source": "call",
-                                "target": ""
-                            },
-                            {
-                                "source": "me",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi,",
-                                "target": ""
-                            },
-                            {
-                                "source": "since",
-                                "target": ""
-                            },
-                            {
-                                "source": "Yahweh",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "testified",
-                                "target": ""
-                            },
-                            {
-                                "source": "against",
-                                "target": ""
-                            },
-                            {
-                                "source": "me,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "Almighty",
-                                "target": ""
-                            },
-                            {
-                                "source": "has",
-                                "target": ""
-                            },
-                            {
-                                "source": "afflicted",
-                                "target": ""
-                            },
-                            {
-                                "source": "me?\"",
-                                "target": ""
-                            }
-                        ]
-                    },
-                    {
-                        "id": 22,
-                        "markers": "\\v 22",
-                        "piles": [
-                            {
-                                "source": "So",
-                                "target": ""
-                            },
-                            {
-                                "source": "Naomi",
-                                "target": ""
-                            },
-                            {
-                                "source": "returned,",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "Ruth",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moabitess,",
-                                "target": ""
-                            },
-                            {
-                                "source": "her",
-                                "target": ""
-                            },
-                            {
-                                "source": "daughter-in-law,",
-                                "target": ""
-                            },
-                            {
-                                "source": "with",
-                                "target": ""
-                            },
-                            {
-                                "source": "her,",
-                                "target": ""
-                            },
-                            {
-                                "source": "who",
-                                "target": ""
-                            },
-                            {
-                                "source": "returned",
-                                "target": ""
-                            },
-                            {
-                                "source": "out",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "country",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "Moab:",
-                                "target": ""
-                            },
-                            {
-                                "source": "and",
-                                "target": ""
-                            },
-                            {
-                                "source": "they",
-                                "target": ""
-                            },
-                            {
-                                "source": "came",
-                                "target": ""
-                            },
-                            {
-                                "source": "to",
-                                "target": ""
-                            },
-                            {
-                                "source": "Bethlehem",
-                                "target": ""
-                            },
-                            {
-                                "source": "in",
-                                "target": ""
-                            },
-                            {
-                                "source": "the",
-                                "target": ""
-                            },
-                            {
-                                "source": "beginning",
-                                "target": ""
-                            },
-                            {
-                                "source": "of",
-                                "target": ""
-                            },
-                            {
-                                "source": "barley",
-                                "target": ""
-                            },
-                            {
-                                "source": "harvest.",
-                                "target": ""
-                            }
-                        ]
-                    }
-                ]
+        sourcephrases = [
+            {
+                "id": null,
+                "markers": "\\id",
+                "orig": null,
+                "source": "RUT",
+                "target": "RUT"
             },
-            {   "id": "RUT2",
-                "name": "Ruth 2",
-                "lastAdapted": 0,
-                "verseCount": 23,
-                "strips": [
-                    {
-                        "id": 1,
-                        "markers": "\\v 1",
-                        "piles": [
-                            {
-                                "source": "Naomi",
-                                "target": ""
-                            }
-                        ]
-                    }
-                ]
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "08-RUT-web.sfm",
+                "target": "08-RUT-web.sfm"
             },
-            {   "id": "RUT3",
-                "name": "Ruth 3",
-                "lastAdapted": 0,
-                "verseCount": 18,
-                "strips": [
-                    {
-                        "id": 1,
-                        "markers": "\\v 1",
-                        "piles": [
-                            {
-                                "source": "Naomi",
-                                "target": ""
-                            }
-                        ]
-                    }
-                ]
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "World",
+                "target": "Amazing"
             },
-            {   "id": "RUT4",
-                "name": "Ruth 4",
-                "lastAdapted": 0,
-                "verseCount": 22,
-                "strips": [
-                    {
-                        "id": 1,
-                        "markers": "\\v 1",
-                        "piles": [
-                            {
-                                "source": "Now",
-                                "target": ""
-                            }
-                        ]
-                    }
-                ]
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "English",
+                "target": "American"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bible",
+                "target": "Bible"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Tuesday",
+                "target": "Friday"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "19",
+                "target": "13"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "August",
+                "target": "December"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "2008",
+                "target": "2013"
+            },
+// header
+            {
+                "id": null,
+                "markers": "\\hdr",
+                "orig": null,
+                "source": "Ruth",
+                "target": "Ruth"
+            },
+// title
+            {
+                "id": null,
+                "markers": "\\mt",
+                "orig": null,
+                "source": "Ruth",
+                "target": "Ruth"
+            },
+// v1
+            {
+                "id": null,
+                "markers": "\\c 1 \\p \\v 1",
+                "orig": null,
+                "source": "It",
+                "target": "It"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "happened",
+                "target": "came about"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": "during"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": "the"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "days",
+                "target": "days"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "when",
+                "target": "when"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": "the"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "judges",
+                "target": "judges"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "judged,",
+                "target": "judged"
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "there",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "a",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "famine",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "land.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "A",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "certain",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "man",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bethlehem",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Judah",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "went",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "live",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "country",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "he,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "his",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wife,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "his",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sons.",
+                "target": ""
+            },
+// v2
+            {
+                "id": null,
+                "markers": "\\v 2",
+                "orig": null,
+                "source": "The",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "name",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "man",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Elimelech,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "name",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "his",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wife",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "name",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "his",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sons",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Mahlon",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Chilion,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Ephrathites",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bethlehem",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Judah.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "They",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "came",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "into",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "country",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "continued",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "there.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 3",
+                "orig": null,
+                "source": "Elimilech,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi's",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "died;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "left,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sons.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 4",
+                "orig": null,
+                "source": "They",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "took",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "them",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wives",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "women",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "name",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "one",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Orpah,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "name",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "other",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Ruth:",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "lived",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "there",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "about",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "ten",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "years.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 5",
+                "orig": null,
+                "source": "Mahlon",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Chilion",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "both",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "died,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "woman",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "bereaved",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "children",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 6",
+                "orig": null,
+                "source": "Then",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "arose",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughters-in-law,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "might",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "return",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "from",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "country",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "had",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "heard",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "country",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "how",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\f +",
+                "orig": null,
+                "source": "\"Yahweh\"",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "is",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "God\'s",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "proper",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Name,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sometimes",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "rendered",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"LORD\"",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "(all",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "caps)",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "other",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "translations.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\f*",
+                "orig": null,
+                "source": "had",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "visited",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "his",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "people",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "giving",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "them",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "bread.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 7",
+                "orig": null,
+                "source": "She",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "went",
+                "target": ""
+            },
+            {
+                "source": "forth",
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "target": ""
+            },
+            {
+                "source": "out",
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "target": ""
+            },
+            {
+                "source": "of",
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "place",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "where",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughters-in-law",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "went",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "on",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "way",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "return",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "land",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Judah.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 8",
+                "orig": null,
+                "source": "Naomi",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughters-in-law,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Go,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "return",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "each",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "mother\'s",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "house:",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "deal",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "kindly",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "as",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "have",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "dealt",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "dead,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 9",
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "grant",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "may",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "find",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "rest,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "each",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "house",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p",
+                "orig": null,
+                "source": "Then",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "kissed",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "them,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "lifted",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "up",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "their",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "voice,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wept.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "house",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband.\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 10",
+                "orig": null,
+                "source": "They",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"No,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "but",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "we",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "return",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "people.\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 11",
+                "orig": null,
+                "source": "Naomi",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Go",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "back,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "my",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughters.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Why",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "do",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "want",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "go",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me?",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Do",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "still",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "have",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sons",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "my",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "womb,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "may",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "be",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husbands?",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 12",
+                "orig": null,
+                "source": "Go",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "back,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "go",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "way;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "am",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "too",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "old",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "have",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "a",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "If",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "should",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "say,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\'I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "have",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "hope,\'",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "if",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "should",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "even",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "have",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "a",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husband",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "tonight,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "should",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "also",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "bear",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sons;",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 13",
+                "orig": null,
+                "source": "would",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "then",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wait",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "until",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "were",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "grown?",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Would",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "then",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "refrain",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "from",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "having",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "husbands?",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "No,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "my",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughters,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "it",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "grieves",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "much",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sakes,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "hand",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "gone",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "out",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "against",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me.\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 14",
+                "orig": null,
+                "source": "They",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "lifted",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "up",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "their",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "voice,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "wept",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "again:",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Orpah",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "kissed",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "mother-in-law,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "but",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Ruth",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "joined",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 15",
+                "orig": null,
+                "source": "She",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Behold,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sister-in-law",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "gone",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "back",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "people,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "god.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Follow",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "sister-in-law.\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 16",
+                "orig": null,
+                "source": "Ruth",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Don\'t",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "entreat",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "leave",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "return",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "from",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "following",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "after",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "where",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "go,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "go;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "where",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "lodge,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "lodge;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "people",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "be",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "my",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "people,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "your",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "God",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\f +",
+                "orig": null,
+                "source": "The",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Hebrew",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "word",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"God\"",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "is",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Elohim\".",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\f*",
+                "orig": null,
+                "source": "my",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "God;",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 17",
+                "orig": null,
+                "source": "where",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "die,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "die,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "there",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "will",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "be",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "buried.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "do",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "more",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "also,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "if",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "anything",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "but",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "death",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "part",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me.\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 18",
+                "orig": null,
+                "source": "When",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "saw",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "steadfastly",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "minded",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "go",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "she",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "left",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "off",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "speaking",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 19",
+                "orig": null,
+                "source": "So",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "two",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "went",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "until",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "came",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bethlehem.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "It",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Happened,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "when",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "had",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "come",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bethlehem,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "that",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "all",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "city",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "was",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "moved",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "about",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "them,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "asked,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Is",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "this",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi?\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\p \\v 20",
+                "orig": null,
+                "source": "She",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "said",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "them,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "\"Don\'t",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "call",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi.",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Call",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Mara;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "for",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Almighty",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "dealt",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "very",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "bitterly",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me.",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 21",
+                "orig": null,
+                "source": "I",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "went",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "out",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "full,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "brought",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "back",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "empty;",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "why",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "do",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "you",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "call",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "since",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Yahweh",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "testified",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "against",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Almighty",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "has",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "afflicted",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "me?\"",
+                "target": ""
+            },
+
+            {
+                "id": null,
+                "markers": "\\v 22",
+                "orig": null,
+                "source": "So",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Naomi",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "returned,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Ruth",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moabitess,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "daughter-in-law,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "with",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "her,",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "who",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "returned",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "out",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "country",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Moab:",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "and",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "they",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "came",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "to",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "Bethlehem",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "in",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "the",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "beginning",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "of",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "barley",
+                "target": ""
+            },
+            {
+                "id": null,
+                "markers": null,
+                "orig": null,
+                "source": "harvest.",
+                "target": ""
+            },
+// CH 2
+            {
+                "id": null,
+                "markers": "\\c 2 \\p \\v 1",
+                "orig": null,
+                "source": "Naomi",
+                "target": ""
+            },
+// CH 3
+            {
+                "id": null,
+                "markers": "\\c3 \\p \\v 1",
+                "orig": null,
+                "source": "Naomi",
+                "target": ""
+            },
+// CH 4
+            {
+                "id": null,
+                "markers": "\\c 4 \\p \\v 1",
+                "orig": null,
+                "source": "Now",
+                "target": ""
             }
         ],
 
-        Chapter = Backbone.Model.extend({
+        SourcePhrase = Backbone.Model.extend({
 
             sync: function (method, model, options) {
                 if (method === "read") {
@@ -2835,9 +4570,9 @@ define(function (require) {
 
         }),
 
-        ChapterCollection = Backbone.Collection.extend({
+        SourcePhraseCollection = Backbone.Collection.extend({
 
-            model: Chapter,
+            model: SourcePhrase,
 
             sync: function (method, model, options) {
                 if (method === "read") {
@@ -2850,8 +4585,8 @@ define(function (require) {
         });
 
     return {
-        Chapter: Chapter,
-        ChapterCollection: ChapterCollection
+        SourcePhrase: SourcePhrase,
+        SourcePhraseCollection: SourcePhraseCollection
     };
 
 });

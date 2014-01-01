@@ -344,6 +344,7 @@ define(function (require) {
             if ($(event.currentTarget.previousElementSibling).html() !==
                     $(event.currentTarget).val()) {
                 // value has changed -- update
+                
             }
             // update the text with the new input value
             $(event.currentTarget.previousElementSibling).html($(event.currentTarget).val());
