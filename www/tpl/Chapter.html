@@ -30,41 +30,47 @@
 
 <div class="topcoat-list__container scroller">
 <div class="topcoat-list chapter" id="strip-{{this.id}}">
-{{#each strips}}
-{{! nested ifConds -- a hacked case statement }}
-{{#ifCond this.markers 'contains' 'mt'}}
-<div class="strip specialtext para" id="strip-{{this.id}}">
-{{else}}
-{{#ifCond this.markers 'contains' 'id'}}
-<div class="strip specialtext para" id="strip-{{this.id}}">
-{{else}}
-{{#ifCond this.markers 'contains' 'hdr'}}
-<div class="strip specialtext para" id="strip-{{this.id}}">
-{{else}}
-{{#ifCond this.markers 'contains' 's'}}
-<div class="strip specialtext para" id="strip-{{this.id}}">
-{{else}}
-{{#ifCond this.markers 'contains' 'f +'}}
-    {{! footnotes are displayed inline; no para class applied }}
-<div class="strip specialtext" id="strip-{{this.id}}">
-{{else}}
-{{#ifCond this.markers 'contains' 'p'}}
-    {{! paragraph has no special color, but para class is applied }}
-<div class="strip newpara" id="strip-{{this.id}}">
-{{else}}
-<div class="strip" id="strip-{{this.id}}">
-{{/ifCond}}
-{{/ifCond}}
-{{/ifCond}}
-{{/ifCond}}
-{{/ifCond}}
-{{/ifCond}}
-{{! end nested ifConds }}
+{{#each sourcephrases}}
 
+{{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
+{{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
+{{#if this.markers}}
+    {{! nested ifConds -- a hacked case statement }}
+    {{#ifCond this.markers 'contains' 'mt'}}
+    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'id'}}
+    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'hdr'}}
+    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 's'}}
+    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'f +'}}
+        {{! footnotes are displayed inline; no para class applied }}
+    <div class="strip specialtext" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'p'}}
+        {{! paragraph has no special color, but para class is applied }}
+    <div class="strip newpara" id="strip-{{this.id}}">
+    {{else}}
+    {{! any other item in the markers starts a "regular" strip div }}
+    <div class="strip" id="strip-{{this.id}}">
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{! end nested ifConds }}    
+    {{! start each strip with a header (e.g. verse or chapter info) }}
     <div id="header-{{this.id}}" class="strip-header">{{this.markers}}</div>
-    {{#each this.piles}} 
-    <div id="pile-{{../this.id}}-{{@index}}" class="pile">
-        <div class="marker">{{#if @first }}{{../../this.markers}}{{/if}}&nbsp;</div>
+{{/if}}
+
+    <div id="pile-{{this.id}}" class="pile">
+        <div class="marker">{{this.markers}}&nbsp;</div>
         <div class="source">{{this.source}}</div>
     {{#ifCond this.source '!=' this.target}}
         <div class="target differences">{{this.target}}
@@ -74,8 +80,10 @@
         </div>
         <input type="text" class="topcoat-text-input" placeholder="" value="{{this.target}}">
     </div>
-    {{/each}}
-</div>
+   
+{{! if this is the last sourcephrase, close out the strip div }}
+{{#if @last}}</div>{{/if}}
 {{/each}}
+
 </div>
 </div>

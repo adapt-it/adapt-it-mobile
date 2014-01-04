@@ -88,8 +88,23 @@ define(function (require) {
         togglePhrase: function (event) {
             // if the current selection is a phrase, remove it; if not,
             // combine the selection into a new phrase
-            var next_edit = null;
+            var next_edit = null,
+                phraseHtml = null,
+                phraseSource = "",
+                PhraseHtmlStart = "<div id=\"pile-ph-" + Underscore.uniqueId() + "\" class=\"pile\">" +
+                                    " <div class=\"marker\">&nbsp;</div> <div class=\"source\">",
+                PhraseHtmlMid = "</div> <div class=\"target\">&nbsp;</div>" +
+                                    " <input type=\"text\" class=\"topcoat-text-input\" placeholder=\"\" value=\"\"></div>";
             if (isPhrase === false) {
+                // build the phrase from the selection
+                $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                    if (index >= idxStart && index <= idxEnd) {
+                        phraseSource += $(value).childNodes[3].innerHTML;
+                    }
+                });
+                phraseHtml = PhraseHtmlStart + phraseSource + PhraseHtmlMid;
+                console.log("phrase: " + phraseHtml);
+                $(selectedStart).before(phraseHtml);
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Placeholder").prop('disabled', true);
