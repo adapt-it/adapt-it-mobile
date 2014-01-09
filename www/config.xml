@@ -3,9 +3,10 @@
         xmlns:gap   = "http://phonegap.com/ns/1.0"
         id          = "org.sil.aimobile"
         versionCode = "1" 
-        version     = "0.1.0" >
-    <name>adapt-it-mobile</name>
-    <description>
+        version     = "0.1.0"
+        defaultlocale = "en">
+    <name short="adapt-it-mobile" xml:lang="en">adapt-it-mobile</name>
+    <description xml:lang="en">
         An open source application for translating between related languages.
     </description>
     <author email="developers@adapt-it.org" href="http://adapt-it.org/">
