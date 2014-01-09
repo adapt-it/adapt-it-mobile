@@ -16,9 +16,9 @@
     <!-- allow local access -->
     <access origin="*" />
     <!-- preferences -->
+    <preference name="phonegap-version" value="3.1.0" />
     <preference name="fullscreen" value="true" />
     <!-- core plugins -->
-    <!--
     <gap:plugin name="org.apache.cordova.battery-status" />
     <gap:plugin name="org.apache.cordova.console" />
     <gap:plugin name="org.apache.cordova.device" />
@@ -26,7 +26,6 @@
     <gap:plugin name="org.apache.cordova.file-transfer" />
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.network-information" />
-    -->
     <!-- icons for each platform -->
     <icon src="icon.png"/>
     <icon src="../assets/icon/ios/icon.png" gap:platform="ios" width="57" height="57" />
