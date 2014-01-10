@@ -298,6 +298,7 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
 .pile .target {
     white-space: nowrap;
     padding: 0.1em;
+    height: 1.2em;
 }
 .topcoat-text-input {
     display: none;
