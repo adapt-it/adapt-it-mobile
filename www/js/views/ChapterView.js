@@ -52,7 +52,7 @@ define(function (require) {
         togglePlaceholder: function (event) {
             // TODO: move placeHolderHtml to templated html
             var next_edit = null,
-                placeHolderHtml = "<div id=\"pile-ph-" + Underscore.uniqueId() + "\" class=\"pile\">" +
+                placeHolderHtml = "<div id=\"pile-plc-" + Underscore.uniqueId() + "\" class=\"pile\">" +
                                     " <div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
                                     " <div class=\"target\">&nbsp;</div>" +
                                     " <input type=\"text\" class=\"topcoat-text-input\" placeholder=\"\" value=\"\"></div>";
@@ -91,15 +91,26 @@ define(function (require) {
             var next_edit = null,
                 phraseHtml = null,
                 phraseSource = "",
-                PhraseHtmlStart = "<div id=\"pile-ph-" + Underscore.uniqueId() + "\" class=\"pile\">" +
+                PhraseHtmlStart = "<div id=\"pile-phr-" + Underscore.uniqueId() + "\" class=\"pile\">" +
                                     " <div class=\"marker\">&nbsp;</div> <div class=\"source\">",
                 PhraseHtmlMid = "</div> <div class=\"target\">&nbsp;</div>" +
                                     " <input type=\"text\" class=\"topcoat-text-input\" placeholder=\"\" value=\"\"></div>";
             if (isPhrase === false) {
                 // build the phrase from the selection
+                // create a new sourcephrase object in the model
+                // var spNew = chapter.
                 $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                     if (index >= idxStart && index <= idxEnd) {
-                        phraseSource += $(value).childNodes[3].innerHTML;
+                        // concatenate the source into a single phrase
+                        if (index > idxStart) {
+                            phraseSource += " ";
+                        }
+                        phraseSource += $(value).children(".source").html();
+                        
+                        // orig.add($(value).children(".source").html());
+                        // remove the original sourcephrase
+                        // TODO: not sure if iteration breaks w/ remove call -- $(selectedStart).remove();
+                        // might need to select indices and remove them together after the .each loop
                     }
                 });
                 phraseHtml = PhraseHtmlStart + phraseSource + PhraseHtmlMid;
@@ -217,7 +228,8 @@ define(function (require) {
         },
         // user released the mouse here
         selectingPilesEnd: function (event) {
-            var tmpItem = null;
+            var tmpItem = null,
+                tmpIdx = 0;
             if (isSelecting === true) {
                 isSelecting = false;
                 // change the class of the mousedown area to let the user know
@@ -256,9 +268,13 @@ define(function (require) {
                     tmpItem = selectedEnd;
                     selectedEnd = selectedStart;
                     selectedStart = tmpItem;
+                    tmpIdx = idxEnd;
+                    idxEnd = idxStart;
+                    idxStart = tmpIdx;
                 }
+                // ** Icons and labels for the toolbar **
                 // did the user select a placeholder?
-                if ((selectedStart.id).indexOf("ph") !== -1) {
+                if ((selectedStart.id).indexOf("plc") !== -1) {
                     // placeholder -- can remove it, but not add a new one
                     isPlaceholder = true;
                     $("#Placeholder").prop('title', "Remove Placeholder");
@@ -268,6 +284,30 @@ define(function (require) {
                     isPlaceholder = false;
                     $("#Placeholder").prop('title', "New Placeholder");
                     $("#Placeholder .icomatic").html("placeholdernew");
+                }
+                // did the user select a phrase?
+                if ((selectedStart.id).indexOf("phr") !== -1) {
+                    // phrase -- can remove it, but not add a new one
+                    isPhrase = true;
+                    $("#Phrase").prop('title', "Remove Phrase");
+                    $("#Phrase .icomatic").html("phrasedelete");
+                } else {
+                    // not a placeholder -- can add a new one
+                    isPhrase = false;
+                    $("#Phrase").prop('title', "New Phrase");
+                    $("#Phrase .icomatic").html("phrasenew");
+                }
+                // did the user select a retranslation?
+                if ((selectedStart.id).indexOf("ret") !== -1) {
+                    // retranslation -- can remove it, but not add a new one
+                    isRetranslation = true;
+                    $("#Retranslation").prop('title', "Remove Retranslation");
+                    $("#Retranslation .icomatic").html("retranslationdelete");
+                } else {
+                    // not a retranslation -- can add a new one
+                    isRetranslation = false;
+                    $("#Retranslation").prop('title', "New Retranslation");
+                    $("#Retranslation .icomatic").html("retranslationnew");
                 }
                 $("#Placeholder").prop('disabled', false);
             }
