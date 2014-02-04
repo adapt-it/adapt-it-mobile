@@ -16,7 +16,7 @@
     <!-- allow local access -->
     <access origin="*" />
     <!-- preferences -->
-    <preference name="phonegap-version" value="3.1.0" />
+    <preference name="phonegap-version" value="3.3.0" />
     <!-- <preference name="fullscreen" value="true" /> -->
     <!-- core plugins -->
     <gap:plugin name="org.apache.cordova.battery-status" />
@@ -47,6 +47,7 @@
     <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
     <gap:splash gap:platform="ios" height="480" src="res/screen/ios/screen-iphone-portrait.png" width="320" />
     <gap:splash gap:platform="ios" height="960" src="res/screen/ios/screen-iphone-portrait_2x.png" width="640" />
+    <gap:splash gap:platform="ios" width="640" height="1136" src="res/screen/ios/screen-iphone5-portrait.png" />
     <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
     <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <!-- retina iPad support: PhoneGap 2.5.0+ only -->
