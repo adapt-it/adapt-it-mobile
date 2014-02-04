@@ -1,9 +1,24 @@
-<h2>Select a Book:</h2>
-<ul class="topcoat-list book-list">
+<div class="topcoat-navigation-bar">
+    <div class="topcoat-navigation-bar__item quarter">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h1 class="topcoat-navigation-bar__title">Start Adapting</h1>
+    </div>
+    <div class="topcoat-navigation-bar__item quarter">&nbsp;</div>
+</div>
+
+<h3 class="topcoat-list__header">Select a book:</h3>
+  <div class="combo">
+    <select class="docNav">
+        <option value="RUT">Ruth</option>
+        <option value="SNG">Song of Solomon</option>
 {{#.}}
-<li class="topcoat-list__item">
-    <a href="#books/{{this.id}}">{{this.name}}
-    <span class="chevron"></span></a>
-</li>
+      <option value="{{this.id}}">{{this.name}}</option>
 {{/.}}
-</ul>
+    </select>
+  </div>
+
+<div class="topcoat-list__container scroller" style="top:100px;"></div>
