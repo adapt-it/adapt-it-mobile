@@ -31,7 +31,7 @@ define(function (require) {
         /* WEB Bible text from http://ebible.org/web/ 
         */
         chapters = [
-            {   "id": "RUT1",
+            {   "id": "RUT001",
                 "name": "Ruth 1",
                 "lastAdapted": 2,
                 "verseCount": 22,
@@ -181,7 +181,7 @@ define(function (require) {
                         "markers": null,
                         "orig": null,
                         "source": "that",
-                        "target": ""
+                        "target": "reallyreallyreallyreallyreallyloooooooooonnnnnnngstring"
                     },
                     {
                         "id": "RUT1-22",

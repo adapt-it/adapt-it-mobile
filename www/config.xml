@@ -52,5 +52,5 @@
     <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <!-- retina iPad support: PhoneGap 2.5.0+ only -->
     <gap:splash gap:platform="ios" width="2048" height="1496" src="res/screen/ios/screen-ipad-landscape_2x.png" />
-    <gap:splash gap:platform="ios" width="1536" height="2008" src="res/screen/ios/screen-ipad-portrait_2x.png" />
+    <gap:splash gap:platform="ios" width="1536" height="2048" src="res/screen/ios/screen-ipad-portrait_2x.png" />
 </widget>
