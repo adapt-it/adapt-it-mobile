@@ -2,15 +2,15 @@ define(function (require) {
 
     "use strict";
 
-    var $ = require('jquery'),
-        Backbone = require('backbone'),
+    var $           = require('jquery'),
+        Backbone    = require('backbone'),
         Handlebars  = require('handlebars'),
-        PageSlider = require('app/utils/pageslider'),
-        HomeView = require('app/views/HomeView'),
-
-        slider = new PageSlider($('body')),
-
-        homeView = new HomeView();
+        PageSlider  = require('app/utils/pageslider'),
+        HomeView    = require('app/views/HomeView'),
+        LookupView  = require('app/views/LookupView'),
+        slider      = new PageSlider($('body')),
+        lookupView  = new LookupView(),
+        homeView    = new HomeView();
     
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
     
@@ -50,8 +50,8 @@ define(function (require) {
 
         routes: {
             "": "home",
-            "chapters/:id": "adaptChapter",
-            "books/:id": "selectBook"
+            "lookup": "lookupChapter",
+            "adapt/:id": "adaptChapter"
         },
 
         home: function () {
@@ -59,12 +59,12 @@ define(function (require) {
             slider.slidePage(homeView.$el);
         },
 
-        selectBook: function (id) {
-            require(["app/models/book", "app/views/BookView"], function (models, BookView) {
-                var book = new models.Book({id: id});
+        lookupChapter: function (id) {
+            require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
+                var book = new models.Chapter({id: id});
                 book.fetch({
                     success: function (data) {
-                        slider.slidePage(new BookView({model: data}).$el);
+                        slider.slidePage(new LookupView({model: data}).$el);
                     }
                 });
             });

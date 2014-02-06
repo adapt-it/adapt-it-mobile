@@ -275,13 +275,21 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
    remove it when upgrading to a Topcoat version that supports dropdown selections */
 .combo {
     border-bottom: none;
-    padding: 8px 14px 12px 8px;
+    padding: 0px 14px 12px 8px;
+    width: 100%;
+}
+.combo label {
+    display: inline-block;
+    padding-top: 14px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 select.docNav {
     box-shadow: 0 0 0 1px #949696;
     background: #DDE1E1;
     text-shadow: 0 -1px 0 #FFF;
-    /*width: 192px;*/
+    width: 250px;
+    background: url(images/drop-down-triangle.png) no-repeat 95% center;
     -webkit-appearance: none;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -404,7 +412,7 @@ ul.btns {
 .btns li {
 	float: left;
 	list-style: none;
-    margin: 8px;
+    margin: 8px 0px;
     padding: 8px;
 /*    border: 1px solid #454545;*/
 }
@@ -414,7 +422,7 @@ ul.btns {
 	width: 64px;
 	/*height: 32px;*/
 	text-align: center;
-	padding: 72px 16px 8px 16px;
+	padding: 64px 16px 8px 16px;
 	text-decoration: none;
     box-shadow: 0 0 0 1px #949696;
     background: #DDE1E1;
@@ -446,21 +454,20 @@ ul.btns {
 	margin: 8px 0 0 0;
 	overflow: hidden;
 }
+span.sprite{
+    top: 0;
+    width: 64px;
+    height: 52px;
+}
 .btn-settings span.sprite{
-	top: 0;
-	width: 64px;
-	height: 64px;
-	background-image: url("images/preferences-system.png");
+	background-image: url("../svg/search.svg");
+    background-size: 56px 56px;
 }
 .btn-status span.sprite{
-	top: 0;
-	width: 64px;
-	height: 64px;
 	background-image: url("images/status.png");
+    background-size: 48px 48px;
 }
 .btn-adapt span.sprite{
-	top: 0;
-	width: 64px;
-	height: 64px;
-	background-image: url("images/adaptit.png");
+	background-image: url("../svg/adapt-it-mobile-nomask.svg");
+    background-size: 48px 48px;
 }
