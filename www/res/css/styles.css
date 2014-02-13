@@ -366,13 +366,30 @@ select.docNav {
     white-space: nowrap;
     padding: 0.1em;
 }
-.pile .target {
+.target {
     white-space: nowrap;
     padding: 0.1em;
-    height: 1.2em;
+    margin: 0;
+    font: inherit;
+    background: transparent;
+    border: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-clip: padding-box;
+    outline: none;
+    line-height: 2rem;
+    font-size: 16px;
+    vertical-align: top;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    box-shadow: 0 0 0 2px transparent;
 }
-.topcoat-text-input {
-    display: none;
+.target:focus {
+    border-radius: 6px;
+    background-color: #fff;
+    color: #454545;
+    border: 1px solid #0036ff;
+    box-shadow: 0 0 0 2px #6fb5f1;
 }
 /* force a paragraph break */
 div.strip.para {

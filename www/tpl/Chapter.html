@@ -1,13 +1,21 @@
+{{! Chapter.html
+    Template for rendering the chapter adaptation page used by ChapterView.js. Note that this will render a
+    container -- the toolbar and menus, etc -- but the individual strips are rendered by the template SourcePhrase.html.
+}}
+
 <div class="topcoat-navigation-bar">
-    <div class="topcoat-navigation-bar__item third">
+    <div class="topcoat-navigation-bar__item">
         <a class="topcoat-icon-button--quiet back-button" href="index.html">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
     </div>
-    <div class="topcoat-navigation-bar__item center third">
+    <div class="topcoat-navigation-bar__item half">
         <h1 class="topcoat-navigation-bar__title">{{this.name}}</h1>
     </div>
-    <div class="topcoat-navigation-bar__item third">
+{{! TODO: toolbar items need to go in the "+" button as a menu -- I think -- due to screen real estate issues;
+    currently, the toolbar disappears with screen widths less than 576px
+}}
+    <div class="topcoat-navigation-bar__item right">
         <div class="topcoat-button-bar">
            <label class="topcoat-button-bar__item">
              <button id="Placeholder" title="Insert Placeholder" class="topcoat-button-bar__button" disabled>
@@ -26,64 +34,56 @@
            </label>
         </div>
     </div>
-</div>
-
-<div class="topcoat-list__container scroller">
-<div class="topcoat-list chapter" id="strip-{{this.id}}">
-{{#each sourcephrases}}
-
-{{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
-{{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
-{{#if this.markers}}
-    {{! nested ifConds -- a hacked case statement }}
-    {{#ifCond this.markers 'contains' 'mt'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
-    {{else}}
-    {{#ifCond this.markers 'contains' 'id'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
-    {{else}}
-    {{#ifCond this.markers 'contains' 'hdr'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
-    {{else}}
-    {{#ifCond this.markers 'contains' 's'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
-    {{else}}
-    {{#ifCond this.markers 'contains' 'f +'}}
-        {{! footnotes are displayed inline; no para class applied }}
-    <div class="strip specialtext" id="strip-{{this.id}}">
-    {{else}}
-    {{#ifCond this.markers 'contains' 'p'}}
-        {{! paragraph has no special color, but para class is applied }}
-    <div class="strip newpara" id="strip-{{this.id}}">
-    {{else}}
-    {{! any other item in the markers starts a "regular" strip div }}
-    <div class="strip" id="strip-{{this.id}}">
-    {{/ifCond}}
-    {{/ifCond}}
-    {{/ifCond}}
-    {{/ifCond}}
-    {{/ifCond}}
-    {{/ifCond}}
-    {{! end nested ifConds }}    
-    {{! start each strip with a header (e.g. verse or chapter info) }}
-    <div id="header-{{this.id}}" class="strip-header">{{this.markers}}</div>
-{{/if}}
-
-    <div id="pile-{{this.id}}" class="pile">
-        <div class="marker">{{this.markers}}&nbsp;</div>
-        <div class="source">{{this.source}}</div>
-    {{#ifCond this.source '!=' this.target}}
-        <div class="target differences">{{this.target}}
-    {{else}}
-        <div class="target">{{this.target}}
-    {{/ifCond}}
-        </div>
-        <input type="text" class="topcoat-text-input" placeholder="" value="{{this.target}}">
+{{!
+    hiding plus and hamburger menu buttons for now...
+    <div class="topcoat-navigation-bar__item right">
+        <a id="slide-menu-button" class="topcoat-icon-button--quiet slide-menu-button">
+            <span class="topcoat-icon topcoat-icon--menu-stack"></span>
+        </a>
     </div>
-   
-{{! if this is the last sourcephrase, close out the strip div }}
-{{#if @last}}</div>{{/if}}
-{{/each}}
-
+    <div class="topcoat-navigation-bar__item right">
+        <div class="topcoat-button-bar">
+           <label class="topcoat-button-bar__item">
+             <button id="Placeholder" title="Insert Placeholder" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">placeholdernew</span>
+             </button>
+           </label>
+           <label class="topcoat-button-bar__item">
+             <button id="Phrase" title="Insert Phrase" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">phrasenew</span>
+             </button>
+           </label>
+           <label class="topcoat-button-bar__item">
+             <button id="Retranslation" title="Insert Retranslation" class="topcoat-button-bar__button" disabled>
+                <span class="icomatic">retranslationnew</span>
+             </button>
+           </label>
+        </div>
+        <a id="slide-menu-button" class="topcoat-icon-button--quiet" disabled>
+            <span class="topcoat-icon topcoat-icon--add"></span>
+        </a>
+    </div>
+}}
+</div>
+{{!
+hiding side-nav menu for now. TODO: a settings side-menu?
+<nav class="side-nav">
+    <div class="topcoat-list__container side-nav__list__container">
+        <ul class="topcoat-list side-nav__list">
+            <li class="topcoat-list__item side-nav__list__item">
+                <a href="#" class="side-nav__button">Item</a>
+            </li>
+            <li class="topcoat-list__item side-nav__list__item is-active">
+                <a href="#" class="side-nav__button">Item</a>
+            </li>
+            <li class="topcoat-list__item side-nav__list__item">
+                <a href="#" class="side-nav__button">Item</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+}}
+<div class="topcoat-list__container scroller">
+<div class="topcoat-list chapter" id="chapter">
 </div>
 </div>

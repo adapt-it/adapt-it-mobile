@@ -18,7 +18,6 @@ define(function (require) {
             this.chapterList = new chapterModels.ChapterCollection();
             this.bookList = new bookModels.BookCollection();
             this.render();
-            //this.collection.on("reset", this.render, this);
         },
 
         render: function () {

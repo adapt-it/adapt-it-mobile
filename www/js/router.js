@@ -49,15 +49,25 @@ define(function (require) {
     return Backbone.Router.extend({
 
         routes: {
-            "": "home",
-            "lookup": "lookupChapter",
-            "adapt/:id": "adaptChapter"
+            "":             "home",     // (top level)
+            //TBD -- help 
+//            "help":         "help",    // #help
+            "lookup":       "lookupChapter",    // #lookup
+            "adapt/:id":    "adaptChapter"     // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
         },
 
         home: function () {
             homeView.delegateEvents();
             slider.slidePage(homeView.$el);
         },
+        
+        /*
+        // TBD -- help view
+        help: function () {
+            helpView.delegateEvents();
+            slider.slidePage(helpView.$el);
+        },
+        */
 
         lookupChapter: function (id) {
             require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {

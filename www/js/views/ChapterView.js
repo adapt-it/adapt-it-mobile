@@ -6,10 +6,11 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        SourcePhraseView  = require('app/views/SourcePhraseView'),
+        SourcePhraseListView = require('app/views/SourcePhraseListView'),
+        spModels    = require('app/models/sourcephrase'),
         tplText     = require('text!tpl/Chapter.html'),
         template    = Handlebars.compile(tplText),
-//        placeText   = require('text!tpl/Placeholder.html'),
-//        placeTpl    = Handlebars.compile(placeText),
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -22,36 +23,68 @@ define(function (require) {
     return Backbone.View.extend({
 
         initialize: function () {
+			this.$list = $('#chapter');
+            this.spList = new spModels.SourcePhraseCollection();
             this.render();
+        },
+        
+        addOne: function (SourcePhrase) {
+            var view = new SourcePhraseView({ model: SourcePhrase });
+            this.$('#chapter').append(view.render().el);
+        },
+
+        addAll: function () {
+            var i = 0;
+            this.$list.html("");
+            for (i = 0; i < this.spList.length; i++) {
+                // if we reach a marker after the first element, close out the previous div
+                // so we can start a new one (note: the new div logic is in the SourcePhrase.html template)
+                if ((i > 0) && (this.spList.at(i).markers !== null)) {
+                    this.$('#chapter').append('<//div>');
+                }
+                // add the new sourcephrase
+                this.addOne(this.spList.at(i));
+            }
+            // close out the last div
+            this.$('#chapter').append('<//div>');
         },
 
         render: function () {
-            this.$el.html(template(this.model.toJSON()));
+            var myid = this.model.get('id');
+            // fetch the source phrases in this chapter
+            this.spList.fetch({reset: true, data: {name: myid}});
+            this.$el.html(template());
+            // populate the list view with the source phrase results
+//            this.addAll();
+            this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});
             return this;
         },
-        
         ////
         // Event Handlers
         ////
         events: {
+            "orientionchange window": "doOnOrientationChange",
             "click #Placeholder": "togglePlaceholder",
             "click #Phrase": "togglePhrase",
-            "click #Retranslation": "toggleRetranslation",
-            "mousedown .pile": "selectingPilesStart",
-            "touchstart .pile": "selectingPilesStart",
-            "mousemove .pile": "selectingPilesMove",
-            "touchmove .pile": "selectingPilesMove",
-            "mouseup .pile": "selectingPilesEnd",
-            "touchend .pile": "selectingPilesEnd",
-            "click .pile": "selectedPiles",
-            "click .target": "selectedAdaptation",
-            "keydown .topcoat-text-input": "editAdaptation",
-            "blur .topcoat-text-input": "unselectedAdaptation"
+            "click #Retranslation": "toggleRetranslation"
+        },
+        doOnOrientationChange: function (event) {
+            switch (window.orientation) {
+            case -90:
+            case 90:
+                alert('landscape');
+                break;
+            default:
+                alert('portrait');
+                break;
+            }
         },
         // User clicked on the Placeholder button
         togglePlaceholder: function (event) {
             // TODO: move placeHolderHtml to templated html
             var next_edit = null,
+                selectedObj = null,
+                phObj = null,
                 placeHolderHtml = "<div id=\"pile-plc-" + Underscore.uniqueId() + "\" class=\"pile\">" +
                                     " <div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
                                     " <div class=\"target\">&nbsp;</div>" +
@@ -61,6 +94,9 @@ define(function (require) {
             // add a placeholder before the current selection
             if (isPlaceholder === false) {
                 // no placeholder at the selection -- add one
+                phObj = new spModels.SourcePhrase({ id: Underscore.UniqueId().stringify(), source: "..."});
+                selectedObj = spModels.sourcephrases.get(selectedStart);
+                spModels.sourcephrases.insertBefore(phObj, selectedObj);
                 //this.Model.
                 $(selectedStart).before(placeHolderHtml);
                 //this.$el.html(placeTpl(this.model.toJSON()));
@@ -91,6 +127,7 @@ define(function (require) {
             var next_edit = null,
                 phraseHtml = null,
                 phraseSource = "",
+                // phraseObj = null,
                 PhraseHtmlStart = "<div id=\"pile-phr-" + Underscore.uniqueId() + "\" class=\"pile\">" +
                                     " <div class=\"marker\">&nbsp;</div> <div class=\"source\">",
                 PhraseHtmlMid = "</div> <div class=\"target\">&nbsp;</div>" +
@@ -106,6 +143,7 @@ define(function (require) {
                             phraseSource += " ";
                         }
                         phraseSource += $(value).children(".source").html();
+                        // phraseObj = new SourcePhrase ([ id: Underscore.UniqueId().stringify(), source: "..."]);
                         
                         // orig.add($(value).children(".source").html());
                         // remove the original sourcephrase
@@ -157,256 +195,6 @@ define(function (require) {
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Retranslation").prop('title', "New Retranslation");
                 $("#Retranslation .icomatic").html("retranslationnew");
-                $("#Placeholder").prop('disabled', true);
-                $("#Retranslation").prop('disabled', true);
-                $("#Phrase").prop('disabled', true);
-            }
-        },
-        // user is starting to select one or more piles
-        selectingPilesStart: function (event) {
-            // change the class of the mousedown area to let the user know
-            // we're tracking the selection
-            if (selectedStart !== null) {
-                // there was an old selection -- remove the ui-selected class
-                $("div").removeClass("ui-selecting ui-selected");
-            }
-            if (event.currentTarget.className !== "pile") {
-                selectedStart = event.currentTarget.parentElement; // pile
-                selectedEnd = selectedStart;
-            } else {
-                selectedStart = event.currentTarget; // pile
-                selectedEnd = selectedStart;
-            }
-            idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
-            idxEnd = idxStart;
-            //console.log("selectedStart: " + selectedStart.id);
-            //console.log("selectedEnd: " + selectedEnd.id);
-            isSelecting = true;
-            if (event.currentTarget.className !== "pile") {
-                event.currentTarget.parentElement.addClass("ui-selecting");
-            } else {
-                $(event.currentTarget).addClass("ui-selecting");
-            }
-        },
-        // user is starting to select one or more piles
-        selectingPilesMove: function (event) {
-            var tmpEnd = null;
-            if (event.currentTarget.className.indexOf("pile") === -1) {
-                tmpEnd = event.currentTarget.parentElement; // pile
-            } else {
-                tmpEnd = event.currentTarget; // pile
-            }
-            // only interested if we're selecting in the same strip
-            if ((isSelecting === true) &&
-                    (tmpEnd.parentElement === selectedStart.parentElement)) {
-                // recalculate the new selectedEnd 
-                selectedEnd = tmpEnd;
-                idxEnd = $(tmpEnd).index() - 1; // EDB try
-                //console.log("selectedEnd: " + selectedEnd.id);
-                $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
-                if (idxStart === idxEnd) {
-                    // try to find the pile element (this could be a child of that element)
-                    if (event.currentTarget.className.indexOf("pile") === -1) {
-                        event.currentTarget.parentElement.addClass("ui-selecting");
-                    } else {
-                        $(event.currentTarget).addClass("ui-selecting");
-                    }
-                } else if (idxStart < idxEnd) {
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            $(value).addClass("ui-selecting");
-                        }
-                    });
-                } else {
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxEnd && index <= idxStart) {
-                            $(value).addClass("ui-selecting");
-                        }
-                    });
-                }
-            }
-        },
-        // user released the mouse here
-        selectingPilesEnd: function (event) {
-            var tmpItem = null,
-                tmpIdx = 0;
-            if (isSelecting === true) {
-                isSelecting = false;
-                // change the class of the mousedown area to let the user know
-                // we're tracking the selection
-                $("div").removeClass("ui-selecting ui-selected");
-                if (idxStart === idxEnd) {
-                    // only one item selected -- can only create a placeholder
-                    $("#Phrase").prop('disabled', true);
-                    $("#Retranslation").prop('disabled', true);
-                    // try to find the pile element (this could be a child of that element)
-                    if (event.currentTarget.className !== "pile") {
-                        event.currentTarget.parentElement.addClass("ui-selected");
-                    } else {
-                        $(event.currentTarget).addClass("ui-selected");
-                    }
-                } else if (idxStart < idxEnd) {
-                    // more than one item selected -- can create a placeholder, phrase, retrans
-                    $("#Phrase").prop('disabled', false);
-                    $("#Retranslation").prop('disabled', false);
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            $(value).addClass("ui-selected");
-                        }
-                    });
-                } else {
-                    // more than one item selected -- can create a placeholder, phrase, retrans
-                    $("#Phrase").prop('disabled', false);
-                    $("#Retranslation").prop('disabled', false);
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxEnd && index <= idxStart) {
-                            $(value).addClass("ui-selected");
-                        }
-                    });
-                    // swap the start and end so that placeholders, etc. insert
-                    // at the correct location
-                    tmpItem = selectedEnd;
-                    selectedEnd = selectedStart;
-                    selectedStart = tmpItem;
-                    tmpIdx = idxEnd;
-                    idxEnd = idxStart;
-                    idxStart = tmpIdx;
-                }
-                // ** Icons and labels for the toolbar **
-                // did the user select a placeholder?
-                if ((selectedStart.id).indexOf("plc") !== -1) {
-                    // placeholder -- can remove it, but not add a new one
-                    isPlaceholder = true;
-                    $("#Placeholder").prop('title', "Remove Placeholder");
-                    $("#Placeholder .icomatic").html("placeholderdelete");
-                } else {
-                    // not a placeholder -- can add a new one
-                    isPlaceholder = false;
-                    $("#Placeholder").prop('title', "New Placeholder");
-                    $("#Placeholder .icomatic").html("placeholdernew");
-                }
-                // did the user select a phrase?
-                if ((selectedStart.id).indexOf("phr") !== -1) {
-                    // phrase -- can remove it, but not add a new one
-                    isPhrase = true;
-                    $("#Phrase").prop('title', "Remove Phrase");
-                    $("#Phrase .icomatic").html("phrasedelete");
-                } else {
-                    // not a placeholder -- can add a new one
-                    isPhrase = false;
-                    $("#Phrase").prop('title', "New Phrase");
-                    $("#Phrase .icomatic").html("phrasenew");
-                }
-                // did the user select a retranslation?
-                if ((selectedStart.id).indexOf("ret") !== -1) {
-                    // retranslation -- can remove it, but not add a new one
-                    isRetranslation = true;
-                    $("#Retranslation").prop('title', "Remove Retranslation");
-                    $("#Retranslation .icomatic").html("retranslationdelete");
-                } else {
-                    // not a retranslation -- can add a new one
-                    isRetranslation = false;
-                    $("#Retranslation").prop('title', "New Retranslation");
-                    $("#Retranslation .icomatic").html("retranslationnew");
-                }
-                $("#Placeholder").prop('disabled', false);
-            }
-        },
-        // user has clicked on a pile -- this is a single selection
-        // TODO: not sure that this event fires anymore - selecingPilesEnd now
-        // handles the mouseUp event
-        selectedPiles: function (event) {
-            if (event.currentTarget !== selectedStart) {
-                if (selectedStart !== null) {
-                    // there was an old selection -- remove the ui-selected class
-                    $("div").removeClass("ui-selecting ui-selected");
-                }
-                selectedStart = event.currentTarget; // pile
-                // did the user select a placeholder?
-                if ((event.currentTarget.id).indexOf("ph") !== -1) {
-                    // placeholder -- can remove it, but not add a new one
-                    isPlaceholder = true;
-                    $("#Placeholder").prop('checked', true);
-                } else {
-                    // not a placeholder -- can add a new one
-                    isPlaceholder = false;
-                    $("#Placeholder").prop('checked', false);
-                }
-                $("#Placeholder").prop('disabled', false);
-                // try to find the pile element (this could be a child of that element)
-                if (event.currentTarget.className !== "pile") {
-                    event.currentTarget.parentElement.addClass("ui-selected");
-                } else {
-                    $(event.currentTarget).addClass("ui-selected");
-                }
-            }
-        },
-        // user has moved the adaptation input field
-        selectedAdaptation: function (event) {
-            // set the current adaptation cursor
-            selectedStart = event.currentTarget.parentElement; // pile
-            //console.log("selectedStart: " + selectedStart.id);
-            // hide the current static target text
-            $(event.currentTarget).hide();
-            // TODO: pull out the possible adaptation from the KB
-            // show the input field and set focus to it
-            $(event.currentTarget.nextElementSibling).show();
-            $(event.currentTarget.nextElementSibling).focus();
-        },
-        editAdaptation: function (event) {
-            if ((event.keyCode === 9) || (event.keyCode === 13)) {
-                var next_edit = null;
-                // If tab/enter is pressed, blur and move to edit the next pile
-                event.stopPropagation();
-                event.preventDefault();
-                $(event.currentTarget).blur();
-    
-                if (event.shiftKey) {
-                    next_edit = selectedStart.previousElementSibling;
-                    if (next_edit.id.substr(0, 4) !== "pile") {
-                        // Probably a header -- see if you can go to the previous strip
-                        if (selectedStart.parentElement.previousElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
-                        } else {
-                            next_edit = null;
-                            console.log("reached first pile.");
-                        }
-                    }
-                } else {
-                    if (selectedStart.nextElementSibling !== null) {
-                        next_edit = selectedStart.nextElementSibling;
-                    } else {
-                        // last pile in the strip -- see if you can go to the next strip
-                        if (selectedStart.parentElement.nextElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
-                        } else {
-                            // no more piles - get out
-                            next_edit = null;
-                            console.log("reached last pile.");
-                        }
-                    }
-                }
-                if (next_edit) {
-                    console.log("next edit: " + next_edit.id);
-                    next_edit.childNodes[5].click();
-                }
-            }
-        },
-        // user has moved out of the current adaptation input field
-        unselectedAdaptation: function (event) {
-            $(event.currentTarget).hide();
-            //var newValue = $(event.currentTarget).val();
-            if ($(event.currentTarget.previousElementSibling).html() !==
-                    $(event.currentTarget).val()) {
-                // value has changed -- update
-                
-            }
-            // update the text with the new input value
-            $(event.currentTarget.previousElementSibling).html($(event.currentTarget).val());
-            $(event.currentTarget.previousElementSibling).show();
-            if (selectedStart !== null) {
-                // there was an old selection -- remove the ui-selected class
-                $("div").removeClass("ui-selecting ui-selected");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
