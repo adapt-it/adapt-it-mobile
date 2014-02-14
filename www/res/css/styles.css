@@ -391,6 +391,11 @@ select.docNav {
     border: 1px solid #0036ff;
     box-shadow: 0 0 0 2px #6fb5f1;
 }
+/* webkit and mozilla fix for cursor on mobile apps / contenteditable */
+*[contenteditable] {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+}
 /* force a paragraph break */
 div.strip.para {
     clear: both;
