@@ -22,8 +22,8 @@ define(function (require) {
     return Backbone.View.extend({
 
         initialize: function () {
-            this.render();
             this.collection.bind('reset', this.render, this);
+            this.render();
         },
 
         addOne: function (SourcePhrase) {
@@ -304,7 +304,8 @@ define(function (require) {
                 // find and update the model object
                 var strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
 				var model = this.collection.get(strID);
-                model.save({ target: trimmedValue });
+                console.log(model);
+                model.set({target: trimmedValue});
 
 				if (value !== trimmedValue) {
 					// Model values changes consisting of whitespaces only are

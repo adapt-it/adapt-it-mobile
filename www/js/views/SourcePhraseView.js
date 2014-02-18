@@ -12,8 +12,8 @@ define(function (require) {
     return Backbone.View.extend({
         
         initialize: function () {
-            this.model.bind('change', this.render());
-            this.render();
+			this.listenTo(this.model, 'change', this.render);
+			this.listenTo(this.model, 'destroy', this.remove);
         },
 
         render: function () {

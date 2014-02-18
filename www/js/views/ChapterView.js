@@ -94,7 +94,7 @@ define(function (require) {
             // add a placeholder before the current selection
             if (isPlaceholder === false) {
                 // no placeholder at the selection -- add one
-                phObj = new spModels.SourcePhrase({ id: Underscore.UniqueId().stringify(), source: "..."});
+                phObj = new spModels.SourcePhrase({ id: Underscore.uniqueId(), source: "..."});
                 selectedObj = spModels.sourcephrases.get(selectedStart);
                 spModels.sourcephrases.insertBefore(phObj, selectedObj);
                 //this.Model.
