@@ -249,8 +249,18 @@ define(function (require) {
         
         editAdaptation: function (event) {
             var next_edit = null,
+                strID = null,
+                model = null,
                 targetText = "";
-            if ((event.keyCode === 9) || (event.keyCode === 13)) {
+            if (event.keyCode === 27) {
+                // Escape key pressed -- cancel the edit (reset the content) and blur
+                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+				model = this.collection.get(strID);
+                $(event.currentTarget).html(model.get('target'));
+                event.stopPropagation();
+                event.preventDefault();
+                $(event.currentTarget).blur();
+            } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                 // If tab/enter is pressed, blur and move to edit the next pile
                 event.stopPropagation();
                 event.preventDefault();
@@ -289,8 +299,13 @@ define(function (require) {
         },
         // user has moved out of the current adaptation input field
         unselectedAdaptation: function (event) {
-			var value = $(event.currentTarget).text();
-			var trimmedValue = value.trim();
+            var value = null,
+                trimmedValue = null,
+                strID = null,
+                model = null;
+            
+			value = $(event.currentTarget).text();
+			trimmedValue = value.trim();
 
 			// We don't want to handle blur events from an item that is no
 			// longer being edited. Relying on the CSS class here has the
@@ -302,8 +317,8 @@ define(function (require) {
 
 			if (trimmedValue) {
                 // find and update the model object
-                var strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
-				var model = this.collection.get(strID);
+                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+				model = this.collection.get(strID);
                 console.log(model);
                 model.set({target: trimmedValue});
 
