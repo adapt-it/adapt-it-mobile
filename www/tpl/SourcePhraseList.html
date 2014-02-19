@@ -38,8 +38,7 @@
     {{! start each strip with a header (e.g. verse or chapter info) }}
     <div id="header-{{this.id}}" class="strip-header">{{this.markers}}</div>
 {{/if}}
-<div id="pile-{{this.id}}" class="pile">
-</div>
+<div id="pile-{{this.id}}" class="pile"></div>
 {{! if this is the last sourcephrase, close out the strip div }}
 {{#if @last}}</div>{{/if}}
 {{/.}}
