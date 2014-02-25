@@ -6,20 +6,21 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
-        tplText     = require('text!tpl/Chapter.html'),
-        template    = Handlebars.compile(tplText),
-//        placeText   = require('text!tpl/Placeholder.html'),
-//        placeTpl    = Handlebars.compile(placeText),
-        selectedStart = null,
-        selectedEnd = null,
-        idxStart = null,
-        idxEnd = null,
-        isSelecting = false,
-        isPlaceholder = false,
-        isPhrase = false,
-        isRetranslation = false;
+        tplText     = require('text!tpl/SourcePhrase.html'),
+        template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({
+        
+        initialize: function () {
+			this.listenTo(this.model, 'change', this.render);
+			this.listenTo(this.model, 'destroy', this.remove);
+        },
+
+        render: function () {
+            var contents = template(this.model.toJSON());
+            this.$el.html(contents);
+            return this;
+        }
     });
 
 });

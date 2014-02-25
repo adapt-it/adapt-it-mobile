@@ -6,10 +6,11 @@ define(function (require) {
         Backbone    = require('backbone'),
 
         findById = function (id) {
-            var deferred = $.Deferred(),
+            var i = 0,
+                deferred = $.Deferred(),
                 chapter = null,
                 l = chapters.length;
-            for (var i = 0; i < l; i++) {
+            for (i = 0; i < l; i++) {
                 if (chapters[i].id === id) {
                     chapter = chapters[i];
                     break;
@@ -31,10 +32,11 @@ define(function (require) {
         /* WEB Bible text from http://ebible.org/web/ 
         */
         chapters = [
-            {   "id": "RUT1",
+            {   "id": "RUT001",
                 "name": "Ruth 1",
                 "lastAdapted": 2,
                 "verseCount": 22,
+             /*
                 "sourcephrases": [
                     {
                         "id": "RUT1-1",
@@ -181,7 +183,7 @@ define(function (require) {
                         "markers": null,
                         "orig": null,
                         "source": "that",
-                        "target": ""
+                        "target": "reallyreallyreallyreallyreallyloooooooooonnnnnnngstring"
                     },
                     {
                         "id": "RUT1-22",
@@ -4467,12 +4469,13 @@ define(function (require) {
                         "source": "harvest.",
                         "target": ""
                     }
-                ]
+                ]*/
             },
             {   "id": "RUT2",
                 "name": "Ruth 2",
                 "lastAdapted": 0,
                 "verseCount": 23,
+             /*
                 "sourcephrases": [
                     {
                         "id": "RUT2-1",
@@ -4628,11 +4631,13 @@ define(function (require) {
                         "target": ""
                     }
                 ]
+                */
             },
             {   "id": "RUT3",
                 "name": "Ruth 3",
                 "lastAdapted": 0,
                 "verseCount": 18,
+             /*
                 "sourcephrases": [
                     {
                         "id": "RUT3-1",
@@ -4642,11 +4647,13 @@ define(function (require) {
                         "target": ""
                     }
                 ]
+                */
             },
             {   "id": "RUT4",
                 "name": "Ruth 4",
                 "lastAdapted": 0,
                 "verseCount": 22,
+             /*
                 "sourcephrases": [
                     {
                         "id": "RUT4-1",
@@ -4656,6 +4663,7 @@ define(function (require) {
                         "target": ""
                     }
                 ]
+                */
             }
         ],
 

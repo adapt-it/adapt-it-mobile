@@ -9,7 +9,8 @@ require.config({
 
     map: {
         '*': {
-            'app/models/chapter': 'app/models/memory/chapter'
+//            'app/models/chapter': 'app/models/memory/chapter'
+            'app/models': 'app/models/memory'
         }
     },
     shim: {

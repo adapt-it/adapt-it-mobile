@@ -48,6 +48,10 @@ a {
     padding: 14px 10px;
 }
 
+.topcoat-button-bar, .topcoat-icon-button--quiet {
+    margin-top: .5em;
+}
+
 .page-body h1 {
     margin: 0px;
     font: inherit;
@@ -148,6 +152,13 @@ a {
 
 .topcoat-icon--back {
     background: url("images/back_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
+.topcoat-icon--add {
+    background: url("images/plus.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -256,6 +267,66 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
 	}
 }
 
+.right {
+    float:right;
+}
+
+/* Temporary -- Topcoat hasn't defined dropdown styles yet, so this is purloined from the topcoat.io demo page
+   remove it when upgrading to a Topcoat version that supports dropdown selections */
+.combo {
+    border-bottom: none;
+    padding: 0px 14px 12px 8px;
+    width: 100%;
+}
+.combo label {
+    display: inline-block;
+    padding-top: 14px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+select.docNav {
+    box-shadow: 0 0 0 1px #949696;
+    background: #DDE1E1;
+    text-shadow: 0 -1px 0 #FFF;
+    width: 250px;
+    background: url(images/drop-down-triangle.png) no-repeat 95% center;
+    -webkit-appearance: none;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 16px;
+    font: 16px "Source Sans", helvetica, arial, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-appearance: button;
+    align-items: center;
+    white-space: pre;
+    cursor: default;
+    margin: 0em;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    display: inline-block;
+    text-align: start;
+    -webkit-writing-mode: horizontal-tb;
+    padding: 0 1.25rem;
+    font-size: 16px;
+    line-height: 3rem;
+    letter-spacing: 1px;
+    color: #454545;
+    text-shadow: 0 1px #fff;
+    vertical-align: top;
+    background-color: #e5e9e8;
+    box-shadow: inset 0 1px #fff;
+    border: 1px solid #9daca9;
+    -webkit-align-items: flex-start;
+    text-align: center;
+    cursor: default;
+}
+
 /* Modified from Joel's POC */
 .marker {
 	display: block;
@@ -295,13 +366,35 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
     white-space: nowrap;
     padding: 0.1em;
 }
-.pile .target {
+.target {
     white-space: nowrap;
     padding: 0.1em;
-    height: 1.2em;
+    margin: 0;
+    font: inherit;
+    background: transparent;
+    border: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-clip: padding-box;
+    outline: none;
+    line-height: 2rem;
+    font-size: 16px;
+    vertical-align: top;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    box-shadow: 0 0 0 2px transparent;
 }
-.topcoat-text-input {
-    display: none;
+.target:focus {
+    border-radius: 6px;
+    background-color: #fff;
+    color: #454545;
+    border: 1px solid #0036ff;
+    box-shadow: 0 0 0 2px #6fb5f1;
+}
+/* webkit and mozilla fix for cursor on mobile apps / contenteditable */
+*[contenteditable] {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
 }
 /* force a paragraph break */
 div.strip.para {
@@ -328,4 +421,75 @@ div.strip.specialtext div.source {
 }
 .marker {
     color: #00cc00; /* light green */
+}
+
+/* from adapt-it-copy */
+ul.btns {
+	display: block;
+	overflow: hidden;
+	margin: 0;
+	list-style: disc;
+    -webkit-padding-start: 8px;
+} 
+.btns li {
+	float: left;
+	list-style: none;
+    margin: 8px 0px;
+    padding: 8px;
+/*    border: 1px solid #454545;*/
+}
+.btns li a {
+	position: relative;
+	display: block;
+	width: 64px;
+	/*height: 32px;*/
+	text-align: center;
+	padding: 64px 16px 8px 16px;
+	text-decoration: none;
+    box-shadow: 0 0 0 1px #949696;
+    background: #DDE1E1;
+    text-shadow: 0 -1px 0 #FFF;
+    /*width: 192px;*/
+    -webkit-appearance: none;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+.btns li :hover {
+    font-weight: 400;
+    color: black;
+    background-color: #eee;
+}
+.btns li a :hover {
+    border: none;
+}
+
+.btns li a span.txt {
+    height: 2em;
+}
+
+.sprite {
+	position: absolute;
+	display: block;
+	background-repeat: no-repeat;
+    background-position: center;
+	margin: 8px 0 0 0;
+	overflow: hidden;
+}
+span.sprite{
+    top: 0;
+    width: 64px;
+    height: 52px;
+}
+.btn-settings span.sprite{
+	background-image: url("../svg/search.svg");
+    background-size: 56px 56px;
+}
+.btn-status span.sprite{
+	background-image: url("images/status.png");
+    background-size: 48px 48px;
+}
+.btn-adapt span.sprite{
+	background-image: url("../svg/adapt-it-mobile-nomask.svg");
+    background-size: 48px 48px;
 }
