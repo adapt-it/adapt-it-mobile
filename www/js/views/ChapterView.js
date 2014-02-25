@@ -45,7 +45,7 @@ define(function (require) {
             var myid = this.model.get('id');
             // fetch the source phrases in this chapter
             this.spList.fetch({reset: true, data: {name: myid}});
-            this.$el.html(template());
+            this.$el.html(template(this.model.toJSON()));
             // populate the list view with the source phrase results
             this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});
             return this;
@@ -70,6 +70,7 @@ define(function (require) {
                 break;
             }
         },
+        // just pass the event handler down to the list view to handle
         togglePlaceholder: function (event) {
             this.listView.togglePlaceholder(event);
         },

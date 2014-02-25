@@ -50,7 +50,6 @@ define(function (require) {
             "touchmove .source": "selectingPilesMove",
             "mouseup .source": "selectingPilesEnd",
             "touchend .source": "selectingPilesEnd",
-            "click .source": "selectedPiles",
             "click .target": "selectedAdaptation",
             "keydown .target": "editAdaptation",
             "blur .target": "unselectedAdaptation"
@@ -113,10 +112,12 @@ define(function (require) {
             if (isSelecting === true) {
                 isSelecting = false;
                 // change the class of the mousedown area to let the user know
-                // we're tracking the selection
+                // we've finished tracking the selection
                 $("div").removeClass("ui-selecting ui-selected");
                 if (idxStart === idxEnd) {
-                    // only one item selected -- can only create a placeholder
+                    // only one item selected -- can only _create_ a placeholder
+                    // (user can also _delete_ a phrase / retranslation; we'll re-enable
+                    // the button below if they've selected an existing retranslation or phrase
                     $("#Phrase").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     // set the class to ui-selected
@@ -167,6 +168,7 @@ define(function (require) {
                     isPhrase = true;
                     $("#Phrase").prop('title', "Remove Phrase");
                     $("#Phrase .icomatic").html("phrasedelete");
+                    $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                 } else {
                     // not a placeholder -- can add a new one
                     isPhrase = false;
@@ -179,6 +181,7 @@ define(function (require) {
                     isRetranslation = true;
                     $("#Retranslation").prop('title', "Remove Retranslation");
                     $("#Retranslation .icomatic").html("retranslationdelete");
+                    $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                 } else {
                     // not a retranslation -- can add a new one
                     isRetranslation = false;
@@ -189,33 +192,6 @@ define(function (require) {
             }
         },
         
-        // user has clicked on the source line of a pile -- this is a single selection
-        // TODO: not sure that this event fires anymore - selecingPilesEnd now
-        // handles the mouseUp event
-        selectedPiles: function (event) {
-            if (event.currentTarget !== selectedStart) {
-                if (selectedStart !== null) {
-                    // there was an old selection -- remove the ui-selected class
-                    $("div").removeClass("ui-selecting ui-selected");
-                }
-                selectedStart = event.currentTarget.parentElement; // pile
-                // did the user select a placeholder?
-                /*
-                if ((event.currentTarget.parentElement.id).indexOf("plc") !== -1) {
-                    // placeholder -- can remove it, but not add a new one
-                    isPlaceholder = true;
-                    $("#Placeholder").prop('checked', true);
-                } else {
-                    // not a placeholder -- can add a new one
-                    isPlaceholder = false;
-                    $("#Placeholder").prop('checked', false);
-                }
-                $("#Placeholder").prop('disabled', false);
-                */
-                // set the class to ui-selected
-                $(event.currentTarget.parentElement).addClass("ui-selected");
-            }
-        },
         // user has clicked on the target field -- swap out the static text
         // with the input control, dynamically resized if needed
         selectedAdaptation: function (event) {
@@ -285,17 +261,9 @@ define(function (require) {
                 strID = null,
                 model = null;
             
+            // get the adaptation text
 			value = $(event.currentTarget).text();
 			trimmedValue = value.trim();
-
-			// We don't want to handle blur events from an item that is no
-			// longer being edited. Relying on the CSS class here has the
-			// benefit of us not having to maintain state in the DOM and the
-			// JavaScript logic.
-//			if (!$(event.currentTarget.parentElement).hasClass('ui-selected')) {
-//				return;
-//			}
-
 			if (trimmedValue) {
                 // find and update the model object
                 strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
@@ -309,12 +277,14 @@ define(function (require) {
 					// compare untrimmed version with a trimmed one to check
 					// whether anything changed
 					// And if yes, we've to trigger change event ourselves
-					this.model.trigger('change');
+					model.trigger('change');
 				}
-                // if the target differs from the source, add "differences" to the class
+                // if the target differs from the source, make it display in green
                 if (model.get('source') === model.get('target')) {
+                    // source === target -- remove "differences" from the class so the text is black
                     $(event.currentTarget).removeClass('differences');
                 } else if (!$(event.currentTarget).hasClass('differences')) {
+                    // source != target -- add "differences" to the class so the text is green
                     $(event.currentTarget).addClass('differences');
                 }
 			} else {
@@ -335,19 +305,20 @@ define(function (require) {
             var next_edit = null,
                 selectedObj = null,
                 strID = null,
+                newID = Underscore.uniqueId(),
                 phObj = null,
-                placeHolderHtml = "<div id=\"pile-plc-" + Underscore.uniqueId() + "\" class=\"pile\">" +
+                placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile\">" +
                                     "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
-                                    " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div>";
+                                    " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
             console.log("placeholder: " + placeHolderHtml);
             // if the current selection is a placeholder, remove it; if not,
             // add a placeholder before the current selection
             if (isPlaceholder === false) {
                 // no placeholder at the selection -- add one
-                phObj = new spModels.SourcePhrase({ id: Underscore.uniqueId(), source: "..."});
+                phObj = new spModels.SourcePhrase({ id: ("plc-" + newID), source: "..."});
                 strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                 selectedObj = this.collection.get(strID);
-                this.collection.add(phObj, {at: idxStart});
+                this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                 //this.Model.
                 $(selectedStart).before(placeHolderHtml);
                 //this.$el.html(placeTpl(this.model.toJSON()));
@@ -380,45 +351,84 @@ define(function (require) {
             // combine the selection into a new phrase
             var next_edit = null,
                 phraseHtml = null,
+                coll = this.collection, // needed to find collection within "each" block below
+                newID = Underscore.uniqueId(),
                 phraseSource = "",
-                // phraseObj = null,
-                PhraseHtmlStart = "<div id=\"pile-phr-" + Underscore.uniqueId() + "\" class=\"pile\">" +
+                phraseTarget = "",
+                phraseObj = null,
+                origTarget = null,
+                phObj = null,
+                strID = null,
+                bookID = null,
+                selectedObj = null,
+                PhraseHtmlStart = "<div id=\"pile-phr-" + newID + "\" class=\"pile\">" +
                                     "<div class=\"marker\">&nbsp;</div> <div class=\"source\">",
-                PhraseHtmlMid = "</div> <div class=\"target\">&nbsp;</div>" +
-                                    " <input type=\"text\" class=\"topcoat-text-input\" placeholder=\"\" value=\"\"></div>";
+                PhraseHtmlMid = "</div> <div class=\"target\" contenteditable=\"true\">",
+                PhraseHtmlEnd = "</div></div>";
             if (isPhrase === false) {
-                // build the phrase from the selection
-                // create a new sourcephrase object in the model
-                // var spNew = chapter.
+                // not a phrase -- create one from the selection
+                // first, iterate through the piles in the strip and pull out the source phrases that
+                // are selected
                 $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                     if (index >= idxStart && index <= idxEnd) {
-                        // concatenate the source into a single phrase
+                        // concatenate the source and target into single phrases
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
                         if (index > idxStart) {
                             phraseSource += " ";
+                            phraseTarget += " ";
                         }
                         phraseSource += $(value).children(".source").html();
-                        // phraseObj = new SourcePhrase ([ id: Underscore.UniqueId().stringify(), source: "..."]);
-                        
-                        // orig.add($(value).children(".source").html());
-                        // remove the original sourcephrase
-                        // TODO: not sure if iteration breaks w/ remove call -- $(selectedStart).remove();
-                        // might need to select indices and remove them together after the .each loop
+                        phraseTarget += $(value).children(".target").html();
                     }
                 });
+                // now build the new sourcephrase from the string
                 phraseHtml = PhraseHtmlStart + phraseSource + PhraseHtmlMid;
+                // if there's something already in the target, use it instead
+                phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                phraseHtml += PhraseHtmlEnd;
                 console.log("phrase: " + phraseHtml);
+                phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: phraseTarget});
+                strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
+                selectedObj = this.collection.get(strID);
+                this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                 $(selectedStart).before(phraseHtml);
+                // finally, remove the selected piles (they were merged into this one)
+                $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                    if (index > idxStart && index <= (idxEnd + 1)) {
+                        // remove the original sourcephrase
+                        strID = $(value).attr('id').substring(5); // remove "pile-"
+                        selectedObj = coll.get(strID);
+                        coll.remove(selectedObj);
+                        $(value).remove();
+                    }
+                });
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
                 // start adapting the new Phrase
-                if (next_edit !== null) {
-                    next_edit.childNodes[4].click();
-                }
+                next_edit = $('#pile-phr-' + newID);
+                selectedStart = null;
+                next_edit[0].childNodes[4].click();
             } else {
                 // selection is a phrase -- delete it from the model and the DOM
+                // first, re-create the original sourcephrase piles and add them to the collection and UI
+                bookID = $('.topcoat-navigation-bar__title').attr('id');
+                strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
+                selectedObj = this.collection.get(strID);
+                origTarget = selectedObj.attr("orig").split(" ");
+                selectedObj.attr("source").split(" ").each(function (index, value) {
+//                    newID = Underscore.uniqueId();
+//                    phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
+//                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
+//                    coll.add(phObj, {at: this.collection.indexOf(selectedObj)});
+//                    // add to UI
+//                    $(selectedStart).before(phraseHtml);
+                });
+                // now delete the phrase itself
+                this.collection.remove(selectedObj);
+                $(selectedStart).remove();
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Phrase").prop('title', "New Phrase");
@@ -441,7 +451,7 @@ define(function (require) {
                 $("#Phrase").prop('disabled', true);
                 // start adapting the new Phrase
                 if (next_edit !== null) {
-                    next_edit.childNodes[5].click();
+                    next_edit.childNodes[4].click();
                 }
             } else {
                 // selection is a phrase -- delete it from the model and the DOM
