@@ -1,3 +1,6 @@
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
+/*global define */
+
 /* 
 * models / memory / SourcePhrase.js
 * in-memory version of the sourcephrase object. Asynchronously returns the
@@ -9,30 +12,6 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-
-        findById = function (id) {
-            var i = 0,
-                deferred = $.Deferred(),
-                sourcephrase = null,
-                l = sourcephrases.length;
-            for (i = 0; i < l; i++) {
-                if (sourcephrases[i].id === id) {
-                    sourcephrase = sourcephrases[i];
-                    break;
-                }
-            }
-            deferred.resolve(sourcephrase);
-            return deferred.promise();
-        },
-
-        findByName = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = sourcephrases.filter(function (element) {
-                return element.id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
 
         /* WEB Bible text for Ruth chapter 1 from http://ebible.org/web/ from 2008
         */
@@ -4639,6 +4618,30 @@ define(function (require) {
                 "target": ""
             }
         ],
+
+        findById = function (id) {
+            var i = 0,
+                deferred = $.Deferred(),
+                sourcephrase = null,
+                l = sourcephrases.length;
+            for (i = 0; i < l; i++) {
+                if (sourcephrases[i].id === id) {
+                    sourcephrase = sourcephrases[i];
+                    break;
+                }
+            }
+            deferred.resolve(sourcephrase);
+            return deferred.promise();
+        },
+
+        findByName = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = sourcephrases.filter(function (element) {
+                return element.id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
+            return deferred.promise();
+        },
 
         SourcePhrase = Backbone.Model.extend({
             // default values

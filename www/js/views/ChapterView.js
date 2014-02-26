@@ -1,3 +1,5 @@
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
+/*global define */
 define(function (require) {
 
     "use strict";
@@ -19,28 +21,6 @@ define(function (require) {
             this.spList = new spModels.SourcePhraseCollection();
             this.render();
         },
-        
-        addOne: function (SourcePhrase) {
-            var view = new SourcePhraseView({ model: SourcePhrase });
-            this.$('#chapter').append(view.render().el);
-        },
-
-        addAll: function () {
-            var i = 0;
-            this.$list.html("");
-            for (i = 0; i < this.spList.length; i++) {
-                // if we reach a marker after the first element, close out the previous div
-                // so we can start a new one (note: the new div logic is in the SourcePhrase.html template)
-                if ((i > 0) && (this.spList.at(i).markers !== null)) {
-                    this.$('#chapter').append('<//div>');
-                }
-                // add the new sourcephrase
-                this.addOne(this.spList.at(i));
-            }
-            // close out the last div
-            this.$('#chapter').append('<//div>');
-        },
-
         render: function () {
             var myid = this.model.get('id');
             // fetch the source phrases in this chapter
