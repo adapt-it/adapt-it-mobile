@@ -358,10 +358,11 @@ define(function (require) {
                 phraseSource = "",
                 phraseTarget = "",
                 phraseObj = null,
-                origTarget = null,
+                origTarget = "",
                 phObj = null,
                 strID = null,
                 bookID = null,
+                newView = null,
                 selectedObj = null,
                 PhraseHtmlStart = "<div id=\"pile-phr-" + newID + "\" class=\"pile\">" +
                                     "<div class=\"marker\">&nbsp;</div> <div class=\"source\">",
@@ -378,9 +379,11 @@ define(function (require) {
                         if (index > idxStart) {
                             phraseSource += " ";
                             phraseTarget += " ";
+                            origTarget += "|";
                         }
                         phraseSource += $(value).children(".source").html();
                         phraseTarget += $(value).children(".target").html();
+                        origTarget += $(value).children(".target").html();
                     }
                 });
                 // now build the new sourcephrase from the string
@@ -389,7 +392,7 @@ define(function (require) {
                 phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
                 phraseHtml += PhraseHtmlEnd;
                 console.log("phrase: " + phraseHtml);
-                phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: phraseTarget});
+                phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
                 strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                 selectedObj = this.collection.get(strID);
                 this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -419,14 +422,17 @@ define(function (require) {
                 bookID = $('.topcoat-navigation-bar__title').attr('id');
                 strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                 selectedObj = this.collection.get(strID);
-                origTarget = selectedObj.attr("orig").split(" ");
-                selectedObj.attr("source").split(" ").each(function (index, value) {
-//                    newID = Underscore.uniqueId();
-//                    phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-//                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
-//                    coll.add(phObj, {at: this.collection.indexOf(selectedObj)});
-//                    // add to UI
-//                    $(selectedStart).before(phraseHtml);
+                origTarget = selectedObj.get("orig").split("|");
+                selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    // add to model
+                    newID = Underscore.uniqueId();
+                    phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
+                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
+                    coll.add(phObj, {at: coll.indexOf(selectedObj)});
+                    // add to UI
+                    $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
+                    newView = new SourcePhraseView({ model: phObj});
+                    $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
                 });
                 // now delete the phrase itself
                 this.collection.remove(selectedObj);
