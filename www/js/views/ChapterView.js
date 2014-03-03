@@ -34,21 +34,9 @@ define(function (require) {
         // Event Handlers
         ////
         events: {
-            "orientionchange window": "doOnOrientationChange",
             "click #Placeholder": "togglePlaceholder",
             "click #Phrase": "togglePhrase",
             "click #Retranslation": "toggleRetranslation"
-        },
-        doOnOrientationChange: function (event) {
-            switch (window.orientation) {
-            case -90:
-            case 90:
-                alert('landscape');
-                break;
-            default:
-                alert('portrait');
-                break;
-            }
         },
         // just pass the event handler down to the list view to handle
         togglePlaceholder: function (event) {

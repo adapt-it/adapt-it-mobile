@@ -78,7 +78,15 @@ define(function (require) {
         // user is starting to select one or more piles
         selectingPilesMove: function (event) {
             var tmpEnd = null;
-            tmpEnd = event.currentTarget.parentElement; // pile
+            if (event.type === "touchmove") {
+                // touch
+                var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
+                tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY).parentElement; // pile (parent)
+                event.preventDefault();
+            } else {
+                // mouse (web app)
+                tmpEnd = event.currentTarget.parentElement; // pile
+            }
             // only interested if we're selecting in the same strip
             if ((isSelecting === true) &&
                     (tmpEnd.parentElement === selectedStart.parentElement)) {

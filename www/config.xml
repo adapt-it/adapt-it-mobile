@@ -17,7 +17,9 @@
     <access origin="*" />
     <!-- preferences -->
     <preference name="phonegap-version" value="3.3.0" />
-    <!-- <preference name="fullscreen" value="true" /> -->
+    <preference name="fullscreen" value="true" />
+    <preference name="Orientation" value="default" />
+    <preference name="DisallowOverscroll" value="true" />
     <!-- core plugins -->
     <gap:plugin name="org.apache.cordova.battery-status" />
     <gap:plugin name="org.apache.cordova.console" />
