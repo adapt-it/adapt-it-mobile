@@ -1,3 +1,17 @@
+@media only screen and (device-width: 768px) and (orientation: landscape) {
+  /* rules for iPad in landscape orientation */
+    .source, .target {
+        max-width: 740px;
+    }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  /* iPhone, Android rules here */
+    .source, .target {
+        max-width: 320px;
+    }
+}
+
 a {
     text-decoration: none;
     color: inherit;
@@ -26,11 +40,12 @@ a {
 
 .large-pic-bg {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: none;
+    background: rgb(0,0,0);
     background: rgba(0,0,0,.8);
 }
 
@@ -52,8 +67,8 @@ a {
     margin-top: .5em;
 }
 
-.page-body h1 {
-    margin: 0px;
+h1 {
+    margin: 0;
     font: inherit;
     color: inherit;
     background: transparent;
@@ -63,21 +78,23 @@ a {
     font-weight: 400;
 }
 
-.page-body h2 {
-    margin: 0px;
+h2 {
+    margin: 0;
     font: inherit;
     color: inherit;
     font-size: 1.1rem;
     width: 100%;
 }
 
-.page-body h3 {
-    margin: 0px;
+h3 {
+    margin: 0;
+    clear: both;
+    padding-top: 12px;
 }
 
 .action-button {
     display: block;
-    margin: 4px 0px;
+    margin: 4px 0;
     text-align: center;
 }
 
@@ -86,9 +103,9 @@ a {
     -webkit-overflow-scrolling: touch;
     position: absolute;
     top: 70px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .hscroller {
@@ -125,7 +142,7 @@ a {
 .topcoat-icon--large {
   position: relative;
   display: inline-block;
-  vertical-align: top;
+/*  vertical-align: top;*/
   overflow: hidden;
   width: 1.62rem;
   height: 1.62rem;
@@ -150,13 +167,6 @@ a {
     list-style: none;
 }
 
-.topcoat-icon--back {
-    background: url("images/back_light.svg") no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-}
-
 .topcoat-icon--add {
     background: url("images/plus.svg") no-repeat;
     -webkit-background-size: cover;
@@ -179,8 +189,8 @@ ul {
     background: transparent url(images/next_blue.svg);
     background-repeat: no-repeat;
     background-size: contain;
-    width: 20px;
-    height: 20px;
+/*    width: 20px;
+    height: 20px;*/
     position: absolute;
     right: 12px;
     top: 15px;
@@ -195,10 +205,6 @@ ul {
     right: 0;
     bottom: 0;
     overflow: hidden;
-}
-h3 {
-    clear: both;
-    padding-top: 12px;
 }
 
 /* icomatic icon font */
@@ -236,33 +242,44 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
 
 /* AI mobile icons */
 .ui-icon-ai-placeholder {
+    background: rgb(0,0,0);
 	background: url("images/placeholder-new.png") no-repeat rgba(0, 0, 0, 0.4) !important;
 }
 
 .ui-icon-ai-phrase {
 	-moz-border-radius: 9px 9px 9px 9px;
+    border-radius: 9px 9px 9px 9px;
+    background: rgb(0,0,0);
 	background: url("images/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
 }
 
 .ui-icon-ai-retranslation {
 	-moz-border-radius: 9px 9px 9px 9px;
+    border-radius: 9px 9px 9px 9px;
+    background: rgb(0,0,0);
 	background: url("images/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-ai-placeholder {
 		-moz-border-radius: 9px 9px 9px 9px;
+        border-radius: 9px 9px 9px 9px;
+        background: rgb(0,0,0);
 		background: url("images/placeholder-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
 		background-size: 18px 18px;
 	}
 	.ui-icon-ai-phrase {
 		-moz-border-radius: 9px 9px 9px 9px;
-		background: url("images/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+        border-radius: 9px 9px 9px 9px;
+        background: rgb(0,0,0);
+		background: url("images/phrase-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
 		background-size: 18px 18px;
 	}
 	.ui-icon-ai-retranslation {
 		-moz-border-radius: 9px 9px 9px 9px;
-		background: url("images/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+        border-radius: 9px 9px 9px 9px;
+        background: rgb(0,0,0);
+		background: url("images/retranslation-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
 		background-size: 18px 18px;
 	}
 }
@@ -275,7 +292,7 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
    remove it when upgrading to a Topcoat version that supports dropdown selections */
 .combo {
     border-bottom: none;
-    margin: 0px 14px 12px 8px;
+    margin: 0 14px 12px 8px;
     /*width: 100%;*/
 }
 .combo label {
@@ -286,10 +303,9 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
 }
 select.docNav {
     box-shadow: 0 0 0 1px #949696;
-    background: #DDE1E1;
     text-shadow: 0 -1px 0 #FFF;
     width: 250px;
-    background: url(images/drop-down-triangle.png) no-repeat 95% center;
+    background: url(images/drop-down-triangle.png) no-repeat 95% center rgb(221, 225, 225);
     -webkit-appearance: none;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -299,32 +315,25 @@ select.docNav {
     font: 16px "Source Sans", helvetica, arial, sans-serif;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
+    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     -moz-appearance: button;
-    align-items: center;
     white-space: pre;
     cursor: default;
-    margin: 0em;
+    margin: 0;
     word-spacing: normal;
     text-transform: none;
-    text-indent: 0px;
+    text-indent: 0;
     display: inline-block;
-    text-align: start;
     -webkit-writing-mode: horizontal-tb;
     padding: 0 1.25rem;
-    font-size: 16px;
     line-height: 3rem;
     letter-spacing: 1px;
     color: #454545;
-    text-shadow: 0 1px #fff;
     vertical-align: top;
-    background-color: #e5e9e8;
-    box-shadow: inset 0 1px #fff;
     border: 1px solid #9daca9;
     -webkit-align-items: flex-start;
-    text-align: center;
-    cursor: default;
 }
 
 /* Modified from Joel's POC */
@@ -348,35 +357,36 @@ select.docNav {
     float: left;
 }
 .ui-selecting {
+    background-color: rgb(116, 183, 241);
     background-color: hsl(208, 82%, 70%);
 }
 .ui-selected {
+    background-color: rgb(185, 219, 248);
     background-color: hsl(208, 82%, 85%);
 }
 .pile {
     color: black;
-    white-space: nowrap;
     height: 6em;
 }
 .pile .marker {
-	white-space: nowrap;
-	padding: 0.1em;
+    word-wrap: break-word;
+    padding: 0.1em;
 }
 .pile .source {
-    white-space: nowrap;
+    word-wrap: break-word;
     padding: 0.1em;
 }
 .target {
-    white-space: nowrap;
+    word-wrap: break-word;
     padding: 0.1em;
     margin: 0;
     font: inherit;
     background: transparent;
-    border: none;
+    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     background-clip: padding-box;
-    outline: none;
+    /*outline: none;*/
     line-height: 2rem;
     font-size: 16px;
     vertical-align: top;
@@ -395,9 +405,10 @@ select.docNav {
 *[contenteditable] {
     -webkit-user-select: auto !important;
     -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
 }
 /* force a paragraph break */
-div.strip.para {
+.para {
     clear: both;
     overflow: auto;
     width: 100%;
@@ -410,7 +421,7 @@ div.strip.para {
 div.strip div.source {
 	color: #0000aa; /* blue */
 }
-div.strip.specialtext div.source {
+.specialtext div.source {
 	color: #aa0000; /* red */
 }
 .retranslation {
@@ -430,11 +441,12 @@ ul.btns {
 	margin: 0;
 	list-style: disc;
     -webkit-padding-start: 8px;
+    -moz-padding-start: 8px;
 } 
 .btns li {
 	float: left;
 	list-style: none;
-    margin: 8px 0px;
+    margin: 8px 0;
     padding: 8px;
 /*    border: 1px solid #454545;*/
 }
@@ -451,6 +463,7 @@ ul.btns {
     text-shadow: 0 -1px 0 #FFF;
     /*width: 192px;*/
     -webkit-appearance: none;
+    -moz-appearance: none;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -464,7 +477,7 @@ ul.btns {
     border: none;
 }
 
-.btns li a span.txt {
+.btns li a .txt {
     height: 2em;
 }
 
