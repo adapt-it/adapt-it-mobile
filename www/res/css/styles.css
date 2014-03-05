@@ -1,14 +1,30 @@
+@media only screen and (orientation: landscape) {
+    .source, .target {
+        max-width: device-width;
+    }
+}
 @media only screen and (device-width: 768px) and (orientation: landscape) {
   /* rules for iPad in landscape orientation */
     .source, .target {
         max-width: 740px;
     }
 }
-
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  /* iPhone, Android rules here */
+@media only screen and (min-device-width: 240px) and (max-device-width: 319px) {
+  /* Android ldpi rules here */
+    .source, .target {
+        max-width: 240px;
+    }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 479px) {
+  /* iPhone, Android mdpi rules here */
     .source, .target {
         max-width: 320px;
+    }
+}
+@media only screen and (min-device-width: 480px) and (max-device-width: 599px) {
+  /* iPhone, Android mdpi rules here */
+    .source, .target {
+        max-width: 480px;
     }
 }
 
