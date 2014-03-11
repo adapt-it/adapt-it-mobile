@@ -384,11 +384,7 @@ select.docNav {
     color: black;
     height: 6em;
 }
-.pile .marker {
-    word-wrap: break-word;
-    padding: 0.1em;
-}
-.pile .source {
+.source, .source-retranslation, marker {
     word-wrap: break-word;
     padding: 0.1em;
 }
@@ -437,10 +433,10 @@ select.docNav {
 div.strip div.source {
 	color: #0000aa; /* blue */
 }
-.specialtext div.source {
+div.strip.specialtext div.source {
 	color: #aa0000; /* red */
 }
-.retranslation {
+.source-retranslation {
 	color: #996633; /* brown */
 }
 .differences {
