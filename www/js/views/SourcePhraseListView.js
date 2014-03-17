@@ -456,10 +456,65 @@ define(function (require) {
         },
         // User clicked on the Retranslation button
         toggleRetranslation: function (event) {
+            var next_edit = null,
+                RetHtml = null,
+                coll = this.collection, // needed to find collection within "each" block below
+                newID = Underscore.uniqueId(),
+                RetSource = "",
+                RetTarget = "",
+                RetObj = null,
+                origTarget = "",
+                phObj = null,
+                strID = null,
+                bookID = null,
+                newView = null,
+                selectedObj = null,
+                RetHtmlStart = "<div id=\"pile-ret-" + newID + "\" class=\"pile\">" +
+                                    "<div class=\"marker\">&nbsp;</div> <div class=\"source-retranslation\">",
+                RetHtmlMid = "</div> <div class=\"target\" contenteditable=\"true\">",
+                RetHtmlEnd = "</div></div>";
             // if the current selection is a retranslation, remove it; if not,
             // combine the selection into a new retranslation
             var next_edit = null;
             if (isRetranslation === false) {
+                // not a retranslation -- create one from the selection
+                // first, iterate through the piles in the strip and pull out the source Rets that
+                // are selected
+                $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                    if (index >= idxStart && index <= idxEnd) {
+                        // concatenate the source and target into single Retranslations
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
+                        if (index > idxStart) {
+                            RetSource += " ";
+                            RetTarget += " ";
+                            origTarget += "|";
+                        }
+                        RetSource += $(value).children(".source").html();
+                        RetTarget += $(value).children(".target").html();
+                        origTarget += $(value).children(".target").html();
+                    }
+                });
+                // now build the new sourcephrase from the string
+                RetHtml = RetHtmlStart + RetSource + RetHtmlMid;
+                // if there's something already in the target, use it instead
+                RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
+                RetHtml += RetHtmlEnd;
+                console.log("Ret: " + RetHtml);
+                phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
+                selectedObj = this.collection.get(strID);
+                this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
+                $(selectedStart).before(RetHtml);
+                // finally, remove the selected piles (they were merged into this one)
+                $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                    if (index > idxStart && index <= (idxEnd + 1)) {
+                        // remove the original sourceRet
+                        strID = $(value).attr('id').substring(5); // remove "pile-"
+                        selectedObj = coll.get(strID);
+                        coll.remove(selectedObj);
+                        $(value).remove();
+                    }
+                });
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Placeholder").prop('disabled', true);
@@ -471,6 +526,25 @@ define(function (require) {
                 }
             } else {
                 // selection is a phrase -- delete it from the model and the DOM
+                // first, re-create the original sourcephrase piles and add them to the collection and UI
+                bookID = $('.topcoat-navigation-bar__title').attr('id');
+                strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
+                selectedObj = this.collection.get(strID);
+                origTarget = selectedObj.get("orig").split("|");
+                selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    // add to model
+                    newID = Underscore.uniqueId();
+                    phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
+                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
+                    coll.add(phObj, {at: coll.indexOf(selectedObj)});
+                    // add to UI
+                    $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
+                    newView = new SourcePhraseView({ model: phObj});
+                    $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
+                });
+                // now delete the phrase itself
+                this.collection.remove(selectedObj);
+                $(selectedStart).remove();
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Retranslation").prop('title', "New Retranslation");
