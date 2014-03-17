@@ -363,14 +363,10 @@ select.docNav {
 .strip-header {
     color: black;
     text-align: center;
-}
-.strip .strip-header {
     float: left;
-    padding: 0.2em;
-    padding-top: 1.5em;
-}
-.strip .pile {
-    float: left;
+    padding: 0 0.3em;
+    padding-top: 1.2em;
+    height: 3.8em;
 }
 .ui-selecting {
     background-color: rgb(116, 183, 241);
@@ -381,16 +377,16 @@ select.docNav {
     background-color: hsl(208, 82%, 85%);
 }
 .pile {
+    float: left;
     color: black;
-    height: 6em;
+    height: 5em;
+    padding: 0 0.3em;
 }
-.source, .source-retranslation, marker {
+.source, .source-retranslation, .marker {
     word-wrap: break-word;
-    padding: 0.1em;
 }
 .target {
     word-wrap: break-word;
-    padding: 0.1em;
     margin: 0;
     font: inherit;
     background: transparent;
