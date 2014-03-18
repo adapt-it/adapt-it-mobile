@@ -188,8 +188,8 @@ define(function (require) {
                     $("#Placeholder .icomatic").html("placeholdernew");
                 }
                 // did the user select a phrase?
-                if ((selectedStart.id).indexOf("phr") !== -1) {
-                    // phrase -- can remove it, but not add a new one
+                if (((selectedStart.id).indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
+                    // phrase (single selection) -- can remove it, but not add a new one
                     isPhrase = true;
                     $("#Phrase").prop('title', "Remove Phrase");
                     $("#Phrase .icomatic").html("phrasedelete");
@@ -395,6 +395,8 @@ define(function (require) {
                 // not a phrase -- create one from the selection
                 // first, iterate through the piles in the strip and pull out the source phrases that
                 // are selected
+                // Note: we are bundling up multiple sourcephrases, some of which could contain a
+                // phrase. Check for these while bundling.
                 $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                     if (index >= idxStart && index <= idxEnd) {
                         // concatenate the source and target into single phrases
@@ -406,7 +408,17 @@ define(function (require) {
                         }
                         phraseSource += $(value).children(".source").html();
                         phraseTarget += $(value).children(".target").html();
-                        origTarget += $(value).children(".target").html();
+                        // check for phrases
+                        if ($(value).attr('id').indexOf("phr") !== -1) {
+                            // phrase -- pull out the original target
+                            strID = $(value).attr('id').substring(5); // remove "pile-"
+                            selectedObj = coll.get(strID);
+                            origTarget += selectedObj.get("orig");
+                        }
+                        else {
+                            // not a phrase -- just add the target text
+                            origTarget += $(value).children(".target").html();
+                        }
                     }
                 });
                 // now build the new sourcephrase from the string
