@@ -73,10 +73,20 @@ define(function (require) {
             //console.log("selectedStart: " + selectedStart.id);
             //console.log("selectedEnd: " + selectedEnd.id);
             isSelecting = true;
+            // retranslations can't mix with other selections --
+            // check to see if we've selected one
+            if ((selectedStart.id).indexOf("ret") !== -1) {
+                isRetranslation = true;
+            } else {
+                isRetranslation = false;
+            }            
             $(event.currentTarget.parentElement).addClass("ui-selecting");
         },
         // user is starting to select one or more piles
         selectingPilesMove: function (event) {
+            if (isRetranslation === true) {
+                return; // cannot select other items
+            }
             var tmpEnd = null;
             if (event.type === "touchmove") {
                 // touch
@@ -90,9 +100,9 @@ define(function (require) {
             // only interested if we're selecting in the same strip
             if ((isSelecting === true) &&
                     (tmpEnd.parentElement === selectedStart.parentElement)) {
-                // recalculate the new selectedEnd 
+                // recalculate the new selectedEnd
                 selectedEnd = tmpEnd;
-                idxEnd = $(tmpEnd).index() - 1; // EDB try
+                idxEnd = $(tmpEnd).index() - 1;
                 //console.log("selectedEnd: " + selectedEnd.id);
                 // remove ui-selecting from all piles in the strip
                 $(event.currentTarget.parentElement.parentElement.childNodes).removeClass("ui-selecting");
@@ -119,6 +129,11 @@ define(function (require) {
         selectingPilesEnd: function (event) {
             var tmpItem = null,
                 tmpIdx = 0;
+            if (isRetranslation === true) {
+                // for retranslations, we only want the first item selected (no multiple selections)
+                idxEnd = idxStart;
+                selectedEnd = selectedStart;
+            }
             if (isSelecting === true) {
                 isSelecting = false;
                 // change the class of the mousedown area to let the user know
@@ -131,7 +146,7 @@ define(function (require) {
                     $("#Phrase").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     // set the class to ui-selected
-                    $(event.currentTarget.parentElement).addClass("ui-selected");
+                    $(selectedStart).addClass("ui-selected");
                 } else if (idxStart < idxEnd) {
                     // more than one item selected -- can create a placeholder, phrase, retrans
                     $("#Phrase").prop('disabled', false);
@@ -475,7 +490,6 @@ define(function (require) {
                 RetHtmlEnd = "</div></div>";
             // if the current selection is a retranslation, remove it; if not,
             // combine the selection into a new retranslation
-            var next_edit = null;
             if (isRetranslation === false) {
                 // not a retranslation -- create one from the selection
                 // first, iterate through the piles in the strip and pull out the source Rets that
@@ -500,7 +514,7 @@ define(function (require) {
                 RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
                 RetHtml += RetHtmlEnd;
                 console.log("Ret: " + RetHtml);
-                phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                phObj = new spModels.SourcePhrase({ id: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
                 strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                 selectedObj = this.collection.get(strID);
                 this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -534,8 +548,8 @@ define(function (require) {
                 selectedObj.get("source").split(" ").forEach(function (value, index) {
                     // add to model
                     newID = Underscore.uniqueId();
-                    phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
+                    RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
+                    phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: RetTarget});
                     coll.add(phObj, {at: coll.indexOf(selectedObj)});
                     // add to UI
                     $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
