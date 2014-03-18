@@ -3,7 +3,7 @@
         xmlns:gap   = "http://phonegap.com/ns/1.0"
         id          = "org.sil.aimobile"
         versionCode = "1" 
-        version     = "0.1.0"
+        version     = "0.2.0"
         defaultlocale = "en">
     <name short="adapt-it-mobile" xml:lang="en">adapt-it-mobile</name>
     <description xml:lang="en">
