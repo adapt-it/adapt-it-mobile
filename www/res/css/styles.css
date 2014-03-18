@@ -352,7 +352,6 @@ select.docNav {
     -webkit-align-items: flex-start;
 }
 
-/* Modified from Joel's POC */
 .marker {
 	display: block;
 	color: #009900; /*green*/
@@ -382,7 +381,7 @@ select.docNav {
     height: 5em;
     padding: 0 0.3em;
 }
-.source, .source-retranslation, .marker {
+.source, .marker {
     word-wrap: break-word;
 }
 .target {
@@ -426,13 +425,14 @@ select.docNav {
     clear: left;
 }
 /* text colors */
-div.strip div.source {
+/*div.strip div.source {*/
+.source {
 	color: #0000aa; /* blue */
 }
 div.strip.specialtext div.source {
 	color: #aa0000; /* red */
 }
-.source-retranslation {
+.retranslation {
 	color: #996633; /* brown */
 }
 .differences {

@@ -470,7 +470,7 @@ define(function (require) {
                 newView = null,
                 selectedObj = null,
                 RetHtmlStart = "<div id=\"pile-ret-" + newID + "\" class=\"pile\">" +
-                                    "<div class=\"marker\">&nbsp;</div> <div class=\"source-retranslation\">",
+                                    "<div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
                 RetHtmlMid = "</div> <div class=\"target\" contenteditable=\"true\">",
                 RetHtmlEnd = "</div></div>";
             // if the current selection is a retranslation, remove it; if not,
@@ -525,7 +525,7 @@ define(function (require) {
                     next_edit.childNodes[4].click();
                 }
             } else {
-                // selection is a phrase -- delete it from the model and the DOM
+                // selection is a retranslation -- delete it from the model and the DOM
                 // first, re-create the original sourcephrase piles and add them to the collection and UI
                 bookID = $('.topcoat-navigation-bar__title').attr('id');
                 strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
@@ -542,7 +542,7 @@ define(function (require) {
                     newView = new SourcePhraseView({ model: phObj});
                     $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
                 });
-                // now delete the phrase itself
+                // now delete the retranslation itself
                 this.collection.remove(selectedObj);
                 $(selectedStart).remove();
                 // update the toolbar UI
