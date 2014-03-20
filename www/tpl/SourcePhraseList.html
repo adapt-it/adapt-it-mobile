@@ -6,28 +6,19 @@
 {{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
 {{#if this.markers}}
     {{! nested ifConds -- a hacked case statement }}
-    {{#ifCond this.markers 'contains' 'mt'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'mt'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 'id'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'id'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 'hdr'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'hdr'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 's'}}
-    <div class="strip specialtext para" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 's'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 'f +'}}
-        {{! footnotes are displayed inline; no para class applied }}
-    <div class="strip specialtext" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'f +'}}{{! footnotes are displayed inline; no para class applied }}<div class="strip specialtext" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 'p'}}
-        {{! paragraph has no special color, but para class is applied }}
-    <div class="strip newpara" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'p'}}{{! paragraph has no special color, but para class is applied }}<div class="strip newpara" id="strip-{{this.id}}">
     {{else}}
-    {{! any other item in the markers starts a "regular" strip div }}
-    <div class="strip" id="strip-{{this.id}}">
+    {{! any other item in the markers starts a "regular" strip div }}<div class="strip" id="strip-{{this.id}}">
     {{/ifCond}}
     {{/ifCond}}
     {{/ifCond}}
@@ -36,7 +27,15 @@
     {{/ifCond}}
     {{! end nested ifConds }}    
     {{! start each strip with a header (e.g. verse or chapter info) }}
-    <div id="header-{{this.id}}" class="strip-header">{{this.markers}}</div>
+{{#ifCond this.markers 'contains' 'c'}}
+    <div id="header-{{this.id}}" class="strip-header chapter-number">{{chapter}}</div>
+{{else}}
+{{#ifCond this.markers 'contains' 'v'}}
+    <div id="header-{{this.id}}" class="strip-header verse-number">{{verse}}</div>
+{{else}}
+    <div id="header-{{this.id}}" class="strip-header" style="display:none;"></div>
+{{/ifCond}}
+{{/ifCond}}
 {{/if}}
 <div id="pile-{{this.id}}" class="pile"></div>
 {{! if this is the last sourcephrase, close out the strip div }}

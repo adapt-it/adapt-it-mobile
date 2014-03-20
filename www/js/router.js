@@ -13,9 +13,21 @@ define(function (require) {
         slider      = new PageSlider($('body')),
         lookupView  = new LookupView(),
         homeView    = new HomeView();
-    
+
+    /** Handlebars helper methods **/
+    Handlebars.registerHelper('chapter', function () {
+        // extract and return the chapter number from the markers
+        var result = parseInt(this.markers.substring(this.markers.indexOf('c') + 1), 10);
+//        console.log(this.markers.substring(this.markers.indexOf('c')));
+        return new Handlebars.SafeString(result);
+    });
+    Handlebars.registerHelper('verse', function () {
+        // extract and return the verse number from the markers
+        var result = parseInt(this.markers.substring(this.markers.indexOf('v') + 1), 10);
+//        console.log(this.markers.substring(this.markers.indexOf('v') + 1));
+        return new Handlebars.SafeString(result);
+    });
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
-    
         /* edb 13 Dev 2013: Handlebars doesn't directly perform conditional expression evaluation;
            this block was modified from the following post:
            http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional

@@ -2,17 +2,50 @@
     .source, .target {
         max-width: device-width;
     }
+    .slide-menu-button {
+        display:none;
+    }
+    .scroller {
+        right:250px;
+    }
 }
 @media only screen and (device-width: 768px) and (orientation: landscape) {
   /* rules for iPad in landscape orientation */
     .source, .target {
         max-width: 740px;
     }
+    .slide-menu-button {
+        display:none;
+    }
+    .scroller {
+        right:250px;
+    }
 }
+/*
+@media screen and (max-width:320px) {
+    .source, .target {
+        max-width: 300px;
+    }
+    .scroller {
+        right:0;
+    }
+}
+@media screen and (min-width: 321px) {
+    .source, .target {
+        max-width: 500px;
+    }
+    .scroller {
+        right:0;
+    }
+}
+*/
 @media only screen and (min-device-width: 240px) and (max-device-width: 319px) {
   /* Android ldpi rules here */
     .source, .target {
         max-width: 240px;
+    }
+    .scroller {
+        right:0;
     }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 479px) {
@@ -20,11 +53,17 @@
     .source, .target {
         max-width: 320px;
     }
+    .scroller {
+        right:0;
+    }
 }
 @media only screen and (min-device-width: 480px) and (max-device-width: 599px) {
   /* iPhone, Android mdpi rules here */
     .source, .target {
         max-width: 480px;
+    }
+    .scroller {
+        right:0;
     }
 }
 
@@ -80,7 +119,7 @@ a {
 }
 
 .topcoat-button-bar, .topcoat-icon-button--quiet {
-    margin-top: .5em;
+    margin-top: 2px;
 }
 
 h1 {
@@ -121,7 +160,6 @@ h3 {
     top: 70px;
     bottom: 0;
     left: 0;
-    right: 0;
 }
 
 .hscroller {
@@ -141,6 +179,7 @@ h3 {
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
+    padding: 0;
 }
 
 .topcoat-list__container {
@@ -304,8 +343,46 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
     float:right;
 }
 
-/* Temporary -- Topcoat hasn't defined dropdown styles yet, so this is purloined from the topcoat.io demo page
+/*** Temporary ***
+   Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
    remove it when upgrading to a Topcoat version that supports dropdown selections */
+
+.side-nav {
+    display:block;
+    position:absolute;
+    top:0;
+    right:0;
+    width:250px;
+    height:100%;
+/*    background-color:#353535;*/
+}
+.side-nav__list__container {
+    margin-top:4rem;
+    border-top:none;
+    border-bottom:none;
+}
+.side-nav__list {
+    border-top:none;
+}
+.side-nav__list__item {
+    padding:0;
+}
+/*
+.side-nav__list__item.is-active {
+    background-color:#353535;
+}
+*/
+.topcoat-icon-button--quiet,
+.side-nav__button {
+    display:block;
+    width:100%;
+    height:100%;
+    padding: 1.25rem;
+    text-align: left;
+    text-decoration: none;
+    color: #454545;
+    font: 16px "Source Sans", helvetica, arial, sans-serif;
+}
 .combo {
     border-bottom: none;
     margin: 0 14px 12px 8px;
@@ -351,6 +428,7 @@ select.docNav {
     border: 1px solid #9daca9;
     -webkit-align-items: flex-start;
 }
+/*** end temporary topcoat stylings ***/
 
 .marker {
 	display: block;
@@ -365,7 +443,16 @@ select.docNav {
     float: left;
     padding: 0 0.3em;
     padding-top: 1.2em;
+    padding-bottom: 1px; /* total height needs to == that of .pile */
     height: 3.8em;
+}
+.chapter-number {
+    padding-top: .7em;
+    padding-bottom: 3px;
+    height: 2.3em;
+    font: 26px "Source Sans", helvetica, arial, sans-serif;
+}
+.verse-number {
 }
 .ui-selecting {
     background-color: rgb(116, 183, 241);

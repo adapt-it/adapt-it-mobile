@@ -14,7 +14,6 @@
     </div>
 {{! TODO: toolbar items need to go in the "+" button as a menu -- I think -- due to screen real estate issues;
     currently, the toolbar disappears with screen widths less than 576px
-}}
     <div class="topcoat-navigation-bar__item right">
         <div class="topcoat-button-bar">
            <label class="topcoat-button-bar__item">
@@ -34,13 +33,13 @@
            </label>
         </div>
     </div>
-{{!
-    hiding plus and hamburger menu buttons for now...
+}}
     <div class="topcoat-navigation-bar__item right">
         <a id="slide-menu-button" class="topcoat-icon-button--quiet slide-menu-button">
-            <span class="topcoat-icon topcoat-icon--menu-stack"></span>
+            <span class="topcoat-icon topcoat-icon--add"></span>
         </a>
     </div>
+{{!    
     <div class="topcoat-navigation-bar__item right">
         <div class="topcoat-button-bar">
            <label class="topcoat-button-bar__item">
@@ -65,24 +64,21 @@
     </div>
 }}
 </div>
-{{!
-hiding side-nav menu for now. TODO: a settings side-menu?
 <nav class="side-nav">
     <div class="topcoat-list__container side-nav__list__container">
         <ul class="topcoat-list side-nav__list">
-            <li class="topcoat-list__item side-nav__list__item">
-                <a href="#" class="side-nav__button">Item</a>
+            <li class="topcoat-list__item side-nav__list__item is-active">
+             <button id="Placeholder" title="Insert Placeholder" class="topcoat-icon-button--quiet" disabled><span class="icomatic">placeholdernew</span> Placeholder</button>
             </li>
             <li class="topcoat-list__item side-nav__list__item is-active">
-                <a href="#" class="side-nav__button">Item</a>
+             <button id="Phrase" title="Insert Phrase" class="topcoat-icon-button--quiet" disabled><span class="icomatic">phrasenew</span> Phrase</button>
             </li>
-            <li class="topcoat-list__item side-nav__list__item">
-                <a href="#" class="side-nav__button">Item</a>
+            <li class="topcoat-list__item side-nav__list__item is-active">
+             <button id="Retranslation" title="Insert Retranslation" class="topcoat-icon-button--quiet" disabled><span class="icomatic">retranslationnew</span> Retranslation</button>
             </li>
         </ul>
     </div>
 </nav>
-}}
 <div class="topcoat-list__container scroller">
 <div class="topcoat-list chapter" id="chapter">
 </div>

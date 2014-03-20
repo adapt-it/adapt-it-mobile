@@ -34,11 +34,22 @@ define(function (require) {
         // Event Handlers
         ////
         events: {
+            "click #slide-menu-button": "toggleSlideMenu",
             "click #Placeholder": "togglePlaceholder",
             "click #Phrase": "togglePhrase",
             "click #Retranslation": "toggleRetranslation"
         },
-        // just pass the event handler down to the list view to handle
+        // For the slide-out menu, toggle its state (open or closed)
+        toggleSlideMenu: function (event) {
+            var site = document.getElementById('site');
+            var cl = site.classList;
+            if (cl.contains('open')) {
+                cl.remove('open');
+            } else {
+                cl.add('open');
+            }
+        },
+        // For the placeholders, etc., just pass the event handler down to the list view to handle
         togglePlaceholder: function (event) {
             this.listView.togglePlaceholder(event);
         },
