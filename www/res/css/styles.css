@@ -239,9 +239,13 @@ ul {
     float:right;
 }
 
-/*** Temporary ***
-   Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
-   remove it when upgrading to a Topcoat version that supports dropdown selections */
+#help {
+    background: url("images/question.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
 #plus {
     background: url("images/plus.svg") no-repeat;
     -webkit-background-size: cover;
@@ -254,6 +258,10 @@ ul {
     -moz-background-size: cover;
     background-size: cover;
 }
+
+/*** Temporary ***
+   Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
+   remove it when upgrading to a Topcoat version that supports dropdown selections */
 .side-nav__list__container {
     border-top:none;
     border-bottom:none;
