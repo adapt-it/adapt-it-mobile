@@ -8,10 +8,12 @@ define(function (require) {
         Backbone    = require('backbone'),
         Handlebars  = require('handlebars'),
         PageSlider  = require('app/utils/pageslider'),
+        HelpView    = require('app/views/HelpView'),
         HomeView    = require('app/views/HomeView'),
         LookupView  = require('app/views/LookupView'),
         slider      = new PageSlider($('body')),
         lookupView  = new LookupView(),
+        helpView    = new HelpView(),
         homeView    = new HomeView();
 
     /** Handlebars helper methods **/
@@ -63,11 +65,10 @@ define(function (require) {
     return Backbone.Router.extend({
 
         routes: {
-            "":             "home",     // (top level)
-            //TBD -- help 
-//            "help":         "help",    // #help
+            "":             "home",             // (top level)
+            "help":         "help",             // #help
             "lookup":       "lookupChapter",    // #lookup
-            "adapt/:id":    "adaptChapter"     // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
+            "adapt/:id":    "adaptChapter"      // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
         },
 
         home: function () {
@@ -75,13 +76,10 @@ define(function (require) {
             slider.slidePage(homeView.$el);
         },
         
-        /*
-        // TBD -- help view
         help: function () {
             helpView.delegateEvents();
             slider.slidePage(helpView.$el);
         },
-        */
 
         lookupChapter: function (id) {
             require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
@@ -104,7 +102,5 @@ define(function (require) {
                 });
             });
         }
-
     });
-
 });

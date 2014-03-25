@@ -180,38 +180,44 @@ define(function (require) {
                     // placeholder -- can remove it, but not add a new one
                     isPlaceholder = true;
                     $("#Placeholder").prop('title', "Remove Placeholder");
-                    $("#Placeholder .icomatic").html("placeholderdelete");
+                    $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
+                    $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
                 } else {
                     // not a placeholder -- can add a new one
                     isPlaceholder = false;
                     $("#Placeholder").prop('title', "New Placeholder");
-                    $("#Placeholder .icomatic").html("placeholdernew");
+                    $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
+                    $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                 }
                 // did the user select a phrase?
                 if (((selectedStart.id).indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
                     // phrase (single selection) -- can remove it, but not add a new one
                     isPhrase = true;
                     $("#Phrase").prop('title', "Remove Phrase");
-                    $("#Phrase .icomatic").html("phrasedelete");
+                    $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
+                    $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
                     $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                 } else {
                     // not a placeholder -- can add a new one
                     isPhrase = false;
                     $("#Phrase").prop('title', "New Phrase");
-                    $("#Phrase .icomatic").html("phrasenew");
+                    $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                    $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                 }
                 // did the user select a retranslation?
                 if ((selectedStart.id).indexOf("ret") !== -1) {
                     // retranslation -- can remove it, but not add a new one
                     isRetranslation = true;
                     $("#Retranslation").prop('title', "Remove Retranslation");
-                    $("#Retranslation .icomatic").html("retranslationdelete");
+                    $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
+                    $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
                     $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                 } else {
                     // not a retranslation -- can add a new one
                     isRetranslation = false;
                     $("#Retranslation").prop('title', "New Retranslation");
-                    $("#Retranslation .icomatic").html("retranslationnew");
+                    $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                    $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                 }
                 $("#Placeholder").prop('disabled', false);
             }
@@ -364,7 +370,8 @@ define(function (require) {
                 // clean up the UI accordingly
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Placeholder").prop('title', "New Placeholder");
-                $("#Placeholder .icomatic").html("placeholdernew");
+                $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
+                $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
@@ -475,7 +482,8 @@ define(function (require) {
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Phrase").prop('title', "New Phrase");
-                $("#Phrase .icomatic").html("phrasenew");
+                $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
@@ -574,7 +582,8 @@ define(function (require) {
                 // update the toolbar UI
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#Retranslation").prop('title', "New Retranslation");
-                $("#Retranslation .icomatic").html("retranslationnew");
+                $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);

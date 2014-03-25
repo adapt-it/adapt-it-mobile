@@ -1,23 +1,3 @@
-
-/*
-@media screen and (max-width:320px) {
-    .source, .target {
-        max-width: 300px;
-    }
-    .scroller {
-        right:0;
-    }
-}
-@media screen and (min-width: 321px) {
-    .source, .target {
-        max-width: 500px;
-    }
-    .scroller {
-        right:0;
-    }
-}
-*/
-
 a {
     text-decoration: none;
     color: inherit;
@@ -206,88 +186,58 @@ ul {
     overflow: hidden;
 }
 
-/* icomatic icon font */
-@font-face {
-font-family: 'Icomatic';
-src: url('icomatic.eot');
-src: url('icomatic.eot?#iefix') format("embedded-opentype"),
-     url('icomatic.woff') format("woff"),
-     url('icomatic.ttf') format("truetype"),
-     url('icomatic.svg#icomatic') format('svg');
-}
-.icomatic {
-    font-family: 'Icomatic','sans-serif';
-    line-height: 1;
-    text-rendering: optimizeLegibility;
-    -webkit-font-feature-settings: "liga", "dlig";
-    -ms-font-feature-settings: "liga", "dlig";
-    -moz-font-feature-settings: "liga", "dlig";
-    -o-font-feature-settings: "liga", "dlig";
-    font-feature-settings: "liga", "dlig";
-    -webkit-font-smoothing: antialiased;
-}
-.icomatic-alt {
-    margin: -1px;
-    border:0;
-    padding: 0;
-    width: 1px; height: 1px;
-    clip: rect(0 0 0 0);
-    position: absolute;
-    overflow: hidden;
-}
-.icomatic {
-    font-size: 22pt;
-}
-
 /* AI mobile icons */
-.ui-icon-ai-placeholder {
-    background: rgb(0,0,0);
-	background: url("images/placeholder-new.png") no-repeat rgba(0, 0, 0, 0.4) !important;
+.topcoat-icon--placeholder-new {
+    background: url("images/placeholder-new_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
 }
 
-.ui-icon-ai-phrase {
-	-moz-border-radius: 9px 9px 9px 9px;
-    border-radius: 9px 9px 9px 9px;
-    background: rgb(0,0,0);
-	background: url("images/phrase-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+.topcoat-icon--placeholder-delete {
+    background: url("images/placeholder-delete_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
 }
 
-.ui-icon-ai-retranslation {
-	-moz-border-radius: 9px 9px 9px 9px;
-    border-radius: 9px 9px 9px 9px;
-    background: rgb(0,0,0);
-	background: url("images/retranslation-new.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
+.topcoat-icon--phrase-new {
+    background: url("images/phrase-new_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 2) {
-	.ui-icon-ai-placeholder {
-		-moz-border-radius: 9px 9px 9px 9px;
-        border-radius: 9px 9px 9px 9px;
-        background: rgb(0,0,0);
-		background: url("images/placeholder-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
-		background-size: 18px 18px;
-	}
-	.ui-icon-ai-phrase {
-		-moz-border-radius: 9px 9px 9px 9px;
-        border-radius: 9px 9px 9px 9px;
-        background: rgb(0,0,0);
-		background: url("images/phrase-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
-		background-size: 18px 18px;
-	}
-	.ui-icon-ai-retranslation {
-		-moz-border-radius: 9px 9px 9px 9px;
-        border-radius: 9px 9px 9px 9px;
-        background: rgb(0,0,0);
-		background: url("images/retranslation-new@2x.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0.4) !important;
-		background-size: 18px 18px;
-	}
+.topcoat-icon--phrase-delete {
+    background: url("images/phrase-delete_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
+.topcoat-icon--retranslation-new {
+    background: url("images/retranslation-new_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
+.topcoat-icon--retranslation-delete {
+    background: url("images/retranslation-delete_black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
 }
 
 .right {
     float:right;
 }
-
-
 
 /*** Temporary ***
    Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
@@ -304,18 +254,7 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
     -moz-background-size: cover;
     background-size: cover;
 }
-
-.side-nav {
-/*    display:block;
-    position:absolute;
-    top:4rem;
-    right:-250px;
-    width:250px;
-    height:100%;*/
-/*    background-color:#353535;*/
-}
 .side-nav__list__container {
-    /*margin-top:4.375rem;*/
     border-top:none;
     border-bottom:none;
 }
@@ -325,11 +264,6 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
 .side-nav__list__item {
     padding:0;
 }
-/*
-.side-nav__list__item.is-active {
-    background-color:#353535;
-}
-*/
 .topcoat-icon-button--quiet,
 .side-nav__button {
     display:block;
@@ -648,7 +582,6 @@ span.sprite{
   /* Android ldpi rules here */
     .source, .target {
         max-width: 240px;
-        color: purple;
     }
     .side-nav__list__item__label {
         /* don't display the label */
