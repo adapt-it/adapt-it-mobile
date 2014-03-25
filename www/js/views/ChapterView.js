@@ -41,12 +41,26 @@ define(function (require) {
         },
         // For the slide-out menu, toggle its state (open or closed)
         toggleSlideMenu: function (event) {
-            var site = document.getElementById('site');
-            var cl = site.classList;
+            var elt = document.getElementById('sidebar');
+            var cl = elt.classList;
             if (cl.contains('open')) {
                 cl.remove('open');
             } else {
                 cl.add('open');
+            }
+            elt = document.getElementById('content');
+            cl = elt.classList;
+            if (cl.contains('open')) {
+                cl.remove('open');
+            } else {
+                cl.add('open');
+            }
+            elt = document.getElementById('plus');
+            cl = elt.classList;
+            if (cl.contains('blue')) {
+                cl.remove('blue');
+            } else {
+                cl.add('blue');
             }
         },
         // For the placeholders, etc., just pass the event handler down to the list view to handle

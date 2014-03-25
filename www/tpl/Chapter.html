@@ -12,74 +12,28 @@
     <div class="topcoat-navigation-bar__item half">
         <h1 class="topcoat-navigation-bar__title" id="{{this.id}}">{{this.name}}</h1>
     </div>
-{{! TODO: toolbar items need to go in the "+" button as a menu -- I think -- due to screen real estate issues;
-    currently, the toolbar disappears with screen widths less than 576px
-    <div class="topcoat-navigation-bar__item right">
-        <div class="topcoat-button-bar">
-           <label class="topcoat-button-bar__item">
-             <button id="Placeholder" title="Insert Placeholder" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">placeholdernew</span>
-             </button>
-           </label>
-           <label class="topcoat-button-bar__item">
-             <button id="Phrase" title="Insert Phrase" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">phrasenew</span>
-             </button>
-           </label>
-           <label class="topcoat-button-bar__item">
-             <button id="Retranslation" title="Insert Retranslation" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">retranslationnew</span>
-             </button>
-           </label>
-        </div>
-    </div>
-}}
     <div class="topcoat-navigation-bar__item right">
         <a id="slide-menu-button" class="topcoat-icon-button--quiet slide-menu-button">
-            <span class="topcoat-icon topcoat-icon--add"></span>
+            <span id="plus" class="topcoat-icon topcoat-icon--add"></span>
         </a>
     </div>
-{{!    
-    <div class="topcoat-navigation-bar__item right">
-        <div class="topcoat-button-bar">
-           <label class="topcoat-button-bar__item">
-             <button id="Placeholder" title="Insert Placeholder" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">placeholdernew</span>
-             </button>
-           </label>
-           <label class="topcoat-button-bar__item">
-             <button id="Phrase" title="Insert Phrase" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">phrasenew</span>
-             </button>
-           </label>
-           <label class="topcoat-button-bar__item">
-             <button id="Retranslation" title="Insert Retranslation" class="topcoat-button-bar__button" disabled>
-                <span class="icomatic">retranslationnew</span>
-             </button>
-           </label>
-        </div>
-        <a id="slide-menu-button" class="topcoat-icon-button--quiet" disabled>
-            <span class="topcoat-icon topcoat-icon--add"></span>
-        </a>
-    </div>
-}}
 </div>
-<nav class="side-nav">
+<nav class="side-nav" id="sidebar">
     <div class="topcoat-list__container side-nav__list__container">
         <ul class="topcoat-list side-nav__list">
             <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Placeholder" title="Insert Placeholder" class="topcoat-icon-button--quiet" disabled><span class="icomatic">placeholdernew</span> Placeholder</button>
+             <button id="Placeholder" title="Insert Placeholder" class="topcoat-icon-button--quiet" disabled><span class="icomatic">placeholdernew</span><span class="side-nav__list__item__label">Placeholder</span></button>
             </li>
             <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Phrase" title="Insert Phrase" class="topcoat-icon-button--quiet" disabled><span class="icomatic">phrasenew</span> Phrase</button>
+             <button id="Phrase" title="Insert Phrase" class="topcoat-icon-button--quiet" disabled><span class="icomatic">phrasenew</span><span class="side-nav__list__item__label">Phrase</span></button>
             </li>
             <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Retranslation" title="Insert Retranslation" class="topcoat-icon-button--quiet" disabled><span class="icomatic">retranslationnew</span> Retranslation</button>
+             <button id="Retranslation" title="Insert Retranslation" class="topcoat-icon-button--quiet" disabled><span class="icomatic">retranslationnew</span><span class="side-nav__list__item__label">Retranslation</span></button>
             </li>
         </ul>
     </div>
 </nav>
-<div class="topcoat-list__container scroller">
+<div class="topcoat-list__container scroller" id="content">
 <div class="topcoat-list chapter" id="chapter">
 </div>
 </div>

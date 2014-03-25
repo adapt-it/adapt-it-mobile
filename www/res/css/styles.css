@@ -1,26 +1,4 @@
-@media only screen and (orientation: landscape) {
-    .source, .target {
-        max-width: device-width;
-    }
-    .slide-menu-button {
-        display:none;
-    }
-    .scroller {
-        right:250px;
-    }
-}
-@media only screen and (device-width: 768px) and (orientation: landscape) {
-  /* rules for iPad in landscape orientation */
-    .source, .target {
-        max-width: 740px;
-    }
-    .slide-menu-button {
-        display:none;
-    }
-    .scroller {
-        right:250px;
-    }
-}
+
 /*
 @media screen and (max-width:320px) {
     .source, .target {
@@ -39,33 +17,6 @@
     }
 }
 */
-@media only screen and (min-device-width: 240px) and (max-device-width: 319px) {
-  /* Android ldpi rules here */
-    .source, .target {
-        max-width: 240px;
-    }
-    .scroller {
-        right:0;
-    }
-}
-@media only screen and (min-device-width: 320px) and (max-device-width: 479px) {
-  /* iPhone, Android mdpi rules here */
-    .source, .target {
-        max-width: 320px;
-    }
-    .scroller {
-        right:0;
-    }
-}
-@media only screen and (min-device-width: 480px) and (max-device-width: 599px) {
-  /* iPhone, Android mdpi rules here */
-    .source, .target {
-        max-width: 480px;
-    }
-    .scroller {
-        right:0;
-    }
-}
 
 a {
     text-decoration: none;
@@ -119,7 +70,7 @@ a {
 }
 
 .topcoat-button-bar, .topcoat-icon-button--quiet {
-    margin-top: 2px;
+    margin-top: 1px;
 }
 
 h1 {
@@ -220,13 +171,6 @@ a {
 
 .topcoat-list {
     list-style: none;
-}
-
-.topcoat-icon--add {
-    background: url("images/plus.svg") no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
 }
 
 ul {
@@ -343,21 +287,35 @@ src: url('icomatic.eot?#iefix') format("embedded-opentype"),
     float:right;
 }
 
+
+
 /*** Temporary ***
    Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
    remove it when upgrading to a Topcoat version that supports dropdown selections */
+#plus {
+    background: url("images/plus.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#plus.blue {
+    background: url("images/plus_blue.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
 
 .side-nav {
-    display:block;
+/*    display:block;
     position:absolute;
-    top:0;
-    right:0;
+    top:4rem;
+    right:-250px;
     width:250px;
-    height:100%;
+    height:100%;*/
 /*    background-color:#353535;*/
 }
 .side-nav__list__container {
-    margin-top:4rem;
+    /*margin-top:4.375rem;*/
     border-top:none;
     border-bottom:none;
 }
@@ -600,4 +558,223 @@ span.sprite{
 .btn-adapt span.sprite{
 	background-image: url("../svg/adapt-it-mobile-nomask.svg");
     background-size: 48px 48px;
+}
+
+@media screen and (max-device-width: 400px) and (orientation: landscape) {
+    .source, .target {
+        max-width: device-width;
+    }
+    #content {
+        right:0px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #content.open {
+        right: 250px;
+    }
+    #sidebar {
+        display: none;
+        width: 249px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #sidebar:before{
+        position: absolute;
+        content: '';
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #9daca9;
+    }
+    #sidebar.open {
+        display:block;
+        position:absolute;
+        top:4.377rem;
+        bottom: 0;
+        right: 0;
+    }
+}
+@media screen and (device-width: 768px) and (orientation: landscape) {
+  /* rules for iPad in landscape orientation */
+    .source, .target {
+        max-width: 740px;
+    }
+    /* we have room to display the label - width should be 250px */
+    .side-nav__list__item__label {
+        padding-left: 8px;
+        display: inline;
+    }
+    #content {
+        right:0px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #content.open {
+        right: 250px;
+    }
+    #sidebar {
+        display: none;
+        width: 249px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #sidebar:before{
+        position: absolute;
+        content: '';
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #9daca9;
+    }
+    #sidebar.open {
+        display:block;
+        position:absolute;
+        top:4.377rem;
+        bottom: 0;
+        right: 0;
+    }
+}
+@media screen and (min-device-width: 240px) and (max-device-width: 319px) {
+  /* Android ldpi rules here */
+    .source, .target {
+        max-width: 240px;
+        color: purple;
+    }
+    .side-nav__list__item__label {
+        /* don't display the label */
+        display: none;
+    }
+    #content {
+        right:0px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #content.open {
+        right: 80px;
+    }
+    #sidebar {
+        display: none;
+        width: 79px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #sidebar:before{
+        position: absolute;
+        content: '';
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #9daca9;
+    }
+    #sidebar.open {
+        display:block;
+        position:absolute;
+        top:4.377rem;
+        bottom: 0;
+        right: 0;
+    }
+}
+@media screen and (min-device-width: 320px) {
+  /* iPhone, Android mdpi rules here */
+    .source, .target {
+        max-width: 320px;
+    }
+    .side-nav__list__item__label {
+        /* don't display the label */
+        display: none;
+    }
+    #content {
+        right:0px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #content.open {
+        right: 80px;
+    }
+    #sidebar {
+        display: none;
+        width: 79px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #sidebar:before{
+        position: absolute;
+        content: '';
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #9daca9;
+    }
+    #sidebar.open {
+        display:block;
+        position:absolute;
+        top:4.377rem;
+        bottom: 0;
+        right: 0;
+    }
+}
+@media screen and (min-width: 500px) {
+  /* iPhone, Android mdpi rules here */
+    .source, .target {
+        max-width: 480px;
+    }
+    .side-nav__list__item__label {
+        /* we have room to display the label */
+        padding-left: 8px;
+        display: inline;
+    }
+    #content {
+        right:0px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #content.open {
+        right: 250px;
+    }
+    #sidebar {
+        display: none;
+        width: 249px;
+        transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    #sidebar:before{
+        position: absolute;
+        content: '';
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #9daca9;
+    }
+    #sidebar.open {
+        display:block;
+        position:absolute;
+        top:4.377rem;
+        bottom: 0;
+        right: 0;
+    }
 }
