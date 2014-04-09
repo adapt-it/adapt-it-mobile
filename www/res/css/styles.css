@@ -502,6 +502,18 @@ span.sprite{
     background-size: 48px 48px;
 }
 
+@media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
+    .source, .target {
+        max-width: device-width;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : landscape) {
+    .source, .target {
+        max-width: device-width;
+        color: purple;
+    }
+}
+
 @media screen and (max-device-width: 400px) and (orientation: landscape) {
     .source, .target {
         max-width: device-width;
@@ -674,7 +686,7 @@ span.sprite{
         right: 0;
     }
 }
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 700px) {
   /* iPhone, Android mdpi rules here */
     .source, .target {
         max-width: 480px;
