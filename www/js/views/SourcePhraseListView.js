@@ -52,6 +52,8 @@ define(function (require) {
             "touchmove .source": "selectingPilesMove",
             "mouseup .source": "selectingPilesEnd",
             "touchend .source": "selectingPilesEnd",
+            "mouseup .pile": "checkStopSelecting",
+            "mouseup .target": "checkStopSelecting",
             "click .target": "selectedAdaptation",
             "keydown .target": "editAdaptation",
             "blur .target": "unselectedAdaptation"
@@ -79,8 +81,9 @@ define(function (require) {
                 isRetranslation = true;
             } else {
                 isRetranslation = false;
-            }            
+            }
             $(event.currentTarget.parentElement).addClass("ui-selecting");
+            $(event.currentTarget.parentElement.parentElement).find(".target").removeAttr('contenteditable');
         },
         // user is starting to select one or more piles
         selectingPilesMove: function (event) {
@@ -125,8 +128,18 @@ define(function (require) {
                 }
             }
         },
+        // if the user happens to have selected something and gone off the rails when stopping
+        // their selection, catch it here
+        checkStopSelecting: function (event) {
+            if (isSelecting === true) {
+                // pretend the user wanted the last selected item to be the end of the selection
+                $(selectedEnd).find('.source').mouseup();
+            }
+        },
         // user released the mouse here
         selectingPilesEnd: function (event) {
+            // re-add the contenteditable fields
+            $(selectedStart.parentElement).find(".target").attr('contenteditable', 'true');
             var tmpItem = null,
                 tmpIdx = 0;
             if (isRetranslation === true) {
@@ -223,8 +236,7 @@ define(function (require) {
             }
         },
         
-        // user has clicked on the target field -- swap out the static text
-        // with the input control, dynamically resized if needed
+        // click event handler for the target field 
         selectedAdaptation: function (event) {
             var targetText = "";
             // set the current adaptation cursor
@@ -235,6 +247,7 @@ define(function (require) {
             $(event.currentTarget).focus();
         },
         
+        // keydown event handler for the target field
         editAdaptation: function (event) {
             var next_edit = null,
                 strID = null,
@@ -285,7 +298,9 @@ define(function (require) {
                 }
             }
         },
-        // user has moved out of the current adaptation input field
+        // User has moved out of the current adaptation input field (blur on target field)
+        // this can be called either programatically (tab / shift+tab keydown response) or
+        // by a selection of something else on the page.
         unselectedAdaptation: function (event) {
             var value = null,
                 trimmedValue = null,
@@ -299,7 +314,7 @@ define(function (require) {
                 // find and update the model object
                 strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
 				model = this.collection.get(strID);
-                console.log(model);
+//                console.log(model);
                 model.set({target: trimmedValue});
 
 				if (value !== trimmedValue) {
@@ -421,8 +436,7 @@ define(function (require) {
                             strID = $(value).attr('id').substring(5); // remove "pile-"
                             selectedObj = coll.get(strID);
                             origTarget += selectedObj.get("orig");
-                        }
-                        else {
+                        } else {
                             // not a phrase -- just add the target text
                             origTarget += $(value).children(".target").html();
                         }
