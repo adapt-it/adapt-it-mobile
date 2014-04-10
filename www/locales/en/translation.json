@@ -1,0 +1,24 @@
+{
+    "ttlMain":"Adapt It Mobile",
+    "lblSearch":"Search",
+    "lblAdapt":"Adapt",
+    "dscSearch":"Look up a passage to start adapting",
+    "dscAdapt":"Continue adapting from where you left off",
+    "lblHelp":"Help",
+    "ttlSearch":"Passage lookup",
+    "dscSearch":"Type to search for a passage",
+    "lblBook":"Select a book:",
+    "lblChapter":"Select a chapter:",
+    "ttlHelp":"Help",
+    "lblPlaceholder":"Placeholder",
+    "lblPhrase":"Phrase",
+    "lblRetranslation":"Retranslation",
+    "dscNewPlaceholder":"New Placeholder",
+    "dscDelPlaceholder":"Delete Placeholder",
+    "dscNewPhrase":"New Phrase",
+    "dscDelPhrase":"Delete Phrase",
+    "dscNewRetranslation":"New Retranslation",
+    "dscDelRetranslation":"Delete Retranslation",
+    "dscToolbar":"Show / Hide Toolbar"
+    "dscBack":"Back"
+}
