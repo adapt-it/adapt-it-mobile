@@ -73,11 +73,12 @@ define(function (require) {
 
         // user is starting to select one or more piles
         selectingPilesStart: function (event) {
-            // change the class of the mousedown area to let the user know
-            // we're tracking the selection
+            var model = null,
+                strID = "";
+            // if there was an old selection, remove it
             if (selectedStart !== null) {
-                // there was an old selection -- remove the ui-selected class
                 $("div").removeClass("ui-selecting ui-selected");
+                $(selectedStart).find('.target').removeAttr('contenteditable');
             }
             selectedStart = event.currentTarget.parentElement; // select the pile, not the source (the currentTarget)
             selectedEnd = selectedStart;
@@ -94,6 +95,8 @@ define(function (require) {
             } else {
                 isRetranslation = false;
             }
+            // change the class of the mousedown area to let the user know
+            // we're tracking the selection
             $(event.currentTarget.parentElement).addClass("ui-selecting");
         },
         // user is starting to select one or more piles
@@ -248,14 +251,13 @@ define(function (require) {
         
         // click event handler for the target field 
         selectedAdaptation: function (event) {
-            var targetText = "";
+            // clear out any previous selection
+            this.clearSelection();
             // set the current adaptation cursor
             selectedStart = event.currentTarget.parentElement; // pile
             //console.log("selectedStart: " + selectedStart.id);
             // TODO: pull out the possible adaptation from the KB
             
-            // clear out the selection
-            this.clearSelection();
             // allow the user to edit the target div content
             $(event.currentTarget).attr('contenteditable', 'true');
             // show the input field and set focus to it
