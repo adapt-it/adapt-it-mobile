@@ -28,18 +28,30 @@ define(function (require) {
             this.collection.bind('reset', this.render, this);
             this.render();
         },
-
         addOne: function (SourcePhrase) {
             var view = new SourcePhraseView({ model: SourcePhrase});//, el: $('#pile-' + SourcePhrase.get('id')) });
             this.$('#pile-' + SourcePhrase.get('id')).append(view.render().el.childNodes);
         },
-        
         render: function () {
             // add the collection
             this.$el.html(template(this.collection.toJSON()));
             // go back and add the individual piles
             this.collection.each(this.addOne, this);
             return this;
+        },
+        // helper method to clear out the selection and disable the toolbar buttons
+        clearSelection: function () {
+            selectedStart = selectedEnd = null;
+            idxStart = idxEnd = null;
+            isSelecting = false;
+            isPlaceholder = false;
+            isPhrase = false;
+            isRetranslation = false;
+            
+            $("div").removeClass("ui-selecting ui-selected");
+            $("#Placeholder").prop('disabled', true);
+            $("#Retranslation").prop('disabled', true);
+            $("#Phrase").prop('disabled', true);
         },
 
         ////
@@ -83,7 +95,6 @@ define(function (require) {
                 isRetranslation = false;
             }
             $(event.currentTarget.parentElement).addClass("ui-selecting");
-            $(event.currentTarget.parentElement.parentElement).find(".target").removeAttr('contenteditable');
         },
         // user is starting to select one or more piles
         selectingPilesMove: function (event) {
@@ -139,7 +150,6 @@ define(function (require) {
         // user released the mouse here
         selectingPilesEnd: function (event) {
             // re-add the contenteditable fields
-            $(selectedStart.parentElement).find(".target").attr('contenteditable', 'true');
             var tmpItem = null,
                 tmpIdx = 0;
             if (isRetranslation === true) {
@@ -243,6 +253,11 @@ define(function (require) {
             selectedStart = event.currentTarget.parentElement; // pile
             //console.log("selectedStart: " + selectedStart.id);
             // TODO: pull out the possible adaptation from the KB
+            
+            // clear out the selection
+            this.clearSelection();
+            // allow the user to edit the target div content
+            $(event.currentTarget).attr('contenteditable', 'true');
             // show the input field and set focus to it
             $(event.currentTarget).focus();
         },
@@ -307,9 +322,11 @@ define(function (require) {
                 strID = null,
                 model = null;
             
+            // remove contenteditable attribute on the div
+            $(event.currentTarget).removeAttr('contenteditable');
             // get the adaptation text
 			value = $(event.currentTarget).text();
-			trimmedValue = value.trim();
+            trimmedValue = value.trim();
 			if (trimmedValue) {
                 // find and update the model object
                 strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
@@ -345,7 +362,7 @@ define(function (require) {
                 $("#Phrase").prop('disabled', true);
             }
         },
-                // User clicked on the Placeholder button
+        // User clicked on the Placeholder button
         togglePlaceholder: function (event) {
             // TODO: move placeHolderHtml to templated html
             var next_edit = null,
