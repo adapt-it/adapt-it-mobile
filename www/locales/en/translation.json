@@ -22,5 +22,13 @@
         "dscDelRetranslation":"Delete Retranslation",
         "dscToolbar":"Show / Hide Toolbar"
         "dscBack":"Back"
+    },
+    "help": {
+        "intro": "",
+        "load": "",
+        "search": "",
+        "adapt": "",
+        "buttons": "",
+        "export": ""
     }
 }

@@ -1,0 +1,34 @@
+{
+    "view": {
+        "ttlMain":"Adapt It Mobile",
+        "lblSearch":"Rechercher",
+        "lblAdapt":"Traduire",
+        "dscSearch":"Rechercher un passage pour commencer à s'adapter",
+        "dscAdapt":"Poursuivre l'adaptation de l'endroit où vous vous étiez arrêté",
+        "lblHelp":"Information",
+        "ttlSearch":"Rechercher un passage de l'Écriture",
+        "dscSearch":"Commencez à taper à la recherche d'un passage",
+        "lblBook":"Sélectionner un livre:",
+        "lblChapter":"Sélectionnez un chapitre:",
+        "ttlHelp":"Information",
+        "lblPlaceholder":"Espace réservé",
+        "lblPhrase":"Phrase",
+        "lblRetranslation":"Retraduction",
+        "dscNewPlaceholder":"Nouvelle espace réservé",
+        "dscDelPlaceholder":"Éliminer espace réservé",
+        "dscNewPhrase":"Nouvelle Phrase",
+        "dscDelPhrase":"Éliminer Phrase",
+        "dscNewRetranslation":"Nouvelle Retraduction",
+        "dscDelRetranslation":"Éliminer Retraduction",
+        "dscToolbar":"Afficher / masquer la barre d'outils"
+        "dscBack":"retour"
+    },
+    "help": {
+        "intro": "",
+        "load": "",
+        "search": "",
+        "adapt": "",
+        "buttons": "",
+        "export": ""
+    }
+}

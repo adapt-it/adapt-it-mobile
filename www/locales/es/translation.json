@@ -22,5 +22,13 @@
         "dscDelRetranslation":"Borrar la retraducción",
         "dscToolbar":"Mostra u ocultar la barra lateral"
         "dscBack":"Retroceder"
+    },
+    "help": {
+        "intro": "",
+        "load": "",
+        "search": "",
+        "adapt": "",
+        "buttons": "",
+        "export": ""
     }
 }
