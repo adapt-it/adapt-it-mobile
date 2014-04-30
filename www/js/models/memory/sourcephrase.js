@@ -31,53 +31,11 @@ define(function (require) {
                 target: "08-RUT-web.sfm"
             },
             {
-                id: "RUT001-3",
+                id: "RUT001-ret-3",
                 markers: null,
-                orig: null,
-                source: "World",
-                target: "Amazing"
-            },
-            {
-                id: "RUT001-4",
-                markers: null,
-                orig: null,
-                source: "English",
-                target: "American"
-            },
-            {
-                id: "RUT001-5",
-                markers: null,
-                orig: null,
-                source: "Bible",
-                target: "Bible"
-            },
-            {
-                id: "RUT001-6",
-                markers: null,
-                orig: null,
-                source: "Tuesday",
-                target: "Friday"
-            },
-            {
-                id: "RUT001-7",
-                markers: null,
-                orig: null,
-                source: "19",
-                target: "13"
-            },
-            {
-                id: "RUT001-8",
-                markers: null,
-                orig: null,
-                source: "August",
-                target: "December"
-            },
-            {
-                id: "RUT001-9",
-                markers: null,
-                orig: null,
-                source: "2008",
-                target: "2013"
+                orig: "World|English|Bible|Tuesday|19|August|2008",
+                source: "World English Bible Tuesday 19 August 2008",
+                target: "Amazing American Bible Friday 13 December 2013"
             },
             {
                 id: "RUT001-10",

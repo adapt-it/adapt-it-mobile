@@ -11,6 +11,7 @@ define(function (require) {
         SourcePhraseView  = require('app/views/SourcePhraseView'),
         SourcePhraseListView = require('app/views/SourcePhraseListView'),
         spModels    = require('app/models/sourcephrase'),
+        kbModels    = require('app/models/targetunit'),
         tplText     = require('text!tpl/Chapter.html'),
         template    = Handlebars.compile(tplText);
 
@@ -19,15 +20,19 @@ define(function (require) {
         initialize: function () {
 			this.$list = $('#chapter');
             this.spList = new spModels.SourcePhraseCollection();
+            this.kblist = new kbModels.TargetUnitCollection();
             this.render();
         },
         render: function () {
             var myid = this.model.get('id');
             // fetch the source phrases in this chapter
             this.spList.fetch({reset: true, data: {name: myid}});
+            // TODO: replace with project ISO639-3 IDs
+            this.kblist.fetch({reset: true, data: {name: 'en.en'}});
             this.$el.html(template(this.model.toJSON()));
             // populate the list view with the source phrase results
             this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});
+            this.listView.kblist = this.kblist;
             return this;
         },
         ////

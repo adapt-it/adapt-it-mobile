@@ -9,9 +9,11 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         SourcePhraseView  = require('app/views/SourcePhraseView'),
-        spModels   = require('app/models/sourcephrase'),
+        spModels    = require('app/models/sourcephrase'),
+        kbModels    = require('app/models/targetunit'),
         tplText     = require('text!tpl/SourcePhraseList.html'),
         template = Handlebars.compile(tplText),
+        kblist      = null, // real value passed in constructor (ChapterView.js)
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -248,22 +250,30 @@ define(function (require) {
                 $("#Placeholder").prop('disabled', false);
             }
         },
-        
         // click event handler for the target field 
         selectedAdaptation: function (event) {
+            var possibleAdaptations = null;
             // clear out any previous selection
             this.clearSelection();
             // set the current adaptation cursor
             selectedStart = event.currentTarget.parentElement; // pile
             //console.log("selectedStart: " + selectedStart.id);
-            // TODO: pull out the possible adaptation from the KB
-            
+            // pull out the possible adaptation from the KB
+//            possibleAdaptations = this.kblist.filter(function (element) {
+//                return element.source.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+//            }).sortBy(function(element){return element.n;});
+//            if (possibleAdaptations != null) {
+//                // entr(ies) in KB -- use the last / most frequently used one
+//                $(event.currentTarget).html(possibleAdaptations.at(possibleAdaptations.length).target);
+//            } else {
+//                // no entry in KB -- just move the source into the target
+//                $(event.currentTarget).html('blah');
+//            }
             // allow the user to edit the target div content
             $(event.currentTarget).attr('contenteditable', 'true');
             // show the input field and set focus to it
             $(event.currentTarget).focus();
         },
-        
         // keydown event handler for the target field
         editAdaptation: function (event) {
             var next_edit = null,
@@ -352,10 +362,8 @@ define(function (require) {
                     // source != target -- add "differences" to the class so the text is green
                     $(event.currentTarget).addClass('differences');
                 }
-			} else {
-				//this.clear();
 			}
-
+            // check for an old selection and remove it if needed
             if (selectedStart !== null) {
                 // there was an old selection -- remove the ui-selected class
                 $("div").removeClass("ui-selecting ui-selected");
