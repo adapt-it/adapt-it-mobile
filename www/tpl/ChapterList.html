@@ -3,19 +3,19 @@
     Each chapter is rendered with a status (number of verses translated), along with a link to adapt that chapter.
     This template is compiled by ChapterListView.js and called from LookupView.js.
 }}
-<h3 class="topcoat-list__header">Select a Chapter:</h3>
+<h3 class="topcoat-list__header">{{t 'view.lblChapter'}}</h3>
 <ul class="topcoat-list__container chapter-list">
 {{#.}}
 <li class="topcoat-list__item">
     <a href="#adapt/{{this.id}}">
     {{this.name}}
     {{#ifCond this.lastAdapted '==' this.verseCount}}
-        <span>Fully translated</span>
+        <span>{{t 'view.lblStatusFullyTranslated'}}</span>
     {{else}} 
         {{#ifCond this.lastAdapted '==' 0}}
-          <span>No translations (no verses of a total of {{this.verseCount}} verses have translation text).</span>
+          <span>((t 'view.lblStatusNotTranslated'))</span>
         {{else}}
-          <span>Partly drafted ({{this.lastAdapted}} of a total of {{this.verseCount}} verses have translation text).</span>
+          <span>{{t 'view.lblStatusPartlyTranslated'}}</span>
         {{/ifCond}}
     {{/ifCond}}
     <span class="chevron"></span></a>
