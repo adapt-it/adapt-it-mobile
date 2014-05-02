@@ -20,7 +20,8 @@
         "dscNewRetranslation": "Crear una retraducción",
         "dscDelRetranslation": "Borrar la retraducción",
         "dscToolbar": "Mostra u ocultar la barra lateral",
-        "dscBack": "Retroceder"
+        "dscBack": "Retroceder",
+        "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
         "intro": "",

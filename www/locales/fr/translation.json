@@ -20,7 +20,8 @@
         "dscNewRetranslation": "Nouvelle Retraduction",
         "dscDelRetranslation": "Éliminer Retraduction",
         "dscToolbar": "Afficher / masquer la barre d'outils",
-        "dscBack": "retour"
+        "dscBack": "retour",
+        "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
         "intro": "",

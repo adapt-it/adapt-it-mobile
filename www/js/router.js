@@ -20,7 +20,7 @@ define(function (require) {
     /** Handlebars helper methods **/
     Handlebars.registerHelper('t', function (i18n_key) {
         var result = i18n.t(i18n_key);
-        console.log(i18n_key + ":" + result);
+//        console.log(i18n_key + ":" + result);
         return new Handlebars.SafeString(result);
     });
     Handlebars.registerHelper('chapter', function () {
