@@ -7,16 +7,22 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         Handlebars  = require('handlebars'),
+        i18n        = require('i18n'),
         PageSlider  = require('app/utils/pageslider'),
         HelpView    = require('app/views/HelpView'),
         HomeView    = require('app/views/HomeView'),
         LookupView  = require('app/views/LookupView'),
         slider      = new PageSlider($('body')),
-        lookupView  = new LookupView(),
-        helpView    = new HelpView(),
-        homeView    = new HomeView();
-
+        lookupView  = null, //new LookupView(),
+        helpView    = null, //new HelpView(),
+        homeView    = null; //new HomeView();
+    
     /** Handlebars helper methods **/
+    Handlebars.registerHelper('t', function (i18n_key) {
+        var result = i18n.t(i18n_key);
+        console.log(i18n_key + ":" + result);
+        return new Handlebars.SafeString(result);
+    });
     Handlebars.registerHelper('chapter', function () {
         // extract and return the chapter number from the markers
         var result = parseInt(this.markers.substring(this.markers.indexOf('c') + 1), 10);
@@ -72,16 +78,19 @@ define(function (require) {
         },
 
         home: function () {
+            homeView = new HomeView();
             homeView.delegateEvents();
             slider.slidePage(homeView.$el);
         },
         
         help: function () {
+            helpView = new HelpView();
             helpView.delegateEvents();
             slider.slidePage(helpView.$el);
         },
 
         lookupChapter: function (id) {
+            lookupView = new LookupView();
             require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
                 var book = new models.Chapter({id: id});
                 book.fetch({
