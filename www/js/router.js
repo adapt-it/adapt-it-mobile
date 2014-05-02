@@ -23,6 +23,15 @@ define(function (require) {
 //        console.log(i18n_key + ":" + result);
         return new Handlebars.SafeString(result);
     });
+    Handlebars.registerHelper('tr', function (context, options) {
+        var opts = i18n.functions.extend(options.hash, context);
+        if (options.fn) {
+            opts.defaultValue = options.fn(context);
+        }
+        var result = i18n.t(opts.key, opts);
+
+        return new Handlebars.SafeString(result);
+    });
     Handlebars.registerHelper('chapter', function () {
         // extract and return the chapter number from the markers
         var result = parseInt(this.markers.substring(this.markers.indexOf('c') + 1), 10);
