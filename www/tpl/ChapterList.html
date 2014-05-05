@@ -13,9 +13,9 @@
         <span>{{t 'view.lblStatusFullyTranslated'}}</span>
     {{else}} 
         {{#ifCond this.lastAdapted '==' 0}}
-          <span>{{t 'view.lblStatusNotTranslated'}}</span>
+          <span>{{tr this key='view.lblStatusNotTranslated' add=this.verseCount}}</span>
         {{else}}
-          <span>{{t 'view.lblStatusPartlyTranslated'}}</span>
+          <span>{{tr this key='view.lblStatusPartlyTranslated' add=this.verseCount}}</span>
         {{/ifCond}}
     {{/ifCond}}
     <span class="chevron"></span></a>
