@@ -10,7 +10,7 @@
         "lblBook": "Sélectionner un livre:",
         "lblChapter": "Sélectionnez un chapitre:",
         "lblStatusFullyTranslated": "Entièrement traduit",
-        "lblStatusNotTranslated": "Pas de versets ont été traduits (0 de __verseCount__ versets ont traduit les textes).",
+        "lblStatusNotTranslated": "Pas de versets ont été traduits (__verseCount__ versets au total).",
         "lblStatusPartlyTranslated": "partiellement traduit (__lastAdapted__ de __verseCount__ versets ont traduit les textes).",
         "ttlHelp": "Information",
         "lblPlaceholder": "Espace réservé",
