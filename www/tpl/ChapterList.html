@@ -10,12 +10,12 @@
     <a href="#adapt/{{this.id}}">
     {{this.name}}
     {{#ifCond this.lastAdapted '==' this.verseCount}}
-        <span>{{t 'view.lblStatusFullyTranslated'}}</span>
+        <span class="sectionStatus">{{t 'view.lblStatusFullyTranslated'}}</span>
     {{else}} 
         {{#ifCond this.lastAdapted '==' 0}}
-          <span>{{tr this key='view.lblStatusNotTranslated' add=this.verseCount}}</span>
+          <span class="sectionStatus">{{tr this key='view.lblStatusNotTranslated' add=this.verseCount}}</span>
         {{else}}
-          <span>{{tr this key='view.lblStatusPartlyTranslated' add=this.verseCount}}</span>
+          <span class="sectionStatus">{{tr this key='view.lblStatusPartlyTranslated' add=this.verseCount}}</span>
         {{/ifCond}}
     {{/ifCond}}
     <span class="chevron"></span></a>

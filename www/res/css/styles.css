@@ -164,6 +164,11 @@ ul {
     clear: both;
 }
 
+.sectionStatus {
+    padding-left: .5em;
+    padding-right: 1.5em;
+}
+
 .chevron {
     background: transparent url(images/next_blue.svg);
     background-repeat: no-repeat;
