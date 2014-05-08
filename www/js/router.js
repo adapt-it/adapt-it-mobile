@@ -13,9 +13,9 @@ define(function (require) {
         HomeView    = require('app/views/HomeView'),
         LookupView  = require('app/views/LookupView'),
         slider      = new PageSlider($('body')),
-        lookupView  = null, //new LookupView(),
-        helpView    = null, //new HelpView(),
-        homeView    = null; //new HomeView();
+        lookupView  = null,
+        helpView    = null,
+        homeView    = null;
     
     /** Handlebars helper methods **/
     Handlebars.registerHelper('t', function (i18n_key) {
