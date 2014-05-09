@@ -60,7 +60,7 @@ define(function (require) {
             },
             {
                 "id": "en.en.0000007",
-                "TU": "the",
+                "source": "the",
                 "target": "the",
                 "n": "2",
                 "timestamp": "2013-09-18T18:50:35z",
@@ -76,7 +76,7 @@ define(function (require) {
             },
             {
                 "id": "en.en.0000009",
-                "TU": "when",
+                "source": "when",
                 "target": "when",
                 "n": "1",
                 "timestamp": "2013-09-18T18:50:35z",

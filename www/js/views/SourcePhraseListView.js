@@ -253,23 +253,35 @@ define(function (require) {
         },
         // click event handler for the target field 
         selectedAdaptation: function (event) {
-            var possibleAdaptations = null;
+            var possibleAdaptations = null,
+                strID = "",
+                model = null,
+                sourceText = "";
             // clear out any previous selection
             this.clearSelection();
             // set the current adaptation cursor
             selectedStart = event.currentTarget.parentElement; // pile
             //console.log("selectedStart: " + selectedStart.id);
-            // pull out the possible adaptation from the KB
-//            possibleAdaptations = this.kblist.filter(function (element) {
-//                return element.source.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-//            }).sortBy(function(element){return element.n;});
-//            if (possibleAdaptations != null) {
-//                // entr(ies) in KB -- use the last / most frequently used one
-//                $(event.currentTarget).html(possibleAdaptations.at(possibleAdaptations.length).target);
-//            } else {
-//                // no entry in KB -- just move the source into the target
-//                $(event.currentTarget).html('blah');
-//            }
+            // Is the target field empty?
+			if ($(event.currentTarget).text().trim().length === 0) {
+                // target is empty -- attempt to populate it
+                // First, see if there are any available adaptations in the KB
+                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+                model = this.collection.get(strID);
+                sourceText = model.get('source');
+                possibleAdaptations = this.kblist.filter(function (tu) {
+                    var stNoPunctuation = sourceText.toLowerCase().replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                    return tu.get('source').toLowerCase() === stNoPunctuation;
+                });
+                if (possibleAdaptations.length > 0) {
+                    // found at least one match -- populate the target with the first match
+                    $(event.currentTarget).html(possibleAdaptations[0].get('target'));
+                    // TODO: mark the item in purple and go to the next field
+                } else {
+                    // nothing in the KB -- populate the target with the source text as the next best guess
+                    $(event.currentTarget).html(sourceText);
+                }
+            }
             // allow the user to edit the target div content
             $(event.currentTarget).attr('contenteditable', 'true');
             // show the input field and set focus to it
