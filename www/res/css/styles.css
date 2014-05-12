@@ -433,6 +433,9 @@ div.strip.specialtext div.source {
 .marker {
     color: #00cc00; /* light green */
 }
+.fromkb {
+    background-color: #ffaaff;
+}
 
 /* from adapt-it-copy */
 ul.btns {

@@ -256,7 +256,8 @@ define(function (require) {
             var possibleAdaptations = null,
                 strID = "",
                 model = null,
-                sourceText = "";
+                sourceText = "",
+                foundInKB = false;
             // clear out any previous selection
             this.clearSelection();
             // set the current adaptation cursor
@@ -276,16 +277,61 @@ define(function (require) {
                 if (possibleAdaptations.length > 0) {
                     // found at least one match -- populate the target with the first match
                     $(event.currentTarget).html(possibleAdaptations[0].get('target'));
-                    // TODO: mark the item in purple and go to the next field
+                    // mark it purple (TODO: unmark when user moves again...)
+                    //$(event.currentTarget).addClass('fromkb');
+                    // jump to the next field
+                    this.moveCursor(event, true);
+                    foundInKB = true;
                 } else {
                     // nothing in the KB -- populate the target with the source text as the next best guess
                     $(event.currentTarget).html(sourceText);
                 }
             }
-            // allow the user to edit the target div content
-            $(event.currentTarget).attr('contenteditable', 'true');
-            // show the input field and set focus to it
-            $(event.currentTarget).focus();
+            if (foundInKB === false) {
+                // allow the user to edit the target div content
+                $(event.currentTarget).attr('contenteditable', 'true');
+                // show the input field and set focus to it
+                $(event.currentTarget).focus();
+            }
+        },
+        // Helper method to move the editing cursor forwards or backwards one pile
+        moveCursor: function (event, moveForward) {
+            var next_edit = null;
+
+            event.stopPropagation();
+            event.preventDefault();
+            $(event.currentTarget).blur();
+            if (moveForward === false) {
+                // move backwards
+                next_edit = selectedStart.previousElementSibling;
+                if (next_edit.id.substr(0, 4) !== "pile") {
+                    // Probably a header -- see if you can go to the previous strip
+                    if (selectedStart.parentElement.previousElementSibling !== null) {
+                        next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
+                    } else {
+                        next_edit = null;
+                        console.log("reached first pile.");
+                    }
+                }
+            } else {
+                // move forwards
+                if (selectedStart.nextElementSibling !== null) {
+                    next_edit = selectedStart.nextElementSibling;
+                } else {
+                    // last pile in the strip -- see if you can go to the next strip
+                    if (selectedStart.parentElement.nextElementSibling !== null) {
+                        next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
+                    } else {
+                        // no more piles - get out
+                        next_edit = null;
+                        console.log("reached last pile.");
+                    }
+                }
+            }
+            if (next_edit) {
+                console.log("next edit: " + next_edit.id);
+                next_edit.childNodes[4].click();
+            }
         },
         // keydown event handler for the target field
         editAdaptation: function (event) {
@@ -303,39 +349,44 @@ define(function (require) {
                 $(event.currentTarget).blur();
             } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                 // If tab/enter is pressed, blur and move to edit the next pile
-                event.stopPropagation();
-                event.preventDefault();
-                $(event.currentTarget).blur();
-    
+//                event.stopPropagation();
+//                event.preventDefault();
+//                $(event.currentTarget).blur();
+
                 if (event.shiftKey) {
-                    next_edit = selectedStart.previousElementSibling;
-                    if (next_edit.id.substr(0, 4) !== "pile") {
-                        // Probably a header -- see if you can go to the previous strip
-                        if (selectedStart.parentElement.previousElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
-                        } else {
-                            next_edit = null;
-                            console.log("reached first pile.");
-                        }
-                    }
+                    this.moveCursor(event, false);  // backwards
                 } else {
-                    if (selectedStart.nextElementSibling !== null) {
-                        next_edit = selectedStart.nextElementSibling;
-                    } else {
-                        // last pile in the strip -- see if you can go to the next strip
-                        if (selectedStart.parentElement.nextElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
-                        } else {
-                            // no more piles - get out
-                            next_edit = null;
-                            console.log("reached last pile.");
-                        }
-                    }
+                    this.moveCursor(event, true);   //forwards
                 }
-                if (next_edit) {
-                    console.log("next edit: " + next_edit.id);
-                    next_edit.childNodes[4].click();
-                }
+//                    
+//                    next_edit = selectedStart.previousElementSibling;
+//                    if (next_edit.id.substr(0, 4) !== "pile") {
+//                        // Probably a header -- see if you can go to the previous strip
+//                        if (selectedStart.parentElement.previousElementSibling !== null) {
+//                            next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
+//                        } else {
+//                            next_edit = null;
+//                            console.log("reached first pile.");
+//                        }
+//                    }
+//                } else {
+//                    if (selectedStart.nextElementSibling !== null) {
+//                        next_edit = selectedStart.nextElementSibling;
+//                    } else {
+//                        // last pile in the strip -- see if you can go to the next strip
+//                        if (selectedStart.parentElement.nextElementSibling !== null) {
+//                            next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
+//                        } else {
+//                            // no more piles - get out
+//                            next_edit = null;
+//                            console.log("reached last pile.");
+//                        }
+//                    }
+//                }
+//                if (next_edit) {
+//                    console.log("next edit: " + next_edit.id);
+//                    next_edit.childNodes[4].click();
+//                }
             }
         },
         // User has moved out of the current adaptation input field (blur on target field)
