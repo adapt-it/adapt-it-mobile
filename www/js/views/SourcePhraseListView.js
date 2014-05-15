@@ -19,11 +19,12 @@ define(function (require) {
         selectedEnd = null,
         idxStart = null,
         idxEnd = null,
+        isDirty = false,
         isSelecting = false,
         isPlaceholder = false,
         isPhrase = false,
+        projectPrefix = "en.en",    // TODO: source.target ISO639 codes
         isRetranslation = false;
-
 
     return Backbone.View.extend({
 
@@ -251,50 +252,28 @@ define(function (require) {
                 $("#Placeholder").prop('disabled', false);
             }
         },
-        // click event handler for the target field 
-        selectedAdaptation: function (event) {
-            var possibleAdaptations = null,
-                strID = "",
-                model = null,
-                sourceText = "",
-                foundInKB = false;
-            // clear out any previous selection
-            this.clearSelection();
-            // set the current adaptation cursor
-            selectedStart = event.currentTarget.parentElement; // pile
-            //console.log("selectedStart: " + selectedStart.id);
-            // Is the target field empty?
-			if ($(event.currentTarget).text().trim().length === 0) {
-                // target is empty -- attempt to populate it
-                // First, see if there are any available adaptations in the KB
-                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
-                model = this.collection.get(strID);
-                sourceText = model.get('source');
-                possibleAdaptations = this.kblist.filter(function (tu) {
-                    var stNoPunctuation = sourceText.toLowerCase().replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-                    return tu.get('source').toLowerCase() === stNoPunctuation;
-                });
-                if (possibleAdaptations.length > 0) {
-                    // found at least one match -- populate the target with the first match
-                    $(event.currentTarget).html(possibleAdaptations[0].get('target'));
-                    // mark it purple (TODO: unmark when user moves again...)
-                    //$(event.currentTarget).addClass('fromkb');
-                    // jump to the next field
-                    this.moveCursor(event, true);
-                    foundInKB = true;
-                } else {
-                    // nothing in the KB -- populate the target with the source text as the next best guess
-                    $(event.currentTarget).html(sourceText);
-                }
-            }
-            if (foundInKB === false) {
-                // allow the user to edit the target div content
-                $(event.currentTarget).attr('contenteditable', 'true');
-                // show the input field and set focus to it
-                $(event.currentTarget).focus();
-            }
+        getTimestamp: function () {
+            var curDate = new Date();
+            //"2013-09-18T18:50:35z";
+            return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
         },
-        // Helper method to move the editing cursor forwards or backwards one pile
+        // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
+        // This method currently strips out all punctuation to match the words.
+        findInKB: function (key) {
+            var result = null,
+                strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            try {
+                result = this.kblist.findWhere({'source': strNoPunctuation});
+                if (typeof result === 'undefined') {
+                    return null;
+                }
+            } catch (err) {
+                console.log(err);
+            }
+            return result;
+        },
+        // Helper method to move the editing cursor forwards or backwards one pile.
+        // this also calls blur(), which saves any changes.
         moveCursor: function (event, moveForward) {
             var next_edit = null;
 
@@ -333,6 +312,55 @@ define(function (require) {
                 next_edit.childNodes[4].click();
             }
         },
+        // click event handler for the target field 
+        selectedAdaptation: function (event) {
+            var tu = null,
+                strID = "",
+                model = null,
+                sourceText = "",
+                refstrings = null,
+                foundInKB = false;
+            // clear out any previous selection
+            this.clearSelection();
+            // set the current adaptation cursor
+            selectedStart = event.currentTarget.parentElement; // pile
+            //console.log("selectedStart: " + selectedStart.id);
+            // Is the target field empty?
+			if ($(event.currentTarget).text().trim().length === 0) {
+                // target is empty -- attempt to populate it
+                // First, see if there are any available adaptations in the KB
+                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+                model = this.collection.get(strID);
+                sourceText = model.get('source');
+                tu = this.findInKB(sourceText);
+                if (tu !== null) {
+                    // found at least one match -- populate the target with the first match
+                    refstrings = tu.get('refstring');
+                    $(event.currentTarget).html(refstrings[0].target);
+                    // mark it purple (TODO: unmark when user moves again...)
+//                    $(event.currentTarget).addClass('fromkb');
+                    // mark the field as changed (so the KB gets incremented)
+                    isDirty = true;
+                    // jump to the next field
+                    this.moveCursor(event, true);
+                    foundInKB = true;
+                } else {
+                    // nothing in the KB -- populate the target with the source text as the next best guess
+                    $(event.currentTarget).html(sourceText);
+                    isDirty = true; // we made a change (populating from the source text)
+                }
+            } else {
+                // something already in the edit field -- reset the dirty bit because
+                // we haven't made any changes yet
+                isDirty = false;
+            }
+            if (foundInKB === false) {
+                // allow the user to edit the target div content
+                $(event.currentTarget).attr('contenteditable', 'true');
+                // show the input field and set focus to it
+                $(event.currentTarget).focus();
+            }
+        },
         // keydown event handler for the target field
         editAdaptation: function (event) {
             var next_edit = null,
@@ -349,53 +377,26 @@ define(function (require) {
                 $(event.currentTarget).blur();
             } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                 // If tab/enter is pressed, blur and move to edit the next pile
-//                event.stopPropagation();
-//                event.preventDefault();
-//                $(event.currentTarget).blur();
-
                 if (event.shiftKey) {
-                    this.moveCursor(event, false);  // backwards
+                    this.moveCursor(event, false);  // shift tab/enter -- move backwards
                 } else {
-                    this.moveCursor(event, true);   //forwards
+                    this.moveCursor(event, true);   // normal tab/enter -- move forwards
                 }
-//                    
-//                    next_edit = selectedStart.previousElementSibling;
-//                    if (next_edit.id.substr(0, 4) !== "pile") {
-//                        // Probably a header -- see if you can go to the previous strip
-//                        if (selectedStart.parentElement.previousElementSibling !== null) {
-//                            next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
-//                        } else {
-//                            next_edit = null;
-//                            console.log("reached first pile.");
-//                        }
-//                    }
-//                } else {
-//                    if (selectedStart.nextElementSibling !== null) {
-//                        next_edit = selectedStart.nextElementSibling;
-//                    } else {
-//                        // last pile in the strip -- see if you can go to the next strip
-//                        if (selectedStart.parentElement.nextElementSibling !== null) {
-//                            next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
-//                        } else {
-//                            // no more piles - get out
-//                            next_edit = null;
-//                            console.log("reached last pile.");
-//                        }
-//                    }
-//                }
-//                if (next_edit) {
-//                    console.log("next edit: " + next_edit.id);
-//                    next_edit.childNodes[4].click();
-//                }
+            } else {
+                // any other key - set the dirty bit
+                isDirty = true;
             }
         },
         // User has moved out of the current adaptation input field (blur on target field)
         // this can be called either programatically (tab / shift+tab keydown response) or
         // by a selection of something else on the page.
+        // This method updates the KB and model (AI Document) if they have any changes, and
+        // removes the content editable field in the UI.
         unselectedAdaptation: function (event) {
             var value = null,
                 trimmedValue = null,
                 strID = null,
+                tu = null,
                 model = null;
             
             // remove contenteditable attribute on the div
@@ -403,19 +404,87 @@ define(function (require) {
             // get the adaptation text
 			value = $(event.currentTarget).text();
             trimmedValue = value.trim();
-			if (trimmedValue) {
-                // find and update the model object
-                strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
-				model = this.collection.get(strID);
+            // find the model object associated with this edit field
+            strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+            model = this.collection.get(strID);
+            // check for changes in the edit field
+            if (isDirty === true) {
+                // something has changed -- update the KB
+                // find this source/target pair in the KB
+                tu = this.findInKB(model.get('source'));
+                if (tu) {
+                    var i = 0,
+                        found = false,
+                        refstrings = tu.get('refstring'),
+                        oldValue = model.get('target');
+                    // delete or decrement the old value
+                    if (oldValue > 0) {
+                        // the model has an old value -- try to find and remove the corresponding KB entry
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].get('target') === oldValue) {
+                                if (refstrings[i].n === '1') {
+                                    // more than one refcount -- decrement it
+                                    refstrings[i].n--;
+                                } else {
+                                    // only one refcount -- remove the element from the KB
+                                    refstrings.splice(i, 1);
+                                }
+                                break;
+                            }
+                        }
+                        
+                    }
+                    // add or increment the new value
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === trimmedValue) {
+                            refstrings[i].n++;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found === false) {
+                        // no entry in KB with this source/target -- add one
+                        var newRS = [
+                            {
+                                'target': trimmedValue,
+                                'n': '1'
+                            }
+                        ];
+                        refstrings.push(newRS);
+                    }
+                    // update the KB model
+                    tu.set({refstring: refstrings});
+                } else {
+                    // no entry in KB with this source -- add one
+                    var newID = Underscore.uniqueId(),
+                        currentdate = new Date(),
+                        newTU = new kbModels.TargetUnit({
+                            id: (projectPrefix + "." + newID),
+                            source: model.get('source'),
+                            refstring: [
+                                {
+                                    target: trimmedValue,
+                                    n: "1"
+                                }
+                            ],
+                            timestamp: this.getTimestamp(),
+                            user: "user:machine"
+                        });
+                    this.kblist.add(newTU);
+                }
+            }
+
+            // Now update the model
+            if (trimmedValue) {
 //                console.log(model);
+
+                // update the model with the new target text
                 model.set({target: trimmedValue});
 
 				if (value !== trimmedValue) {
 					// Model values changes consisting of whitespaces only are
-					// not causing change to be triggered Therefore we've to
-					// compare untrimmed version with a trimmed one to check
-					// whether anything changed
-					// And if yes, we've to trigger change event ourselves
+					// not causing change to be triggered. Check for this condition
+					// and trigger the change event manually if needed
 					model.trigger('change');
 				}
                 // if the target differs from the source, make it display in green
