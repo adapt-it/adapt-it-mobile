@@ -13,96 +13,144 @@ define(function (require) {
             {
                 "id": "en.en.0000001",
                 "source": "RUT",
-                "target": "RUT",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "RUT",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000002",
                 "source": "08-RUT-web.sfm",
-                "target": "08-RUT-web.sfm",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "08-RUT-web.sfm",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2014-01-01T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000003",
                 "source": "Ruth",
-                "target": "Ruth",
-                "n": "2",
+                "refstring": [
+                    {
+                        "target": "Ruth",
+                        "n": "2"
+                    }
+                ],
                 "dt": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000004",
                 "source": "It",
-                "target": "It",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "It",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000005",
                 "source": "happened",
-                "target": "came about",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "came about",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000006",
                 "source": "in",
-                "target": "during",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "during",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000007",
                 "source": "the",
-                "target": "the",
-                "n": "2",
+                "refstring": [
+                    {
+                        "target": "the",
+                        "n": "2"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000008",
                 "source": "days",
-                "target": "days",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "days",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000009",
                 "source": "when",
-                "target": "when",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "when",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000010",
                 "source": "judges",
-                "target": "judges",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "judges",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000011",
                 "source": "judged",
-                "target": "judged",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "judged",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             },
             {
                 "id": "en.en.0000012",
                 "source": "that",
-                "target": "reallyreallyreallyreallyreallyloooooooooonnnnnnngstring",
-                "n": "1",
+                "refstring": [
+                    {
+                        "target": "reallyreallyreallyreallyreallyloooooooooonnnnnnngstring",
+                        "n": "1"
+                    }
+                ],
                 "timestamp": "2013-09-18T18:50:35z",
                 "user": "user:machine"
             }
