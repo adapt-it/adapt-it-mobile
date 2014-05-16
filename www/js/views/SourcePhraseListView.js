@@ -15,15 +15,16 @@ define(function (require) {
         tplText     = require('text!tpl/SourcePhraseList.html'),
         template = Handlebars.compile(tplText),
         kblist      = null, // real value passed in constructor (ChapterView.js)
+        projectPrefix = "en.en",    // TODO: source.target ISO639 codes
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
         idxEnd = null,
+        showingKBInput = false,
         isDirty = false,
         isSelecting = false,
         isPlaceholder = false,
         isPhrase = false,
-        projectPrefix = "en.en",    // TODO: source.target ISO639 codes
         isRetranslation = false;
 
     return Backbone.View.extend({
@@ -43,7 +44,74 @@ define(function (require) {
             this.collection.each(this.addOne, this);
             return this;
         },
-        // helper method to clear out the selection and disable the toolbar buttons
+        
+        ////
+        // Helper methods
+        ////
+
+        // Helper to get a string with the current date/time in the form:
+        //     "2013-09-18T18:50:35z"
+        // This method is used for KB updates
+        getTimestamp: function () {
+            var curDate = new Date();
+            return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
+        },
+        // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
+        // This method currently strips out all punctuation to match the words; a null is returned 
+        // if there is no entry in the KB
+        findInKB: function (key) {
+            var result = null,
+                strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            try {
+                result = this.kblist.findWhere({'source': strNoPunctuation});
+                if (typeof result === 'undefined') {
+                    return null;
+                }
+            } catch (err) {
+                console.log(err);
+            }
+            return result;
+        },
+        // Helper method to move the editing cursor forwards or backwards one pile.
+        // this also calls blur(), which saves any changes.
+        moveCursor: function (event, moveForward) {
+            var next_edit = null;
+            event.stopPropagation();
+            event.preventDefault();
+            $(event.currentTarget).blur();
+            if (moveForward === false) {
+                // move backwards
+                next_edit = selectedStart.previousElementSibling;
+                if (next_edit.id.substr(0, 4) !== "pile") {
+                    // Probably a header -- see if you can go to the previous strip
+                    if (selectedStart.parentElement.previousElementSibling !== null) {
+                        next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
+                    } else {
+                        next_edit = null;
+                        console.log("reached first pile.");
+                    }
+                }
+            } else {
+                // move forwards
+                if (selectedStart.nextElementSibling !== null) {
+                    next_edit = selectedStart.nextElementSibling;
+                } else {
+                    // last pile in the strip -- see if you can go to the next strip
+                    if (selectedStart.parentElement.nextElementSibling !== null) {
+                        next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
+                    } else {
+                        // no more piles - get out
+                        next_edit = null;
+                        console.log("reached last pile.");
+                    }
+                }
+            }
+            if (next_edit) {
+                console.log("next edit: " + next_edit.id);
+                next_edit.childNodes[4].click();
+            }
+        },
+        // Helper method to clear out the selection and disable the toolbar buttons
         clearSelection: function () {
             selectedStart = selectedEnd = null;
             idxStart = idxEnd = null;
@@ -146,8 +214,10 @@ define(function (require) {
                 }
             }
         },
-        // if the user happens to have selected something and gone off the rails when stopping
-        // their selection, catch it here
+        // User released the mouse on a pile or target. Here we'll check to see if the user 
+        // started selecting a phrase and had a "fat finger" moment, missing the source line when
+        // they finished their selection. If so, we'll manually fire a Mouse Up event on the 
+        // source line instead.
         checkStopSelecting: function (event) {
             if (isSelecting === true) {
                 // pretend the user wanted the last selected item to be the end of the selection
@@ -252,66 +322,6 @@ define(function (require) {
                 $("#Placeholder").prop('disabled', false);
             }
         },
-        getTimestamp: function () {
-            var curDate = new Date();
-            //"2013-09-18T18:50:35z";
-            return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
-        },
-        // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
-        // This method currently strips out all punctuation to match the words.
-        findInKB: function (key) {
-            var result = null,
-                strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-            try {
-                result = this.kblist.findWhere({'source': strNoPunctuation});
-                if (typeof result === 'undefined') {
-                    return null;
-                }
-            } catch (err) {
-                console.log(err);
-            }
-            return result;
-        },
-        // Helper method to move the editing cursor forwards or backwards one pile.
-        // this also calls blur(), which saves any changes.
-        moveCursor: function (event, moveForward) {
-            var next_edit = null;
-
-            event.stopPropagation();
-            event.preventDefault();
-            $(event.currentTarget).blur();
-            if (moveForward === false) {
-                // move backwards
-                next_edit = selectedStart.previousElementSibling;
-                if (next_edit.id.substr(0, 4) !== "pile") {
-                    // Probably a header -- see if you can go to the previous strip
-                    if (selectedStart.parentElement.previousElementSibling !== null) {
-                        next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
-                    } else {
-                        next_edit = null;
-                        console.log("reached first pile.");
-                    }
-                }
-            } else {
-                // move forwards
-                if (selectedStart.nextElementSibling !== null) {
-                    next_edit = selectedStart.nextElementSibling;
-                } else {
-                    // last pile in the strip -- see if you can go to the next strip
-                    if (selectedStart.parentElement.nextElementSibling !== null) {
-                        next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
-                    } else {
-                        // no more piles - get out
-                        next_edit = null;
-                        console.log("reached last pile.");
-                    }
-                }
-            }
-            if (next_edit) {
-                console.log("next edit: " + next_edit.id);
-                next_edit.childNodes[4].click();
-            }
-        },
         // click event handler for the target field 
         selectedAdaptation: function (event) {
             var tu = null,
@@ -337,8 +347,9 @@ define(function (require) {
                     // found at least one match -- populate the target with the first match
                     refstrings = tu.get('refstring');
                     $(event.currentTarget).html(refstrings[0].target);
-                    // mark it purple (TODO: unmark when user moves again...)
-//                    $(event.currentTarget).addClass('fromkb');
+                    // mark it purple
+                    $(event.currentTarget).addClass('fromkb');
+                    showingKBInput = true;
                     // mark the field as changed (so the KB gets incremented)
                     isDirty = true;
                     // jump to the next field
@@ -376,6 +387,11 @@ define(function (require) {
                 event.preventDefault();
                 $(event.currentTarget).blur();
             } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                // remove any earlier kb "purple"
+                if (showingKBInput === true) {
+                    $(".target").removeClass("fromkb");
+                    showingKBInput = false;
+                }
                 // If tab/enter is pressed, blur and move to edit the next pile
                 if (event.shiftKey) {
                     this.moveCursor(event, false);  // shift tab/enter -- move backwards
@@ -473,14 +489,11 @@ define(function (require) {
                     this.kblist.add(newTU);
                 }
             }
-
             // Now update the model
             if (trimmedValue) {
 //                console.log(model);
-
                 // update the model with the new target text
                 model.set({target: trimmedValue});
-
 				if (value !== trimmedValue) {
 					// Model values changes consisting of whitespaces only are
 					// not causing change to be triggered. Check for this condition
@@ -764,5 +777,4 @@ define(function (require) {
             }
         }
     });
-
 });
