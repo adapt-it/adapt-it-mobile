@@ -20,7 +20,7 @@ define(function (require) {
         selectedEnd = null,
         idxStart = null,
         idxEnd = null,
-        showingKBInput = false,
+        clearKBInput = false,
         isDirty = false,
         isSelecting = false,
         isPlaceholder = false,
@@ -349,7 +349,7 @@ define(function (require) {
                     $(event.currentTarget).html(refstrings[0].target);
                     // mark it purple
                     $(event.currentTarget).addClass('fromkb');
-                    showingKBInput = true;
+                    clearKBInput = false;
                     // mark the field as changed (so the KB gets incremented)
                     isDirty = true;
                     // jump to the next field
@@ -358,11 +358,13 @@ define(function (require) {
                 } else {
                     // nothing in the KB -- populate the target with the source text as the next best guess
                     $(event.currentTarget).html(sourceText);
+                    clearKBInput = true;
                     isDirty = true; // we made a change (populating from the source text)
                 }
             } else {
                 // something already in the edit field -- reset the dirty bit because
                 // we haven't made any changes yet
+                clearKBInput = true;
                 isDirty = false;
             }
             if (foundInKB === false) {
@@ -387,11 +389,6 @@ define(function (require) {
                 event.preventDefault();
                 $(event.currentTarget).blur();
             } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
-                // remove any earlier kb "purple"
-                if (showingKBInput === true) {
-                    $(".target").removeClass("fromkb");
-                    showingKBInput = false;
-                }
                 // If tab/enter is pressed, blur and move to edit the next pile
                 if (event.shiftKey) {
                     this.moveCursor(event, false);  // shift tab/enter -- move backwards
@@ -417,6 +414,11 @@ define(function (require) {
             
             // remove contenteditable attribute on the div
             $(event.currentTarget).removeAttr('contenteditable');
+            // remove any earlier kb "purple"
+            if (clearKBInput === true) {
+                $(".target").removeClass("fromkb");
+                clearKBInput = false;
+            }
             // get the adaptation text
 			value = $(event.currentTarget).text();
             trimmedValue = value.trim();
