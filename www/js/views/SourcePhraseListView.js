@@ -436,21 +436,17 @@ define(function (require) {
                         refstrings = tu.get('refstring'),
                         oldValue = model.get('target');
                     // delete or decrement the old value
-                    if (oldValue > 0) {
+                    if (oldValue.length > 0) {
                         // the model has an old value -- try to find and remove the corresponding KB entry
                         for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].get('target') === oldValue) {
-                                if (refstrings[i].n === '1') {
+                            if (refstrings[i].target === oldValue) {
+                                if (refstrings[i].n !== '0') {
                                     // more than one refcount -- decrement it
                                     refstrings[i].n--;
-                                } else {
-                                    // only one refcount -- remove the element from the KB
-                                    refstrings.splice(i, 1);
                                 }
                                 break;
                             }
                         }
-                        
                     }
                     // add or increment the new value
                     for (i = 0; i < refstrings.length; i++) {
