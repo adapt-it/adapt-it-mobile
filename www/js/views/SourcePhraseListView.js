@@ -12,10 +12,12 @@ define(function (require) {
         SourcePhraseView  = require('app/views/SourcePhraseView'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
+        projModel   = require('app/models/project'),
         tplText     = require('text!tpl/SourcePhraseList.html'),
-        template = Handlebars.compile(tplText),
+        template    = Handlebars.compile(tplText),
         kblist      = null, // real value passed in constructor (ChapterView.js)
-        projectPrefix = "en.en",    // TODO: source.target ISO639 codes
+        projectPrefix = projModel.Project.get('id'), // <src>.<tgt> ISO639, e.g., "en.en"
+        copyPunct = true,
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -55,6 +57,26 @@ define(function (require) {
         getTimestamp: function () {
             var curDate = new Date();
             return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
+        },
+        // Helper method to copy any punctuation from the source to the target field. This happens
+        // 
+        copyPunctuation: function (source, target) {
+//            var result = "",
+//                idx = 0,
+//                targetNoPunct = target.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
+//                hasPunct = source.search(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/);
+//            if (hasPunct !== -1) {
+//                // copy over punctuation
+//                if (hasPunct === 0) {
+//                    // beginning punctuation
+//                    source.charAt[idx].in
+//                }
+//                while (idx < source.len
+//            } else {
+//                // don't do anything
+//                result = target;
+//            }
+//            return result;
         },
         // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
         // This method currently strips out all punctuation to match the words; a null is returned 
@@ -328,6 +350,7 @@ define(function (require) {
                 strID = "",
                 model = null,
                 sourceText = "",
+                targetText = "",
                 refstrings = null,
                 foundInKB = false;
             // clear out any previous selection
@@ -346,7 +369,8 @@ define(function (require) {
                 if (tu !== null) {
                     // found at least one match -- populate the target with the first match
                     refstrings = tu.get('refstring');
-                    $(event.currentTarget).html(refstrings[0].target);
+                    targetText = refstrings[0].target;
+                    $(event.currentTarget).html(targetText);
                     // mark it purple
                     $(event.currentTarget).addClass('fromkb');
                     clearKBInput = false;
@@ -422,9 +446,12 @@ define(function (require) {
             // get the adaptation text
 			value = $(event.currentTarget).text();
             trimmedValue = value.trim();
+            
             // find the model object associated with this edit field
             strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
             model = this.collection.get(strID);
+            // add any punctuation back to the target field
+            this.copyPunctuation(model.get('source'), trimmedValue);
             // check for changes in the edit field
             if (isDirty === true) {
                 // something has changed -- update the KB
