@@ -16,7 +16,7 @@ define(function (require) {
         tplText     = require('text!tpl/SourcePhraseList.html'),
         template    = Handlebars.compile(tplText),
         kblist      = null, // real value passed in constructor (ChapterView.js)
-        projectPrefix = projModel.Project.get('id'), // <src>.<tgt> ISO639, e.g., "en.en"
+        projectPrefix = "en.en",// TODO: hook this up properly --> projModel.Project.get('id'), // <src>.<tgt> ISO639, e.g., "en.en"
         copyPunct = true,
         selectedStart = null,
         selectedEnd = null,
