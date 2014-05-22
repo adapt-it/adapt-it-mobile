@@ -152,8 +152,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "judged,",
+                follpuncts: ",",
+                source: "judged",
                 target: "judged"
             },
             {
@@ -232,8 +232,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "land.",
+                follpuncts: ".",
+                source: "land",
                 target: ""
             },
             {
@@ -372,8 +372,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Moab,",
+                follpuncts: ",",
+                source: "Moab",
                 target: ""
             },
             {
@@ -382,8 +382,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "he,",
+                follpuncts: ",",
+                source: "he",
                 target: ""
             },
             {
@@ -412,8 +412,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "wife,",
+                follpuncts: ",",
+                source: "wife",
                 target: ""
             },
             {
@@ -452,8 +452,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "sons.",
+                follpuncts: ".",
+                source: "sons",
                 target: ""
             },
             {
@@ -522,8 +522,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Elimelech,",
+                follpuncts: ",",
+                source: "Elimelech",
                 target: ""
             },
             {
@@ -592,8 +592,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Naomi,",
+                follpuncts: ",",
+                source: "Naomi",
                 target: ""
             },
             {
@@ -692,8 +692,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Chilion,",
+                follpuncts: ",",
+                source: "Chilion",
                 target: ""
             },
             {
@@ -732,8 +732,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Judah.",
+                follpuncts: ".",
+                source: "Judah",
                 target: ""
             },
             {
@@ -802,8 +802,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Moab,",
+                follpuncts: ",",
+                source: "Moab",
                 target: ""
             },
             {
@@ -832,8 +832,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "there.",
+                follpuncts: ".",
+                source: "there",
                 target: ""
             },
             {
@@ -842,8 +842,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Elimilech,",
+                follpuncts: ",",
+                source: "Elimilech",
                 target: ""
             },
             {
@@ -862,8 +862,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "husband,",
+                follpuncts: ",",
+                source: "husband",
                 target: ""
             },
             {
@@ -872,8 +872,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "died;",
+                follpuncts: ";",
+                source: "died",
                 target: ""
             },
             {
@@ -912,8 +912,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "left,",
+                follpuncts: ",",
+                source: "left",
                 target: ""
             },
             {
@@ -952,8 +952,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "sons.",
+                follpuncts: ".",
+                source: "sons",
                 target: ""
             },
             {
@@ -1042,8 +1042,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Moab;",
+                follpuncts: ";",
+                source: "Moab",
                 target: ""
             },
             {
@@ -1112,8 +1112,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Orpah,",
+                follpuncts: ",",
+                source: "Orpah",
                 target: ""
             },
             {
@@ -1182,8 +1182,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Ruth:",
+                follpuncts: ":",
+                source: "Ruth",
                 target: ""
             },
             {
@@ -1252,8 +1252,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "years.",
+                follpuncts: ".",
+                source: "years",
                 target: ""
             },
             {
@@ -1302,8 +1302,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "died,",
+                follpuncts: ",",
+                source: "died",
                 target: ""
             },
             {
@@ -1430,10 +1430,10 @@ define(function (require) {
                 id: "RUT001-149",
                 markers: null,
                 orig: null,
-                source: "husband.",
+                source: "husband",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ".",
                 target: ""
             },
             {
@@ -1492,8 +1492,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "daughters-in-law,",
+                follpuncts: ",",
+                source: "daughters-in-law",
                 target: ""
             },
             {
@@ -1582,8 +1582,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Moab;",
+                follpuncts: ";",
+                source: "Moab",
                 target: ""
             },
             {
@@ -1710,10 +1710,10 @@ define(function (require) {
                 id: "RUT001-177",
                 markers: "\\f +",
                 orig: null,
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                source: "\"Yahweh\"",
+                follpuncts: "\"",
+                source: "Yahweh",
                 target: ""
             },
             {
@@ -1752,8 +1752,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Name,",
+                follpuncts: ",",
+                source: "Name",
                 target: ""
             },
             {
@@ -1780,20 +1780,20 @@ define(function (require) {
                 id: "RUT001-184",
                 markers: null,
                 orig: null,
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                source: "\"LORD\"",
+                follpuncts: "\"",
+                source: "LORD",
                 target: ""
             },
             {
                 id: "RUT001-185",
                 markers: null,
                 orig: null,
-                prepuncts: "",
+                prepuncts: "(",
                 midpuncts: "",
                 follpuncts: "",
-                source: "(all",
+                source: "all",
                 target: ""
             },
             {
@@ -1802,8 +1802,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "caps)",
+                follpuncts: ")",
+                source: "caps",
                 target: ""
             },
             {
@@ -1830,10 +1830,10 @@ define(function (require) {
                 id: "RUT001-189",
                 markers: null,
                 orig: null,
-                source: "translations.",
+                source: "translations",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ".",
                 target: ""
             },
             {
@@ -1912,8 +1912,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "bread.",
+                follpuncts: ".",
+                source: "bread",
                 target: ""
             },
             {
@@ -2010,10 +2010,10 @@ define(function (require) {
                 id: "RUT001-207",
                 markers: null,
                 orig: null,
-                source: "was,",
+                source: "was",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ",",
                 target: ""
             },
             {
@@ -2072,8 +2072,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "her;",
+                follpuncts: ";",
+                source: "her",
                 target: ""
             },
             {
@@ -2202,8 +2202,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "Judah.",
+                follpuncts: ".",
+                source: "Judah",
                 target: ""
             },
             {
@@ -2260,20 +2260,20 @@ define(function (require) {
                 id: "RUT001-232",
                 markers: null,
                 orig: null,
-                source: "daughters-in-law,",
+                source: "daughters-in-law",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ",",
                 target: ""
             },
             {
                 id: "RUT001-233",
                 markers: null,
                 orig: null,
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                source: "\"Go,",
+                follpuncts: ",",
+                source: "Go",
                 target: ""
             },
             {
@@ -2352,8 +2352,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "house:",
+                follpuncts: ":",
+                source: "house",
                 target: ""
             },
             {
@@ -2402,8 +2402,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "you,",
+                follpuncts: ",",
+                source: "you",
                 target: ""
             },
             {
@@ -2472,8 +2472,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "dead,",
+                follpuncts: ",",
+                source: "dead",
                 target: ""
             },
             {
@@ -2502,8 +2502,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "me.",
+                follpuncts: ".",
+                source: "me",
                 target: ""
             },
             {
@@ -2582,8 +2582,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "rest,",
+                follpuncts: ",",
+                source: "rest",
                 target: ""
             },
             {
@@ -2672,8 +2672,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "husband.",
+                follpuncts: ".\"",
+                source: "husband",
                 target: ""
             },
             {
@@ -2712,8 +2712,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "them,",
+                follpuncts: ",",
+                source: "them",
                 target: ""
             },
             {
@@ -2772,8 +2772,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "voice,",
+                follpuncts: ",",
+                source: "voice",
                 target: ""
             },
             {
@@ -2792,8 +2792,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "wept.",
+                follpuncts: ".",
+                source: "wept",
                 target: ""
             },
             {
@@ -2832,18 +2832,18 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "her,",
+                follpuncts: ",",
+                source: "her",
                 target: ""
             },
             {
                 id: "RUT001-290",
                 markers: null,
                 orig: null,
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                source: "\"No,",
+                follpuncts: ",",
+                source: "No",
                 target: ""
             },
             {
@@ -2932,8 +2932,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "people.\"",
+                follpuncts: ".\"",
+                source: "people",
                 target: ""
             },
             {
@@ -2952,8 +2952,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "said,",
+                follpuncts: ",",
+                source: "said",
                 target: ""
             },
             {
@@ -2962,8 +2962,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "\"Go",
+                follpuncts: "\"",
+                source: "Go",
                 target: ""
             },
             {
@@ -2972,8 +2972,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "back,",
+                follpuncts: ",",
+                source: "back",
                 target: ""
             },
             {
@@ -2992,8 +2992,8 @@ define(function (require) {
                 orig: null,
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                source: "daughters.",
+                follpuncts: ".",
+                source: "daughters",
                 target: ""
             },
             {
@@ -3021,3270 +3021,3270 @@ define(function (require) {
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-309",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "want",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "want",
+                target: ""
             },
             {
                 id: "RUT001-310",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-311",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "go",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "go",
+                target: ""
             },
             {
                 id: "RUT001-312",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "with",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "with",
+                target: ""
             },
             {
                 id: "RUT001-313",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me?",
-                "target": ""
+                follpuncts: "?",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-314",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Do",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Do",
+                target: ""
             },
             {
                 id: "RUT001-315",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-316",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "still",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "still",
+                target: ""
             },
             {
                 id: "RUT001-317",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "have",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "have",
+                target: ""
             },
             {
                 id: "RUT001-318",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "sons",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "sons",
+                target: ""
             },
             {
                 id: "RUT001-319",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "in",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "in",
+                target: ""
             },
             {
                 id: "RUT001-320",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "my",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "my",
+                target: ""
             },
             {
                 id: "RUT001-321",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "womb,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "womb",
+                target: ""
             },
             {
                 id: "RUT001-322",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "that",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "that",
+                target: ""
             },
             {
                 id: "RUT001-323",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-324",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "may",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "may",
+                target: ""
             },
             {
                 id: "RUT001-325",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "be",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "be",
+                target: ""
             },
             {
                 id: "RUT001-326",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-327",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "husbands?",
-                "target": ""
+                follpuncts: "?",
+                markers: null,
+                orig: null,
+                source: "husbands",
+                target: ""
             },
             {
                 id: "RUT001-328",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\v 12",
-                "source": "Go",
-                "target": ""
+                orig: null,
+                markers: "\\v 12",
+                source: "Go",
+                target: ""
             },
             {
                 id: "RUT001-329",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "back,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "back",
+                target: ""
             },
             {
                 id: "RUT001-330",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "go",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "go",
+                target: ""
             },
             {
                 id: "RUT001-331",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-332",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "way;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "way",
+                target: ""
             },
             {
                 id: "RUT001-333",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-334",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-335",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "am",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "am",
+                target: ""
             },
             {
                 id: "RUT001-336",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "too",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "too",
+                target: ""
             },
             {
                 id: "RUT001-337",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "old",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "old",
+                target: ""
             },
             {
                 id: "RUT001-338",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-339",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "have",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "have",
+                target: ""
             },
             {
                 id: "RUT001-340",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "a",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "a",
+                target: ""
             },
             {
                 id: "RUT001-341",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "husband.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "husband",
+                target: ""
             },
             {
                 id: "RUT001-342",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "If",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "If",
+                target: ""
             },
             {
                 id: "RUT001-343",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-344",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "should",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "should",
+                target: ""
             },
             {
                 id: "RUT001-345",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "say,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "say",
+                target: ""
             },
             {
                 id: "RUT001-346",
-                prepuncts: "",
+                prepuncts: "\'",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\'I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-347",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "have",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "have",
+                target: ""
             },
             {
                 id: "RUT001-348",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "hope,\'",
-                "target": ""
+                follpuncts: ",\'",
+                markers: null,
+                orig: null,
+                source: "hope",
+                target: ""
             },
             {
                 id: "RUT001-349",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "if",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "if",
+                target: ""
             },
             {
                 id: "RUT001-350",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-351",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "should",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "should",
+                target: ""
             },
             {
                 id: "RUT001-352",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "even",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "even",
+                target: ""
             },
             {
                 id: "RUT001-353",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "have",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "have",
+                target: ""
             },
             {
                 id: "RUT001-354",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "a",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "a",
+                target: ""
             },
             {
                 id: "RUT001-355",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "husband",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "husband",
+                target: ""
             },
             {
                 id: "RUT001-356",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "tonight,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "tonight",
+                target: ""
             },
             {
                 id: "RUT001-357",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-358",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "should",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "should",
+                target: ""
             },
             {
                 id: "RUT001-359",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "also",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "also",
+                target: ""
             },
             {
                 id: "RUT001-360",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "bear",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "bear",
+                target: ""
             },
             {
                 id: "RUT001-361",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "sons;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "sons",
+                target: ""
             },
             {
                 id: "RUT001-362",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\v 13",
-                "source": "would",
-                "target": ""
+                orig: null,
+                markers: "\\v 13",
+                source: "would",
+                target: ""
             },
             {
                 id: "RUT001-363",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-364",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "then",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "then",
+                target: ""
             },
             {
                 id: "RUT001-365",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "wait",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "wait",
+                target: ""
             },
             {
                 id: "RUT001-366",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "until",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "until",
+                target: ""
             },
             {
                 id: "RUT001-367",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-368",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "were",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "were",
+                target: ""
             },
             {
                 id: "RUT001-369",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "grown?",
-                "target": ""
+                follpuncts: "?",
+                markers: null,
+                orig: null,
+                source: "grown",
+                target: ""
             },
             {
                 id: "RUT001-370",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Would",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Would",
+                target: ""
             },
             {
                 id: "RUT001-371",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-372",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "then",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "then",
+                target: ""
             },
             {
                 id: "RUT001-373",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "refrain",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "refrain",
+                target: ""
             },
             {
                 id: "RUT001-374",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "from",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "from",
+                target: ""
             },
             {
                 id: "RUT001-375",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "having",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "having",
+                target: ""
             },
             {
                 id: "RUT001-376",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "husbands?",
-                "target": ""
+                follpuncts: "?",
+                markers: null,
+                orig: null,
+                source: "husbands",
+                target: ""
             },
             {
                 id: "RUT001-377",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "No,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "No",
+                target: ""
             },
             {
                 id: "RUT001-378",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "my",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "my",
+                target: ""
             },
             {
                 id: "RUT001-379",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "daughters,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "daughters",
+                target: ""
             },
             {
                 id: "RUT001-380",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-381",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "it",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "it",
+                target: ""
             },
             {
                 id: "RUT001-382",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "grieves",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "grieves",
+                target: ""
             },
             {
                 id: "RUT001-383",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-384",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "much",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "much",
+                target: ""
             },
             {
                 id: "RUT001-385",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-386",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-387",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "sakes,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "sakes",
+                target: ""
             },
             {
                 id: "RUT001-388",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-389",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-390",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "hand",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "hand",
+                target: ""
             },
             {
                 id: "RUT001-391",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "of",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "of",
+                target: ""
             },
             {
                 id: "RUT001-392",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Yahweh",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Yahweh",
+                target: ""
             },
             {
                 id: "RUT001-393",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-394",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "gone",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "gone",
+                target: ""
             },
             {
                 id: "RUT001-395",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "out",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "out",
+                target: ""
             },
             {
                 id: "RUT001-396",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "against",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "against",
+                target: ""
             },
             {
                 id: "RUT001-397",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me.\"",
-                "target": ""
+                follpuncts: ".\"",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-398",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\p \\v 14",
-                "orig": null,
-                "source": "They",
-                "target": ""
+                markers: "\\p \\v 14",
+                orig: null,
+                source: "They",
+                target: ""
             },
             {
                 id: "RUT001-399",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "lifted",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "lifted",
+                target: ""
             },
             {
                 id: "RUT001-400",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "up",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "up",
+                target: ""
             },
             {
                 id: "RUT001-401",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "their",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "their",
+                target: ""
             },
             {
                 id: "RUT001-402",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "voice,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "voice",
+                target: ""
             },
             {
                 id: "RUT001-403",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-404",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "wept",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "wept",
+                target: ""
             },
             {
                 id: "RUT001-405",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "again:",
-                "target": ""
+                follpuncts: ":",
+                markers: null,
+                orig: null,
+                source: "again",
+                target: ""
             },
             {
                 id: "RUT001-406",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-407",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Orpah",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Orpah",
+                target: ""
             },
             {
                 id: "RUT001-408",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "kissed",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "kissed",
+                target: ""
             },
             {
                 id: "RUT001-409",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-410",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "mother-in-law,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "mother-in-law",
+                target: ""
             },
             {
                 id: "RUT001-411",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "but",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "but",
+                target: ""
             },
             {
                 id: "RUT001-412",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Ruth",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Ruth",
+                target: ""
             },
             {
                 id: "RUT001-413",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "joined",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "joined",
+                target: ""
             },
             {
                 id: "RUT001-414",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "with",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "with",
+                target: ""
             },
             {
                 id: "RUT001-415",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-416",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\v 15",
-                "orig": null,
-                "source": "She",
-                "target": ""
+                markers: "\\v 15",
+                orig: null,
+                source: "She",
+                target: ""
             },
             {
                 id: "RUT001-417",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "said,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "said",
+                target: ""
             },
             {
                 id: "RUT001-418",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"Behold,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "Behold",
+                target: ""
             },
             {
                 id: "RUT001-419",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-420",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "sister-in-law",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "sister-in-law",
+                target: ""
             },
             {
                 id: "RUT001-421",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-422",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "gone",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "gone",
+                target: ""
             },
             {
                 id: "RUT001-423",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "back",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "back",
+                target: ""
             },
             {
                 id: "RUT001-424",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-425",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-426",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "people,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "people",
+                target: ""
             },
             {
                 id: "RUT001-427",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-428",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-429",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-430",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "god.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "god",
+                target: ""
             },
             {
                 id: "RUT001-431",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Follow",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Follow",
+                target: ""
             },
             {
                 id: "RUT001-432",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-433",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "sister-in-law.\"",
-                "target": ""
+                follpuncts: ".\"",
+                markers: null,
+                orig: null,
+                source: "sister-in-law",
+                target: ""
             },
             {
                 id: "RUT001-434",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\p \\v 16",
-                "orig": null,
-                "source": "Ruth",
-                "target": ""
+                markers: "\\p \\v 16",
+                orig: null,
+                source: "Ruth",
+                target: ""
             },
             {
                 id: "RUT001-435",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "said,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "said",
+                target: ""
             },
             {
                 id: "RUT001-436",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"Don\'t",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Don\'t",
+                target: ""
             },
             {
                 id: "RUT001-437",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "entreat",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "entreat",
+                target: ""
             },
             {
                 id: "RUT001-438",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-439",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-440",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "leave",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "leave",
+                target: ""
             },
             {
                 id: "RUT001-441",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-442",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-443",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-444",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "return",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "return",
+                target: ""
             },
             {
                 id: "RUT001-445",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "from",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "from",
+                target: ""
             },
             {
                 id: "RUT001-446",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "following",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "following",
+                target: ""
             },
             {
                 id: "RUT001-447",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "after",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "after",
+                target: ""
             },
             {
                 id: "RUT001-448",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-449",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-450",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "where",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "where",
+                target: ""
             },
             {
                 id: "RUT001-451",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-452",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "go,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "go",
+                target: ""
             },
             {
                 id: "RUT001-453",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-454",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "will",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "will",
+                target: ""
             },
             {
                 id: "RUT001-455",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "go;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "go",
+                target: ""
             },
             {
                 id: "RUT001-456",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-457",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "where",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "where",
+                target: ""
             },
             {
                 id: "RUT001-458",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-459",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "lodge,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "lodge",
+                target: ""
             },
             {
                 id: "RUT001-460",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-461",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "will",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "will",
+                target: ""
             },
             {
                 id: "RUT001-462",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "lodge;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "lodge",
+                target: ""
             },
             {
                 id: "RUT001-463",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-464",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "people",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "people",
+                target: ""
             },
             {
                 id: "RUT001-465",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "will",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "will",
+                target: ""
             },
             {
                 id: "RUT001-466",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "be",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "be",
+                target: ""
             },
             {
                 id: "RUT001-467",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "my",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "my",
+                target: ""
             },
             {
                 id: "RUT001-468",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "people,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "people",
+                target: ""
             },
             {
                 id: "RUT001-470",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-471",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "your",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "your",
+                target: ""
             },
             {
                 id: "RUT001-472",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "God",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "God",
+                target: ""
             },
             {
                 id: "RUT001-473",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\f +",
-                "orig": null,
-                "source": "The",
-                "target": ""
+                markers: "\\f +",
+                orig: null,
+                source: "The",
+                target: ""
             },
             {
                 id: "RUT001-474",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Hebrew",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Hebrew",
+                target: ""
             },
             {
                 id: "RUT001-475",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "word",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "word",
+                target: ""
             },
             {
                 id: "RUT001-476",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"God\"",
-                "target": ""
+                follpuncts: "\"",
+                markers: null,
+                orig: null,
+                source: "God",
+                target: ""
             },
             {
                 id: "RUT001-477",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "is",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "is",
+                target: ""
             },
             {
                 id: "RUT001-478",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"Elohim\".",
-                "target": ""
+                follpuncts: "\".",
+                markers: null,
+                orig: null,
+                source: "Elohim",
+                target: ""
             },
             {
                 id: "RUT001-479",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\f*",
-                "source": "my",
-                "target": ""
+                orig: null,
+                markers: "\\f*",
+                source: "my",
+                target: ""
             },
             {
                 id: "RUT001-480",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "God;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "God",
+                target: ""
             },
             {
                 id: "RUT001-481",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\v 17",
-                "source": "where",
-                "target": ""
+                orig: null,
+                markers: "\\v 17",
+                source: "where",
+                target: ""
             },
             {
                 id: "RUT001-482",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-483",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "die,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "die",
+                target: ""
             },
             {
                 id: "RUT001-484",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "will",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "will",
+                target: ""
             },
             {
                 id: "RUT001-485",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-486",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "die,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "die",
+                target: ""
             },
             {
                 id: "RUT001-487",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-488",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "there",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "there",
+                target: ""
             },
             {
                 id: "RUT001-489",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "will",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "will",
+                target: ""
             },
             {
                 id: "RUT001-490",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-491",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "be",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "be",
+                target: ""
             },
             {
                 id: "RUT001-492",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "buried.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "buried",
+                target: ""
             },
             {
                 id: "RUT001-493",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Yahweh",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Yahweh",
+                target: ""
             },
             {
                 id: "RUT001-494",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "do",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "do",
+                target: ""
             },
             {
                 id: "RUT001-495",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-496",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-497",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-498",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "more",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "more",
+                target: ""
             },
             {
                 id: "RUT001-499",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "also,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "also",
+                target: ""
             },
             {
                 id: "RUT001-500",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "if",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "if",
+                target: ""
             },
             {
                 id: "RUT001-501",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "anything",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "anything",
+                target: ""
             },
             {
                 id: "RUT001-502",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "but",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "but",
+                target: ""
             },
             {
                 id: "RUT001-503",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "death",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "death",
+                target: ""
             },
             {
                 id: "RUT001-504",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "part",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "part",
+                target: ""
             },
             {
                 id: "RUT001-505",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-506",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-507",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me.\"",
-                "target": ""
+                follpuncts: ".\"",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-508",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\p \\v 18",
-                "source": "When",
-                "target": ""
+                orig: null,
+                markers: "\\p \\v 18",
+                source: "When",
+                target: ""
             },
             {
                 id: "RUT001-509",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "she",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "she",
+                target: ""
             },
             {
                 id: "RUT001-510",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "saw",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "saw",
+                target: ""
             },
             {
                 id: "RUT001-511",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "that",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "that",
+                target: ""
             },
             {
                 id: "RUT001-512",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "she",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "she",
+                target: ""
             },
             {
                 id: "RUT001-513",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "was",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "was",
+                target: ""
             },
             {
                 id: "RUT001-514",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "steadfastly",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "steadfastly",
+                target: ""
             },
             {
                 id: "RUT001-515",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "minded",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "minded",
+                target: ""
             },
             {
                 id: "RUT001-516",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-517",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "go",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "go",
+                target: ""
             },
             {
                 id: "RUT001-518",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "with",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "with",
+                target: ""
             },
             {
                 id: "RUT001-519",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-520",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "she",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "she",
+                target: ""
             },
             {
                 id: "RUT001-521",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "left",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "left",
+                target: ""
             },
             {
                 id: "RUT001-522",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "off",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "off",
+                target: ""
             },
             {
                 id: "RUT001-523",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "speaking",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "speaking",
+                target: ""
             },
             {
                 id: "RUT001-524",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-525",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-526",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\p \\v 19",
-                "orig": null,
-                "source": "So",
-                "target": ""
+                markers: "\\p \\v 19",
+                orig: null,
+                source: "So",
+                target: ""
             },
             {
                 id: "RUT001-527",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-528",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "two",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "two",
+                target: ""
             },
             {
                 id: "RUT001-529",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "went",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "went",
+                target: ""
             },
             {
                 id: "RUT001-530",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "until",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "until",
+                target: ""
             },
             {
                 id: "RUT001-531",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-532",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "came",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "came",
+                target: ""
             },
             {
                 id: "RUT001-533",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-534",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Bethlehem.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "Bethlehem",
+                target: ""
             },
             {
                 id: "RUT001-535",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "It",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "It",
+                target: ""
             },
             {
                 id: "RUT001-536",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Happened,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "Happened",
+                target: ""
             },
             {
                 id: "RUT001-537",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "when",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "when",
+                target: ""
             },
             {
                 id: "RUT001-538",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-539",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "had",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "had",
+                target: ""
             },
             {
                 id: "RUT001-540",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "come",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "come",
+                target: ""
             },
             {
                 id: "RUT001-541",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-542",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Bethlehem,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "Bethlehem",
+                target: ""
             },
             {
                 id: "RUT001-543",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "that",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "that",
+                target: ""
             },
             {
                 id: "RUT001-544",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "all",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "all",
+                target: ""
             },
             {
                 id: "RUT001-545",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-546",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "city",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "city",
+                target: ""
             },
             {
                 id: "RUT001-547",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "was",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "was",
+                target: ""
             },
             {
                 id: "RUT001-548",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "moved",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "moved",
+                target: ""
             },
             {
                 id: "RUT001-549",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "about",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "about",
+                target: ""
             },
             {
                 id: "RUT001-550",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "them,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "them",
+                target: ""
             },
             {
                 id: "RUT001-551",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-552",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-553",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "asked,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "asked",
+                target: ""
             },
             {
                 id: "RUT001-554",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"Is",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Is",
+                target: ""
             },
             {
                 id: "RUT001-555",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "this",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "this",
+                target: ""
             },
             {
                 id: "RUT001-556",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Naomi?\"",
-                "target": ""
+                follpuncts: "?\"",
+                markers: null,
+                orig: null,
+                source: "Naomi",
+                target: ""
             },
             {
                 id: "RUT001-557",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\p \\v 20",
-                "orig": null,
-                "source": "She",
-                "target": ""
+                markers: "\\p \\v 20",
+                orig: null,
+                source: "She",
+                target: ""
             },
             {
                 id: "RUT001-558",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "said",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "said",
+                target: ""
             },
             {
                 id: "RUT001-559",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-560",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "them,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "them",
+                target: ""
             },
             {
                 id: "RUT001-561",
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "\"Don\'t",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Don\'t",
+                target: ""
             },
             {
                 id: "RUT001-562",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "call",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "call",
+                target: ""
             },
             {
                 id: "RUT001-563",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-564",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Naomi.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "Naomi",
+                target: ""
             },
             {
                 id: "RUT001-565",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Call",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Call",
+                target: ""
             },
             {
                 id: "RUT001-566",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-567",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Mara;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "Mara",
+                target: ""
             },
             {
                 id: "RUT001-568",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "for",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "for",
+                target: ""
             },
             {
                 id: "RUT001-569",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-570",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Almighty",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Almighty",
+                target: ""
             },
             {
                 id: "RUT001-571",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-572",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "dealt",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "dealt",
+                target: ""
             },
             {
                 id: "RUT001-573",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "very",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "very",
+                target: ""
             },
             {
                 id: "RUT001-574",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "bitterly",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "bitterly",
+                target: ""
             },
             {
                 id: "RUT001-575",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "with",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "with",
+                target: ""
             },
             {
                 id: "RUT001-576",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-577",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": "\\v 21",
-                "orig": null,
-                "source": "I",
-                "target": ""
+                markers: "\\v 21",
+                orig: null,
+                source: "I",
+                target: ""
             },
             {
                 id: "RUT001-578",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "went",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "went",
+                target: ""
             },
             {
                 id: "RUT001-479",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "out",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "out",
+                target: ""
             },
             {
                 id: "RUT001-580",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "full,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "full",
+                target: ""
             },
             {
                 id: "RUT001-581",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-582",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Yahweh",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Yahweh",
+                target: ""
             },
             {
                 id: "RUT001-583",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-584",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "brought",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "brought",
+                target: ""
             },
             {
                 id: "RUT001-585",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-586",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "back",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "back",
+                target: ""
             },
             {
                 id: "RUT001-587",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "empty;",
-                "target": ""
+                follpuncts: ";",
+                markers: null,
+                orig: null,
+                source: "empty",
+                target: ""
             },
             {
                 id: "RUT001-588",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "why",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "why",
+                target: ""
             },
             {
                 id: "RUT001-589",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "do",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "do",
+                target: ""
             },
             {
                 id: "RUT001-590",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "you",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "you",
+                target: ""
             },
             {
                 id: "RUT001-591",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "call",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "call",
+                target: ""
             },
             {
                 id: "RUT001-592",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-593",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Naomi,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "Naomi",
+                target: ""
             },
             {
                 id: "RUT001-594",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "since",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "since",
+                target: ""
             },
             {
                 id: "RUT001-595",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Yahweh",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Yahweh",
+                target: ""
             },
             {
                 id: "RUT001-596",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-597",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "testified",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "testified",
+                target: ""
             },
             {
                 id: "RUT001-598",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "against",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "against",
+                target: ""
             },
             {
                 id: "RUT001-599",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-600",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-601",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-602",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Almighty",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Almighty",
+                target: ""
             },
             {
                 id: "RUT001-603",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "has",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "has",
+                target: ""
             },
             {
                 id: "RUT001-604",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "afflicted",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "afflicted",
+                target: ""
             },
             {
                 id: "RUT001-605",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "me?\"",
-                "target": ""
+                follpuncts: "?\"",
+                markers: null,
+                orig: null,
+                source: "me",
+                target: ""
             },
             {
                 id: "RUT001-606",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "orig": null,
-                "markers": "\\v 22",
-                "source": "So",
-                "target": ""
+                orig: null,
+                markers: "\\v 22",
+                source: "So",
+                target: ""
             },
             {
                 id: "RUT001-607",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Naomi",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Naomi",
+                target: ""
             },
             {
                 id: "RUT001-608",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "returned,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "returned",
+                target: ""
             },
             {
                 id: "RUT001-609",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-610",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Ruth",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Ruth",
+                target: ""
             },
             {
                 id: "RUT001-611",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-612",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Moabitess,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "Moabitess",
+                target: ""
             },
             {
                 id: "RUT001-613",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-614",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "daughter-in-law,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "daughter-in-law",
+                target: ""
             },
             {
                 id: "RUT001-615",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "with",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "with",
+                target: ""
             },
             {
                 id: "RUT001-616",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "her,",
-                "target": ""
+                follpuncts: ",",
+                markers: null,
+                orig: null,
+                source: "her",
+                target: ""
             },
             {
                 id: "RUT001-617",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "who",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "who",
+                target: ""
             },
             {
                 id: "RUT001-618",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "returned",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "returned",
+                target: ""
             },
             {
                 id: "RUT001-619",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "out",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "out",
+                target: ""
             },
             {
                 id: "RUT001-620",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "of",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "of",
+                target: ""
             },
             {
                 id: "RUT001-621",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-622",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "country",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "country",
+                target: ""
             },
             {
                 id: "RUT001-623",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "of",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "of",
+                target: ""
             },
             {
                 id: "RUT001-624",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Moab:",
-                "target": ""
+                follpuncts: ":",
+                markers: null,
+                orig: null,
+                source: "Moab",
+                target: ""
             },
             {
                 id: "RUT001-625",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "and",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "and",
+                target: ""
             },
             {
                 id: "RUT001-626",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "they",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "they",
+                target: ""
             },
             {
                 id: "RUT001-627",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "came",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "came",
+                target: ""
             },
             {
                 id: "RUT001-628",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "to",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "to",
+                target: ""
             },
             {
                 id: "RUT001-629",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "Bethlehem",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "Bethlehem",
+                target: ""
             },
             {
                 id: "RUT001-630",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "in",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "in",
+                target: ""
             },
             {
                 id: "RUT001-631",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "the",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "the",
+                target: ""
             },
             {
                 id: "RUT001-632",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "beginning",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "beginning",
+                target: ""
             },
             {
                 id: "RUT001-633",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "of",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "of",
+                target: ""
             },
             {
                 id: "RUT001-634",
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "barley",
-                "target": ""
+                markers: null,
+                orig: null,
+                source: "barley",
+                target: ""
             },
             {
                 id: "RUT001-635",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
-                "markers": null,
-                "orig": null,
-                "source": "harvest.",
-                "target": ""
+                follpuncts: ".",
+                markers: null,
+                orig: null,
+                source: "harvest",
+                target: ""
             },
 // CH 2
             {
@@ -6351,10 +6351,10 @@ define(function (require) {
                 id: "RUT002-7",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ",",
                 markers: null,
                 orig: null,
-                source: "husband\'s,",
+                source: "husband\'s",
                 target: ""
             },
             {
@@ -6401,10 +6401,10 @@ define(function (require) {
                 id: "RUT002-12",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ",",
                 markers: null,
                 orig: null,
-                source: "wealth,",
+                source: "wealth",
                 target: ""
             },
             {
@@ -6451,10 +6451,10 @@ define(function (require) {
                 id: "RUT002-17",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ",",
                 markers: null,
                 orig: null,
-                source: "Elimelech,",
+                source: "Elimelech",
                 target: ""
             },
             {
@@ -6501,10 +6501,10 @@ define(function (require) {
                 id: "RUT002-22",
                 prepuncts: "",
                 midpuncts: "",
-                follpuncts: "",
+                follpuncts: ".",
                 markers: null,
                 orig: null,
-                source: "Boaz.",
+                source: "Boaz",
                 target: ""
             },
 // CH 3
