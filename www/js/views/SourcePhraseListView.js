@@ -16,7 +16,7 @@ define(function (require) {
         tplText     = require('text!tpl/SourcePhraseList.html'),
         template    = Handlebars.compile(tplText),
         kblist      = null, // real value passed in constructor (ChapterView.js)
-        projectPrefix = "en.en",// TODO: hook this up properly --> projModel.Project.get('id'), // <src>.<tgt> ISO639, e.g., "en.en"
+        project     = null, // real value passed in constructor
         copyPunct = true,
         selectedStart = null,
         selectedEnd = null,
@@ -500,7 +500,7 @@ define(function (require) {
                     var newID = Underscore.uniqueId(),
                         currentdate = new Date(),
                         newTU = new kbModels.TargetUnit({
-                            id: (projectPrefix + "." + newID),
+                            id: (this.project.id + "." + newID),
                             source: model.get('source'),
                             refstring: [
                                 {
