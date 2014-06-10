@@ -348,7 +348,8 @@ select.docNav {
     float: left;
     padding: 0 0.3em;
     padding-top: 1.2em;
-    padding-bottom: 1px; /* total height needs to == that of .pile */
+    /* edb 6/10/14 Firefox and Chrome -- 1px is too much; Safari is just right, just comment out for now */
+    /*padding-bottom: 1px; /* total height needs to == that of .pile */
     height: 3.8em;
 }
 .chapter-number {

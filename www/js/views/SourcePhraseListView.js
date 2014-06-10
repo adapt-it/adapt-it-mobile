@@ -60,23 +60,36 @@ define(function (require) {
         },
         // Helper method to copy any punctuation from the source to the target field. This happens
         // 
-        copyPunctuation: function (source, target) {
-//            var result = "",
-//                idx = 0,
-//                targetNoPunct = target.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
-//                hasPunct = source.search(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/);
-//            if (hasPunct !== -1) {
-//                // copy over punctuation
-//                if (hasPunct === 0) {
-//                    // beginning punctuation
-//                    source.charAt[idx].in
+        copyPunctuation: function (model, target) {
+            var i = 0,
+                result = "";
+            // add any prepuncts
+//            for (i = 0; i < model.prepuncts.length; i++) {
+//                // if this character is in the mapping, add the corresponding character
+//                if (this.project.punctPairsSource.indexOf(model.prepuncts[i]) > -1) {
+//                    result += this.project.PunctPairsTarget.charAt(this.project.punctPairsSource.indexOf(model.prepuncts[i]));
+//                } else {
+//                    // not there -- just add the character itself
+//                    result += model.prepuncts[i];
 //                }
-//                while (idx < source.len
-//            } else {
-//                // don't do anything
-//                result = target;
 //            }
-//            return result;
+//            // add the target
+//            result += target;
+//            // add any following puncts
+//            for (i = 0; i < model.follpuncts.length; i++) {
+//                // if this character is in the mapping, add the corresponding character
+//                if (this.project.punctPairsSource.indexOf(model.follpuncts[i]) > -1) {
+//                    result += this.project.PunctPairsTarget.charAt(this.project.punctPairsSource.indexOf(model.follpuncts[i]));
+//                } else {
+//                    // not there -- just add the character itself
+//                    result += model.follpuncts[i];
+//                }
+//            }
+            if (result === "") {
+                return target;
+            } else {
+                return result;
+            }
         },
         // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
         // This method currently strips out all punctuation to match the words; a null is returned 
