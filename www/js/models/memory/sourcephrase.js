@@ -2960,9 +2960,9 @@ define(function (require) {
                 id: "RUT001-302",
                 markers: null,
                 orig: null,
-                prepuncts: "",
+                prepuncts: "\"",
                 midpuncts: "",
-                follpuncts: "\"",
+                follpuncts: "",
                 source: "Go",
                 target: ""
             },

@@ -58,33 +58,36 @@ define(function (require) {
             var curDate = new Date();
             return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
         },
-        // Helper method to copy any punctuation from the source to the target field. This happens
+        // Helper method to copy any punctuation from the source to the target field. This method is
+        // called from unselectedAdaptation (when the focus blurs in the targt field).
         // 
         copyPunctuation: function (model, target) {
             var i = 0,
-                result = "";
+                result = "",
+                prepuncts = model.get('prepuncts'),
+                follpuncts = model.get('follpuncts');
             // add any prepuncts
-//            for (i = 0; i < model.prepuncts.length; i++) {
-//                // if this character is in the mapping, add the corresponding character
-//                if (this.project.punctPairsSource.indexOf(model.prepuncts[i]) > -1) {
-//                    result += this.project.PunctPairsTarget.charAt(this.project.punctPairsSource.indexOf(model.prepuncts[i]));
-//                } else {
-//                    // not there -- just add the character itself
-//                    result += model.prepuncts[i];
-//                }
-//            }
-//            // add the target
-//            result += target;
-//            // add any following puncts
-//            for (i = 0; i < model.follpuncts.length; i++) {
-//                // if this character is in the mapping, add the corresponding character
-//                if (this.project.punctPairsSource.indexOf(model.follpuncts[i]) > -1) {
-//                    result += this.project.PunctPairsTarget.charAt(this.project.punctPairsSource.indexOf(model.follpuncts[i]));
-//                } else {
-//                    // not there -- just add the character itself
-//                    result += model.follpuncts[i];
-//                }
-//            }
+            for (i = 0; i < prepuncts.length; i++) {
+                // if this character is in the mapping, add the corresponding character
+                if (this.project.PunctPairsSource.indexOf(prepuncts[i]) > -1) {
+                    result += this.project.PunctPairsTarget.charAt(this.project.PunctPairsSource.indexOf(prepuncts[i]));
+                } else {
+                    // not there -- just add the character itself
+                    result += prepuncts[i];
+                }
+            }
+            // add the target
+            result += target;
+            // add any following puncts
+            for (i = 0; i < follpuncts.length; i++) {
+                // if this character is in the mapping, add the corresponding character
+                if (this.project.PunctPairsSource.indexOf(follpuncts[i]) > -1) {
+                    result += this.project.PunctPairsTarget.charAt(this.project.PunctPairsSource.indexOf(follpuncts[i]));
+                } else {
+                    // not there -- just add the character itself
+                    result += follpuncts[i];
+                }
+            }
             if (result === "") {
                 return target;
             } else {
@@ -464,7 +467,7 @@ define(function (require) {
             strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
             model = this.collection.get(strID);
             // add any punctuation back to the target field
-            this.copyPunctuation(model.get('source'), trimmedValue);
+            $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
             // check for changes in the edit field
             if (isDirty === true) {
                 // something has changed -- update the KB
