@@ -15,6 +15,8 @@
     <content src="index.html" />
     <!-- allow local access -->
     <access origin="*" />
+    <!-- for Blackberry 10 -->
+    <feature name="File" value="File" />
     <!-- preferences -->
     <preference name="phonegap-version" value="3.4.0" />
     <preference name="Orientation" value="default" />

@@ -11,7 +11,7 @@ define(function (require) {
         */
         targetunits = [
             {
-                "id": "en.en.0000001",
+                "id": "en-us.en-au.0000001",
                 "source": "RUT",
                 "refstring": [
                     {
@@ -23,7 +23,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000002",
+                "id": "en-us.en-au.0000002",
                 "source": "08-RUT-web.sfm",
                 "refstring": [
                     {
@@ -35,7 +35,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000003",
+                "id": "en-us.en-au.0000003",
                 "source": "Ruth",
                 "refstring": [
                     {
@@ -47,7 +47,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000004",
+                "id": "en-us.en-au.0000004",
                 "source": "It",
                 "refstring": [
                     {
@@ -59,7 +59,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000005",
+                "id": "en-us.en-au.0000005",
                 "source": "happened",
                 "refstring": [
                     {
@@ -71,7 +71,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000006",
+                "id": "en-us.en-au.0000006",
                 "source": "in",
                 "refstring": [
                     {
@@ -83,7 +83,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000007",
+                "id": "en-us.en-au.0000007",
                 "source": "the",
                 "refstring": [
                     {
@@ -95,7 +95,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000008",
+                "id": "en-us.en-au.0000008",
                 "source": "days",
                 "refstring": [
                     {
@@ -107,7 +107,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000009",
+                "id": "en-us.en-au.0000009",
                 "source": "when",
                 "refstring": [
                     {
@@ -119,7 +119,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000010",
+                "id": "en-us.en-au.0000010",
                 "source": "judges",
                 "refstring": [
                     {
@@ -131,7 +131,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000011",
+                "id": "en-us.en-au.0000011",
                 "source": "judged",
                 "refstring": [
                     {
@@ -143,7 +143,7 @@ define(function (require) {
                 "user": "user:machine"
             },
             {
-                "id": "en.en.0000012",
+                "id": "en-us.en-au.0000012",
                 "source": "that",
                 "refstring": [
                     {

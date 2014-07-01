@@ -27,8 +27,8 @@ define(function (require) {
                 "SourceDir": "ltr",
                 "TargetDir": "ltr",
                 "NavDir": "ltr",
-                "id": "en.en",
-                "name": "English to English adaptations"
+                "id": "en-us.en-au",
+                "name": "US English to English adaptations"
             },
         findById = function (id) {
             var deferred = $.Deferred();
