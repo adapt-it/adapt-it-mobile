@@ -12,6 +12,17 @@
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__verseCount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastAdapted__ of a total of __verseCount__ verses have translation text).",
+        "lblWelcome": "Welcome",
+        "dscWelcome": "Welcome to Adapt It Mobile! To get started, you can either create a new project or open an existing one.",
+        "lblCreateProject": "Create Project",
+        "dscCreateProject": "Enter the name and code of the language. If you are unsure, click on the Lookup Codes button."
+        "lblOpenProject": "Open a Project",
+        "dscOpenProject": "Enter the web address of the project you want to open."
+        "lblSourceFont": "Source Font:",
+        "lblTargetFont": "Target Font:",
+        "lblNavFont": "Navigation Font:",
+        "lblChange": "Change...",
+        "lblRTL": "Language reads right-to-left",
         "ttlHelp": "Help",
         "lblPlaceholder": "Placeholder",
         "lblPhrase": "Phrase",
