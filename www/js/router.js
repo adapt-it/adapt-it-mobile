@@ -11,10 +11,12 @@ define(function (require) {
         PageSlider  = require('app/utils/pageslider'),
         HelpView    = require('app/views/HelpView'),
         HomeView    = require('app/views/HomeView'),
+        SelectProjectView = require('app/views/SelectProjectView'),
         LookupView  = require('app/views/LookupView'),
         slider      = new PageSlider($('body')),
         lookupView  = null,
         helpView    = null,
+        selectProjectView = null,
         homeView    = null;
     
     /** Handlebars helper methods **/
@@ -82,6 +84,7 @@ define(function (require) {
         routes: {
             "":             "home",             // (top level)
             "help":         "help",             // #help
+            "project":      "project",          // #project
             "lookup":       "lookupChapter",    // #lookup
             "adapt/:id":    "adaptChapter"      // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
         },
@@ -96,6 +99,12 @@ define(function (require) {
             helpView = new HelpView();
             helpView.delegateEvents();
             slider.slidePage(helpView.$el);
+        },
+        
+        project: function () {
+            selectProjectView = new SelectProjectView();
+            selectProjectView.delegateEvents();
+            slider.slidePage(selectProjectView.$el);
         },
 
         lookupChapter: function (id) {
