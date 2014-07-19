@@ -11,12 +11,12 @@ define(function (require) {
         PageSlider  = require('app/utils/pageslider'),
         HelpView    = require('app/views/HelpView'),
         HomeView    = require('app/views/HomeView'),
-        SelectProjectView = require('app/views/SelectProjectView'),
+        NewProjectView = require('app/views/NewProjectView'),
         LookupView  = require('app/views/LookupView'),
         slider      = new PageSlider($('body')),
         lookupView  = null,
         helpView    = null,
-        selectProjectView = null,
+        newProjectView = null,
         homeView    = null;
     
     /** Handlebars helper methods **/
@@ -102,9 +102,9 @@ define(function (require) {
         },
         
         project: function () {
-            selectProjectView = new SelectProjectView();
-            selectProjectView.delegateEvents();
-            slider.slidePage(selectProjectView.$el);
+            newProjectView = new NewProjectView();
+            newProjectView.delegateEvents();
+            slider.slidePage(newProjectView.$el);
         },
 
         lookupChapter: function (id) {

@@ -9,7 +9,7 @@
         </a>
     </div>
     <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title">{{t 'view.lblWelcome'}}</h1>
+        <h1 class="topcoat-navigation-bar__title" id="StepTitle"></h1>
     </div>
     <div class="topcoat-navigation-bar__item right">
         <a href="#help" class="topcoat-icon-button--quiet">
@@ -18,9 +18,10 @@
     </div>
 </div>
 <div class="topcoat-list__container scroller" style="width:100%;">
-    <p>{{t 'view.dscWelcome'}}</p>
-    <button class="topcoat-button" id="NewProject">{{t 'view.lblCreateProject'}}</button>
-    <button class="topcoat-button" id="LoadProject">{{t 'view.lblOpenProject'}}</button>
-    <div id="projectDetails"></div>
-    <div id="WizardSteps"></div>
+    <p id="StepInstructions"></p>
+    <div id="StepContainer"></div>
+    <div id="WizardSteps">
+        <button class="topcoat-button" id="Prev"><span class="topcoat-icon topcoat-icon--back"></span> <span id="lblPrev"></span></button>
+        <button class="topcoat-button" id="Next"><span id="lblNext"></span> <span class="topcoat-icon topcoat-icon--forward"></span></button>
+    </div>
 </div>

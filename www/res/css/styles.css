@@ -113,6 +113,14 @@ h3 {
     padding: 0;
 }
 
+.topcoat-icon--forward {
+    background: url("images/forward_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
 .topcoat-list__container {
     border-bottom: none;
     clear: both;
@@ -457,10 +465,10 @@ ul.btns {
 .btns li a {
 	position: relative;
 	display: block;
-	width: 64px;
+	width: 96px;
 	/*height: 32px;*/
 	text-align: center;
-	padding: 64px 16px 8px 16px;
+	padding: 96px 14px 6px 14px;
 	text-decoration: none;
     box-shadow: 0 0 0 1px #949696;
     background: #DDE1E1;
@@ -495,20 +503,24 @@ ul.btns {
 }
 span.sprite{
     top: 0;
-    width: 64px;
-    height: 52px;
+    width: 100px;
+    height: 80px;
+}
+.btn-newproject span.sprite{
+	background-image: url("../svg/project-new.svg");
+    background-size: 80px 80px;
 }
 .btn-settings span.sprite{
 	background-image: url("../svg/search.svg");
-    background-size: 56px 56px;
+    background-size: 80px 80px;
 }
 .btn-status span.sprite{
 	background-image: url("images/status.png");
-    background-size: 48px 48px;
+    background-size: 80px 80px;
 }
 .btn-adapt span.sprite{
 	background-image: url("../svg/adapt-it-mobile-nomask.svg");
-    background-size: 48px 48px;
+    background-size: 80px 80px;
 }
 
 @media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
