@@ -7,11 +7,17 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
-        tplText     = require('text!tpl/SelectProject.html'),
-        ProjectView = require('app/views/ProjectLanguagesView'),
+        i18n        = require('i18n'),
+        tplText     = require('text!tpl/NewProject.html'),
+        ProjectCasesView = require('app/views/ProjectCasesView'),
+        ProjectFontsView = require('app/views/ProjectFontsView'),
+        ProjectLanguagesView = require('app/views/ProjectLanguagesView'),
+        ProjectPunctuationView = require('app/views/ProjectPunctuationView'),
+        ProjectUSFMFilteringView = require('app/views/ProjectUSFMFilteringView'),
         projModel   = require('app/models/project'),
         obj         = {},
         project     = null,
+        step        = 1,
         template    = Handlebars.compile(tplText);
 
 
@@ -21,6 +27,7 @@ define(function (require) {
             obj.indexedDB = {};
             obj.indexedDB.db = null;
             this.render();
+            this.OnNewProject();
         },
 
         render: function () {
@@ -29,15 +36,96 @@ define(function (require) {
         },
         
         events: {
-            "click #NewProject": "OnNewProject",
-            "click #LoadProject": "OnLoadProject"
+            "click #Prev": "OnPrevStep",
+            "click #Next": "OnNextStep"
+        },
+        
+        OnPrevStep: function (event) {
+            // pull the info from the 
+            if (step > 1) {
+                step--;
+            } else {
+                // last step -- finish up
+            }
+            this.ShowStep(step);
         },
 
-        OnNewProject: function (event) {
+        OnNextStep: function (event) {
+            if (step < 5) {
+                step++;
+            } else {
+                // last step -- finish up
+            }
+            this.ShowStep(step);
+        },
+
+        OnNewProject: function () {
+            // create a new project model object
             //this.openDB();
-//            this.project = projModel.Project;
-//            var view = new ProjectLanguagesView({ model: this.project});
-//            this.$('#projectDetails').append(view.render().el.childNodes);
+            this.project = projModel.Project;
+            // start the wizard
+            this.ShowStep(step);
+        },
+        
+        ShowStep: function (number) {
+            console.log("ShowStep: " + number);
+            var view = null;
+            switch (number) {
+            case 1: // languages
+                view = new ProjectLanguagesView({ model: this.project});
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                // controls
+                this.$('#StepContainer').html(view.render().el.childNodes);
+                // first step -- disable the prev button
+                this.$("#Prev").attr('disabled', 'true');
+                break;
+            case 2: // fonts
+                view = new ProjectFontsView({ model: this.project});
+                // title
+                $("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                $("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                // controls
+                $('#StepContainer').html(view.render().el.childNodes);
+                // Second step -- enable the prev button
+                this.$("#Prev").attr('disabled', 'false');
+                break;
+            case 3: // punctuation
+                view = new ProjectPunctuationView({ model: this.project});
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                // controls
+                this.$('#StepContainer').html(view.render().el.childNodes);
+                break;
+            case 4: // cases
+                view = new ProjectCasesView({ model: this.project});
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                // controls
+                this.$('#StepContainer').html(view.render().el.childNodes);
+                // Penultimate step -- enable the next button (only needed
+                // if the user happens to back up from the last one)
+                this.$("#lblNext").html(i18n.t('view.dscCreateProject'));
+                break;
+            case 5: // USFM filtering
+                view = new ProjectUSFMFilteringView({ model: this.project});
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                // controls
+                this.$('#StepContainer').html(view.render().el.childNodes);
+                // Last step -- change the text of the Next button to "finish"
+                this.$("#lblNext").attr('disabled', 'true');
+                break;
+            }
         },
 
         openDB: function () {
