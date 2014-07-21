@@ -64,6 +64,8 @@ define(function (require) {
             //this.openDB();
             this.project = projModel.Project;
             // start the wizard
+            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
+            this.$("#lblNext").html(i18n.t('view.lblNext'));
             this.ShowStep(step);
         },
         
@@ -91,7 +93,7 @@ define(function (require) {
                 // controls
                 $('#StepContainer').html(view.render().el.childNodes);
                 // Second step -- enable the prev button
-                this.$("#Prev").attr('disabled', 'false');
+                this.$("#Prev").removeAttr('disabled');
                 break;
             case 3: // punctuation
                 view = new ProjectPunctuationView({ model: this.project});
@@ -112,7 +114,8 @@ define(function (require) {
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 // Penultimate step -- enable the next button (only needed
                 // if the user happens to back up from the last one)
-                this.$("#lblNext").html(i18n.t('view.dscCreateProject'));
+                this.$("#lblNext").html(i18n.t('view.lblNext'));
+                this.$("#imgNext").removeAttr("display");
                 break;
             case 5: // USFM filtering
                 view = new ProjectUSFMFilteringView({ model: this.project});
@@ -123,7 +126,8 @@ define(function (require) {
                 // controls
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 // Last step -- change the text of the Next button to "finish"
-                this.$("#lblNext").attr('disabled', 'true');
+                this.$("#lblNext").html(i18n.t('view.lblFinish'));
+                this.$("#imgNext").attr("display", "none");
                 break;
             }
         },
