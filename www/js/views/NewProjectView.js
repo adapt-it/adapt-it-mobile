@@ -76,7 +76,7 @@ define(function (require) {
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectLanguages'));
                 // controls
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 // first step -- disable the prev button
@@ -87,7 +87,7 @@ define(function (require) {
                 // title
                 $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                $("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                 // controls
                 $('#StepContainer').html(view.render().el.childNodes);
                 // Second step -- enable the prev button
@@ -98,7 +98,7 @@ define(function (require) {
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                 // controls
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 break;
@@ -107,7 +107,7 @@ define(function (require) {
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                 // controls
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 // Penultimate step -- enable the next button (only needed
@@ -119,7 +119,7 @@ define(function (require) {
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                this.$("#StepInstructions").html(i18n.t('view.dscCreateProject'));
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                 // controls
                 this.$('#StepContainer').html(view.render().el.childNodes);
                 // Last step -- change the text of the Next button to "finish"
