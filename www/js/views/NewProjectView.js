@@ -16,7 +16,8 @@ define(function (require) {
         ProjectUSFMFilteringView = require('app/views/ProjectUSFMFilteringView'),
         projModel   = require('app/models/project'),
         obj         = {},
-        project     = null,
+        project     = null, // model
+        currentView = null, // view
         step        = 1,
         template    = Handlebars.compile(tplText);
 
@@ -41,22 +42,41 @@ define(function (require) {
         },
         
         OnPrevStep: function (event) {
-            // pull the info from the 
+            // pull the info from the current step
+            this.GetProjectInfo(step);
             if (step > 1) {
                 step--;
-            } else {
-                // last step -- finish up
             }
             this.ShowStep(step);
         },
 
         OnNextStep: function (event) {
+            // pull the info from the current step
+            this.GetProjectInfo(step);
             if (step < 5) {
                 step++;
             } else {
                 // last step -- finish up
+                // display the result
             }
             this.ShowStep(step);
+        },
+        
+        GetProjectInfo: function (step) {
+            console.log("GetProjectInfo: " + step);
+            var view = null;
+            switch (step) {
+            case 1: // languages
+                break;
+            case 2: // fonts
+                break;
+            case 3: // punctuation
+                break;
+            case 4: // cases
+                break;
+            case 5: // USFM filtering
+                break;
+            }
         },
 
         OnNewProject: function () {
@@ -70,61 +90,63 @@ define(function (require) {
         },
         
         ShowStep: function (number) {
+            console.log("Project: " + this.project);
             console.log("ShowStep: " + number);
-            var view = null;
+            // clear out the old view (if any)
+            currentView = null;
             switch (number) {
             case 1: // languages
-                view = new ProjectLanguagesView({ model: this.project});
+                currentView = new ProjectLanguagesView({ model: this.project});
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
                 this.$("#StepInstructions").html(i18n.t('view.dscProjectLanguages'));
                 // controls
-                this.$('#StepContainer').html(view.render().el.childNodes);
+                this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // first step -- disable the prev button
                 this.$("#Prev").attr('disabled', 'true');
                 break;
             case 2: // fonts
-                view = new ProjectFontsView({ model: this.project});
+                currentView = new ProjectFontsView({ model: this.project});
                 // title
                 $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
                 $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                 // controls
-                $('#StepContainer').html(view.render().el.childNodes);
+                $('#StepContainer').html(currentView.render().el.childNodes);
                 // Second step -- enable the prev button
                 this.$("#Prev").removeAttr('disabled');
                 break;
             case 3: // punctuation
-                view = new ProjectPunctuationView({ model: this.project});
+                currentView = new ProjectPunctuationView({ model: this.project});
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
                 this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                 // controls
-                this.$('#StepContainer').html(view.render().el.childNodes);
+                this.$('#StepContainer').html(currentView.render().el.childNodes);
                 break;
             case 4: // cases
-                view = new ProjectCasesView({ model: this.project});
+                currentView = new ProjectCasesView({ model: this.project});
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
                 this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                 // controls
-                this.$('#StepContainer').html(view.render().el.childNodes);
+                this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // Penultimate step -- enable the next button (only needed
                 // if the user happens to back up from the last one)
                 this.$("#lblNext").html(i18n.t('view.lblNext'));
                 this.$("#imgNext").removeAttr("display");
                 break;
             case 5: // USFM filtering
-                view = new ProjectUSFMFilteringView({ model: this.project});
+                currentView = new ProjectUSFMFilteringView({ model: this.project});
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
                 this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                 // controls
-                this.$('#StepContainer').html(view.render().el.childNodes);
+                this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // Last step -- change the text of the Next button to "finish"
                 this.$("#lblNext").html(i18n.t('view.lblFinish'));
                 this.$("#imgNext").attr("display", "none");

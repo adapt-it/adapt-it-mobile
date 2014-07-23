@@ -38,7 +38,22 @@ define(function (require) {
         },
 
         Project = Backbone.Model.extend({
-
+            defaults: {
+                "SourceFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
+                "TargetFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
+                "NavigationFont": "",
+                "SourceLanguageName": "English",
+                "TargetLanguageName": "English",
+                "SourceLanguageCode": "en",
+                "TargetLanguageCode": "en",
+                "PunctPairsSource": "?.,;:\"!()<>{}\"\"\'\'",
+                "PunctPairsTarget": "?.,;:\"!()<>{}\"\"\'\'",
+                "SourceDir": "ltr",
+                "TargetDir": "ltr",
+                "NavDir": "ltr",
+                "id": "en-us.en-au",
+                "name": "US English to English adaptations"
+            },
             sync: function (method, model, options) {
                 if (method === "read") {
                     findById(this.id).done(function (data) {
