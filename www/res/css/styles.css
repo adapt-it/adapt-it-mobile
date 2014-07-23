@@ -483,26 +483,20 @@ ul.btns {
 	float: left;
 	list-style: none;
     margin: 8px 0;
-    padding: 8px;
-/*    border: 1px solid #454545;*/
+    padding-right: 6px;
 }
 .btns li a {
 	position: relative;
 	display: block;
-	width: 96px;
+	width: 72px;
 	/*height: 32px;*/
 	text-align: center;
-	padding: 96px 14px 6px 14px;
+	padding: 64px 0px 6px 0px;
 	text-decoration: none;
-    box-shadow: 0 0 0 1px #949696;
     background: #DDE1E1;
-    text-shadow: 0 -1px 0 #FFF;
-    /*width: 192px;*/
+/*    text-shadow: 0 -1px 0 #FFF;*/
     -webkit-appearance: none;
     -moz-appearance: none;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
 }
 .btns li :hover {
     font-weight: 400;
@@ -515,6 +509,8 @@ ul.btns {
 
 .btns li a .txt {
     height: 2em;
+    font-size: .8rem;
+    font-weight: 400;
 }
 
 .sprite {
@@ -527,24 +523,28 @@ ul.btns {
 }
 span.sprite{
     top: 0;
-    width: 100px;
-    height: 80px;
+    width: 72px;
+    height: 48px;
 }
 .btn-newproject span.sprite{
 	background-image: url("../svg/project-new.svg");
-    background-size: 80px 80px;
+    background-size: 48px 48px;
 }
-.btn-settings span.sprite{
-	background-image: url("../svg/search.svg");
-    background-size: 80px 80px;
+.btn-copyproject span.sprite{
+	background-image: url("../svg/project-copy.svg");
+    background-size: 48px 48px;
+}
+.btn-search span.sprite{
+	background-image: url("../svg/project-search.svg");
+    background-size: 48px 48px;
 }
 .btn-status span.sprite{
 	background-image: url("images/status.png");
-    background-size: 80px 80px;
+    background-size: 48px 48px;
 }
 .btn-adapt span.sprite{
-	background-image: url("../svg/adapt-it-mobile-nomask.svg");
-    background-size: 80px 80px;
+	background-image: url("../svg/project-edit.svg");
+    background-size: 48px 48px;
 }
 
 @media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
