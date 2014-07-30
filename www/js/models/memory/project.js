@@ -15,15 +15,89 @@ define(function (require) {
         */
         project =
             {
-                "SourceFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
-                "TargetFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
-                "NavigationFont": "",
+                "SourceFont": "Source Sans",
+                "SourceFontSize": "16px;",
+                "SourceColor": "#0000aa;",
+                "TargetFont": "Source Sans",
+                "TargetFontSize": "16px;",
+                "TargetColor": "#000;",
+                "NavigationFont": "Source Sans",
+                "NavigationFontSize": "16px;",
+                "NavigationColor": "#00cc00;",
                 "SourceLanguageName": "English",
                 "TargetLanguageName": "English",
                 "SourceLanguageCode": "en",
                 "TargetLanguageCode": "en",
-                "PunctPairsSource": "?.,;:\"!()<>{}\"\"\'\'",
-                "PunctPairsTarget": "?.,;:\"!()<>{}\"\"\'\'",
+                "PunctPairs": [
+                    {
+                        "s": "?",
+                        "t": "?"
+                    },
+                    {
+                        "s": ".",
+                        "t": "."
+                    },
+                    {
+                        "s": ",",
+                        "t": ","
+                    },
+                    {
+                        "s": ";",
+                        "t": ";"
+                    },
+                    {
+                        "s": ":",
+                        "t": ":"
+                    },
+                    {
+                        "s": "\"",
+                        "t": "\""
+                    },
+                    {
+                        "s": "!",
+                        "t": "!"
+                    },
+                    {
+                        "s": "(",
+                        "t": "("
+                    },
+                    {
+                        "s": ")",
+                        "t": ")"
+                    },
+                    {
+                        "s": "<",
+                        "t": "<"
+                    },
+                    {
+                        "s": ">",
+                        "t": ">"
+                    },
+                    {
+                        "s": "{",
+                        "t": "{"
+                    },
+                    {
+                        "s": "}",
+                        "t": "}"
+                    },
+                    {
+                        "s": "“",
+                        "t": "“"
+                    },
+                    {
+                        "s": "”",
+                        "t": "”"
+                    },
+                    {
+                        "s": "‘",
+                        "t": "‘"
+                    },
+                    {
+                        "s": "’",
+                        "t": "’"
+                    }
+                ],
                 "SourceDir": "ltr",
                 "TargetDir": "ltr",
                 "NavDir": "ltr",
@@ -39,15 +113,89 @@ define(function (require) {
 
         Project = Backbone.Model.extend({
             defaults: {
-                "SourceFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
-                "TargetFont": "16px \"Source Sans\", helvetica, arial, sans-serif;",
-                "NavigationFont": "",
+                "SourceFont": "Source Sans",
+                "SourceFontSize": "16px;",
+                "SourceColor": "#0000aa;",
+                "TargetFont": "Source Sans",
+                "TargetFontSize": "16px;",
+                "TargetColor": "#000;",
+                "NavigationFont": "Source Sans",
+                "NavigationFontSize": "16px;",
+                "NavigationColor": "#00cc00;",
                 "SourceLanguageName": "English",
                 "TargetLanguageName": "English",
                 "SourceLanguageCode": "en",
                 "TargetLanguageCode": "en",
-                "PunctPairsSource": "?.,;:\"!()<>{}\"\"\'\'",
-                "PunctPairsTarget": "?.,;:\"!()<>{}\"\"\'\'",
+                "PunctPairs": [
+                    {
+                        "s": "?",
+                        "t": "?"
+                    },
+                    {
+                        "s": ".",
+                        "t": "."
+                    },
+                    {
+                        "s": ",",
+                        "t": ","
+                    },
+                    {
+                        "s": ";",
+                        "t": ";"
+                    },
+                    {
+                        "s": ":",
+                        "t": ":"
+                    },
+                    {
+                        "s": "\"",
+                        "t": "\""
+                    },
+                    {
+                        "s": "!",
+                        "t": "!"
+                    },
+                    {
+                        "s": "(",
+                        "t": "("
+                    },
+                    {
+                        "s": ")",
+                        "t": ")"
+                    },
+                    {
+                        "s": "<",
+                        "t": "<"
+                    },
+                    {
+                        "s": ">",
+                        "t": ">"
+                    },
+                    {
+                        "s": "{",
+                        "t": "{"
+                    },
+                    {
+                        "s": "}",
+                        "t": "}"
+                    },
+                    {
+                        "s": "“",
+                        "t": "“"
+                    },
+                    {
+                        "s": "”",
+                        "t": "”"
+                    },
+                    {
+                        "s": "‘",
+                        "t": "‘"
+                    },
+                    {
+                        "s": "’",
+                        "t": "’"
+                    }
+                ],
                 "SourceDir": "ltr",
                 "TargetDir": "ltr",
                 "NavDir": "ltr",

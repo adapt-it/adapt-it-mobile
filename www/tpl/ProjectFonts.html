@@ -1,5 +1,20 @@
-<div id="fonts">
-    {{ t 'view.lblSourceFont'}} {{this.SourceFont}} <button class="topcoat-button" id="ChangeSourceFont">{{ t 'view.lblChange'}}</button><br>
-    {{ t 'view.lblTargetFont'}} {{this.TargetFont}} <button class="topcoat-button" id="ChangeTargetFont">{{ t 'view.lblChange'}}</button><br>
-    {{ t 'view.lblNavFont'}} {{this.NavigationFont}} <button class="topcoat-button" id="ChangeNavFont">{{ t 'view.lblChange'}}</button><br>
-</div>
+<div class="control-row" style="border-top:1px solid #949696;"><ul class="topcoat-list__container chapter-list">
+<li class="topcoat-list__item">
+    <a href="#">
+    <header><h3>{{t 'view.lblSourceFont'}}</h3></header>
+    <div style="color: {{this.SourceColor}} font-size: {{this.SourceFontSize}} font: {{this.SourceFont}};">{{this.SourceFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a href="#">
+    <header><h3>{{t 'view.lblTargetFont'}}</h3></header>
+    <div style="color: {{this.TargetColor}} font-size: {{this.TargetFontSize}} font: {{this.TargetFont}};">{{this.TargetFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a href="#">
+    <header><h3>{{t 'view.lblNavFont'}}</h3></header>
+    <div style="color: {{this.NavigationColor}} font-size: {{this.NavigationFontSize}} font:{{this.NavigationFont}};">{{this.NavigationFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+</ul></div>

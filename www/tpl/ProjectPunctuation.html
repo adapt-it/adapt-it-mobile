@@ -1,6 +1,11 @@
-<div id="punctuation pairs">{{t 'view.lblPunctuationPairs'}} {{this.PunctPairsSource}} {{this.PunctPairsTarget}}</div>
-<div id="copy punctuation"><label class="topcoat-checkbox">
+<div id="copy punctuation" class="control-row"><label class="topcoat-checkbox">
   <input type="checkbox">
   <div class="topcoat-checkbox__checkmark"></div>
     {{t 'view.lblCopyPunctuation'}}
 </label></div>
+<div class="control-group">
+<div class="control-row"><span class="quarter">Source</span><span class="quarter">Target</span></div>
+{{#each this.PunctPairs}}
+<div class="control-row"><input type="text" class="topcoat-text-input quarter" maxlength="1" value="{{this.s}}"> --> <input type="text" class="topcoat-text-input quarter" maxlength="1" value="{{this.t}}"></div>
+{{/each}}
+</div>
