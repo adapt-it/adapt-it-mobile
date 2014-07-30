@@ -14,11 +14,12 @@ define(function (require) {
     return Backbone.View.extend({
         
         initialize: function () {
-            this.render();
+//            this.render();
         },
 
         render: function () {
-            this.$el.html(template());
+            var contents = template(this.model);
+            this.$el.html(contents);
             return this;
         }
     });

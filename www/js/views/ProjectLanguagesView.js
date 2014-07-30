@@ -8,17 +8,19 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        projModel   = require('app/models/project'),
         tplText     = require('text!tpl/ProjectLanguages.html'),
         template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({
         
         initialize: function () {
-            this.render();
+//            this.render();
         },
 
         render: function () {
-            this.$el.html(template());
+            var contents = template(this.model);
+            this.$el.html(contents);
             return this;
         }
     });

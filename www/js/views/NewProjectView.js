@@ -18,6 +18,11 @@ define(function (require) {
         obj         = {},
         project     = null, // model
         currentView = null, // view
+        projCasesView = null,
+        projFontsView = null,
+        projLanguagesView = null,
+        projPunctuationView = null,
+        projUSFMFiltingView = null,
         step        = 1,
         template    = Handlebars.compile(tplText);
 
@@ -27,8 +32,10 @@ define(function (require) {
         initialize: function () {
             obj.indexedDB = {};
             obj.indexedDB.db = null;
-            this.render();
             this.OnNewProject();
+            this.render();
+            // start the wizard
+            this.ShowStep(step);
         },
 
         render: function () {
@@ -57,6 +64,7 @@ define(function (require) {
                 step++;
             } else {
                 // last step -- finish up
+                console.log("last step");
                 // display the result
             }
             this.ShowStep(step);
@@ -82,11 +90,13 @@ define(function (require) {
         OnNewProject: function () {
             // create a new project model object
             //this.openDB();
+            // create the view objects
             this.project = projModel.Project;
-            // start the wizard
-            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
-            this.$("#lblNext").html(i18n.t('view.lblNext'));
-            this.ShowStep(step);
+            projCasesView = new ProjectCasesView({ model: this.project});
+            projFontsView = new ProjectFontsView({ model: this.project});
+            projLanguagesView =  new ProjectLanguagesView({ model: this.project});
+            projPunctuationView = new ProjectPunctuationView({ model: this.project});
+            projUSFMFiltingView = new ProjectUSFMFilteringView({ model: this.project});
         },
         
         ShowStep: function (number) {
@@ -96,7 +106,7 @@ define(function (require) {
             currentView = null;
             switch (number) {
             case 1: // languages
-                currentView = new ProjectLanguagesView({ model: this.project});
+                currentView = projLanguagesView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
@@ -105,9 +115,11 @@ define(function (require) {
                 this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // first step -- disable the prev button
                 this.$("#Prev").attr('disabled', 'true');
+                this.$("#lblPrev").html(i18n.t('view.lblPrev'));
+                this.$("#lblNext").html(i18n.t('view.lblNext'));
                 break;
             case 2: // fonts
-                currentView = new ProjectFontsView({ model: this.project});
+                currentView = projFontsView;
                 // title
                 $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
@@ -118,7 +130,7 @@ define(function (require) {
                 this.$("#Prev").removeAttr('disabled');
                 break;
             case 3: // punctuation
-                currentView = new ProjectPunctuationView({ model: this.project});
+                currentView = projPunctuationView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
@@ -127,7 +139,7 @@ define(function (require) {
                 this.$('#StepContainer').html(currentView.render().el.childNodes);
                 break;
             case 4: // cases
-                currentView = new ProjectCasesView({ model: this.project});
+                currentView = projCasesView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
@@ -140,7 +152,7 @@ define(function (require) {
                 this.$("#imgNext").removeAttr("display");
                 break;
             case 5: // USFM filtering
-                currentView = new ProjectUSFMFilteringView({ model: this.project});
+                currentView = projUSFMFiltingView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions

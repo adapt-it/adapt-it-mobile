@@ -27,6 +27,7 @@ define(function (require) {
         isSelecting = false,
         isPlaceholder = false,
         isPhrase = false,
+        idx = 1,
         isRetranslation = false;
 
     return Backbone.View.extend({
@@ -38,12 +39,16 @@ define(function (require) {
         addOne: function (SourcePhrase) {
             var view = new SourcePhraseView({ model: SourcePhrase});//, el: $('#pile-' + SourcePhrase.get('id')) });
             this.$('#pile-' + SourcePhrase.get('id')).append(view.render().el.childNodes);
+            this.$('#pile-' + SourcePhrase.get('id')).find('.target').attr('tabindex', idx++);
         },
         render: function () {
             // add the collection
             this.$el.html(template(this.collection.toJSON()));
             // go back and add the individual piles
             this.collection.each(this.addOne, this);
+            //edb test -- remove
+            $(".target").attr('contenteditable', 'true');
+
             return this;
         },
         
@@ -188,7 +193,7 @@ define(function (require) {
             // if there was an old selection, remove it
             if (selectedStart !== null) {
                 $("div").removeClass("ui-selecting ui-selected");
-                $(selectedStart).find('.target').removeAttr('contenteditable');
+//                $(selectedStart).find('.target').removeAttr('contenteditable');
             }
             selectedStart = event.currentTarget.parentElement; // select the pile, not the source (the currentTarget)
             selectedEnd = selectedStart;
@@ -453,7 +458,7 @@ define(function (require) {
                 model = null;
             
             // remove contenteditable attribute on the div
-            $(event.currentTarget).removeAttr('contenteditable');
+//            $(event.currentTarget).removeAttr('contenteditable');
             // remove any earlier kb "purple"
             if (clearKBInput === true) {
                 $(".target").removeClass("fromkb");
