@@ -11,7 +11,8 @@ define(function (require) {
         tplText     = require('text!tpl/NewProject.html'),
         ProjectCasesView = require('app/views/ProjectCasesView'),
         ProjectFontsView = require('app/views/ProjectFontsView'),
-        ProjectLanguagesView = require('app/views/ProjectLanguagesView'),
+        ProjectSourceLanguageView = require('app/views/ProjectSourceLanguageView'),
+        ProjectTargetLanguageView = require('app/views/ProjectTargetLanguageView'),
         ProjectPunctuationView = require('app/views/ProjectPunctuationView'),
         ProjectUSFMFilteringView = require('app/views/ProjectUSFMFilteringView'),
         projModel   = require('app/models/project'),
@@ -20,7 +21,8 @@ define(function (require) {
         currentView = null, // view
         projCasesView = null,
         projFontsView = null,
-        projLanguagesView = null,
+        projSourceLanguageView = null,
+        projTargetLanguageView = null,
         projPunctuationView = null,
         projUSFMFiltingView = null,
         step        = 1,
@@ -60,7 +62,7 @@ define(function (require) {
         OnNextStep: function (event) {
             // pull the info from the current step
             this.GetProjectInfo(step);
-            if (step < 5) {
+            if (step < 6) {
                 step++;
             } else {
                 // last step -- finish up
@@ -94,7 +96,8 @@ define(function (require) {
             this.project = projModel.Project;
             projCasesView = new ProjectCasesView({ model: this.project});
             projFontsView = new ProjectFontsView({ model: this.project});
-            projLanguagesView =  new ProjectLanguagesView({ model: this.project});
+            projSourceLanguageView =  new ProjectSourceLanguageView({ model: this.project});
+            projTargetLanguageView =  new ProjectTargetLanguageView({ model: this.project});
             projPunctuationView = new ProjectPunctuationView({ model: this.project});
             projUSFMFiltingView = new ProjectUSFMFilteringView({ model: this.project});
         },
@@ -105,12 +108,12 @@ define(function (require) {
             // clear out the old view (if any)
             currentView = null;
             switch (number) {
-            case 1: // languages
-                currentView = projLanguagesView;
+            case 1: // source language
+                currentView = projSourceLanguageView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                 // instructions
-                this.$("#StepInstructions").html(i18n.t('view.dscProjectLanguages'));
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                 // controls
                 this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // first step -- disable the prev button
@@ -118,7 +121,17 @@ define(function (require) {
                 this.$("#lblPrev").html(i18n.t('view.lblPrev'));
                 this.$("#lblNext").html(i18n.t('view.lblNext'));
                 break;
-            case 2: // fonts
+            case 2: // target language
+                currentView = projTargetLanguageView;
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                // instructions
+                this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
+                // controls
+                this.$('#StepContainer').html(currentView.render().el.childNodes);
+                this.$("#Prev").removeAttr('disabled');
+                break;
+            case 3: // fonts
                 currentView = projFontsView;
                 // title
                 $("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -127,9 +140,8 @@ define(function (require) {
                 // controls
                 $('#StepContainer').html(currentView.render().el.childNodes);
                 // Second step -- enable the prev button
-                this.$("#Prev").removeAttr('disabled');
                 break;
-            case 3: // punctuation
+            case 4: // punctuation
                 currentView = projPunctuationView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -138,7 +150,7 @@ define(function (require) {
                 // controls
                 this.$('#StepContainer').html(currentView.render().el.childNodes);
                 break;
-            case 4: // cases
+            case 5: // cases
                 currentView = projCasesView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -151,7 +163,7 @@ define(function (require) {
                 this.$("#lblNext").html(i18n.t('view.lblNext'));
                 this.$("#imgNext").removeAttr("display");
                 break;
-            case 5: // USFM filtering
+            case 6: // USFM filtering
                 currentView = projUSFMFiltingView;
                 // title
                 this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));

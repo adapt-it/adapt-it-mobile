@@ -9,7 +9,7 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         projModel   = require('app/models/project'),
-        tplText     = require('text!tpl/ProjectLanguages.html'),
+        tplText     = require('text!tpl/ProjectSourceLanguage.html'),
         template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({
