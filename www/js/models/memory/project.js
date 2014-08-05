@@ -13,207 +13,249 @@ define(function (require) {
             Are there javascript libraries that can give us what we need? (text direction, iso639 
             codes/names, etc.)
         */
-        project =
+        projects = [
             {
-                "SourceFont": "Source Sans",
-                "SourceFontSize": "16px;",
-                "SourceColor": "#0000aa;",
-                "TargetFont": "Source Sans",
-                "TargetFontSize": "16px;",
-                "TargetColor": "#000;",
-                "NavigationFont": "Source Sans",
-                "NavigationFontSize": "16px;",
-                "NavigationColor": "#00cc00;",
-                "SourceLanguageName": "English",
-                "TargetLanguageName": "English",
-                "SourceLanguageCode": "en",
-                "TargetLanguageCode": "en",
-                "PunctPairs": [
+                SourceFont: "Source Sans",
+                SourceFontSize: "16px;",
+                SourceColor: "#0000aa;",
+                TargetFont: "Source Sans",
+                TargetFontSize: "16px;",
+                TargetColor: "#000;",
+                NavigationFont: "Source Sans",
+                NavigationFontSize: "16px;",
+                NavigationColor: "#00cc00;",
+                SourceLanguageName: "English",
+                TargetLanguageName: "English",
+                SourceLanguageCode: "en",
+                TargetLanguageCode: "en",
+                PunctPairs: [
                     {
-                        "s": "?",
-                        "t": "?"
+                        s: "?",
+                        t: "?"
                     },
                     {
-                        "s": ".",
-                        "t": "."
+                        s: ".",
+                        t: "."
                     },
                     {
-                        "s": ",",
-                        "t": ","
+                        s: ",",
+                        t: ","
                     },
                     {
-                        "s": ";",
-                        "t": ";"
+                        s: ";",
+                        t: ";"
                     },
                     {
-                        "s": ":",
-                        "t": ":"
+                        s: ":",
+                        t: ":"
                     },
                     {
-                        "s": "\"",
-                        "t": "\""
+                        s: "\"",
+                        t: "\""
                     },
                     {
-                        "s": "!",
-                        "t": "!"
+                        s: "!",
+                        t: "!"
                     },
                     {
-                        "s": "(",
-                        "t": "("
+                        s: "(",
+                        t: "("
                     },
                     {
-                        "s": ")",
-                        "t": ")"
+                        s: ")",
+                        t: ")"
                     },
                     {
-                        "s": "<",
-                        "t": "<"
+                        s: "<",
+                        t: "<"
                     },
                     {
-                        "s": ">",
-                        "t": ">"
+                        s: ">",
+                        t: ">"
                     },
                     {
-                        "s": "{",
-                        "t": "{"
+                        s: "{",
+                        t: "{"
                     },
                     {
-                        "s": "}",
-                        "t": "}"
+                        s: "}",
+                        t: "}"
                     },
                     {
-                        "s": "“",
-                        "t": "“"
+                        s: "“",
+                        t: "“"
                     },
                     {
-                        "s": "”",
-                        "t": "”"
+                        s: "”",
+                        t: "”"
                     },
                     {
-                        "s": "‘",
-                        "t": "‘"
+                        s: "‘",
+                        t: "‘"
                     },
                     {
-                        "s": "’",
-                        "t": "’"
+                        s: "’",
+                        t: "’"
                     }
                 ],
-                "SourceDir": "ltr",
-                "TargetDir": "ltr",
-                "NavDir": "ltr",
-                "id": "en-us.en-au",
-                "name": "US English to English adaptations"
-            },
+                SourceDir: "ltr",
+                TargetDir: "ltr",
+                NavDir: "ltr",
+                id: "en-us.en-au",
+                name: "US English to English adaptations"
+                }
+        ],
+        
         findById = function (id) {
-            var deferred = $.Deferred();
-            
+            var i = 0,
+                deferred = $.Deferred(),
+                project = null,
+                l = projects.length;
+            for (i = 0; i < l; i++) {
+                if (projects[i].id === id) {
+                    project = projects[i];
+                    break;
+                }
+            }
             deferred.resolve(project);
             return deferred.promise();
         },
 
         Project = Backbone.Model.extend({
             defaults: {
-                "SourceFont": "Source Sans",
-                "SourceFontSize": "16px;",
-                "SourceColor": "#0000aa;",
-                "TargetFont": "Source Sans",
-                "TargetFontSize": "16px;",
-                "TargetColor": "#000;",
-                "NavigationFont": "Source Sans",
-                "NavigationFontSize": "16px;",
-                "NavigationColor": "#00cc00;",
-                "SourceLanguageName": "English",
-                "TargetLanguageName": "English",
-                "SourceLanguageCode": "en",
-                "TargetLanguageCode": "en",
-                "PunctPairs": [
+                SourceFont: "Source Sans",
+                SourceFontSize: "16px;",
+                SourceColor: "#0000aa;",
+                TargetFont: "Source Sans",
+                TargetFontSize: "16px;",
+                TargetColor: "#000;",
+                NavigationFont: "Source Sans",
+                NavigationFontSize: "16px;",
+                NavigationColor: "#00cc00;",
+                SourceLanguageName: "",
+                TargetLanguageName: "",
+                SourceLanguageCode: "",
+                TargetLanguageCode: "",
+                PunctPairs: [
                     {
-                        "s": "?",
-                        "t": "?"
+                        s: "?",
+                        t: "?"
                     },
                     {
-                        "s": ".",
-                        "t": "."
+                        s: ".",
+                        t: "."
                     },
                     {
-                        "s": ",",
-                        "t": ","
+                        s: ",",
+                        t: ","
                     },
                     {
-                        "s": ";",
-                        "t": ";"
+                        s: ";",
+                        t: ";"
                     },
                     {
-                        "s": ":",
-                        "t": ":"
+                        s: ":",
+                        t: ":"
                     },
                     {
-                        "s": "\"",
-                        "t": "\""
+                        s: "\"",
+                        t: "\""
                     },
                     {
-                        "s": "!",
-                        "t": "!"
+                        s: "!",
+                        t: "!"
                     },
                     {
-                        "s": "(",
-                        "t": "("
+                        s: "(",
+                        t: "("
                     },
                     {
-                        "s": ")",
-                        "t": ")"
+                        s: ")",
+                        t: ")"
                     },
                     {
-                        "s": "<",
-                        "t": "<"
+                        s: "<",
+                        t: "<"
                     },
                     {
-                        "s": ">",
-                        "t": ">"
+                        s: ">",
+                        t: ">"
                     },
                     {
-                        "s": "{",
-                        "t": "{"
+                        s: "{",
+                        t: "{"
                     },
                     {
-                        "s": "}",
-                        "t": "}"
+                        s: "}",
+                        t: "}"
                     },
                     {
-                        "s": "“",
-                        "t": "“"
+                        s: "“",
+                        t: "“"
                     },
                     {
-                        "s": "”",
-                        "t": "”"
+                        s: "”",
+                        t: "”"
                     },
                     {
-                        "s": "‘",
-                        "t": "‘"
+                        s: "‘",
+                        t: "‘"
                     },
                     {
-                        "s": "’",
-                        "t": "’"
+                        s: "’",
+                        t: "’"
                     }
                 ],
-                "SourceDir": "ltr",
-                "TargetDir": "ltr",
-                "NavDir": "ltr",
-                "id": "en-us.en-au",
-                "name": "US English to English adaptations"
+                SourceDir: "",
+                TargetDir: "",
+                NavDir: "",
+                id: "",
+                name: ""
             },
+
+            sync: function (method, model, options) {
+                // read is the only method currently implemented for in-memory;
+                // the others will simply return a success state.
+                switch (method) {
+                case 'create':
+                    options.success(model);
+                    break;
+                        
+                case 'read':
+                    findById(this.id).done(function (data) {
+                        options.success(data);
+                    });
+                    break;
+                        
+                case 'update':
+                    options.success(model);
+                    break;
+                        
+                case 'delete':
+                    options.success(model);
+                    break;
+                }
+            }
+
+        }),
+
+        ProjectCollection = Backbone.Collection.extend({
+
+            model: Project,
+
             sync: function (method, model, options) {
                 if (method === "read") {
-                    findById(this.id).done(function (data) {
+                    findByName(options.data.name).done(function (data) {
                         options.success(data);
                     });
                 }
             }
 
         });
-
+    
     return {
-        Project: project
+        Project: Project,
+        ProjectCollection: ProjectCollection
     };
 
 });

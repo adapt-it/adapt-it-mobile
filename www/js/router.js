@@ -13,6 +13,7 @@ define(function (require) {
         HomeView    = require('app/views/HomeView'),
         NewProjectView = require('app/views/NewProjectView'),
         LookupView  = require('app/views/LookupView'),
+        projModel   = require('app/models/project'),
         slider      = new PageSlider($('body')),
         lookupView  = null,
         helpView    = null,
@@ -102,7 +103,8 @@ define(function (require) {
         },
         
         project: function () {
-            newProjectView = new NewProjectView();
+            var proj = new projModel.Project();
+            newProjectView = new NewProjectView({model: proj});
             newProjectView.delegateEvents();
             slider.slidePage(newProjectView.$el);
         },

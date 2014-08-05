@@ -17,7 +17,6 @@ define(function (require) {
         ProjectUSFMFilteringView = require('app/views/ProjectUSFMFilteringView'),
         projModel   = require('app/models/project'),
         obj         = {},
-        project     = null, // model
         currentView = null, // view
         projCasesView = null,
         projFontsView = null,
@@ -73,18 +72,38 @@ define(function (require) {
         },
         
         GetProjectInfo: function (step) {
-            console.log("GetProjectInfo: " + step);
-            var view = null;
+            var value = null,
+                trimmedValue = null;
             switch (step) {
-            case 1: // languages
+            case 1: // source language
+                value = $("#SourceLanguageName").val();
+                trimmedValue = value.trim();
+                console.log("SourceLanguageName:" + trimmedValue);
+                this.model.set("SourceLanguageName", trimmedValue);
+                value = $("#SourceLanguageCode").val();
+                trimmedValue = value.trim();
+                console.log("SourceLanguageCode:" + trimmedValue);
+                this.model.set("SourceLanguageCode", trimmedValue);
+                this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
-            case 2: // fonts
+            case 2: // target language
+                value = $("#TargetLanguageName").val();
+                trimmedValue = value.trim();
+                console.log("TargetLanguageName:" + trimmedValue);
+                this.model.set("TargetLanguageName", trimmedValue);
+                value = $("#TargetLanguageCode").val();
+                trimmedValue = value.trim();
+                console.log("TargetLanguageCode:" + trimmedValue);
+                this.model.set("TargetLanguageCode", trimmedValue);
+                this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
-            case 3: // punctuation
+            case 3: // fonts
                 break;
-            case 4: // cases
+            case 4: // punctuation
                 break;
-            case 5: // USFM filtering
+            case 5: // cases
+                break;
+            case 6: // USFM filtering
                 break;
             }
         },
@@ -93,17 +112,16 @@ define(function (require) {
             // create a new project model object
             //this.openDB();
             // create the view objects
-            this.project = projModel.Project;
-            projCasesView = new ProjectCasesView({ model: this.project});
-            projFontsView = new ProjectFontsView({ model: this.project});
-            projSourceLanguageView =  new ProjectSourceLanguageView({ model: this.project});
-            projTargetLanguageView =  new ProjectTargetLanguageView({ model: this.project});
-            projPunctuationView = new ProjectPunctuationView({ model: this.project});
-            projUSFMFiltingView = new ProjectUSFMFilteringView({ model: this.project});
+            projCasesView = new ProjectCasesView({ model: this.model});
+            projFontsView = new ProjectFontsView({ model: this.model});
+            projSourceLanguageView =  new ProjectSourceLanguageView({ model: this.model});
+            projTargetLanguageView =  new ProjectTargetLanguageView({ model: this.model});
+            projPunctuationView = new ProjectPunctuationView({ model: this.model});
+            projUSFMFiltingView = new ProjectUSFMFilteringView({ model: this.model});
         },
         
         ShowStep: function (number) {
-            console.log("Project: " + this.project);
+            console.log("Project: " + this.model);
             console.log("ShowStep: " + number);
             // clear out the old view (if any)
             currentView = null;
