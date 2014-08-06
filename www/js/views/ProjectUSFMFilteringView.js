@@ -18,7 +18,7 @@ define(function (require) {
         },
 
         render: function () {
-            var contents = template(this.model);
+            var contents = template(this.model.toJSON());
             this.$el.html(contents);
             return this;
         }
