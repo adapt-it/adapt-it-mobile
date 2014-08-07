@@ -44,9 +44,35 @@ define(function (require) {
             return this;
         },
         
+        // event handlers, including those inside the wizard steps
         events: {
+            "click #lookupSource": "OnLookupSource",
+            "click #lookupTarget": "OnLookupTarget",
+            "click #sourceFont": "OnEditSourceFont",
+            "click #targetFont": "OnEditTargetFont",
+            "click #navFont": "OnEditNavFont",
             "click #Prev": "OnPrevStep",
             "click #Next": "OnNextStep"
+        },
+        
+        OnLookupSource: function (event) {
+            console.log("OnLookupSource");
+        },
+
+        OnLookupTarget: function (event) {
+            console.log("OnLookupTarget");
+        },
+
+        OnEditSourceFont: function (event) {
+            console.log("OnEditSourceFont");
+        },
+
+        OnEditTargetFont: function (event) {
+            console.log("OnEditTargetFont");
+        },
+
+        OnEditNavFont: function (event) {
+            console.log("OnEditNavFont");
         },
         
         OnPrevStep: function (event) {
@@ -73,6 +99,8 @@ define(function (require) {
         
         GetProjectInfo: function (step) {
             var value = null,
+                index = 0,
+                punctPairs = null,
                 trimmedValue = null;
             switch (step) {
             case 1: // source language
@@ -100,6 +128,10 @@ define(function (require) {
             case 3: // fonts
                 break;
             case 4: // punctuation
+                punctPairs = this.model.get("PunctPairs");
+                for (index = 0; index < punctPairs.length; index++) {
+                    punctPairs[index]
+                }
                 break;
             case 5: // cases
                 break;
@@ -179,7 +211,7 @@ define(function (require) {
                 // Penultimate step -- enable the next button (only needed
                 // if the user happens to back up from the last one)
                 this.$("#lblNext").html(i18n.t('view.lblNext'));
-                this.$("#imgNext").removeAttr("display");
+                this.$("#imgNext").removeAttr("style");
                 break;
             case 6: // USFM filtering
                 currentView = projUSFMFiltingView;
@@ -191,7 +223,7 @@ define(function (require) {
                 this.$('#StepContainer').html(currentView.render().el.childNodes);
                 // Last step -- change the text of the Next button to "finish"
                 this.$("#lblNext").html(i18n.t('view.lblFinish'));
-                this.$("#imgNext").attr("display", "none");
+                this.$("#imgNext").attr("style", "display:none");
                 break;
             }
         },
