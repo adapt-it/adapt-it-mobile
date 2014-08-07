@@ -5,7 +5,7 @@
         versionCode = "1" 
         version     = "0.2.0"
         defaultlocale = "en">
-    <name short="adapt-it-mobile" xml:lang="en">adapt-it-mobile</name>
+    <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
     </description>
