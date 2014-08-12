@@ -12,7 +12,7 @@
         "lblStatusFullyTranslated": "Completamente traducido.",
         "lblStatusNotTranslated": "No hay traducciones realizadas (__verseCount__ versículos en total).",
         "lblStatusPartlyTranslated": "Parcialmente traducido (__lastAdapted__ de __verseCount__ versículos tienen traducciones realizadas).",
-        "ttlWelcome": "Bienvenido",
+        "ttlWelcome": "Bienvenido a",
         "lblContinue": "Continuar",
         "ttlGetStarted": "Empezar",
         "dscGetStarted": "Para empezar, puede crear un nuevo proyecto o copiar uno ya existente.",

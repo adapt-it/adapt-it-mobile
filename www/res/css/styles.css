@@ -13,6 +13,35 @@ a {
     width: 100%;
 }
 
+.splash-screen {
+    background: -webkit-linear-gradient(#3da8da, #0d75bb);
+    background: -o-linear-gradient(#3da8da, #0d75bb);
+    background: -moz-linear-gradient(#3da8da, #0d75bb);
+    background: linear-gradient(#3da8da, #0d75bb);
+    height: 100%;
+}
+
+.welcome-title {
+    text-align: center;
+    color: white;
+}
+
+.welcome-title h1 {
+    font-size: 3rem;
+    font-weight: 100;
+}
+.welcome-title h2 {
+    font-size: 2rem;
+    font-weight: 100;
+}
+
+.welcome-logo {
+    height: 70%;
+    overflow-y: hidden;
+    background: url('../svg/adapt-it-mobile-white.svg') no-repeat center center fixed;
+    background-size: 80%;
+}
+
 .topcoat-list li p:nth-of-type(2) {
     color:  #58C0FF ;
 }

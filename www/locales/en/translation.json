@@ -12,7 +12,7 @@
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__verseCount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastAdapted__ of a total of __verseCount__ verses have translation text).",
-        "ttlWelcome": "Welcome to Adapt It Mobile",
+        "ttlWelcome": "Welcome to",
         "lblContinue": "Continue",
         "ttlGetStarted": "Get Started",
         "dscGetStarted": "You can either create a new project or copy an existing one from an existing device.",

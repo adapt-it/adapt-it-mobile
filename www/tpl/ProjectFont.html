@@ -1,15 +1,9 @@
 <div id="source" class="control-group"><header><h3>{{t 'view.lblSourceFont'}}</h3></header>
-    <div class="control-row" style="font:{{this.SourceFont}}">{{this.SourceFont}}</div>
-    <div class="control-row half" style="float: left;">
-        <div class="control-row">Font: {{this.SourceFont}}</div>
-        <div class="control-row">Size: <span style="font-size: 12px;">A</span><input type='range' class='topcoat-range-input' name="SourceFontSize" min="12" max="24" value="16"><span style="font-size: 24px;">A</span></div>
-        <div class="control-row">Color: <span class="topcoat-icon" style="border: 1px solid #000; background-color: {{this.SourceColor}}">&nbsp;</span></div>
+    <div class="control-row">
+        <label id="fontLabel" for="font"></label>
+        <select id="font" autofocus class="docNav">
+        </select>
     </div>
-    <div class="control-row right"><button class="topcoat-button" id="ChangeSourceFont">{{ t 'view.lblChange'}}</button></div>
-</div>
-<div id="source" class="control-group"><header><h3>{{t 'view.lblTargetFont'}}</h3></header>
-    <div class="control-row">{{this.TargetFont}} <button class="topcoat-button" id="ChangeTargetFont">{{ t 'view.lblChange'}}</button></div>
-</div>
-<div id="source" class="control-group"><header><h3>{{t 'view.lblNavFont'}}</h3></header>
-    <div class="control-row">{{this.NavigationFont}} <button class="topcoat-button" id="ChangeNavFont">{{ t 'view.lblChange'}}</button></div>
+    <div class="control-row">Size: <span style="font-size: 12px;">A</span><input type='range' class='topcoat-range-input' name="SourceFontSize" min="12" max="24" value="16"><span style="font-size: 24px;">A</span></div>
+    <div class="control-row">Color: <span class="topcoat-icon" style="border: 1px solid #000; background-color: {{this.SourceColor}}">&nbsp;</span></div>
 </div>

@@ -11,6 +11,7 @@ define(function (require) {
         PageSlider  = require('app/utils/pageslider'),
         HelpView    = require('app/views/HelpView'),
         HomeView    = require('app/views/HomeView'),
+        WelcomeView = require('app/views/WelcomeView'),
         NewProjectView = require('app/views/NewProjectView'),
         LookupView  = require('app/views/LookupView'),
         projModel   = require('app/models/project'),
@@ -18,6 +19,7 @@ define(function (require) {
         lookupView  = null,
         helpView    = null,
         newProjectView = null,
+        welcomeView = null,
         homeView    = null;
     
     /** Handlebars helper methods **/
@@ -84,6 +86,7 @@ define(function (require) {
 
         routes: {
             "":             "home",             // (top level)
+            "welcome":      "welcome",          // #welcome (first-time landing page)
             "help":         "help",             // #help
             "project":      "project",          // #project
             "lookup":       "lookupChapter",    // #lookup
@@ -100,6 +103,12 @@ define(function (require) {
             helpView = new HelpView();
             helpView.delegateEvents();
             slider.slidePage(helpView.$el);
+        },
+        
+        welcome: function () {
+            welcomeView = new WelcomeView();
+            welcomeView.delegateEvents();
+            slider.slidePage(welcomeView.$el);
         },
         
         project: function () {
