@@ -21,7 +21,7 @@
         "dscProjectSourceLanguage": "<b>Step 1: Source Language</b><br>Enter the name and code of the source language. If you are unsure, click on the Lookup Codes button.",
         "dscProjectTargetLanguage": "<b>Step 2: Target Language</b><br>Enter the name and code of the target language. If you are unsure, click on the Lookup Codes button.",
         "dscProjectFonts": "<b>Step 3: Fonts</b><br>If you would like to customize the font or color for the source, target or navigation text, click that line. Otherwise, click Next to continue.",
-        "dscProjectPunctuation": "<b>Step 4: Punctuation</b><br>Specify the punctuation mappings for the source and target languages, and whether to automatically copy the punctuation from the source to the target language when adapting.",
+        "dscProjectPunctuation": "<b>Step 4: Punctuation</b><br>Specify whether to automatically copy the punctuation from the source to the target language when adapting, and the punctuation mappings for the source and target languages.",
         "dscProjectCases": "<b>Step 5: Cases</b>",
         "dscProjectUSFMFiltering": "<b>Step 6: USFM Filtering</b><br>Specify whether to filter out any USFM markers when adapting.",
         "lblOpenProject": "Open a Project",

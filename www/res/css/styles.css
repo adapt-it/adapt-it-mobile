@@ -34,14 +34,23 @@ a {
     font-size: 2rem;
     font-weight: 100;
 }
-
+.x-small-input {
+    width: 4rem;
+}
+.small-input {
+    width: 6rem;
+}
 .welcome-logo {
     height: 70%;
     overflow-y: hidden;
     background: url('../svg/adapt-it-mobile-white.svg') no-repeat center center fixed;
     background-size: 80%;
 }
-
+.container {
+    position: relative;
+    height: calc(100% - 133px);
+    width: 100%;
+}
 .topcoat-list li p:nth-of-type(2) {
     color:  #58C0FF ;
 }

@@ -1,1 +1,6 @@
-<div id="usfmfiltering">USFM filtering</div>
+<div class="control-group">
+<div class="control-row">Filter Settings</div>
+{{#each PunctPairs}}
+<div class="control-row"><input type="text" id="s-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.s}}"> --> <input type="text" id="t-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.t}}"></div>
+{{/each}}
+</div>

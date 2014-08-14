@@ -1,1 +1,8 @@
-<div id="case">Upper and lower case</div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceRTL" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>Source contains upper and lower case</label></div></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceRTL" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>Automatically capitalize target when appropriate</label></div></div>
+<div class="control-group">
+<div class="control-row"><span class="quarter">Source</span><span class="quarter">Target</span><span class="quarter">Gloss</span></div>
+{{#each PunctPairs}}
+<div class="control-row"><input type="text" id="s-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.s}}"> --> <input type="text" id="t-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.t}}"></div>
+{{/each}}
+</div>
