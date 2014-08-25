@@ -8,6 +8,7 @@ require.config({
         app: '../js',
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.0.min',
+        utils: '..//js/utils',
         tpl: '../tpl'
     },
     map: {
