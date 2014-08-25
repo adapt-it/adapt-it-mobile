@@ -1,6 +1,6 @@
 <div class="control-group">
 <div class="control-row">Filter Settings</div>
 {{#each PunctPairs}}
-<div class="control-row"><input type="text" id="s-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.s}}"> --> <input type="text" id="t-{{@index}}" class="topcoat-text-input quarter" maxlength="1" value="{{this.t}}"></div>
+<div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="filter-{{@index}}" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{this.t}}</label></div>
 {{/each}}
 </div>

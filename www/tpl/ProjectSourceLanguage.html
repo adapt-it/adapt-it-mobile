@@ -1,5 +1,7 @@
-<div id="source" class="control-group"><header><h3>{{t 'view.lblSourceLanguageName'}}</h3></header>
-    <div class="control-row"><input type="text" id="SourceLanguageName" class="topcoat-text-input full" placeholder="{{t 'view.lblSourceLanguageName'}}" value="{{SourceLanguageName}}"></div>
-    <div class="control-row"><input type="text" id="SourceLanguageCode" class="topcoat-text-input half" style="margin-right: 4px;" placeholder="{{t 'view.lblCode'}}" value="{{SourceLanguageCode}}"><button class="topcoat-button" id="lookupSource">{{t 'view.lblLookupCodes'}}</button></div>
-    <div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="SourceRTL" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblRTL'}}</label></div></div>
-
+<div id="source" class="control-group" style="height:100%;">
+    <div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="SourceRTL" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblRTL'}}</label></div>
+    <div class="control-row" id="langName">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div>
+    <div class="control-row" id="langCode">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
+    <div class="control-row"><input type="text" id="SourceLanguageName" class="topcoat-text-input full" placeholder="{{ t 'view.lblSourceLanguageName'}}" value="{{SourceLanguageName}}"></div>
+    <div class="autocomplete-suggestions" id="name-suggestions"></div>
+</div>

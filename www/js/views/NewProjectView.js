@@ -44,25 +44,42 @@ define(function (require) {
             return this;
         },
         
-        // event handlers, including those inside the wizard steps
+        ////
+        // Event Handlers
+        ////
         events: {
-            "click #lookupSource": "OnLookupSource",
-            "click #lookupTarget": "OnLookupTarget",
             "click #sourceFont": "OnEditSourceFont",
             "click #targetFont": "OnEditTargetFont",
             "click #navFont": "OnEditNavFont",
+            "keyup #SourceLanguageName":    "searchSource",
+            "keypress #SourceLanguageName": "onkeypressSourceName",
+            "keyup #TargetLanguageName":    "searchTarget",
+            "keypress #TargetLanguageName": "onkeypressTargetName",
+            "click .autocomplete-suggestion": "selectLanguage",
             "click #Prev": "OnPrevStep",
             "click #Next": "OnNextStep"
         },
+
+        searchSource: function (event) {
+            currentView.search(event);
+        },
+
+        onkeypressSourceName: function (event) {
+            currentView.onkeypress(event);
+        },
         
-        OnLookupSource: function (event) {
-            console.log("OnLookupSource");
+        searchTarget: function (event) {
+            currentView.search(event);
         },
 
-        OnLookupTarget: function (event) {
-            console.log("OnLookupTarget");
+        onkeypressTargetName: function (event) {
+            currentView.onkeypress(event);
         },
 
+        selectLanguage: function (event) {
+            currentView.onSelectLanguage(event);
+        },
+        
         OnEditSourceFont: function (event) {
             console.log("OnEditSourceFont");
         },
@@ -104,25 +121,13 @@ define(function (require) {
                 trimmedValue = null;
             switch (step) {
             case 1: // source language
-                value = $("#SourceLanguageName").val();
-                trimmedValue = value.trim();
-                console.log("SourceLanguageName:" + trimmedValue);
-                this.model.set("SourceLanguageName", trimmedValue);
-                value = $("#SourceLanguageCode").val();
-                trimmedValue = value.trim();
-                console.log("SourceLanguageCode:" + trimmedValue);
-                this.model.set("SourceLanguageCode", trimmedValue);
+                this.model.set("SourceLanguageName", currentView.langName);
+                this.model.set("SourceLanguageCode", currentView.langCode);
                 this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
             case 2: // target language
-                value = $("#TargetLanguageName").val();
-                trimmedValue = value.trim();
-                console.log("TargetLanguageName:" + trimmedValue);
-                this.model.set("TargetLanguageName", trimmedValue);
-                value = $("#TargetLanguageCode").val();
-                trimmedValue = value.trim();
-                console.log("TargetLanguageCode:" + trimmedValue);
-                this.model.set("TargetLanguageCode", trimmedValue);
+                this.model.set("SourceLanguageName", currentView.langName);
+                this.model.set("SourceLanguageCode", currentView.langCode);
                 this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
             case 3: // fonts
@@ -130,7 +135,7 @@ define(function (require) {
             case 4: // punctuation
                 punctPairs = this.model.get("PunctPairs");
                 for (index = 0; index < punctPairs.length; index++) {
-                    punctPairs[index]
+//                    punctPairs[index]
                 }
                 break;
             case 5: // cases
@@ -153,8 +158,6 @@ define(function (require) {
         },
         
         ShowStep: function (number) {
-            console.log("Project: " + this.model);
-            console.log("ShowStep: " + number);
             // clear out the old view (if any)
             currentView = null;
             switch (number) {

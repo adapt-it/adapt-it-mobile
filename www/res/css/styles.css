@@ -48,7 +48,7 @@ a {
 }
 .container {
     position: relative;
-    height: calc(100% - 133px);
+    height: 72%; /*alc(100% - 133px);*/
     width: 100%;
 }
 .topcoat-list li p:nth-of-type(2) {
@@ -492,6 +492,41 @@ select.docNav {
     border: 1px solid #0036ff;
     box-shadow: 0 0 0 2px #6fb5f1;
 }
+.cases {
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    padding: 1.25rem;
+    height: 43.5rem;
+    width: 6rem;
+}
+#name-suggestions {
+/*
+    position: absolute;
+    top: 190px;
+    left: 15px;
+*/
+    margin: 0;
+    height: 70%;/*calc(100% - 120px);*/
+    overflow-y: scroll;
+/*    display: none;*/
+    border: 1px solid #949696;
+    z-index: 9999;
+    padding: 6px;
+    line-height: 1.4rem;
+}
+.autocomplete-suggestion {
+    border-top: 1px solid #ccc;
+}
+.autocomplete-suggestion:hover {
+    background: #ccc;
+}
+/*
+@media (min-device-height: 640px) {
+    .cases {
+        height: 18rem;
+    }
+}
+*/
 /* webkit and mozilla fix for cursor on mobile apps / contenteditable */
 *[contenteditable] {
     -webkit-user-select: auto !important;
@@ -614,7 +649,6 @@ span.sprite{
 @media only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : landscape) {
     .source, .target {
         max-width: device-width;
-        color: purple;
     }
 }
 

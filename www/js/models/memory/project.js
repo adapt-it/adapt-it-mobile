@@ -98,12 +98,122 @@ define(function (require) {
                         t: "’"
                     }
                 ],
+                AutoCapitalization: "false",
+                SourceHasUpperCase: "false",
+                CasePairs: [
+                    {
+                        s: "aA",
+                        t: "aA"
+                    },
+                    {
+                        s: "bB",
+                        t: "bB"
+                    },
+                    {
+                        s: "cC",
+                        t: "cC"
+                    },
+                    {
+                        s: "dD",
+                        t: "dD"
+                    },
+                    {
+                        s: "eE",
+                        t: "eE"
+                    },
+                    {
+                        s: "fF",
+                        t: "fF"
+                    },
+                    {
+                        s: "gG",
+                        t: "gG"
+                    },
+                    {
+                        s: "hH",
+                        t: "hH"
+                    },
+                    {
+                        s: "iI",
+                        t: "iI"
+                    },
+                    {
+                        s: "jJ",
+                        t: "jJ"
+                    },
+                    {
+                        s: "kK",
+                        t: "kK"
+                    },
+                    {
+                        s: "lL",
+                        t: "lL"
+                    },
+                    {
+                        s: "mM",
+                        t: "mM"
+                    },
+                    {
+                        s: "nN",
+                        t: "nN"
+                    },
+                    {
+                        s: "oO",
+                        t: "oO"
+                    },
+                    {
+                        s: "pP",
+                        t: "pP"
+                    },
+                    {
+                        s: "qQ",
+                        t: "qQ"
+                    },
+                    {
+                        s: "rR",
+                        t: "rR"
+                    },
+                    {
+                        s: "sS",
+                        t: "sS"
+                    },
+                    {
+                        s: "tT",
+                        t: "tT"
+                    },
+                    {
+                        s: "uU",
+                        t: "uU"
+                    },
+                    {
+                        s: "vV",
+                        t: "vV"
+                    },
+                    {
+                        s: "wW",
+                        t: "wW"
+                    },
+                    {
+                        s: "xX",
+                        t: "xX"
+                    },
+                    {
+                        s: "yY",
+                        t: "yY"
+                    },
+                    {
+                        s: "zZ",
+                        t: "zZ"
+                    }
+                ],
                 SourceDir: "ltr",
                 TargetDir: "ltr",
                 NavDir: "ltr",
                 id: "en-us.en-au",
-                name: "US English to English adaptations"
-                }
+                name: "US English to English adaptations",
+                lastDocument: "Ruth.xml",
+                FilterMarkers: "\\lit \\_table_grid \\_header \\_intro_base \\x \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\xt \\_notes_base \\__normal \\xdc \\ide \\mr \\xq \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\xot \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\xk \\_list_base \\ib \\xnt \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\xo \\_single_boxed_para \\sts"
+            }
         ],
         
         findById = function (id) {
@@ -118,6 +228,15 @@ define(function (require) {
                 }
             }
             deferred.resolve(project);
+            return deferred.promise();
+        },
+
+        findByName = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = projects.filter(function (element) {
+                return element.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
             return deferred.promise();
         },
 
@@ -206,11 +325,121 @@ define(function (require) {
                         t: "’"
                     }
                 ],
+                AutoCapitalization: "false",
+                SourceHasUpperCase: "false",
+                CasePairs: [
+                    {
+                        s: "aA",
+                        t: "aA"
+                    },
+                    {
+                        s: "bB",
+                        t: "bB"
+                    },
+                    {
+                        s: "cC",
+                        t: "cC"
+                    },
+                    {
+                        s: "dD",
+                        t: "dD"
+                    },
+                    {
+                        s: "eE",
+                        t: "eE"
+                    },
+                    {
+                        s: "fF",
+                        t: "fF"
+                    },
+                    {
+                        s: "gG",
+                        t: "gG"
+                    },
+                    {
+                        s: "hH",
+                        t: "hH"
+                    },
+                    {
+                        s: "iI",
+                        t: "iI"
+                    },
+                    {
+                        s: "jJ",
+                        t: "jJ"
+                    },
+                    {
+                        s: "kK",
+                        t: "kK"
+                    },
+                    {
+                        s: "lL",
+                        t: "lL"
+                    },
+                    {
+                        s: "mM",
+                        t: "mM"
+                    },
+                    {
+                        s: "nN",
+                        t: "nN"
+                    },
+                    {
+                        s: "oO",
+                        t: "oO"
+                    },
+                    {
+                        s: "pP",
+                        t: "pP"
+                    },
+                    {
+                        s: "qQ",
+                        t: "qQ"
+                    },
+                    {
+                        s: "rR",
+                        t: "rR"
+                    },
+                    {
+                        s: "sS",
+                        t: "sS"
+                    },
+                    {
+                        s: "tT",
+                        t: "tT"
+                    },
+                    {
+                        s: "uU",
+                        t: "uU"
+                    },
+                    {
+                        s: "vV",
+                        t: "vV"
+                    },
+                    {
+                        s: "wW",
+                        t: "wW"
+                    },
+                    {
+                        s: "xX",
+                        t: "xX"
+                    },
+                    {
+                        s: "yY",
+                        t: "yY"
+                    },
+                    {
+                        s: "zZ",
+                        t: "zZ"
+                    }
+                ],
                 SourceDir: "",
                 TargetDir: "",
                 NavDir: "",
                 id: "",
-                name: ""
+                name: "",
+                lastDocument: "",
+                FilterMarkers: "\\lit \\_table_grid \\_header \\_intro_base \\x \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\xt \\_notes_base \\__normal \\xdc \\ide \\mr \\xq \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\xot \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\xk \\_list_base \\ib \\xnt \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\xo \\_single_boxed_para \\sts"
             },
 
             sync: function (method, model, options) {

@@ -5,24 +5,24 @@ define(function (require) {
     "use strict";
 
     var $           = require('jquery'),
-        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
-        projModel   = require('app/models/project'),
-        tplText     = require('text!tpl/ProjectSourceLanguage.html'),
-        template    = Handlebars.compile(tplText);
+        tplText     = require('text!tpl/LanguagesList.html'),
+        template = Handlebars.compile(tplText);
+
 
     return Backbone.View.extend({
-        
+
         initialize: function () {
-//            this.render();
+            this.render();
+            this.collection.on("reset", this.render, this);
         },
 
         render: function () {
-            var contents = template(this.model.toJSON());
-            this.$el.html(contents);
+            this.$el.html(template(this.collection.toJSON()));
             return this;
         }
+
     });
 
 });
