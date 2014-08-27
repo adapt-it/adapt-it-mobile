@@ -11,6 +11,7 @@ define(function (require) {
         tplText     = require('text!tpl/NewProject.html'),
         ProjectCasesView = require('app/views/ProjectCasesView'),
         ProjectFontsView = require('app/views/ProjectFontsView'),
+        ProjectFontView = require('app/views/ProjectFontView'),
         ProjectSourceLanguageView = require('app/views/ProjectSourceLanguageView'),
         ProjectTargetLanguageView = require('app/views/ProjectTargetLanguageView'),
         ProjectPunctuationView = require('app/views/ProjectPunctuationView'),
@@ -20,6 +21,7 @@ define(function (require) {
         currentView = null, // view
         projCasesView = null,
         projFontsView = null,
+        projFontView = null,
         projSourceLanguageView = null,
         projTargetLanguageView = null,
         projPunctuationView = null,
@@ -56,6 +58,8 @@ define(function (require) {
             "keyup #TargetLanguageName":    "searchTarget",
             "keypress #TargetLanguageName": "onkeypressTargetName",
             "click .autocomplete-suggestion": "selectLanguage",
+            "click #SourceHasCases": "OnClickSourceHasCases",
+            "click #AutoCapitalize": "OnClickAutoCapitalize",
             "click #Prev": "OnPrevStep",
             "click #Next": "OnNextStep"
         },
@@ -79,9 +83,28 @@ define(function (require) {
         selectLanguage: function (event) {
             currentView.onSelectLanguage(event);
         },
+
+        OnClickSourceHasCases: function (event) {
+            currentView.onClickSourceHasCases(event);
+        },
+        
+        OnClickAutoCapitalize: function (event) {
+            currentView.onClickAutoCapitalize(event);
+        },
         
         OnEditSourceFont: function (event) {
             console.log("OnEditSourceFont");
+//            currentView = new ProjectFontView({ model: this.model});
+//            // title
+//            this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+//            // instructions
+//            this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+//            // controls
+//            this.$('#StepContainer').html(currentView.render().el.childNodes);
+//            // first step -- disable the prev button
+//            this.$("#Prev").attr('disabled', 'true');
+//            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
+//            this.$("#lblNext").html(i18n.t('view.lblNext'));
         },
 
         OnEditTargetFont: function (event) {

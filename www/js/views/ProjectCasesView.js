@@ -21,7 +21,34 @@ define(function (require) {
             var contents = template(this.model.toJSON());
             this.$el.html(contents);
             return this;
+        },
+        
+        ////
+        // Event Handlers
+        ////
+        events: {
+            "click #SourceHasCases": "onClickSourceHasCases",
+            "click #AutoCapitalize": "onClickAutoCapitalize"
+        },
+
+        onClickSourceHasCases: function (event) {
+            // enable / disable the autocapitalize checkbox based on the value
+            if ($("#SourceHasCases").is(':checked') === true) {
+                $("#AutoCapitalize").prop('disabled', false);
+            } else {
+                $("#AutoCapitalize").prop('disabled', true);
+            }
+        },
+        
+        onClickAutoCapitalize: function (event) {
+            // show / hide the cases list based on the value
+            if ($("#AutoCapitalize").is(':checked') === true) {
+                $("#CaseEquivs").prop('hidden', false);
+            } else {
+                $("#CaseEquivs").prop('hidden', true);
+            }
         }
+        
     });
 
 });

@@ -1,7 +1,7 @@
 <div id="source" class="control-group" style="height:100%;">
-    <div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="TargetRTL" value="{{#ifCond TargetDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblRTL'}}</label></div>
     <div class="control-row" id="langName">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
     <div class="control-row" id="langCode">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
+    <div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="TargetRTL" value="{{#ifCond TargetDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblRTL'}}</label></div>
     <div class="control-row"><input type="text" id="TargetLanguageName" class="topcoat-text-input full" placeholder="{{ t 'view.lblTargetLanguageName'}}" value="{{TargetLanguageName}}"></div>
     <div class="autocomplete-suggestions" id="name-suggestions"></div>
 </div>
