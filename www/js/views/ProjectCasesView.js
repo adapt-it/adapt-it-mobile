@@ -35,8 +35,14 @@ define(function (require) {
             // enable / disable the autocapitalize checkbox based on the value
             if ($("#SourceHasCases").is(':checked') === true) {
                 $("#AutoCapitalize").prop('disabled', false);
+                if ($("#AutoCapitalize").is(':checked') === true) {
+                    $("#CaseEquivs").prop('hidden', false);
+                } else {
+                    $("#CaseEquivs").prop('hidden', true);
+                }
             } else {
                 $("#AutoCapitalize").prop('disabled', true);
+                $("#CaseEquivs").prop('hidden', true);
             }
         },
         

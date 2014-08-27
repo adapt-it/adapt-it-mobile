@@ -1,9 +1,9 @@
-<div id="copy punctuation" class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox">
-  <input type="checkbox">
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox">
+  <input id="CopyPunctuation" type="checkbox">
   <div class="topcoat-checkbox__checkmark"></div>
     {{t 'view.lblCopyPunctuation'}}
 </label></div>
-<div class="control-group">
+<div class="control-group" id="PunctMappings" hidden="true">
 <div class="control-row">Punctuation mappings (<i>Source</i> --> <i>Target</i>)</div>
 <div class="control-row">
 {{#each PunctPairs}}

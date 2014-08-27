@@ -58,6 +58,7 @@ define(function (require) {
             "keyup #TargetLanguageName":    "searchTarget",
             "keypress #TargetLanguageName": "onkeypressTargetName",
             "click .autocomplete-suggestion": "selectLanguage",
+            "click #CopyPunctuation": "OnClickCopyPunctuation",
             "click #SourceHasCases": "OnClickSourceHasCases",
             "click #AutoCapitalize": "OnClickAutoCapitalize",
             "click #Prev": "OnPrevStep",
@@ -82,6 +83,10 @@ define(function (require) {
 
         selectLanguage: function (event) {
             currentView.onSelectLanguage(event);
+        },
+        
+        OnClickCopyPunctuation: function (event) {
+            currentView.onClickCopyPunctuation(event);
         },
 
         OnClickSourceHasCases: function (event) {

@@ -21,6 +21,19 @@ define(function (require) {
             var contents = template(this.model.toJSON());
             this.$el.html(contents);
             return this;
+        },
+        
+        events: {
+            "click #CopyPunctuation": "onClickCopyPunctuation"
+        },
+
+        onClickCopyPunctuation: function (event) {
+            // enable / disable the autocapitalize checkbox based on the value
+            if ($("#CopyPunctuation").is(':checked') === true) {
+                $("#PunctMappings").prop('hidden', false);
+            } else {
+                $("#PunctMappings").prop('hidden', true);
+            }
         }
     });
 
