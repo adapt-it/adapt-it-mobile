@@ -111,7 +111,8 @@ define(function (require) {
                 console.log("last step");
                 // add the project to the collection
                 projModel.ProjectCollection.add(this.model);
-                // head back to the 
+                // head back to the home page
+                
             }
             this.ShowStep(step);
         },

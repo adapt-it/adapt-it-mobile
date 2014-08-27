@@ -14,10 +14,12 @@ a {
 }
 
 .splash-screen {
-    background: -webkit-linear-gradient(#eee, #ccc);
-    background: -o-linear-gradient(#eee, #ccc);
-    background: -moz-linear-gradient(#eee, #ccc);
-    background: linear-gradient(#eee, #ccc);
+    /* fallback solid color */
+    background-color: #ccc;
+    background-image: -webkit-linear-gradient(#eee, #ccc);
+    background-image: -o-linear-gradient(#eee, #ccc);
+    background-image: -moz-linear-gradient(#eee, #ccc);
+    background-image: linear-gradient(#eee, #ccc);
     box-shadow: 0 0 0 1px #949696;
     width: 90%;
     margin-left: auto;
