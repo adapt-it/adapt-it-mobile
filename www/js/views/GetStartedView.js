@@ -8,7 +8,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
-        tplText     = require('text!tpl/Welcome.html'),
+        tplText     = require('text!tpl/GetStarted.html'),
         template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({

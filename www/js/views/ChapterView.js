@@ -14,15 +14,17 @@ define(function (require) {
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
         tplText     = require('text!tpl/Chapter.html'),
+        project     = null,
         template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({
 
         initialize: function () {
+            var coll = new projModel.ProjectCollection();
 			this.$list = $('#chapter');
             this.spList = new spModels.SourcePhraseCollection();
             this.kblist = new kbModels.TargetUnitCollection();
-            this.project = projModel.Project;
+            this.project = coll.at(0);
             this.render();
         },
         render: function () {

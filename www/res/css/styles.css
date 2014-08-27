@@ -14,25 +14,39 @@ a {
 }
 
 .splash-screen {
-    background: -webkit-linear-gradient(#3da8da, #0d75bb);
-    background: -o-linear-gradient(#3da8da, #0d75bb);
-    background: -moz-linear-gradient(#3da8da, #0d75bb);
-    background: linear-gradient(#3da8da, #0d75bb);
-    height: 100%;
+    background: -webkit-linear-gradient(#eee, #ccc);
+    background: -o-linear-gradient(#eee, #ccc);
+    background: -moz-linear-gradient(#eee, #ccc);
+    background: linear-gradient(#eee, #ccc);
+    box-shadow: 0 0 0 1px #949696;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    -webkit-appearance: none;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid #9daca9;
 }
 
 .welcome-title {
     text-align: center;
-    color: white;
+    color: #454545;
 }
 
 .welcome-title h1 {
     font-size: 3rem;
-    font-weight: 100;
+    font-weight: 400;
 }
 .welcome-title h2 {
     font-size: 2rem;
-    font-weight: 100;
+    font-weight: 200;
 }
 .x-small-input {
     width: 4rem;
@@ -41,10 +55,15 @@ a {
     width: 6rem;
 }
 .welcome-logo {
-    height: 70%;
-    overflow-y: hidden;
-    background: url('../svg/adapt-it-mobile-white.svg') no-repeat center center fixed;
-    background-size: 80%;
+/*    float: left;*/
+    height: 96px;
+    width: 96px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background: url('../svg/adapt-it-mobile.svg') no-repeat;
+    background-size: cover;
 }
 .container {
     position: relative;

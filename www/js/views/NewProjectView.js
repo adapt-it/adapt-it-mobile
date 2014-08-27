@@ -31,8 +31,8 @@ define(function (require) {
     return Backbone.View.extend({
 
         initialize: function () {
-            obj.indexedDB = {};
-            obj.indexedDB.db = null;
+//            obj.indexedDB = {};
+//            obj.indexedDB.db = null;
             this.OnNewProject();
             this.render();
             // start the wizard
@@ -109,7 +109,9 @@ define(function (require) {
             } else {
                 // last step -- finish up
                 console.log("last step");
-                // display the result
+                // add the project to the collection
+                projModel.ProjectCollection.add(this.model);
+                // head back to the 
             }
             this.ShowStep(step);
         },

@@ -7,19 +7,48 @@ define(function (require) {
     var $               = require('jquery'),
         Handlebars      = require('handlebars'),
         Backbone        = require('backbone'),
+        GetStartedView  = require('app/views/GetStartedView'),
+        WelcomeView     = require('app/views/WelcomeView'),
+        HomeNormalView  = require('app/views/HomeNormalView'),
         tplText         = require('text!tpl/Home.html'),
+        projModel       = require('app/models/project'),
         template = Handlebars.compile(tplText);
 
 
     return Backbone.View.extend({
 
         initialize: function () {
+            var currentView,
+                coll = new projModel.ProjectCollection();
             this.render();
+            // if this is a new install, show the welcome screen
+            if (coll.length === 0) {
+                // no project -- show welcome subview
+                currentView = new WelcomeView();
+                this.$('#Container').html(currentView.render().el.childNodes);
+            } else {
+                // project(s) -- display normal view
+                currentView = new HomeNormalView();
+                this.$('#Container').html(currentView.render().el.childNodes);
+            }
         },
 
         render: function () {
             this.$el.html(template());
             return this;
+        },
+        
+        ////
+        // Event Handlers
+        ////
+        events: {
+            "click #Continue": "onContinue"
+        },        
+        
+        onContinue: function (event) {
+            console.log("onContinue");
+            var currentView = new GetStartedView();
+            this.$('#Container').html(currentView.render().el.childNodes);
         }
     });
 
