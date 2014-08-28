@@ -548,6 +548,9 @@ select.docNav {
     }
 }
 */
+.topcoat-checkbox__checkmark {
+    margin-right: 6px;
+}
 /* webkit and mozilla fix for cursor on mobile apps / contenteditable */
 *[contenteditable] {
     -webkit-user-select: auto !important;

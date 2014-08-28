@@ -21,6 +21,19 @@ define(function (require) {
             var contents = template(this.model.toJSON());
             this.$el.html(contents);
             return this;
+        },
+        
+        events: {
+            "click #CustomFilters": "onClickCustomFilters"
+        },
+
+        onClickCustomFilters: function (event) {
+            // enable / disable the autocapitalize checkbox based on the value
+            if ($("#CustomFilters").is(':checked') === true) {
+                $("#USFMFilters").prop('hidden', false);
+            } else {
+                $("#USFMFilters").prop('hidden', true);
+            }
         }
     });
 

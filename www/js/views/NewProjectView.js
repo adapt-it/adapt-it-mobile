@@ -61,6 +61,7 @@ define(function (require) {
             "click #CopyPunctuation": "OnClickCopyPunctuation",
             "click #SourceHasCases": "OnClickSourceHasCases",
             "click #AutoCapitalize": "OnClickAutoCapitalize",
+            "click #CustomFilters": "OnClickCustomFilters",
             "click #Prev": "OnPrevStep",
             "click #Next": "OnNextStep"
         },
@@ -95,6 +96,10 @@ define(function (require) {
         
         OnClickAutoCapitalize: function (event) {
             currentView.onClickAutoCapitalize(event);
+        },
+
+        OnClickCustomFilters: function (event) {
+            currentView.onClickCustomFilters(event);
         },
         
         OnEditSourceFont: function (event) {
