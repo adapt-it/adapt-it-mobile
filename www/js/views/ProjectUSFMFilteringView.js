@@ -8,17 +8,21 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        usfm       = require('utils/usfm'),
         tplText     = require('text!tpl/ProjectUSFMFiltering.html'),
         template    = Handlebars.compile(tplText);
 
     return Backbone.View.extend({
         
         initialize: function () {
+            this.coll = new usfm.MarkerCollection();
 //            this.render();
         },
 
         render: function () {
-            var contents = template(this.model.toJSON());
+            this.coll.fetch({reset: true, data: {name: ""}}); // return all results
+            
+            var contents = template(this.coll.toJSON());
             this.$el.html(contents);
             return this;
         },
