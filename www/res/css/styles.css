@@ -665,6 +665,35 @@ span.sprite{
     background-size: 48px 48px;
 }
 
+/* edb - table for usfm? */
+.topcoat-table {
+	border:1px solid #9daca9;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+/*    width: 100%;*/
+}
+.topcoat-table th { 
+/*    background-color:#aaa;*/
+    text-align: center;
+    padding: 4px 20px;
+    font-size: 0.9em;
+    font-weight: 800;
+    background-color: #d2d6d6;
+    color: #454545;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.topcoat-table tr {
+/*    line-height: 1.2rem;*/
+}
+.topcoat-table td {
+    padding: 3px;
+}
+.topcoat-table tr:nth-child(odd){ background-color:#eee; }
+.topcoat-table tr:nth-child(even)    { background-color:#fff; }
+/***********
+* media queries - for specific device sizes / screen resolutions
+***********/
 @media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
     .source, .target {
         max-width: device-width;
