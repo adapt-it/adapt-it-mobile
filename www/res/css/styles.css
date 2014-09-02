@@ -667,11 +667,14 @@ span.sprite{
 
 /* edb - table for usfm? */
 .topcoat-table {
+    table-layout: fixed;
 	border:1px solid #9daca9;
+    border-collapse: separate;
+    border-spacing: 1px;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
 	border-radius:6px;
-/*    width: 100%;*/
+    width: 100%;
 }
 .topcoat-table th { 
 /*    background-color:#aaa;*/

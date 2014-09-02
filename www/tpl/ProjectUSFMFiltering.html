@@ -1,7 +1,7 @@
 <div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="CustomFilters" value="{{#ifCond TargetDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblCustomFilters'}}</label></div>
 <div class="control-group" id="USFMFilters" hidden="true">
-<div class="control-row">Filter Settings</div>
-<div class="control-row"><table class="topcoat-table"><tr><th></th><th>Name</th><th>Description</th></tr>
+<div class="control-row">Check markers to display</div>
+<div class="control-row"><table class="topcoat-table"><colgroup><col style="width:2.5rem;"><col style="width:4.5rem;"><col></colgroup><thead><tr><th></th><th>Name</th><th>Description</th></tr></thead>
 {{#.}}
     <tr><td><label class="topcoat-checkbox"><input type="checkbox" id="filter-{{@index}}" value="false"><div class="topcoat-checkbox__checkmark"></div></label></td><td>{{this.name}}</td><td>{{this.description}}</td></tr>
 {{/.}}

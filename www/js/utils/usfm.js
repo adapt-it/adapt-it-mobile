@@ -2180,7 +2180,7 @@ define(function (require) {
             },
             {
                 name: "pubinfo",
-                description: "Publication information - Lang,Credit,Version,Copies,Publisher,Id,Logo",
+                description: "Publication information - Lang, Credit, Version, Copies, Publisher, Id, Logo",
                 usfm: "1",
                 userCanSetFilter: "1",
                 bdryOnLast: "1",
