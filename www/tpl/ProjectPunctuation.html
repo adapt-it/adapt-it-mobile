@@ -4,10 +4,10 @@
     {{t 'view.lblCopyPunctuation'}}
 </label></div>
 <div class="control-group" id="PunctMappings" hidden="true">
-<div class="control-row">Punctuation mappings (<i>Source</i> --> <i>Target</i>)</div>
-<div class="control-row">
+    <div class="control-row">Type in each punctuation character in the source language, followed by the corresponding character in the target language.</div>
+<div class="control-row"><table class="topcoat-table"><thead><tr><th>Source</th><th>Target</th></tr></thead>
 {{#each PunctPairs}}
-<div class="control-row" style="float:left; padding-right:18px;"><input type="text" id="s-{{@index}}" class="topcoat-text-input x-small-input" maxlength="1" value="{{this.s}}"> --> <input type="text" id="t-{{@index}}" class="topcoat-text-input x-small-input" maxlength="1" value="{{this.t}}"></div>
+    <tr><td><input type="text" id="s-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.t}}"></td></tr>
 {{/each}}
-</div>
+</table></div>
 </div>

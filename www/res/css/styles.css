@@ -611,15 +611,14 @@ ul.btns {
 	text-align: center;
 	padding: 64px 0px 6px 0px;
 	text-decoration: none;
-    background: #DDE1E1;
-/*    text-shadow: 0 -1px 0 #FFF;*/
+/*    background: #DDE1E1;*/
     -webkit-appearance: none;
     -moz-appearance: none;
 }
 .btns li :hover {
     font-weight: 400;
     color: black;
-    background-color: #eee;
+/*    background-color: #eee;*/
 }
 .btns li a :hover {
     border: none;
@@ -630,7 +629,19 @@ ul.btns {
     font-size: .8rem;
     font-weight: 400;
 }
-
+.light-bg {
+    background: #DDE1E1;
+}
+.light-bg :hover {
+    background-color: #eee;
+}
+.no-bg {
+    background: transparent;
+    background-color: transparent;
+}
+.no-bg :hover {
+    background-color: transparent;
+}
 .sprite {
 	position: absolute;
 	display: block;

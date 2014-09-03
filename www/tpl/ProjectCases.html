@@ -2,14 +2,9 @@
 <div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" disabled id="AutoCapitalize" value="{{#ifCond SourceDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>Automatically capitalize target when appropriate</label></div></div>
 <div class="control-group" id="CaseEquivs" hidden="true">
 <div class="control-row">Enter the lower and upper case equivalencies for the source and target languages below.</div>
-<div class="control-row">
-<div style="float:left; margin-right:18px;">
-<label for="source">Source</label><br>
-<textarea class="topcoat-textarea cases" id="source" placeholder="Textarea">{{#each CasePairs}}{{this.s}}&#10;{{/each}}</textarea>
-</div>
-<div style="float:left;">
-<label for="target">Target</label><br>
-<textarea class="topcoat-textarea cases" id="target" placeholder="Textarea">{{#each CasePairs}}{{this.t}}&#10;{{/each}}</textarea>
-</div>
-</div>
+<div class="control-row"><table class="topcoat-table"><thead><tr><th>Source</th><th>Target</th></tr></thead>
+{{#each CasePairs}}
+    <tr><td><input type="text" id="s-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.t}}"></td></tr>
+{{/each}}
+</table></div>
 </div>

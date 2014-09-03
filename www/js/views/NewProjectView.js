@@ -135,17 +135,19 @@ define(function (require) {
         },
 
         OnNextStep: function (event) {
+            var coll = null;
             // pull the info from the current step
             this.GetProjectInfo(step);
             if (step < 6) {
                 step++;
             } else {
                 // last step -- finish up
-                console.log("last step");
+                coll = new projModel.ProjectCollection();
                 // add the project to the collection
-                projModel.ProjectCollection.add(this.model);
+                coll.add(this.model);
                 // head back to the home page
-                
+                console.log("last step - project count:" + coll.length);
+                $(".back-button").trigger("click");
             }
             this.ShowStep(step);
         },

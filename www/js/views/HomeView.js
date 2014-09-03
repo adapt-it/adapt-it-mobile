@@ -18,9 +18,14 @@ define(function (require) {
     return Backbone.View.extend({
 
         initialize: function () {
+            this.render();
+        },
+
+        render: function () {
             var currentView,
                 coll = new projModel.ProjectCollection();
-            this.render();
+            this.$el.html(template());
+            console.log("Projects:" + coll.length);
             // if this is a new install, show the welcome screen
             if (coll.length === 0) {
                 // no project -- show welcome subview
@@ -31,10 +36,6 @@ define(function (require) {
                 currentView = new HomeNormalView();
                 this.$('#Container').html(currentView.render().el.childNodes);
             }
-        },
-
-        render: function () {
-            this.$el.html(template());
             return this;
         },
         
