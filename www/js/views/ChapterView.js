@@ -21,6 +21,7 @@ define(function (require) {
 
         initialize: function () {
             var coll = new projModel.ProjectCollection();
+            coll.fetch({reset: true, data: {name: ""}});
 			this.$list = $('#chapter');
             this.spList = new spModels.SourcePhraseCollection();
             this.kblist = new kbModels.TargetUnitCollection();

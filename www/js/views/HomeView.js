@@ -24,6 +24,7 @@ define(function (require) {
         render: function () {
             var currentView,
                 coll = new projModel.ProjectCollection();
+            coll.fetch({reset: true, data: {name: ""}});
             this.$el.html(template());
             console.log("Projects:" + coll.length);
             // if this is a new install, show the welcome screen
@@ -44,7 +45,7 @@ define(function (require) {
         ////
         events: {
             "click #Continue": "onContinue"
-        },        
+        },
         
         onContinue: function (event) {
             console.log("onContinue");

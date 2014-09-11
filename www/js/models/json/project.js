@@ -5,16 +5,25 @@ define(function (require) {
 
     "use strict";
 
-    var Backbone = require('backbone'),
+     var Backbone = require('backbone'),
 
         Project = Backbone.Model.extend({
 
             urlRoot: "http://localhost:3000/project"
 
+        }),
+
+        ProjectCollection = Backbone.Collection.extend({
+
+            model: Project,
+
+            url: "http://localhost:3000/projects"
+
         });
 
     return {
-        Project: Project
+        Project: Project,
+        ProjectCollection: ProjectCollection
     };
 
 });
