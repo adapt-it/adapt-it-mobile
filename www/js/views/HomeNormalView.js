@@ -9,7 +9,8 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         tplText     = require('text!tpl/HomeNormal.html'),
-        template    = Handlebars.compile(tplText);
+        template    = Handlebars.compile(tplText),
+        project     = null;
 
     return Backbone.View.extend({
         
@@ -18,7 +19,8 @@ define(function (require) {
         },
 
         render: function () {
-            this.$el.html(template(this.collection.toJSON()));
+            this.project = this.collection.at(0);
+            this.$el.html(template(this.project.toJSON()));
             return this;
         }
     });

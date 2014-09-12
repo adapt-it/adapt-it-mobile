@@ -349,6 +349,22 @@ ul {
     padding: 0;
 }
 
+.topcoat-icon--item-add {
+    background: url("images/plus_pill.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
+.topcoat-icon--item-delete {
+    background: url("images/minus_pill.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
 .right {
     float:right;
 }
