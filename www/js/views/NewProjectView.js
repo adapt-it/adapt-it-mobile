@@ -143,6 +143,7 @@ define(function (require) {
             } else {
                 // last step -- finish up
                 coll = new projModel.ProjectCollection();
+                coll.fetch({reset: true, data: {name: ""}});
                 // add the project to the collection
                 coll.add(this.model);
                 // head back to the home page

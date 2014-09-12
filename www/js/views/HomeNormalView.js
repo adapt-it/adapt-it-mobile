@@ -18,8 +18,7 @@ define(function (require) {
         },
 
         render: function () {
-            var contents = template();
-            this.$el.html(contents);
+            this.$el.html(template(this.collection.toJSON()));
             return this;
         }
     });

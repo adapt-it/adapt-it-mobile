@@ -34,7 +34,7 @@ define(function (require) {
                 this.$('#Container').html(currentView.render().el.childNodes);
             } else {
                 // project(s) -- display normal view
-                currentView = new HomeNormalView();
+                currentView = new HomeNormalView({collection: coll});
                 this.$('#Container').html(currentView.render().el.childNodes);
             }
             return this;
