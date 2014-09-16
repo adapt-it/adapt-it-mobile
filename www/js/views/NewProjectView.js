@@ -165,8 +165,8 @@ define(function (require) {
                 this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
             case 2: // target language
-                this.model.set("SourceLanguageName", currentView.langName);
-                this.model.set("SourceLanguageCode", currentView.langCode);
+                this.model.set("TargetLanguageName", currentView.langName);
+                this.model.set("TargetLanguageCode", currentView.langCode);
                 this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                 break;
             case 3: // fonts

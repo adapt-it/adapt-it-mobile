@@ -59,7 +59,7 @@ define(function (require) {
         
         onSelectLanguage: function (event) {
             // pull out the language
-            this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;')).trim();
+            this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
             $("#langName").html(i18n.t('view.lblTargetLanguageName') + ": " + this.langName);
             this.langCode = $(event.currentTarget).attr('id').trim();
             $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
