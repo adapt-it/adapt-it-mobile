@@ -31,7 +31,9 @@ define(function (require) {
         idx = 1,
         isRetranslation = false;
 
-    return Backbone.View.extend({
+    return Marionette.CollectionView.extend({
+//        template: Handlebars.compile(tplText),
+//        itemView: SourcePhraseView;
 
         initialize: function () {
             this.collection.bind('reset', this.render, this);

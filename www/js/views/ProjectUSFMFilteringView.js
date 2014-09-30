@@ -13,7 +13,7 @@ define(function (require) {
         tplText     = require('text!tpl/ProjectUSFMFiltering.html'),
         template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
+    return Marionette.CompositeView.extend({
         
         initialize: function () {
             this.coll = new usfm.MarkerCollection();

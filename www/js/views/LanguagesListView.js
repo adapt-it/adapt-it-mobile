@@ -12,7 +12,7 @@ define(function (require) {
         template = Handlebars.compile(tplText);
 
 
-    return Backbone.View.extend({
+    return Marionette.CompositeView.extend({
 
         initialize: function () {
             this.render();
