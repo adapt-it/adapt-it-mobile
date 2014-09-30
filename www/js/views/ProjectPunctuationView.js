@@ -8,10 +8,11 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/ProjectPunctuation.html'),
         template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
         
         initialize: function () {
 //            this.render();

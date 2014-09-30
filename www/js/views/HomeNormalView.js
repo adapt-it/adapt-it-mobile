@@ -8,6 +8,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/HomeNormal.html'),
         template    = Handlebars.compile(tplText),
         project     = null;

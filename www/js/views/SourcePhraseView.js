@@ -7,12 +7,13 @@ define(function (require) {
     var $           = require('jquery'),
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
-        Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/SourcePhrase.html'),
         template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
-        
+    return Marionette.ItemView.extend({
+//        template: Handlebars.compile(tplText),
+//        model: this.model
         initialize: function () {
 			//this.listenTo(this.model, 'change', this.render);
             this.model.bind('change', this.render, this);

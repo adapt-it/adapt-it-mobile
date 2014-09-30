@@ -13,11 +13,12 @@ define(function (require) {
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/Chapter.html'),
         project     = null,
         template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
 
         initialize: function () {
             var coll = new projModel.ProjectCollection();

@@ -7,6 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         ChapterListView = require('app/views/ChapterListView'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
@@ -14,7 +15,7 @@ define(function (require) {
         template    = Handlebars.compile(tplText);
 
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
 
         initialize: function () {
             this.chapterList = new chapterModels.ChapterCollection();

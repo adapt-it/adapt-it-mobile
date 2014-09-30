@@ -5,11 +5,14 @@ require.config({
     baseUrl: 'lib',
 
     paths: {
+        // folders
         app: '../js',
+        utils: '..//js/utils',
+        tpl: '../tpl',
+        // libraries
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.0.min',
-        utils: '..//js/utils',
-        tpl: '../tpl'
+        marionette: 'backbone.marionette'
     },
     map: {
         '*': {
@@ -19,6 +22,10 @@ require.config({
     shim: {
         'handlebars': {
             exports: 'Handlebars'
+        },
+        marionette: {
+            deps: ['jquery', 'backbone'],
+            exports: 'Marionette'
         },
         'backbone': {
             deps: ['underscore', 'jquery'],

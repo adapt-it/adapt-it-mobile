@@ -8,6 +8,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         i18n        = require('i18n'),
         SourcePhraseView  = require('app/views/SourcePhraseView'),
         spModels    = require('app/models/sourcephrase'),

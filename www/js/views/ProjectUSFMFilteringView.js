@@ -8,6 +8,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         usfm       = require('utils/usfm'),
         tplText     = require('text!tpl/ProjectUSFMFiltering.html'),
         template    = Handlebars.compile(tplText);

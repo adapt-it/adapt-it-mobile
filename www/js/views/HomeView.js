@@ -7,6 +7,7 @@ define(function (require) {
     var $               = require('jquery'),
         Handlebars      = require('handlebars'),
         Backbone        = require('backbone'),
+        Marionette      = require('marionette'),
         GetStartedView  = require('app/views/GetStartedView'),
         WelcomeView     = require('app/views/WelcomeView'),
         HomeNormalView  = require('app/views/HomeNormalView'),
@@ -15,7 +16,7 @@ define(function (require) {
         template = Handlebars.compile(tplText);
 
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
 
         initialize: function () {
             this.render();

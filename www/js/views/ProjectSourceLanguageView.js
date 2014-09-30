@@ -8,6 +8,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         i18n        = require('i18n'),
         LanguagesListView = require('app/views/LanguagesListView'),
         langs       = require('utils/languages'),
@@ -18,7 +19,7 @@ define(function (require) {
         langCode    = "",
         languages   = null;
     
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
         
         initialize: function () {
             // autocomplete takes either an array of strings or suggestion objects. Use the

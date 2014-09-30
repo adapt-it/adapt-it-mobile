@@ -7,6 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/LanguagesList.html'),
         template = Handlebars.compile(tplText);
 

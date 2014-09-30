@@ -7,11 +7,12 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         tplText     = require('text!tpl/ChapterList.html'),
         template = Handlebars.compile(tplText);
 
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
 
         initialize: function () {
             this.render();

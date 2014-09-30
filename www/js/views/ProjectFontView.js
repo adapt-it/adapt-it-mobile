@@ -8,13 +8,14 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
         fontColor   = "#000",
         fontSize    = "16px",
         fontName    = "Source Sans",
         tplText     = require('text!tpl/ProjectFont.html'),
         template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
+    return Marionette.ItemView.extend({
         
         initialize: function () {
 //            this.render();
