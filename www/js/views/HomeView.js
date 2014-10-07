@@ -16,7 +16,7 @@ define(function (require) {
         template = Handlebars.compile(tplText);
 
 
-    return Marionette.ItemView.extend({
+    return Marionette.CollectionView.extend({
 
         initialize: function () {
             this.render();

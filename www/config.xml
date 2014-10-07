@@ -18,7 +18,7 @@
     <!-- for Blackberry 10 -->
     <feature name="File" value="File" />
     <!-- preferences -->
-    <preference name="phonegap-version" value="3.5.0" />
+    <preference name="phonegap-version" value="3.6.3" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
     <!-- core plugins -->

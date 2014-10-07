@@ -89,7 +89,7 @@ define(function (require) {
             // add any following puncts
             for (i = 0; i < follpuncts.length; i++) {
                 // if this character is in the mapping, add the corresponding character
-                if (this.project.PunctPairsSource.indexOf(follpuncts[i]) > -1) {
+                if (this.project.PunctPairs.indexOf(follpuncts[i]) > -1) {
                     result += this.project.PunctPairsTarget.charAt(this.project.PunctPairsSource.indexOf(follpuncts[i]));
                 } else {
                     // not there -- just add the character itself
