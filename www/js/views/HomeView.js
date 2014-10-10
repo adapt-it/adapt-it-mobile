@@ -13,11 +13,15 @@ define(function (require) {
         HomeNormalView  = require('app/views/HomeNormalView'),
         tplText         = require('text!tpl/Home.html'),
         projModel       = require('app/models/project'),
-        template = Handlebars.compile(tplText);
+        template        = Handlebars.compile(tplText);
 
 
-    return Marionette.CollectionView.extend({
-
+    return Marionette.CompositeView.extend({
+        template: Handlebars.compile(tplText),
+		childViewContainer: '#todo-list',
+        childView: HomeNormalView,
+        emptyView: WelcomeView,
+        
         initialize: function () {
             this.render();
         },

@@ -42,8 +42,20 @@ require.config({
 });
 
 // start the main application object in app.js
-require(["app/app"], function (AIM) {
+require(["app/Application"], function (Application) {
     "use strict";
     
-    AIM.start();
+    var theApp = new Application();
+    theApp.start();
+    window.Application = theApp;
 });
+
+//require(['app/app', 'backbone', 'routers/index', 'controllers/index'], function (app, Backbone, Router, Controller) {
+//	'use strict';
+//
+//	app.start();
+//
+//	new Router({ controller: Controller });
+//
+//	Backbone.history.start();
+//});
