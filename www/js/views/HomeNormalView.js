@@ -14,11 +14,8 @@ define(function (require) {
         project     = null;
 
     return Backbone.View.extend({
-        
-        initialize: function () {
-//            this.render();
-        },
-
+        template: Handlebars.compile(tplText),
+  
         render: function () {
             this.project = this.collection.at(0);
             this.$el.html(template(this.project.toJSON()));

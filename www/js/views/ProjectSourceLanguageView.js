@@ -20,6 +20,7 @@ define(function (require) {
         languages   = null;
     
     return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText),
         
         initialize: function () {
             // autocomplete takes either an array of strings or suggestion objects. Use the

@@ -13,15 +13,7 @@ define(function (require) {
         template    = Handlebars.compile(tplText);
 
     return Marionette.ItemView.extend({
-        
-        initialize: function () {
-        },
-
-        render: function () {
-            var contents = template();
-            this.$el.html(contents);
-            return this;
-        }
+        template: Handlebars.compile(tplText)
     });
 
 });

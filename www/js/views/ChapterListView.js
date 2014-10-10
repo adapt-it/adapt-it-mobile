@@ -13,6 +13,7 @@ define(function (require) {
 
 
     return Marionette.CollectionView.extend({
+        template: Handlebars.compile(tplText),
 
         initialize: function () {
             this.render();

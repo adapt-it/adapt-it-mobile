@@ -16,6 +16,7 @@ define(function (require) {
 
 
     return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText),
 
         initialize: function () {
             this.chapterList = new chapterModels.ChapterCollection();

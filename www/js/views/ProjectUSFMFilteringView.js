@@ -14,6 +14,7 @@ define(function (require) {
         template    = Handlebars.compile(tplText);
 
     return Marionette.CompositeView.extend({
+        template: Handlebars.compile(tplText),
         
         initialize: function () {
             this.coll = new usfm.MarkerCollection();

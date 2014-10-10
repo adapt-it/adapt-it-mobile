@@ -16,16 +16,7 @@ define(function (require) {
         template    = Handlebars.compile(tplText);
 
     return Marionette.ItemView.extend({
-        
-        initialize: function () {
-//            this.render();
-        },
-
-        render: function () {
-            var contents = template(this.model.toJSON());
-            this.$el.html(contents);
-            return this;
-        }
+        template: Handlebars.compile(tplText)
     });
 
 });

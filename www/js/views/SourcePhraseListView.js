@@ -32,7 +32,7 @@ define(function (require) {
         isRetranslation = false;
 
     return Marionette.CollectionView.extend({
-//        template: Handlebars.compile(tplText),
+        template: Handlebars.compile(tplText),
 //        itemView: SourcePhraseView;
 
         initialize: function () {

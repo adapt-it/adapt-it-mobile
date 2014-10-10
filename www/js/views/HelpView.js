@@ -13,15 +13,7 @@ define(function (require) {
 
 
     return Backbone.View.extend({
-
-        initialize: function () {
-            this.render();
-        },
-
-        render: function () {
-            this.$el.html(template());
-            return this;
-        }
+        template: Handlebars.compile(tplText)
     });
 
 });

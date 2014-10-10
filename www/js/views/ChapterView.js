@@ -19,6 +19,7 @@ define(function (require) {
         template    = Handlebars.compile(tplText);
 
     return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText),
 
         initialize: function () {
             var coll = new projModel.ProjectCollection();

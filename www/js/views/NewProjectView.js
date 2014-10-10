@@ -32,6 +32,7 @@ define(function (require) {
 
 
     return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText),
 
         initialize: function () {
 //            obj.indexedDB = {};
