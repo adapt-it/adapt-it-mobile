@@ -20,7 +20,10 @@ define(function (require) {
 
         // app initialization code. Here we'll initialize localization with the current locale 
         initialize: function (options) {
-//            console.log(options.container);
+            // add the UI regions (just the main "content" for now)
+            this.addRegions({
+                main: '#content'
+            });
             // get the user's locale - mobile or web
             if (typeof navigator.globalization !== 'undefined') {
                 // on mobile phone
@@ -43,13 +46,20 @@ define(function (require) {
                 // i18next is done asynchronously; this is the callback function
                 // Tell backbone we're ready to start loading the View classes.
                 Backbone.history.start();
+
+                var coll = new projModel.ProjectCollection();
+                coll.fetch({reset: true, data: {name: ""}});
+
+                var home = new HomeView({collection: coll});
+                
+                // note: our context in this callback is the window object; we've saved the application
+                // there in main.js as window.Application
+                this.Application.main.show(home);
+
+                coll.fetch();
             });
 
             var router  = new Router();
-
-            var l = function (string) {
-                return string.toLocaleString();
-            };
 
             $(function () {
                 FastClick.attach(document.body);
@@ -59,14 +69,6 @@ define(function (require) {
                 event.preventDefault();
                 window.history.back();
             });
-
-//            var coll = new projModel.ProjectCollection();
-//            coll.fetch({reset: true, data: {name: ""}});
-//
-//            var main    = new HomeView({collection: coll});
-//            main.show(main);
-//
-//            coll.fetch();
         }
     });
 });

@@ -6,6 +6,8 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        Marionette  = require('marionette'),
+//        Application = require('app/Application'),
         Handlebars  = require('handlebars'),
         i18n        = require('i18n'),
         PageSlider  = require('app/utils/pageslider'),
@@ -82,7 +84,8 @@ define(function (require) {
         }
     });
     
-    return Backbone.Router.extend({
+    return Marionette.AppRouter.extend({
+//        controller: Application,
 
         routes: {
             "":             "home",             // (top level)
