@@ -4,39 +4,241 @@ define(function (require) {
 
     "use strict";
 
-    var Application = require('app/Application');
-    
-    // ProjectViews module
-    // Functionally independent module containing View classes dealing with the new / copy project
-    // functionality in AIM.
-    Application.module("Application.ProjectViews", function (ProjectViews, Application, Handlebars, Backbone, Marionette, $, _) {
-        var tplProject  = require('text!tpl/NewProject.html'),
-            tplCases    = require('text!tpl/ProjectCases.html'),
-            tplFonts    = require('text!tpl/ProjectFonts.html'),
-            tplFont     = require('text!tpl/ProjectFont.html'),
-            tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
-            tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
-            tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
-            tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
-            i18n        = require('i18n'),
-            LanguagesListView = require('app/views/LanguagesListView'),
-            usfm       = require('utils/usfm'),
-            langs       = require('utils/languages'),
-            projModel   = require('app/models/project'),
-            langName    = "",
-            langCode    = "",
-            step        = 0,
-            currentView = null,
-            languages   = null,
-            projCasesView = null,
-            projFontsView = null,
-            projSourceLanguageView = null,
-            projTargetLanguageView =  null,
-            projPunctuationView = null,
-            projUSFMFiltingView = null,
-            template    = null;
+    var $               = require('jquery'),
+        Backbone        = require('backbone'),
+        Handlebars      = require('handlebars'),
+        Helpers         = require('app/utils/HandlebarHelpers'),
+        Marionette      = require('marionette'),
+        Application = require('app/Application'),
+        tplProject  = require('text!tpl/NewProject.html'),
+        tplCases    = require('text!tpl/ProjectCases.html'),
+        tplFonts    = require('text!tpl/ProjectFonts.html'),
+        tplFont     = require('text!tpl/ProjectFont.html'),
+        tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
+        tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
+        tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
+        tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
+        i18n        = require('i18n'),
+        LanguagesListView = require('app/views/LanguagesListView'),
+        usfm       = require('utils/usfm'),
+        langs       = require('utils/languages'),
+        projModel   = require('app/models/project'),
+        langName    = "",
+        langCode    = "",
+        step        = 0,
+        currentView = null,
+        languages   = null,
+        projCasesView = null,
+        projFontsView = null,
+        projSourceLanguageView = null,
+        projTargetLanguageView =  null,
+        projPunctuationView = null,
+        projUSFMFiltingView = null,
+        template    = null,
 
-        ProjectViews.NewProjectView = Marionette.ItemView.extend({
+        // CasesView
+        // View / edit the upper/lowercase equivlencies for the source and target
+        // languages, and whether to automatically copy cases.
+        CasesView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplCases),
+
+            ////
+            // Event Handlers
+            ////
+            events: {
+                "click #SourceHasCases": "onClickSourceHasCases",
+                "click #AutoCapitalize": "onClickAutoCapitalize"
+            },
+
+            onClickSourceHasCases: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#SourceHasCases").is(':checked') === true) {
+                    $("#AutoCapitalize").prop('disabled', false);
+                    if ($("#AutoCapitalize").is(':checked') === true) {
+                        $("#CaseEquivs").prop('hidden', false);
+                    } else {
+                        $("#CaseEquivs").prop('hidden', true);
+                    }
+                } else {
+                    $("#AutoCapitalize").prop('disabled', true);
+                    $("#CaseEquivs").prop('hidden', true);
+                }
+            },
+
+            onClickAutoCapitalize: function (event) {
+                // show / hide the cases list based on the value
+                if ($("#AutoCapitalize").is(':checked') === true) {
+                    $("#CaseEquivs").prop('hidden', false);
+                } else {
+                    $("#CaseEquivs").prop('hidden', true);
+                }
+            }
+        }),
+
+        // FontsView - display the fonts for source, target and navigation. Clicking on a link
+        // opens the FontView
+        FontsView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplFonts)
+        }),
+
+        // FontView - view / edit a single font
+        FontView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplFont)
+        }),
+
+        // PunctuationView - view / edit the punctuation pairs, and specify whether to copy the punctuation from
+        // source to target
+        PunctuationView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplPunctuation),
+
+            events: {
+                "click #CopyPunctuation": "onClickCopyPunctuation"
+            },
+
+            onClickCopyPunctuation: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#CopyPunctuation").is(':checked') === true) {
+                    $("#PunctMappings").prop('hidden', false);
+                } else {
+                    $("#PunctMappings").prop('hidden', true);
+                }
+            }
+        }),
+
+        // SourceLanguageView - view / edit the source language name and code, as well as
+        // any variants. Also specify whether the language is LTR.
+        SourceLanguageView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplSourceLanguage),
+
+            initialize: function () {
+                // autocomplete takes either an array of strings or suggestion objects. Use the
+                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
+                this.languageList = new langs.LanguageCollection();
+            },
+
+            render: function () {
+                var contents = template(this.model.toJSON());
+                this.$el.html(contents);
+                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
+                return this;
+            },
+
+            events: {
+                "keyup #SourceLanguageName":    "search",
+                "keypress #SourceLanguageName": "onkeypress"
+            },
+
+            search: function (event) {
+                // pull out the value from the input field
+                var key = $('#SourceLanguageName').val();
+                if (key.trim() === "") {
+                    // Fix problem where an empty value returns all results.
+                    // Here if there's no _real_ value, fetch nothing.
+                    this.languageList.fetch({reset: true, data: {name: "    "}});
+                } else {
+                    // find all matches in the language collection
+                    this.languageList.fetch({reset: true, data: {name: key}});
+                }
+            },
+
+            onkeypress: function (event) {
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+            },
+
+            onSelectLanguage: function (event) {
+                // pull out the language
+                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
+                $("#langName").html(i18n.t('view.lblSourceLanguageName') + ": " + this.langName);
+                this.langCode = $(event.currentTarget).attr('id').trim();
+                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
+            }
+        }),
+
+        // TargetLanguageView - view / edit the target language name and code, as well as
+        // any variants. Also specify whether the language is LTR.
+        TargetLanguageView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplTargetLanguage),
+
+            initialize: function () {
+                // autocomplete takes either an array of strings or suggestion objects. Use the
+                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
+                this.languageList = new langs.LanguageCollection();
+            },
+
+            render: function () {
+                var contents = template(this.model.toJSON());
+                this.$el.html(contents);
+                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
+                return this;
+            },
+
+            events: {
+                "keyup #TargetLanguageName":    "search",
+                "keypress #TargetLanguageName": "onkeypress"
+            },
+
+            search: function (event) {
+                // pull out the value from the input field
+                var key = $('#TargetLanguageName').val();
+                if (key.trim() === "") {
+                    // Fix problem where an empty value returns all results.
+                    // Here if there's no _real_ value, fetch nothing.
+                    this.languageList.fetch({reset: true, data: {name: "    "}});
+                } else {
+                    // find all matches in the language collection
+                    this.languageList.fetch({reset: true, data: {name: key}});
+                }
+            },
+
+            onkeypress: function (event) {
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+            },
+
+            onSelectLanguage: function (event) {
+                // pull out the language
+                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
+                $("#langName").html(i18n.t('view.lblTargetLanguageName') + ": " + this.langName);
+                this.langCode = $(event.currentTarget).attr('id').trim();
+                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
+            }
+        }),
+
+        // USFMFilteringView
+        // View / edit the USFM markers that are filtered from the UI when
+        // adapting.
+        USFMFilteringView = Marionette.CompositeView.extend({
+            template: Handlebars.compile(tplUSFMFiltering),
+
+            initialize: function () {
+                this.coll = new usfm.MarkerCollection();
+            },
+
+            render: function () {
+                this.coll.fetch({reset: true, data: {name: ""}}); // return all results
+
+                var contents = template(this.coll.toJSON());
+                this.$el.html(contents);
+                return this;
+            },
+
+            events: {
+                "click #CustomFilters": "onClickCustomFilters"
+            },
+
+            onClickCustomFilters: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#CustomFilters").is(':checked') === true) {
+                    $("#USFMFilters").prop('hidden', false);
+                } else {
+                    $("#USFMFilters").prop('hidden', true);
+                }
+            }
+        }),
+        NewProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplProject),
 
             initialize: function () {
@@ -178,9 +380,9 @@ define(function (require) {
                     break;
                 case 4: // punctuation
                     punctPairs = this.model.get("PunctPairs");
-//                    for (index = 0; index < punctPairs.length; index++) {
-//    //                    punctPairs[index]
-//                    }
+    //                    for (index = 0; index < punctPairs.length; index++) {
+    //    //                    punctPairs[index]
+    //                    }
                     break;
                 case 5: // cases
                     break;
@@ -193,12 +395,12 @@ define(function (require) {
                 // create a new project model object
                 //this.openDB();
                 // create the view objects
-                projCasesView = new ProjectViews.CasesView({ model: this.model});
-                projFontsView = new ProjectViews.FontsView({ model: this.model});
-                projSourceLanguageView =  new ProjectViews.SourceLanguageView({ model: this.model});
-                projTargetLanguageView =  new ProjectViews.TargetLanguageView({ model: this.model});
-                projPunctuationView = new ProjectViews.PunctuationView({ model: this.model});
-                projUSFMFiltingView = new ProjectViews.USFMFilteringView({ model: this.model});
+                projCasesView = new CasesView({ model: this.model});
+                projFontsView = new FontsView({ model: this.model});
+                projSourceLanguageView =  new SourceLanguageView({ model: this.model});
+                projTargetLanguageView =  new TargetLanguageView({ model: this.model});
+                projPunctuationView = new PunctuationView({ model: this.model});
+                projUSFMFiltingView = new USFMFilteringView({ model: this.model});
             },
 
             ShowStep: function (number) {
@@ -275,205 +477,15 @@ define(function (require) {
                 }
             }
         });
-
-        // CasesView
-        // View / edit the upper/lowercase equivlencies for the source and target
-        // languages, and whether to automatically copy cases.
-        ProjectViews.CasesView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplCases),
-
-            ////
-            // Event Handlers
-            ////
-            events: {
-                "click #SourceHasCases": "onClickSourceHasCases",
-                "click #AutoCapitalize": "onClickAutoCapitalize"
-            },
-
-            onClickSourceHasCases: function (event) {
-                // enable / disable the autocapitalize checkbox based on the value
-                if ($("#SourceHasCases").is(':checked') === true) {
-                    $("#AutoCapitalize").prop('disabled', false);
-                    if ($("#AutoCapitalize").is(':checked') === true) {
-                        $("#CaseEquivs").prop('hidden', false);
-                    } else {
-                        $("#CaseEquivs").prop('hidden', true);
-                    }
-                } else {
-                    $("#AutoCapitalize").prop('disabled', true);
-                    $("#CaseEquivs").prop('hidden', true);
-                }
-            },
-
-            onClickAutoCapitalize: function (event) {
-                // show / hide the cases list based on the value
-                if ($("#AutoCapitalize").is(':checked') === true) {
-                    $("#CaseEquivs").prop('hidden', false);
-                } else {
-                    $("#CaseEquivs").prop('hidden', true);
-                }
-            }
-        });
-
-        // FontsView - display the fonts for source, target and navigation. Clicking on a link
-        // opens the FontView
-        ProjectViews.FontsView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplFonts)
-        });
-
-        // FontView - view / edit a single font
-        ProjectViews.FontView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplFont)
-        });
-
-        // PunctuationView - view / edit the punctuation pairs, and specify whether to copy the punctuation from
-        // source to target
-        ProjectViews.PunctuationView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplPunctuation),
-
-            events: {
-                "click #CopyPunctuation": "onClickCopyPunctuation"
-            },
-
-            onClickCopyPunctuation: function (event) {
-                // enable / disable the autocapitalize checkbox based on the value
-                if ($("#CopyPunctuation").is(':checked') === true) {
-                    $("#PunctMappings").prop('hidden', false);
-                } else {
-                    $("#PunctMappings").prop('hidden', true);
-                }
-            }
-        });
-
-        // SourceLanguageView - view / edit the source language name and code, as well as
-        // any variants. Also specify whether the language is LTR.
-        ProjectViews.SourceLanguageView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplSourceLanguage),
-
-            initialize: function () {
-                // autocomplete takes either an array of strings or suggestion objects. Use the
-                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
-                this.languageList = new langs.LanguageCollection();
-            },
-
-            render: function () {
-                var contents = template(this.model.toJSON());
-                this.$el.html(contents);
-                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
-                return this;
-            },
-
-            events: {
-                "keyup #SourceLanguageName":    "search",
-                "keypress #SourceLanguageName": "onkeypress"
-            },
-
-            search: function (event) {
-                // pull out the value from the input field
-                var key = $('#SourceLanguageName').val();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    this.languageList.fetch({reset: true, data: {name: "    "}});
-                } else {
-                    // find all matches in the language collection
-                    this.languageList.fetch({reset: true, data: {name: key}});
-                }
-            },
-
-            onkeypress: function (event) {
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
-            },
-
-            onSelectLanguage: function (event) {
-                // pull out the language
-                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
-                $("#langName").html(i18n.t('view.lblSourceLanguageName') + ": " + this.langName);
-                this.langCode = $(event.currentTarget).attr('id').trim();
-                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
-            }
-        });
-
-        // TargetLanguageView - view / edit the target language name and code, as well as
-        // any variants. Also specify whether the language is LTR.
-        ProjectViews.TargetLanguageView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplTargetLanguage),
-
-            initialize: function () {
-                // autocomplete takes either an array of strings or suggestion objects. Use the
-                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
-                this.languageList = new langs.LanguageCollection();
-            },
-
-            render: function () {
-                var contents = template(this.model.toJSON());
-                this.$el.html(contents);
-                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
-                return this;
-            },
-
-            events: {
-                "keyup #TargetLanguageName":    "search",
-                "keypress #TargetLanguageName": "onkeypress"
-            },
-
-            search: function (event) {
-                // pull out the value from the input field
-                var key = $('#TargetLanguageName').val();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    this.languageList.fetch({reset: true, data: {name: "    "}});
-                } else {
-                    // find all matches in the language collection
-                    this.languageList.fetch({reset: true, data: {name: key}});
-                }
-            },
-
-            onkeypress: function (event) {
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
-            },
-
-            onSelectLanguage: function (event) {
-                // pull out the language
-                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
-                $("#langName").html(i18n.t('view.lblTargetLanguageName') + ": " + this.langName);
-                this.langCode = $(event.currentTarget).attr('id').trim();
-                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
-            }
-        });
-        
-        ProjectViews.USFMFilteringView = Marionette.CompositeView.extend({
-            template: Handlebars.compile(tplUSFMFiltering),
-
-            initialize: function () {
-                this.coll = new usfm.MarkerCollection();
-            },
-
-            render: function () {
-                this.coll.fetch({reset: true, data: {name: ""}}); // return all results
-
-                var contents = template(this.coll.toJSON());
-                this.$el.html(contents);
-                return this;
-            },
-
-            events: {
-                "click #CustomFilters": "onClickCustomFilters"
-            },
-
-            onClickCustomFilters: function (event) {
-                // enable / disable the autocapitalize checkbox based on the value
-                if ($("#CustomFilters").is(':checked') === true) {
-                    $("#USFMFilters").prop('hidden', false);
-                } else {
-                    $("#USFMFilters").prop('hidden', true);
-                }
-            }
-        });
-    });
+    
+    return {
+        NewProjectView: NewProjectView,
+        CasesView: CasesView,
+        FontsView: FontsView,
+        FontView: FontView,
+        PunctuationView: PunctuationView,
+        SourceLanguageView: SourceLanguageView,
+        TargetLanguageView: TargetLanguageView,
+        USFMFilteringView: USFMFilteringView
+    };
 });

@@ -45,7 +45,7 @@ require.config({
 require(["app/Application"], function (Application) {
     "use strict";
     
-    var theApp = new Application();
+    var theApp = new Application.Application();
     theApp.start();
     window.Application = theApp;
 });
