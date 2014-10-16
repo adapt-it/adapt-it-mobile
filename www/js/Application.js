@@ -6,11 +6,25 @@ define(function (require) {
 
     var $               = require('jquery'),
         Backbone        = require('backbone'),
+        Handlebars      = require('handlebars'),
+        Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
         HomeView        = require('app/views/HomeView'),
+        HelpView        = require('app/views/HelpView'),
+        WelcomeView     = require('app/views/WelcomeView'),
+        NewProjectView  = require('app/views/NewProjectView'),
+//        ProjectViews    = require('app/views/ProjectViews'),
+        LookupView      = require('app/views/LookupView'),
         projModel       = require('app/models/project'),
-        Router          = require('app/router'),
+        AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
+        PageSlider      = require('app/utils/pageslider'),
+        slider          = new PageSlider($('body')),
+        lookupView      = null,
+        helpView        = null,
+        newProjectView  = null,
+        welcomeView     = null,
+        homeView        = null,
         i18n            = require('i18n'),
         lang            = "",
         locale          = "en-AU";  // default
@@ -54,12 +68,10 @@ define(function (require) {
                 
                 // note: our context in this callback is the window object; we've saved the application
                 // there in main.js as window.Application
-                this.Application.main.show(home);
-
-                coll.fetch();
+                window.Application.main.show(home);
             });
 
-            var router  = new Router();
+            var router  = new AppRouter({controller: this});
 
             $(function () {
                 FastClick.attach(document.body);
@@ -68,6 +80,49 @@ define(function (require) {
             $("body").on("click", ".back-button", function (event) {
                 event.preventDefault();
                 window.history.back();
+            });
+        },
+
+        // Routes from AppRouter (router.js)
+        home: function () {
+            homeView = new HomeView();
+            homeView.delegateEvents();
+            slider.slidePage(homeView.$el);
+        },
+        
+        help: function () {
+            helpView = new HelpView();
+            helpView.delegateEvents();
+            slider.slidePage(helpView.$el);
+        },
+        
+        project: function () {
+            var proj = new projModel.Project();
+            newProjectView = new NewProjectView({model: proj});
+            newProjectView.delegateEvents();
+            slider.slidePage(newProjectView.$el);
+        },
+
+        lookupChapter: function (id) {
+            lookupView = new LookupView();
+            require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
+                var book = new models.Chapter({id: id});
+                book.fetch({
+                    success: function (data) {
+                        slider.slidePage(new LookupView({model: data}).$el);
+                    }
+                });
+            });
+        },
+
+        adaptChapter: function (id) {
+            require(["app/models/chapter", "app/views/ChapterView"], function (models, ChapterView) {
+                var chapter = new models.Chapter({id: id});
+                chapter.fetch({
+                    success: function (data) {
+                        slider.slidePage(new ChapterView({model: data}).$el);
+                    }
+                });
             });
         }
     });
