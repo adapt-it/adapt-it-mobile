@@ -18,7 +18,7 @@ define(function (require) {
 
     return Marionette.CompositeView.extend({
         template: Handlebars.compile(tplText),
-		childViewContainer: '#todo-list',
+//		childViewContainer: '#Container',
         childView: HomeNormalView,
         emptyView: WelcomeView,
         
@@ -26,24 +26,24 @@ define(function (require) {
             this.render();
         },
 
-        render: function () {
-            var currentView,
-                coll = new projModel.ProjectCollection();
-            coll.fetch({reset: true, data: {name: ""}});
-            this.$el.html(template());
-            console.log("Projects:" + coll.length);
-            // if this is a new install, show the welcome screen
-            if (coll.length === 0) {
-                // no project -- show welcome subview
-                currentView = new WelcomeView();
-                this.$('#Container').html(currentView.render().el.childNodes);
-            } else {
-                // project(s) -- display normal view
-                currentView = new HomeNormalView({collection: coll});
-                this.$('#Container').html(currentView.render().el.childNodes);
-            }
-            return this;
-        },
+//        render: function () {
+//            var currentView,
+//                coll = new projModel.ProjectCollection();
+//            coll.fetch({reset: true, data: {name: ""}});
+//            this.$el.html(template());
+//            console.log("Projects:" + coll.length);
+//            // if this is a new install, show the welcome screen
+//            if (coll.length === 0) {
+//                // no project -- show welcome subview
+//                currentView = new WelcomeView();
+//                this.$('#Container').html(currentView.render().el.childNodes);
+//            } else {
+//                // project(s) -- display normal view
+//                currentView = new HomeNormalView({collection: coll});
+//                this.$('#Container').html(currentView.render().el.childNodes);
+//            }
+//            return this;
+//        },
         
         ////
         // Event Handlers

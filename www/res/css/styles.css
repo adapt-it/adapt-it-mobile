@@ -166,7 +166,7 @@ header h3 {
 }
 
 .scroller {
-    overflow: auto;
+    /*overflow: auto;*/
     -webkit-overflow-scrolling: touch;
     position: absolute;
     top: 70px;

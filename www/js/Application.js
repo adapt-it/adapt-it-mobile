@@ -12,8 +12,8 @@ define(function (require) {
         HomeView        = require('app/views/HomeView'),
         HelpView        = require('app/views/HelpView'),
         WelcomeView     = require('app/views/WelcomeView'),
-        NewProjectView  = require('app/views/NewProjectView'),
-//        ProjectViews    = require('app/views/ProjectViews'),
+//        NewProjectView  = require('app/views/NewProjectView'),
+        ProjectViews    = require('app/views/ProjectViews'),
         LookupView      = require('app/views/LookupView'),
         projModel       = require('app/models/project'),
         AppRouter       = require('app/router'),
@@ -39,6 +39,13 @@ define(function (require) {
                 this.addRegions({
                     main: '#content'
                 });
+                // main Region's show event handler -- we use it to do
+                // page transition animations.
+                this.main.on("show", function(view){
+                  // manipulate the `view` or do something extra
+                  // with the region via `this`
+                    slider.slidePage(view.$el);
+                });
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
                     // on mobile phone
@@ -60,16 +67,16 @@ define(function (require) {
                 }, function () {
                     // i18next is done asynchronously; this is the callback function
                     // Tell backbone we're ready to start loading the View classes.
-                    Backbone.history.start();
-
                     ProjectList = new projModel.ProjectCollection();
                     ProjectList.fetch({reset: true, data: {name: ""}});
 
-                    var home = new HomeView({collection: ProjectList});
+                    Backbone.history.start();
 
-                    // note: our context in this callback is the window object; we've saved the application
-                    // there in main.js as window.Application
-                    window.Application.main.show(home);
+//                    var home = new HomeView({collection: ProjectList});
+//
+//                    // note: our context in this callback is the window object; we've saved the application
+//                    // there in main.js as window.Application
+//                    window.Application.main.show(home);
                 });
 
                 var router  = new AppRouter({controller: this});
@@ -83,25 +90,28 @@ define(function (require) {
                     window.history.back();
                 });
             },
-
+            
             // Routes from AppRouter (router.js)
             home: function () {
-                homeView = new HomeView();
+                homeView = new HomeView({collection: ProjectList});
                 homeView.delegateEvents();
-                slider.slidePage(homeView.$el);
+                //slider.slidePage(homeView.$el);
+                this.main.show(homeView);
             },
 
             help: function () {
                 helpView = new HelpView();
                 helpView.delegateEvents();
-                slider.slidePage(helpView.$el);
+//                slider.slidePage(helpView.$el);
+                this.main.show(helpView);
             },
 
             project: function () {
                 var proj = new projModel.Project();
-                newProjectView = new NewProjectView({model: proj});
+                newProjectView = new ProjectViews.NewProjectView({model: proj});
                 newProjectView.delegateEvents();
-                slider.slidePage(newProjectView.$el);
+//                slider.slidePage(newProjectView.$el);
+                this.main.show(newProjectView);
             },
 
             lookupChapter: function (id) {
@@ -110,7 +120,8 @@ define(function (require) {
                     var book = new models.Chapter({id: id});
                     book.fetch({
                         success: function (data) {
-                            slider.slidePage(new LookupView({model: data}).$el);
+//                            slider.slidePage(new LookupView({model: data}).$el);
+                            window.Application.main.show(new LookupView({model: data}));
                         }
                     });
                 });
@@ -121,7 +132,8 @@ define(function (require) {
                     var chapter = new models.Chapter({id: id});
                     chapter.fetch({
                         success: function (data) {
-                            slider.slidePage(new ChapterView({model: data}).$el);
+//                            slider.slidePage(new ChapterView({model: data}).$el);
+                            window.Application.main.show(new ChapterView({model: data}));
                         }
                     });
                 });

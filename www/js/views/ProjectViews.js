@@ -9,7 +9,7 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
-        Application = require('app/Application'),
+//        Application = require('app/Application'),
         tplProject  = require('text!tpl/NewProject.html'),
         tplCases    = require('text!tpl/ProjectCases.html'),
         tplFonts    = require('text!tpl/ProjectFonts.html'),
@@ -25,7 +25,7 @@ define(function (require) {
         projModel   = require('app/models/project'),
         langName    = "",
         langCode    = "",
-        step        = 0,
+        step        = 1,
         currentView = null,
         languages   = null,
         projCasesView = null,
@@ -238,7 +238,7 @@ define(function (require) {
                 }
             }
         }),
-        NewProjectView = Marionette.ItemView.extend({
+        NewProjectView = Marionette.CompositeView.extend({
             template: Handlebars.compile(tplProject),
 
             initialize: function () {
@@ -249,6 +249,7 @@ define(function (require) {
             },
 
             render: function () {
+                template = Handlebars.compile(tplProject);
                 this.$el.html(template());
                 return this;
             },

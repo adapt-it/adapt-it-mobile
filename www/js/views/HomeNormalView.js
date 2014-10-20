@@ -4,23 +4,13 @@ define(function (require) {
 
     "use strict";
 
-    var $           = require('jquery'),
-        Underscore  = require('underscore'),
-        Handlebars  = require('handlebars'),
-        Backbone    = require('backbone'),
+    var Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         tplText     = require('text!tpl/HomeNormal.html'),
-        template    = Handlebars.compile(tplText),
-        project     = null;
+        template    = Handlebars.compile(tplText);
 
-    return Backbone.View.extend({
-        template: Handlebars.compile(tplText),
-  
-        render: function () {
-            this.project = this.collection.at(0);
-            this.$el.html(template(this.project.toJSON()));
-            return this;
-        }
+    return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText)
     });
 
 });
