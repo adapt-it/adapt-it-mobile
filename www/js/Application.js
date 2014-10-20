@@ -37,7 +37,7 @@ define(function (require) {
             initialize: function (options) {
                 // add the UI regions (just the main "content" for now)
                 this.addRegions({
-                    main: '#content'
+                    main: '#main'
                 });
                 // main Region's show event handler -- we use it to do
                 // page transition animations.
