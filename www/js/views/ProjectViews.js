@@ -9,7 +9,6 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
-//        Application = require('app/Application'),
         tplProject  = require('text!tpl/NewProject.html'),
         tplCases    = require('text!tpl/ProjectCases.html'),
         tplFonts    = require('text!tpl/ProjectFonts.html'),
@@ -117,9 +116,9 @@ define(function (require) {
             },
 
             render: function () {
-                var contents = template(this.model.toJSON());
-                this.$el.html(contents);
-                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
+//                var contents = template(this.model.toJSON());
+//                this.$el.html(contents);
+//                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
                 return this;
             },
 
@@ -168,9 +167,9 @@ define(function (require) {
             },
 
             render: function () {
-                var contents = template(this.model.toJSON());
-                this.$el.html(contents);
-                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
+//                var contents = template(this.model.toJSON());
+//                this.$el.html(contents);
+//                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
                 return this;
             },
 
@@ -210,20 +209,8 @@ define(function (require) {
         // USFMFilteringView
         // View / edit the USFM markers that are filtered from the UI when
         // adapting.
-        USFMFilteringView = Marionette.CompositeView.extend({
+        USFMFilteringView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplUSFMFiltering),
-
-            initialize: function () {
-                this.coll = new usfm.MarkerCollection();
-            },
-
-            render: function () {
-                this.coll.fetch({reset: true, data: {name: ""}}); // return all results
-
-                var contents = template(this.coll.toJSON());
-                this.$el.html(contents);
-                return this;
-            },
 
             events: {
                 "click #CustomFilters": "onClickCustomFilters"
@@ -243,14 +230,12 @@ define(function (require) {
 
             initialize: function () {
                 this.OnNewProject();
-                this.render();
-                // start the wizard
-                this.ShowStep(step);
             },
 
             render: function () {
                 template = Handlebars.compile(tplProject);
                 this.$el.html(template());
+                this.ShowStep(step);
                 return this;
             },
 
@@ -350,13 +335,8 @@ define(function (require) {
                     step++;
                 } else {
                     // last step -- finish up
-                    coll = new projModel.ProjectCollection();
-                    coll.fetch({reset: true, data: {name: ""}});
-                    // add the project to the collection
-                    coll.add(this.model);
                     // head back to the home page
-                    console.log("last step - project count:" + coll.length);
-                    $(".back-button").trigger("click");
+                    window.Application.main.show(home);
                 }
                 this.ShowStep(step);
             },
@@ -401,7 +381,10 @@ define(function (require) {
                 projSourceLanguageView =  new SourceLanguageView({ model: this.model});
                 projTargetLanguageView =  new TargetLanguageView({ model: this.model});
                 projPunctuationView = new PunctuationView({ model: this.model});
-                projUSFMFiltingView = new USFMFilteringView({ model: this.model});
+                var coll = new usfm.MarkerCollection();
+                coll.fetch({reset: true, data: {name: ""}}); // return all results
+
+                projUSFMFiltingView = new USFMFilteringView({ collection: coll});
             },
 
             ShowStep: function (number) {

@@ -95,14 +95,12 @@ define(function (require) {
             home: function () {
                 homeView = new HomeView({collection: ProjectList});
                 homeView.delegateEvents();
-                //slider.slidePage(homeView.$el);
                 this.main.show(homeView);
             },
 
             help: function () {
                 helpView = new HelpView();
                 helpView.delegateEvents();
-//                slider.slidePage(helpView.$el);
                 this.main.show(helpView);
             },
 
@@ -110,7 +108,7 @@ define(function (require) {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
                 newProjectView.delegateEvents();
-//                slider.slidePage(newProjectView.$el);
+                ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
 
