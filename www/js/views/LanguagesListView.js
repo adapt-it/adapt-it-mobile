@@ -4,27 +4,14 @@ define(function (require) {
 
     "use strict";
 
-    var $           = require('jquery'),
-        Handlebars  = require('handlebars'),
-        Backbone    = require('backbone'),
+    var Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         tplText     = require('text!tpl/LanguagesList.html'),
         template = Handlebars.compile(tplText);
 
 
-    return Marionette.CompositeView.extend({
-        template: Handlebars.compile(tplText),
-
-        initialize: function () {
-            this.render();
-            this.collection.on("reset", this.render, this);
-        },
-
-        render: function () {
-            this.$el.html(template(this.collection.toJSON()));
-            return this;
-        }
-
+    return Marionette.ItemView.extend({
+        template: Handlebars.compile(tplText)
     });
 
 });

@@ -2,9 +2,6 @@
     Template for rendering the languages that match the search list on the project source and target language pages.
     This template is compiled by LanguagesView and called from ProjectSourceLanguageView.js and ProjectTargetLanguageView.js.
 }}
-<h3 class="topcoat-list__header">Possible languages:</h3>
-{{#.}}
 <div class="autocomplete-suggestion" data-index="{{@index}}" id="{{this.Id}}">
     ({{this.Id}})&nbsp;{{this.Ref_Name}}
 </div>
-{{/.}}

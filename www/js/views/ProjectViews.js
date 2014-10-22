@@ -5,6 +5,7 @@ define(function (require) {
     "use strict";
 
     var $               = require('jquery'),
+        Underscore  = require('underscore'),
         Backbone        = require('backbone'),
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
@@ -106,44 +107,23 @@ define(function (require) {
 
         // SourceLanguageView - view / edit the source language name and code, as well as
         // any variants. Also specify whether the language is LTR.
-        SourceLanguageView = Marionette.ItemView.extend({
+        SourceLanguageView = Marionette.CompositeView.extend({
             template: Handlebars.compile(tplSourceLanguage),
+            childView: LanguagesListView,
+            itemViewContainer: null,
 
-            initialize: function () {
-                // autocomplete takes either an array of strings or suggestion objects. Use the
-                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
-                this.languageList = new langs.LanguageCollection();
+            attachBuffer: function (compositeView, buffer) {
+                var container = this.itemViewContainer;
+                container.append(buffer);
             },
-
-            render: function () {
-//                var contents = template(this.model.toJSON());
-//                this.$el.html(contents);
-//                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
-                return this;
+            
+            onRender: function () {
+                this.itemViewContainer = this.$('div#name-suggestions');
             },
-
+            
             events: {
                 "keyup #SourceLanguageName":    "search",
                 "keypress #SourceLanguageName": "onkeypress"
-            },
-
-            search: function (event) {
-                // pull out the value from the input field
-                var key = $('#SourceLanguageName').val();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    this.languageList.fetch({reset: true, data: {name: "    "}});
-                } else {
-                    // find all matches in the language collection
-                    this.languageList.fetch({reset: true, data: {name: key}});
-                }
-            },
-
-            onkeypress: function (event) {
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
             },
 
             onSelectLanguage: function (event) {
@@ -157,44 +137,23 @@ define(function (require) {
 
         // TargetLanguageView - view / edit the target language name and code, as well as
         // any variants. Also specify whether the language is LTR.
-        TargetLanguageView = Marionette.ItemView.extend({
+        TargetLanguageView = Marionette.CompositeView.extend({
             template: Handlebars.compile(tplTargetLanguage),
+            childView: LanguagesListView,
+            itemViewContainer: null,
 
-            initialize: function () {
-                // autocomplete takes either an array of strings or suggestion objects. Use the
-                // underscore "pluck" method to create an array of strings out of the Ref_Name attribute.
-                this.languageList = new langs.LanguageCollection();
+            attachBuffer: function (compositeView, buffer) {
+                var container = this.itemViewContainer;
+                container.append(buffer);
             },
-
-            render: function () {
-//                var contents = template(this.model.toJSON());
-//                this.$el.html(contents);
-//                this.listView = new LanguagesListView({collection: this.languageList, el: $("#name-suggestions", this.el)});
-                return this;
+            
+            onRender: function () {
+                this.itemViewContainer = this.$('div#name-suggestions');
             },
-
+            
             events: {
                 "keyup #TargetLanguageName":    "search",
                 "keypress #TargetLanguageName": "onkeypress"
-            },
-
-            search: function (event) {
-                // pull out the value from the input field
-                var key = $('#TargetLanguageName').val();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    this.languageList.fetch({reset: true, data: {name: "    "}});
-                } else {
-                    // find all matches in the language collection
-                    this.languageList.fetch({reset: true, data: {name: key}});
-                }
-            },
-
-            onkeypress: function (event) {
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
             },
 
             onSelectLanguage: function (event) {
@@ -246,10 +205,8 @@ define(function (require) {
                 "click #sourceFont": "OnEditSourceFont",
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
-                "keyup #SourceLanguageName":    "searchSource",
-                "keypress #SourceLanguageName": "onkeypressSourceName",
-                "keyup #TargetLanguageName":    "searchTarget",
-                "keypress #TargetLanguageName": "onkeypressTargetName",
+                "keyup #LanguageName":    "searchLanguageName",
+                "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
@@ -259,12 +216,24 @@ define(function (require) {
                 "click #Next": "OnNextStep"
             },
 
-            searchSource: function (event) {
-                currentView.search(event);
+            searchLanguageName: function (event) {
+                // pull out the value from the input field
+                var key = $('#LanguageName').val();
+                if (key.trim() === "") {
+                    // Fix problem where an empty value returns all results.
+                    // Here if there's no _real_ value, fetch nothing.
+                    languages.fetch({reset: true, data: {name: "    "}});
+                } else {
+                    // find all matches in the language collection
+                    languages.fetch({reset: true, data: {name: key}});
+                }
+//                console.log(key + ": " + languages.length + " results.");
             },
 
-            onkeypressSourceName: function (event) {
-                currentView.onkeypress(event);
+            onkeypressLanguageName: function (event) {
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
             },
 
             searchTarget: function (event) {
@@ -378,8 +347,9 @@ define(function (require) {
                 // create the view objects
                 projCasesView = new CasesView({ model: this.model});
                 projFontsView = new FontsView({ model: this.model});
-                projSourceLanguageView =  new SourceLanguageView({ model: this.model});
-                projTargetLanguageView =  new TargetLanguageView({ model: this.model});
+                languages = new langs.LanguageCollection();
+                projSourceLanguageView =  new SourceLanguageView({ model: this.model, collection: languages });
+                projTargetLanguageView =  new TargetLanguageView({ model: this.model, collection: languages });
                 projPunctuationView = new PunctuationView({ model: this.model});
                 var coll = new usfm.MarkerCollection();
                 coll.fetch({reset: true, data: {name: ""}}); // return all results
