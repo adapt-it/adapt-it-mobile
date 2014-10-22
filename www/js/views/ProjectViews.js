@@ -90,17 +90,31 @@ define(function (require) {
         // source to target
         PunctuationView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplPunctuation),
-
             events: {
                 "click #CopyPunctuation": "onClickCopyPunctuation"
             },
+            FindIdx: function (event) {
+            },
             onClickDeleteRow: function (event) {
                 // find the current row
-                var index = event.currentTarget.id.substr(2);
                 var array = this.model.get('PunctPairs');
-                array.splice(index, 1);
+                var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
+                var realIndex = index;
+                var src = $(("#s-" + index)).val();
+                var tgt = $(("#t-" + index)).val();
+                var i = 0;
+                for (i = 0; i < array.length; i++) { // find the "real" index of this punctuation pair
+                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
+                        realIndex = i; // found where the real item is in the index
+                        break;
+                    }
+                }
+                // remove the item from the model
+                array.splice(realIndex, 1);
                 this.model.set({PunctPairs: array});
-                console.log(index);
+                // remove the item from the UI
+                var element = "#r-" + index;
+                $(element).remove();
             },
             onClickCopyPunctuation: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
