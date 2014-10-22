@@ -7,7 +7,7 @@
     <div class="control-row">Type in each punctuation character in the source language, followed by the corresponding character in the target language.</div>
     <div class="control-row"><table class="topcoat-table"><colgroup><col><col><col style="width:4.5rem;"></colgroup><thead><tr><th>Source</th><th>Target</th><th>&nbsp;</th></tr></thead>
 {{#each PunctPairs}}
-        <tr><td><input type="text" id="s-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.t}}"></td><td><button title="delete" class="topcoat-icon-button--quiet"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
+        <tr><td><input type="text" id="s-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.t}}"></td><td><button title="delete" class="topcoat-icon-button--quiet delete-row" id="d-{{@index}}"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
 {{/each}}
 <tr><td><input type="text" id="s-999" class="topcoat-text-input" style="width:100%;" maxlength="1" value=""></td><td><input type="text" id="t-999" class="topcoat-text-input" style="width:100%;" maxlength="1" value=""></td><td><button title="delete" class="topcoat-icon-button--quiet" style="display:none;"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
 </table></button></div>

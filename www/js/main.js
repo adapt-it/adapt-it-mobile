@@ -12,6 +12,7 @@ require.config({
         // libraries
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.0.min',
+        'languages': '..//js/utils/languages',
         marionette: 'backbone.marionette'
     },
     map: {

@@ -21,7 +21,7 @@ define(function (require) {
         i18n        = require('i18n'),
         LanguagesListView = require('app/views/LanguagesListView'),
         usfm       = require('utils/usfm'),
-        langs       = require('utils/languages'),
+        langs       = require('languages'),
         projModel   = require('app/models/project'),
         langName    = "",
         langCode    = "",
@@ -94,7 +94,14 @@ define(function (require) {
             events: {
                 "click #CopyPunctuation": "onClickCopyPunctuation"
             },
-
+            onClickDeleteRow: function (event) {
+                // find the current row
+                var index = event.currentTarget.id.substr(2);
+                var array = this.model.get('PunctPairs');
+                array.splice(index, 1);
+                this.model.set({PunctPairs: array});
+                console.log(index);
+            },
             onClickCopyPunctuation: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#CopyPunctuation").is(':checked') === true) {
@@ -208,6 +215,7 @@ define(function (require) {
                 "keyup #LanguageName":    "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
+                "click .delete-row": "onClickDeleteRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
@@ -246,6 +254,10 @@ define(function (require) {
 
             selectLanguage: function (event) {
                 currentView.onSelectLanguage(event);
+            },
+            
+            onClickDeleteRow: function (event) {
+                currentView.onClickDeleteRow(event);
             },
 
             OnClickCopyPunctuation: function (event) {
