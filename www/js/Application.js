@@ -58,7 +58,7 @@ define(function (require) {
                     lang = navigator.language.split("-");
                     locale = lang[0];
                 }
-            //    console.log("locale:" + locale);
+                console.log("locale:" + locale);
                 // initialize / load the localization info
                 i18n.init({
                     lng: locale,

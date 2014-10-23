@@ -1,10 +1,10 @@
-<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceHasCases" value="{{#ifCond SourceHasUpperCase '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>Source contains upper and lower case</label></div></div>
-<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" disabled id="AutoCapitalize" value="{{#ifCond AutoCapitalization '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>Automatically capitalize target when appropriate</label></div></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceHasCases" value="{{#ifCond SourceHasUpperCase '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblSourceHasUpperCase'}}</label></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" disabled id="AutoCapitalize" value="{{#ifCond AutoCapitalization '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblAutoCapitalize'}}</label></div>
 {{#ifCond SourceHasCases '==' 'true'}}<div class="control-group" id="CaseEquivs" hidden="{{#ifCond AutoCapitalization '==' 'false'}}true{{else}}false{{/ifCond}}">
 {{else}}<div class="control-group" id="CaseEquivs" hidden="true">
 {{/ifCond}}
-<div class="control-row">Enter the lower and upper case equivalencies for the source and target languages below.</div>
-<div class="control-row"><table class="topcoat-table"><colgroup><col><col><col style="width:4.5rem;"></colgroup><thead><tr><th>Source</th><th>Target</th><th>&nbsp;</th></tr></thead>
+<div class="control-row">{{t 'view.lblCases'}}</div>
+<div class="control-row"><table class="topcoat-table"><colgroup><col><col><col style="width:4.5rem;"></colgroup><thead><tr><th>{{t 'view.lblSource'}}</th><th>{{t 'view.lblTarget'}}</th><th>&nbsp;</th></tr></thead>
 {{#each CasePairs}}
     <tr id="r-{{@index}}"><td><input type="text" id="s-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input" style="width:100%;" maxlength="1" value="{{this.t}}"></td><td><button title="delete" class="topcoat-icon-button--quiet delete-row" id="d-{{@index}}"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
 {{/each}}
