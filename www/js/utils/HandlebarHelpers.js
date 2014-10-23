@@ -9,6 +9,7 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         i18n        = require('i18n');
     
@@ -45,6 +46,13 @@ define(function (require) {
         // extract and return the verse number from the markers
         var result = parseInt(this.markers.substring(this.markers.indexOf('v') + 1), 10);
 //        console.log(this.markers.substring(this.markers.indexOf('v') + 1));
+        return new Handlebars.SafeString(result);
+    });
+
+    // Return a unique ID
+    Handlebars.registerHelper('id', function () {
+        // extract and return the verse number from the markers
+        var result = Underscore.uniqueId();
         return new Handlebars.SafeString(result);
     });
     

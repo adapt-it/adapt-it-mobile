@@ -41,15 +41,31 @@ define(function (require) {
         // languages, and whether to automatically copy cases.
         CasesView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCases),
-
-            ////
-            // Event Handlers
-            ////
             events: {
                 "click #SourceHasCases": "onClickSourceHasCases",
                 "click #AutoCapitalize": "onClickAutoCapitalize"
             },
-
+            onClickDeleteRow: function (event) {
+                // find the current row
+                var array = this.model.get('CasePairs');
+                var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
+                var realIndex = index;
+                var src = $(("#s-" + index)).val();
+                var tgt = $(("#t-" + index)).val();
+                var i = 0;
+                for (i = 0; i < array.length; i++) { // find the "real" index of this case pair
+                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
+                        realIndex = i; // found where the real item is in the index
+                        break;
+                    }
+                }
+                // remove the item from the model
+                array.splice(realIndex, 1);
+                this.model.set({CasePairs: array});
+                // remove the item from the UI
+                var element = "#r-" + index;
+                $(element).remove();
+            },
             onClickSourceHasCases: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#SourceHasCases").is(':checked') === true) {
@@ -64,7 +80,6 @@ define(function (require) {
                     $("#CaseEquivs").prop('hidden', true);
                 }
             },
-
             onClickAutoCapitalize: function (event) {
                 // show / hide the cases list based on the value
                 if ($("#AutoCapitalize").is(':checked') === true) {
@@ -92,8 +107,6 @@ define(function (require) {
             template: Handlebars.compile(tplPunctuation),
             events: {
                 "click #CopyPunctuation": "onClickCopyPunctuation"
-            },
-            FindIdx: function (event) {
             },
             onClickDeleteRow: function (event) {
                 // find the current row
@@ -132,21 +145,17 @@ define(function (require) {
             template: Handlebars.compile(tplSourceLanguage),
             childView: LanguagesListView,
             itemViewContainer: null,
-
             attachBuffer: function (compositeView, buffer) {
                 var container = this.itemViewContainer;
                 container.append(buffer);
             },
-            
             onRender: function () {
                 this.itemViewContainer = this.$('div#name-suggestions');
             },
-            
             events: {
                 "keyup #SourceLanguageName":    "search",
                 "keypress #SourceLanguageName": "onkeypress"
             },
-
             onSelectLanguage: function (event) {
                 // pull out the language
                 this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
@@ -162,21 +171,17 @@ define(function (require) {
             template: Handlebars.compile(tplTargetLanguage),
             childView: LanguagesListView,
             itemViewContainer: null,
-
             attachBuffer: function (compositeView, buffer) {
                 var container = this.itemViewContainer;
                 container.append(buffer);
             },
-            
             onRender: function () {
                 this.itemViewContainer = this.$('div#name-suggestions');
             },
-            
             events: {
                 "keyup #TargetLanguageName":    "search",
                 "keypress #TargetLanguageName": "onkeypress"
             },
-
             onSelectLanguage: function (event) {
                 // pull out the language
                 this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
@@ -191,11 +196,9 @@ define(function (require) {
         // adapting.
         USFMFilteringView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplUSFMFiltering),
-
             events: {
                 "click #CustomFilters": "onClickCustomFilters"
             },
-
             onClickCustomFilters: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#CustomFilters").is(':checked') === true) {
@@ -207,18 +210,15 @@ define(function (require) {
         }),
         NewProjectView = Marionette.CompositeView.extend({
             template: Handlebars.compile(tplProject),
-
             initialize: function () {
                 this.OnNewProject();
             },
-
             render: function () {
                 template = Handlebars.compile(tplProject);
                 this.$el.html(template());
                 this.ShowStep(step);
                 return this;
             },
-
             ////
             // Event Handlers
             ////
@@ -261,35 +261,27 @@ define(function (require) {
             searchTarget: function (event) {
                 currentView.search(event);
             },
-
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
             },
-
             selectLanguage: function (event) {
                 currentView.onSelectLanguage(event);
             },
-            
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
             },
-
             OnClickCopyPunctuation: function (event) {
                 currentView.onClickCopyPunctuation(event);
             },
-
             OnClickSourceHasCases: function (event) {
                 currentView.onClickSourceHasCases(event);
             },
-
             OnClickAutoCapitalize: function (event) {
                 currentView.onClickAutoCapitalize(event);
             },
-
             OnClickCustomFilters: function (event) {
                 currentView.onClickCustomFilters(event);
             },
-
             OnEditSourceFont: function (event) {
                 console.log("OnEditSourceFont");
     //            currentView = new ProjectFontView({ model: this.model});
@@ -355,12 +347,15 @@ define(function (require) {
                 case 3: // fonts
                     break;
                 case 4: // punctuation
+                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
     //                    for (index = 0; index < punctPairs.length; index++) {
     //    //                    punctPairs[index]
     //                    }
                     break;
                 case 5: // cases
+                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
+                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
                     break;
                 case 6: // USFM filtering
                     break;

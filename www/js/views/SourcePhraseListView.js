@@ -13,12 +13,10 @@ define(function (require) {
         SourcePhraseView  = require('app/views/SourcePhraseView'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
-        projModel   = require('app/models/project'),
         tplText     = require('text!tpl/SourcePhraseList.html'),
         template    = Handlebars.compile(tplText),
         kblist      = null, // real value passed in constructor (ChapterView.js)
         project     = null, // real value passed in constructor
-        copyPunct = true,
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -74,6 +72,10 @@ define(function (require) {
                 result = "",
                 prepuncts = model.get('prepuncts'),
                 follpuncts = model.get('follpuncts');
+            // If we aren't copying punctuation for this project, just return the target (unaltered)
+            if (project.get('CopyPunctuation') === 'false') {
+                return target;
+            }
             // add any prepuncts
             for (i = 0; i < prepuncts.length; i++) {
                 // if this character is in the mapping, add the corresponding character

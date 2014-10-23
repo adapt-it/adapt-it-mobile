@@ -28,6 +28,7 @@ define(function (require) {
                 TargetLanguageName: "English",
                 SourceLanguageCode: "en",
                 TargetLanguageCode: "en",
+                CopyPunctuation: "true",
                 PunctPairs: [
                     {
                         s: "?",
@@ -257,6 +258,7 @@ define(function (require) {
                 TargetLanguageName: "",
                 SourceLanguageCode: "",
                 TargetLanguageCode: "",
+                CopyPunctuation: "false",
                 PunctPairs: [
                     {
                         s: "?",
