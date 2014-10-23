@@ -122,6 +122,8 @@
         "3JN": "3 Jon",
         "JUD": "Jut",
         "REV": "Revelesen",
+        "lblPossibleLanguages": "Possible Languages:",
+        "lblSearching": "(Searching... please wait)",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

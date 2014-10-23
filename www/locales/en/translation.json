@@ -19,7 +19,7 @@
         "lblCreateProject": "Create Project",
         "dscCreateProject": "Create a new project",
         "dscProjectSourceLanguage": "<b>Step 1: Source Language</b><br>Start typing in the name of the source language, and then select the correct value from the list below.",
-        "dscProjectTargetLanguage": "<b>Step 2: Target Language</b><br>Enter the name and code of the target language. If you are unsure, click on the Lookup Codes button.",
+        "dscProjectTargetLanguage": "<b>Step 2: Target Language</b><br>Start typing in the name of the target language, and then select the correct value from the list below.",
         "dscProjectFonts": "<b>Step 3: Fonts</b><br>If you would like to customize the font or color for the source, target or navigation text, click that line. Otherwise, click Next to continue.",
         "dscProjectPunctuation": "<b>Step 4: Punctuation</b>",
         "dscProjectCases": "<b>Step 5: Cases</b>",
@@ -122,6 +122,8 @@
         "3JN": "3 John",
         "JUD": "Jude",
         "REV": "Revelation",
+        "lblPossibleLanguages": "Possible Languages:",
+        "lblSearching": "(Searching... please wait)",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

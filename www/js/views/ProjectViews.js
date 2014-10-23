@@ -249,10 +249,12 @@ define(function (require) {
                     // find all matches in the language collection
                     languages.fetch({reset: true, data: {name: key}});
                 }
+                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
 
             onkeypressLanguageName: function (event) {
+                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
