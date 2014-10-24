@@ -1,6 +1,6 @@
-<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceHasCases" value="{{#ifCond SourceHasUpperCase '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblSourceHasUpperCase'}}</label></div>
-<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" disabled id="AutoCapitalize" value="{{#ifCond AutoCapitalization '==' 'true'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblAutoCapitalize'}}</label></div>
-{{#ifCond SourceHasCases '==' 'true'}}<div class="control-group" id="CaseEquivs" hidden="{{#ifCond AutoCapitalization '==' 'false'}}true{{else}}false{{/ifCond}}">
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="SourceHasCases" value="{{#ifCond SourceHasUpperCase '==' 'true'}}true{{else}}false{{/ifCond}}" {{#ifCond SourceHasUpperCase '==' 'true'}}checked{{else}}{{/ifCond}}><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblSourceHasUpperCase'}}</label></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" {{#ifCond SourceHasUpperCase '==' 'true'}}{{else}}disabled{{/ifCond}} id="AutoCapitalize" value="{{#ifCond AutoCapitalization '==' 'true'}}true{{else}}false{{/ifCond}}" {{#ifCond AutoCapitalization '==' 'true'}}checked{{else}}{{/ifCond}}><div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblAutoCapitalize'}}</label></div>
+{{#ifCond SourceHasUpperCase '==' 'true'}}<div class="control-group" id="CaseEquivs" {{#ifCond AutoCapitalization '==' 'false'}}hidden='true'{{else}}{{/ifCond}}>
 {{else}}<div class="control-group" id="CaseEquivs" hidden="true">
 {{/ifCond}}
 <div class="control-row">{{t 'view.lblCases'}}</div>

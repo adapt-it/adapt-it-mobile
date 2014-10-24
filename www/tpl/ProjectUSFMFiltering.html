@@ -1,4 +1,4 @@
-<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="CustomFilters" value="{{#ifCond TargetDir '==' 'rtl'}}true{{else}}false{{/ifCond}}"><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblCustomFilters'}}</label></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="UseCustomFilters" value="{{#ifCond CustomFilters '==' 'true'}}true{{else}}false{{/ifCond}}" {{#ifCond CustomFilters '==' 'true'}}checked{{else}}{{/ifCond}}><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblCustomFilters'}}</label></div>
 <div class="control-group" id="USFMFilters" hidden="true">
 <div class="control-row">{{t 'view.lblFilters'}}</div>
 <div class="control-row"><table class="topcoat-table"><colgroup><col style="width:2.5rem;"><col style="width:4.5rem;"><col></colgroup><thead><tr><th></th><th>{{t 'view.lblName'}}</th><th>{{t 'view.lblDescription'}}</th></tr></thead>

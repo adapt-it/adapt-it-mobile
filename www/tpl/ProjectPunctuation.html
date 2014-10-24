@@ -1,9 +1,9 @@
 <div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox">
-  <input id="CopyPunctuation" type="checkbox" value="{{CopyPunctuation}}">
+  <input id="CopyPunctuation" type="checkbox" value="{{CopyPunctuation}}" {{#ifCond CopyPunctuation '==' 'true'}}checked{{else}}{{/ifCond}}>
   <div class="topcoat-checkbox__checkmark"></div>
     {{t 'view.lblCopyPunctuation'}}
 </label></div>
-<div class="control-group" id="PunctMappings" hidden="{{#ifCond CopyPunctuation '==' 'false'}}true{{else}}false{{/ifCond}}">
+<div class="control-group" id="PunctMappings" {{#ifCond CopyPunctuation '==' 'false'}}hidden="true"{{else}}{{/ifCond}}">
     <div class="control-row">{{t 'view.lblCases'}}</div>
     <div class="control-row"><table class="topcoat-table" id="table"><colgroup><col><col><col style="width:4.5rem;"></colgroup><thead><tr><th>{{t 'view.lblSource'}}</th><th>{{t 'view.lblTarget'}}</th><th>&nbsp;</th></tr></thead>
 {{#each PunctPairs}}

@@ -28,6 +28,7 @@ define(function (require) {
         step        = 1,
         currentView = null,
         languages   = null,
+        USFMMarkers = null,
         projCasesView = null,
         projFontsView = null,
         projSourceLanguageView = null,
@@ -197,19 +198,22 @@ define(function (require) {
         USFMFilteringView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplUSFMFiltering),
             events: {
-                "click #CustomFilters": "onClickCustomFilters"
+                "click #UseCustomFilters": "onClickCustomFilters"
             },
             onClickCustomFilters: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
-                if ($("#CustomFilters").is(':checked') === true) {
+                if ($("#UseCustomFilters").is(':checked') === true) {
                     $("#USFMFilters").prop('hidden', false);
                 } else {
                     $("#USFMFilters").prop('hidden', true);
                 }
             }
         }),
-        NewProjectView = Marionette.CompositeView.extend({
+        NewProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplProject),
+            regions: {
+                container: "#StepContainer"
+            },
             initialize: function () {
                 this.OnNewProject();
             },
@@ -233,7 +237,7 @@ define(function (require) {
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
-                "click #CustomFilters": "OnClickCustomFilters",
+                "click #UseCustomFilters": "OnClickCustomFilters",
                 "click #Prev": "OnPrevStep",
                 "click #Next": "OnNextStep"
             },
@@ -351,15 +355,16 @@ define(function (require) {
                 case 4: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
-    //                    for (index = 0; index < punctPairs.length; index++) {
-    //    //                    punctPairs[index]
-    //                    }
+                    // TODO: punctuation
                     break;
                 case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
+                    // TODO: cases
                     break;
                 case 6: // USFM filtering
+                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
+                    //TODO: markers
                     break;
                 }
             },
@@ -367,17 +372,9 @@ define(function (require) {
             OnNewProject: function () {
                 // create a new project model object
                 //this.openDB();
-                // create the view objects
-                projCasesView = new CasesView({ model: this.model});
-                projFontsView = new FontsView({ model: this.model});
                 languages = new langs.LanguageCollection();
-                projSourceLanguageView =  new SourceLanguageView({ model: this.model, collection: languages });
-                projTargetLanguageView =  new TargetLanguageView({ model: this.model, collection: languages });
-                projPunctuationView = new PunctuationView({ model: this.model});
-                var coll = new usfm.MarkerCollection();
-                coll.fetch({reset: true, data: {name: ""}}); // return all results
-
-                projUSFMFiltingView = new USFMFilteringView({ collection: coll});
+                USFMMarkers = new usfm.MarkerCollection();
+                USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
 
             ShowStep: function (number) {
@@ -385,73 +382,76 @@ define(function (require) {
                 currentView = null;
                 switch (number) {
                 case 1: // source language
-                    currentView = projSourceLanguageView;
+                    languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
+                    currentView = new SourceLanguageView({ model: this.model, collection: languages });;
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     // controls
-                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // first step -- disable the prev button
                     this.$("#Prev").attr('disabled', 'true');
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     break;
                 case 2: // target language
-                    currentView = projTargetLanguageView;
+                    languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
+                    currentView = new TargetLanguageView({ model: this.model, collection: languages });;
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     // controls
-                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     this.$("#Prev").removeAttr('disabled');
                     break;
                 case 3: // fonts
-                    currentView = projFontsView;
+                    currentView = new FontsView({ model: this.model});;
                     // title
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // controls
-                    $('#StepContainer').html(currentView.render().el.childNodes);
+//                    $('#StepContainer').html(currentView.render().el.childNodes);
                     // Second step -- enable the prev button
                     break;
                 case 4: // punctuation
-                    currentView = projPunctuationView;
+                    currentView = new PunctuationView({ model: this.model});;
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     // controls
-                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     break;
                 case 5: // cases
-                    currentView = projCasesView;
+                    currentView = new CasesView({ model: this.model});;
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     // controls
-                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // Penultimate step -- enable the next button (only needed
                     // if the user happens to back up from the last one)
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     this.$("#imgNext").removeAttr("style");
                     break;
                 case 6: // USFM filtering
-                    currentView = projUSFMFiltingView;
+                    currentView = new USFMFilteringView({ collection: USFMMarkers});;
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     // controls
-                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // Last step -- change the text of the Next button to "finish"
                     this.$("#lblNext").html(i18n.t('view.lblFinish'));
                     this.$("#imgNext").attr("style", "display:none");
                     break;
                 }
+                this.container.show(currentView);
             }
         });
     
