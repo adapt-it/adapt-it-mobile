@@ -133,6 +133,7 @@
         "lblDescription": "Description",
         "lblSource": "Source",
         "lblTarget": "Target",
+        "lblProjectSettings": "Project Settings",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

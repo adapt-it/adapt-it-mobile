@@ -368,7 +368,12 @@ ul {
 .right {
     float:right;
 }
-
+.project {
+	background-image: url("../svg/project.svg");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
 #help {
     background: url("images/question.svg") no-repeat;
     -webkit-background-size: cover;
@@ -683,6 +688,14 @@ span.sprite{
 	background-image: url("../svg/project-search.svg");
     background-size: 48px 48px;
 }
+.btn-project span.sprite{
+	background-image: url("../svg/project.svg");
+    background-size: 48px 48px;
+}
+.btn-settings span.sprite{
+	background-image: url("../svg/project-settings.svg");
+    background-size: 48px 48px;
+}
 .btn-status span.sprite{
 	background-image: url("images/status.png");
     background-size: 48px 48px;
@@ -690,6 +703,28 @@ span.sprite{
 .btn-adapt span.sprite{
 	background-image: url("../svg/project-edit.svg");
     background-size: 48px 48px;
+}
+.project-folder {
+    display: none;
+}
+.project-folder-open {
+    clear: both;
+    width: 256px;
+    height: 128px;
+    background-color: #eee;
+    box-shadow: 0 0 0 1px #949696;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    -webkit-appearance: none;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid #9daca9;
 }
 
 /* edb - table for usfm? */

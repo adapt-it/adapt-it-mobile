@@ -133,6 +133,7 @@
         "lblDescription": "Descripción",
         "lblSource": "Lenguaje original",
         "lblTarget": "Lenguaje objecto",
+        "lblProjectSettings": "Configuración del Proyecto",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

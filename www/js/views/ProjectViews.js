@@ -326,12 +326,12 @@ define(function (require) {
                 this.GetProjectInfo(step);
                 if (step < 6) {
                     step++;
+                    this.ShowStep(step);
                 } else {
                     // last step -- finish up
                     // head back to the home page
-                    window.Application.main.show(home);
+                    window.Application.home();
                 }
-                this.ShowStep(step);
             },
 
             GetProjectInfo: function (step) {
@@ -349,6 +349,7 @@ define(function (require) {
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
                 case 3: // fonts
                     break;
@@ -383,7 +384,7 @@ define(function (require) {
                 switch (number) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
-                    currentView = new SourceLanguageView({ model: this.model, collection: languages });;
+                    currentView = new SourceLanguageView({ model: this.model, collection: languages });
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -397,7 +398,7 @@ define(function (require) {
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
-                    currentView = new TargetLanguageView({ model: this.model, collection: languages });;
+                    currentView = new TargetLanguageView({ model: this.model, collection: languages });
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -407,7 +408,7 @@ define(function (require) {
                     this.$("#Prev").removeAttr('disabled');
                     break;
                 case 3: // fonts
-                    currentView = new FontsView({ model: this.model});;
+                    currentView = new FontsView({ model: this.model});
                     // title
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -417,7 +418,7 @@ define(function (require) {
                     // Second step -- enable the prev button
                     break;
                 case 4: // punctuation
-                    currentView = new PunctuationView({ model: this.model});;
+                    currentView = new PunctuationView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -426,7 +427,7 @@ define(function (require) {
 //                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     break;
                 case 5: // cases
-                    currentView = new CasesView({ model: this.model});;
+                    currentView = new CasesView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -439,7 +440,7 @@ define(function (require) {
                     this.$("#imgNext").removeAttr("style");
                     break;
                 case 6: // USFM filtering
-                    currentView = new USFMFilteringView({ collection: USFMMarkers});;
+                    currentView = new USFMFilteringView({ collection: USFMMarkers});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions

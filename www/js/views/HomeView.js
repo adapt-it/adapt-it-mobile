@@ -9,52 +9,39 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         GetStartedView  = require('app/views/GetStartedView'),
-        WelcomeView     = require('app/views/WelcomeView'),
-        HomeNormalView  = require('app/views/HomeNormalView'),
         tplText         = require('text!tpl/Home.html'),
         projModel       = require('app/models/project'),
         template        = Handlebars.compile(tplText);
 
 
-    return Marionette.CompositeView.extend({
+    return Marionette.ItemView.extend({
         template: Handlebars.compile(tplText),
-		childViewContainer: '#Container',
-        childView: HomeNormalView,
-        emptyView: WelcomeView,
-//        initialize: function () {
-//            this.render();
-//        },
-
-//        render: function () {
-//            var currentView,
-//                coll = new projModel.ProjectCollection();
-//            coll.fetch({reset: true, data: {name: ""}});
-//            this.$el.html(template());
-//            console.log("Projects:" + coll.length);
-//            // if this is a new install, show the welcome screen
-//            if (coll.length === 0) {
-//                // no project -- show welcome subview
-//                currentView = new WelcomeView();
-//                this.$('#Container').html(currentView.render().el.childNodes);
-//            } else {
-//                // project(s) -- display normal view
-//                currentView = new HomeNormalView({collection: coll});
-//                this.$('#Container').html(currentView.render().el.childNodes);
-//            }
-//            return this;
-//        },
         
         ////
         // Event Handlers
         ////
         events: {
-            "click #Continue": "onContinue"
+            "click #Continue": "onContinue",
+            "click .project-item": "toggleProjectFolder"
         },
-        
         onContinue: function (event) {
             console.log("onContinue");
             var currentView = new GetStartedView();
             this.$('#Container').html(currentView.render().el.childNodes);
+        },
+        // Display / hide the contents of the selected project folder
+        toggleProjectFolder: function (event) {
+            console.log("toggleProjectFolder");
+            var index = event.currentTarget.id.substr(2);
+            var elt = document.getElementById('f-' + index);
+            var cl = elt.classList;
+            if (cl.contains('project-folder-open')) {
+                cl.add('project-folder');
+                cl.remove('project-folder-open');
+            } else {
+                cl.add('project-folder-open');
+                cl.remove('project-folder');
+            }
         }
     });
 
