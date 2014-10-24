@@ -18,13 +18,12 @@ define(function (require) {
 
     return Marionette.CompositeView.extend({
         template: Handlebars.compile(tplText),
-//		childViewContainer: '#Container',
+		childViewContainer: '#Container',
         childView: HomeNormalView,
         emptyView: WelcomeView,
-        
-        initialize: function () {
-            this.render();
-        },
+//        initialize: function () {
+//            this.render();
+//        },
 
 //        render: function () {
 //            var currentView,
