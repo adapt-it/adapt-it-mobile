@@ -20,7 +20,7 @@
     </li>    
     <!--    <button id="p-{{@index}}" title="{{name}}" class="topcoat-button--large--quiet project-item"><span class="topcoat-icon--large project"></span></button><span class="txt">{{name}}</span></li> -->
     <ul id="f-{{@index}}" class="project-folder">
-        <h3>{{name}} -- {{id}}</h3>
+        <h3>{{this.name}} -- {{this.id}}</h3>
         <li id="settings--{{@index}}" class="no-bg"><a class="btn-settings no-bg" href="#project/{{this.id}}" title="{{ t 'view.dscProjectSettings'}}"><span class="sprite">&nbsp;</span><span class="txt">{{ t 'view.lblProjectSettings'}}</span></a></li>
         <li id="search-{{@index}}" class="no-bg"><a class="btn-search no-bg" href="#lookup" title="{{ t 'view.dscSearch'}}"><span class="sprite">&nbsp;</span><span class="txt">{{ t 'view.lblSearch'}}</span></a></li>
         <li id="adapt-{{@index}}" class="no-bg"><a class="btn-adapt no-bg" href="#adapt/{{lastAdaptedID}}" title="{{ t 'view.dscAdapt'}}"><span class="sprite">&nbsp;</span><span class="txt">{{this.lastAdaptedName}}</span></a></li>

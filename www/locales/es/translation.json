@@ -140,6 +140,9 @@
         "lblNoAutoCapitalization": "Do not capitalize target text",
         "ttlFilter": "USFM Filtering",
         "lblFilteringDefault": "Display default USFM set",
+        "lblOK": "Aceptar",
+        "lblCancel": "Cancelar",
+        "ttlEditProject": "Edit Project",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

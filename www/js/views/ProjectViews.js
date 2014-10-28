@@ -215,15 +215,15 @@ define(function (require) {
             regions: {
                 container: "#StepContainer"
             },
-            initialize: function () {
-                this.OnNewProject();
-            },
-            render: function () {
-                template = Handlebars.compile(tplEditProject);
-                this.$el.html(template());
-                this.ShowStep(step);
-                return this;
-            },
+//            initialize: function () {
+//                this.OnNewProject();
+//            },
+//            render: function () {
+//                template = Handlebars.compile(tplEditProject);
+//                this.$el.html(template());
+//                this.ShowStep(step);
+//                return this;
+//            },
             ////
             // Event Handlers
             ////
@@ -239,8 +239,8 @@ define(function (require) {
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
                 "click #UseCustomFilters": "OnClickCustomFilters",
-                "click #Prev": "OnPrevStep",
-                "click #Next": "OnNextStep"
+                "click #Cancel": "OnCancel",
+                "click #OK": "OnOK"
             },
 
             searchLanguageName: function (event) {
@@ -291,17 +291,6 @@ define(function (require) {
             },
             OnEditSourceFont: function (event) {
                 console.log("OnEditSourceFont");
-    //            currentView = new ProjectFontView({ model: this.model});
-    //            // title
-    //            this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
-    //            // instructions
-    //            this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
-    //            // controls
-    //            this.$('#StepContainer').html(currentView.render().el.childNodes);
-    //            // first step -- disable the prev button
-    //            this.$("#Prev").attr('disabled', 'true');
-    //            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
-    //            this.$("#lblNext").html(i18n.t('view.lblNext'));
             },
 
             OnEditTargetFont: function (event) {
@@ -312,27 +301,14 @@ define(function (require) {
                 console.log("OnEditNavFont");
             },
 
-            OnPrevStep: function (event) {
-                // pull the info from the current step
-                this.GetProjectInfo(step);
-                if (step > 1) {
-                    step--;
-                }
-                this.ShowStep(step);
+            OnCancel: function (event) {
+                // just return
             },
 
-            OnNextStep: function (event) {
-                var coll = null;
+            OnOK: function (event) {
                 // pull the info from the current step
                 this.GetProjectInfo(step);
-                if (step < 6) {
-                    step++;
-                    this.ShowStep(step);
-                } else {
-                    // last step -- finish up
-                    // head back to the home page
-                    window.Application.home();
-                }
+                // return 
             },
 
             GetProjectInfo: function (step) {
@@ -390,12 +366,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
-                    // first step -- disable the prev button
-                    this.$("#Prev").attr('disabled', 'true');
-                    this.$("#lblPrev").html(i18n.t('view.lblPrev'));
-                    this.$("#lblNext").html(i18n.t('view.lblNext'));
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
@@ -404,9 +374,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
-                    this.$("#Prev").removeAttr('disabled');
                     break;
                 case 3: // fonts
                     currentView = new FontsView({ model: this.model});
@@ -414,9 +381,6 @@ define(function (require) {
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
-                    // controls
-//                    $('#StepContainer').html(currentView.render().el.childNodes);
-                    // Second step -- enable the prev button
                     break;
                 case 4: // punctuation
                     currentView = new PunctuationView({ model: this.model});
@@ -424,8 +388,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     break;
                 case 5: // cases
                     currentView = new CasesView({ model: this.model});
@@ -433,12 +395,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
-                    // Penultimate step -- enable the next button (only needed
-                    // if the user happens to back up from the last one)
-                    this.$("#lblNext").html(i18n.t('view.lblNext'));
-                    this.$("#imgNext").removeAttr("style");
                     break;
                 case 6: // USFM filtering
                     currentView = new USFMFilteringView({ collection: USFMMarkers});
@@ -446,11 +402,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
-                    // Last step -- change the text of the Next button to "finish"
-                    this.$("#lblNext").html(i18n.t('view.lblFinish'));
-                    this.$("#imgNext").attr("style", "display:none");
                     break;
                 }
                 this.container.show(currentView);
@@ -596,8 +547,10 @@ define(function (require) {
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
-                    this.model.set("id", (this.model.get("SourceLanguageCode" + "." + currentView.langCode)));
+                    value = this.model.get("SourceLanguageCode") + "." + currentView.langCode;
+                    this.model.set("id", value);
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
+                    console.log("id: " + value);
                     break;
                 case 3: // fonts
                     break;

@@ -105,12 +105,10 @@ define(function (require) {
 
             editProject: function (id) {
                 // edit the selected project
-                var proj = new projModel.Project({id: id});
-                proj.fetch({
-                    success: function (data) {
-                        window.Application.main.show(new ProjectViews.EditProjectView({model: data}));
-                    }
-                });
+                var proj = ProjectList.where({id: id});
+                if (proj !== null) {
+                    window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
+                }
             },
 
             newProject: function () {
