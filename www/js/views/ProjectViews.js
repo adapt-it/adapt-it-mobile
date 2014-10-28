@@ -24,6 +24,7 @@ define(function (require) {
         usfm       = require('utils/usfm'),
         langs       = require('languages'),
         projModel   = require('app/models/project'),
+        fontModel   = require('app/models/font'),
         langName    = "",
         langCode    = "",
         step        = 1,
@@ -215,9 +216,9 @@ define(function (require) {
             regions: {
                 container: "#StepContainer"
             },
-//            initialize: function () {
-//                this.OnNewProject();
-//            },
+            initialize: function () {
+                this.OnEditProject();
+            },
 //            render: function () {
 //                template = Handlebars.compile(tplEditProject);
 //                this.$el.html(template());
@@ -228,9 +229,14 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
+                "click #SourceLanguage": "OnEditSourceLanguage",
+                "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
+                "click #Punctuation": "OnEditPunctuation",
+                "click #Cases": "OnEditCases",
+                "click #Filtering": "OnEditFiltering",
                 "keyup #LanguageName":    "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
@@ -242,7 +248,7 @@ define(function (require) {
                 "click #Cancel": "OnCancel",
                 "click #OK": "OnOK"
             },
-
+                                                       
             searchLanguageName: function (event) {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val();
@@ -292,19 +298,30 @@ define(function (require) {
             OnEditSourceFont: function (event) {
                 console.log("OnEditSourceFont");
             },
-
             OnEditTargetFont: function (event) {
                 console.log("OnEditTargetFont");
             },
-
             OnEditNavFont: function (event) {
                 console.log("OnEditNavFont");
             },
-
+            OnEditSourceLanguage: function (event) {
+                console.log("OnEditSourceLanguage");
+            },
+            OnEditTargetLanguage: function (event) {
+                console.log("OnEditTargetLanguage");
+            },
+            OnEditPunctuation: function (event) {
+                console.log("OnEditPunctuation");
+            },
+            OnEditCases: function (event) {
+                console.log("OnEditCases");
+            },
+            OnEditFiltering: function (event) {
+                console.log("OnEditFiltering");
+            },
             OnCancel: function (event) {
                 // just return
             },
-
             OnOK: function (event) {
                 // pull the info from the current step
                 this.GetProjectInfo(step);
@@ -347,61 +364,73 @@ define(function (require) {
                 }
             },
 
-            OnNewProject: function () {
+            OnEditProject: function () {
                 // create a new project model object
                 //this.openDB();
                 languages = new langs.LanguageCollection();
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
+                // title
+                this.$("#StepTitle").html(i18n.t('view.lblEditProject'));
             },
 
-            ShowStep: function (number) {
+            ShowView: function (number) {
+                // Display the frame UI
+                $("#OKCancelButtons").prop('hidden', false);
+                $("#Instructions").prop('hidden', false);
+                $("#StepContainer").prop('hidden', false);
+                $("#OKCancelButtons").prop('hidden', false);
+                // hide the project list items
+                $('#ProjectItems').hide();
                 // clear out the old view (if any)
                 currentView = null;
                 switch (number) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new SourceLanguageView({ model: this.model, collection: languages });
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    this.$("#Instructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new TargetLanguageView({ model: this.model, collection: languages });
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
+                    this.$("#Instructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
-                case 3: // fonts
+                case 3: // source font
+                    currentView = new FontView({ model: new fontModel.font({id: "Source", typeface: this.model.get('SourceFont'), size: this.model.get('SourceFontSize'), color: this.model.get('SourceColor')})});
+                    // instructions
+                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    break;
+                case 4: // target font
+                    currentView = new FontView({ model: new fontModel.font({id: "Target", typeface: this.model.get('TargetFont'), size: this.model.get('TargetFontSize'), color: this.model.get('TargetColor')})});
+                    // instructions
+                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    break;
+                case 5: // navigation font
+                    currentView = new FontView({ model: new fontModel.font({id: "Navigation", typeface: this.model.get('NavigationFont'), size: this.model.get('NavigationFontSize'), color: this.model.get('NavigationColor')})});
+                    // instructions
+                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    break;
+                case 6: // fonts
                     currentView = new FontsView({ model: this.model});
-                    // title
-                    $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
+                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
                     break;
-                case 4: // punctuation
+                case 7: // punctuation
                     currentView = new PunctuationView({ model: this.model});
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
+                    this.$("#Instructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
-                case 5: // cases
+                case 8: // cases
                     currentView = new CasesView({ model: this.model});
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
+                    this.$("#Instructions").html(i18n.t('view.dscProjectCases'));
                     break;
-                case 6: // USFM filtering
+                case 9: // USFM filtering
                     currentView = new USFMFilteringView({ collection: USFMMarkers});
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
+                    this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
                 }
                 this.container.show(currentView);
