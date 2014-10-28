@@ -134,6 +134,12 @@
         "lblSource": "Lenguaje original",
         "lblTarget": "Lenguaje objecto",
         "lblProjectSettings": "Configuración del Proyecto",
+        "ttlPunctuation": "Punctuation",
+        "lblNoPunctuationCopy": "Do not copy punctuation",
+        "ttlCases": "Cases",
+        "lblNoAutoCapitalization": "Do not capitalize target text",
+        "ttlFilter": "USFM Filtering",
+        "lblFilteringDefault": "Display default USFM set",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

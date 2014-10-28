@@ -10,7 +10,8 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
-        tplProject  = require('text!tpl/NewProject.html'),
+        tplEditProject  = require('text!tpl/EditProject.html'),
+        tplNewProject   = require('text!tpl/NewProject.html'),
         tplCases    = require('text!tpl/ProjectCases.html'),
         tplFonts    = require('text!tpl/ProjectFonts.html'),
         tplFont     = require('text!tpl/ProjectFont.html'),
@@ -209,8 +210,8 @@ define(function (require) {
                 }
             }
         }),
-        NewProjectView = Marionette.LayoutView.extend({
-            template: Handlebars.compile(tplProject),
+        EditProjectView = Marionette.LayoutView.extend({
+            template: Handlebars.compile(tplEditProject),
             regions: {
                 container: "#StepContainer"
             },
@@ -218,7 +219,7 @@ define(function (require) {
                 this.OnNewProject();
             },
             render: function () {
-                template = Handlebars.compile(tplProject);
+                template = Handlebars.compile(tplEditProject);
                 this.$el.html(template());
                 this.ShowStep(step);
                 return this;
@@ -454,9 +455,257 @@ define(function (require) {
                 }
                 this.container.show(currentView);
             }
+        }),
+        NewProjectView = Marionette.LayoutView.extend({
+            template: Handlebars.compile(tplNewProject),
+            regions: {
+                container: "#StepContainer"
+            },
+            initialize: function () {
+                this.OnNewProject();
+            },
+            render: function () {
+                template = Handlebars.compile(tplNewProject);
+                this.$el.html(template());
+                this.ShowStep(step);
+                return this;
+            },
+            ////
+            // Event Handlers
+            ////
+            events: {
+                "click #sourceFont": "OnEditSourceFont",
+                "click #targetFont": "OnEditTargetFont",
+                "click #navFont": "OnEditNavFont",
+                "keyup #LanguageName":    "searchLanguageName",
+                "keypress #LanguageName": "onkeypressLanguageName",
+                "click .autocomplete-suggestion": "selectLanguage",
+                "click .delete-row": "onClickDeleteRow",
+                "click #CopyPunctuation": "OnClickCopyPunctuation",
+                "click #SourceHasCases": "OnClickSourceHasCases",
+                "click #AutoCapitalize": "OnClickAutoCapitalize",
+                "click #UseCustomFilters": "OnClickCustomFilters",
+                "click #Prev": "OnPrevStep",
+                "click #Next": "OnNextStep"
+            },
+
+            searchLanguageName: function (event) {
+                // pull out the value from the input field
+                var key = $('#LanguageName').val();
+                if (key.trim() === "") {
+                    // Fix problem where an empty value returns all results.
+                    // Here if there's no _real_ value, fetch nothing.
+                    languages.fetch({reset: true, data: {name: "    "}});
+                } else {
+                    // find all matches in the language collection
+                    languages.fetch({reset: true, data: {name: key}});
+                }
+                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
+//                console.log(key + ": " + languages.length + " results.");
+            },
+
+            onkeypressLanguageName: function (event) {
+                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+            },
+
+            searchTarget: function (event) {
+                currentView.search(event);
+            },
+            onkeypressTargetName: function (event) {
+                currentView.onkeypress(event);
+            },
+            selectLanguage: function (event) {
+                currentView.onSelectLanguage(event);
+            },
+            onClickDeleteRow: function (event) {
+                currentView.onClickDeleteRow(event);
+            },
+            OnClickCopyPunctuation: function (event) {
+                currentView.onClickCopyPunctuation(event);
+            },
+            OnClickSourceHasCases: function (event) {
+                currentView.onClickSourceHasCases(event);
+            },
+            OnClickAutoCapitalize: function (event) {
+                currentView.onClickAutoCapitalize(event);
+            },
+            OnClickCustomFilters: function (event) {
+                currentView.onClickCustomFilters(event);
+            },
+            OnEditSourceFont: function (event) {
+                console.log("OnEditSourceFont");
+    //            currentView = new ProjectFontView({ model: this.model});
+    //            // title
+    //            this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+    //            // instructions
+    //            this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+    //            // controls
+    //            this.$('#StepContainer').html(currentView.render().el.childNodes);
+    //            // first step -- disable the prev button
+    //            this.$("#Prev").attr('disabled', 'true');
+    //            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
+    //            this.$("#lblNext").html(i18n.t('view.lblNext'));
+            },
+
+            OnEditTargetFont: function (event) {
+                console.log("OnEditTargetFont");
+            },
+
+            OnEditNavFont: function (event) {
+                console.log("OnEditNavFont");
+            },
+
+            OnPrevStep: function (event) {
+                // pull the info from the current step
+                this.GetProjectInfo(step);
+                if (step > 1) {
+                    step--;
+                }
+                this.ShowStep(step);
+            },
+
+            OnNextStep: function (event) {
+                var coll = null;
+                // pull the info from the current step
+                this.GetProjectInfo(step);
+                if (step < 6) {
+                    step++;
+                    this.ShowStep(step);
+                } else {
+                    // last step -- finish up
+                    // head back to the home page
+                    window.Application.home();
+                }
+            },
+
+            GetProjectInfo: function (step) {
+                var value = null,
+                    index = 0,
+                    punctPairs = null,
+                    trimmedValue = null;
+                switch (step) {
+                case 1: // source language
+                    this.model.set("SourceLanguageName", currentView.langName);
+                    this.model.set("SourceLanguageCode", currentView.langCode);
+                    this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    break;
+                case 2: // target language
+                    this.model.set("TargetLanguageName", currentView.langName);
+                    this.model.set("TargetLanguageCode", currentView.langCode);
+                    this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("id", (this.model.get("SourceLanguageCode" + "." + currentView.langCode)));
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
+                    break;
+                case 3: // fonts
+                    break;
+                case 4: // punctuation
+                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
+                    punctPairs = this.model.get("PunctPairs");
+                    // TODO: punctuation
+                    break;
+                case 5: // cases
+                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
+                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
+                    // TODO: cases
+                    break;
+                case 6: // USFM filtering
+                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
+                    //TODO: markers
+                    break;
+                }
+            },
+
+            OnNewProject: function () {
+                // create a new project model object
+                //this.openDB();
+                languages = new langs.LanguageCollection();
+                USFMMarkers = new usfm.MarkerCollection();
+                USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
+            },
+
+            ShowStep: function (number) {
+                // clear out the old view (if any)
+                currentView = null;
+                switch (number) {
+                case 1: // source language
+                    languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
+                    currentView = new SourceLanguageView({ model: this.model, collection: languages });
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    // controls
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+                    // first step -- disable the prev button
+                    this.$("#Prev").attr('disabled', 'true');
+                    this.$("#lblPrev").html(i18n.t('view.lblPrev'));
+                    this.$("#lblNext").html(i18n.t('view.lblNext'));
+                    break;
+                case 2: // target language
+                    languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
+                    currentView = new TargetLanguageView({ model: this.model, collection: languages });
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
+                    // controls
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+                    this.$("#Prev").removeAttr('disabled');
+                    break;
+                case 3: // fonts
+                    currentView = new FontsView({ model: this.model});
+                    // title
+                    $("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
+                    // controls
+//                    $('#StepContainer').html(currentView.render().el.childNodes);
+                    // Second step -- enable the prev button
+                    break;
+                case 4: // punctuation
+                    currentView = new PunctuationView({ model: this.model});
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
+                    // controls
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+                    break;
+                case 5: // cases
+                    currentView = new CasesView({ model: this.model});
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
+                    // controls
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+                    // Penultimate step -- enable the next button (only needed
+                    // if the user happens to back up from the last one)
+                    this.$("#lblNext").html(i18n.t('view.lblNext'));
+                    this.$("#imgNext").removeAttr("style");
+                    break;
+                case 6: // USFM filtering
+                    currentView = new USFMFilteringView({ collection: USFMMarkers});
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
+                    // controls
+//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
+                    // Last step -- change the text of the Next button to "finish"
+                    this.$("#lblNext").html(i18n.t('view.lblFinish'));
+                    this.$("#imgNext").attr("style", "display:none");
+                    break;
+                }
+                this.container.show(currentView);
+            }
         });
     
     return {
+        EditProjectView: EditProjectView,
         NewProjectView: NewProjectView,
         CasesView: CasesView,
         FontsView: FontsView,

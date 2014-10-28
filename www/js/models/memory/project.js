@@ -27,8 +27,8 @@ define(function (require) {
 //                NavigationColor: "#00cc00;",
 //                SourceLanguageName: "English",
 //                TargetLanguageName: "English",
-//                SourceLanguageCode: "en",
-//                TargetLanguageCode: "en",
+//                SourceLanguageCode: "en-au",
+//                TargetLanguageCode: "en-au",
 //                CopyPunctuation: "true",
 //                PunctPairs: [
 //                    {

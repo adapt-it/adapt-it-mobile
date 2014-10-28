@@ -14,7 +14,8 @@ define(function (require) {
         appRoutes: {
             "":             "home",             // (top level)
             "help":         "help",             // #help
-            "project":      "project",          // #project
+            "project":      "newProject",       // #project
+            "project/:id":  "editProject",      // #project/projectID
             "lookup":       "lookupChapter",    // #lookup
             "adapt/:id":    "adaptChapter"      // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
         }

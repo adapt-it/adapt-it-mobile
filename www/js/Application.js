@@ -23,6 +23,7 @@ define(function (require) {
         lookupView      = null,
         helpView        = null,
         newProjectView  = null,
+        editProjectView = null,
         homeView        = null,
         i18n            = require('i18n'),
         lang            = "",
@@ -39,7 +40,7 @@ define(function (require) {
                 });
                 // main Region's show event handler -- we use it to do
                 // page transition animations.
-                this.main.on("show", function(view){
+                this.main.on("show", function (view) {
                   // manipulate the `view` or do something extra
                   // with the region via `this`
                     slider.slidePage(view.$el);
@@ -102,14 +103,24 @@ define(function (require) {
                 this.main.show(helpView);
             },
 
-            project: function () {
+            editProject: function (id) {
+                // edit the selected project
+                var proj = new projModel.Project({id: id});
+                proj.fetch({
+                    success: function (data) {
+                        window.Application.main.show(new ProjectViews.EditProjectView({model: data}));
+                    }
+                });
+            },
+
+            newProject: function () {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
                 newProjectView.delegateEvents();
                 ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
-
+            
             lookupChapter: function (id) {
                 lookupView = new LookupView();
                 require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
