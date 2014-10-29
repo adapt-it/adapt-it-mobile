@@ -139,6 +139,30 @@ define(function (require) {
                 } else {
                     $("#PunctMappings").prop('hidden', true);
                 }
+            },
+            // Handler for when the user starts typing on the last row input fields; 
+            // adds one more row, shows the delete button on the current ond, and removes the new-row class
+            // from the current row so this method doesn't get called on this row again.
+            addNewRow: function (event) {
+                var newID = Underscore.uniqueId();
+                var index = event.currentTarget.id.substr(2);
+                // remove the class from this row
+                $(("#s-" + index)).removeClass("new-row");
+                $(("#t-" + index)).removeClass("new-row");
+                // show the delete button
+                $(("#d" + index)).show();
+                // add a new row (with the .new-row class)
+                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet' id='d-" + newID + "' style='display:none;'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
+            },
+            getRows: function () {
+                var array = null;
+                $("tr.item").each(function (index, elt) {
+                    array.append({
+                        s: $(("#s-" + index)).val(),
+                        t: $(("#t-" + index)).val()
+                    });
+                });
+                return array;
             }
         }),
 
@@ -241,6 +265,7 @@ define(function (require) {
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
+                "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
@@ -263,14 +288,15 @@ define(function (require) {
                 $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
-
+            addNewRow: function (event) {
+                currentView.addNewRow(event);
+            },
             onkeypressLanguageName: function (event) {
                 $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
             },
-
             searchTarget: function (event) {
                 currentView.search(event);
             },
@@ -461,6 +487,7 @@ define(function (require) {
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
+                "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
@@ -504,6 +531,9 @@ define(function (require) {
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
+            },
+            addNewRow: function (event) {
+                currentView.addNewRow(event);
             },
             OnClickCopyPunctuation: function (event) {
                 currentView.onClickCopyPunctuation(event);
