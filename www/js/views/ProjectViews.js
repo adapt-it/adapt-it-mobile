@@ -476,9 +476,11 @@ define(function (require) {
                     // Fix problem where an empty value returns all results.
                     // Here if there's no _real_ value, fetch nothing.
                     languages.fetch({reset: true, data: {name: "    "}});
+                    this.$("#name-suggestions").hide();
                 } else {
                     // find all matches in the language collection
                     languages.fetch({reset: true, data: {name: key}});
+                    this.$("#name-suggestions").show();
                 }
                 $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
@@ -620,6 +622,7 @@ define(function (require) {
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     // controls
+                    this.$("#name-suggestions").hide();
 //                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // first step -- disable the prev button
                     this.$("#Prev").attr('disabled', 'true');
@@ -634,6 +637,7 @@ define(function (require) {
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     // controls
+                    this.$("#name-suggestions").hide();
 //                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     this.$("#Prev").removeAttr('disabled');
                     break;
