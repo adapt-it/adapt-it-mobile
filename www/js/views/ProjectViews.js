@@ -51,20 +51,7 @@ define(function (require) {
             onClickDeleteRow: function (event) {
                 // find the current row
                 var array = this.model.get('CasePairs');
-                var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
-//                var realIndex = index;
-//                var src = $(("#s-" + index)).val();
-//                var tgt = $(("#t-" + index)).val();
-//                var i = 0;
-//                for (i = 0; i < array.length; i++) { // find the "real" index of this case pair
-//                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
-//                        realIndex = i; // found where the real item is in the index
-//                        break;
-//                    }
-//                }
-//                // remove the item from the model
-//                array.splice(realIndex, 1);
-//                this.model.set({CasePairs: array});
+                var index = event.currentTarget.id.substr(2);
                 // remove the item from the UI
                 var element = "#r-" + index;
                 $(element).remove();
@@ -80,9 +67,24 @@ define(function (require) {
                 $(("#t-" + index)).removeClass("new-row");
                 // show the delete button
                 $(("#d-" + index)).removeClass("hide");
-//                $(("#d" + index)).show();
                 // add a new row (with the .new-row class)
-                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
+                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row' id='s-" + newID + "' style='width:100%;' maxlength='2' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row' style='width:100%;' maxlength='2' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
+            },
+            // returns an array of objects corresponding to the current s/t values in the table
+            // (i.e., in the CasePairs format)
+            getRows: function () {
+                var arr = [],
+                    s = null,
+                    t = null;
+                $("tr").each(function () {
+                    s = $(this).find(".s").val();
+                    t = $(this).find(".t").val();
+                    if (s && s.length > 0) {
+                        arr[arr.length] = {s: s, t: t};
+                    }
+                    console.log(arr);
+                });
+                return arr;
             },
             onClickSourceHasCases: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
@@ -129,20 +131,7 @@ define(function (require) {
             onClickDeleteRow: function (event) {
                 // find the current row
                 var array = this.model.get('PunctPairs');
-                var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
-//                var realIndex = index;
-//                var src = $(("#s-" + index)).val();
-//                var tgt = $(("#t-" + index)).val();
-//                var i = 0;
-//                for (i = 0; i < array.length; i++) { // find the "real" index of this punctuation pair
-//                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
-//                        realIndex = i; // found where the real item is in the index
-//                        break;
-//                    }
-//                }
-//                // remove the item from the model
-//                array.splice(realIndex, 1);
-//                this.model.set({PunctPairs: array});
+                var index = event.currentTarget.id.substr(2);
                 // remove the item from the UI
                 var element = "#r-" + index;
                 $(element).remove();
@@ -166,31 +155,22 @@ define(function (require) {
                 $(("#t-" + index)).removeClass("new-row");
                 // show the delete button
                 $(("#d-" + index)).removeClass("hide");
-//                $(("#d" + index)).show();
                 // add a new row (with the .new-row class)
                 $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row s' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row t' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
             },
+            // returns an array of objects corresponding to the current s/t values in the table
+            // (i.e., in the PunctPairs format)
             getRows: function () {
-                var arr = new Array(0),
+                var arr = [],
                     s = null,
                     t = null;
                 $("tr").each(function () {
                     s = $(this).find(".s").val();
                     t = $(this).find(".t").val();
-                    var item = [{
-                        s: s,
-                        t: t
-                    }];
                     if (s && s.length > 0) {
-                        arr.push(item);
+                        arr[arr.length] = {s: s, t: t};
                     }
                     console.log(arr);
-//                    arr.append(item);
-//                    console.log(index + ": " + elt);
-//                    arr.append({
-//                        s: $(("#s-" + index)).val(),
-//                        t: $(("#t-" + index)).val()
-//                    });
                 });
                 return arr;
             }
@@ -409,13 +389,12 @@ define(function (require) {
                 case 4: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
-                    // TODO: punctuation
                     this.model.set({PunctPairs: currentView.getRows()});
                     break;
                 case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
-                    // TODO: cases
+                    this.model.set({CasePairs: currentView.getRows()});
                     break;
                 case 6: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
@@ -544,7 +523,6 @@ define(function (require) {
                     this.$("#name-suggestions").show();
                 }
                 $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
-//                console.log(key + ": " + languages.length + " results.");
             },
 
             onkeypressLanguageName: function (event) {
@@ -652,14 +630,12 @@ define(function (require) {
                     break;
                 case 4: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
-                    punctPairs = this.model.get("PunctPairs");
-                    // TODO: punctuation
                     this.model.set({PunctPairs: currentView.getRows()});
                     break;
                 case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
-                    // TODO: cases
+                    this.model.set({CasePairs: currentView.getRows()});
                     break;
                 case 6: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
@@ -689,7 +665,6 @@ define(function (require) {
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     // controls
                     this.$("#name-suggestions").hide();
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // first step -- disable the prev button
                     this.$("#Prev").attr('disabled', 'true');
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
@@ -704,7 +679,6 @@ define(function (require) {
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     // controls
                     this.$("#name-suggestions").hide();
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     this.$("#Prev").removeAttr('disabled');
                     break;
                 case 3: // fonts
@@ -713,9 +687,6 @@ define(function (require) {
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
-                    // controls
-//                    $('#StepContainer').html(currentView.render().el.childNodes);
-                    // Second step -- enable the prev button
                     break;
                 case 4: // punctuation
                     currentView = new PunctuationView({ model: this.model});
@@ -723,8 +694,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
-                    // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     break;
                 case 5: // cases
                     currentView = new CasesView({ model: this.model});
@@ -733,7 +702,6 @@ define(function (require) {
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // Penultimate step -- enable the next button (only needed
                     // if the user happens to back up from the last one)
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
@@ -746,7 +714,6 @@ define(function (require) {
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     // controls
-//                    this.$('#StepContainer').html(currentView.render().el.childNodes);
                     // Last step -- change the text of the Next button to "finish"
                     this.$("#lblNext").html(i18n.t('view.lblFinish'));
                     this.$("#imgNext").attr("style", "display:none");
