@@ -52,22 +52,37 @@ define(function (require) {
                 // find the current row
                 var array = this.model.get('CasePairs');
                 var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
-                var realIndex = index;
-                var src = $(("#s-" + index)).val();
-                var tgt = $(("#t-" + index)).val();
-                var i = 0;
-                for (i = 0; i < array.length; i++) { // find the "real" index of this case pair
-                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
-                        realIndex = i; // found where the real item is in the index
-                        break;
-                    }
-                }
-                // remove the item from the model
-                array.splice(realIndex, 1);
-                this.model.set({CasePairs: array});
+//                var realIndex = index;
+//                var src = $(("#s-" + index)).val();
+//                var tgt = $(("#t-" + index)).val();
+//                var i = 0;
+//                for (i = 0; i < array.length; i++) { // find the "real" index of this case pair
+//                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
+//                        realIndex = i; // found where the real item is in the index
+//                        break;
+//                    }
+//                }
+//                // remove the item from the model
+//                array.splice(realIndex, 1);
+//                this.model.set({CasePairs: array});
                 // remove the item from the UI
                 var element = "#r-" + index;
                 $(element).remove();
+            },
+            // Handler for when the user starts typing on the last row input fields; 
+            // adds one more row, shows the delete button on the current ond, and removes the new-row class
+            // from the current row so this method doesn't get called on this row again.
+            addNewRow: function (event) {
+                var newID = Underscore.uniqueId();
+                var index = event.currentTarget.id.substr(2);
+                // remove the class from this row
+                $(("#s-" + index)).removeClass("new-row");
+                $(("#t-" + index)).removeClass("new-row");
+                // show the delete button
+                $(("#d-" + index)).removeClass("hide");
+//                $(("#d" + index)).show();
+                // add a new row (with the .new-row class)
+                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
             },
             onClickSourceHasCases: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
@@ -115,19 +130,19 @@ define(function (require) {
                 // find the current row
                 var array = this.model.get('PunctPairs');
                 var index = event.currentTarget.id.substr(2); // accurate as an index only until the first item is removed
-                var realIndex = index;
-                var src = $(("#s-" + index)).val();
-                var tgt = $(("#t-" + index)).val();
-                var i = 0;
-                for (i = 0; i < array.length; i++) { // find the "real" index of this punctuation pair
-                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
-                        realIndex = i; // found where the real item is in the index
-                        break;
-                    }
-                }
-                // remove the item from the model
-                array.splice(realIndex, 1);
-                this.model.set({PunctPairs: array});
+//                var realIndex = index;
+//                var src = $(("#s-" + index)).val();
+//                var tgt = $(("#t-" + index)).val();
+//                var i = 0;
+//                for (i = 0; i < array.length; i++) { // find the "real" index of this punctuation pair
+//                    if (array[i].s === src.trim() && array[i].t === tgt.trim()) {
+//                        realIndex = i; // found where the real item is in the index
+//                        break;
+//                    }
+//                }
+//                // remove the item from the model
+//                array.splice(realIndex, 1);
+//                this.model.set({PunctPairs: array});
                 // remove the item from the UI
                 var element = "#r-" + index;
                 $(element).remove();
@@ -150,19 +165,34 @@ define(function (require) {
                 $(("#s-" + index)).removeClass("new-row");
                 $(("#t-" + index)).removeClass("new-row");
                 // show the delete button
-                $(("#d" + index)).show();
+                $(("#d-" + index)).removeClass("hide");
+//                $(("#d" + index)).show();
                 // add a new row (with the .new-row class)
-                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet' id='d-" + newID + "' style='display:none;'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
+                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row s' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row t' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
             },
             getRows: function () {
-                var array = null;
-                $("tr.item").each(function (index, elt) {
-                    array.append({
-                        s: $(("#s-" + index)).val(),
-                        t: $(("#t-" + index)).val()
-                    });
+                var arr = new Array(0),
+                    s = null,
+                    t = null;
+                $("tr").each(function () {
+                    s = $(this).find(".s").val();
+                    t = $(this).find(".t").val();
+                    var item = [{
+                        s: s,
+                        t: t
+                    }];
+                    if (s && s.length > 0) {
+                        arr.push(item);
+                    }
+                    console.log(arr);
+//                    arr.append(item);
+//                    console.log(index + ": " + elt);
+//                    arr.append({
+//                        s: $(("#s-" + index)).val(),
+//                        t: $(("#t-" + index)).val()
+//                    });
                 });
-                return array;
+                return arr;
             }
         }),
 
@@ -281,9 +311,11 @@ define(function (require) {
                     // Fix problem where an empty value returns all results.
                     // Here if there's no _real_ value, fetch nothing.
                     languages.fetch({reset: true, data: {name: "    "}});
+                    this.$("#name-suggestions").hide();
                 } else {
                     // find all matches in the language collection
                     languages.fetch({reset: true, data: {name: key}});
+                    this.$("#name-suggestions").show();
                 }
                 $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
@@ -292,6 +324,7 @@ define(function (require) {
                 currentView.addNewRow(event);
             },
             onkeypressLanguageName: function (event) {
+                this.$("#name-suggestions").show();
                 $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
@@ -377,6 +410,7 @@ define(function (require) {
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
                     // TODO: punctuation
+                    this.model.set({PunctPairs: currentView.getRows()});
                     break;
                 case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
@@ -514,6 +548,7 @@ define(function (require) {
             },
 
             onkeypressLanguageName: function (event) {
+                this.$("#name-suggestions").show();
                 $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
@@ -619,6 +654,7 @@ define(function (require) {
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
                     // TODO: punctuation
+                    this.model.set({PunctPairs: currentView.getRows()});
                     break;
                 case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");

@@ -143,6 +143,7 @@
         "lblOK": "OK",
         "lblCancel": "Cancel",
         "ttlEditProject": "Edit Project",
+        "ttlDelete": "Delete",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

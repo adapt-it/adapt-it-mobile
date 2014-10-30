@@ -364,7 +364,6 @@ ul {
     background-size: cover;
     padding: 0;
 }
-
 .right {
     float:right;
 }
@@ -756,6 +755,10 @@ span.sprite{
 }
 .topcoat-table tr:nth-child(odd){ background-color:#eee; }
 .topcoat-table tr:nth-child(even)    { background-color:#fff; }
+.hide {
+    display: none;
+}
+
 /***********
 * media queries - for specific device sizes / screen resolutions
 ***********/
