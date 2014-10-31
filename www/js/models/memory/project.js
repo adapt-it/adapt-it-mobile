@@ -27,8 +27,10 @@ define(function (require) {
 //                NavigationColor: "#00cc00;",
 //                SourceLanguageName: "English",
 //                TargetLanguageName: "English",
-//                SourceLanguageCode: "en-au",
-//                TargetLanguageCode: "en-au",
+//                SourceLanguageCode: "en",
+//                TargetLanguageCode: "en",
+//                SourceVariant: "US",
+//                TargetVariant: "au",
 //                CopyPunctuation: "true",
 //                PunctPairs: [
 //                    {
@@ -263,6 +265,8 @@ define(function (require) {
                 TargetLanguageName: "",
                 SourceLanguageCode: "",
                 TargetLanguageCode: "",
+                SourceVariant: "",
+                TargetVariant: "",
                 CopyPunctuation: "true",
                 PunctPairs: [
                     {
