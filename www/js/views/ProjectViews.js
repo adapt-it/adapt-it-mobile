@@ -18,6 +18,7 @@ define(function (require) {
         tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
+        tplDirAndVariant    = require('text!tpl/ProjectDirandVariant.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         i18n        = require('i18n'),
         LanguagesListView = require('app/views/LanguagesListView'),
@@ -239,12 +240,29 @@ define(function (require) {
             onClickCustomFilters: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
-                    $("#USFMFilters").prop('hidden', false);
+                    $("#LanguageVariant").prop('hidden', false);
                 } else {
-                    $("#USFMFilters").prop('hidden', true);
+                    $("#LanguageVariant").prop('hidden', true);
                 }
             }
         }),
+        
+        // DirAndVariantView
+        // View / edit the text direction and variant / dialect (if any) of the language.
+        // This view is used for both source and target language
+        DirAndVariantView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplDirAndVariant),
+            onClickVariant: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#isVariant").is(':checked') === true) {
+                    $("#USFMFilters").prop('disabled', false);
+                } else {
+                    $("#USFMFilters").prop('disabled', true);
+                }
+            }
+        }),
+        
+        
         EditProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplEditProject),
             regions: {
@@ -376,11 +394,13 @@ define(function (require) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
+                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
                     this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
+                    this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
@@ -427,12 +447,16 @@ define(function (require) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new SourceLanguageView({ model: this.model, collection: languages });
+                    currentView.langName = this.model.get("SourceLanguageName");
+                    currentView.langCode = this.model.get("SourceLanguageCode");
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new TargetLanguageView({ model: this.model, collection: languages });
+                    currentView.langName = this.model.get("TargetLanguageName");
+                    currentView.langCode = this.model.get("TargetLanguageCode");
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
@@ -615,11 +639,13 @@ define(function (require) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
+                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
                     this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
+                    this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                     value = this.model.get("SourceLanguageCode") + "." + currentView.langCode;
                     this.model.set("id", value);
@@ -647,6 +673,7 @@ define(function (require) {
             OnNewProject: function () {
                 // create a new project model object
                 //this.openDB();
+                this.numSteps = 6;
                 languages = new langs.LanguageCollection();
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
@@ -655,10 +682,15 @@ define(function (require) {
             ShowStep: function (number) {
                 // clear out the old view (if any)
                 currentView = null;
+                var newWidth = "width:" + (100 / this.numSteps * number) + "%;";
+                console.log(newWidth);
+                this.$("#progress").attr("style", newWidth);
                 switch (number) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new SourceLanguageView({ model: this.model, collection: languages });
+                    currentView.langName = this.model.get("SourceLanguageName");
+                    currentView.langCode = this.model.get("SourceLanguageCode");
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
@@ -673,6 +705,8 @@ define(function (require) {
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new TargetLanguageView({ model: this.model, collection: languages });
+                    currentView.langName = this.model.get("TargetLanguageName");
+                    currentView.langCode = this.model.get("TargetLanguageCode");
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
