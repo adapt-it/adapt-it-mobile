@@ -620,7 +620,7 @@ define(function (require) {
                 var coll = null;
                 // pull the info from the current step
                 this.GetProjectInfo(step);
-                if (step < 6) {
+                if (step < this.numSteps) {
                     step++;
                     this.ShowStep(step);
                 } else {
@@ -639,31 +639,37 @@ define(function (require) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
-                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
-                    this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                     break;
-                case 2: // target language
+                case 2: // source language variant / direction
+                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
+                    break;
+                case 3: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
+                    break;
+                case 4: // target language variant / direction
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
-                    this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
-                    value = this.model.get("SourceLanguageCode") + "." + currentView.langCode;
+                    this.model.set("TargetDir", ($('#tRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    // also set the ID and name of the project, now that we (should) have both source and target defined
+                    // TODO: do we need to add the variant to the ID and/or name?
+                    value = this.model.get("SourceLanguageCode") + "." + this.model.get("TargetLanguageCode");
                     this.model.set("id", value);
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}));
                     console.log("id: " + value);
                     break;
-                case 3: // fonts
+                case 5: // fonts
                     break;
-                case 4: // punctuation
+                case 6: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     this.model.set({PunctPairs: currentView.getRows()});
                     break;
-                case 5: // cases
+                case 7: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
                     this.model.set({CasePairs: currentView.getRows()});
                     break;
-                case 6: // USFM filtering
+                case 8: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
                     //TODO: markers
                     break;
@@ -673,7 +679,7 @@ define(function (require) {
             OnNewProject: function () {
                 // create a new project model object
                 //this.openDB();
-                this.numSteps = 6;
+                this.numSteps = 8;
                 languages = new langs.LanguageCollection();
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
@@ -702,7 +708,23 @@ define(function (require) {
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     break;
-                case 2: // target language
+                case 2: // Text direction and language variant
+                    currentView = new DirAndVariantView({ model: this.model });
+                    if (this.model.get("SourceDir") === "rtl") {
+                        this.$("#RTL").checked = true;
+                    }
+                    if (this.model.get("SourceVariant").length > 0) {
+                        // variant -- mark the checkbox
+                        this.$("#isVariant").checked = true;
+                        // set the value
+                        this.$("#LanguageVariant").html(this.model.get("SourceVariant"));
+                    }
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    break;
+                case 3: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new TargetLanguageView({ model: this.model, collection: languages });
                     currentView.langName = this.model.get("TargetLanguageName");
@@ -715,21 +737,37 @@ define(function (require) {
                     this.$("#name-suggestions").hide();
                     this.$("#Prev").removeAttr('disabled');
                     break;
-                case 3: // fonts
+                case 4: // Text direction and language variant
+                    currentView = new DirAndVariantView({ model: this.model });
+                    if (this.model.get("TargetDir") === "rtl") {
+                        this.$("#RTL").checked = true;
+                    }
+                    if (this.model.get("TargetVariant").length > 0) {
+                        // variant -- mark the checkbox
+                        this.$("#isVariant").checked = true;
+                        // set the value
+                        this.$("#LanguageVariant").html(this.model.get("TargetVariant"));
+                    }
+                    // title
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    // instructions
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    break;
+                case 5: // fonts
                     currentView = new FontsView({ model: this.model});
                     // title
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
-                case 4: // punctuation
+                case 6: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
-                case 5: // cases
+                case 7: // cases
                     currentView = new CasesView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -741,7 +779,7 @@ define(function (require) {
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     this.$("#imgNext").removeAttr("style");
                     break;
-                case 6: // USFM filtering
+                case 8: // USFM filtering
                     currentView = new USFMFilteringView({ collection: USFMMarkers});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -766,6 +804,7 @@ define(function (require) {
         PunctuationView: PunctuationView,
         SourceLanguageView: SourceLanguageView,
         TargetLanguageView: TargetLanguageView,
+        DirAndVariantView: DirAndVariantView,
         USFMFilteringView: USFMFilteringView
     };
 });
