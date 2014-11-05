@@ -144,6 +144,8 @@
         "lblCancel": "Cancelar",
         "ttlEditProject": "Editar Projecto",
         "ttlDelete": "Borrar",
+        "lblIsVariant": "Language is a dialect / variant",
+        "lblLanguageVariant": "Dialect Name",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

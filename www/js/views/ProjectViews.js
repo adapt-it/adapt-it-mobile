@@ -200,6 +200,7 @@ define(function (require) {
                 $("#langName").html(i18n.t('view.lblSourceLanguageName') + ": " + this.langName);
                 this.langCode = $(event.currentTarget).attr('id').trim();
                 $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
+                $("#LanguageName").val(this.langName);
             }
         }),
 
@@ -226,6 +227,7 @@ define(function (require) {
                 $("#langName").html(i18n.t('view.lblTargetLanguageName') + ": " + this.langName);
                 this.langCode = $(event.currentTarget).attr('id').trim();
                 $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
+                $("#LanguageName").val(this.langName);
             }
         }),
 
@@ -689,7 +691,6 @@ define(function (require) {
                 // clear out the old view (if any)
                 currentView = null;
                 var newWidth = "width:" + (100 / this.numSteps * number) + "%;";
-                console.log(newWidth);
                 this.$("#progress").attr("style", newWidth);
                 switch (number) {
                 case 1: // source language

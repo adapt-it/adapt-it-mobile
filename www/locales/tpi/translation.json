@@ -144,6 +144,8 @@
         "lblCancel": "Kensel",
         "ttlEditProject": "Editim Projek",
         "ttlDelete": "Rausim",
+        "lblIsVariant": "Language is a dialect / variant",
+        "lblLanguageVariant": "Dialect Name",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

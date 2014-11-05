@@ -25,13 +25,11 @@ define(function (require) {
             "click .project-item": "toggleProjectFolder"
         },
         onContinue: function (event) {
-            console.log("onContinue");
             var currentView = new GetStartedView();
             this.$('#Container').html(currentView.render().el.childNodes);
         },
         // Display / hide the contents of the selected project folder
         toggleProjectFolder: function (event) {
-            console.log("toggleProjectFolder");
             var index = event.currentTarget.id.substr(2);
             var elt = document.getElementById('f-' + index);
             var cl = elt.classList;
