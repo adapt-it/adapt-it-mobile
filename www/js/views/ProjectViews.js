@@ -241,9 +241,9 @@ define(function (require) {
             onClickCustomFilters: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
-                    $("#LanguageVariant").prop('hidden', false);
+                    $("#USFMFilters").prop('hidden', false);
                 } else {
-                    $("#LanguageVariant").prop('hidden', true);
+                    $("#USFMFilters").prop('hidden', true);
                 }
             }
         }),
@@ -254,11 +254,12 @@ define(function (require) {
         DirAndVariantView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplDirAndVariant),
             onClickVariant: function (event) {
+                console.log("onclickvariant");
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#isVariant").is(':checked') === true) {
-                    $("#USFMFilters").prop('disabled', false);
+                    $("#LanguageVariant").prop('disabled', false);
                 } else {
-                    $("#USFMFilters").prop('disabled', true);
+                    $("#LanguageVariant").prop('disabled', true);
                 }
             }
         }),
@@ -526,6 +527,7 @@ define(function (require) {
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
+                "click #isVariant": "onClickVariant",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
@@ -544,7 +546,7 @@ define(function (require) {
                     this.$("#name-suggestions").hide();
                 } else {
                     // find all matches in the language collection
-                    languages.fetch({reset: true, data: {name: key}});
+                    Underscore.first(languages.fetch({reset: true, data: {name: key}}), 100);
                     this.$("#name-suggestions").show();
                 }
                 $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
@@ -572,6 +574,9 @@ define(function (require) {
             },
             addNewRow: function (event) {
                 currentView.addNewRow(event);
+            },
+            onClickVariant: function (event) {
+                currentView.onClickVariant(event);
             },
             OnClickCopyPunctuation: function (event) {
                 currentView.onClickCopyPunctuation(event);
