@@ -83,7 +83,6 @@ define(function (require) {
                     if (s && s.length > 0) {
                         arr[arr.length] = {s: s, t: t};
                     }
-                    console.log(arr);
                 });
                 return arr;
             },

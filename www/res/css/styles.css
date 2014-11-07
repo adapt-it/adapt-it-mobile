@@ -709,22 +709,25 @@ span.sprite{
 }
 .project-folder-open {
     clear: both;
-    width: 256px;
+    width: 100%;
+    left: -8px;
     height: 128px;
     background-color: #eee;
-    box-shadow: 0 0 0 1px #949696;
-    margin-left: auto;
+    margin-left: -8px;
     margin-right: auto;
     margin-top: 0;
     -webkit-appearance: none;
+    box-shadow: 0 0 0 1px #949696;
+    /*
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    */
     padding: 6px;
-    border: 1px solid #9daca9;
+ /*   border: 1px solid #9daca9;*/
 }
 
 /* edb - table for usfm? */
