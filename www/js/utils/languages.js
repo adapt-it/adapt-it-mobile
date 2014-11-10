@@ -12,6 +12,7 @@ define(function (require) {
     // iso 639-3 codes from http://www-01.sil.org/iso639-3/download.asp
     var $ = require('jquery'),
         Backbone = require('backbone'),
+        Underscore = require('underscore'),
         languages = [
             {
                 "Id": "aaa",
@@ -246,7 +247,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambala Ayta"
-          },
+            },
             {
                 "Id": "abd",
                 "Part2B": "",
@@ -255,7 +256,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Manide"
-          },
+            },
             {
                 "Id": "abe",
                 "Part2B": "",
@@ -264,7 +265,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Western Abnaki"
-          },
+            },
             {
                 "Id": "abf",
                 "Part2B": "",
@@ -273,7 +274,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abai Sungai"
-          },
+            },
             {
                 "Id": "abg",
                 "Part2B": "",
@@ -282,7 +283,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abaga"
-          },
+            },
             {
                 "Id": "abh",
                 "Part2B": "",
@@ -291,7 +292,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tajiki Arabic"
-          },
+            },
             {
                 "Id": "abi",
                 "Part2B": "",
@@ -300,7 +301,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abidji"
-          },
+            },
             {
                 "Id": "abj",
                 "Part2B": "",
@@ -309,7 +310,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aka-Bea"
-          },
+            },
             {
                 "Id": "abk",
                 "Part2B": "abk",
@@ -318,7 +319,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abkhazian"
-          },
+            },
             {
                 "Id": "abl",
                 "Part2B": "",
@@ -327,7 +328,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Lampung Nyo"
-          },
+            },
             {
                 "Id": "abm",
                 "Part2B": "",
@@ -336,7 +337,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abanyom"
-          },
+            },
             {
                 "Id": "abn",
                 "Part2B": "",
@@ -345,7 +346,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abua"
-          },
+            },
             {
                 "Id": "abo",
                 "Part2B": "",
@@ -354,7 +355,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abon"
-          },
+            },
             {
                 "Id": "abp",
                 "Part2B": "",
@@ -363,7 +364,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abellen Ayta"
-          },
+            },
             {
                 "Id": "abq",
                 "Part2B": "",
@@ -372,7 +373,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abaza"
-          },
+            },
             {
                 "Id": "abr",
                 "Part2B": "",
@@ -381,7 +382,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abron"
-          },
+            },
             {
                 "Id": "abs",
                 "Part2B": "",
@@ -390,7 +391,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambonese Malay"
-          },
+            },
             {
                 "Id": "abt",
                 "Part2B": "",
@@ -399,7 +400,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambulas"
-          },
+            },
             {
                 "Id": "abu",
                 "Part2B": "",
@@ -408,7 +409,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abure"
-          },
+            },
             {
                 "Id": "abv",
                 "Part2B": "",
@@ -417,7 +418,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baharna Arabic"
-          },
+            },
             {
                 "Id": "abw",
                 "Part2B": "",
@@ -426,7 +427,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pal"
-          },
+            },
             {
                 "Id": "abx",
                 "Part2B": "",
@@ -435,7 +436,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Inabaknon"
-          },
+            },
             {
                 "Id": "aby",
                 "Part2B": "",
@@ -444,7 +445,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aneme Wake"
-          },
+            },
             {
                 "Id": "abz",
                 "Part2B": "",
@@ -453,7 +454,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abui"
-          },
+            },
             {
                 "Id": "aca",
                 "Part2B": "",
@@ -70740,9 +70741,10 @@ define(function (require) {
 
         findByName = function (searchKey) {
             var deferred = $.Deferred();
-            var results = languages.filter(function (element) {
+            var fullresults = languages.filter(function (element) {
                 return element.Ref_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
+            var results = Underscore.first(200);
             deferred.resolve(results);
             return deferred.promise();
         },
