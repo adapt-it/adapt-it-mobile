@@ -70744,7 +70744,7 @@ define(function (require) {
             var fullresults = languages.filter(function (element) {
                 return element.Ref_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
-            var results = Underscore.first(200);
+            var results = Underscore.first(fullresults, 200);
             deferred.resolve(results);
             return deferred.promise();
         },

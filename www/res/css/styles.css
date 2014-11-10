@@ -542,15 +542,16 @@ select.docNav {
     width: 6rem;
 }
 #name-suggestions {
-/*
+  max-height: 150px;
+  overflow-y: auto;
+    /*
     position: absolute;
     top: 190px;
     left: 15px;
-*/
     margin: 0;
-    height: 70%;/*calc(100% - 120px);*/
+    height: 70%;
     overflow-y: scroll;
-/*    display: none;*/
+    */
     border: 1px solid #949696;
     z-index: 9999;
     padding: 6px;

@@ -18,7 +18,6 @@ define(function (require) {
         tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
-        tplDirAndVariant    = require('text!tpl/ProjectDirandVariant.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         i18n        = require('i18n'),
         LanguagesListView = require('app/views/LanguagesListView'),
@@ -248,23 +247,6 @@ define(function (require) {
             }
         }),
         
-        // DirAndVariantView
-        // View / edit the text direction and variant / dialect (if any) of the language.
-        // This view is used for both source and target language
-        DirAndVariantView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplDirAndVariant),
-            onClickVariant: function (event) {
-                console.log("onclickvariant");
-                // enable / disable the autocapitalize checkbox based on the value
-                if ($("#isVariant").is(':checked') === true) {
-                    $("#LanguageVariant").prop('disabled', false);
-                } else {
-                    $("#LanguageVariant").prop('disabled', true);
-                }
-            }
-        }),
-        
-        
         EditProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplEditProject),
             regions: {
@@ -317,7 +299,7 @@ define(function (require) {
                     languages.fetch({reset: true, data: {name: key}});
                     this.$("#name-suggestions").show();
                 }
-                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
+//                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
             addNewRow: function (event) {
@@ -325,7 +307,7 @@ define(function (require) {
             },
             onkeypressLanguageName: function (event) {
                 this.$("#name-suggestions").show();
-                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
+//                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
@@ -525,9 +507,9 @@ define(function (require) {
                 "keyup #LanguageName":    "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
+                "keyup #LanguageVariant": "buildFullLanguageCode",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
-                "click #isVariant": "onClickVariant",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
@@ -549,17 +531,41 @@ define(function (require) {
                     Underscore.first(languages.fetch({reset: true, data: {name: key}}), 100);
                     this.$("#name-suggestions").show();
                 }
-                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
+//                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
             },
 
             onkeypressLanguageName: function (event) {
                 this.$("#name-suggestions").show();
-                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
+//                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
             },
-
+            buildFullLanguageCode: function (event) {
+                var value = currentView.langCode,
+                    newValue = value;
+                // only build if there's a language code defined
+                if (value.length > 0) {
+                    // is there anything in the language variant?
+                    if ($('#LanguageVariant').val().trim().length === 0) {
+                        // nothing in the variant -- use just the iso639 code with no -x-
+                        if (value.indexOf("-x-") > 0) {
+                            newValue = value.substr(0, value.indexOf("-x-"));
+                        }
+                    } else {
+                        // variant is defined --- code is in the form [is0639]-x-[variant]
+                        if (value.indexOf("-x-") > 0) {
+                            // replace the existing variant
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                        } else {
+                            // add a new variant
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                        }
+                    }
+                    $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
+                    currentView.langCode = newValue;
+                }
+            },
             searchTarget: function (event) {
                 currentView.search(event);
             },
@@ -568,6 +574,11 @@ define(function (require) {
             },
             selectLanguage: function (event) {
                 currentView.onSelectLanguage(event);
+                this.$("#name-suggestions").hide();
+                // if there's a language variant defined, rework the language code to include it
+                if ($('#LanguageVariant').val().length > 0) {
+                    this.buildFullLanguageCode(event);
+                }
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
@@ -645,16 +656,12 @@ define(function (require) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
-                    break;
-                case 2: // source language variant / direction
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
                     break;
-                case 3: // target language
+                case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
-                    break;
-                case 4: // target language variant / direction
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
                     this.model.set("TargetDir", ($('#tRTL').is(':checked') === true) ? "rtl" : "ltr");
                     // also set the ID and name of the project, now that we (should) have both source and target defined
@@ -664,18 +671,18 @@ define(function (require) {
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}));
                     console.log("id: " + value);
                     break;
-                case 5: // fonts
+                case 3: // fonts
                     break;
-                case 6: // punctuation
+                case 4: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     this.model.set({PunctPairs: currentView.getRows()});
                     break;
-                case 7: // cases
+                case 5: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
                     this.model.set({CasePairs: currentView.getRows()});
                     break;
-                case 8: // USFM filtering
+                case 6: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
                     //TODO: markers
                     break;
@@ -685,7 +692,7 @@ define(function (require) {
             OnNewProject: function () {
                 // create a new project model object
                 //this.openDB();
-                this.numSteps = 8;
+                this.numSteps = 6;
                 languages = new langs.LanguageCollection();
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
@@ -712,24 +719,13 @@ define(function (require) {
                     this.$("#Prev").attr('disabled', 'true');
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
-                    break;
-                case 2: // Text direction and language variant
-                    currentView = new DirAndVariantView({ model: this.model });
+                    // controls
                     if (this.model.get("SourceDir") === "rtl") {
                         this.$("#RTL").checked = true;
                     }
-                    if (this.model.get("SourceVariant").length > 0) {
-                        // variant -- mark the checkbox
-                        this.$("#isVariant").checked = true;
-                        // set the value
-                        this.$("#LanguageVariant").html(this.model.get("SourceVariant"));
-                    }
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
-                    // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    this.$("#LanguageVariant").html(this.model.get("SourceVariant"));
                     break;
-                case 3: // target language
+                case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
                     currentView = new TargetLanguageView({ model: this.model, collection: languages });
                     currentView.langName = this.model.get("TargetLanguageName");
@@ -739,40 +735,28 @@ define(function (require) {
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     // controls
-                    this.$("#name-suggestions").hide();
-                    this.$("#Prev").removeAttr('disabled');
-                    break;
-                case 4: // Text direction and language variant
-                    currentView = new DirAndVariantView({ model: this.model });
                     if (this.model.get("TargetDir") === "rtl") {
                         this.$("#RTL").checked = true;
                     }
-                    if (this.model.get("TargetVariant").length > 0) {
-                        // variant -- mark the checkbox
-                        this.$("#isVariant").checked = true;
-                        // set the value
-                        this.$("#LanguageVariant").html(this.model.get("TargetVariant"));
-                    }
-                    // title
-                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
-                    // instructions
-                    this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    this.$("#LanguageVariant").html(this.model.get("TargetVariant"));
+                    this.$("#name-suggestions").hide();
+                    this.$("#Prev").removeAttr('disabled');
                     break;
-                case 5: // fonts
+                case 3: // fonts
                     currentView = new FontsView({ model: this.model});
                     // title
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
-                case 6: // punctuation
+                case 4: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
-                case 7: // cases
+                case 5: // cases
                     currentView = new CasesView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -784,7 +768,7 @@ define(function (require) {
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     this.$("#imgNext").removeAttr("style");
                     break;
-                case 8: // USFM filtering
+                case 6: // USFM filtering
                     currentView = new USFMFilteringView({ collection: USFMMarkers});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
@@ -809,7 +793,6 @@ define(function (require) {
         PunctuationView: PunctuationView,
         SourceLanguageView: SourceLanguageView,
         TargetLanguageView: TargetLanguageView,
-        DirAndVariantView: DirAndVariantView,
         USFMFilteringView: USFMFilteringView
     };
 });
