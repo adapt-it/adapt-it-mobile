@@ -359,29 +359,37 @@ define(function (require) {
             OnClickCustomFilters: function (event) {
                 currentView.onClickCustomFilters(event);
             },
-            OnEditSourceFont: function (event) {
-                console.log("OnEditSourceFont");
-            },
-            OnEditTargetFont: function (event) {
-                console.log("OnEditTargetFont");
-            },
-            OnEditNavFont: function (event) {
-                console.log("OnEditNavFont");
-            },
             OnEditSourceLanguage: function (event) {
-                console.log("OnEditSourceLanguage");
+                step = 1;
+                this.ShowView(step);
             },
             OnEditTargetLanguage: function (event) {
-                console.log("OnEditTargetLanguage");
+                step = 2;
+                this.ShowView(step);
+            },
+            OnEditSourceFont: function (event) {
+                step = 3;
+                this.ShowView(step);
+            },
+            OnEditTargetFont: function (event) {
+                step = 4;
+                this.ShowView(step);
+            },
+            OnEditNavFont: function (event) {
+                step = 5;
+                this.ShowView(step);
             },
             OnEditPunctuation: function (event) {
-                console.log("OnEditPunctuation");
+                step = 6;
+                this.ShowView(step);
             },
             OnEditCases: function (event) {
-                console.log("OnEditCases");
+                step = 7;
+                this.ShowView(step);
             },
             OnEditFiltering: function (event) {
-                console.log("OnEditFiltering");
+                step = 8;
+                this.ShowView(step);
             },
             OnCancel: function (event) {
                 // just return
@@ -411,19 +419,23 @@ define(function (require) {
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
-                case 3: // fonts
+                case 3: // source font
                     break;
-                case 4: // punctuation
+                case 4: // target font
+                    break;
+                case 5: // navigation font
+                    break;
+                case 6: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
                     punctPairs = this.model.get("PunctPairs");
                     this.model.set({PunctPairs: currentView.getRows()});
                     break;
-                case 5: // cases
+                case 7: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
                     this.model.set({CasePairs: currentView.getRows()});
                     break;
-                case 6: // USFM filtering
+                case 8: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
                     //TODO: markers
                     break;
@@ -482,22 +494,17 @@ define(function (require) {
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
                     break;
-                case 6: // fonts
-                    currentView = new FontsView({ model: this.model});
-                    // instructions
-                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
-                    break;
-                case 7: // punctuation
+                case 6: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
-                case 8: // cases
+                case 7: // cases
                     currentView = new CasesView({ model: this.model});
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectCases'));
                     break;
-                case 9: // USFM filtering
+                case 8: // USFM filtering
                     currentView = new USFMFilteringView({ collection: USFMMarkers});
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
@@ -666,7 +673,8 @@ define(function (require) {
                 } else {
                     // last step -- finish up
                     // head back to the home page
-                    window.Application.home();
+                    window.history.go(-1);
+//                    window.Application.home();
                 }
             },
 
