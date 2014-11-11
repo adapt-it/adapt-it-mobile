@@ -169,7 +169,6 @@ define(function (require) {
                     if (s && s.length > 0) {
                         arr[arr.length] = {s: s, t: t};
                     }
-                    console.log(arr);
                 });
                 return arr;
             }
@@ -237,9 +236,39 @@ define(function (require) {
             events: {
                 "click #UseCustomFilters": "onClickCustomFilters"
             },
+            // Build the body rows of the usfm filter table, with any items from the filterMarkers checked.
+            // This method gets called the first time that the table is about to be displayed.
+            BuildFilterTable: function () {
+                var htmlstring = "",
+                    filter = this.model.get('FilterMarkers'),
+                    value = "false";
+                USFMMarkers.each(function (item, index, list) {
+                    value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
+                    htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
+                    if (value === "true") {
+                        htmlstring += " checked";
+                    }
+                    htmlstring += "><div class='topcoat-checkbox__checkmark'></div></label></td><td><span class='n'>" + item.get('name') + "</span></td><td>" + item.get('description') + "</td></tr>";
+                });
+                $("#tb").html(htmlstring);
+            },
+            // Extracts a filter string (for the filterMarkers property) from the items that are
+            // checked in the usfm filter table.
+            getFilterString: function () {
+                var filterString = "";
+                $("tr").each(function () {
+                    if ($(this).find(".c").is(':checked') === true) {
+                        filterString += "\\" + $(this).find(".n").html() + " ";
+                    }
+                });
+                return filterString;
+            },
             onClickCustomFilters: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
+                    if ($("#tb").html().length === 0) {
+                        this.BuildFilterTable();
+                    }
                     $("#USFMFilters").prop('hidden', false);
                 } else {
                     $("#USFMFilters").prop('hidden', true);
@@ -255,12 +284,6 @@ define(function (require) {
             initialize: function () {
                 this.OnEditProject();
             },
-//            render: function () {
-//                template = Handlebars.compile(tplEditProject);
-//                this.$el.html(template());
-//                this.ShowStep(step);
-//                return this;
-//            },
             ////
             // Event Handlers
             ////
@@ -684,7 +707,9 @@ define(function (require) {
                     break;
                 case 6: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
-                    //TODO: markers
+                    if (($('#UseCustomFilters').is(':checked') === true)) {
+                        this.model.set("FilterMarkers", currentView.getFilterString());
+                    }
                     break;
                 }
             },
@@ -769,7 +794,7 @@ define(function (require) {
                     this.$("#imgNext").removeAttr("style");
                     break;
                 case 6: // USFM filtering
-                    currentView = new USFMFilteringView({ collection: USFMMarkers});
+                    currentView = new USFMFilteringView({ model: this.model});
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
