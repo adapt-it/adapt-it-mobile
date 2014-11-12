@@ -392,12 +392,18 @@ define(function (require) {
                 this.ShowView(step);
             },
             OnCancel: function (event) {
-                // just return
+                // just display the project settings list (don't save)
+                $("#StepContainer").hide();
+                $("#OKCancelButtons").hide();
+                $('#ProjectItems').show();
             },
             OnOK: function (event) {
-                // pull the info from the current step
+                // save the info from the current step
                 this.GetProjectInfo(step);
-                // return 
+                // display the project settings list
+                $("#StepContainer").hide();
+                $("#OKCancelButtons").hide();
+                $('#ProjectItems').show();
             },
 
             GetProjectInfo: function (step) {
@@ -440,6 +446,7 @@ define(function (require) {
                     //TODO: markers
                     break;
                 }
+                this.model.save();
             },
 
             OnEditProject: function () {

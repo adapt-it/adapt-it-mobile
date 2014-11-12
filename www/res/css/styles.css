@@ -150,10 +150,13 @@ header h3 {
     padding-bottom: 3px;
 }
 
-#WizardSteps {
+#WizardSteps, #OKCancelButtons {
     padding: 0;
     text-align: center;
     line-height: 0.5em;
+}
+#OKCancelButtons {
+    padding-top: 6px;
 }
 
 .wizard-instructions {
