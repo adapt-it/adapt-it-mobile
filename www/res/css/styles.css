@@ -69,7 +69,7 @@ a {
 }
 .container {
     position: relative;
-    height: 72%; /*alc(100% - 133px);*/
+    height: 72%; 
     width: 100%;
 }
 .topcoat-list li p:nth-of-type(2) {

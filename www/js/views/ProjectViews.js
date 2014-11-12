@@ -396,17 +396,19 @@ define(function (require) {
                 $("#StepContainer").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
+                $(".container").attr("style", "height: calc(100% - 70px);");
             },
             OnOK: function (event) {
                 // save the info from the current step
-                this.GetProjectInfo(step);
+                this.UpdateProject(step);
                 // display the project settings list
                 $("#StepContainer").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
+                $(".container").attr("style", "height: calc(100% - 70px);");
             },
 
-            GetProjectInfo: function (step) {
+            UpdateProject: function (step) {
                 var value = null,
                     index = 0,
                     punctPairs = null,
@@ -446,7 +448,7 @@ define(function (require) {
                     //TODO: markers
                     break;
                 }
-                this.model.save();
+//                this.model.save();
             },
 
             OnEditProject: function () {
@@ -466,7 +468,10 @@ define(function (require) {
                 $("#StepContainer").prop('hidden', false);
                 $("#OKCancelButtons").prop('hidden', false);
                 // hide the project list items
+                $("#StepContainer").show();
+                $("#OKCancelButtons").show();
                 $('#ProjectItems').hide();
+                $(".container").removeAttr("style");
                 // clear out the old view (if any)
                 currentView = null;
                 switch (number) {
