@@ -146,6 +146,10 @@
         "ttlDelete": "Rausim",
         "lblIsVariant": "Language is a dialect / variant",
         "lblLanguageVariant": "Dialect Name",
+        "lblProjectCreated": "Project Created",
+        "dscProjectCreated": "The project \"__name_\" was successfully created. Press Continue to import documents from the source language __souce__.",
+        "lblImportDocuments": "Import Documents",
+        "dscImportDocuments": "Enter the web address of the documents from the source language __source__. These will be imported into this device.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

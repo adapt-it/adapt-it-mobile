@@ -684,6 +684,8 @@ define(function (require) {
                     this.ShowStep(step);
                 } else {
                     // last step -- finish up
+                    // save the model
+                    this.model.trigger('change');
                     // head back to the home page
                     window.history.go(-1);
 //                    window.Application.home();
