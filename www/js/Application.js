@@ -119,7 +119,15 @@ define(function (require) {
                 this.main.show(newProjectView);
             },
             
+            importBooks: function (id) {
+            },
+            
             lookupChapter: function (id) {
+                var proj = ProjectList.where({id: id});
+                if (proj !== null) {
+                    // TODO: how do we want this? ID as separate or in chapters?
+                }
+                
                 lookupView = new LookupView();
                 require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
                     var book = new models.Chapter({id: id});
@@ -132,9 +140,9 @@ define(function (require) {
                 });
             },
 
-            adaptChapter: function (id) {
+            adaptChapter: function (projid, bookid) {
                 require(["app/models/chapter", "app/views/ChapterView"], function (models, ChapterView) {
-                    var chapter = new models.Chapter({id: id});
+                    var chapter = new models.Chapter({id: bookid});
                     chapter.fetch({
                         success: function (data) {
 //                            slider.slidePage(new ChapterView({model: data}).$el);

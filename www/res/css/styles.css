@@ -41,7 +41,9 @@ a {
     text-align: center;
     color: #454545;
 }
-
+.center {
+    text-align: center;
+}
 .welcome-title h1 {
     font-size: 3rem;
     font-weight: 400;
@@ -655,14 +657,13 @@ ul.btns {
     font-weight: 400;
 }
 .light-bg {
-    background: #DDE1E1;
-}
-.light-bg :hover {
     background-color: #eee;
+    border: 1px solid #999;
 }
 .no-bg {
     background: transparent;
     background-color: transparent;
+    border: 1px transparent;
 }
 .no-bg :hover {
     background-color: transparent;
@@ -688,51 +689,86 @@ span.sprite{
 	background-image: url("../svg/project-copy.svg");
     background-size: 48px 48px;
 }
-.btn-search span.sprite{
-	background-image: url("../svg/project-search.svg");
-    background-size: 48px 48px;
+.btn-search{
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+	background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+	background-image: url("../svg/search.svg");
+/*	background-image: url("../svg/project-search.svg");*/
+    background-size: 22px;
 }
 .btn-project span.sprite{
 	background-image: url("../svg/project.svg");
     background-size: 48px 48px;
 }
-.btn-settings span.sprite{
-	background-image: url("../svg/project-settings.svg");
-    background-size: 48px 48px;
+.btn-settings{
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    display: inline-block;
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url("../svg/settings.svg");
+/*	background-image: url("../svg/project-settings.svg");*/
+    background-size: 22px;
 }
 .btn-status span.sprite{
 	background-image: url("images/status.png");
     background-size: 48px 48px;
 }
-.btn-adapt span.sprite{
-	background-image: url("../svg/project-edit.svg");
-    background-size: 48px 48px;
+.btn-adapt{
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    display: inline-block;
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url("../svg/pencil.svg");
+/*	background-image: url("../svg/project-edit.svg");*/
+    background-size: 22px;
+}
+.btn-import{
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    display: inline-block;
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url("../svg/download.svg");
+    background-size: 22px;
 }
 .project-folder {
     display: none;
 }
 .project-folder-open {
-    clear: both;
+    display: table;
+    position: absolute;
     width: 100%;
-    left: -8px;
-    height: 128px;
-    background-color: #eee;
-    margin-left: -8px;
+    height: 70%;
+}
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+.inner {
+    margin-left: auto;
     margin-right: auto;
-    margin-top: 0;
+    width: 80%;
+    background-color: #eee;
     -webkit-appearance: none;
-    box-shadow: 0 0 0 1px #949696;
-    /*
+    box-shadow: 0 0 5px 1px #949696;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    */
     padding: 6px;
- /*   border: 1px solid #9daca9;*/
 }
+
 
 /* edb - table for usfm? */
 .topcoat-table {

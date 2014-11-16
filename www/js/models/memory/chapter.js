@@ -16,19 +16,19 @@ define(function (require) {
                 "verseCount": 22
             },
             {
-                "id": "RUT2",
+                "id": "RUT002",
                 "name": "Ruth 2",
                 "lastAdapted": 0,
                 "verseCount": 23
             },
             {
-                "id": "RUT3",
+                "id": "RUT003",
                 "name": "Ruth 3",
                 "lastAdapted": 0,
                 "verseCount": 18
             },
             {
-                "id": "RUT4",
+                "id": "RUT004",
                 "name": "Ruth 4",
                 "lastAdapted": 0,
                 "verseCount": 22

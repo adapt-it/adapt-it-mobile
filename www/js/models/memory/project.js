@@ -29,7 +29,7 @@ define(function (require) {
 //                TargetLanguageName: "English",
 //                SourceLanguageCode: "en",
 //                TargetLanguageCode: "en",
-//                SourceVariant: "US",
+//                SourceVariant: "us",
 //                TargetVariant: "au",
 //                CopyPunctuation: "true",
 //                PunctPairs: [
@@ -213,7 +213,7 @@ define(function (require) {
 //                SourceDir: "ltr",
 //                TargetDir: "ltr",
 //                NavDir: "ltr",
-//                id: "en-us.en-au",
+//                id: "en-x-us.en-x-au",
 //                name: "US English to Australian English adaptations",
 //                lastDocument: "Ruth.xml",
 //                lastAdaptedID: "RUT001",

@@ -16,8 +16,9 @@ define(function (require) {
             "help":         "help",             // #help
             "project":      "newProject",       // #project
             "project/:id":  "editProject",      // #project/projectID
-            "lookup":       "lookupChapter",    // #lookup
-            "adapt/:id":    "adaptChapter"      // #adapt/RUT001 (3-letter ID of book + 3 digit chapter number)
+            "lookup/:id":   "lookupChapter",    // #lookup/projectID
+            "import/:id":   "importBooks",      // #import/projectID (import books into projectID)
+            "adapt/:projid/:bookid":    "adaptChapter"      // #adapt/projectID/RUT001 (3-letter ID of book + 3 digit chapter number)
         }
     });
 });
