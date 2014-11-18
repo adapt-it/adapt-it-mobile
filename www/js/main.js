@@ -13,7 +13,8 @@ require.config({
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.0.min',
         'languages': '..//js/utils/languages',
-        marionette: 'backbone.marionette'
+        marionette: 'backbone.marionette',
+        colorpicker: 'spectrum'
     },
     map: {
         '*': {
@@ -27,6 +28,9 @@ require.config({
         marionette: {
             deps: ['backbone'],
             exports: 'Marionette'
+        },
+        colorpicker: {
+            deps: ['jquery']
         },
         'backbone': {
             deps: ['underscore', 'jquery'],

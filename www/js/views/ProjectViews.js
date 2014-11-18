@@ -10,6 +10,7 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
+        cp              = require('colorpicker'),
         tplEditProject  = require('text!tpl/EditProject.html'),
         tplNewProject   = require('text!tpl/NewProject.html'),
         tplCases    = require('text!tpl/ProjectCases.html'),
@@ -37,6 +38,7 @@ define(function (require) {
         projTargetLanguageView =  null,
         projPunctuationView = null,
         projUSFMFiltingView = null,
+        theFont = null,
         template    = null,
 
         // CasesView
@@ -117,7 +119,26 @@ define(function (require) {
 
         // FontView - view / edit a single font
         FontView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplFont)
+            template: Handlebars.compile(tplFont),
+            
+            onShow: function () {
+//                console.log("blah");
+                if (this.model) {
+                    $("#color").spectrum({
+                        showPaletteOnly: true,
+                        showPalette: true,
+                        color: this.model.get('color'),
+                        palette: [
+                            ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
+                            ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+                            ["#c00", "#e69138", "#cc0", "#0c0", "#0cc", "#00c", "#674ea7", "#c0c"],
+                            ["#a00", "#a60", "#aa0", "#0a0", "#0aa", "#00a", "#60a", "#a0a"],
+                            ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                            ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                        ]
+                    });
+                }
+            }
         }),
 
         // PunctuationView - view / edit the punctuation pairs, and specify whether to copy the punctuation from
@@ -428,10 +449,19 @@ define(function (require) {
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
                 case 3: // source font
+                    this.model.set('SourceFont', $('#font').val());
+                    this.model.set('SourceFontSize', $('#FontSize').val());
+                    this.model.set('SourceColor', $('#color').val());
                     break;
                 case 4: // target font
+                    this.model.set('TargetFont', $('#font').val());
+                    this.model.set('TargetFontSize', $('#FontSize').val());
+                    this.model.set('TargetColor', $('#color').val());
                     break;
                 case 5: // navigation font
+                    this.model.set('NavigationFont', $('#font').val());
+                    this.model.set('NavigationFontSize', $('#FontSize').val());
+                    this.model.set('NavigationColor', $('#color').val());
                     break;
                 case 6: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
@@ -492,17 +522,35 @@ define(function (require) {
                     this.$("#Instructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
                 case 3: // source font
-                    currentView = new FontView({ model: new fontModel.font({id: "Source", typeface: this.model.get('SourceFont'), size: this.model.get('SourceFontSize'), color: this.model.get('SourceColor')})});
+                    theFont = new fontModel.Font();
+                    theFont.set("name", i18n.t('view.lblSourceFont'));
+                    theFont.set("typeface", this.model.get('SourceFont'));
+                    theFont.set("size", parseInt(this.model.get('SourceFontSize'), 10));
+                    theFont.set("color", this.model.get('SourceColor'));
+                    currentView = new FontView({ model: theFont});
+                    Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 4: // target font
-                    currentView = new FontView({ model: new fontModel.font({id: "Target", typeface: this.model.get('TargetFont'), size: this.model.get('TargetFontSize'), color: this.model.get('TargetColor')})});
+                    theFont = new fontModel.Font();
+                    theFont.set("name", i18n.t('view.lblTargetFont'));
+                    theFont.set("typeface", this.model.get('TargetFont'));
+                    theFont.set("size", parseInt(this.model.get('TargetFontSize'), 10));
+                    theFont.set("color", this.model.get('TargetColor'));
+                    currentView = new FontView({ model: theFont});
+                    Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 5: // navigation font
-                    currentView = new FontView({ model: new fontModel.font({id: "Navigation", typeface: this.model.get('NavigationFont'), size: this.model.get('NavigationFontSize'), color: this.model.get('NavigationColor')})});
+                    theFont = new fontModel.Font();
+                    theFont.set("name", i18n.t('view.lblNavigationFont'));
+                    theFont.set("typeface", this.model.get('NavigationFont'));
+                    theFont.set("size", parseInt(this.model.get('NavigationFontSize'), 10));
+                    theFont.set("color", this.model.get('NavigationColor'));
+                    currentView = new FontView({ model: theFont});
+                    Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
                     break;
@@ -523,6 +571,7 @@ define(function (require) {
                     break;
                 }
                 this.container.show(currentView);
+
             }
         }),
         NewProjectView = Marionette.LayoutView.extend({

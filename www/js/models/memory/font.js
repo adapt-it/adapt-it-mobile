@@ -7,7 +7,8 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         i           = 0,
-        fonts = [
+        fonts = null,
+        /*[
             {
                 id: "Source",
                 typeface: "Source Sans",
@@ -26,7 +27,7 @@ define(function (require) {
                 size: "16px;",
                 color: "#00cc00;"
             }
-        ],
+        ],*/
         findById = function (id) {
             var deferred = $.Deferred(),
                 font = null,
@@ -51,34 +52,54 @@ define(function (require) {
         },
 
         Font = Backbone.Model.extend({
-
+            defaults: {
+                name: "",
+                typeface: "Source Sans",
+                size: "16",
+                color: "#0000aa"
+            },
+            
             sync: function (method, model, options) {
-                if (method === "read") {
+                // read is the only method currently implemented for in-memory;
+                // the others will simply return a success state.
+                switch (method) {
+                case 'create':
+                    options.success(model);
+                    break;
+                        
+                case 'read':
                     findById(this.id).done(function (data) {
                         options.success(data);
                     });
+                    break;
+                        
+                case 'update':
+                    options.success(model);
+                    break;
+                        
+                case 'delete':
+                    options.success(model);
+                    break;
                 }
             }
-
-        }),
-
-        FontCollection = Backbone.Collection.extend({
-
-            model: Font,
-
-            sync: function (method, model, options) {
-                if (method === "read") {
-                    findByName(options.data.name).done(function (data) {
-                        options.success(data);
-                    });
-                }
-            }
-
+//        }),
+//
+//        FontCollection = Backbone.Collection.extend({
+//
+//            model: Font,
+//
+//            sync: function (method, model, options) {
+//                if (method === "read") {
+//                    findByName(options.data.name).done(function (data) {
+//                        options.success(data);
+//                    });
+//                }
+//            }
         });
 
     return {
-        Font: Font,
-        FontCollection: FontCollection
+        Font: Font
+//        FontCollection: FontCollection
     };
 
 });

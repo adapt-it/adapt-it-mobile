@@ -18,6 +18,10 @@ define(function (require) {
     return Marionette.ItemView.extend({
         template: Handlebars.compile(tplText),
         
+        onRender: function () {
+            console.log("onRender...");
+        },
+        
         ////
         // Event Handlers
         ////
