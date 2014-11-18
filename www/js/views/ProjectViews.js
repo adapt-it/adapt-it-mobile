@@ -564,7 +564,7 @@ define(function (require) {
                     break;
                 case 5: // navigation font
                     theFont = new fontModel.Font();
-                    theFont.set("name", i18n.t('view.lblNavigationFont'));
+                    theFont.set("name", i18n.t('view.lblNavFont'));
                     theFont.set("typeface", this.model.get('NavigationFont'));
                     theFont.set("size", parseInt(this.model.get('NavigationFontSize'), 10));
                     theFont.set("color", this.model.get('NavigationColor'));
@@ -623,6 +623,8 @@ define(function (require) {
                 "click #SourceHasCases": "OnClickSourceHasCases",
                 "click #AutoCapitalize": "OnClickAutoCapitalize",
                 "click #UseCustomFilters": "OnClickCustomFilters",
+                "click #Cancel": "OnCancel",
+                "click #OK": "OnOK",
                 "click #Prev": "OnPrevStep",
                 "click #Next": "OnNextStep"
             },
@@ -711,26 +713,79 @@ define(function (require) {
                 currentView.onClickCustomFilters(event);
             },
             OnEditSourceFont: function (event) {
-                console.log("OnEditSourceFont");
-    //            currentView = new ProjectFontView({ model: this.model});
-    //            // title
-    //            this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
-    //            // instructions
-    //            this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
-    //            // controls
-    //            this.$('#StepContainer').html(currentView.render().el.childNodes);
-    //            // first step -- disable the prev button
-    //            this.$("#Prev").attr('disabled', 'true');
-    //            this.$("#lblPrev").html(i18n.t('view.lblPrev'));
-    //            this.$("#lblNext").html(i18n.t('view.lblNext'));
+                var theFont = new fontModel.Font();
+                theFont.set("name", i18n.t('view.lblSourceFont'));
+                theFont.set("typeface", this.model.get('SourceFont'));
+                theFont.set("size", parseInt(this.model.get('SourceFontSize'), 10));
+                theFont.set("color", this.model.get('SourceColor'));
+                currentView = new FontView({ model: theFont});
+                Marionette.triggerMethodOn(currentView, 'show');
+                this.container.show(currentView);
+                $('#StepInstructions').hide();
+                $('#WizardSteps').hide();
+                $('#OKCancelButtons').show();
             },
 
             OnEditTargetFont: function (event) {
-                console.log("OnEditTargetFont");
+                var theFont = new fontModel.Font();
+                theFont.set("name", i18n.t('view.lblTargetFont'));
+                theFont.set("typeface", this.model.get('TargetFont'));
+                theFont.set("size", parseInt(this.model.get('TargetFontSize'), 10));
+                theFont.set("color", this.model.get('TargetColor'));
+                currentView = new FontView({ model: theFont});
+                Marionette.triggerMethodOn(currentView, 'show');
+                this.container.show(currentView);
+                $('#StepInstructions').hide();
+                $('#WizardSteps').hide();
+                $('#OKCancelButtons').show();
             },
 
             OnEditNavFont: function (event) {
-                console.log("OnEditNavFont");
+                var theFont = new fontModel.Font();
+                theFont.set("name", i18n.t('view.lblNavFont'));
+                theFont.set("typeface", this.model.get('NavigationFont'));
+                theFont.set("size", parseInt(this.model.get('NavigationFontSize'), 10));
+                theFont.set("color", this.model.get('NavigationColor'));
+                currentView = new FontView({ model: theFont});
+                Marionette.triggerMethodOn(currentView, 'show');
+                this.container.show(currentView);
+                $('#StepInstructions').hide();
+                $('#WizardSteps').hide();
+                $('#OKCancelButtons').show();
+            },
+            OnCancel: function (event) {
+                // just display the project settings list (don't save)
+                $('#StepInstructions').show();
+                $("#OKCancelButtons").hide();
+                $('#WizardSteps').show();
+                this.ShowStep(step);
+            },
+            OnOK: function (event) {
+                // save the info from the current step
+                switch ($('#ttlFont').html()) {
+                // font steps (okay, not technically steps in the work
+                case i18n.t('view.lblSourceFont'): // source font
+                    this.model.set('SourceFont', $('#font').val());
+                    this.model.set('SourceFontSize', $('#FontSize').val());
+                    this.model.set('SourceColor', $('#color').val());
+                    break;
+                case i18n.t('view.lblTargetFont'): // target font
+                    this.model.set('TargetFont', $('#font').val());
+                    this.model.set('TargetFontSize', $('#FontSize').val());
+                    this.model.set('TargetColor', $('#color').val());
+                    break;
+                case i18n.t('view.lblNavFont'): // navigation font
+                default:
+                    this.model.set('NavigationFont', $('#font').val());
+                    this.model.set('NavigationFontSize', $('#FontSize').val());
+                    this.model.set('NavigationColor', $('#color').val());
+                    break;
+                }
+                // display the project settings list
+                $('#StepInstructions').show();
+                $("#OKCancelButtons").hide();
+                $('#WizardSteps').show();
+                this.ShowStep(step);
             },
 
             OnPrevStep: function (event) {
