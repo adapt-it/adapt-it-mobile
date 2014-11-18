@@ -120,13 +120,20 @@ define(function (require) {
         // FontView - view / edit a single font
         FontView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplFont),
-            
+            events: {
+                "change #font": "updateSample",
+                "change #FontSize": "updateSample",
+                "change #color": "updateSample"
+            },
+            updateSample: function (event) {
+                $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-face:' + $('#font').val() + '; color:' + $('#color').val() + ';');
+            },
             onShow: function () {
-//                console.log("blah");
                 if (this.model) {
                     $("#color").spectrum({
                         showPaletteOnly: true,
                         showPalette: true,
+                        hideAfterPaletteSelect: true,
                         color: this.model.get('color'),
                         palette: [
                             ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
@@ -308,6 +315,9 @@ define(function (require) {
             ////
             // Event Handlers
             ////
+            modelEvents: {
+                'change': 'render'
+            },
             events: {
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
@@ -465,19 +475,28 @@ define(function (require) {
                     break;
                 case 6: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
-                    punctPairs = this.model.get("PunctPairs");
-                    this.model.set({PunctPairs: currentView.getRows()});
+                    if ($('#CopyPunctuation').is(':checked')) {
+                        // don't need to update this if we aren't copying punctuation
+                        this.model.set({PunctPairs: currentView.getRows()});
+                    }
                     break;
                 case 7: // cases
                     this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
                     this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
-                    this.model.set({CasePairs: currentView.getRows()});
+                    if ($('#AutoCapitalize').is(':checked')) {
+                        // don't need to update this if we aren't capitalizing the target
+                        this.model.set({CasePairs: currentView.getRows()});
+                    }
                     break;
                 case 8: // USFM filtering
                     this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
-                    //TODO: markers
+                    if (($('#UseCustomFilters').is(':checked') === true)) {
+                        this.model.set("FilterMarkers", currentView.getFilterString());
+                    }
                     break;
                 }
+                console.log(this.model.toJSON());
+                this.model.trigger('change');
 //                this.model.save();
             },
 
@@ -565,13 +584,12 @@ define(function (require) {
                     this.$("#Instructions").html(i18n.t('view.dscProjectCases'));
                     break;
                 case 8: // USFM filtering
-                    currentView = new USFMFilteringView({ collection: USFMMarkers});
+                    currentView = new USFMFilteringView({ model: this.model});
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
                 }
                 this.container.show(currentView);
-
             }
         }),
         NewProjectView = Marionette.LayoutView.extend({
