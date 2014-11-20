@@ -1,5 +1,11 @@
 @import "spectrum.css";
 
+/* embedded fonts */
+@font-face {
+    font-family: "Andika", Fallback, sans-serif;
+    src: url();
+}
+
 a {
     text-decoration: none;
     color: inherit;
