@@ -2,8 +2,12 @@
 
 /* embedded fonts */
 @font-face {
-    font-family: "Andika", Fallback, sans-serif;
-    src: url();
+    font-family: "Andika";
+    src: url("../Andika-R.woff") format('woff');
+}
+@font-face {
+    font-family: "GentiumPlus";
+    src: url("../GentiumPlus-R.woff") format('woff');
 }
 
 a {
