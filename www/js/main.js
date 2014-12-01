@@ -7,12 +7,12 @@ require.config({
     paths: {
         // folders
         app: '../js',
-        utils: '..//js/utils',
+        utils: '../js/utils',
         tpl: '../tpl',
         // libraries
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.0.min',
-        'languages': '..//js/utils/languages',
+        'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
         colorpicker: 'spectrum'
     },
