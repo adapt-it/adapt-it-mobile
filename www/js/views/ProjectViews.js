@@ -129,7 +129,32 @@ define(function (require) {
                 $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-face:' + $('#font').val() + '; color:' + $('#color').val() + ';');
             },
             onShow: function () {
+                // populate the font drop-down and color picker if the model is set
                 if (this.model) {
+                    // font drop-down
+                    var typefaces = null;
+                    // start with fonts installed on device
+                    if (navigator.Fonts) {
+                        console.log("Fonts object in navigator");
+                        navigator.Fonts.getFontList(
+                            function(success) {
+                                typefaces = success;
+                                console.log(success);
+                            },
+                            function (error) {
+                                console.log(error);
+                            });
+                    } else {
+                        console.error("Plugin error: Fonts plugin not found (is it installed?)");
+                    }
+                    // add the fonts we've embedded with AIM
+                    $("#font").append($('<option>', {value : 'Andika'}).text('Andika'));
+                    $("#font").append($('<option>', {value : 'Gentium'}).text('Gentium'));
+                    $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
+                    // select the current font
+                    $("#font").val(this.model.get('typeface'));
+
+                    // color picker
                     $("#color").spectrum({
                         showPaletteOnly: true,
                         showPalette: true,
