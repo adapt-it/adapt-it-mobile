@@ -3,11 +3,11 @@
 /* embedded fonts */
 @font-face {
     font-family: "Andika";
-    src: url("../Andika-R.woff") format('woff');
+    src: url("../font/Andika-R.woff") format('woff');
 }
 @font-face {
-    font-family: "GentiumPlus";
-    src: url("../GentiumPlus-R.woff") format('woff');
+    font-family: "Gentium";
+    src: url("../font/GentiumPlus-R.woff") format('woff');
 }
 
 a {

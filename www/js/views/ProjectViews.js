@@ -126,7 +126,7 @@ define(function (require) {
                 "change #color": "updateSample"
             },
             updateSample: function (event) {
-                $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-face:' + $('#font').val() + '; color:' + $('#color').val() + ';');
+                $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-family:\'' + $('#font').val() + '\'; color:' + $('#color').val() + ';');
             },
             onShow: function () {
                 // populate the font drop-down and color picker if the model is set
@@ -137,15 +137,16 @@ define(function (require) {
                     if (navigator.Fonts) {
                         console.log("Fonts object in navigator");
                         navigator.Fonts.getFontList(
-                            function(success) {
+                            function (success) {
                                 typefaces = success;
                                 console.log(success);
                             },
                             function (error) {
                                 console.log(error);
-                            });
+                            }
+                        );
                     } else {
-                        console.error("Plugin error: Fonts plugin not found (is it installed?)");
+                        console.log("Plugin error: Fonts plugin not found (is it installed?)");
                     }
                     // add the fonts we've embedded with AIM
                     $("#font").append($('<option>', {value : 'Andika'}).text('Andika'));
@@ -155,18 +156,19 @@ define(function (require) {
                     $("#font").val(this.model.get('typeface'));
 
                     // color picker
+                    $("#color").val(this.model.get('color'));
                     $("#color").spectrum({
                         showPaletteOnly: true,
                         showPalette: true,
                         hideAfterPaletteSelect: true,
                         color: this.model.get('color'),
                         palette: [
-                            ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
-                            ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
-                            ["#c00", "#e69138", "#cc0", "#0c0", "#0cc", "#00c", "#674ea7", "#c0c"],
-                            ["#a00", "#a60", "#aa0", "#0a0", "#0aa", "#00a", "#60a", "#a0a"],
-                            ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
-                            ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                            ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                            ["#ff0000", "#ff9900", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#9900ff", "#ff00ff"],
+                            ["#cc0000", "#e69138", "#cccc00", "#00cc00", "#00cccc", "#0000cc", "#674ea7", "#cc00cc"],
+                            ["#aa0000", "#aa6600", "#aaaa00", "#00aa00", "#00aaaa", "#0000aa", "#6600aa", "#aa00aa"],
+                            ["#990000", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                            ["#660000", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
                         ]
                     });
                 }
@@ -468,6 +470,9 @@ define(function (require) {
                 var value = null,
                     index = 0,
                     punctPairs = null,
+                    tempfont = "",
+                    tempSize = "",
+                    tempColor = "",
                     trimmedValue = null;
                 switch (step) {
                 case 1: // source language
@@ -484,19 +489,28 @@ define(function (require) {
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
                 case 3: // source font
-                    this.model.set('SourceFont', $('#font').val());
-                    this.model.set('SourceFontSize', $('#FontSize').val());
-                    this.model.set('SourceColor', $('#color').val());
+                    tempfont = $('#font').val();
+                    tempSize = $('#FontSize').val();
+                    tempColor = $('#color').val();
+                    this.model.set('SourceFont', tempfont);
+                    this.model.set('SourceFontSize', tempSize);
+                    this.model.set('SourceColor', tempColor);
                     break;
                 case 4: // target font
-                    this.model.set('TargetFont', $('#font').val());
-                    this.model.set('TargetFontSize', $('#FontSize').val());
-                    this.model.set('TargetColor', $('#color').val());
+                    tempfont = $('#font').val();
+                    tempSize = $('#FontSize').val();
+                    tempColor = $('#color').val();
+                    this.model.set('TargetFont', tempfont);
+                    this.model.set('TargetFontSize', tempSize);
+                    this.model.set('TargetColor', tempColor);
                     break;
                 case 5: // navigation font
-                    this.model.set('NavigationFont', $('#font').val());
-                    this.model.set('NavigationFontSize', $('#FontSize').val());
-                    this.model.set('NavigationColor', $('#color').val());
+                    tempfont = $('#font').val();
+                    tempSize = $('#FontSize').val();
+                    tempColor = $('#color').val();
+                    this.model.set('NavigationFont', tempfont);
+                    this.model.set('NavigationFontSize', tempSize);
+                    this.model.set('NavigationColor', tempColor);
                     break;
                 case 6: // punctuation
                     this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
@@ -520,7 +534,6 @@ define(function (require) {
                     }
                     break;
                 }
-                console.log(this.model.toJSON());
                 this.model.trigger('change');
 //                this.model.save();
             },
