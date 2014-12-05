@@ -44,7 +44,12 @@ define(function (require) {
                 $("#import").attr("href", "#search/" + model.get("id"));
                 $("#search").attr("href", "#search/" + model.get("id"));
                 $("#adapt").attr("href", "#adapt/" + model.get("id"));
-                $('#lblAdapt').html(model.get('lastAdaptedName'));
+                if (model.get('lastAdaptedName').length > 0) {
+                    $('#lblAdapt').html(model.get('lastAdaptedName'));
+                } else {
+                    // no last adapted Name
+                    $('#lblAdapt').html(i18n.t('view.lblAdapt'));
+                }
             } else {
                 // no last adapted Name
                 $('#lblAdapt').html(i18n.t('view.lblAdapt'));

@@ -7,221 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         i           = 0,
-        /* English/English translation project scaffolding
-            TBD: currently this is just a gleaning of .aic file properties, some of which
-            can be found in .ldml / CLDR data. Does it make sense to leverage some of that info?
-            Are there javascript libraries that can give us what we need? (text direction, iso639 
-            codes/names, etc.)
-        */
-        projects = null,
-//        [
-//            {
-//                SourceFont: "Source Sans",
-//                SourceFontSize: "16px;",
-//                SourceColor: "#0000aa;",
-//                TargetFont: "Source Sans",
-//                TargetFontSize: "16px;",
-//                TargetColor: "#000;",
-//                NavigationFont: "Source Sans",
-//                NavigationFontSize: "16px;",
-//                NavigationColor: "#00cc00;",
-//                SourceLanguageName: "English",
-//                TargetLanguageName: "English",
-//                SourceLanguageCode: "en",
-//                TargetLanguageCode: "en",
-//                SourceVariant: "us",
-//                TargetVariant: "au",
-//                CopyPunctuation: "true",
-//                PunctPairs: [
-//                    {
-//                        s: "?",
-//                        t: "?"
-//                    },
-//                    {
-//                        s: ".",
-//                        t: "."
-//                    },
-//                    {
-//                        s: ",",
-//                        t: ","
-//                    },
-//                    {
-//                        s: ";",
-//                        t: ";"
-//                    },
-//                    {
-//                        s: ":",
-//                        t: ":"
-//                    },
-//                    {
-//                        s: "\"",
-//                        t: "\""
-//                    },
-//                    {
-//                        s: "!",
-//                        t: "!"
-//                    },
-//                    {
-//                        s: "(",
-//                        t: "("
-//                    },
-//                    {
-//                        s: ")",
-//                        t: ")"
-//                    },
-//                    {
-//                        s: "<",
-//                        t: "<"
-//                    },
-//                    {
-//                        s: ">",
-//                        t: ">"
-//                    },
-//                    {
-//                        s: "{",
-//                        t: "{"
-//                    },
-//                    {
-//                        s: "}",
-//                        t: "}"
-//                    },
-//                    {
-//                        s: "“",
-//                        t: "“"
-//                    },
-//                    {
-//                        s: "”",
-//                        t: "”"
-//                    },
-//                    {
-//                        s: "‘",
-//                        t: "‘"
-//                    },
-//                    {
-//                        s: "’",
-//                        t: "’"
-//                    }
-//                ],
-//                AutoCapitalization: "false",
-//                SourceHasUpperCase: "false",
-//                CasePairs: [
-//                    {
-//                        s: "aA",
-//                        t: "aA"
-//                    },
-//                    {
-//                        s: "bB",
-//                        t: "bB"
-//                    },
-//                    {
-//                        s: "cC",
-//                        t: "cC"
-//                    },
-//                    {
-//                        s: "dD",
-//                        t: "dD"
-//                    },
-//                    {
-//                        s: "eE",
-//                        t: "eE"
-//                    },
-//                    {
-//                        s: "fF",
-//                        t: "fF"
-//                    },
-//                    {
-//                        s: "gG",
-//                        t: "gG"
-//                    },
-//                    {
-//                        s: "hH",
-//                        t: "hH"
-//                    },
-//                    {
-//                        s: "iI",
-//                        t: "iI"
-//                    },
-//                    {
-//                        s: "jJ",
-//                        t: "jJ"
-//                    },
-//                    {
-//                        s: "kK",
-//                        t: "kK"
-//                    },
-//                    {
-//                        s: "lL",
-//                        t: "lL"
-//                    },
-//                    {
-//                        s: "mM",
-//                        t: "mM"
-//                    },
-//                    {
-//                        s: "nN",
-//                        t: "nN"
-//                    },
-//                    {
-//                        s: "oO",
-//                        t: "oO"
-//                    },
-//                    {
-//                        s: "pP",
-//                        t: "pP"
-//                    },
-//                    {
-//                        s: "qQ",
-//                        t: "qQ"
-//                    },
-//                    {
-//                        s: "rR",
-//                        t: "rR"
-//                    },
-//                    {
-//                        s: "sS",
-//                        t: "sS"
-//                    },
-//                    {
-//                        s: "tT",
-//                        t: "tT"
-//                    },
-//                    {
-//                        s: "uU",
-//                        t: "uU"
-//                    },
-//                    {
-//                        s: "vV",
-//                        t: "vV"
-//                    },
-//                    {
-//                        s: "wW",
-//                        t: "wW"
-//                    },
-//                    {
-//                        s: "xX",
-//                        t: "xX"
-//                    },
-//                    {
-//                        s: "yY",
-//                        t: "yY"
-//                    },
-//                    {
-//                        s: "zZ",
-//                        t: "zZ"
-//                    }
-//                ],
-//                SourceDir: "ltr",
-//                TargetDir: "ltr",
-//                NavDir: "ltr",
-//                id: "en-x-us.en-x-au",
-//                name: "US English to Australian English adaptations",
-//                lastDocument: "Ruth.xml",
-//                lastAdaptedID: "RUT001",
-//                lastAdaptedName: "Ruth 1",
-//                CustomFilters: "false",
-//                FilterMarkers: "\\lit \\_table_grid \\_header \\_intro_base \\x \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\xt \\_notes_base \\__normal \\xdc \\ide \\mr \\xq \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\xot \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\xk \\_list_base \\ib \\xnt \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\xo \\_single_boxed_para \\sts"
-//            }
-//        ],
+        projects = [],
         
         findById = function (id) {
             var i = 0,
@@ -241,9 +27,9 @@ define(function (require) {
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var results = null;
-            if (projects != null) {
+            if (projects !== null) {
                 results = projects.filter(function (element) {
-                    return element.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+                    return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
                 });
             }
             deferred.resolve(results);
@@ -459,14 +245,18 @@ define(function (require) {
             },
             
             initialize: function () {
-                this.fetch();
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                this.set(JSON.parse(localStorage.getItem(this.id)));
+                // search for our key - p.<id>
+                this.set(JSON.parse(localStorage.getItem("p." + this.id)));
             },
             save: function (attributes) {
-                localStorage.setItem(this.id, JSON.stringify(this.toJSON()));
+                // only save if the id actually has a value
+                if (this.id.length > 1) {
+                    // save with a key of p.<id>
+                    localStorage.setItem(("p." + this.id), JSON.stringify(this));
+                }
             },
             destroy: function (options) {
                 localStorage.removeItem(this.id);
@@ -503,6 +293,23 @@ define(function (require) {
         ProjectCollection = Backbone.Collection.extend({
 
             model: Project,
+
+            resetFromLocalStorage: function () {
+                var i = 0,
+                    len = 0;
+                for (i = 0, len = localStorage.length; i < len; ++i) {
+                    // if this is a project, add it to our collection
+                    if (localStorage.key(i).substr(0, 2) === "p.") {
+                        var proj = new Project();
+                        proj.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
+                        projects.push(proj);
+                    }
+                }
+            },
+            
+            initialize: function () {
+                this.resetFromLocalStorage();
+            },
 
             sync: function (method, model, options) {
                 if (method === "read") {
