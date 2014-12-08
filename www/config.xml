@@ -3,7 +3,7 @@
         xmlns:gap   = "http://phonegap.com/ns/1.0"
         id          = "org.sil.aimobile"
         versionCode = "1" 
-        version     = "0.2.0"
+        version     = "0.2.5"
         defaultlocale = "en">
     <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
@@ -22,13 +22,10 @@
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
     <!-- core plugins -->
-    <gap:plugin name="org.apache.cordova.battery-status" />
     <gap:plugin name="org.apache.cordova.console" />
-    <gap:plugin name="org.apache.cordova.device" />
     <gap:plugin name="org.apache.cordova.file" />
     <gap:plugin name="org.apache.cordova.file-transfer" />
     <gap:plugin name="org.apache.cordova.globalization" />
-    <gap:plugin name="org.apache.cordova.network-information" />
     <feature name="fonts">
         <param name="ios-package" value="CDVFonts" />
     </feature>
