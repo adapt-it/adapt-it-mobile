@@ -11,7 +11,6 @@ define(function (require) {
         Marionette      = require('marionette'),
         HomeView        = require('app/views/HomeView'),
         HelpView        = require('app/views/HelpView'),
-//        NewProjectView  = require('app/views/NewProjectView'),
         ProjectViews    = require('app/views/ProjectViews'),
         LookupView      = require('app/views/LookupView'),
         projModel       = require('app/models/project'),
@@ -24,6 +23,7 @@ define(function (require) {
         helpView        = null,
         newProjectView  = null,
         editProjectView = null,
+        copyProjectView = null,
         homeView        = null,
         i18n            = require('i18n'),
         lang            = "",
@@ -53,6 +53,7 @@ define(function (require) {
                         function () {console.log('Error getting locale\n'); }
                     );
                 } else {
+                    console.log("no navigator.globalization object - looking in browser");
                     // in web browser
                     lang = navigator.language.split("-");
                     locale = lang[0];
@@ -111,6 +112,14 @@ define(function (require) {
                 }
             },
 
+            copyProject: function () {
+                var proj = new projModel.Project();
+                copyProjectView = new ProjectViews.CopyProjectView({model: proj});
+                copyProjectView.delegateEvents();
+                ProjectList.add(proj);
+                this.main.show(copyProjectView);
+            },
+            
             newProject: function () {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});

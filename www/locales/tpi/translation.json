@@ -33,6 +33,7 @@
         "lblOpenProject": "Opim Projek",
         "dscOpenProject": "Enter the web address of the project you want to open.",
         "lblCopyProject": "Kopi Projek",
+        "dscCopyProjInstructions": "Enter the web address of the project you want to open.",
         "dscCopyProject": "Kopi projek long existing project from another device.",
         "lblSourceLanguageName": "Nem Bilong Sos Teks",
         "lblTargetLanguageName": "Nem Bilong Taget Teks",

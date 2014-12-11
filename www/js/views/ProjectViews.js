@@ -13,6 +13,7 @@ define(function (require) {
         cp              = require('colorpicker'),
         tplEditProject  = require('text!tpl/EditProject.html'),
         tplNewProject   = require('text!tpl/NewProject.html'),
+        tplCopyOrImport = require('text!tpl/CopyOrImport.html'),
         tplCases    = require('text!tpl/ProjectCases.html'),
         tplFonts    = require('text!tpl/ProjectFonts.html'),
         tplFont     = require('text!tpl/ProjectFont.html'),
@@ -41,6 +42,19 @@ define(function (require) {
         theFont = null,
         template    = null,
 
+        // CopyProjectView
+        // Copy a project from another device.
+        CopyProjectView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplCopyOrImport),
+            events: {
+                "click #UseCustomFilters": "onClickCustomFilters"
+            },
+            onRender: function (event) {
+                $("#title").html(i18n.t('view.lblCopyProject'));
+                $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
+            }
+        }),
+        
         // CasesView
         // View / edit the upper/lowercase equivlencies for the source and target
         // languages, and whether to automatically copy cases.
@@ -993,6 +1007,7 @@ define(function (require) {
     
     return {
         EditProjectView: EditProjectView,
+        CopyProjectView: CopyProjectView,
         NewProjectView: NewProjectView,
         CasesView: CasesView,
         FontsView: FontsView,
