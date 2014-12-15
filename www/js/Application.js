@@ -53,13 +53,13 @@ define(function (require) {
                         function () {console.log('Error getting locale\n'); }
                     );
                 } else {
-                    console.log("No navigator.globalization object - looking in browser");
+//                    console.log("No navigator.globalization object - looking in browser");
                     // in web browser
-                    lang = navigator.language.split("-");
-                    console.log("lang: " + lang);
-                    locale = lang[0];
+                    lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+//                    console.log("lang: " + lang);
+                    locale = lang.split("-")[0];
                 }
-                console.log("locale:" + locale);
+//                console.log("locale:" + locale);
                 // initialize / load the localization info
                 i18n.init({
                     lng: locale,
