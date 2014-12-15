@@ -1,8 +1,8 @@
 # [Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile)
 
-By Erik Brommers, Bruce Waters, Bill Martin and some great [contributors](https://github.com/adapt-it/adapt-it-mobile/graphs/contributors)!
-
 Adapt It Mobile is a simple related language translation tool designed specifically for mobile devices. Using a tablet or smartphone, you can use Adapt It Mobile to quickly translate text from one language to another related language. Previous translations are stored in a translation memory called a _Knowledge Base_, and are suggested the next time that particular word or phrase is encountered.
+
+Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](http://adapt-it.org/), written -- by the same developers -- specifically for mobile devices.
 
 ## Implementation Details
 
@@ -18,7 +18,7 @@ For those wanting to contribute to this project, check out the [wiki pages](http
 
 ## Philosophy
 
-Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of [USFM](http://paratext.ubs-translations.org/about/usfm), and collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](https://sites.google.com/site/bibledit/).
+Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](https://sites.google.com/site/bibledit/).
 
 ## License
 

@@ -53,9 +53,10 @@ define(function (require) {
                         function () {console.log('Error getting locale\n'); }
                     );
                 } else {
-                    console.log("no navigator.globalization object - looking in browser");
+                    console.log("No navigator.globalization object - looking in browser");
                     // in web browser
                     lang = navigator.language.split("-");
+                    console.log("lang: " + lang);
                     locale = lang[0];
                 }
                 console.log("locale:" + locale);
