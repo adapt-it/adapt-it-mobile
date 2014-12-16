@@ -12,8 +12,10 @@ define(function (require) {
         HomeView        = require('app/views/HomeView'),
         HelpView        = require('app/views/HelpView'),
         ProjectViews    = require('app/views/ProjectViews'),
+        AdaptViews      = require('app/views/AdaptViews'),
         LookupView      = require('app/views/LookupView'),
         projModel       = require('app/models/project'),
+        chapterModel    = require('app/models/chapter'),
         AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
@@ -114,6 +116,7 @@ define(function (require) {
             },
 
             copyProject: function () {
+                console.log("copyProject");
                 var proj = new projModel.Project();
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
                 copyProjectView.delegateEvents();
@@ -151,14 +154,12 @@ define(function (require) {
             },
 
             adaptChapter: function (projid, bookid) {
-                require(["app/models/chapter", "app/views/ChapterView"], function (models, ChapterView) {
-                    var chapter = new models.Chapter({id: bookid});
-                    chapter.fetch({
-                        success: function (data) {
+                var chapter = new chapterModel.Chapter({id: bookid});
+                chapter.fetch({
+                    success: function (data) {
 //                            slider.slidePage(new ChapterView({model: data}).$el);
-                            window.Application.main.show(new ChapterView({model: data}));
-                        }
-                    });
+                        window.Application.main.show(new AdaptViews.ChapterView({model: data}));
+                    }
                 });
             }
         });

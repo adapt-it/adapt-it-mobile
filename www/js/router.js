@@ -14,7 +14,7 @@ define(function (require) {
         appRoutes: {
             "":             "home",             // (top level)
             "help":         "help",             // #help
-            "#copy":        "copyProject",      // #copy
+            "copy":        "copyProject",       // #copy
             "project":      "newProject",       // #project
             "project/:id":  "editProject",      // #project/projectID
             "lookup/:id":   "lookupChapter",    // #lookup/projectID

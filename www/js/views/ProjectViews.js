@@ -21,8 +21,8 @@ define(function (require) {
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
+        tplLanguages        = require('text!tpl/LanguagesList.html'),
         i18n        = require('i18n'),
-        LanguagesListView = require('app/views/LanguagesListView'),
         usfm       = require('utils/usfm'),
         langs       = require('languages'),
         projModel   = require('app/models/project'),
@@ -47,9 +47,12 @@ define(function (require) {
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
             events: {
-                "click #UseCustomFilters": "onClickCustomFilters"
+                "click #OK": "onOK"
             },
-            onRender: function (event) {
+            onOK: function (event) {
+                console.log("CopyProjectView: onRender");
+            },
+            onShow: function () {
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
             }
@@ -243,6 +246,13 @@ define(function (require) {
             }
         }),
 
+        // LanguagesListView - displays a list of language codes / names matching
+        // a search criteria. Used as a child view of the SourceLanguageView and TargetLanguageView
+        // classes, defined below.
+        LanguagesListView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplLanguages)
+        }),
+            
         // SourceLanguageView - view / edit the source language name and code, as well as
         // any variants. Also specify whether the language is LTR.
         SourceLanguageView = Marionette.CompositeView.extend({
@@ -1015,6 +1025,7 @@ define(function (require) {
         PunctuationView: PunctuationView,
         SourceLanguageView: SourceLanguageView,
         TargetLanguageView: TargetLanguageView,
+        LanguagesListView: LanguagesListView,
         USFMFilteringView: USFMFilteringView
     };
 });
