@@ -38,12 +38,19 @@ define(function (require) {
             var index = event.currentTarget.id.substr(2);
             var model = this.collection.at(index);
             var elt = document.getElementById('folder');
+            var adaptHref = "";
             $('#projTitle').html($(event.currentTarget).find('.txt').html());
             if (model) {
                 $("#settings").attr("href", "#project/" + model.get("id"));
-                $("#import").attr("href", "#search/" + model.get("id"));
+                $("#import").attr("href", "#import/" + model.get("id"));
                 $("#search").attr("href", "#search/" + model.get("id"));
-                $("#adapt").attr("href", "#adapt/" + model.get("id"));
+                if (model.get('lastAdaptedID').length > 0) {
+                    adaptHref = "#adapt/" + model.get("id") + "/" + model.get('lastAdaptedID');
+                } else {
+                    // no last placeholder. Start at the beginning...
+                    adaptHref = "#adapt/" + model.get("id") + "/" + "GEN001";
+                }
+                $("#adapt").attr("href", adaptHref);
                 if (model.get('lastAdaptedName').length > 0) {
                     $('#lblAdapt').html(model.get('lastAdaptedName'));
                 } else {

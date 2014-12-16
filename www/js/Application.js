@@ -12,8 +12,8 @@ define(function (require) {
         HomeView        = require('app/views/HomeView'),
         HelpView        = require('app/views/HelpView'),
         ProjectViews    = require('app/views/ProjectViews'),
+        SearchViews     = require('app/views/SearchViews'),
         AdaptViews      = require('app/views/AdaptViews'),
-        LookupView      = require('app/views/LookupView'),
         projModel       = require('app/models/project'),
         chapterModel    = require('app/models/chapter'),
         AppRouter       = require('app/router'),
@@ -133,27 +133,28 @@ define(function (require) {
             },
             
             importBooks: function (id) {
+                console.log("importBooks");
             },
             
             lookupChapter: function (id) {
+                console.log("lookupChapter");
                 var proj = ProjectList.where({id: id});
                 if (proj !== null) {
+                    console.log("no project defined");
                     // TODO: how do we want this? ID as separate or in chapters?
                 }
                 
-                lookupView = new LookupView();
-                require(["app/models/chapter", "app/views/LookupView"], function (models, LookupView) {
-                    var book = new models.Chapter({id: id});
-                    book.fetch({
-                        success: function (data) {
+                var book = new chapterModel.Chapter({id: id});
+                book.fetch({
+                    success: function (data) {
 //                            slider.slidePage(new LookupView({model: data}).$el);
-                            window.Application.main.show(new LookupView({model: data}));
-                        }
-                    });
+                        window.Application.main.show(new SearchViews.LookupView({model: data}));
+                    }
                 });
             },
 
             adaptChapter: function (projid, bookid) {
+                console.log("adaptChapter");
                 var chapter = new chapterModel.Chapter({id: bookid});
                 chapter.fetch({
                     success: function (data) {
