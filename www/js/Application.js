@@ -9,7 +9,7 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
-        HomeView        = require('app/views/HomeView'),
+        HomeViews       = require('app/views/HomeViews'),
         HelpView        = require('app/views/HelpView'),
         ProjectViews    = require('app/views/ProjectViews'),
         SearchViews     = require('app/views/SearchViews'),
@@ -96,7 +96,7 @@ define(function (require) {
             
             // Routes from AppRouter (router.js)
             home: function () {
-                homeView = new HomeView({collection: ProjectList});
+                homeView = new HomeViews.HomeView({collection: ProjectList});
                 homeView.delegateEvents();
                 this.main.show(homeView);
             },
