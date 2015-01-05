@@ -29,6 +29,7 @@ define(function (require) {
         homeView        = null,
         i18n            = require('i18n'),
         lang            = "",
+        models          = [],
         locale          = "en-AU",  // default
 
 
@@ -96,6 +97,22 @@ define(function (require) {
             
             // Routes from AppRouter (router.js)
             home: function () {
+                // First, look for projects in the project list that aren't complete;
+                // this can happen if the user clicks the back button before completing the 
+                // new project wizard. These objects with no id defined are only in memory;
+                // once the source and target language are defined, an id is set and
+                // the project is saved in the device's localStorage.
+                ProjectList.each(function (model, index) {
+                    if (model.get('id').length < 1) {
+                        // empty project -- mark for removal
+                        models.push(model);
+                    }
+                });
+                // remove the half-completed project objects
+                if (models.length > 0) {
+                    ProjectList.remove(models);
+                }
+                // now display the home view
                 homeView = new HomeViews.HomeView({collection: ProjectList});
                 homeView.delegateEvents();
                 this.main.show(homeView);

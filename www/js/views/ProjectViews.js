@@ -41,6 +41,7 @@ define(function (require) {
         projUSFMFiltingView = null,
         theFont = null,
         template    = null,
+        projectURL  = "",
 
         // CopyProjectView
         // Copy a project from another device.
@@ -50,9 +51,11 @@ define(function (require) {
                 "click #OK": "onOK"
             },
             onOK: function (event) {
-                console.log("CopyProjectView: onRender");
+                console.log("CopyProjectView: onOK");
+                projectURL = $('#url').trim();
             },
             onShow: function () {
+                $("#progress").attr("style", "0%;");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
             }
