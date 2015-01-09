@@ -51,8 +51,15 @@ define(function (require) {
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
                     // on mobile phone
+//                    navigator.globalization.getPreferredLanguage(
+//                        function (language) {alert('language: ' + language.value + '\n');},
+//                        function () {alert('Error getting language\n');}
+//                    );
                     navigator.globalization.getLocaleName(
-                        function (loc) {locale = loc.value; },
+                        function (loc) {
+//                            alert('locale: ' + loc.value + '\n');
+                            locale = loc.value; 
+                        },
                         function () {console.log('Error getting locale\n'); }
                     );
                 } else {
