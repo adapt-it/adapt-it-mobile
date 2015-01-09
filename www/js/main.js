@@ -49,10 +49,24 @@ require.config({
 // start the main application object in app.js
 require(["app/Application"], function (Application) {
     "use strict";
+
+    var runningOnApp = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+
+    function startTheApp() {
+        var theApp = new Application.Application();
+        theApp.start();
+        window.Application = theApp;
+    };
+
+    if ( runningOnApp ) {
+        // "real" Cordova application - start the app after DeviceReady is fired
+        document.addEventListener("deviceready", startTheApp, true);        
+    } else {
+        // Local web page - no cordova.js installed and no access to native plugins;
+        // just start up the app now
+        startTheApp();
+    }    
     
-    var theApp = new Application.Application();
-    theApp.start();
-    window.Application = theApp;
 });
 
 //require(['app/app', 'backbone', 'routers/index', 'controllers/index'], function (app, Backbone, Router, Controller) {

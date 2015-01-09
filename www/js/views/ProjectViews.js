@@ -42,6 +42,8 @@ define(function (require) {
         theFont = null,
         template    = null,
         projectURL  = "",
+        localURL    = "",//cordova.file.documentsDirectory + "/file.zip",
+        ft = null,
 
         // CopyProjectView
         // Copy a project from another device.
@@ -50,9 +52,84 @@ define(function (require) {
             events: {
                 "click #OK": "onOK"
             },
+            validURL: function (str) {
+                var urlExp = /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+                return urlExp.test(str);
+            },
+            clearResults: function () {
+                var results = document.getElementById("lblStatus");
+                results.innerHTML = '';
+            },
             onOK: function (event) {
-                console.log("CopyProjectView: onOK");
-                projectURL = $('#url').trim();
+                var directory = 'cdv_image';
+                var element = new Image();
+                var imageURL = "http://apache.org/images/feather-small.gif";
+                var filename = imageURL.substring(imageURL.lastIndexOf("/") + 1);
+                filename = directory + filename || filename;
+                function download(fileSystem) {
+                    var ft = new FileTransfer();
+                    console.log("Starting download");
+                    ft.download(imageURL, fileSystem.root.toURL() + filename, function (entry) {
+                        console.log("Download complete");
+                        element.src = entry.toURL();
+                        console.log("Src URL is " + element.src);
+                        console.log("Inserting element");
+                        document.getElementById("lblStatus").appendChild(element);
+                    }, function (e) { console.log("ERROR: ft.download " + e.code); });
+                }
+                console.log("Requesting filesystem");
+                this.clearResults();
+                requestFileSystem(TEMPORARY, 0, function (fileSystem) {
+                    console.log("Checking for existing file");
+                    if (directory !== undefined) {
+                        console.log("Checking for existing directory.");
+                        fileSystem.root.getDirectory(directory, {}, function (dirEntry) {
+                            dirEntry.removeRecursively(function () {
+                                download(fileSystem);
+                            }, function (e) { console.log("ERROR: dirEntry.removeRecursively"); });
+                        }, function () {
+                            download(fileSystem);
+                        });
+                    } else {
+                        fileSystem.root.getFile(filename, { create: false }, function (entry) {
+                            console.log("Removing existing file");
+                            entry.remove(function () {
+                                download(fileSystem);
+                            }, function (e) { console.log("ERROR: entry.remove"); });
+                        }, function () {
+                            download(fileSystem);
+                        });
+                    }
+                }, function (e) { console.log("ERROR: requestFileSystem"); });
+
+//                var status = true,
+//                    path = window.File.documentsDirectory;
+//                var ft = new FileTransfer();
+//                console.log("CopyProjectView: onOK");
+//                projectURL = encodeURI($('#url').val().trim());
+//                status = this.validURL(projectURL);
+//                if (status === true) {
+////                    localURL = window.resolveLocalFileSystemURL(path + "file.zip", appStart, downloadAsset);
+//                    ft.download(
+//                        projectURL + "//AI-ProjectConfiguration.aic",
+//                        path + "//AI-ProjectConfiguration.aic",
+//                        function (entry) {
+//                            $('#lblStatus').html("Success");
+//                        },
+//                        function (error) {
+//                            $('#lblStatus').html(error.source + "<br/>" + error.target + " +<br/>" + error.code);
+//                        },
+//                        false,
+//                        {
+//                            headers: {
+//                                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+//                            }
+//                        }
+//                    );
+//                } else {
+//                    $('#lblStatus').html("Invalid URL");
+//                }
+                
             },
             onShow: function () {
                 $("#progress").attr("style", "0%;");
