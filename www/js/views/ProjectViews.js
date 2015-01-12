@@ -233,28 +233,29 @@ define(function (require) {
                         var typefaces = null;
                         // start with fonts installed on device
                         if (navigator.Fonts) {
-                            console.log("Fonts object in navigator");
+//                            console.log("Fonts object in navigator");
                             navigator.Fonts.getFontList(
                                 function (fontList) {
                                     typefaces = fontList;
                                     console.log(fontList);
+                                    if (typefaces) {
+                                        for (var i = 0; i < typefaces.length; i++) {
+                                            $("#font").append($("<option></option>")
+                                                              .attr("value", typefaces[i])
+                                                              .text(typefaces[i]));
+                                        }
+                                    }
                                 },
                                 function (error) {
+                                    console.log("FontList error: " + error);
                                     console.log(error);
                                 }
                             );
+                        console.log("FontList: exit");
                         } else {
                             console.log("Plugin error: Fonts plugin not found (is it installed?)");
                         }
                         // add the fonts we've embedded with AIM
-                        if (typefaces) {
-                            for (var i = 0; i < typefaces.length; i++) {
-    //                            $("#font").append($('<option>', {value : (typefaces[i])}).text(typefaces[i]));
-                                $("#font").append($("<option></option>")
-                                                  .attr("value", typefaces[i])
-                                                  .text(typefaces[i]));
-                            }
-                        }
                         $("#font").append($('<option>', {value : 'Andika'}).text('Andika'));
                         $("#font").append($('<option>', {value : 'Gentium'}).text('Gentium'));
                         $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
