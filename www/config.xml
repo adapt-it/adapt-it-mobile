@@ -22,7 +22,7 @@
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
     <!-- core plugins -->
-    <gap:plugin name="org.apache.cordova.console" />
+    <gap:plugin name="org.adapt-it.cordova.fonts" source="plugins.cordova.io" />
     <gap:plugin name="org.apache.cordova.file" />
     <gap:plugin name="org.apache.cordova.file-transfer" />
     <gap:plugin name="org.apache.cordova.globalization" />
