@@ -61,74 +61,77 @@ define(function (require) {
                 results.innerHTML = '';
             },
             onOK: function (event) {
-                var directory = 'cdv_image';
-                var element = new Image();
-                var imageURL = "http://apache.org/images/feather-small.gif";
-                var filename = imageURL.substring(imageURL.lastIndexOf("/") + 1);
-                filename = directory + filename || filename;
-                function download(fileSystem) {
-                    var ft = new FileTransfer();
-                    console.log("Starting download");
-                    ft.download(imageURL, fileSystem.root.toURL() + filename, function (entry) {
-                        console.log("Download complete");
-                        element.src = entry.toURL();
-                        console.log("Src URL is " + element.src);
-                        console.log("Inserting element");
-                        document.getElementById("lblStatus").appendChild(element);
-                    }, function (e) { console.log("ERROR: ft.download " + e.code); });
-                }
-                console.log("Requesting filesystem");
-                this.clearResults();
-                requestFileSystem(TEMPORARY, 0, function (fileSystem) {
-                    console.log("Checking for existing file");
-                    if (directory !== undefined) {
-                        console.log("Checking for existing directory.");
-                        fileSystem.root.getDirectory(directory, {}, function (dirEntry) {
-                            dirEntry.removeRecursively(function () {
-                                download(fileSystem);
-                            }, function (e) { console.log("ERROR: dirEntry.removeRecursively"); });
-                        }, function () {
-                            download(fileSystem);
-                        });
-                    } else {
-                        fileSystem.root.getFile(filename, { create: false }, function (entry) {
-                            console.log("Removing existing file");
-                            entry.remove(function () {
-                                download(fileSystem);
-                            }, function (e) { console.log("ERROR: entry.remove"); });
-                        }, function () {
-                            download(fileSystem);
-                        });
-                    }
-                }, function (e) { console.log("ERROR: requestFileSystem"); });
-
-//                var status = true,
-//                    path = window.File.documentsDirectory;
-//                var ft = new FileTransfer();
-//                console.log("CopyProjectView: onOK");
-//                projectURL = encodeURI($('#url').val().trim());
-//                status = this.validURL(projectURL);
-//                if (status === true) {
-////                    localURL = window.resolveLocalFileSystemURL(path + "file.zip", appStart, downloadAsset);
-//                    ft.download(
-//                        projectURL + "//AI-ProjectConfiguration.aic",
-//                        path + "//AI-ProjectConfiguration.aic",
-//                        function (entry) {
-//                            $('#lblStatus').html("Success");
-//                        },
-//                        function (error) {
-//                            $('#lblStatus').html(error.source + "<br/>" + error.target + " +<br/>" + error.code);
-//                        },
-//                        false,
-//                        {
-//                            headers: {
-//                                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
-//                            }
-//                        }
-//                    );
-//                } else {
-//                    $('#lblStatus').html("Invalid URL");
+//                var directory = 'cdv_image';
+//                var element = new Image();
+//                var imageURL = "http://apache.org/images/feather-small.gif";
+//                var filename = imageURL.substring(imageURL.lastIndexOf("/") + 1);
+//                filename = directory + filename || filename;
+//                function download(fileSystem) {
+//                    var ft = new FileTransfer();
+//                    console.log("Starting download");
+//                    ft.download(imageURL, fileSystem.root.toURL() + filename, function (entry) {
+//                        console.log("Download complete");
+//                        element.src = entry.toURL();
+//                        console.log("Src URL is " + element.src);
+//                        console.log("Inserting element");
+//                        document.getElementById("lblStatus").appendChild(element);
+//                    }, function (e) { console.log("ERROR: ft.download " + e.code); });
 //                }
+//                console.log("Requesting filesystem");
+//                this.clearResults();
+//                requestFileSystem(TEMPORARY, 0, function (fileSystem) {
+//                    console.log("Checking for existing file");
+//                    if (directory !== undefined) {
+//                        console.log("Checking for existing directory.");
+//                        fileSystem.root.getDirectory(directory, {}, function (dirEntry) {
+//                            dirEntry.removeRecursively(function () {
+//                                download(fileSystem);
+//                            }, function (e) { console.log("ERROR: dirEntry.removeRecursively"); });
+//                        }, function () {
+//                            download(fileSystem);
+//                        });
+//                    } else {
+//                        fileSystem.root.getFile(filename, { create: false }, function (entry) {
+//                            console.log("Removing existing file");
+//                            entry.remove(function () {
+//                                download(fileSystem);
+//                            }, function (e) { console.log("ERROR: entry.remove"); });
+//                        }, function () {
+//                            download(fileSystem);
+//                        });
+//                    }
+//                }, function (e) { console.log("ERROR: requestFileSystem"); });
+
+                var status = true,
+                    path = "";
+                // window.File.documentsDirectory; ios
+                //window.File.dataDirectory; Android
+                //window.File.externalApplicationStorageDirectory;
+                var ft = new FileTransfer();
+                console.log("CopyProjectView: onOK");
+                projectURL = encodeURI($('#url').val().trim());
+                status = this.validURL(projectURL);
+                if (status === true) {
+//                    localURL = window.resolveLocalFileSystemURL(path + "file.zip", appStart, downloadAsset);
+                    ft.download(
+                        projectURL + "//AI-ProjectConfiguration.aic",
+                        path + "//AI-ProjectConfiguration.aic",
+                        function (entry) {
+                            $('#lblStatus').html("Success");
+                        },
+                        function (error) {
+                            $('#lblStatus').html(error.source + "<br/>" + error.target + " +<br/>" + error.code);
+                        },
+                        false,
+                        {
+                            headers: {
+                                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+                            }
+                        }
+                    );
+                } else {
+                    $('#lblStatus').html("Invalid URL");
+                }
                 
             },
             onShow: function () {
@@ -230,7 +233,8 @@ define(function (require) {
                 if (this.model) {
                     // font drop-down
                     if ($("#font").length) { // only if UI is shown
-                        var typefaces = null;
+                        var typefaces = null,
+                            i = 0;
                         // start with fonts installed on device
                         if (navigator.Fonts) {
 //                            console.log("Fonts object in navigator");
@@ -239,7 +243,7 @@ define(function (require) {
                                     typefaces = fontList;
                                     console.log(fontList);
                                     if (typefaces) {
-                                        for (var i = 0; i < typefaces.length; i++) {
+                                        for (i = 0; i < typefaces.length; i++) {
                                             $("#font").append($("<option></option>")
                                                               .attr("value", typefaces[i])
                                                               .text(typefaces[i]));
@@ -251,7 +255,7 @@ define(function (require) {
                                     console.log(error);
                                 }
                             );
-                        console.log("FontList: exit");
+                            console.log("FontList: exit");
                         } else {
                             console.log("Plugin error: Fonts plugin not found (is it installed?)");
                         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
     <widget xmlns   = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
+        xmlnls:android = "http://schemas.android.com/apk/res/android"
         id          = "org.sil.aimobile"
         versionCode = "1" 
         version     = "0.2.5"
@@ -21,11 +22,27 @@
     <preference name="phonegap-version" value="3.6.3" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
-    <!-- core plugins -->
+    <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
+    <!-- PhoneGap Build - core plugins -->
     <gap:plugin name="org.adapt-it.cordova.fonts" source="plugins.cordova.io" />
     <gap:plugin name="org.apache.cordova.file" />
     <gap:plugin name="org.apache.cordova.file-transfer" />
     <gap:plugin name="org.apache.cordova.globalization" />
+    <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
+    (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
+    -->
+    <gap:config-file platform="ios" parent="UISupportedInterfaceOrientations" overwrite="true">
+        <array>
+          <string>UIInterfaceOrientationPortrait</string>
+          <string>UIInterfaceOrientationLandscapeLeft</string>
+          <string>UIInterfaceOrientationLandscapeRight</string>
+        </array>
+    </gap:config-file>
+    <gap:config-file platform="android" parent="/manifest" overwrite="true">
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    </gap:config-file>
     <feature name="fonts">
         <param name="ios-package" value="CDVFonts" />
     </feature>
