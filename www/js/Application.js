@@ -140,7 +140,6 @@ define(function (require) {
             },
 
             copyProject: function () {
-                console.log("copyProject");
                 var proj = new projModel.Project();
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
                 copyProjectView.delegateEvents();

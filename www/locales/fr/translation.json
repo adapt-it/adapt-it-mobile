@@ -34,7 +34,7 @@
         "dscOpenProject": "Saisissez l'adresse Web du projet que vous souhaitez ouvrir.",
         "lblCopyProject": "Copier un projet",
         "dscCopyProject": "Copiez un projet existant dans un autre appareil.",
-        "dscCopyProjInstructions": "Saisissez l'adresse Web du projet que vous souhaitez copier.",
+        "dscCopyProjInstructions": "xxx",
         "lblSourceLanguageName": "Nom de la langue d'origine",
         "lblTargetLanguageName": "Nom de la langue cible",
         "lblCode": "Code",
