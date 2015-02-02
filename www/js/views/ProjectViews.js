@@ -56,7 +56,17 @@ define(function (require) {
             getProjFile: function (event) {
                 console.log("getProjFile");
                 // open selected .aic file
-                //event.files[0].name
+                var reader = new FileReader();
+                reader.onloadend = function (e) {
+                    var i = 0,
+                        lines = this.result.split("\n");
+                    for (i = 0; i < lines.length; i++) {
+                        console.log(lines[i]);
+                    }
+                    $("#lblStatus").html(this.result);
+                };
+                reader.readAsText(event.currentTarget.files[0]);
+                
             },
             onShow: function () {
                 $("#progress").attr("style", "0%;");
