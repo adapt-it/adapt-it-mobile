@@ -82,12 +82,6 @@ define(function (require) {
                     ProjectList.fetch({reset: true, data: {name: ""}});
 
                     Backbone.history.start();
-
-//                    var home = new HomeView({collection: ProjectList});
-//
-//                    // note: our context in this callback is the window object; we've saved the application
-//                    // there in main.js as window.Application
-//                    window.Application.main.show(home);
                 });
 
                 var router  = new AppRouter({controller: this});

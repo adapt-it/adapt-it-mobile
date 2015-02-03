@@ -43,6 +43,7 @@ define(function (require) {
         template    = null,
         projectURL  = "",
         localURL    = "",//cordova.file.documentsDirectory + "/file.zip",
+        lines       = [],
         ft = null,
 
 
@@ -51,19 +52,131 @@ define(function (require) {
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
             events: {
-                "change #projFile": "getProjFile"
+                "change #projFile": "copyProjFile",
+                "click #OK": "onOK"
             },
-            getProjFile: function (event) {
-                console.log("getProjFile");
+            onOK: function(event) {
+                // save the model
+                this.model.trigger('change');
+                // head back to the home page
+                window.history.go(-1);
+            },
+            copyProjFile: function (event) {
+                console.log("copyProjFile");
                 // open selected .aic file
+                var model = this.model;
                 var reader = new FileReader();
                 reader.onloadend = function (e) {
-                    var i = 0,
-                        lines = this.result.split("\n");
-                    for (i = 0; i < lines.length; i++) {
-                        console.log(lines[i]);
+                    var value = "",
+                        value2 = "",
+                        value3 = "",
+                        value4 = "",
+                        i = 0,
+                        s = null,
+                        t = null,
+                        arr = [];
+                    var getSettingValue = function (expectedIndex, aicSetting) {
+                        var i = 0,
+                            value = "";
+                        if (lines[expectedIndex].indexOf(aicSetting) !== -1) {
+                            // the value is the rest of the line AFTER the aicsetting + space
+                            value = lines[expectedIndex].substr(aicSetting.length + 1);
+                        } else {
+                            // This setting is NOT at the line we expected. It could be on a different
+                            // line, or not in the .aic file at all
+                            for (i = 0; i < lines.length; i++) {
+                                if (lines[i].indexOf(aicSetting) === 0) {
+                                    // Found! The value is the rest of the line AFTER the aicsetting + space
+                                    value = lines[i].substr(aicSetting.length + 1);
+                                    // finish searching
+                                    break;
+                                }
+                            }
+                        }
+                        return value;
+                    };
+                    // split out the .aic file into an array (one entry per line of the file)
+                    lines = this.result.split("\n");
+                    // We've successfully opened an Adapt It project file (.aic) -
+                    // populate our AIM model object with values
+                    // from the .aic file
+                    model.set("SourceLanguageName", getSettingValue(55, "SourceLanguageName"));
+                    model.set("TargetLanguageName", getSettingValue(56, "TargetLanguageName"));
+                    model.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"));
+                    model.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"));
+                    model.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr");
+                    model.set("TargetDir", (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr");
+                    value = getSettingValue(124, "ProjectName");
+                    if (value.length > 0) {
+                        model.set("name", value);
+                    } else {
+                        // project name not found -- build it from the source & target languages
+                        model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: model.get("SourceLanguageName"), target: model.get("TargetLanguageName")}));
+                        
                     }
-                    $("#lblStatus").html(this.result);
+                    // filters (USFM only -- other settings are ignored)
+                    value = getSettingValue(124, "UseSFMarkerSet");
+                    if (value === "UsfmOnly") {
+                        value = getSettingValue(123, "UseFilterMarkers");
+                        if (value !== model.get("FilterMarkers")) {
+                            model.set("UseCustomFilters", "true");
+                            model.set("FilterMarkers", value);
+                        }
+                    }
+                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
+                    model.set("id", value);
+                    // The following settings require some extra work
+                    // Punctuation pairs
+                    value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
+                    value2 = getSettingValue(80, "PunctuationPairsTargetSet(stores space for an empty cell)");
+                    for (i = 0; i < value.length; i++) {
+                        s = value.charAt(i);
+                        t = value2.charAt(i);
+                        if (s && s.length > 0) {
+                            arr[arr.length] = {s: s, t: t};
+                        }
+                    }
+                    model.set({PunctPairs: arr});
+                    // Auto capitalization
+                    value = getSettingValue(115, "LowerCaseSourceLanguageChars");
+                    value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
+                    value3 = getSettingValue(117, "LowerCaseTargetLanguageChars");
+                    value4 = getSettingValue(118, "UpperCaseTargetLanguageChars");
+                    for (i = 0; i < value.length; i++) {
+                        s = value.charAt(i) + value2.charAt(i);
+                        t = value3.charAt(i) + value4.charAt(i);
+                        if (s && s.length > 0) {
+                            arr[arr.length] = {s: s, t: t};
+                        }
+                    }
+                    model.set({CasePairs: arr});
+                    value = getSettingValue(121, "AutoCapitalizationFlag");
+                    model.set("AutoCapitalization", (value === "1") ? "true" : "false");
+                    value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
+                    model.set("SourceHasUpperCase", (value === "1") ? "true" : "false");
+                    
+                    // Fonts, if they're installed on this device (getFontList is async)
+                    if (navigator.Fonts) {
+                        navigator.Fonts.getFontList(
+                            function (fontList) {
+                                if (fontList) {
+                                    // Source Font
+                                    value = getSettingValue(16, "FaceName");
+                                    if ($.inArray(value, fontList) > -1) {
+                                        model.set("SourceFont", value);
+                                    }
+                                    // Target Font
+                                    value = getSettingValue(34, "FaceName");
+                                    if ($.inArray(value, fontList) > -1) {
+                                        model.set("TargetFont", value);
+                                    }
+                                }
+                            },
+                            function (error) {
+                                console.log("FontList error: " + error);
+                            }
+                        );
+                    }
                 };
                 reader.readAsText(event.currentTarget.files[0]);
                 
