@@ -177,6 +177,8 @@ define(function (require) {
                             }
                         );
                     }
+                    // done -- display the OK button
+                    $("#OK").show();
                 };
                 reader.readAsText(event.currentTarget.files[0]);
                 
@@ -185,6 +187,7 @@ define(function (require) {
                 $("#progress").attr("style", "0%;");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
+                $("#OK").hide();
             }
         }),
         
