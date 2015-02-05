@@ -55,7 +55,7 @@ define(function (require) {
                 "change #selFile": "copyProjFile",
                 "click #OK": "onOK"
             },
-            onOK: function(event) {
+            onOK: function (event) {
                 // save the model
                 this.model.trigger('change');
                 // head back to the home page
