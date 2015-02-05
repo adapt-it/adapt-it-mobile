@@ -33,7 +33,7 @@
         "lblOpenProject": "Open a Project",
         "dscOpenProject": "Enter the web address of the project you want to open.",
         "lblCopyProject": "Copy Project",
-        "dscCopyProjInstructions": "xx",
+        "dscCopyProjInstructions": "Select the project file you want to copy from the local device.",
         "dscCopyProject": "Copy an existing project from another device",
         "lblSourceLanguageName": "Source Language Name",
         "lblTargetLanguageName": "Target Language Name",

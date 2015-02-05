@@ -33,7 +33,7 @@
         "lblOpenProject": "Copiar un proyecto",
         "dscOpenProject": "Ingrese la dirección Web del proyecto que desea abrir.",
         "lblCopyProject": "Copiar un proyecto",
-        "dscCopyProjInstructions": "XXX",
+        "dscCopyProjInstructions": "Elija el archivo de proyecto que desea copiar.",
         "dscCopyProject": "Copiar un proyecto desde otra computadora",
         "lblSourceLanguageName": "Idioma de origen",
         "lblTargetLanguageName": "Idioma de destino",
