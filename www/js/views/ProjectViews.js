@@ -52,7 +52,7 @@ define(function (require) {
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
             events: {
-                "change #projFile": "copyProjFile",
+                "change #selFile": "copyProjFile",
                 "click #OK": "onOK"
             },
             onOK: function(event) {
@@ -184,7 +184,7 @@ define(function (require) {
                 
             },
             onShow: function () {
-                $("#progress").attr("style", "0%;");
+                $("#selFile").attr("accept", ".aic");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 $("#OK").hide();
