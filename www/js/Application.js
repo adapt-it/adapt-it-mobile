@@ -12,6 +12,7 @@ define(function (require) {
         HomeViews       = require('app/views/HomeViews'),
         HelpView        = require('app/views/HelpView'),
         ProjectViews    = require('app/views/ProjectViews'),
+        DocumentViews   = require('app/views/DocumentViews'),
         SearchViews     = require('app/views/SearchViews'),
         AdaptViews      = require('app/views/AdaptViews'),
         projModel       = require('app/models/project'),
@@ -27,6 +28,7 @@ define(function (require) {
         editProjectView = null,
         copyProjectView = null,
         homeView        = null,
+        importDocView   = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -151,12 +153,20 @@ define(function (require) {
             
             importBooks: function (id) {
                 console.log("importBooks");
+                var proj = ProjectList.where({id: id});
+                if (proj === null) {
+                    console.log("no project defined");
+                    // TODO: how do we want this? ID as separate or in chapters?
+                }
+                importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
+                importDocView.delegateEvents();
+                this.main.show(importDocView);
             },
             
             lookupChapter: function (id) {
                 console.log("lookupChapter");
                 var proj = ProjectList.where({id: id});
-                if (proj !== null) {
+                if (proj === null) {
                     console.log("no project defined");
                     // TODO: how do we want this? ID as separate or in chapters?
                 }
