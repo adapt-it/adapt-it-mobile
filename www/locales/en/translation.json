@@ -150,7 +150,7 @@
         "lblProjectCreated": "Project Created",
         "dscProjectCreated": "The project \"__name_\" was successfully created. Press Continue to import documents from the source language __souce__.",
         "lblImportDocuments": "Import Documents",
-        "dscImportDocuments": "Enter the web address of the documents from the source language __source__. These will be imported into this device.",
+        "dscImportDocuments": "Select the document files you want to copy from the local device. These can either be source language documents in USFM format or Adapt It documents in .xml format.",
         "lblFont": "Font:",
         "lblSize": "Size:",
         "lblColor": "Color:",
