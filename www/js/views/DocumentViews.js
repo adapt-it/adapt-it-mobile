@@ -13,6 +13,7 @@ define(function (require) {
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
+        spModel         = require('app/models/sourcephrase'),
         chapterView     = require('app/models/chapter'),
 //        parser          = sax.parser(true),
         lines           = [],
@@ -39,6 +40,7 @@ define(function (require) {
                 // callback for when the selected file finishes loading
                 reader.onloadend = function (e) {
                     var value = "",
+                        bookID = "",
                         chap = 0,
                         verse = 0,
                         index = 0,
@@ -49,6 +51,7 @@ define(function (require) {
                         prepuncts = "",
                         midpuncts = "",
                         follpuncts = "",
+                        newSP = null,
                         arr = [];
                     var readXMLDoc = function (contents) {
                         console.log("Reading XML file");
@@ -58,6 +61,21 @@ define(function (require) {
                     };
                     var readUSFMDoc = function (contents) {
                         console.log("Reading USFM file");
+                        // build book and chapter(s)
+//                        bookID = contents.substr(contents.find("\\id") + 4, 3);
+//                        // build SourcePhrases
+//                        while (i < contents.length) {
+//                            phObj = new spModels.SourcePhrase({ id: ("plc-" + newID), source: "..."});
+//                            newSP = new spModel.SourcePhrase({
+//                                id: bookID + chap + "-" + index,
+//                                markers: "",
+//                                orig: null,
+//                                prepuncts: "",
+//                                midpuncts: "",
+//                                follpuncts: "",
+//                                source: "",
+//                                target: ""});
+//                        }
                         // split out the .usfm file into an array (one entry per usfm tag)
                         lines = contents.split("\\");
                         return doc;

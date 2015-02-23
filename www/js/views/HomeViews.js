@@ -12,6 +12,7 @@ define(function (require) {
         tplHome         = require('text!tpl/Home.html'),
         tplGetStarted   = require('text!tpl/GetStarted.html'),
         projModel       = require('app/models/project'),
+        bookModel       = require('app/models/book'),
 
         GetStartedView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplGetStarted)
@@ -45,19 +46,28 @@ define(function (require) {
                 if (model) {
                     $("#settings").attr("href", "#project/" + model.get("id"));
                     $("#import").attr("href", "#import/" + model.get("id"));
-                    $("#search").attr("href", "#search/" + model.get("id"));
-                    if (model.get('lastAdaptedID').length > 0) {
-                        adaptHref = "#adapt/" + model.get("id") + "/" + model.get('lastAdaptedID');
+                    if (bookModel.BookCollection.length === 0) {
+                        // no books imported -- hide the search and adapt links
+                        $("#search").hide();
+                        $("#adapt").hide();
                     } else {
-                        // no last placeholder. Start at the beginning...
-                        adaptHref = "#adapt/" + model.get("id") + "/" + "GEN001";
-                    }
-                    $("#adapt").attr("href", adaptHref);
-                    if (model.get('lastAdaptedName').length > 0) {
-                        $('#lblAdapt').html(model.get('lastAdaptedName'));
-                    } else {
-                        // no last adapted Name
-                        $('#lblAdapt').html(i18n.t('view.lblAdapt'));
+                        // at least one book imported -- display the search and adapt links
+                        $("#search").show();
+                        $("#adapt").show();
+                        $("#search").attr("href", "#search/" + model.get("id"));
+                        if (model.get('lastAdaptedID').length > 0) {
+                            adaptHref = "#adapt/" + model.get("id") + "/" + model.get('lastAdaptedID');
+                        } else {
+                            // no last placeholder. Start at the beginning...
+                            adaptHref = "#adapt/" + model.get("id") + "/" + "GEN001";
+                        }
+                        $("#adapt").attr("href", adaptHref);
+                        if (model.get('lastAdaptedName').length > 0) {
+                            $('#lblAdapt').html(model.get('lastAdaptedName'));
+                        } else {
+                            // no last adapted Name
+                            $('#lblAdapt').html(i18n.t('view.lblAdapt'));
+                        }
                     }
                 } else {
                     // no last adapted Name
