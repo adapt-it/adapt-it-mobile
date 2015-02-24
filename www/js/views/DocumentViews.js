@@ -15,7 +15,7 @@ define(function (require) {
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         chapterView     = require('app/models/chapter'),
-//        parser          = sax.parser(true),
+        bookIDs         = require('app/utils/bookIDs'),
         lines           = [],
 
         ImportDocumentView = Marionette.ItemView.extend({
@@ -61,11 +61,21 @@ define(function (require) {
                     };
                     var readUSFMDoc = function (contents) {
                         console.log("Reading USFM file");
-                        // build book and chapter(s)
-//                        bookID = contents.substr(contents.find("\\id") + 4, 3);
-//                        // build SourcePhrases
+                        // find the ID of this book
+                        var bookIDList = new bookIDs.BookIDCollection();
+                        bookIDList.fetch({reset: true, data: {id: ""}});
+                        index = contents.indexOf("\\id");
+                        if (index === -1) {
+                            // no ID found -- just return
+                            return null;
+                        }
+                        bookID = bookIDList.where({id: contents.substr(index + 4, 3)})[0];
+                        // build SourcePhrases
 //                        while (i < contents.length) {
-//                            phObj = new spModels.SourcePhrase({ id: ("plc-" + newID), source: "..."});
+//                            // get the next source word
+////                            s = parseWord(contents, i);
+//                            
+//                            // build the SourcePhrase
 //                            newSP = new spModel.SourcePhrase({
 //                                id: bookID + chap + "-" + index,
 //                                markers: "",
@@ -73,11 +83,12 @@ define(function (require) {
 //                                prepuncts: "",
 //                                midpuncts: "",
 //                                follpuncts: "",
-//                                source: "",
-//                                target: ""});
+//                                source: s,
+//                                target: ""
+//                            });
 //                        }
                         // split out the .usfm file into an array (one entry per usfm tag)
-                        lines = contents.split("\\");
+//                        lines = contents.split("\\");
                         return doc;
                     };
 
@@ -103,7 +114,6 @@ define(function (require) {
                 }
             },
             onShow: function () {
-                console.log("onShow");
                 $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
