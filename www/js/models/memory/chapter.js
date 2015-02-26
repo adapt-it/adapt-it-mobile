@@ -68,10 +68,26 @@ define(function (require) {
                 verseCount: 0
             },
             sync: function (method, model, options) {
-                if (method === "read") {
+                // read is the only method currently implemented for in-memory;
+                // the others will simply return a success state.
+                switch (method) {
+                case 'create':
+                    options.success(model);
+                    break;
+                        
+                case 'read':
                     findById(this.id).done(function (data) {
                         options.success(data);
                     });
+                    break;
+                        
+                case 'update':
+                    options.success(model);
+                    break;
+                        
+                case 'delete':
+                    options.success(model);
+                    break;
                 }
             }
 

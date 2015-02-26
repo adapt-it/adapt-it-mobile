@@ -563,6 +563,7 @@ define(function (require) {
             defaults: {
                 id: "",
                 name: "",
+                num: 0,
                 chapters: 0
             },
             sync: function (method, model, options) {

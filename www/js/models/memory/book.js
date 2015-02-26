@@ -7,9 +7,8 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         i           = 0,
-        /* OT/NT books, not counting apocrypha
-        */
         books = [],
+        
         findById = function (id) {
             var deferred = $.Deferred(),
                 book = null,
@@ -26,9 +25,12 @@ define(function (require) {
 
         findByName = function (searchKey) {
             var deferred = $.Deferred();
-            var results = books.filter(function (element) {
-                return element.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
+            var results = null;
+            if (books !== null) {
+                results = books.filter(function (element) {
+                    return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+                });
+            }
             deferred.resolve(results);
             return deferred.promise();
         },
@@ -39,19 +41,71 @@ define(function (require) {
                 name: "",
                 chapters: 0
             },
+            initialize: function () {
+                this.on('change', this.save, this);
+            },
+            fetch: function () {
+                // search for our key - b.<id>
+                this.set(JSON.parse(localStorage.getItem("b." + this.id)));
+            },
+            save: function (attributes) {
+                // only save if the id actually has a value
+                if (this.id.length > 1) {
+                    // save with a key of b.<id>
+                    localStorage.setItem(("b." + this.id), JSON.stringify(this));
+                }
+            },
+            destroy: function (options) {
+                localStorage.removeItem(this.id);
+            },
+
             sync: function (method, model, options) {
-                if (method === "read") {
+                // read is the only method currently implemented for in-memory;
+                // the others will simply return a success state.
+                switch (method) {
+                case 'create':
+                    options.success(model);
+                    break;
+                        
+                case 'read':
                     findById(this.id).done(function (data) {
                         options.success(data);
                     });
+                    break;
+                        
+                case 'update':
+                    model.save();
+                    options.success(model);
+                    break;
+                        
+                case 'delete':
+                    model.destroy(options);
+                    options.success(model);
+                    break;
                 }
             }
-
         }),
 
         BookCollection = Backbone.Collection.extend({
 
             model: Book,
+
+            resetFromLocalStorage: function () {
+                var i = 0,
+                    len = 0;
+                for (i = 0, len = localStorage.length; i < len; ++i) {
+                    // if this is a book, add it to our collection
+                    if (localStorage.key(i).substr(0, 2) === "b.") {
+                        var bk = new Book();
+                        bk.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
+                        books.push(bk);
+                    }
+                }
+            },
+            
+            initialize: function () {
+                this.resetFromLocalStorage();
+            },
 
             sync: function (method, model, options) {
                 if (method === "read") {

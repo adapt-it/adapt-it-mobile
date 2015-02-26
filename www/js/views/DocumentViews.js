@@ -14,7 +14,7 @@ define(function (require) {
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
-        chapterView     = require('app/models/chapter'),
+        chapModel       = require('app/models/chapter'),
         bookIDs         = require('app/utils/bookIDs'),
         lines           = [],
 
@@ -34,13 +34,15 @@ define(function (require) {
                 console.log("importDocument");
                 var model = this.model;
                 var reader = new FileReader();
+                var proj = this.model;
                 var i = 0;
                 var name = "";
                 var doc = null;
                 // callback for when the selected file finishes loading
                 reader.onloadend = function (e) {
                     var value = "",
-                        bookID = "",
+                        bookID = null,
+                        bookName = "",
                         chap = 0,
                         verse = 0,
                         index = 0,
@@ -52,6 +54,10 @@ define(function (require) {
                         midpuncts = "",
                         follpuncts = "",
                         newSP = null,
+                        chapter = null,
+                        book = null,
+                        books = new bookModel.BookCollection(),
+                        chapters = new chapModel.ChapterCollection(),
                         arr = [];
                     var readXMLDoc = function (contents) {
                         console.log("Reading XML file");
@@ -70,6 +76,43 @@ define(function (require) {
                             return null;
                         }
                         bookID = bookIDList.where({id: contents.substr(index + 4, 3)})[0];
+                        books.fetch({reset: true, data: {id: ""}});
+                        if (books.where({id: (proj.get('id') + ".." + bookID)}).length > 0) {
+                            // this book is already in the list -- just return
+                            return null;
+                        }
+                        index = contents.indexOf("\\h ");
+                        if (index > -1) {
+                            // get the name from the usfm itself
+                            bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
+                        }
+                        // add a book and chapters
+                        arr = bookID.get('chapters');
+                        for (i = 0; i < arr.length; i++) {
+                            // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
+                            chapters.add(new chapModel.Chapter({
+                                id: bookID.get('id') + ("00" + (i + 1)).slice(-3),
+                                name: (bookName + " " + (i + 1)),
+                                lastAdapted: 0,
+                                verseCount: arr[i]
+                            }));
+                        }
+                        book = new bookModel.Book({
+                            id: proj.get('id') + ".." + bookID.get('id'),
+                            name: bookName,
+                            chapters: arr
+                        });
+                        books.add(book);
+                        book.trigger('change');
+                        if (proj.get('lastAdaptedID') === "") {
+                            if (bookID !== null) {
+                                proj.set('lastAdaptedID', bookID.get('id') + "001");
+                            }
+                        }
+                        if (proj.get('lastAdaptedName') === "") {
+                            // TODO: localization of chapter numbers?
+                            proj.set('lastAdaptedName', bookName + " 1");
+                        }
                         // build SourcePhrases
 //                        while (i < contents.length) {
 //                            // get the next source word
@@ -101,9 +144,19 @@ define(function (require) {
                         // error out
                         console.log("Unrecognized document format");
                     }
-                    // add to documents list
-                    // doc = 
-
+                    // set the lastDocument / lastAdapted<xxx> values if not already set
+                    if (proj.get('lastDocument') === "") {
+                        proj.set('lastDocument', name);
+                    }
+                    if (proj.get('lastAdaptedID') === "") {
+                        if (bookID !== null) {
+                            proj.set('lastAdaptedID', bookID.get('id') + "001");
+                        }
+                    }
+                    if (proj.get('lastAdaptedName') === "") {
+                        // TODO: localization of chapter numbers?
+                        proj.set('lastAdaptedName', bookName + " 1");
+                    }
                     // done -- display the OK button
                     $("#OK").show();
                 };

@@ -41,12 +41,14 @@ define(function (require) {
                 var index = event.currentTarget.id.substr(2);
                 var model = this.collection.at(index);
                 var elt = document.getElementById('folder');
+                var books = new bookModel.BookCollection();
+                books.fetch({reset: true, data: {name: ""}});
                 var adaptHref = "";
                 $('#projTitle').html($(event.currentTarget).find('.txt').html());
                 if (model) {
                     $("#settings").attr("href", "#project/" + model.get("id"));
                     $("#import").attr("href", "#import/" + model.get("id"));
-                    if (bookModel.BookCollection.length === 0) {
+                    if (books.length === 0) {
                         // no books imported -- hide the search and adapt links
                         $("#search").hide();
                         $("#adapt").hide();
