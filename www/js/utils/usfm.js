@@ -2218,19 +2218,6 @@ define(function (require) {
                 nextStyle: "cap"
             }
         ],
-        findById = function (id) {
-            var deferred = $.Deferred(),
-                marker = null,
-                l = markers.length;
-            for (i = 0; i < l; i++) {
-                if (markers[i].id === id) {
-                    marker = markers[i];
-                    break;
-                }
-            }
-            deferred.resolve(marker);
-            return deferred.promise();
-        },
 
         findByName = function (searchKey) {
             var deferred = $.Deferred();
@@ -2245,7 +2232,7 @@ define(function (require) {
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    findById(this.id).done(function (data) {
+                    findByName(this.data.name).done(function (data) {
                         options.success(data);
                     });
                 }
