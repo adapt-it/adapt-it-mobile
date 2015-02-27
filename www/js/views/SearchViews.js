@@ -40,7 +40,6 @@ define(function (require) {
 
             render: function () {
                 template = Handlebars.compile(tplLookup);
-
                 this.$el.html(template());
                 this.listView = new ChapterListView({collection: this.chapterList, el: $(".scroller", this.el)});
                 return this;
@@ -51,7 +50,16 @@ define(function (require) {
                 "keypress .search-key": "onkeypress",
                 "change #book":         "onSelectBook"
             },
-
+            
+            onShow: function () {
+                var options = "";
+                this.bookList.fetch({reset: true, data: {name: ""}});
+                this.bookList.each(function (model, index) {
+                    options += "<option value=\"" + model.get("id").substr(model.get("id").indexOf("..") + 2) +  "\">" + model.get("name") + "</option>";
+                });
+                $("#book").html(options);
+            },
+            
             search: function (event) {
                 var key = $('.search-key').val();
                 this.chapterList.fetch({reset: true, data: {name: key}});
