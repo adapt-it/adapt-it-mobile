@@ -178,6 +178,7 @@ define(function (require) {
                         );
                     }
                     // done -- display the OK button
+                    $("#lblStatus").html(i18n.t("view.dscCopyProjectFound", {project: model.get("name")}));
                     $("#OK").show();
                 };
                 reader.readAsText(event.currentTarget.files[0]);

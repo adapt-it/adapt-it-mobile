@@ -49,7 +49,7 @@
         "lblPrev": "Anterior",
         "lblNext": "Próximo",
         "lblFinish": "Terminar",
-        "lblSourceToTargetAdaptations": "__source__ a __target__ Adaptacíons",
+        "lblSourceToTargetAdaptations": "__source__ a __target__ Adaptacíones",
         "ttlHelp": "Ayuda",
         "lblPlaceholder": "Punto de referencia",
         "lblPhrase": "Cláusula",
@@ -154,6 +154,7 @@
         "lblFont": "Tipo de letra:",
         "lblSize": "Tamaño:",
         "lblColor": "Color:",
+        "dscCopyProjectFound": "Project found: \"__project__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

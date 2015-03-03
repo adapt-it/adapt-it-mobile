@@ -154,6 +154,7 @@
         "lblFont": "Font:",
         "lblSize": "Size:",
         "lblColor": "Color:",
+        "dscCopyProjectFound": "Project found: \"__project__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

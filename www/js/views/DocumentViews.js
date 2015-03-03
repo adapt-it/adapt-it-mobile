@@ -59,6 +59,9 @@ define(function (require) {
                         books = new bookModel.BookCollection(),
                         chapters = new chapModel.ChapterCollection(),
                         arr = [];
+                    var readTextDoc = function (contents) {
+                        console.log("Fallback -- reading text file");
+                    };
                     var readXMLDoc = function (contents) {
                         console.log("Reading XML file");
                         // add chapters
@@ -141,8 +144,8 @@ define(function (require) {
                     } else if (name.indexOf(".xml") > 0) {
                         doc = readXMLDoc(this.result);
                     } else {
-                        // error out
-                        console.log("Unrecognized document format");
+                        // something else -- try reading it as a text document
+                        doc = readTextDoc(this.result);
                     }
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (proj.get('lastDocument') === "") {

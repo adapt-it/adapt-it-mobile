@@ -148,12 +148,13 @@
         "lblIsVariant": "Language is a dialect / variant",
         "lblLanguageVariant": "Dialect Name",
         "lblProjectCreated": "Project Created",
-        "dscProjectCreated": "The project \"__name_\" was successfully created. Press Continue to import documents from the source language __souce__.",
+        "dscProjectCreated": "The project \"__name__\" was successfully created. Press Continue to import documents from the source language __souce__.",
         "lblImportDocuments": "Import Documents",
         "dscImportDocuments": "Select the document files you want to copy from the local device. These can either be source language documents in USFM format or Adapt It documents in .xml format.",
         "lblFont": "Font:",
         "lblSize": "Size:",
         "lblColor": "Color:",
+        "dscCopyProjectFound": "Project found: \"__project__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
