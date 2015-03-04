@@ -60,8 +60,6 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
-                // read is the only method currently implemented for in-memory;
-                // the others will simply return a success state.
                 switch (method) {
                 case 'create':
                     options.success(model);

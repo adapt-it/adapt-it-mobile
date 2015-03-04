@@ -107,12 +107,14 @@ define(function (require) {
                             arr = bookID.get('chapters');
                             for (i = 0; i < arr.length; i++) {
                                 // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
-                                chapters.add(new chapModel.Chapter({
-                                    id: bookID.get('id') + ("00" + (i + 1)).slice(-3),
+                                chapter = new chapModel.Chapter({
+                                    id: proj.get('id') + ".." + bookID.get('id') + ("00" + (i + 1)).slice(-3),
                                     name: (bookName + " " + (i + 1)),
                                     lastAdapted: 0,
                                     verseCount: arr[i]
-                                }));
+                                });
+                                chapters.add(chapter);
+                                chapter.trigger('change');
                             }
                             book = new bookModel.Book({
                                 id: proj.get('id') + ".." + bookID.get('id'),
@@ -139,7 +141,7 @@ define(function (require) {
                         };
 
                         // read doc as appropriate
-                        if (file.name.indexOf(".usfm") > 0) {
+                        if ((file.name.indexOf(".usfm") > 0) || (file.name.indexOf(".sfm") > 0)) {
                             readUSFMDoc(this.result);
                         } else if (file.name.indexOf(".xml") > 0) {
                             readXMLDoc(this.result);
@@ -172,7 +174,6 @@ define(function (require) {
             },
             onShow: function () {
                 $("#selFile").attr("accept", ".xml,.usfm");
-                $("#selFile").attr("multiple", "true");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
                 $("#OK").hide();

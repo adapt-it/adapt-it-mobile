@@ -186,6 +186,7 @@ define(function (require) {
             },
             onShow: function () {
                 $("#selFile").attr("accept", ".aic");
+                $("#selFile").removeAttr("multiple");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 $("#OK").hide();

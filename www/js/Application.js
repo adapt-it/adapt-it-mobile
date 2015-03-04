@@ -170,14 +170,14 @@ define(function (require) {
                     console.log("no project defined");
                     // TODO: how do we want this? ID as separate or in chapters?
                 }
-                
-                var book = new chapterModel.Chapter({id: id});
-                book.fetch({
-                    success: function (data) {
-//                            slider.slidePage(new LookupView({model: data}).$el);
-                        window.Application.main.show(new SearchViews.LookupView({model: data}));
-                    }
-                });
+                window.Application.main.show(new SearchViews.LookupView({model: proj}));
+//                var book = new chapterModel.Chapter({id: id});
+//                book.fetch({
+//                    success: function (data) {
+////                            slider.slidePage(new LookupView({model: data}).$el);
+//                        window.Application.main.show(new SearchViews.LookupView({model: data}));
+//                    }
+//                });
             },
 
             adaptChapter: function (projid, bookid) {
