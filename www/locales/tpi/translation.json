@@ -156,6 +156,7 @@
         "lblColor": "Color:",
         "dscCopyProjectFound": "Projek: \"__project__.\"",
         "dscCopyDocumentFound": "Document found: \"__document__.\"",
+        "lblSelect": "Select",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
