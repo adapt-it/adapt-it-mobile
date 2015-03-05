@@ -5,6 +5,7 @@ define(function (require) {
     "use strict";
 
     var $           = require('jquery'),
+        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
@@ -13,19 +14,23 @@ define(function (require) {
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup     = require('text!tpl/Lookup.html'),
         template = null,
+        
+        NoChildrenView = Marionette.ItemView.extend({
+            template: Handlebars.compile("<div id=\"nochildren\"></div>")
+        }),
+        
+        ChildrenView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplChapterList)
+        }),
 
-        ChapterListView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplChapterList),
+        ChapterListView = Marionette.CollectionView.extend({
+            childView: ChildrenView,
+            emptyView: NoChildrenView,
 
             initialize: function () {
                 this.render();
                 this.collection.on("reset", this.render, this);
             }
-
-//            render: function () {
-//                this.$el.html(template(this.collection.toJSON()));
-//                return this;
-//            }
 
         }),
 
@@ -41,7 +46,7 @@ define(function (require) {
             render: function () {
                 template = Handlebars.compile(tplLookup);
                 this.$el.html(template());
-                this.listView = new ChapterListView({collection: this.chapterList, el: $(".scroller", this.el)});
+                this.listView = new ChapterListView({collection: this.chapterList, el: $(".chapter-list", this.el)});
                 return this;
             },
 
@@ -63,6 +68,11 @@ define(function (require) {
             search: function (event) {
                 var key = $('.search-key').val();
                 this.chapterList.fetch({reset: true, data: {name: key}});
+                if (this.chapterList.length > 0) {
+                    $("#lblChooseChapter").removeAttr("style");
+                } else {
+                    $("#lblChooseChapter").attr("style", "display:none");
+                }
             },
 
             onkeypress: function (event) {
@@ -73,7 +83,13 @@ define(function (require) {
 
             onSelectBook: function (event) {
                 var key = $('#book').val();
+                // find each chapter of this book in the chapterlist collection
                 this.chapterList.fetch({reset: true, data: {name: key}});
+                if (this.chapterList.length > 0) {
+                    $("#lblChooseChapter").removeAttr("style");
+                } else {
+                    $("#lblChooseChapter").attr("style", "display:none");
+                }
             }
         });
             

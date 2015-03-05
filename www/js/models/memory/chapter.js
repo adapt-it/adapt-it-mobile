@@ -54,7 +54,7 @@ define(function (require) {
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var results = chapters.filter(function (element) {
-                return element.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+                return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();

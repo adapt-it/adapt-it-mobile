@@ -3,9 +3,6 @@
     Each chapter is rendered with a status (number of verses translated), along with a link to adapt that chapter.
     This template is compiled by ChapterListView.js and called from LookupView.js.
 }}
-<h3 class="topcoat-list__header">{{t 'view.lblChapter'}}</h3>
-<ul class="topcoat-list__container chapter-list">
-{{#.}}
 <li class="topcoat-list__item">
     <a href="#adapt/{{this.id}}">
     {{this.name}}
@@ -20,5 +17,3 @@
     {{/ifCond}}
     <span class="chevron"></span></a>
 </li>
-{{/.}}
-</ul>
