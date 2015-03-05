@@ -60,7 +60,7 @@ define(function (require) {
                 var options = "";
                 this.bookList.fetch({reset: true, data: {name: ""}});
                 this.bookList.each(function (model, index) {
-                    options += "<option value=\"" + model.get("id").substr(model.get("id").indexOf("..") + 2) +  "\">" + model.get("name") + "</option>";
+                    options += "<option value=\"" + model.get("name") +  "\">" + model.get("name") + "</option>";
                 });
                 $("#book").html(options);
             },

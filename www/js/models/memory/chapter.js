@@ -6,35 +6,7 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-        // WEB Bible text from http://ebible.org/web/ 
-        // (moved to sourcephrase.js)
         chapters = [],
-//        [
-//            {
-//                "id": "RUT001",
-//                "name": "Ruth 1",
-//                "lastAdapted": 2,
-//                "verseCount": 22
-//            },
-//            {
-//                "id": "RUT002",
-//                "name": "Ruth 2",
-//                "lastAdapted": 0,
-//                "verseCount": 23
-//            },
-//            {
-//                "id": "RUT003",
-//                "name": "Ruth 3",
-//                "lastAdapted": 0,
-//                "verseCount": 18
-//            },
-//            {
-//                "id": "RUT004",
-//                "name": "Ruth 4",
-//                "lastAdapted": 0,
-//                "verseCount": 22
-//            }
-//        ],
 
         findById = function (id) {
             var i = 0,
