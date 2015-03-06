@@ -12,6 +12,8 @@
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__verseCount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastAdapted__ of a total of __verseCount__ verses have translation text).",
+        "lblStatusNotTranslatedNoVerses": "No translations.",
+        "lblStatusPartlyTranslatedNoVerses": "Partly drafted.",
         "ttlWelcome": "Welcome",
         "lblContinue": "Continue",
         "ttlGetStarted": "Get Started",

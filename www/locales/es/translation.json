@@ -12,6 +12,8 @@
         "lblStatusFullyTranslated": "Completamente traducido.",
         "lblStatusNotTranslated": "No hay traducciones realizadas (__verseCount__ versículos en total).",
         "lblStatusPartlyTranslated": "Parcialmente traducido (__lastAdapted__ de __verseCount__ versículos tienen traducciones realizadas).",
+        "lblStatusNotTranslatedNoVerses": "No hay traducciones realizadas.",
+        "lblStatusPartlyTranslatedNoVerses": "Parcialmente traducido.",
         "ttlWelcome": "Bienvenido a",
         "lblContinue": "Continuar",
         "ttlGetStarted": "Empezar",

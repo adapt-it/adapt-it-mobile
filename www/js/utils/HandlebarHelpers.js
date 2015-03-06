@@ -77,13 +77,13 @@ define(function (require) {
             return (v1 !== v2) ? options.fn(this) : options.inverse(this);
         case '===':
             return (v1 === v2) ? options.fn(this) : options.inverse(this);
-        case '<':
+        case 'lt':
             return (v1 < v2) ? options.fn(this) : options.inverse(this);
-        case '<=':
+        case 'lte':
             return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-        case '>':
+        case 'gt':
             return (v1 > v2) ? options.fn(this) : options.inverse(this);
-        case '>=':
+        case 'gte':
             return (v1 >= v2) ? options.fn(this) : options.inverse(this);
         default:
             return options.inverse(this);

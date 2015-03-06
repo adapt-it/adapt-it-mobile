@@ -5,6 +5,7 @@ define(function (require) {
     "use strict";
 
     var $               = require('jquery'),
+        Underscore      = require('underscore'),
         Handlebars      = require('handlebars'),
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
@@ -65,9 +66,79 @@ define(function (require) {
                             book = null,
                             books = new bookModel.BookCollection(),
                             chapters = new chapModel.ChapterCollection(),
+                            sourcePhrases = new spModel.SourcePhraseCollection(),
                             arr = [];
                         var readTextDoc = function (contents) {
+                            var re = /\s+/;
+                            var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
+                            var prepunct = "";
+                            var follpunct = "";
+                            var needsNewLine = false;
+                            var sp = null;
                             console.log("Fallback -- reading text file");
+                            index = 1;
+                            bookName = file.name;
+                            bookID = Underscore.uniqueId();
+                            // Create the book and chapter 
+                            // (for now, just one chapter -- eventually we could chunk this out based on file size)
+                            chapter = new chapModel.Chapter({
+                                id: proj.get('id') + ".." + bookID + "001",
+                                name: bookName,
+                                lastAdapted: 0,
+                                verseCount: 0
+                            });
+                            chapters.add(chapter);
+                            chapter.trigger('change');
+                            book = new bookModel.Book({
+                                id: proj.get('id') + ".." + bookID,
+                                name: bookName,
+                                chapters: []
+                            });
+                            books.add(book);
+                            book.trigger('change');
+                            if (proj.get('lastAdaptedID') === "") {
+                                if (bookID !== null) {
+                                    proj.set('lastAdaptedID', bookID + "001");
+                                }
+                            }
+                            if (proj.get('lastAdaptedName') === "") {
+                                proj.set('lastAdaptedName', bookName);
+                            }
+                            // parse the text file and create the SourcePhrases
+                            arr = contents.replace(newline, " <p> ").split(re); // insert special <p> for linefeeds, then split on whitespace
+//                            arr = contents.split(re);
+                            for (i = 0; i < arr.length; i++) {
+                                // text becomes a new SourcePhrase, <p> and punctuation become markers / punct
+                                if (arr[i] === "<p>") {
+                                    // newline -- make a note and keep going
+                                    needsNewLine = true;
+                                    continue;
+                                }
+                                // punctuation -- have to check our punctuation pairs
+//                                if (false) {
+//                                    // is this before or after a space? <<<<<<<<<<<<<<<<
+//                                    break;
+//                                }
+                                // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
+                                sp = new spModel.SourcePhrase({
+                                    id: proj.get('id') + file.name + "-" + index,
+                                    markers: (needsNewLine === true) ? "\\p" : "",
+                                    orig: null,
+                                    prepuncts: "",
+                                    midpuncts: "",
+                                    follpuncts: "",
+                                    source: arr[i],
+                                    target: ""
+                                });
+                                index++;
+                                sourcePhrases.add(sp);
+                                needsNewLine = false;
+                            }
+                            // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
+                            // negative value for the # of SourcePhrases in the text.
+                            chapter.set('verseCount', -(index));
+                            chapter.trigger('change');
+                            // Update the status string
                             if (status.length > 0) {
                                 status += "<br>";
                             }
@@ -173,7 +244,7 @@ define(function (require) {
                 readFile(0);
             },
             onShow: function () {
-                $("#selFile").attr("accept", ".xml,.usfm");
+//                $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
                 $("#OK").hide();
