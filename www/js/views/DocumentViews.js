@@ -114,6 +114,9 @@ define(function (require) {
                                     needsNewLine = true;
                                     continue;
                                 }
+                                if (arr[i].length === 0) {
+                                    continue; // blank entry -- skip
+                                }
                                 // punctuation -- have to check our punctuation pairs
 //                                if (false) {
 //                                    // is this before or after a space? <<<<<<<<<<<<<<<<
