@@ -29,6 +29,7 @@ define(function (require) {
         copyProjectView = null,
         homeView        = null,
         importDocView   = null,
+        db              = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -50,6 +51,10 @@ define(function (require) {
                   // with the region via `this`
                     slider.slidePage(view.$el);
                 });
+                // sqlitePlugin -- available on DeviceReady (mobile app)
+                if (window.sqlitePlugin) {
+                    this.db = window.sqlitePlugin.openDatabase({name: "AIM"});
+                }
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
                     // on mobile phone

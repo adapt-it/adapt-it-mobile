@@ -26,6 +26,7 @@
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
     <!-- PhoneGap Build - core plugins -->
     <gap:plugin name="org.adapt-it.cordova.fonts" source="plugins.cordova.io" />
+    <gap:plugin name="com.brodysoft.sqliteplugin" />
     <gap:plugin name="org.apache.cordova.file" />
     <gap:plugin name="org.apache.cordova.file-transfer" />
     <gap:plugin name="org.apache.cordova.globalization" />
