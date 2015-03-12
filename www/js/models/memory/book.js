@@ -100,16 +100,22 @@ define(function (require) {
                     }
                 }
             },
-            
+
             initialize: function () {
                 this.resetFromLocalStorage();
             },
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    findByName(options.data.name).done(function (data) {
-                        options.success(data);
-                    });
+                    if (options.data.id) {
+                        findById(options.data.id).done(function (data) {
+                            options.success(data);
+                        });
+                    } else if (options.data.name) {
+                        findByName(options.data.name).done(function (data) {
+                            options.success(data);
+                        });
+                    }
                 }
             }
 
