@@ -39,6 +39,7 @@ define(function (require) {
             defaults: {
                 id: "",
                 name: "",
+                filename: "",
                 chapters: 0
             },
             initialize: function () {
@@ -101,17 +102,31 @@ define(function (require) {
                 }
             },
 
+            resetFromDB: function (callback) {
+                directory.db.transaction(
+                    function (tx) {
+                        var sql =
+                            "CREATE TABLE IF NOT EXISTS book ( " +
+                            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                            "name VARCHAR(50), " +
+                            "chapters VARCHAR(50), ";
+                        console.log('Creating BOOK table');
+                        tx.executeSql(sql);
+                    }
+                );
+            },
+
             initialize: function () {
                 this.resetFromLocalStorage();
             },
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    if (options.data.id) {
+                    if (options.data.hasOwnProperty('id')) {
                         findById(options.data.id).done(function (data) {
                             options.success(data);
                         });
-                    } else if (options.data.name) {
+                    } else if (options.data.hasOwnProperty('name')) {
                         findByName(options.data.name).done(function (data) {
                             options.success(data);
                         });
