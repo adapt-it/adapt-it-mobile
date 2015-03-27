@@ -188,6 +188,13 @@ define(function (require) {
         },
 
         TargetUnit = Backbone.Model.extend({
+            defaults: {
+                id: null,
+                source: "",
+                refstring: [],
+                timestamp: "",
+                user: ""
+            },
 
             sync: function (method, model, options) {
                 if (method === "read") {
