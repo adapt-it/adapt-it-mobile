@@ -92,6 +92,7 @@ define(function (require) {
                             book = new bookModel.Book({
                                 id: proj.get('id') + ".." + bookID,
                                 name: bookName,
+                                filename: file.name,
                                 chapters: []
                             });
                             books.add(book);
@@ -193,6 +194,7 @@ define(function (require) {
                             book = new bookModel.Book({
                                 id: proj.get('id') + ".." + bookID.get('id'),
                                 name: bookName,
+                                filename: file.name,
                                 chapters: arr
                             });
                             books.add(book);
