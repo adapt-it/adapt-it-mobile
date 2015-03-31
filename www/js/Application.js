@@ -54,6 +54,9 @@ define(function (require) {
                 // sqlitePlugin -- available on DeviceReady (mobile app)
                 if (window.sqlitePlugin) {
                     this.db = window.sqlitePlugin.openDatabase({name: "AIM"});
+                } else {
+                    // running in browser -- use WebSQL (Chrome / Safari ONLY)
+                    this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
                 }
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
@@ -65,7 +68,7 @@ define(function (require) {
                     navigator.globalization.getLocaleName(
                         function (loc) {
 //                            alert('locale: ' + loc.value + '\n');
-                            locale = loc.value; 
+                            locale = loc.value;
                         },
                         function () {console.log('Error getting locale\n'); }
                     );
