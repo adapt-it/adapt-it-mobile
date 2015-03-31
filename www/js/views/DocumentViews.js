@@ -199,6 +199,7 @@ define(function (require) {
                                 chapters: arr
                             });
                             books.add(book);
+                            book.trigger('change');
                             firstChapterID = chapterID = Underscore.uniqueId();
                             for (i = 0; i < arr.length; i++) {
                                 // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
