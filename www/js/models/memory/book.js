@@ -49,7 +49,15 @@ define(function (require) {
             },
             fetch: function () {
                 // search for our key - b.<id>
-                this.set(JSON.parse(localStorage.getItem("b." + this.id)));
+//                this.set(JSON.parse(localStorage.getItem("b." + this.id)));
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                        console.log("SELECT ok: " + res.rows);
+                        this.set(JSON.parse(res.rows.item(0)));
+                    });
+                }, function (tx, err) {
+                    console.log("SELECT error: " + err.toString());
+                });
             },
             save: function () {
                 // is there a record already?
@@ -120,6 +128,29 @@ define(function (require) {
         BookCollection = Backbone.Collection.extend({
 
             model: Book,
+
+            resetFromDB: function () {
+                var i = 0,
+                    len = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from book;", [], function (tx, res) {
+                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                            // add the chapter
+                            var book = new Book();
+                            book.set(res.rows.item(i));
+                            books.push(book);
+                        }
+                        console.log("SELECT ok: " + res.rows);
+//                        this.set(JSON.parse(res.rows.item(0)));
+                    });
+                }, function (err) {
+                    console.log("SELECT error: " + err.toString());
+                });
+            },
+            
+            initialize: function () {
+                this.resetFromDB();
+            },
 
             sync: function (method, model, options) {
                 if (method === "read") {

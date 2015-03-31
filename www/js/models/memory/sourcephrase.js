@@ -147,6 +147,29 @@ define(function (require) {
 
             model: SourcePhrase,
 
+            resetFromDB: function () {
+                var i = 0,
+                    len = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from sourcephrase;", [], function (tx, res) {
+                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                            // add the chapter
+                            var sp = new SourcePhrase();
+                            sp.set(res.rows.item(i));
+                            sourcephrases.push(sp);
+                        }
+                        console.log("SELECT ok: " + res.rows);
+//                        this.set(JSON.parse(res.rows.item(0)));
+                    });
+                }, function (err) {
+                    console.log("SELECT error: " + err.toString());
+                });
+            },
+            
+            initialize: function () {
+                this.resetFromDB();
+            },
+
             sync: function (method, model, options) {
                 if (method === "read") {
                     findByName(options.data.name).done(function (data) {
