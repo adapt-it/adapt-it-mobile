@@ -7,154 +7,8 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         i           = 0,
-        /* hard-coded KB from the sample WEB data (see sourcephrase.js)
-        */
-        targetunits = [
-            {
-                "id": "en-us.en-au.0000001",
-                "source": "RUT",
-                "refstring": [
-                    {
-                        "target": "RUT",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000002",
-                "source": "08-RUT-web.sfm",
-                "refstring": [
-                    {
-                        "target": "08-RUT-web.sfm",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2014-01-01T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000003",
-                "source": "Ruth",
-                "refstring": [
-                    {
-                        "target": "Ruth",
-                        "n": "2"
-                    }
-                ],
-                "dt": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000004",
-                "source": "It",
-                "refstring": [
-                    {
-                        "target": "It",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000005",
-                "source": "happened",
-                "refstring": [
-                    {
-                        "target": "came about",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000006",
-                "source": "in",
-                "refstring": [
-                    {
-                        "target": "during",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000007",
-                "source": "the",
-                "refstring": [
-                    {
-                        "target": "the",
-                        "n": "2"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000008",
-                "source": "days",
-                "refstring": [
-                    {
-                        "target": "days",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000009",
-                "source": "when",
-                "refstring": [
-                    {
-                        "target": "when",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000010",
-                "source": "judges",
-                "refstring": [
-                    {
-                        "target": "judges",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000011",
-                "source": "judged",
-                "refstring": [
-                    {
-                        "target": "judged",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            },
-            {
-                "id": "en-us.en-au.0000012",
-                "source": "that",
-                "refstring": [
-                    {
-                        "target": "reallyreallyreallyreallyreallyloooooooooonnnnnnngstring",
-                        "n": "1"
-                    }
-                ],
-                "timestamp": "2013-09-18T18:50:35z",
-                "user": "user:machine"
-            }
-        ],
+        targetunits = [],
+        
         findById = function (id) {
             var deferred = $.Deferred(),
                 targetunit = null,
@@ -189,7 +43,8 @@ define(function (require) {
 
         TargetUnit = Backbone.Model.extend({
             defaults: {
-                id: null,
+                id: 0,
+                projectid: 0,
                 source: "",
                 refstring: [],
                 timestamp: "",

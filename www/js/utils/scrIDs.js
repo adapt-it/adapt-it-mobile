@@ -1,5 +1,7 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// scrIDs: Scripture ID data - name, 3-letter ID, number of chapters, etc.
 define(function (require) {
 
     "use strict";
@@ -10,7 +12,7 @@ define(function (require) {
         /* OT/NT books, including apocrypha
         * versification info taken from https://github.com/digitalbiblesociety/browserbible-3/blob/master/app/js/bible/bible.data.json
         */
-        bookIDs = [
+        scrIDs = [
             {
                 id: "GEN",
                 name: "Genesis",
@@ -538,28 +540,28 @@ define(function (require) {
         ],
         findById = function (id) {
             var deferred = $.Deferred(),
-                bookID = null,
-                l = bookIDs.length;
+                scrID = null,
+                l = scrIDs.length;
             for (i = 0; i < l; i++) {
-                if (bookIDs[i].id === id) {
-                    bookID = bookIDs[i];
+                if (scrIDs[i].id === id) {
+                    scrID = scrIDs[i];
                     break;
                 }
             }
-            deferred.resolve(bookID);
+            deferred.resolve(scrID);
             return deferred.promise();
         },
 
         findByName = function (searchKey) {
             var deferred = $.Deferred();
-            var results = bookIDs.filter(function (element) {
+            var results = scrIDs.filter(function (element) {
                 return element.id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();
         },
 
-        BookID = Backbone.Model.extend({
+        ScrID = Backbone.Model.extend({
             defaults: {
                 id: "",
                 name: "",
@@ -576,9 +578,9 @@ define(function (require) {
 
         }),
 
-        BookIDCollection = Backbone.Collection.extend({
+        ScrIDCollection = Backbone.Collection.extend({
 
-            model: BookID,
+            model: ScrID,
 
             sync: function (method, model, options) {
                 if (method === "read") {
@@ -591,8 +593,8 @@ define(function (require) {
         });
 
     return {
-        BookID: BookID,
-        BookIDCollection: BookIDCollection
+        ScrID: ScrID,
+        ScrIDCollection: ScrIDCollection
     };
 
 });

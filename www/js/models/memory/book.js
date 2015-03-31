@@ -37,10 +37,12 @@ define(function (require) {
 
         Book = Backbone.Model.extend({
             defaults: {
-                id: "",
+                bookid: "",
+                projectid: 0,
+                scrid: "",
                 name: "",
                 filename: "",
-                chapters: 0
+                chapters: ""
             },
             initialize: function () {
                 this.on('change', this.save, this);
@@ -49,15 +51,45 @@ define(function (require) {
                 // search for our key - b.<id>
                 this.set(JSON.parse(localStorage.getItem("b." + this.id)));
             },
-            save: function (attributes) {
-                // only save if the id actually has a value
-                if (this.id.length > 1) {
-                    // save with a key of b.<id>
-                    localStorage.setItem(("b." + this.id), JSON.stringify(this));
-                }
+            save: function () {
+                // is there a record already?
+                var attributes = this.attributes;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT COUNT(id) AS cnt FROM book WHERE projectid=? AND scrid=?;", [attributes.projectid, attributes.scrid], function (tx, res) {
+                        console.log("SELECT ok: " + res.toString());
+                        if (res.rows.item(0).cnt > 0) {
+                            // there's already a record for this id -- update the values
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("UPDATE book SET bookid=?, name=?, filename=?, chapters=? WHERE projectid=? and scrid=?;", [attributes.bookid, attributes.name, attributes.filename, attributes.chapters, attributes.projectid, attributes.scrid], function (tx, res) {
+                                    console.log("UPDATE ok: " + res.toString());
+                                });
+                            }, function (err) {
+                                console.log("UPDATE error: " + err.toString());
+                            });
+                        } else {
+                            // new record -- insert
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("INSERT INTO book (bookid,projectid,scrid,name,filename,chapters) VALUES (?,?,?,?,?,?);", [attributes.bookid, attributes.projectid, attributes.scrid, attributes.name, attributes.filename, attributes.chapters], function (tx, res) {
+                                    console.log("INSERT ok: " + res.toString());
+                                });
+                            }, function (err) {
+                                console.log("INSERT error: " + err.toString());
+                            });
+                        }
+                    }, function (tx, err) {
+                        console.log("SELECT error: " + err.toString());
+                    });
+                });
             },
             destroy: function (options) {
-                localStorage.removeItem(this.id);
+//                localStorage.removeItem(this.id);
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                        console.log("DELETE ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("DELETE error: " + err.toString());
+                    });
+                });
             },
 
             sync: function (method, model, options) {
@@ -88,37 +120,6 @@ define(function (require) {
         BookCollection = Backbone.Collection.extend({
 
             model: Book,
-
-            resetFromLocalStorage: function () {
-                var i = 0,
-                    len = 0;
-                for (i = 0, len = localStorage.length; i < len; ++i) {
-                    // if this is a book, add it to our collection
-                    if (localStorage.key(i).substr(0, 2) === "b.") {
-                        var bk = new Book();
-                        bk.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
-                        books.push(bk);
-                    }
-                }
-            },
-
-            resetFromDB: function (callback) {
-                directory.db.transaction(
-                    function (tx) {
-                        var sql =
-                            "CREATE TABLE IF NOT EXISTS book ( " +
-                            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                            "name VARCHAR(50), " +
-                            "chapters VARCHAR(50), ";
-                        console.log('Creating BOOK table');
-                        tx.executeSql(sql);
-                    }
-                );
-            },
-
-            initialize: function () {
-                this.resetFromLocalStorage();
-            },
 
             sync: function (method, model, options) {
                 if (method === "read") {

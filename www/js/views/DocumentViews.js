@@ -16,7 +16,7 @@ define(function (require) {
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         chapModel       = require('app/models/chapter'),
-        bookIDs         = require('app/utils/bookIDs'),
+        scrIDs         = require('app/utils/scrIDs'),
         lines           = [],
 
         ImportDocumentView = Marionette.ItemView.extend({
@@ -49,7 +49,7 @@ define(function (require) {
                     var file = files[fileindex];
                     reader.onloadend = function (e) {
                         var value = "",
-                            bookID = null,
+                            scrID = null,
                             bookName = "",
                             chap = 0,
                             verse = 0,
@@ -67,7 +67,10 @@ define(function (require) {
                             books = new bookModel.BookCollection(),
                             chapters = new chapModel.ChapterCollection(),
                             sourcePhrases = new spModel.SourcePhraseCollection(),
-                            arr = [];
+                            arr = [],
+                            bookID = "",
+                            chapterID = "",
+                            spID = "";
                         var readTextDoc = function (contents) {
                             var re = /\s+/;
                             var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
@@ -80,27 +83,28 @@ define(function (require) {
                             bookName = file.name;
                             bookID = Underscore.uniqueId();
                             // Create the book and chapter 
-                            // (for now, just one chapter -- eventually we could chunk this out based on file size)
-                            chapter = new chapModel.Chapter({
-                                id: proj.get('id') + ".." + bookID + "001",
-                                name: bookName,
-                                lastAdapted: 0,
-                                verseCount: 0
-                            });
-                            chapters.add(chapter);
-                            chapter.trigger('change');
                             book = new bookModel.Book({
-                                id: proj.get('id') + ".." + bookID,
+                                bookid: bookID,
+                                projectid: proj.get('id'),
                                 name: bookName,
                                 filename: file.name,
                                 chapters: []
                             });
                             books.add(book);
                             book.trigger('change');
-                            if (proj.get('lastAdaptedID') === "") {
-                                if (bookID !== null) {
-                                    proj.set('lastAdaptedID', bookID + "001");
-                                }
+                            // (for now, just one chapter -- eventually we could chunk this out based on file size)
+                            chapterID = Underscore.uniqueId();
+                            chapter = new chapModel.Chapter({
+                                chapterid: chapterID,
+                                bookid: bookID,
+                                name: bookName,
+                                lastAdapted: 0,
+                                verseCount: 0
+                            });
+                            chapters.add(chapter);
+                            if (proj.get('lastAdaptedBookID') === "0") {
+                                proj.set('lastAdaptedBookID', bookID);
+                                proj.set('lastAdaptedChapterID', chapterID);
                             }
                             if (proj.get('lastAdaptedName') === "") {
                                 proj.set('lastAdaptedName', bookName);
@@ -124,8 +128,11 @@ define(function (require) {
 //                                    break;
 //                                }
                                 // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
+                                spID = Underscore.uniqueId();
                                 sp = new spModel.SourcePhrase({
-                                    id: proj.get('id') + file.name + "-" + index,
+                                    spid: spID,
+                                    bookid: bookID,
+                                    chapterid: chapterID,
                                     markers: (needsNewLine === true) ? "\\p" : "",
                                     orig: null,
                                     prepuncts: "",
@@ -136,12 +143,13 @@ define(function (require) {
                                 });
                                 index++;
                                 sourcePhrases.add(sp);
+                                sp.trigger('change');
                                 needsNewLine = false;
                             }
                             // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                             // negative value for the # of SourcePhrases in the text.
                             chapter.set('verseCount', -(index));
-                            chapter.trigger('change');
+//                            chapter.trigger('change');
                             // Update the status string
                             if (status.length > 0) {
                                 status += "<br>";
@@ -160,16 +168,18 @@ define(function (require) {
                         var readUSFMDoc = function (contents) {
                             console.log("Reading USFM file");
                             // find the ID of this book
-                            var bookIDList = new bookIDs.BookIDCollection();
-                            bookIDList.fetch({reset: true, data: {id: ""}});
+                            var scrIDList = new scrIDs.ScrIDCollection();
+                            var firstChapterID = "";
+                            scrIDList.fetch({reset: true, data: {id: ""}});
                             index = contents.indexOf("\\id");
                             if (index === -1) {
                                 // no ID found -- just return
                                 return null;
                             }
-                            bookID = bookIDList.where({id: contents.substr(index + 4, 3)})[0];
+                            scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
+                            arr = scrID.get('chapters');
                             books.fetch({reset: true, data: {name: ""}});
-                            if (books.where({id: (proj.get('id') + ".." + bookID)}).length > 0) {
+                            if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                                 // this book is already in the list -- just return
                                 return null;
                             }
@@ -179,30 +189,34 @@ define(function (require) {
                                 bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
                             }
                             // add a book and chapters
-                            arr = bookID.get('chapters');
-                            for (i = 0; i < arr.length; i++) {
-                                // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
-                                chapter = new chapModel.Chapter({
-                                    id: proj.get('id') + ".." + bookID.get('id') + ("00" + (i + 1)).slice(-3),
-                                    name: (bookName + " " + (i + 1)),
-                                    lastAdapted: 0,
-                                    verseCount: arr[i]
-                                });
-                                chapters.add(chapter);
-                                chapter.trigger('change');
-                            }
+                            bookID = Underscore.uniqueId();
                             book = new bookModel.Book({
-                                id: proj.get('id') + ".." + bookID.get('id'),
+                                bookid: bookID,
+                                projectid: proj.get('id'),
+                                scrid: scrID.get('id'),
                                 name: bookName,
                                 filename: file.name,
                                 chapters: arr
                             });
                             books.add(book);
-                            book.trigger('change');
-                            if (proj.get('lastAdaptedID') === "") {
-                                if (bookID !== null) {
-                                    proj.set('lastAdaptedID', bookID.get('id') + "001");
-                                }
+                            firstChapterID = chapterID = Underscore.uniqueId();
+                            for (i = 0; i < arr.length; i++) {
+                                // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
+//                                    id: proj.get('id') + ".." + scrID.get('id') + ("00" + (i + 1)).slice(-3),
+                                chapter = new chapModel.Chapter({
+                                    chapterid: chapterID,
+                                    bookid: bookID,
+                                    name: (bookName + " " + (i + 1)),
+                                    lastAdapted: 0,
+                                    verseCount: arr[i]
+                                });
+                                chapterID = Underscore.uniqueId();
+                                chapters.add(chapter);
+                                chapter.trigger('change');
+                            }
+                            if (proj.get('lastAdaptedBookID') === 0) {
+                                proj.set('lastAdaptedBookID', bookID);
+                                proj.set('lastAdaptedChapterID', firstChapterID);
                             }
                             if (proj.get('lastAdaptedName') === "") {
                                 // TODO: localization of chapter numbers?
@@ -228,11 +242,6 @@ define(function (require) {
                         // set the lastDocument / lastAdapted<xxx> values if not already set
                         if (proj.get('lastDocument') === "") {
                             proj.set('lastDocument', name);
-                        }
-                        if (proj.get('lastAdaptedID') === "") {
-                            if (bookID !== null) {
-                                proj.set('lastAdaptedID', bookID.get('id') + "001");
-                            }
                         }
                         if (proj.get('lastAdaptedName') === "") {
                             // TODO: localization of chapter numbers?

@@ -123,7 +123,8 @@ define(function (require) {
                             model.set("FilterMarkers", value);
                         }
                     }
-                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
+//                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
+                    value = Underscore.uniqueId();
                     model.set("id", value);
                     // The following settings require some extra work
                     // Punctuation pairs
@@ -1042,7 +1043,8 @@ define(function (require) {
                     this.model.set("TargetDir", ($('#tRTL').is(':checked') === true) ? "rtl" : "ltr");
                     // also set the ID and name of the project, now that we (should) have both source and target defined
                     // TODO: do we need to add the variant to the ID and/or name?
-                    value = this.model.get("SourceLanguageCode") + "." + this.model.get("TargetLanguageCode");
+//                    value = this.model.get("SourceLanguageCode") + "." + this.model.get("TargetLanguageCode");
+                    value = Underscore.uniqueId();
                     this.model.set("id", value);
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}));
                     console.log("id: " + value);

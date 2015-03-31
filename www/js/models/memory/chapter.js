@@ -34,7 +34,8 @@ define(function (require) {
 
         Chapter = Backbone.Model.extend({
             defaults: {
-                id: "",
+                chapterid: "",
+                bookid: "",
                 name: "",
                 lastAdapted: 0,
                 verseCount: 0
@@ -44,17 +45,54 @@ define(function (require) {
             },
             fetch: function () {
                 // search for our key - b.<id>
-                this.set(JSON.parse(localStorage.getItem("c." + this.id)));
+//                this.set(JSON.parse(localStorage.getItem("c." + this.id)));
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from chapter WHERE chapterid=?;", [this.attributes.chapterid], function (tx, res) {
+                        console.log("SELECT ok: " + res.rows);
+                        this.set(JSON.parse(res.rows.item(0)));
+                    });
+                }, function (tx, err) {
+                    console.log("SELECT error: " + err.toString());
+                });
             },
-            save: function (attributes) {
-                // only save if the id actually has a value
-                if (this.id.length > 1) {
-                    // save with a key of c.<id>
-                    localStorage.setItem(("c." + this.id), JSON.stringify(this));
-                }
+            save: function () {
+                // is there a record already?
+                var attributes = this.attributes;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT COUNT(id) AS cnt FROM chapter WHERE chapterid=?;", [attributes.chapterid], function (tx, res) {
+                        console.log("SELECT ok: " + res.toString());
+                        if (res.rows.item(0).cnt > 0) {
+                            // there's already a record for this id -- update the values
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("UPDATE chapter SET bookid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.name, attributes.lastAdapted, attributes.verseCount, attributes.chapterid], function (tx, res) {
+                                    console.log("UPDATE ok: " + res.toString());
+                                });
+                            }, function (err) {
+                                console.log("UPDATE error: " + err.toString());
+                            });
+                        } else {
+                            // new record -- insert
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,name,lastadapted,versecount) VALUES (?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.name, attributes.lastAdapted, attributes.verseCount], function (tx, res) {
+                                    console.log("INSERT ok: " + res.toString());
+                                });
+                            }, function (err) {
+                                console.log("INSERT error: " + err.toString());
+                            });
+                        }
+                    }, function (tx, err) {
+                        console.log("SELECT error: " + err.toString());
+                    });
+                });
             },
             destroy: function (options) {
-                localStorage.removeItem(this.id);
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("DELETE FROM chapter WHERE chapterid=?;", [this.attributes.chapterid], function (tx, res) {
+                        console.log("DELETE ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("DELETE error: " + err.toString());
+                    });
+                });
             },
             
             sync: function (method, model, options) {

@@ -235,10 +235,11 @@ define(function (require) {
                 SourceDir: "",
                 TargetDir: "",
                 NavDir: "",
-                id: "",
+                id: 0,
                 name: "",
                 lastDocument: "",
-                lastAdaptedID: "",
+                lastAdaptedBookID: 0,
+                lastAdaptedChapterID: 0,
                 lastAdaptedName: "",
                 CustomFilters: "false",
                 FilterMarkers: "\\lit \\_table_grid \\_header \\_intro_base \\x \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\xt \\_notes_base \\__normal \\xdc \\ide \\mr \\xq \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\xot \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\xk \\_list_base \\ib \\xnt \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\xo \\_single_boxed_para \\sts "
@@ -253,10 +254,22 @@ define(function (require) {
             },
             save: function (attributes) {
                 // only save if the id actually has a value
-                if (this.id.length > 1) {
+                if (this.id > 0) {
                     // save with a key of p.<id>
                     localStorage.setItem(("p." + this.id), JSON.stringify(this));
                 }
+                window.Application.db.transaction(function (tx) {
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, projectid integer, source text, timestamp text, user text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, name text, lastadapted integer, versecount integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, bookid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
+                });
+                
+//                window.Application.db.transaction(function (tx) {
+//                    tx.executeSql("INSERT INTO project VALUES (\'" + this.id + "\',\'" + + "\')", ["test", 100], function (tx, res) {
+//                    });
+//                });
             },
             destroy: function (options) {
                 localStorage.removeItem(this.id);
@@ -306,6 +319,54 @@ define(function (require) {
                     }
                 }
             },
+            
+//            resetFromDB: function (callback) {
+//                directory.db.transaction(
+//                    function (tx) {
+//                        var sql =
+//                            "CREATE TABLE IF NOT EXISTS project ( " +
+//                            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                            "SourceFont VARCHAR(50), " +
+//                            "SourceFontSize VARCHAR(3), " +
+//                            "SourceFontColor VARCHAR(8), " +
+//                            "TargetFont VARCHAR(50), " +
+//                            "TargetFontSize VARCHAR(3), " +
+//                            "TargetFontColor VARCHAR(8), " +
+//                            "NavigationFont VARCHAR(50), " +
+//                            "NavigationFontSize VARCHAR(3), " +
+//                            "NavigationFontColor VARCHAR(8), " +
+//                            "SourceLanguageName VARCHAR(50), " +
+//                            "TargetLanguageName VARCHAR(50), " +
+//                            "SourceLanguageCode VARCHAR(50), " +
+//                            "TargetLanguageCode VARCHAR(50), " +
+//                            "SourceVariant VARCHAR(40), " +
+//                            "TargetVariant VARCHAR(40), " +
+//                            "CopyPunctuation BOOLEAN, " +
+//                            "PunctPairs VARCHAR(40), " +
+//                            "AutoCapitalization BOOLEAN, " +
+//                            "SourceHasUpperCase BOOLEAN, " +
+//                            "CasePairs VARCHAR(40), " +
+//                            "SourceDir VARCHAR(4), " +
+//                            "TargetDir VARCHAR(4), " +
+//                            "NavDir VARCHAR(4), " +
+//                            "name VARCHAR(50), " +
+//                            "LastDocument VARCHAR(50), " +
+//                            "LastAdaptedName VARCHAR(50), " +
+//                            "LastAdaptedChapter VARCHAR(50), " +
+//                            "LastAdaptedID VARCHAR(50), " +
+//                            "CustomFilters BOOLEAN, " +
+//                            "FilterMarkers VARCHAR(1000))";
+//                        console.log('Creating EMPLOYEE table');
+//                        tx.executeSql(sql);
+//                    },
+//                    function (tx, error) {
+//                        alert('Transaction error ' + error);
+//                    },
+//                    function (tx) {
+//                        callback();
+//                    }
+//                );
+//            },
             
             initialize: function () {
                 this.resetFromLocalStorage();
