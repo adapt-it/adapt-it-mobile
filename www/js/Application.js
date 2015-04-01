@@ -22,6 +22,7 @@ define(function (require) {
         PageSlider      = require('app/utils/pageslider'),
         slider          = new PageSlider($('body')),
         ProjectList     = null,
+        ChapterList     = null,
         lookupView      = null,
         helpView        = null,
         newProjectView  = null,
@@ -90,6 +91,8 @@ define(function (require) {
                     // Tell backbone we're ready to start loading the View classes.
                     ProjectList = new projModel.ProjectCollection();
                     ProjectList.fetch({reset: true, data: {name: ""}});
+                    ChapterList = new chapterModel.ChapterCollection();
+                    ChapterList.fetch({reset: true, data: {name: ""}});
 
                     Backbone.history.start();
                 });
@@ -188,15 +191,15 @@ define(function (require) {
 //                });
             },
 
-            adaptChapter: function (projid, bookid) {
+            adaptChapter: function (id) {
                 console.log("adaptChapter");
-                var chapter = new chapterModel.Chapter({id: bookid});
-                chapter.fetch({
-                    success: function (data) {
-//                            slider.slidePage(new ChapterView({model: data}).$el);
-                        window.Application.main.show(new AdaptViews.ChapterView({model: data}));
-                    }
-                });
+                ChapterList.fetch({reset: true, data: {name: ""}});
+                var chapter = ChapterList.findWhere({chapterid: id});
+                if (chapter) {
+                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
+                } else {
+                    console.log("no chapter found");
+                }
             }
         });
     

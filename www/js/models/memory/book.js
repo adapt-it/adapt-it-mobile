@@ -48,12 +48,11 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                // search for our key - b.<id>
-//                this.set(JSON.parse(localStorage.getItem("b." + this.id)));
+                var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT * from book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                    tx.executeSql("SELECT * from book WHERE bookid=?;", [attributes.bookid], function (tx, res) {
                         console.log("SELECT ok: " + res.rows);
-                        this.set(JSON.parse(res.rows.item(0)));
+                        this.set(res.rows.item(0));
                     });
                 }, function (tx, err) {
                     console.log("SELECT error: " + err.toString());
@@ -137,10 +136,12 @@ define(function (require) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
                             var book = new Book();
+                            book.off("change");
                             book.set(res.rows.item(i));
                             books.push(book);
+                            book.on("change", book.save, book);
                         }
-                        console.log("SELECT ok: " + res.rows);
+                        console.log("SELECT ok: " + res.rows.length + " book items");
 //                        this.set(JSON.parse(res.rows.item(0)));
                     });
                 }, function (err) {

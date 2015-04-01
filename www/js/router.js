@@ -19,7 +19,7 @@ define(function (require) {
             "project/:id":  "editProject",      // #project/projectID
             "search/:id":   "lookupChapter",    // #search/projectID
             "import/:id":   "importBooks",      // #import/projectID (import books into projectID)
-            "adapt/:projid/:bookid":    "adaptChapter"      // #adapt/projectID/RUT001 (3-letter ID of book + 3 digit chapter number)
+            "adapt/:chapterid":    "adaptChapter"      // #adapt/chapterID (adapt chapterID)
         }
     });
 });

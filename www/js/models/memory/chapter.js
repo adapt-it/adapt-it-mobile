@@ -44,16 +44,19 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                // search for our key - b.<id>
-//                this.set(JSON.parse(localStorage.getItem("c." + this.id)));
+                var deferred = $.Deferred();
+                var obj = this;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT * from chapter WHERE chapterid=?;", [this.attributes.chapterid], function (tx, res) {
+                    tx.executeSql("SELECT * from chapter WHERE chapterid=?;", [obj.attributes.chapterid], function (tx, res) {
                         console.log("SELECT ok: " + res.rows);
-                        this.set(JSON.parse(res.rows.item(0)));
+                        obj.set(res.rows.item(0));
+                        deferred.resolve(obj);
                     });
-                }, function (tx, err) {
+                }, function (err) {
                     console.log("SELECT error: " + err.toString());
+                    deferred.reject(err);
                 });
+                return deferred.promise();
             },
             save: function () {
                 // is there a record already?
@@ -133,25 +136,16 @@ define(function (require) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
                             var ch = new Chapter();
+                            ch.off("change");
                             ch.set(res.rows.item(i));
                             chapters.push(ch);
+                            ch.on("change", ch.save, ch);
                         }
-                        console.log("SELECT ok: " + res.rows);
-//                        this.set(JSON.parse(res.rows.item(0)));
+                        console.log("SELECT ok: " + res.rows.length + " chapter items");
                     });
                 }, function (err) {
                     console.log("SELECT error: " + err.toString());
                 });
-//                var i = 0,
-//                    len = 0;
-//                for (i = 0, len = localStorage.length; i < len; ++i) {
-//                    // if this is a chapter, add it to our collection
-//                    if (localStorage.key(i).substr(0, 2) === "c.") {
-//                        var ch = new Chapter();
-//                        ch.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
-//                        chapters.push(ch);
-//                    }
-//                }
             },
             
             initialize: function () {

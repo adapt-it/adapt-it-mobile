@@ -848,11 +848,11 @@ define(function (require) {
                 this.render();
             },
             render: function () {
-                var myid = this.model.get('id');
+                var chapterid = this.model.get('chapterid');
                 // fetch the KB for this project
                 this.kblist.fetch({reset: true, data: {name: this.project.id}});
                 // fetch the source phrases in this chapter
-                this.spList.fetch({reset: true, data: {name: myid}});
+                this.spList.fetch({reset: true, data: {name: chapterid}});
                 this.$el.html(template(this.model.toJSON()));
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});

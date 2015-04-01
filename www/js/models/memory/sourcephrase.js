@@ -67,12 +67,10 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                // find our 
-                // search for our key - p.<id>
-//                this.set(JSON.parse(localStorage.getItem("p." + this.id)));
+                var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT * FROM sourcephrase WHERE spid=?;", [this.attribues.spid], function (tx, res) {
-                        this.set(JSON.parse(res.rows.item(0)));
+                    tx.executeSql("SELECT * FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
+                        this.set(res.rows.item(0));
                     });
                 });
                 
@@ -155,10 +153,12 @@ define(function (require) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
                             var sp = new SourcePhrase();
+                            sp.off("change");
                             sp.set(res.rows.item(i));
                             sourcephrases.push(sp);
+                            sp.on("change", sp.save, sp);
                         }
-                        console.log("SELECT ok: " + res.rows);
+                        console.log("SELECT ok: " + res.rows.length + " sourcephrase items");
 //                        this.set(JSON.parse(res.rows.item(0)));
                     });
                 }, function (err) {
