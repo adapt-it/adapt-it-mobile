@@ -37,8 +37,8 @@ define(function (require) {
                 chapterid: "",
                 bookid: "",
                 name: "",
-                lastAdapted: 0,
-                verseCount: 0
+                lastadapted: 0,
+                versecount: 0
             },
             initialize: function () {
                 this.on('change', this.save, this);
@@ -64,7 +64,7 @@ define(function (require) {
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("UPDATE chapter SET bookid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.name, attributes.lastAdapted, attributes.verseCount, attributes.chapterid], function (tx, res) {
+                                tx.executeSql("UPDATE chapter SET bookid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
                                     console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
@@ -73,7 +73,7 @@ define(function (require) {
                         } else {
                             // new record -- insert
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,name,lastadapted,versecount) VALUES (?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.name, attributes.lastAdapted, attributes.verseCount], function (tx, res) {
+                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,name,lastadapted,versecount) VALUES (?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
                                     console.log("INSERT ok: " + res.toString());
                                 });
                             }, function (err) {

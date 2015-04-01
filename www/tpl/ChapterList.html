@@ -6,24 +6,24 @@
 <li class="topcoat-list__item">
     <a href="#adapt/{{this.id}}">
     {{this.name}}
-    {{#ifCond this.verseCount 'lt' 0}}
-        {{#ifCond this.lastAdapted '==' this.verseCount}}
+    {{#ifCond this.versecount 'lt' 0}}
+        {{#ifCond this.lastadapted '==' this.versecount}}
             <span class="sectionStatus">{{t 'view.lblStatusFullyTranslated'}}</span>
         {{else}} 
-            {{#ifCond this.lastAdapted '==' 0}}
+            {{#ifCond this.lastadapted '==' 0}}
               <span class="sectionStatus">{{t 'view.lblStatusNotTranslatedNoVerses'}}</span>
             {{else}}
               <span class="sectionStatus">{{t 'view.lblStatusPartlyTranslatedNoVerses'}}</span>
             {{/ifCond}}
         {{/ifCond}}
     {{else}}
-        {{#ifCond this.lastAdapted '==' this.verseCount}}
+        {{#ifCond this.lastadapted '==' this.versecount}}
             <span class="sectionStatus">{{t 'view.lblStatusFullyTranslated'}}</span>
         {{else}} 
-            {{#ifCond this.lastAdapted '==' 0}}
-              <span class="sectionStatus">{{tr this key='view.lblStatusNotTranslated' add=this.verseCount}}</span>
+            {{#ifCond this.lastadapted '==' 0}}
+              <span class="sectionStatus">{{tr this key='view.lblStatusNotTranslated' add=this.versecount}}</span>
             {{else}}
-              <span class="sectionStatus">{{tr this key='view.lblStatusPartlyTranslated' add=this.verseCount}}</span>
+              <span class="sectionStatus">{{tr this key='view.lblStatusPartlyTranslated' add=this.versecount}}</span>
             {{/ifCond}}
         {{/ifCond}}
     {{/ifCond}}

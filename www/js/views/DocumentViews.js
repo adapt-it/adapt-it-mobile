@@ -98,8 +98,8 @@ define(function (require) {
                                 chapterid: chapterID,
                                 bookid: bookID,
                                 name: bookName,
-                                lastAdapted: 0,
-                                verseCount: 0
+                                lastadapted: 0,
+                                versecount: 0
                             });
                             chapters.add(chapter);
                             if (proj.get('lastAdaptedBookID') === "0") {
@@ -148,7 +148,7 @@ define(function (require) {
                             }
                             // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                             // negative value for the # of SourcePhrases in the text.
-                            chapter.set('verseCount', -(index));
+                            chapter.set('versecount', -(index));
 //                            chapter.trigger('change');
                             // Update the status string
                             if (status.length > 0) {
@@ -208,8 +208,8 @@ define(function (require) {
                                     chapterid: chapterID,
                                     bookid: bookID,
                                     name: (bookName + " " + (i + 1)),
-                                    lastAdapted: 0,
-                                    verseCount: arr[i]
+                                    lastadapted: 0,
+                                    versecount: arr[i]
                                 });
                                 chapterID = Underscore.uniqueId();
                                 chapters.add(chapter);
