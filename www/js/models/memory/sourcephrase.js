@@ -12,25 +12,18 @@ define(function (require) {
         Backbone    = require('backbone'),
         sourcephrases = [],
 
-        findById = function (id) {
-            var i = 0,
-                deferred = $.Deferred(),
-                sourcephrase = null,
-                l = sourcephrases.length;
-            for (i = 0; i < l; i++) {
-                if (sourcephrases[i].id === id) {
-                    sourcephrase = sourcephrases[i];
-                    break;
-                }
-            }
-            deferred.resolve(sourcephrase);
-            return deferred.promise();
-        },
-
-        findByName = function (searchKey) {
+        findById = function (searchKey) {
             var deferred = $.Deferred();
             var results = sourcephrases.filter(function (element) {
-                return element.id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+                return element.attributes.spid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
+            return deferred.promise();
+        },
+        findByChapterId = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = sourcephrases.filter(function (element) {
+                return element.attributes.chapterid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();
@@ -172,9 +165,15 @@ define(function (require) {
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    findByName(options.data.name).done(function (data) {
-                        options.success(data);
-                    });
+                    if (options.data.hasOwnProperty('id')) {
+                        findById(options.data.id).done(function (data) {
+                            options.success(data);
+                        });
+                    } else if (options.data.hasOwnProperty('chapterid')) {
+                        findByChapterId(options.data.chapterid).done(function (data) {
+                            options.success(data);
+                        });
+                    }
                 }
             }
 

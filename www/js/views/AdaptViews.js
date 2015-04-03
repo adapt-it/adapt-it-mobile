@@ -840,19 +840,19 @@ define(function (require) {
 
             initialize: function () {
                 var coll = new projModel.ProjectCollection();
+                var chapterid = this.model.get('chapterid');
                 coll.fetch({reset: true, data: {name: ""}});
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
                 this.kblist = new kbModels.TargetUnitCollection();
                 this.project = coll.at(0);
-                this.render();
-            },
-            render: function () {
-                var chapterid = this.model.get('chapterid');
                 // fetch the KB for this project
                 this.kblist.fetch({reset: true, data: {name: this.project.id}});
                 // fetch the source phrases in this chapter
-                this.spList.fetch({reset: true, data: {name: chapterid}});
+                this.spList.fetch({reset: true, data: {chapterid: chapterid}});
+            },
+            render: function () {
+                template = Handlebars.compile(tplChapter);
                 this.$el.html(template(this.model.toJSON()));
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});

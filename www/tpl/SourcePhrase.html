@@ -1,7 +1,7 @@
-<div class="marker">{{this.markers}}&nbsp;</div>
-<div class="source">{{this.prepuncts}}{{this.source}}{{this.follpuncts}}</div>
+<div class="marker">a{{this.markers}}&nbsp;</div>
+<div class="source">b{{this.prepuncts}}{{this.source}}{{this.follpuncts}}</div>
 {{#ifCond this.source '!=' this.target}}
-<div class="target differences">{{this.target}}&nbsp;</div>
+<div class="target differences">c{{this.target}}&nbsp;</div>
 {{else}}
-<div class="target">{{this.target}}&nbsp;</div>
+<div class="target">c{{this.target}}&nbsp;</div>
 {{/ifCond}}

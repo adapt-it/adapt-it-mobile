@@ -17,12 +17,14 @@ define(function (require) {
         AdaptViews      = require('app/views/AdaptViews'),
         projModel       = require('app/models/project'),
         chapterModel    = require('app/models/chapter'),
+        spModel         = require('app/models/sourcephrase'),
         AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
         slider          = new PageSlider($('body')),
         ProjectList     = null,
         ChapterList     = null,
+        spList          = null,
         lookupView      = null,
         helpView        = null,
         newProjectView  = null,
@@ -93,6 +95,8 @@ define(function (require) {
                     ProjectList.fetch({reset: true, data: {name: ""}});
                     ChapterList = new chapterModel.ChapterCollection();
                     ChapterList.fetch({reset: true, data: {name: ""}});
+                    spList = new spModel.SourcePhraseCollection();
+                    spList.fetch({reset: true, data: {name: ""}});
 
                     Backbone.history.start();
                 });
