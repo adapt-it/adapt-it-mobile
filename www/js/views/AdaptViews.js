@@ -14,7 +14,7 @@ define(function (require) {
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
         tplChapter  = require('text!tpl/Chapter.html'),
-        tplSoursePhraseList = require('text!tpl/SourcePhraseList.html'),
+        tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
@@ -36,7 +36,7 @@ define(function (require) {
         }),
         
         SourcePhraseListView = Marionette.CollectionView.extend({
-            template: Handlebars.compile(tplSoursePhraseList),
+            template: Handlebars.compile(tplSourcePhraseList),
     //        itemView: SourcePhraseView;
 
             initialize: function () {
@@ -50,6 +50,7 @@ define(function (require) {
             },
             render: function () {
                 // add the collection
+                template = Handlebars.compile(tplSourcePhraseList);
                 this.$el.html(template(this.collection.toJSON()));
                 // go back and add the individual piles
                 this.collection.each(this.addOne, this);
@@ -835,9 +836,11 @@ define(function (require) {
             }
         }),
 
-        ChapterView = Marionette.ItemView.extend({
+        ChapterView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplChapter),
-
+            regions: {
+                container: "#chapter"
+            },
             initialize: function () {
                 var coll = new projModel.ProjectCollection();
                 var chapterid = this.model.get('chapterid');
