@@ -10,7 +10,7 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         i18n            = require('i18n'),
-        sax             = require('sax'),
+//        sax             = require('sax'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
@@ -131,7 +131,6 @@ define(function (require) {
                                 spID = Underscore.uniqueId();
                                 sp = new spModel.SourcePhrase({
                                     spid: spID,
-                                    bookid: bookID,
                                     chapterid: chapterID,
                                     markers: (needsNewLine === true) ? "\\p" : "",
                                     orig: null,
@@ -157,7 +156,57 @@ define(function (require) {
                             status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
                         };
                         var readXMLDoc = function (contents) {
+                            var re = /\s+/;
+                            var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
+                            var prepunct = "";
+                            var follpunct = "";
+                            var needsNewLine = false;
+                            var sp = null;
+                            var xmlDoc = $.parseXML(contents);
                             console.log("Reading XML file");
+                            index = 1;
+                            bookName = file.name;
+                            bookID = Underscore.uniqueId();
+                            // Create the book and chapter 
+                            book = new bookModel.Book({
+                                bookid: bookID,
+                                projectid: proj.get('id'),
+                                name: bookName,
+                                filename: file.name,
+                                chapters: []
+                            });
+                            books.add(book);
+                            book.trigger('change');
+                            var $xml = $(xmlDoc);
+                            $.get($xml, function(toc) {
+                                function processSP () {
+                                    // test for new Chapter
+                                    // if (this.m.indexof("\\c ") > -1) {
+                                    // // > create a chapter -- use new chapterID
+                                    // }
+                                    //
+//                                    spID = Underscore.uniqueId();
+//                                    sp = new spModel.SourcePhrase({
+//                                        spid: spID,
+//                                        chapterid: chapterID,
+//                                        markers: (needsNewLine === true) ? "\\p" : "",
+//                                        orig: null,
+//                                        prepuncts: "",
+//                                        midpuncts: "",
+//                                        follpuncts: "",
+//                                        source: arr[i],
+//                                        target: ""
+//                                    });
+//                                    index++;
+//                                    sourcePhrases.add(sp);
+//                                    sp.trigger('change');                                    
+                                }
+                                $xml.children().each(processSP);
+                            });
+                            $($xml.find("S")).each(function (index) {
+                                console.log(index + ": " + $(this).text());
+                                
+                            });
                             // add chapters
                             // add sourcephrases
                             if (status.length > 0) {
