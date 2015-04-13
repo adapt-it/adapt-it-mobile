@@ -42,7 +42,7 @@ define(function (require) {
         theFont = null,
         template    = null,
         projectURL  = "",
-        localURL    = "",//cordova.file.documentsDirectory + "/file.zip",
+        localURL    = "",//cordova.file.documentsDirectory
         lines       = [],
         ft = null,
 
@@ -190,6 +190,64 @@ define(function (require) {
                 $("#selFile").removeAttr("multiple");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
+                if (navigator.Fonts) {
+                    // running on device -- use cordova file plugin to select file
+                    $("#browserSelect").hide();
+//                    localURL = cordova.file.dataDirectory;
+                    var localURLs    = [
+                        cordova.file.documentsDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
+                        cordova.file.syncedDataDirectory
+                    ];
+                    var i;
+                    var statusStr = "";
+                    var addFileEntry = function (entry) {
+                        var dirReader = entry.createReader();
+                        dirReader.readEntries(
+                            function (entries) {
+                                var fileStr = "";
+                                var i;
+                                for (i = 0; i < entries.length; i++) {
+                                    if (entries[i].isDirectory === true) {
+                                        // reCurses! Foiled again!
+                                        addFileEntry(entries[i]);
+                                    } else {
+                                        if (entries[i].name === "AIM") {
+                                            continue; // skip the internal database file
+                                        }
+                                        fileStr += "<div class=\"control-row\"><label class=\"topcoat-checkbox\"><input type=\"checkbox\" id=\"" + entries[i].fullPath + "\"><div class=\"topcoat-checkbox__checkmark\"></div>" + entries[i].name + "</label></div>";
+//                                        fileStr += "**> " + entries[i].name + "<br>";
+                                    }
+                                }
+                                statusStr += fileStr;
+                            },
+                            function (error) {
+                                console.log("readEntries error: " + error.code);
+                                statusStr += "<p>readEntries error: " + error.code + "</p>";
+                            }
+                        );
+                    };
+                    var addError = function (error) {
+                        console.log("getDirectory error: " + error.code);
+                        statusStr += "<p>getDirectory error: " + error.code + ", " + error.message + "</p>";
+                    };
+                    for (i = 0; i < localURLs.length; i++) {
+                        if (localURLs[i] === null || localURLs[i].length === 0) {
+                            continue; // skip blank / non-existent paths for this platform
+                        }
+                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                    }
+                    if (statusStr.length > 0) {
+                        $("#mobileSelect").html(statusStr);
+                    } else {
+                        // nothing to select -- inform the user
+                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                    }
+                } else {
+                    // running in browser -- use html <input> to select file
+                    $("#mobileSelect").hide();
+                }
                 $("#OK").hide();
             }
         }),

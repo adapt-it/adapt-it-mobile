@@ -158,6 +158,7 @@
         "lblColor": "Color:",
         "dscCopyProjectFound": "Project found: \"__project__.\"",
         "dscCopyDocumentFound": "Document found: \"__document__.\"",
+        "dscNoDocumentsFound": "No available files found on device. Please copy files onto the device and try again.",
         "lblSelect": "Select",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
