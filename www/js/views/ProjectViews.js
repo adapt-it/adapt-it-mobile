@@ -190,7 +190,8 @@ define(function (require) {
                 $("#selFile").removeAttr("multiple");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
-                if (navigator.Fonts) {
+                // cheater way to tell if running on mobile device
+                if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
 //                    localURL = cordova.file.dataDirectory;

@@ -121,7 +121,8 @@ define(function (require) {
                 // once the source and target language are defined, an id is set and
                 // the project is saved in the device's localStorage.
                 ProjectList.each(function (model, index) {
-                    if (model.get('id').length < 1) {
+                    console.log("Model: " + model.get('id'));
+                    if (model.get('id') === 0) {
                         // empty project -- mark for removal
                         models.push(model);
                     }
