@@ -102,7 +102,7 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
-                            if (proj.get('lastAdaptedBookID') === "0") {
+                            if (proj.get('lastAdaptedBookID') === 0) {
                                 proj.set('lastAdaptedBookID', bookID);
                                 proj.set('lastAdaptedChapterID', chapterID);
                             }

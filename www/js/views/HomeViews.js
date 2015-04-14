@@ -58,7 +58,7 @@ define(function (require) {
                         $("#search").show();
                         $("#adapt").show();
                         $("#search").attr("href", "#search/" + model.get("id"));
-                        if (model.get('lastAdaptedBookID').length > 0) {
+                        if (model.get('lastAdaptedBookID').length !== 0) {
                             adaptHref = "#adapt/" + model.get('lastAdaptedChapterID');
                         }
                         $("#adapt").attr("href", adaptHref);
