@@ -178,39 +178,151 @@ define(function (require) {
                 $("#status1").html(i18n.t("view.dscCopyProjectFound", {project: this.model.get("name")}));
                 $("#OK").show();
             },
+////////////
             selectFile: function (event) {
                 console.log("copyProjFile");
                 // open selected .aic file
                 var index = $(event.currentTarget).attr('id').trim();
+                var model = this.model;
+                console.log("index: " + index + ", FileList[index]: " + fileList[index]);
                 // request the persistent file system
-                window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,
-                    function (fs) {
-                        fileSystem.root.getFile(fileList[index], {create: false, exclusive: false},
-                            function (entry) {
-                                entry.file(
-                                    function (file) {
-                                        var reader = new FileReader();
-                                        reader.onloadend = this.parseSettingsFile(evt);
-                                        reader.readAsText(file);
-                                    },
-                                    function (error) {
-                                        console.log("FileEntry.file error: " + error.code);
+                window.resolveLocalFileSystemURL(fileList[index],
+                    function (entry) {
+                        entry.file(
+                            function (file) {
+                                var reader = new FileReader();
+                                reader.onloadend = function (evt) {
+                                    var value = "",
+                                        value2 = "",
+                                        value3 = "",
+                                        value4 = "",
+                                        i = 0,
+                                        s = null,
+                                        t = null,
+                                        arr = [];
+                                    var getSettingValue = function (expectedIndex, aicSetting) {
+                                        var i = 0,
+                                            value = "";
+                                        if (lines[expectedIndex].indexOf(aicSetting) !== -1) {
+                                            // the value is the rest of the line AFTER the aicsetting + space
+                                            value = lines[expectedIndex].substr(aicSetting.length + 1);
+                                        } else {
+                                            // This setting is NOT at the line we expected. It could be on a different
+                                            // line, or not in the .aic file at all
+                                            for (i = 0; i < lines.length; i++) {
+                                                if (lines[i].indexOf(aicSetting) === 0) {
+                                                    // Found! The value is the rest of the line AFTER the aicsetting + space
+                                                    value = lines[i].substr(aicSetting.length + 1);
+                                                    // finish searching
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        return value;
+                                    };
+                                    // split out the .aic file into an array (one entry per line of the file)
+                                    lines = evt.target.result.split("\n");
+                                    // We've successfully opened an Adapt It project file (.aic) -
+                                    // populate our AIM model object with values
+                                    // from the .aic file
+                                    model.set("SourceLanguageName", getSettingValue(55, "SourceLanguageName"));
+                                    model.set("TargetLanguageName", getSettingValue(56, "TargetLanguageName"));
+                                    model.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"));
+                                    model.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"));
+                                    model.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr");
+                                    model.set("TargetDir", (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr");
+                                    value = getSettingValue(124, "ProjectName");
+                                    if (value.length > 0) {
+                                        model.set("name", value);
+                                    } else {
+                                        // project name not found -- build it from the source & target languages
+                                        model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: model.get("SourceLanguageName"), target: model.get("TargetLanguageName")}));
+
                                     }
-                                );
+                                    // filters (USFM only -- other settings are ignored)
+                                    value = getSettingValue(124, "UseSFMarkerSet");
+                                    if (value === "UsfmOnly") {
+                                        value = getSettingValue(123, "UseFilterMarkers");
+                                        if (value !== model.get("FilterMarkers")) {
+                                            model.set("UseCustomFilters", "true");
+                                            model.set("FilterMarkers", value);
+                                        }
+                                    }
+                    //                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
+                                    value = Underscore.uniqueId();
+                                    model.set("id", value);
+                                    // The following settings require some extra work
+                                    // Punctuation pairs
+                                    value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
+                                    value2 = getSettingValue(80, "PunctuationPairsTargetSet(stores space for an empty cell)");
+                                    for (i = 0; i < value.length; i++) {
+                                        s = value.charAt(i);
+                                        t = value2.charAt(i);
+                                        if (s && s.length > 0) {
+                                            arr[arr.length] = {s: s, t: t};
+                                        }
+                                    }
+                                    model.set({PunctPairs: arr});
+                                    // Auto capitalization
+                                    value = getSettingValue(115, "LowerCaseSourceLanguageChars");
+                                    value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
+                                    value3 = getSettingValue(117, "LowerCaseTargetLanguageChars");
+                                    value4 = getSettingValue(118, "UpperCaseTargetLanguageChars");
+                                    for (i = 0; i < value.length; i++) {
+                                        s = value.charAt(i) + value2.charAt(i);
+                                        t = value3.charAt(i) + value4.charAt(i);
+                                        if (s && s.length > 0) {
+                                            arr[arr.length] = {s: s, t: t};
+                                        }
+                                    }
+                                    model.set({CasePairs: arr});
+                                    value = getSettingValue(121, "AutoCapitalizationFlag");
+                                    model.set("AutoCapitalization", (value === "1") ? "true" : "false");
+                                    value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
+                                    model.set("SourceHasUpperCase", (value === "1") ? "true" : "false");
+
+                                    // Fonts, if they're installed on this device (getFontList is async)
+                                    if (navigator.Fonts) {
+                                        navigator.Fonts.getFontList(
+                                            function (fontList) {
+                                                if (fontList) {
+                                                    // Source Font
+                                                    value = getSettingValue(16, "FaceName");
+                                                    if ($.inArray(value, fontList) > -1) {
+                                                        model.set("SourceFont", value);
+                                                    }
+                                                    // Target Font
+                                                    value = getSettingValue(34, "FaceName");
+                                                    if ($.inArray(value, fontList) > -1) {
+                                                        model.set("TargetFont", value);
+                                                    }
+                                                }
+                                            },
+                                            function (error) {
+                                                console.log("FontList error: " + error);
+                                            }
+                                        );
+                                    }
+                                    // done -- display the OK button
+                                    $("#status1").html(i18n.t("view.dscCopyProjectFound", {project: model.get("name")}));
+                                    $("#OK").show();
+                                };
+                                reader.readAsText(file, "UTF-8");
                             },
                             function (error) {
-                                console.log("GetFile error: " + error.code);
-                            });
+                                console.log("FileEntry.file error: " + error.code);
+                            }
+                        );
                     },
                     function (error) {
-                        console.log("requestFileSystem error: " + error.code);
+                        console.log("resolveLocalFileSystemURL error: " + error.code);
                     });
             },
             copyProjFile: function (event) {
                 console.log("copyProjFile");
                 // open selected .aic file
                 var reader = new FileReader();
-                reader.onloadend = this.parseSettingsFile(evt);
+                reader.onloadend = this.parseSettingsFile;
                 reader.readAsText(event.currentTarget.files[0]);
                 
             },
@@ -225,6 +337,12 @@ define(function (require) {
                     $("#browserSelect").hide();
 //                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
+                        cordova.file.applicationStorageDirectory,
+                        cordova.file.cacheDirectory,
+                        cordova.file.externalApplicationStorageDirectory,
+                        cordova.file.externalCacheDirectory,
+                        cordova.file.tempDirectory,
+                        cordova.file.sharedDirectory,
                         cordova.file.documentsDirectory,
                         cordova.file.dataDirectory,
                         cordova.file.externalDataDirectory,
@@ -244,12 +362,11 @@ define(function (require) {
                                         // reCurses! Foiled again!
                                         addFileEntry(entries[i]);
                                     } else {
-                                        if (entries[i].name === "AIM") {
-                                            continue; // skip the internal database file
+                                        if (entries[i].name.indexOf(".aic") > 0) {
+                                            fileList[index] = entries[i].toURL();
+                                            fileStr += "<div class=\"autocomplete-suggestion\" id=\"" + index + "\">" + entries[i].name + "</div>";
+                                            index++;
                                         }
-                                        fileList[index] = entries[i].fullPath;
-                                        fileStr += "<div class=\"autocomplete-suggestion\" id=\"" + index + "\">" + entries[i].name + "</div>";
-                                        index++;
                                     }
                                 }
                                 statusStr += fileStr;
