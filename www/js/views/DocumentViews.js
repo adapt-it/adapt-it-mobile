@@ -18,6 +18,7 @@ define(function (require) {
         chapModel       = require('app/models/chapter'),
         scrIDs         = require('app/utils/scrIDs'),
         lines           = [],
+        fileList    = [],
 
         ImportDocumentView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplImportDoc),
@@ -178,8 +179,8 @@ define(function (require) {
                             books.add(book);
                             book.trigger('change');
                             var $xml = $(xmlDoc);
-                            $.get($xml, function(toc) {
-                                function processSP () {
+                            $.get($xml, function (toc) {
+                                function processSP() {
                                     // test for new Chapter
                                     // if (this.m.indexof("\\c ") > -1) {
                                     // // > create a chapter -- use new chapterID
@@ -312,6 +313,77 @@ define(function (require) {
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
                 $("#OK").hide();
+                // cheater way to tell if running on mobile device
+                if (window.sqlitePlugin) {
+                    // running on device -- use cordova file plugin to select file
+                    $("#browserSelect").hide();
+//                    localURL = cordova.file.dataDirectory;
+                    var localURLs    = [
+                        cordova.file.applicationStorageDirectory,
+                        cordova.file.cacheDirectory,
+                        cordova.file.externalApplicationStorageDirectory,
+                        cordova.file.externalCacheDirectory,
+                        cordova.file.tempDirectory,
+                        cordova.file.sharedDirectory,
+                        cordova.file.documentsDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
+                        cordova.file.syncedDataDirectory
+                    ];
+                    var index = 0;
+                    var i;
+                    var statusStr = "";
+                    var addFileEntry = function (entry) {
+                        var dirReader = entry.createReader();
+                        dirReader.readEntries(
+                            function (entries) {
+                                var fileStr = "";
+                                var i;
+                                for (i = 0; i < entries.length; i++) {
+                                    if (entries[i].isDirectory === true) {
+                                        // reCurses! Foiled again!
+                                        addFileEntry(entries[i]);
+                                    } else {
+                                        if ((entries[i].name.indexOf(".txt") > 0) ||
+                                                (entries[i].name.indexOf(".usx") > 0) ||
+                                                (entries[i].name.indexOf(".usfm") > 0) ||
+                                                (entries[i].name.indexOf(".sfm") > 0) ||
+                                                (entries[i].name.indexOf(".xml") > 0)) {
+                                            fileList[index] = entries[i].toURL();
+                                            fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].name + "</span></td></tr>";
+                                            index++;
+                                        }
+                                    }
+                                }
+                                statusStr += fileStr;
+                            },
+                            function (error) {
+                                console.log("readEntries error: " + error.code);
+                                statusStr += "<p>readEntries error: " + error.code + "</p>";
+                            }
+                        );
+                    };
+                    var addError = function (error) {
+                        console.log("getDirectory error: " + error.code);
+                        statusStr += "<p>getDirectory error: " + error.code + ", " + error.message + "</p>";
+                    };
+                    for (i = 0; i < localURLs.length; i++) {
+                        if (localURLs[i] === null || localURLs[i].length === 0) {
+                            continue; // skip blank / non-existent paths for this platform
+                        }
+                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                    }
+                    if (statusStr.length > 0) {
+                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table>");
+                        $("#tb").html(statusStr);
+                    } else {
+                        // nothing to select -- inform the user
+                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                    }
+                } else {
+                    // running in browser -- use html <input> to select file
+                    $("#mobileSelect").hide();
+                }
             }
         }),
         
