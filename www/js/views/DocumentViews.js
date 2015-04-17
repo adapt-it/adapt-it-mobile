@@ -319,7 +319,6 @@ define(function (require) {
                     $("#browserSelect").hide();
 //                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
-                        cordova.file.cacheDirectory,
                         cordova.file.dataDirectory,
                         cordova.file.documentsDirectory,
                         cordova.file.externalApplicationStorageDirectory,
@@ -355,6 +354,13 @@ define(function (require) {
                                     }
                                 }
                                 statusStr += fileStr;
+                                if (statusStr.length > 0) {
+                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table>");
+                                    $("#tb").html(statusStr);
+                                } else {
+                                    // nothing to select -- inform the user
+                                    $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                                }
                             },
                             function (error) {
                                 console.log("readEntries error: " + error.code);
@@ -371,13 +377,6 @@ define(function (require) {
                             continue; // skip blank / non-existent paths for this platform
                         }
                         window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
-                    }
-                    if (statusStr.length > 0) {
-                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table>");
-                        $("#tb").html(statusStr);
-                    } else {
-                        // nothing to select -- inform the user
-                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
                     }
                 } else {
                     // running in browser -- use html <input> to select file
