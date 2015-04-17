@@ -141,6 +141,10 @@ define(function (require) {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, bookid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
+                });
+                window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from sourcephrase;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter

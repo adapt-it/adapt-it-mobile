@@ -132,6 +132,10 @@ define(function (require) {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
+                });
+                window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from book;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
