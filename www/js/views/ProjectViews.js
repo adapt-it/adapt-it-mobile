@@ -337,15 +337,14 @@ define(function (require) {
                     $("#browserSelect").hide();
 //                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
-                        cordova.file.applicationStorageDirectory,
                         cordova.file.cacheDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.documentsDirectory,
                         cordova.file.externalApplicationStorageDirectory,
                         cordova.file.externalCacheDirectory,
-                        cordova.file.tempDirectory,
-                        cordova.file.sharedDirectory,
-                        cordova.file.documentsDirectory,
-                        cordova.file.dataDirectory,
+                        cordova.file.externalRootDirectory,
                         cordova.file.externalDataDirectory,
+                        cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     var index = 0;
