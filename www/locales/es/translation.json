@@ -153,6 +153,7 @@
         "dscProjectCreated": "El proyecto \"__name_\" fue creado. Empuje Continuar para importar documentos de la lengua de origen __souce__.",
         "lblImportDocuments": "Importar Documentos",
         "dscImportDocuments": "Seleccione los archivos de documentos que desea copiar a Adapt It Mobile.",
+        "lblImport": "Importar",
         "lblFont": "Tipo de letra:",
         "lblSize": "Tamaño:",
         "lblColor": "Color:",

@@ -24,7 +24,32 @@ define(function (require) {
             template: Handlebars.compile(tplImportDoc),
             events: {
                 "change #selFile": "importDocument",
+                "click .c": "onClickFileRow",
+                "click #Import": "onImport",
                 "click #OK": "onOK"
+            },
+            onClickFileRow: function (event) {
+                var found = false;
+                // if there is at least one selected row, enable the import button
+                if ($(event.currentTarget).is(':checked') === true) {
+                    // easy answer -- the current target is checked, so enable
+                    $("#Import").removeAttr("disabled");
+                } else {
+                    // harder answer -- check _all_ the file rows
+                    $(".c").each(function (index, value) {
+                        if ($(value).is(':checked') === true) {
+                            $("#Import").removeAttr("disabled");
+                            found = true;
+//                            break;
+                        }
+                    });
+                    if (found === false) {
+                        $("#Import").disable();
+                    }
+                }
+            },
+            onImport: function (event) {
+                // find all the selected files
             },
             onOK: function (event) {
                 // save the model
@@ -339,7 +364,7 @@ define(function (require) {
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
                                     if (entries[i].isDirectory === true) {
-                                        // reCurses! Foiled again!
+                                        // Recursive -- call back into this subdirectory
                                         addFileEntry(entries[i]);
                                     } else {
                                         if ((entries[i].name.indexOf(".txt") > 0) ||
@@ -348,14 +373,14 @@ define(function (require) {
                                                 (entries[i].name.indexOf(".sfm") > 0) ||
                                                 (entries[i].name.indexOf(".xml") > 0)) {
                                             fileList[index] = entries[i].toURL();
-                                            fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].name + "</span></td></tr>";
+                                            fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
                                             index++;
                                         }
                                     }
                                 }
                                 statusStr += fileStr;
                                 if (statusStr.length > 0) {
-                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table>");
+                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
                                     $("#tb").html(statusStr);
                                 } else {
                                     // nothing to select -- inform the user

@@ -153,6 +153,7 @@
         "dscProjectCreated": "The project \"__name__\" was successfully created. Press Continue to import documents from the source language __souce__.",
         "lblImportDocuments": "Import Documents",
         "dscImportDocuments": "Select the document files you want to copy from the local device. These can either be source language documents in USFM format or Adapt It documents in .xml format.",
+        "lblImport": "Import",
         "lblFont": "Font:",
         "lblSize": "Size:",
         "lblColor": "Color:",

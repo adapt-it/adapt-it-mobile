@@ -153,6 +153,7 @@
         "dscProjectCreated": "le projet \"__name__\" a été créé avec succès.",
         "lblImportDocuments": "Copier des documents",
         "dscImportDocuments": "Sélectionnez les documents que vous souhaitez copier. Ceux-ci peuvent être soit des documents en langue source dans USFM ou le format .xml.",
+        "lblImport": "Copier",
         "lblFont": "Caractères:",
         "lblSize": "Taille:",
         "lblColor": "Coleur:",
