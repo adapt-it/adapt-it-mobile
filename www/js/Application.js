@@ -201,6 +201,9 @@ define(function (require) {
                 ChapterList.fetch({reset: true, data: {name: ""}});
                 var chapter = ChapterList.findWhere({chapterid: id});
                 if (chapter) {
+                    var theView = new AdaptViews.ChapterView({model: chapter});
+                    var proj = ProjectList.where({id: chapter.get('projectid')});
+                    theView.project = proj;
                     window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
                 } else {
                     console.log("no chapter found");

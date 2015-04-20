@@ -123,6 +123,7 @@ define(function (require) {
                             chapter = new chapModel.Chapter({
                                 chapterid: chapterID,
                                 bookid: bookID,
+                                projectid: proj.get('id'),
                                 name: bookName,
                                 lastadapted: 0,
                                 versecount: 0
@@ -282,6 +283,7 @@ define(function (require) {
                                 chapter = new chapModel.Chapter({
                                     chapterid: chapterID,
                                     bookid: bookID,
+                                    projectid: proj.get('id'),
                                     name: (bookName + " " + (i + 1)),
                                     lastadapted: 0,
                                     versecount: arr[i]

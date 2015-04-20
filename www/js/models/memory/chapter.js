@@ -36,6 +36,7 @@ define(function (require) {
             defaults: {
                 chapterid: "",
                 bookid: "",
+                projectid: 0,
                 name: "",
                 lastadapted: 0,
                 versecount: 0
@@ -67,7 +68,7 @@ define(function (require) {
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("UPDATE chapter SET bookid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
+                                tx.executeSql("UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
                                     console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
@@ -76,7 +77,7 @@ define(function (require) {
                         } else {
                             // new record -- insert
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,name,lastadapted,versecount) VALUES (?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
+                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
                                     console.log("INSERT ok: " + res.toString());
                                 });
                             }, function (err) {
@@ -133,7 +134,7 @@ define(function (require) {
                     len = 0;
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, name text, lastadapted integer, versecount integer);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
                 });
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from chapter;", [], function (tx, res) {

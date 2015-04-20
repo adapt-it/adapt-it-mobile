@@ -533,7 +533,8 @@ define(function (require) {
                         var newID = Underscore.uniqueId(),
                             currentdate = new Date(),
                             newTU = new kbModels.TargetUnit({
-                                id: (this.project.id + "." + newID),
+                                tuid: newID,
+                                projectid: this.project.id,
                                 source: model.get('source'),
                                 refstring: [
                                     {
