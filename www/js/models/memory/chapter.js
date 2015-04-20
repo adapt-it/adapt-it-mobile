@@ -54,7 +54,7 @@ define(function (require) {
                         deferred.resolve(obj);
                     });
                 }, function (err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                     deferred.reject(err);
                 });
                 return deferred.promise();
@@ -72,7 +72,7 @@ define(function (require) {
                                     console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
-                                console.log("UPDATE error: " + err.toString());
+                                console.log("UPDATE error: " + err.message);
                             });
                         } else {
                             // new record -- insert
@@ -81,11 +81,11 @@ define(function (require) {
                                     console.log("INSERT ok: " + res.toString());
                                 });
                             }, function (err) {
-                                console.log("INSERT error: " + err.toString());
+                                console.log("INSERT error: " + err.message);
                             });
                         }
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.toString());
+                        console.log("SELECT error: " + err.message);
                     });
                 });
             },
@@ -94,7 +94,7 @@ define(function (require) {
                     tx.executeSql("DELETE FROM chapter WHERE chapterid=?;", [this.attributes.chapterid], function (tx, res) {
                         console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("DELETE error: " + err.toString());
+                        console.log("DELETE error: " + err.message);
                     });
                 });
             },
@@ -149,7 +149,7 @@ define(function (require) {
                         console.log("SELECT ok: " + res.rows.length + " chapter items");
                     });
                 }, function (err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                 });
             },
             

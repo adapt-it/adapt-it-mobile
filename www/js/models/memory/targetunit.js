@@ -11,7 +11,7 @@ define(function (require) {
         
         findById = function (searchKey) {
             var deferred = $.Deferred();
-            var results = sourcephrases.filter(function (element) {
+            var results = targetunits.filter(function (element) {
                 return element.attributes.tuid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
@@ -20,7 +20,7 @@ define(function (require) {
 
         findByProjectId = function (searchKey) {
             var deferred = $.Deferred();
-            var results = sourcephrases.filter(function (element) {
+            var results = targetunits.filter(function (element) {
                 return element.attributes.projectid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
@@ -38,7 +38,7 @@ define(function (require) {
 
         TargetUnit = Backbone.Model.extend({
             defaults: {
-                tuid: 0,
+                tuid: "",
                 projectid: 0,
                 source: "",
                 refstring: [],
@@ -58,7 +58,7 @@ define(function (require) {
                         this.set(res.rows.item(0));
                     });
                 }, function (tx, err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                 });
             },
 
@@ -75,7 +75,7 @@ define(function (require) {
                                     console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
-                                console.log("UPDATE error: " + err.toString());
+                                console.log("UPDATE error: " + err.message);
                             });
                         } else {
                             // new record -- insert
@@ -84,11 +84,11 @@ define(function (require) {
                                     console.log("INSERT ok: " + res.toString());
                                 });
                             }, function (err) {
-                                console.log("INSERT error: " + err.toString());
+                                console.log("INSERT error: " + err.message);
                             });
                         }
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.toString());
+                        console.log("SELECT error: " + err.message);
                     });
                 });
             },
@@ -98,7 +98,7 @@ define(function (require) {
                     tx.executeSql("DELETE FROM targetunit WHERE tuid=?;", [this.attributes.tuid], function (tx, res) {
                         console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("DELETE error: " + err.toString());
+                        console.log("DELETE error: " + err.message);
                     });
                 });
             },
@@ -138,7 +138,7 @@ define(function (require) {
                     len = 0;
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, projectid integer, source text, timestamp text, user text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
                 });
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
@@ -153,7 +153,7 @@ define(function (require) {
                         console.log("SELECT ok: " + res.rows.length + " targetunit items");
                     });
                 }, function (err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                 });
             },
             

@@ -260,7 +260,7 @@ define(function (require) {
                 }
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, projectid integer, source text, timestamp text, user text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');

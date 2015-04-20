@@ -55,7 +55,7 @@ define(function (require) {
                         this.set(res.rows.item(0));
                     });
                 }, function (tx, err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                 });
             },
             save: function () {
@@ -71,7 +71,7 @@ define(function (require) {
                                     console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
-                                console.log("UPDATE error: " + err.toString());
+                                console.log("UPDATE error: " + err.message);
                             });
                         } else {
                             // new record -- insert
@@ -84,7 +84,7 @@ define(function (require) {
                             });
                         }
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.toString());
+                        console.log("SELECT error: " + err.message);
                     });
                 });
             },
@@ -94,7 +94,7 @@ define(function (require) {
                     tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
                         console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("DELETE error: " + err.toString());
+                        console.log("DELETE error: " + err.message);
                     });
                 });
             },
@@ -149,7 +149,7 @@ define(function (require) {
 //                        this.set(JSON.parse(res.rows.item(0)));
                     });
                 }, function (err) {
-                    console.log("SELECT error: " + err.toString());
+                    console.log("SELECT error: " + err.message);
                 });
             },
             

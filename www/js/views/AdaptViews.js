@@ -80,7 +80,7 @@ define(function (require) {
                     prepuncts = model.get('prepuncts'),
                     follpuncts = model.get('follpuncts');
                 // If we aren't copying punctuation for this project, just return the target (unaltered)
-                if (project.get('CopyPunctuation') === 'false') {
+                if (this.project.get('CopyPunctuation') === 'false') {
                     return target;
                 }
                 // add any prepuncts
@@ -528,6 +528,7 @@ define(function (require) {
                         }
                         // update the KB model
                         tu.set({refstring: refstrings});
+                        tu.trigger('change');
                     } else {
                         // no entry in KB with this source -- add one
                         var newID = Underscore.uniqueId(),
@@ -546,6 +547,7 @@ define(function (require) {
                                 user: "user:machine"
                             });
                         this.kblist.add(newTU);
+                        newTU.trigger('change');
                     }
                 }
                 // Now update the model
