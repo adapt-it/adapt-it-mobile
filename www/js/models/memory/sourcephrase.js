@@ -72,12 +72,12 @@ define(function (require) {
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT COUNT(id) AS cnt FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
-                        console.log("SELECT ok: " + res.toString());
+//                        console.log("SELECT ok: " + res.toString());
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
                             window.Application.db.transaction(function (tx) {
                                 tx.executeSql("UPDATE sourcephrase SET chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;", [attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target, attributes.spid], function (tx, res) {
-                                    console.log("UPDATE ok: " + res.toString());
+//                                    console.log("UPDATE ok: " + res.toString());
                                 });
                             }, function (err) {
                                 console.log("UPDATE error: " + err.message);
@@ -86,7 +86,7 @@ define(function (require) {
                             // new record -- insert
                             window.Application.db.transaction(function (tx) {
                                 tx.executeSql("INSERT INTO sourcephrase (spid,chapterid, markers,orig,prepuncts,midpuncts,follpuncts,source,target) VALUES (?,?,?,?,?,?,?,?,?);", [attributes.spid, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
-                                    console.log("INSERT ok: " + res.toString());
+//                                    console.log("INSERT ok: " + res.toString());
                                 });
                             }, function (err) {
                                 console.log("INSERT error: " + err.message);
@@ -100,7 +100,7 @@ define(function (require) {
             destroy: function (options) {
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("DELETE FROM sourcephrase WHERE id=?;", [this.attributes.id], function (tx, res) {
-                        console.log("DELETE ok: " + res.toString());
+//                        console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });
