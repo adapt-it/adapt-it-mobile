@@ -278,7 +278,7 @@ define(function (require) {
                     project.set('lastAdaptedName', bookName + " 1");
                 }
                 // done -- display the OK button
-                $("#lblStatus").html(status);
+                $("#status2").html(status);
                 $("#OK").show();
             };
             reader.readAsText(file);
