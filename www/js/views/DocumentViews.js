@@ -19,12 +19,16 @@ define(function (require) {
         scrIDs          = require('app/utils/scrIDs'),
         lines           = [],
         fileList        = [],
+
+        // Helper method to import the selected file into the specified project.
+        // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
         importFile      = function (file, project) {
             var status = "";
             var reader = new FileReader();
             var i = 0;
             var name = "";
             var doc = null;
+            // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
                 var value = "",
                     scrID = null,
@@ -49,6 +53,7 @@ define(function (require) {
                     bookID = "",
                     chapterID = "",
                     spID = "";
+                // Parse a text document
                 var readTextDoc = function (contents) {
                     var re = /\s+/;
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
@@ -127,13 +132,13 @@ define(function (require) {
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index));
-//                            chapter.trigger('change');
                     // Update the status string
                     if (status.length > 0) {
                         status += "<br>";
                     }
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
                 };
+                // Handler for Adapt It XML file parsing
                 var readXMLDoc = function (contents) {
                     var re = /\s+/;
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
@@ -193,6 +198,7 @@ define(function (require) {
                     }
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
                 };
+                // Handler for USFM file parsing
                 var readUSFMDoc = function (contents) {
                     console.log("Reading USFM file:" + file.name);
                     // find the ID of this book
@@ -287,15 +293,22 @@ define(function (require) {
             };
             reader.readAsText(file);
         },
+        
 
         ImportDocumentView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplImportDoc),
+            ////
+            // Event Handlers
+            ////
             events: {
                 "change #selFile": "browserImportDocs",
                 "click #Import": "mobileImportDocs",
                 "click .c": "onClickFileRow",
                 "click #OK": "onOK"
             },
+            // Handler for when the user checks / unchecks a file in the list.
+            // Looks to see if there are any files selected, and if so, enables
+            // the Import button.
             onClickFileRow: function (event) {
                 var found = false;
                 // if there is at least one selected row, enable the import button
@@ -316,9 +329,10 @@ define(function (require) {
                     $("#Import").removeAttr('disabled');
                 }
             },
+            // Handler for when the user clicks the Select button
+            // (this is the html <input type=file> element  displayed for the browser only) --
+            // file selections are returned by the browser in the event.currentTarget.files array
             browserImportDocs: function (event) {
-                // click on the html <input type=file> element (browser only) --
-                // file selections are in event.currentTarget.files
                 console.log("browserImportDocs");
                 var fileindex = 0;
                 var files = event.currentTarget.files;
@@ -329,9 +343,12 @@ define(function (require) {
                     fileindex++;
                 }
             },
+            // Handler for the Import button click event (mobile only) -
+            // this handler is more of a manual process than the browserImportDocs handler;
+            // we need to look at the checkboxes in the <tr> rows and gather the file paths
+            // from that list, then reconstitute file objects from the paths using the
+            // cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
-                // click on the import button (mobile only) --
-                // file selections are the checkboxes in the <tr> rows
                 console.log("mobileImportDocs");
                 // find all the selected files
                 var selected = [];
@@ -369,13 +386,19 @@ define(function (require) {
                     fileindex++;
                 }
             },
+            // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
                 // save the model
                 this.model.trigger('change');
                 // head back to the home page
                 window.history.go(-1);
             },
-
+            // Show event handler (from MarionetteJS):
+            // - if we're running in a mobile device, we'll use the cordova-plugin-file
+            //   API to search through the device directories and add any valid files
+            //   to a table grid
+            // - If we're in a browser, just show the html <input type=file> to allow
+            //   for file selection
             onShow: function () {
 //                $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
