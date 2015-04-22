@@ -56,7 +56,7 @@ define(function (require) {
                     var follpunct = "";
                     var needsNewLine = false;
                     var sp = null;
-                    console.log("Fallback -- reading text file");
+                    console.log("Reading text file:" + file.name);
                     index = 1;
                     bookName = file.name;
                     bookID = Underscore.uniqueId();
@@ -142,7 +142,7 @@ define(function (require) {
                     var needsNewLine = false;
                     var sp = null;
                     var xmlDoc = $.parseXML(contents);
-                    console.log("Reading XML file");
+                    console.log("Reading XML file:" + file.name);
                     index = 1;
                     bookName = file.name;
                     bookID = Underscore.uniqueId();
@@ -194,7 +194,7 @@ define(function (require) {
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
                 };
                 var readUSFMDoc = function (contents) {
-                    console.log("Reading USFM file");
+                    console.log("Reading USFM file:" + file.name);
                     // find the ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var firstChapterID = "";
@@ -278,7 +278,11 @@ define(function (require) {
                     project.set('lastAdaptedName', bookName + " 1");
                 }
                 // done -- display the OK button
-                $("#status2").html(status);
+                var curStatus = $("#status2").html();
+                if (curStatus.length > 0) {
+                    curStatus += "<br>";
+                }
+                $("#status2").html(curStatus + status);
                 $("#OK").show();
             };
             reader.readAsText(file);
@@ -339,6 +343,7 @@ define(function (require) {
                 // Get a "real" file object for each of the selected files.
                 // This requires using the html5 filesystem API.
                 var fileindex = 0;
+                var i = 0;
                 var project = this.model;
                 var processFile = function (url) {
                     window.resolveLocalFileSystemURL(url,
@@ -356,8 +361,11 @@ define(function (require) {
                             console.log("resolveLocalFileSystemURL error: " + error.code);
                         });
                 };
-                while (fileindex < fileList.length) {
-                    processFile(fileList[fileindex]);
+                while (fileindex < selected.length) {
+                    // process just the selected ones in the file list
+                    i = selected[fileindex];
+                    console.log(i + ", fileList: " + fileList[i]);
+                    processFile(fileList[selected[fileindex]]);
                     fileindex++;
                 }
             },
