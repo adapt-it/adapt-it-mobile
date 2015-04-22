@@ -46,6 +46,14 @@ define(function (require) {
         lines       = [],
         ft          = null,
         fileList    = [],
+
+        ////
+        // Helper methods
+        ////
+        
+        // Helper to import the selected file into the specified
+        // project object (overridding any existing values). This gets called
+        // from both mobileImportAIC and browserImportAIC.
         importSettingsFile = function (file, project) {
             var reader = new FileReader();
             reader.onloadend = function (evt) {
@@ -168,20 +176,27 @@ define(function (require) {
         },
 
         // CopyProjectView
-        // Copy a project from another device.
+        // Copy a project file from an .aic file on the device.
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
+            ////
+            // Event Handlers
+            ////
             events: {
                 "change #selFile": "browserImportAIC",
                 "click .autocomplete-suggestion": "mobileImportAIC",
                 "click #OK": "onOK"
             },
+            // Handler for the OK button click -- 
+            // saves any changes and goes back to the home page
             onOK: function (event) {
                 // save the model
                 this.model.trigger('change');
                 // head back to the home page
                 window.history.go(-1);
             },
+            // Handler for the click event on the project file list (mobile only) -
+            // reconstitutes the file object from the path and calls importSettingsFile()
             mobileImportAIC: function (event) {
                 console.log("mobileImportAIC");
                 // open selected .aic file
@@ -204,12 +219,20 @@ define(function (require) {
                         console.log("resolveLocalFileSystemURL error: " + error.code);
                     });
             },
+            // Handler for the click event on the Select html <input type=file> button element -
+            // just calls importSettingsFile() to import the selected file
             browserImportAIC: function (event) {
                 // click on the html <input type=file> element (browser only) --
                 // file selection is in event.currentTarget.files[0] (no multi-select for project files)
                 console.log("browserImportAIC");
                 importSettingsFile(event.currentTarget.files[0], this.model);
             },
+            // Show event handler (from MarionetteJS) -
+            // - For mobile devices, uses the cordova-plugin-file API to iterate through
+            //   known directories on the mobile device in search of project settings files.
+            //   Any found files are listed as <div> elements
+            // - For browsers, uses the html <input type=file> element to allow the user
+            //   to select an .aic file from the local PC.
             onShow: function () {
                 $("#selFile").attr("accept", ".aic");
                 $("#selFile").removeAttr("multiple");

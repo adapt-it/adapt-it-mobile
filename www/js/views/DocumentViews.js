@@ -22,7 +22,7 @@ define(function (require) {
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
-        importFile      = function (file, project) {
+        importFile = function (file, project) {
             var status = "";
             var reader = new FileReader();
             var i = 0;
@@ -294,7 +294,9 @@ define(function (require) {
             reader.readAsText(file);
         },
         
-
+        // ImportDocumentView
+        // Select and import documents (txt, usfm, sfm, usx, xml) into 
+        // AIM from the device or PC, depending on where AIM is run from. 
         ImportDocumentView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplImportDoc),
             ////
