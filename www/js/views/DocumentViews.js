@@ -162,8 +162,25 @@ define(function (require) {
                     books.add(book);
                     book.trigger('change');
                     var $xml = $(xmlDoc);
-                    $.get($xml, function (toc) {
-                        function processSP() {
+                    $($xml).find("S").each(function (i) {
+                        console.log(i + ": ");// + $(this).attr('s'); <<
+                        // > create a chapter -- use new chapterID
+                        spID = Underscore.uniqueId();
+                        sp = new spModel.SourcePhrase({
+                            spid: spID,
+                            chapterid: chapterID,
+                            markers: $(this).attr('m'),
+                            orig: null,
+                            prepuncts: $(this).attr('pp'),
+                            midpuncts: $(this).attr('m'),
+                            follpuncts: $(this).attr('fp'),
+                            source: $(this).attr('s'),
+                            target: $(this).attr('t')
+                        });
+                        index++;
+                        sourcePhrases.add(sp);
+                        sp.trigger('change');                                    
+                    });
                             // test for new Chapter
                             // if (this.m.indexof("\\c ") > -1) {
                             // // > create a chapter -- use new chapterID
@@ -184,13 +201,11 @@ define(function (require) {
 //                                    index++;
 //                                    sourcePhrases.add(sp);
 //                                    sp.trigger('change');                                    
-                        }
-                        $xml.children().each(processSP);
-                    });
-                    $($xml.find("S")).each(function (index) {
-                        console.log(index + ": " + $(this).text());
-
-                    });
+                    
+//                    $($xml.find("S")).each(function (index) {
+//                        console.log(index + ": " + $(this).text());
+//
+//                    });
                     // add chapters
                     // add sourcephrases
                     if (status.length > 0) {
