@@ -27,7 +27,7 @@
     {{/ifCond}}
     {{! end nested ifConds }}    
     {{! start each strip with a header (e.g. verse or chapter info) }}
-{{#ifCond this.markers 'contains' 'c'}}
+{{#ifCond this.markers 'contains' 'c '}}
     <div id="header-{{this.id}}" class="strip-header chapter-number">{{chapter}}</div>
 {{else}}
 {{#ifCond this.markers 'contains' 'v'}}
