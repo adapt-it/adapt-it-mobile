@@ -14,6 +14,7 @@
         "lblStatusPartlyTranslated": "Sampela wok i no yet (__lastadapted__ bilong __versecount__ ves olgeta i gat trenslesen teks).",
         "lblStatusNotTranslatedNoVerses": "Nogat trenslesen.",
         "lblStatusPartlyTranslatedNoVerses": "Sampela wok i no yet.",
+        "lblChapterName": "__bookName__ __chapterNumber__",
         "ttlWelcome": "Welkam",
         "lblContinue": "Go het",
         "ttlGetStarted": "Go long stat",

@@ -147,9 +147,10 @@ define(function (require) {
                     var needsNewLine = false;
                     var sp = null;
                     var xmlDoc = $.parseXML(contents);
+                    var chapterName = "";
                     console.log("Reading XML file:" + file.name);
                     index = 1;
-                    bookName = file.name;
+                    bookName = file.name.substr(0, file.name.indexOf("."));
                     bookID = Underscore.uniqueId();
                     // Create the book and chapter 
                     book = new bookModel.Book({
@@ -161,10 +162,50 @@ define(function (require) {
                     });
                     books.add(book);
                     book.trigger('change');
+                    chapterID = Underscore.uniqueId();
+                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    chapter = new chapModel.Chapter({
+                        chapterid: chapterID,
+                        bookid: bookID,
+                        projectid: project.get('id'),
+                        name: chapterName,
+                        lastadapted: 0,
+                        versecount: 0
+                    });
+                    chapters.add(chapter);
+                    chapter.trigger('change');
+                    if (project.get('lastAdaptedBookID') === 0) {
+                        project.set('lastAdaptedBookID', bookID);
+                        project.set('lastAdaptedChapterID', chapterID);
+                    }
+                    if (project.get('lastAdaptedName') === "") {
+                        project.set('lastAdaptedName', bookName);
+                    }
+                    // create the sourcephrases
                     var $xml = $(xmlDoc);
+                    var markers = "";
+                    var stridx = 0;
                     $($xml).find("S").each(function (i) {
-                        console.log(i + ": ");// + $(this).attr('s'); <<
-                        // > create a chapter -- use new chapterID
+                        // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
+                        // create a new chapter object
+                        markers = $(this).attr('m');
+                        if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
+                            stridx = markers.indexOf("\\c ") + 3;
+                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                            chapterID = Underscore.uniqueId();
+                            chapter = new chapModel.Chapter({
+                                chapterid: chapterID,
+                                bookid: bookID,
+                                projectid: project.get('id'),
+                                name: chapterName,
+                                lastadapted: 0,
+                                versecount: 0
+                            });
+                            chapters.add(chapter);
+                            chapter.trigger('change');
+                        }
+                        // create the next sourcephrase
+                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         spID = Underscore.uniqueId();
                         sp = new spModel.SourcePhrase({
                             spid: spID,
@@ -172,42 +213,15 @@ define(function (require) {
                             markers: $(this).attr('m'),
                             orig: null,
                             prepuncts: $(this).attr('pp'),
-                            midpuncts: $(this).attr('m'),
+                            midpuncts: "",
                             follpuncts: $(this).attr('fp'),
                             source: $(this).attr('s'),
                             target: $(this).attr('t')
                         });
                         index++;
                         sourcePhrases.add(sp);
-                        sp.trigger('change');                                    
+                        sp.trigger('change');
                     });
-                            // test for new Chapter
-                            // if (this.m.indexof("\\c ") > -1) {
-                            // // > create a chapter -- use new chapterID
-                            // }
-                            //
-//                                    spID = Underscore.uniqueId();
-//                                    sp = new spModel.SourcePhrase({
-//                                        spid: spID,
-//                                        chapterid: chapterID,
-//                                        markers: (needsNewLine === true) ? "\\p" : "",
-//                                        orig: null,
-//                                        prepuncts: "",
-//                                        midpuncts: "",
-//                                        follpuncts: "",
-//                                        source: arr[i],
-//                                        target: ""
-//                                    });
-//                                    index++;
-//                                    sourcePhrases.add(sp);
-//                                    sp.trigger('change');                                    
-                    
-//                    $($xml.find("S")).each(function (index) {
-//                        console.log(index + ": " + $(this).text());
-//
-//                    });
-                    // add chapters
-                    // add sourcephrases
                     if (status.length > 0) {
                         status += "<br>";
                     }

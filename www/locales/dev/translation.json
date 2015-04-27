@@ -14,6 +14,7 @@
         "lblStatusPartlyTranslated": "Partly drafted (__lastadapted__ of a total of __versecount__ verses have translation text).",
         "lblStatusNotTranslatedNoVerses": "No translations.",
         "lblStatusPartlyTranslatedNoVerses": "Partly drafted.",
+        "lblChapterName": "__bookName__ __chapterNumber__",
         "ttlWelcome": "Welcome",
         "lblContinue": "Continue",
         "ttlGetStarted": "Get Started",

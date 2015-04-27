@@ -14,6 +14,7 @@
         "lblStatusPartlyTranslated": "Partiellement traduit (__lastadapted__ de __versecount__ versets ont traduit les textes).",
         "lblStatusNotTranslatedNoVerses": "Pas de versets ont été traduits.",
         "lblStatusPartlyTranslatedNoVerses": "Partiellement traduit.",
+        "lblChapterName": "__bookName__ __chapterNumber__",
         "ttlWelcome": "Bienvenue",
         "lblContinue": "Continuer",
         "ttlGetStarted": "Commencer",
