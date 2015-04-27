@@ -148,7 +148,26 @@ define(function (require) {
                     var sp = null;
                     var xmlDoc = $.parseXML(contents);
                     var chapterName = "";
+                    // find the USFM ID of this book
+                    var scrIDList = new scrIDs.ScrIDCollection();
+                    var firstChapterID = "";
                     console.log("Reading XML file:" + file.name);
+                    scrIDList.fetch({reset: true, data: {id: ""}});
+                    index = contents.indexOf("\\id");
+                    if (index === -1) {
+                        // no ID found -- just return
+                        return null;
+                    }
+                    // we've found the usfm marker -- the "real" index is inside this xml element under the source attribute 
+                    // e.g., (s="MAT"). We need to search backwards to find it.
+                    index = contents.lastIndexOf("s=", index) + 2;
+                    scrID = scrIDList.where({id: contents.substr(index, contents.indexOf("\"", index) - index)})[0];
+                    arr = scrID.get('chapters');
+                    books.fetch({reset: true, data: {name: ""}});
+                    if (books.where({scrid: (scrID.get('id'))}).length > 0) {
+                        // this book is already in the list -- just return
+                        return null;
+                    }
                     index = 1;
                     bookName = file.name.substr(0, file.name.indexOf("."));
                     bookID = Underscore.uniqueId();
@@ -156,6 +175,7 @@ define(function (require) {
                     book = new bookModel.Book({
                         bookid: bookID,
                         projectid: project.get('id'),
+                        scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
                         chapters: []
@@ -179,7 +199,7 @@ define(function (require) {
                         project.set('lastAdaptedChapterID', chapterID);
                     }
                     if (project.get('lastAdaptedName') === "") {
-                        project.set('lastAdaptedName', bookName);
+                        project.set('lastAdaptedName', chapterName);
                     }
                     // create the sourcephrases
                     var $xml = $(xmlDoc);
@@ -215,7 +235,7 @@ define(function (require) {
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
                             follpuncts: $(this).attr('fp'),
-                            source: $(this).attr('s'),
+                            source: $(this).attr('k'), // source w/o punctuation
                             target: $(this).attr('t')
                         });
                         index++;
