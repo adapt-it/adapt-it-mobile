@@ -53,6 +53,7 @@ define(function (require) {
             events: {
                 "keyup .search-key":    "search",
                 "keypress .search-key": "onkeypress",
+                "focus #book":          "onFocusBook",
                 "change #book":         "onSelectBook"
             },
             
@@ -63,6 +64,7 @@ define(function (require) {
                     options += "<option value=\"" + model.get("name") +  "\">" + model.get("name") + "</option>";
                 });
                 $("#book").html(options);
+                $("#book").val("");
             },
             
             search: function (event) {
@@ -79,6 +81,10 @@ define(function (require) {
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
+            },
+            
+            onFocusBook: function (event) {
+                $("#book").val("");
             },
 
             onSelectBook: function (event) {
