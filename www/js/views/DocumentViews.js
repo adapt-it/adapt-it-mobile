@@ -150,17 +150,22 @@ define(function (require) {
                     var chapterName = "";
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
+                    var verseCount = 0;
+                    var verses = [];
+                    var lastAdapted = 0;
                     var firstChapterID = "";
+                    var i = 0;
                     console.log("Reading XML file:" + file.name);
                     scrIDList.fetch({reset: true, data: {id: ""}});
-                    index = contents.indexOf("\\id");
+                    i = contents.indexOf("<S ");
+                    index = contents.indexOf("\\id", i);
                     if (index === -1) {
                         // no ID found -- just return
                         return null;
                     }
                     // we've found the usfm marker -- the "real" index is inside this xml element under the source attribute 
                     // e.g., (s="MAT"). We need to search backwards to find it.
-                    index = contents.lastIndexOf("s=", index) + 2;
+                    index = contents.lastIndexOf("s=", index) + 3;
                     scrID = scrIDList.where({id: contents.substr(index, contents.indexOf("\"", index) - index)})[0];
                     arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
@@ -210,9 +215,16 @@ define(function (require) {
                         // create a new chapter object
                         markers = $(this).attr('m');
                         if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
+                            verses.push(verseCount);
+                            verseCount = 0; // reset for the next chapter
+                            // update the last adapted for the previous chapter before closing it out
+                            chapter.set('lastAdapted', lastAdapted);
+                            chapter.trigger('change'); // save the old chapter
+                            lastAdapted = 0; // reset for the next chapter
                             stridx = markers.indexOf("\\c ") + 3;
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
                             chapterID = Underscore.uniqueId();
+                            // create the new chapter
                             chapter = new chapModel.Chapter({
                                 chapterid: chapterID,
                                 bookid: bookID,
@@ -223,6 +235,14 @@ define(function (require) {
                             });
                             chapters.add(chapter);
                             chapter.trigger('change');
+                        }
+                        if (markers && markers.indexOf("\\v ") !== -1) {
+                            verseCount++;
+                            // check this sourcephrase for a target
+                            // (note that we're only checking the FIRST sp of each verse
+                            if ($(this).attr('t')) {
+                                lastAdapted++;
+                            }
                         }
                         // create the next sourcephrase
                         console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
@@ -242,6 +262,12 @@ define(function (require) {
                         sourcePhrases.add(sp);
                         sp.trigger('change');
                     });
+                    // update the verse count and last adapted verse for the book
+                    if (verseCount > 0) {
+                        verses.push(verseCount);
+                    }
+                    book.set('chapters', verses);
+                    book.trigger("change");
                     if (status.length > 0) {
                         status += "<br>";
                     }
