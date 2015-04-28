@@ -278,9 +278,11 @@ define(function (require) {
                                 statusStr += fileStr;
                                 if (statusStr.length > 0) {
                                     $("#mobileSelect").html(statusStr);
+                                    $("#OK").attr("disabled", true);
                                 } else {
                                     // nothing to select -- inform the user
                                     $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                                    $("#OK").removeAttr("disabled");
                                 }
                             },
                             function (error) {

@@ -573,9 +573,11 @@ define(function (require) {
                                 if (statusStr.length > 0) {
                                     $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
                                     $("#tb").html(statusStr);
+                                    $("#OK").attr("disabled", true);
                                 } else {
                                     // nothing to select -- inform the user
                                     $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                                    $("#OK").removeAttr("disabled");
                                 }
                             },
                             function (error) {
