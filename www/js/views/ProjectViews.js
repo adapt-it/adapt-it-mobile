@@ -170,7 +170,7 @@ define(function (require) {
                 }
                 // done -- display the OK button
                 $("#status1").html(i18n.t("view.dscCopyProjectFound", {project: project.get("name")}));
-                $("#OK").show();
+                $("#OK").removeAttr("disabled");
             };
             reader.readAsText(file, "UTF-8");
         },
@@ -237,6 +237,7 @@ define(function (require) {
                 $("#selFile").attr("accept", ".aic");
                 $("#selFile").removeAttr("multiple");
                 $("#title").html(i18n.t('view.lblCopyProject'));
+                $(".topcoat-progress-bar").hide();
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
@@ -302,7 +303,7 @@ define(function (require) {
                     // running in browser -- use html <input> to select file
                     $("#mobileSelect").hide();
                 }
-                $("#OK").hide();
+                $("#OK").attr("disabled", true);
             }
         }),
         

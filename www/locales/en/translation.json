@@ -161,7 +161,7 @@
         "dscCopyProjectFound": "Project found: \"__project__.\"",
         "dscCopyDocumentFound": "Document found: \"__document__.\"",
         "dscNoDocumentsFound": "No available files found on device. Please copy files onto the device and try again.",
-        "lblSelect": "Select",
+        "lblSelect": "Select Files",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

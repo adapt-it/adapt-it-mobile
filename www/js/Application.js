@@ -206,7 +206,7 @@ define(function (require) {
                     theView.project = proj;
                     window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
                 } else {
-                    console.log("no chapter found");
+                    console.log("No chapter found matching id:" + id);
                 }
             }
         });

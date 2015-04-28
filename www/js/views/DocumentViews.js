@@ -19,6 +19,8 @@ define(function (require) {
         scrIDs          = require('app/utils/scrIDs'),
         lines           = [],
         fileList        = [],
+        fileCount       = 0,
+        curFileIdx      = 0,
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -86,6 +88,10 @@ define(function (require) {
                         versecount: 0
                     });
                     chapters.add(chapter);
+                    // set the lastDocument / lastAdapted<xxx> values if not already set
+                    if (project.get('lastDocument') === "") {
+                        project.set('lastDocument', bookName);
+                    }
                     if (project.get('lastAdaptedBookID') === 0) {
                         project.set('lastAdaptedBookID', bookID);
                         project.set('lastAdaptedChapterID', chapterID);
@@ -137,7 +143,21 @@ define(function (require) {
                         status += "<br>";
                     }
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
+                    // update the status
+                    var curStatus = $("#status2").html();
+                    if (curStatus.length > 0) {
+                        curStatus += "<br>";
+                    }
+                    $("#status2").html(curStatus + status);
+                    curFileIdx++;
+                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
+                    $("#progress").attr("style", newWidth);
+                    if (fileCount === curFileIdx) {
+                        // last document -- display the OK button
+                        $("#OK").removeAttr("disabled");
+                    }
                 };
+                
                 // Handler for Adapt It XML file parsing
                 var readXMLDoc = function (contents) {
                     var re = /\s+/;
@@ -157,14 +177,19 @@ define(function (require) {
                     var i = 0;
                     console.log("Reading XML file:" + file.name);
                     scrIDList.fetch({reset: true, data: {id: ""}});
+                    // Starting at the SourcePhrases ( <S ...> ), look for the \id element
+                    // in the markers. We'll test this against the canonical usfm markers to learn more about this document.
                     i = contents.indexOf("<S ");
                     index = contents.indexOf("\\id", i);
                     if (index === -1) {
-                        // no ID found -- just return
+                        // no ID found -- this is most likely not an AI xml document.
+                        // We'll just return for now
+                        console.log("No ID element found (is this an AI XML document?) -- exiting.");
                         return null;
                     }
-                    // we've found the usfm marker -- the "real" index is inside this xml element under the source attribute 
-                    // e.g., (s="MAT"). We need to search backwards to find it.
+                    // we've found the \id element in the markers -- to get the value, we have to work
+                    // backwards until we find the nearest "s" attribute
+                    // e.g., <S s="MAT" ...>.
                     index = contents.lastIndexOf("s=", index) + 3;
                     scrID = scrIDList.where({id: contents.substr(index, contents.indexOf("\"", index) - index)})[0];
                     arr = scrID.get('chapters');
@@ -186,7 +211,6 @@ define(function (require) {
                         chapters: []
                     });
                     books.add(book);
-                    book.trigger('change');
                     chapterID = Underscore.uniqueId();
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
@@ -198,7 +222,10 @@ define(function (require) {
                         versecount: 0
                     });
                     chapters.add(chapter);
-                    chapter.trigger('change');
+                    // set the lastDocument / lastAdapted<xxx> values if not already set
+                    if (project.get('lastDocument') === "") {
+                        project.set('lastDocument', bookName);
+                    }
                     if (project.get('lastAdaptedBookID') === 0) {
                         project.set('lastAdaptedBookID', bookID);
                         project.set('lastAdaptedChapterID', chapterID);
@@ -215,11 +242,11 @@ define(function (require) {
                         // create a new chapter object
                         markers = $(this).attr('m');
                         if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
-                            verses.push(verseCount);
-                            verseCount = 0; // reset for the next chapter
                             // update the last adapted for the previous chapter before closing it out
-                            chapter.set('lastAdapted', lastAdapted);
-                            chapter.trigger('change'); // save the old chapter
+                            chapter.set('versecount', verseCount);
+                            chapter.set('lastadapted', lastAdapted);
+                            verses.push(verseCount); // add this chapter's verseCount to the array
+                            verseCount = 0; // reset for the next chapter
                             lastAdapted = 0; // reset for the next chapter
                             stridx = markers.indexOf("\\c ") + 3;
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
@@ -234,12 +261,11 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
-                            chapter.trigger('change');
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
-                            // check this sourcephrase for a target
-                            // (note that we're only checking the FIRST sp of each verse
+                            // check this sourcephrase for a target - if there is one, consider this verse adapted
+                            // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
                             if ($(this).attr('t')) {
                                 lastAdapted++;
                             }
@@ -267,12 +293,25 @@ define(function (require) {
                         verses.push(verseCount);
                     }
                     book.set('chapters', verses);
-                    book.trigger("change");
                     if (status.length > 0) {
                         status += "<br>";
                     }
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
+                    // update the status
+                    var curStatus = $("#status2").html();
+                    if (curStatus.length > 0) {
+                        curStatus += "<br>";
+                    }
+                    $("#status2").html(curStatus + status);
+                    curFileIdx++;
+                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
+                    $("#progress").attr("style", newWidth);
+                    if (fileCount === curFileIdx) {
+                        // last document -- display the OK button
+                        $("#OK").removeAttr("disabled");
+                    }
                 };
+                
                 // Handler for USFM file parsing
                 var readUSFMDoc = function (contents) {
                     console.log("Reading USFM file:" + file.name);
@@ -325,6 +364,10 @@ define(function (require) {
                         chapters.add(chapter);
                         chapter.trigger('change');
                     }
+                    // set the lastDocument / lastAdapted<xxx> values if not already set
+                    if (project.get('lastDocument') === "") {
+                        project.set('lastDocument', bookName);
+                    }
                     if (project.get('lastAdaptedBookID') === 0) {
                         project.set('lastAdaptedBookID', bookID);
                         project.set('lastAdaptedChapterID', firstChapterID);
@@ -339,6 +382,19 @@ define(function (require) {
                         status += "<br>";
                     }
                     status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
+                    // update the status
+                    var curStatus = $("#status2").html();
+                    if (curStatus.length > 0) {
+                        curStatus += "<br>";
+                    }
+                    $("#status2").html(curStatus + status);
+                    curFileIdx++;
+                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
+                    $("#progress").attr("style", newWidth);
+                    if (fileCount === curFileIdx) {
+                        // last document -- display the OK button
+                        $("#OK").removeAttr("disabled");
+                    }
                 };
 
                 // read doc as appropriate
@@ -350,21 +406,6 @@ define(function (require) {
                     // something else -- try reading it as a text document
                     readTextDoc(this.result);
                 }
-                // set the lastDocument / lastAdapted<xxx> values if not already set
-                if (project.get('lastDocument') === "") {
-                    project.set('lastDocument', name);
-                }
-                if (project.get('lastAdaptedName') === "") {
-                    // TODO: localization of chapter numbers?
-                    project.set('lastAdaptedName', bookName + " 1");
-                }
-                // done -- display the OK button
-                var curStatus = $("#status2").html();
-                if (curStatus.length > 0) {
-                    curStatus += "<br>";
-                }
-                $("#status2").html(curStatus + status);
-                $("#OK").show();
             };
             reader.readAsText(file);
         },
@@ -411,11 +452,14 @@ define(function (require) {
             // file selections are returned by the browser in the event.currentTarget.files array
             browserImportDocs: function (event) {
                 console.log("browserImportDocs");
+                $(".topcoat-progress-bar").show();
+                $("#progress").attr("style", "width: 0%;");
                 var fileindex = 0;
                 var files = event.currentTarget.files;
+                fileCount = files.length;
                 // each of the files items is a file object already; there's no need to use
                 // the file plugin like we need to below. Just call importFile() directly.
-                while (fileindex < files.length) {
+                while (fileindex < fileCount) {
                     importFile(files[fileindex], this.model);
                     fileindex++;
                 }
@@ -427,6 +471,8 @@ define(function (require) {
             // cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
                 console.log("mobileImportDocs");
+                $(".topcoat-progress-bar").show();
+                $("#progress").attr("style", "width: 0%;");
                 // find all the selected files
                 var selected = [];
                 $("tr").each(function () {
@@ -434,6 +480,7 @@ define(function (require) {
                         selected.push($(this).find(".c").attr('id'));
                     }
                 });
+                fileCount = selected.length;
                 // Get a "real" file object for each of the selected files.
                 // This requires using the html5 filesystem API.
                 var fileindex = 0;
@@ -480,7 +527,8 @@ define(function (require) {
 //                $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
-                $("#OK").hide();
+                $(".topcoat-progress-bar").hide();
+                $("#OK").attr("disabled", true);
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
