@@ -261,6 +261,7 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
+                            console.log(": " + $(this).attr('s') + ", " + chapterID);
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
@@ -271,7 +272,7 @@ define(function (require) {
                             }
                         }
                         // create the next sourcephrase
-                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
+//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         spID = Underscore.uniqueId();
                         sp = new spModel.SourcePhrase({
                             spid: spID,

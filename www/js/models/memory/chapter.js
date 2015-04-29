@@ -64,28 +64,20 @@ define(function (require) {
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT COUNT(id) AS cnt FROM chapter WHERE chapterid=?;", [attributes.chapterid], function (tx, res) {
-//                        console.log("SELECT ok: " + res.toString());
+//                        console.log("SELECT ok: " + res.rows.item(0).cnt + " with chapterid=" + attributes.chapterid);
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql("UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
-//                                    console.log("UPDATE ok: " + res.toString());
-                                });
-                            }, function (err) {
-                                console.log("UPDATE error: " + err.message);
+                            tx.executeSql("UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
+//                                console.log("UPDATE ok: " + res.toString());
                             });
                         } else {
                             // new record -- insert
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql("INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
-//                                    console.log("INSERT ok: " + res.toString());
-                                });
-                            }, function (err) {
-                                console.log("INSERT error: " + err.message);
+                            tx.executeSql("INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
+//                                console.log("INSERT ok: " + res.toString());
                             });
                         }
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.message);
+//                        console.log("SELECT error: " + err.message);
                     });
                 });
             },
