@@ -261,6 +261,7 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
+                            chapter.trigger('change');
                             console.log(": " + $(this).attr('s') + ", " + chapterID);
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
