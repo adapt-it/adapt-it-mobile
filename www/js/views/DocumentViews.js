@@ -55,7 +55,13 @@ define(function (require) {
                     bookID = "",
                     chapterID = "",
                     spID = "";
-                // Parse a text document
+                ///
+                // FILE TYPE READERS
+                ///
+                
+                // Plain Text document
+                // We assume these are just text with no markup,
+                // in a single chapter (this could change if needed)
                 var readTextDoc = function (contents) {
                     var re = /\s+/;
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
@@ -158,13 +164,75 @@ define(function (require) {
                     }
                 };
                 
-                // Handler for Adapt It XML file parsing
-                var readXMLDoc = function (contents) {
-                    var re = /\s+/;
-                    var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
+                // Paratext USX document
+                // These are XML-flavored markup files exported from Paratext
+                var readUSXDoc = function (contents) {
                     var prepunct = "";
                     var follpunct = "";
-                    var needsNewLine = false;
+                    var sp = null;
+                    var xmlDoc = $.parseXML(contents);
+                    var $xml = $(xmlDoc);
+                    var chapterName = "";
+                    // find the USFM ID of this book
+                    var scrIDList = new scrIDs.ScrIDCollection();
+                    var verseCount = 0;
+                    var verses = [];
+                    var lastAdapted = 0;
+                    var firstChapterID = "";
+                    var i = 0;
+                    console.log("Reading XML file:" + file.name);
+                    scrIDList.fetch({reset: true, data: {id: ""}});
+                    scrID = scrIDList.where({id: $($xml).find("book").attr("code")})[0];
+                    arr = scrID.get('chapters');
+                    books.fetch({reset: true, data: {name: ""}});
+                    if (books.where({scrid: (scrID.get('id'))}).length > 0) {
+                        // this book is already in the list -- just return
+                        return null;
+                    }
+                    index = 1;
+                    bookName = file.name.substr(0, file.name.indexOf("."));
+                    bookID = Underscore.uniqueId();
+                    // Create the book and chapter 
+                    book = new bookModel.Book({
+                        bookid: bookID,
+                        projectid: project.get('id'),
+                        scrid: scrID.get('id'),
+                        name: bookName,
+                        filename: file.name,
+                        chapters: []
+                    });
+                    books.add(book);
+                    chapterID = Underscore.uniqueId();
+                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    chapter = new chapModel.Chapter({
+                        chapterid: chapterID,
+                        bookid: bookID,
+                        projectid: project.get('id'),
+                        name: chapterName,
+                        lastadapted: 0,
+                        versecount: 0
+                    });
+                    chapters.add(chapter);
+                    // set the lastDocument / lastAdapted<xxx> values if not already set
+                    if (project.get('lastDocument') === "") {
+                        project.set('lastDocument', bookName);
+                    }
+                    if (project.get('lastAdaptedBookID') === 0) {
+                        project.set('lastAdaptedBookID', bookID);
+                        project.set('lastAdaptedChapterID', chapterID);
+                    }
+                    if (project.get('lastAdaptedName') === "") {
+                        project.set('lastAdaptedName', chapterName);
+                    }
+                };
+                
+                // Adapt It XML document
+                // While XML is a general purpose document format, we're looking
+                // specifically for Adapt It XML document files; other files
+                // will be skipped (for now)
+                var readXMLDoc = function (contents) {
+                    var prepunct = "";
+                    var follpunct = "";
                     var sp = null;
                     var xmlDoc = $.parseXML(contents);
                     var chapterName = "";
@@ -314,7 +382,9 @@ define(function (require) {
                     }
                 };
                 
-                // Handler for USFM file parsing
+                // USFM document
+                // This is the file format for Bibledit and Paratext
+                // See http://paratext.org/about/usfm for format specification
                 var readUSFMDoc = function (contents) {
                     console.log("Reading USFM file:" + file.name);
                     // find the ID of this book
@@ -402,6 +472,9 @@ define(function (require) {
                 // read doc as appropriate
                 if ((file.name.indexOf(".usfm") > 0) || (file.name.indexOf(".sfm") > 0)) {
                     readUSFMDoc(this.result);
+                } else if (file.name.indexOf(".usx") > 0) {
+                    readUSXDoc(this.result);
+                           
                 } else if (file.name.indexOf(".xml") > 0) {
                     readXMLDoc(this.result);
                 } else {
