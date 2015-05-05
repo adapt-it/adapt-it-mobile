@@ -16,7 +16,8 @@ define(function (require) {
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         chapModel       = require('app/models/chapter'),
-        scrIDs          = require('app/utils/scrIDs'),
+        scrIDs          = require('utils/scrIDs'),
+        USFM            = require('utils/usfm'),
         lines           = [],
         fileList        = [],
         fileCount       = 0,
@@ -182,7 +183,12 @@ define(function (require) {
                     var i = 0;
                     console.log("Reading XML file:" + file.name);
                     scrIDList.fetch({reset: true, data: {id: ""}});
+                    // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
                     scrID = scrIDList.where({id: $($xml).find("book").attr("code")})[0];
+                    if (scrID === null) {
+                        console.log("No ID matching this document: " + $($xml).find("book").attr("code"));
+                        return null;
+                    }
                     arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
@@ -232,6 +238,7 @@ define(function (require) {
                 // will be skipped (for now)
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
+                    var re = /\s+/;
                     var follpunct = "";
                     var sp = null;
                     var xmlDoc = $.parseXML(contents);
@@ -242,6 +249,7 @@ define(function (require) {
                     var verses = [];
                     var lastAdapted = 0;
                     var firstChapterID = "";
+                    var markers = "";
                     var i = 0;
                     console.log("Reading XML file:" + file.name);
                     scrIDList.fetch({reset: true, data: {id: ""}});
@@ -303,7 +311,6 @@ define(function (require) {
                     }
                     // create the sourcephrases
                     var $xml = $(xmlDoc);
-                    var markers = "";
                     var stridx = 0;
                     $($xml).find("S").each(function (i) {
                         // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
@@ -339,6 +346,36 @@ define(function (require) {
                             if ($(this).attr('t')) {
                                 lastAdapted++;
                             }
+                        }
+                        // if there are filtered text items, insert them now
+                        if ($(this).attr('fi')) {
+                            $(this).attr('fi').split(re).forEach(function (elt, index, array) {
+                                if (elt.indexOf("~FILTER") > -1) {
+                                    continue; // skip first and last elements
+                                }
+                                if (elt.indexOf("\\") === 0) {
+                                    markers += elt;
+                                } else if (elt.indexOf("\\") > 0) {
+                                    markers += elt;
+                                } else {
+                                    spID = Underscore.uniqueId();
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        chapterid: chapterID,
+                                        markers: markers,
+                                        orig: null,
+                                        prepuncts: $(this).attr('pp'),
+                                        midpuncts: "",
+                                        follpuncts: $(this).attr('fp'),
+                                        source: $(this).attr('k'), // source w/o punctuation
+                                        target: $(this).attr('t')
+                                    });
+                                    index++;
+                                    sourcePhrases.add(sp);
+                                    sp.trigger('change');
+                                    markers = ""; // reset
+                                }
+                            });
                         }
                         // create the next sourcephrase
 //                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
@@ -386,18 +423,24 @@ define(function (require) {
                 // This is the file format for Bibledit and Paratext
                 // See http://paratext.org/about/usfm for format specification
                 var readUSFMDoc = function (contents) {
+                    var scrIDList = new scrIDs.ScrIDCollection();
+                    var chapterName = "";
+                    var sp = null;
+                    var re = /\s+/;
+                    var markerList = new USFM.MarkerCollection();
+                    var marker = null;
+
                     console.log("Reading USFM file:" + file.name);
                     // find the ID of this book
-                    var scrIDList = new scrIDs.ScrIDCollection();
-                    var firstChapterID = "";
-                    scrIDList.fetch({reset: true, data: {id: ""}});
                     index = contents.indexOf("\\id");
                     if (index === -1) {
                         // no ID found -- just return
                         return null;
                     }
+                    markerList.fetch({reset: true, data: {name: ""}});
+                    scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
-                    arr = scrID.get('chapters');
+//                    arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                         // this book is already in the list -- just return
@@ -408,7 +451,7 @@ define(function (require) {
                         // get the name from the usfm itself
                         bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
                     }
-                    // add a book and chapters
+                    // add a book and chapter
                     bookID = Underscore.uniqueId();
                     book = new bookModel.Book({
                         bookid: bookID,
@@ -416,40 +459,76 @@ define(function (require) {
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
-                        chapters: arr
+                        chapters: [] // arr
                     });
                     books.add(book);
-                    book.trigger('change');
-                    firstChapterID = chapterID = Underscore.uniqueId();
-                    for (i = 0; i < arr.length; i++) {
-                        // book ID + chapter #, padded with zeros (using slice to get last 3 digits)
-//                                    id: proj.get('id') + ".." + scrID.get('id') + ("00" + (i + 1)).slice(-3),
-                        chapter = new chapModel.Chapter({
-                            chapterid: chapterID,
-                            bookid: bookID,
-                            projectid: project.get('id'),
-                            name: (bookName + " " + (i + 1)),
-                            lastadapted: 0,
-                            versecount: arr[i]
-                        });
-                        chapterID = Underscore.uniqueId();
-                        chapters.add(chapter);
-                        chapter.trigger('change');
-                    }
+                    // Note that we're adding chapter 1 before we reach the \c 1 marker in the file --
+                    // Usually there's a fair amount of front matter before we reach the chapter itself;
+                    // rather than creating a chapter 0 (which would throw off the search stuff), we'll
+                    // just add the front matter to chapter 1.
+                    chapterID = Underscore.uniqueId();
+                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    chapter = new chapModel.Chapter({
+                        chapterid: chapterID,
+                        bookid: bookID,
+                        projectid: project.get('id'),
+                        name: chapterName,
+                        lastadapted: 0,
+                        versecount: 0
+                    });
+                    chapters.add(chapter);
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (project.get('lastDocument') === "") {
                         project.set('lastDocument', bookName);
                     }
                     if (project.get('lastAdaptedBookID') === 0) {
                         project.set('lastAdaptedBookID', bookID);
-                        project.set('lastAdaptedChapterID', firstChapterID);
+                        project.set('lastAdaptedChapterID', chapterID);
                     }
                     if (project.get('lastAdaptedName') === "") {
-                        // TODO: localization of chapter numbers?
-                        project.set('lastAdaptedName', bookName + " 1");
+                        project.set('lastAdaptedName', chapterName);
                     }
                     // build SourcePhrases
-//                        while (i < contents.length) {
+                    arr = contents.split(re);
+                    for (i = 0; i < arr.length; i++) {
+                        // text becomes a new SourcePhrase, <p> and punctuation become markers / punct
+                        if (arr[i].indexOf("\\") === 0) {
+                            // marker -- which one?
+//                            if ((arr[i] === "\\v") || (arr[i] === "\\\c")) {
+//                                // join with the next
+//                            }
+                        }
+//                        if (arr[i] === "<p>") {
+//                            // newline -- make a note and keep going
+//                        }
+//                        if (arr[i].length === 0) {
+//                            continue; // blank entry -- skip
+//                        }
+                        // punctuation -- have to check our punctuation pairs
+//                                if (false) {
+//                                    // is this before or after a space? <<<<<<<<<<<<<<<<
+//                                    break;
+//                                }
+                        // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
+                        spID = Underscore.uniqueId();
+                        sp = new spModel.SourcePhrase({
+                            spid: spID,
+                            chapterid: chapterID,
+                            markers: "",
+                            orig: null,
+                            prepuncts: "",
+                            midpuncts: "",
+                            follpuncts: "",
+                            source: arr[i],
+                            target: ""
+                        });
+                        index++;
+                        sourcePhrases.add(sp);
+                        sp.trigger('change');
+//                        needsNewLine = false;
+                    }
+                    
+                    // done parsing -- update the status
                     if (status.length > 0) {
                         status += "<br>";
                     }

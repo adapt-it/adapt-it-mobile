@@ -6,7 +6,6 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-        i           = 0,
         /* Converted from AI_USFM.xml, with non-settable markers removed */
         markers = [
             {
