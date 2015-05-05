@@ -349,15 +349,18 @@ define(function (require) {
                         }
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
+                            markers = "";
                             $(this).attr('fi').split(re).forEach(function (elt, index, array) {
                                 if (elt.indexOf("~FILTER") > -1) {
-                                    continue; // skip first and last elements
-                                }
-                                if (elt.indexOf("\\") === 0) {
+                                    // do nothing -- skip first and last elements
+                                } else if (elt.indexOf("\\") === 0) {
+                                    // starting marker
                                     markers += elt;
                                 } else if (elt.indexOf("\\") > 0) {
-                                    markers += elt;
-                                } else {
+                                    // ending marker - it's concatenated with the preceding token, no space
+                                    // create a sourcephrase with the first part of the token, using the marker
+                                    // from the end
+                                    markers += elt.substr(elt.indexOf("\\"));
                                     spID = Underscore.uniqueId();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -367,8 +370,26 @@ define(function (require) {
                                         prepuncts: $(this).attr('pp'),
                                         midpuncts: "",
                                         follpuncts: $(this).attr('fp'),
-                                        source: $(this).attr('k'), // source w/o punctuation
-                                        target: $(this).attr('t')
+                                        source: elt.substr(0, elt.indexOf("\\") - 1),
+                                        target: ""
+                                    });
+                                    index++;
+                                    sourcePhrases.add(sp);
+                                    sp.trigger('change');
+                                    markers = ""; // reset
+                                } else {
+                                    // regular token - add as a new sourcephrase
+                                    spID = Underscore.uniqueId();
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        chapterid: chapterID,
+                                        markers: markers,
+                                        orig: null,
+                                        prepuncts: $(this).attr('pp'),
+                                        midpuncts: "",
+                                        follpuncts: $(this).attr('fp'),
+                                        source: elt,
+                                        target: ""
                                     });
                                     index++;
                                     sourcePhrases.add(sp);
