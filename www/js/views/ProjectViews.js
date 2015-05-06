@@ -350,6 +350,8 @@ define(function (require) {
                     s = $(this).find(".s").val();
                     t = $(this).find(".t").val();
                     if (s && s.length > 0) {
+                        s = Handlebars.Utils.escapeExpression(s);
+                        t = Handlebars.Utils.escapeExpression(t);
                         arr[arr.length] = {s: s, t: t};
                     }
                 });
@@ -769,13 +771,13 @@ define(function (require) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
-                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
+                    this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
                     this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
-                    this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
+                    this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
                     this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
