@@ -502,6 +502,10 @@ define(function (require) {
                     s = $(this).find(".s").val();
                     t = $(this).find(".t").val();
                     if (s && s.length > 0) {
+                        // escape the punctuation chars (avoids injection attacks)
+                        s = Handlebars.Utils.escapeExpression(s);
+                        t = Handlebars.Utils.escapeExpression(t);
+                        // update the array
                         arr[arr.length] = {s: s, t: t};
                     }
                 });
