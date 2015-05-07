@@ -511,41 +511,46 @@ define(function (require) {
                     }
                     // build SourcePhrases
                     arr = contents.split(re);
-                    for (i = 0; i < arr.length; i++) {
-                        // text becomes a new SourcePhrase, <p> and punctuation become markers / punct
+                    i = 0;
+                    while (i < arr.length) {
+                        // check for a marker
                         if (arr[i].indexOf("\\") === 0) {
-                            // marker -- which one?
-//                            if ((arr[i] === "\\v") || (arr[i] === "\\\c")) {
-//                                // join with the next
-//                            }
-                        }
-//                        if (arr[i] === "<p>") {
-//                            // newline -- make a note and keep going
-//                        }
-//                        if (arr[i].length === 0) {
-//                            continue; // blank entry -- skip
-//                        }
+                            markers += arr[i];
+                            // Check for markers with more than one token (and merge the two marker tokens)
+                            if ((arr[i] === "\\x") || (arr[i] === "\\f") ||
+                                    (arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
+                                    (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
+                                // join with the next
+                                i++;
+                                markers += arr[i];
+                            }
+                        } else if (arr[i].length === 0) {
+                            i++;
+                            continue; // blank entry -- skip
+                        } else {
                         // punctuation -- have to check our punctuation pairs
 //                                if (false) {
 //                                    // is this before or after a space? <<<<<<<<<<<<<<<<
 //                                    break;
 //                                }
-                        // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
-                        spID = Underscore.uniqueId();
-                        sp = new spModel.SourcePhrase({
-                            spid: spID,
-                            chapterid: chapterID,
-                            markers: "",
-                            orig: null,
-                            prepuncts: "",
-                            midpuncts: "",
-                            follpuncts: "",
-                            source: arr[i],
-                            target: ""
-                        });
-                        index++;
-                        sourcePhrases.add(sp);
-                        sp.trigger('change');
+                            // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
+                            spID = Underscore.uniqueId();
+                            sp = new spModel.SourcePhrase({
+                                spid: spID,
+                                chapterid: chapterID,
+                                markers: "",
+                                orig: null,
+                                prepuncts: "",
+                                midpuncts: "",
+                                follpuncts: "",
+                                source: arr[i],
+                                target: ""
+                            });
+                            index++;
+                            sourcePhrases.add(sp);
+                            sp.trigger('change');
+                            i++;
+                        }
 //                        needsNewLine = false;
                     }
                     
