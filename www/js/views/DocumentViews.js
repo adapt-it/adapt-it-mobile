@@ -450,6 +450,10 @@ define(function (require) {
                     var re = /\s+/;
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
+                    var lastAdapted = 0;
+                    var verses = 0;
+                    var verseCount = 0;
+                    var stridx = 0;
 
                     console.log("Reading USFM file:" + file.name);
                     // find the ID of this book
@@ -461,7 +465,6 @@ define(function (require) {
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
-//                    arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                         // this book is already in the list -- just return
@@ -524,21 +527,56 @@ define(function (require) {
                                 i++;
                                 markers += arr[i];
                             }
+                            i++;
                         } else if (arr[i].length === 0) {
                             i++;
-                            continue; // blank entry -- skip
                         } else {
+                            // "normal" sourcephrase
                         // punctuation -- have to check our punctuation pairs
 //                                if (false) {
 //                                    // is this before or after a space? <<<<<<<<<<<<<<<<
 //                                    break;
 //                                }
-                            // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
+                            // Before creating the sourcephrase, look to see if we need to create a chapter element
+                            // (note that we've already created chapter 1, so skip it if we come across it)
+                            if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
+                                // update the last adapted for the previous chapter before closing it out
+                                chapter.set('versecount', verseCount);
+                                chapter.set('lastadapted', lastAdapted);
+                                verses.push(verseCount); // add this chapter's verseCount to the array
+                                verseCount = 0; // reset for the next chapter
+                                lastAdapted = 0; // reset for the next chapter
+                                stridx = markers.indexOf("\\c ") + 3;
+                                chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                chapterID = Underscore.uniqueId();
+                                // create the new chapter
+                                chapter = new chapModel.Chapter({
+                                    chapterid: chapterID,
+                                    bookid: bookID,
+                                    projectid: project.get('id'),
+                                    name: chapterName,
+                                    lastadapted: 0,
+                                    versecount: 0
+                                });
+                                chapters.add(chapter);
+                                chapter.trigger('change');
+                                console.log(": " + $(this).attr('s') + ", " + chapterID);
+                            }
+                            // also do some processing for verse markers
+                            if (markers && markers.indexOf("\\v ") !== -1) {
+                                verseCount++;
+                                // check this sourcephrase for a target - if there is one, consider this verse adapted
+                                // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
+                                if ($(this).attr('t')) {
+                                    lastAdapted++;
+                                }
+                            }
+                            // Now create a new sourcephrase
                             spID = Underscore.uniqueId();
                             sp = new spModel.SourcePhrase({
                                 spid: spID,
                                 chapterid: chapterID,
-                                markers: "",
+                                markers: markers,
                                 orig: null,
                                 prepuncts: "",
                                 midpuncts: "",
@@ -546,12 +584,12 @@ define(function (require) {
                                 source: arr[i],
                                 target: ""
                             });
+                            markers = "";
                             index++;
                             sourcePhrases.add(sp);
                             sp.trigger('change');
                             i++;
                         }
-//                        needsNewLine = false;
                     }
                     
                     // done parsing -- update the status
