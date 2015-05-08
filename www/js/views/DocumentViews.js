@@ -21,6 +21,8 @@ define(function (require) {
         lines           = [],
         fileList        = [],
         fileCount       = 0,
+        punctExp        = "",
+        puncts          = [],
         curFileIdx      = 0,
 
         // Helper method to import the selected file into the specified project.
@@ -447,12 +449,13 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
                     var sp = null;
-                    var re = /\s+/;
+                    var re = /\s+/; // []
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
                     var verses = 0;
                     var verseCount = 0;
+                    var hasPunct = false;
                     var stridx = 0;
 
                     console.log("Reading USFM file:" + file.name);
@@ -512,12 +515,14 @@ define(function (require) {
                     if (project.get('lastAdaptedName') === "") {
                         project.set('lastAdaptedName', chapterName);
                     }
-                    // build SourcePhrases
-                    arr = contents.split(re);
+                    
+                    // build SourcePhrases                    
+                    arr = contents.split(new RegExp(punctExp, 'g')); // (re);
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
                         if (arr[i].indexOf("\\") === 0) {
+                            // marker token
                             markers += arr[i];
                             // Check for markers with more than one token (and merge the two marker tokens)
                             if ((arr[i] === "\\x") || (arr[i] === "\\f") ||
@@ -529,14 +534,14 @@ define(function (require) {
                             }
                             i++;
                         } else if (arr[i].length === 0) {
+                            // nothing in this token -- skip
+                            i++;
+                        } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
+                            // punctuation token -- add to the prepuncts
+                            prepuncts += arr[i];
                             i++;
                         } else {
-                            // "normal" sourcephrase
-                        // punctuation -- have to check our punctuation pairs
-//                                if (false) {
-//                                    // is this before or after a space? <<<<<<<<<<<<<<<<
-//                                    break;
-//                                }
+                            // "normal" sourcephrase token
                             // Before creating the sourcephrase, look to see if we need to create a chapter element
                             // (note that we've already created chapter 1, so skip it if we come across it)
                             if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
@@ -747,6 +752,18 @@ define(function (require) {
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
                 $(".topcoat-progress-bar").hide();
                 $("#OK").attr("disabled", true);
+                // build the regular expression to identify punctuation
+                // (this allows us to split out punctuation as separate tokens when importing
+                punctExp = "[\\s";
+                this.model.get('PunctPairs').forEach(function (elt, idx, array) {
+                    // Unicode-encoded punctuation, formatted to get leading 00 padding (e.g., \U0065 for "a"
+                    // each punctuation marker is bound in "capturing parentheses", meaning that
+                    // the punctuation itself is kept as a separate token in the array when we perform our split() call.
+                    puncts.push(elt.s);
+                    punctExp += "(\\u" + ("000" + elt.s.charCodeAt(0)).slice(-4) + ")";
+                });
+                punctExp += "]+"; // one or more of ANY of the above will trigger a new token
+                
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
