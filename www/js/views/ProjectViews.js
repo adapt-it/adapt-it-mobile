@@ -64,7 +64,8 @@ define(function (require) {
                     i = 0,
                     s = null,
                     t = null,
-                    arr = [];
+                    arrPunct = [],
+                    arrCases = [];
                 var getSettingValue = function (expectedIndex, aicSetting) {
                     var i = 0,
                         value = "";
@@ -124,10 +125,10 @@ define(function (require) {
                     s = value.charAt(i);
                     t = value2.charAt(i);
                     if (s && s.length > 0) {
-                        arr[arr.length] = {s: s, t: t};
+                        arrPunct[arrPunct.length] = {s: s, t: t};
                     }
                 }
-                project.set({PunctPairs: arr});
+                project.set({PunctPairs: arrPunct});
                 // Auto capitalization
                 value = getSettingValue(115, "LowerCaseSourceLanguageChars");
                 value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
@@ -137,10 +138,10 @@ define(function (require) {
                     s = value.charAt(i) + value2.charAt(i);
                     t = value3.charAt(i) + value4.charAt(i);
                     if (s && s.length > 0) {
-                        arr[arr.length] = {s: s, t: t};
+                        arrCases[arrCases.length] = {s: s, t: t};
                     }
                 }
-                project.set({CasePairs: arr});
+                project.set({CasePairs: arrCases});
                 value = getSettingValue(121, "AutoCapitalizationFlag");
                 project.set("AutoCapitalization", (value === "1") ? "true" : "false");
                 value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
