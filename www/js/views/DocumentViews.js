@@ -449,13 +449,14 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
                     var sp = null;
-                    var re = /\s+/; // []
+                    var re = /\s+/;
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
                     var verses = 0;
                     var verseCount = 0;
                     var hasPunct = false;
+                    var punctIdx = 0;
                     var stridx = 0;
 
                     console.log("Reading USFM file:" + file.name);
@@ -489,6 +490,7 @@ define(function (require) {
                         chapters: [] // arr
                     });
                     books.add(book);
+                    book.trigger('change');
                     // Note that we're adding chapter 1 before we reach the \c 1 marker in the file --
                     // Usually there's a fair amount of front matter before we reach the chapter itself;
                     // rather than creating a chapter 0 (which would throw off the search stuff), we'll
@@ -504,6 +506,7 @@ define(function (require) {
                         versecount: 0
                     });
                     chapters.add(chapter);
+                    chapter.trigger('change');
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (project.get('lastDocument') === "") {
                         project.set('lastDocument', bookName);
@@ -517,12 +520,15 @@ define(function (require) {
                     }
                     
                     // build SourcePhrases                    
-                    arr = contents.split(new RegExp(punctExp, 'g')); // (re);
+                    arr = contents.replace(/\\/gi, " \\").split(re); // add space to make sure markers get put in a separate token
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
                         if (arr[i].indexOf("\\") === 0) {
                             // marker token
+                            if (markers.length > 0) {
+                                markers += " ";
+                            }
                             markers += arr[i];
                             // Check for markers with more than one token (and merge the two marker tokens)
                             if ((arr[i] === "\\x") || (arr[i] === "\\f") ||
@@ -576,24 +582,56 @@ define(function (require) {
                                     lastAdapted++;
                                 }
                             }
-                            // Now create a new sourcephrase
-                            spID = Underscore.uniqueId();
-                            sp = new spModel.SourcePhrase({
-                                spid: spID,
-                                chapterid: chapterID,
-                                markers: markers,
-                                orig: null,
-                                prepuncts: "",
-                                midpuncts: "",
-                                follpuncts: "",
-                                source: arr[i],
-                                target: ""
-                            });
-                            markers = "";
-                            index++;
-                            sourcePhrases.add(sp);
-                            sp.trigger('change');
-                            i++;
+                            s = arr[i];
+                            // look for leading and trailing punctuation
+                            // leading...
+                            if (puncts.indexOf(arr[i].charAt(0)) > -1) {
+                                // leading punct 
+                                punctIdx = 0;
+                                while (puncts.indexOf(arr[i].charAt(punctIdx)) > -1 && punctIdx < arr[i].length) {
+                                    prepuncts += arr[i].charAt(punctIdx);
+                                    punctIdx++;
+                                }
+                                // remove the punctuation from the "source" of the substring
+                                s = s.substr(punctIdx);
+                            }
+                            if (s.length === 0) {
+                                // it'a ALL punctuation -- jump to the next token
+                                i++;
+                            } else {
+                                // not all punctuation -- check following punctuation, then create a sourcephrase
+                                if (puncts.indexOf(s.charAt(s.length - 1)) > -1) {
+                                    // trailing punct 
+                                    punctIdx = s.length - 1;
+                                    while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
+                                        follpuncts += s.charAt(punctIdx);
+                                        punctIdx--;
+                                    }
+                                    // remove the punctuation from the "source" of the substring
+                                    s = s.substr(0, punctIdx + 1);
+                                }
+                                // Now create a new sourcephrase
+                                spID = Underscore.uniqueId();
+                                sp = new spModel.SourcePhrase({
+                                    spid: spID,
+                                    chapterid: chapterID,
+                                    markers: markers,
+                                    orig: null,
+                                    prepuncts: prepuncts,
+                                    midpuncts: midpuncts,
+                                    follpuncts: follpuncts,
+                                    source: s,
+                                    target: ""
+                                });
+                                markers = "";
+                                prepuncts = "";
+                                follpuncts = "";
+                                punctIdx = 0;
+                                index++;
+                                sourcePhrases.add(sp);
+                                sp.trigger('change');
+                                i++;
+                            }
                         }
                     }
                     
@@ -756,11 +794,13 @@ define(function (require) {
                 // (this allows us to split out punctuation as separate tokens when importing
                 punctExp = "[\\s";
                 this.model.get('PunctPairs').forEach(function (elt, idx, array) {
-                    // Unicode-encoded punctuation, formatted to get leading 00 padding (e.g., \U0065 for "a"
+                    // Unicode-encoded punctuation, formatted to get leading 00 padding (e.g., \U0065 for "a"),
                     // each punctuation marker is bound in "capturing parentheses", meaning that
                     // the punctuation itself is kept as a separate token in the array when we perform our split() call.
+                    // Note that we have to do a charCodeAt(), which returns the decimal value of the unicode char,
+                    // then convert it to hex using toString(16).
                     puncts.push(elt.s);
-                    punctExp += "(\\u" + ("000" + elt.s.charCodeAt(0)).slice(-4) + ")";
+                    punctExp += "(\\u" + ("000" + elt.s.charCodeAt(0).toString(16)).slice(-4) + ")";
                 });
                 punctExp += "]+"; // one or more of ANY of the above will trigger a new token
                 
