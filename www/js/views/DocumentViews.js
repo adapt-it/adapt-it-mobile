@@ -10,7 +10,6 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         i18n            = require('i18n'),
-//        sax             = require('sax'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
@@ -49,6 +48,7 @@ define(function (require) {
                     midpuncts = "",
                     follpuncts = "",
                     newSP = null,
+                    punctIdx = 0,
                     chapter = null,
                     book = null,
                     books = new bookModel.BookCollection(),
@@ -111,39 +111,75 @@ define(function (require) {
                     // parse the text file and create the SourcePhrases
                     arr = contents.replace(newline, " <p> ").split(re); // insert special <p> for linefeeds, then split on whitespace
 //                            arr = contents.split(re);
-                    for (i = 0; i < arr.length; i++) {
-                        // text becomes a new SourcePhrase, <p> and punctuation become markers / punct
-                        if (arr[i] === "<p>") {
-                            // newline -- make a note and keep going
-                            needsNewLine = true;
-                            continue;
-                        }
+                    i = 0;
+                    while (i < arr.length) {
+                        // check for a marker
                         if (arr[i].length === 0) {
-                            continue; // blank entry -- skip
+                            // nothing in this token -- skip
+                            i++;
+                        } else if (arr[i] === "<p>") {
+                            // newline -- make a note and keep going
+                            markers = "\\p";
+                            i++;
+                        } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
+                            // punctuation token -- add to the prepuncts
+                            prepuncts += arr[i];
+                            i++;
+                        } else {
+                            // "normal" sourcephrase token
+                            s = arr[i];
+                            // look for leading and trailing punctuation
+                            // leading...
+                            if (puncts.indexOf(arr[i].charAt(0)) > -1) {
+                                // leading punct 
+                                punctIdx = 0;
+                                while (puncts.indexOf(arr[i].charAt(punctIdx)) > -1 && punctIdx < arr[i].length) {
+                                    prepuncts += arr[i].charAt(punctIdx);
+                                    punctIdx++;
+                                }
+                                // remove the punctuation from the "source" of the substring
+                                s = s.substr(punctIdx);
+                            }
+                            if (s.length === 0) {
+                                // it'a ALL punctuation -- jump to the next token
+                                i++;
+                            } else {
+                                // not all punctuation -- check following punctuation, then create a sourcephrase
+                                if (puncts.indexOf(s.charAt(s.length - 1)) > -1) {
+                                    // trailing punct 
+                                    punctIdx = s.length - 1;
+                                    while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
+                                        follpuncts += s.charAt(punctIdx);
+                                        punctIdx--;
+                                    }
+                                    // remove the punctuation from the "source" of the substring
+                                    s = s.substr(0, punctIdx + 1);
+                                }
+                                // Now create a new sourcephrase
+                                spID = Underscore.uniqueId();
+                                sp = new spModel.SourcePhrase({
+                                    spid: spID,
+                                    chapterid: chapterID,
+                                    markers: markers,
+                                    orig: null,
+                                    prepuncts: prepuncts,
+                                    midpuncts: midpuncts,
+                                    follpuncts: follpuncts,
+                                    source: s,
+                                    target: ""
+                                });
+                                markers = "";
+                                prepuncts = "";
+                                follpuncts = "";
+                                punctIdx = 0;
+                                index++;
+                                sourcePhrases.add(sp);
+                                sp.trigger('change');
+                                i++;
+                            }
                         }
-                        // punctuation -- have to check our punctuation pairs
-//                                if (false) {
-//                                    // is this before or after a space? <<<<<<<<<<<<<<<<
-//                                    break;
-//                                }
-                        // if we got here, it's a regular SourcePhrase word. Create a new SP and add any LF / punctuation
-                        spID = Underscore.uniqueId();
-                        sp = new spModel.SourcePhrase({
-                            spid: spID,
-                            chapterid: chapterID,
-                            markers: (needsNewLine === true) ? "\\p" : "",
-                            orig: null,
-                            prepuncts: "",
-                            midpuncts: "",
-                            follpuncts: "",
-                            source: arr[i],
-                            target: ""
-                        });
-                        index++;
-                        sourcePhrases.add(sp);
-                        sp.trigger('change');
-                        needsNewLine = false;
                     }
+
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index));
@@ -180,9 +216,158 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
                     var verses = [];
+                    var punctIdx = 0;
                     var lastAdapted = 0;
                     var firstChapterID = "";
+                    var innerText = "";
                     var i = 0;
+                    var closingMarker = "";
+                    var parseNode = function (element) {
+                        closingMarker = "";
+                        // process the node itself
+                        switch ($(element)[0].tagName) {
+                        case "chapter":
+                            if (markers.length > 0) {
+                                markers += " ";
+                            }
+                            markers += "\\c " + element.attributes.item("number").nodeValue;
+                            if (element.attributes.item("number").nodeValue !== "1") {
+                                // not the first chapter
+                                // first, close out the previous chapter
+                                chapter.set('versecount', verseCount);
+                                chapter.set('lastadapted', lastAdapted);
+                                verses.push(verseCount); // add this chapter's verseCount to the array
+                                verseCount = 0; // reset for the next chapter
+                                lastAdapted = 0; // reset for the next chapter
+                                // now create the new chapter
+                                chapterID = Underscore.uniqueId();
+                                chapter = new chapModel.Chapter({
+                                    chapterid: chapterID,
+                                    bookid: bookID,
+                                    projectid: project.get('id'),
+                                    name: bookName,
+                                    lastadapted: 0,
+                                    versecount: 0
+                                });
+                            }
+                            break;
+                        case "verse":
+                            verseCount++;
+                            if (markers.length > 0) {
+                                markers += " ";
+                            }
+                            markers += "\\v " + element.attributes.item("number").nodeValue;
+                            break;
+                        case "para":
+                            // the para kind is in the style tag
+                            if (markers.length > 0) {
+                                markers += " ";
+                            }
+                            markers += "\\" + element.attributes.item("style").nodeValue;
+                            break;
+                        case "char":
+                            break;
+                        case "figure":
+                            break;
+                        case "note":
+                                //caller, style
+                            if (markers.length > 0) {
+                                markers += " ";
+                            }
+                            markers += "\\" + element.attributes.item("style").nodeValue;
+                            if (element.attributes.item("caller")) {
+                                markers += " " + element.attributes.item("caller").nodeValue;
+                            }
+                            closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                            break;
+                        case "reference":
+                            break;
+                        default: // no processing for other nodes
+                            break;
+                        }
+                        // If this xml node has inner text, create any needed sourcephrases
+                        innerText = "";
+                        if (element.contents) {
+                            innerText = element.contents().filter(function () {
+                                return this.nodeType === 3;
+                            })[0].nodeValue.trim();
+                        }
+                        if (innerText.length > 0) {
+                            arr = innerText.split("\\s+"); // note that this is for a "strip" of text and not the whole document
+                            i = 0;
+                            while (i < arr.length) {
+                                // check for a marker
+                                if (arr[i].length === 0) {
+                                    // nothing in this token -- skip
+                                    i++;
+                                } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
+                                    // punctuation token -- add to the prepuncts
+                                    prepuncts += arr[i];
+                                    i++;
+                                } else {
+                                    // "normal" sourcephrase token
+                                    s = arr[i];
+                                    // look for leading and trailing punctuation
+                                    // leading...
+                                    if (puncts.indexOf(arr[i].charAt(0)) > -1) {
+                                        // leading punct 
+                                        punctIdx = 0;
+                                        while (puncts.indexOf(arr[i].charAt(punctIdx)) > -1 && punctIdx < arr[i].length) {
+                                            prepuncts += arr[i].charAt(punctIdx);
+                                            punctIdx++;
+                                        }
+                                        // remove the punctuation from the "source" of the substring
+                                        s = s.substr(punctIdx);
+                                    }
+                                    if (s.length === 0) {
+                                        // it'a ALL punctuation -- jump to the next token
+                                        i++;
+                                    } else {
+                                        // not all punctuation -- check following punctuation, then create a sourcephrase
+                                        if (puncts.indexOf(s.charAt(s.length - 1)) > -1) {
+                                            // trailing punct 
+                                            punctIdx = s.length - 1;
+                                            while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
+                                                follpuncts += s.charAt(punctIdx);
+                                                punctIdx--;
+                                            }
+                                            // remove the punctuation from the "source" of the substring
+                                            s = s.substr(0, punctIdx + 1);
+                                        }
+                                        // Now create a new sourcephrase
+                                        spID = Underscore.uniqueId();
+                                        sp = new spModel.SourcePhrase({
+                                            spid: spID,
+                                            chapterid: chapterID,
+                                            markers: markers,
+                                            orig: null,
+                                            prepuncts: prepuncts,
+                                            midpuncts: midpuncts,
+                                            follpuncts: follpuncts,
+                                            source: s,
+                                            target: ""
+                                        });
+                                        markers = "";
+                                        prepuncts = "";
+                                        follpuncts = "";
+                                        punctIdx = 0;
+                                        index++;
+                                        sourcePhrases.add(sp);
+                                        sp.trigger('change');
+                                        i++;
+                                    }
+                                }
+                            }
+
+                        }
+//                        $(element).attr()
+                        // recurse into children
+                        if ($(element).children()) {
+                            $(element).children().each(function (idx, elt) {
+                                parseNode(elt);
+                            });
+                        }
+                    };
                     console.log("Reading XML file:" + file.name);
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
@@ -232,6 +417,8 @@ define(function (require) {
                     if (project.get('lastAdaptedName') === "") {
                         project.set('lastAdaptedName', chapterName);
                     }
+                    // now read the contents of the file
+                    parseNode($($xml).find("usx"));
                 };
                 
                 // Adapt It XML document
@@ -355,6 +542,7 @@ define(function (require) {
                             $(this).attr('fi').split(re).forEach(function (elt, index, array) {
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
+                                    console.log("filter");
                                 } else if (elt.indexOf("\\") === 0) {
                                     // starting marker
                                     markers += elt;
@@ -808,7 +996,6 @@ define(function (require) {
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
-//                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
                         cordova.file.dataDirectory,
                         cordova.file.documentsDirectory,
@@ -866,10 +1053,9 @@ define(function (require) {
                         statusStr += "<p>getDirectory error: " + error.code + ", " + error.message + "</p>";
                     };
                     for (i = 0; i < localURLs.length; i++) {
-                        if (localURLs[i] === null || localURLs[i].length === 0) {
-                            continue; // skip blank / non-existent paths for this platform
+                        if (localURLs[i] !== null && localURLs[i].length > 0) {
+                            window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
                         }
-                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
                     }
                 } else {
                     // running in browser -- use html <input> to select file
