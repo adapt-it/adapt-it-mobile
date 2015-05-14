@@ -209,6 +209,7 @@ define(function (require) {
                     var prepunct = "";
                     var follpunct = "";
                     var sp = null;
+                    var re = /\s+/;
                     var xmlDoc = $.parseXML(contents);
                     var $xml = $(xmlDoc);
                     var chapterName = "";
@@ -221,6 +222,7 @@ define(function (require) {
                     var firstChapterID = "";
                     var innerText = "";
                     var i = 0;
+                    var tmpVal = null;
                     var closingMarker = "";
                     var parseNode = function (element) {
                         closingMarker = "";
@@ -236,18 +238,18 @@ define(function (require) {
                                     // not the first chapter
                                     // first, close out the previous chapter
                                     chapter.set('versecount', verseCount);
-                                    chapter.set('lastadapted', lastAdapted);
                                     chapter.trigger('change');
                                     verses.push(verseCount); // add this chapter's verseCount to the array
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
                                     // now create the new chapter
+                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: element.attributes.item("number").nodeValue});
                                     chapterID = Underscore.uniqueId();
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
                                         bookid: bookID,
                                         projectid: project.get('id'),
-                                        name: bookName,
+                                        name: chapterName,
                                         lastadapted: 0,
                                         versecount: 0
                                     });
@@ -291,11 +293,11 @@ define(function (require) {
                             }
                         }
                         
-                        // If this xml node has inner text, create any needed sourcephrases
-                        innerText = "";
-                        innerText = $(element).text();
-                        if (innerText.length > 0) {
-                            arr = innerText.split("\\s+"); // note that this is for a "strip" of text and not the whole document
+                        // If this is a text node, create any needed sourcephrases
+                        if ($(element)[0].nodeType === 3) {
+                            // Split the text into an array
+                            // Note that this is analogous to the AI "strip" of text, and not the whole document
+                            arr = ($(element)[0].nodeValue).trim().split(re);
                             i = 0;
                             while (i < arr.length) {
                                 // check for a marker
@@ -362,8 +364,8 @@ define(function (require) {
                             }
                         }
                         // recurse into children
-                        if ($(element).childElementCount > 0) {
-                            $(element).children().each(function (idx, elt) {
+                        if ($(element).contents().length > 0) {
+                            $(element).contents().each(function (idx, elt) {
                                 parseNode(elt);
                             });
                         }
@@ -420,9 +422,10 @@ define(function (require) {
                         project.set('lastAdaptedName', chapterName);
                     }
                     // now read the contents of the file
-                    $($xml).find("usx").children().each(function (idx, elt) {
-                        parseNode(elt);
-                    });
+                    parseNode($($xml).find("usx"));
+                    // update the last chapter's verseCount
+                    chapter.set('versecount', verseCount);
+                    chapter.trigger('change');
                     // update the status
                     var curStatus = $("#status2").html();
                     if (curStatus.length > 0) {
