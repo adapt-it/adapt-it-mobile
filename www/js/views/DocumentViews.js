@@ -426,6 +426,11 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount);
                     chapter.trigger('change');
+                    // update the verse count and last adapted verse for the book
+                    if (verseCount > 0) {
+                        verses.push(verseCount);
+                    }
+                    book.set('chapters', verses);
                     // update the status
                     var curStatus = $("#status2").html();
                     if (curStatus.length > 0) {
@@ -626,6 +631,9 @@ define(function (require) {
                         sourcePhrases.add(sp);
                         sp.trigger('change');
                     });
+                    // update the last chapter's verseCount
+                    chapter.set('versecount', verseCount);
+                    chapter.trigger('change');
                     // update the verse count and last adapted verse for the book
                     if (verseCount > 0) {
                         verses.push(verseCount);
@@ -842,7 +850,15 @@ define(function (require) {
                             }
                         }
                     }
-                    
+                    // update the last chapter's verseCount
+                    chapter.set('versecount', verseCount);
+                    chapter.trigger('change');
+                    // update the verse count and last adapted verse for the book
+                    if (verseCount > 0) {
+                        verses.push(verseCount);
+                    }
+                    book.set('chapters', verses);
+
                     // done parsing -- update the status
                     if (status.length > 0) {
                         status += "<br>";
