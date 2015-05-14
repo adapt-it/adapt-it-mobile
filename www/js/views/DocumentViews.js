@@ -669,7 +669,7 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
-                    var verses = 0;
+                    var verses = [];
                     var verseCount = 0;
                     var hasPunct = false;
                     var punctIdx = 0;
@@ -752,7 +752,7 @@ define(function (require) {
                                     (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
                                 // join with the next
                                 i++;
-                                markers += arr[i];
+                                markers += " " + arr[i];
                             }
                             i++;
                         } else if (arr[i].length === 0) {
@@ -771,6 +771,7 @@ define(function (require) {
                                 chapter.set('versecount', verseCount);
                                 chapter.set('lastadapted', lastAdapted);
                                 verses.push(verseCount); // add this chapter's verseCount to the array
+                                chapter.trigger('change');
                                 verseCount = 0; // reset for the next chapter
                                 lastAdapted = 0; // reset for the next chapter
                                 stridx = markers.indexOf("\\c ") + 3;
@@ -787,7 +788,7 @@ define(function (require) {
                                 });
                                 chapters.add(chapter);
                                 chapter.trigger('change');
-                                console.log(": " + $(this).attr('s') + ", " + chapterID);
+                                console.log(chapterName + ": " + chapterID);
                             }
                             // also do some processing for verse markers
                             if (markers && markers.indexOf("\\v ") !== -1) {
@@ -858,6 +859,7 @@ define(function (require) {
                         verses.push(verseCount);
                     }
                     book.set('chapters', verses);
+                    book.trigger('change');
 
                     // done parsing -- update the status
                     if (status.length > 0) {
@@ -939,6 +941,7 @@ define(function (require) {
                 console.log("browserImportDocs");
                 $(".topcoat-progress-bar").show();
                 $("#progress").attr("style", "width: 0%;");
+                curFileIdx = 0;
                 var fileindex = 0;
                 var files = event.currentTarget.files;
                 fileCount = files.length;
@@ -968,6 +971,7 @@ define(function (require) {
                 fileCount = selected.length;
                 // Get a "real" file object for each of the selected files.
                 // This requires using the html5 filesystem API.
+                curFileIdx = 0;
                 var fileindex = 0;
                 var i = 0;
                 var project = this.model;
