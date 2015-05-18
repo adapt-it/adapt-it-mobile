@@ -30,6 +30,8 @@ define(function (require) {
         idx = 1,
         isRetranslation = false,
         template = null,
+        punctsSource = [],
+        punctsTarget = [],
 
         SourcePhraseView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplSourcePhrase)
@@ -86,8 +88,8 @@ define(function (require) {
                 // add any prepuncts
                 for (i = 0; i < prepuncts.length; i++) {
                     // if this character is in the mapping, add the corresponding character
-                    if (this.project.PunctPairsSource.indexOf(prepuncts[i]) > -1) {
-                        result += this.project.PunctPairsTarget.charAt(this.project.PunctPairsSource.indexOf(prepuncts[i]));
+                    if (punctsSource.indexOf(prepuncts.substr(i, 1)) > -1) {
+                        result += punctsTarget[punctsSource.indexOf(prepuncts.substr(i, 1))];
                     } else {
                         // not there -- just add the character itself
                         result += prepuncts[i];
@@ -98,8 +100,8 @@ define(function (require) {
                 // add any following puncts
                 for (i = 0; i < follpuncts.length; i++) {
                     // if this character is in the mapping, add the corresponding character
-                    if (this.project.PunctPairs.indexOf(follpuncts[i]) > -1) {
-                        result += this.project.PunctPairsTarget.charAt(this.project.PunctPairsSource.indexOf(follpuncts[i]));
+                    if (punctsSource.indexOf(follpuncts.substr(i, 1)) > -1) {
+                        result += punctsTarget[punctsSource.indexOf(follpuncts.substr(i, 1))];
                     } else {
                         // not there -- just add the character itself
                         result += follpuncts[i];
@@ -856,6 +858,10 @@ define(function (require) {
                 this.kblist.fetch({reset: true, data: {name: this.project.id}});
                 // fetch the source phrases in this chapter
                 this.spList.fetch({reset: true, data: {chapterid: chapterid}});
+                this.project.get('PunctPairs').forEach(function (elt, idx, array) {
+                    punctsSource.push(elt.s);
+                    punctsTarget.push(elt.t);
+                });
             },
             render: function () {
                 template = Handlebars.compile(tplChapter);
