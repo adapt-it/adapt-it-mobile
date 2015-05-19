@@ -775,7 +775,15 @@ define(function (require) {
                                 verseCount = 0; // reset for the next chapter
                                 lastAdapted = 0; // reset for the next chapter
                                 stridx = markers.indexOf("\\c ") + 3;
-                                chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                if (markers.lastIndexOf(" ") < stridx) {
+                                    // no space after the chapter # (it's the ending of the string)
+                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx)});
+                                } else {
+                                    // space after the chapter #
+                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                }
+                                
+                                
                                 chapterID = Underscore.uniqueId();
                                 // create the new chapter
                                 chapter = new chapModel.Chapter({

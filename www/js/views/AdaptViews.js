@@ -13,11 +13,13 @@ define(function (require) {
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
+        chapterModel = require('app/models/Chapter'),
         tplChapter  = require('text!tpl/Chapter.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
+        chapter     = null, // real value passed in constructor
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -571,6 +573,21 @@ define(function (require) {
                         // source != target -- add "differences" to the class so the text is green
                         $(event.currentTarget).addClass('differences');
                     }
+                    // if we reached a new verse, update the last adapted count
+                    if (model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
+                        // get the verse #
+                        var stridx = model.get('markers').indexOf("\\v ") + 3;
+                        var verseNum = "";
+                        if (model.get('markers').lastIndexOf(" ") < stridx) {
+                            // no space after the verse # (it's the ending of the string)
+                            verseNum = model.get('markers').substr(stridx);
+                        } else {
+                            // space after the verse #
+                            verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(" ", stridx) - stridx);
+                        }
+                        console.log("Adapting verse: " + verseNum);
+                        chapter.set('lastadapted', verseNum);
+                    }
                 }
                 // check for an old selection and remove it if needed
                 if (selectedStart !== null) {
@@ -849,6 +866,7 @@ define(function (require) {
             initialize: function () {
                 var coll = new projModel.ProjectCollection();
                 var chapterid = this.model.get('chapterid');
+                chapter = this.model;
                 coll.fetch({reset: true, data: {name: ""}});
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
