@@ -17,6 +17,7 @@ define(function (require) {
         AdaptViews      = require('app/views/AdaptViews'),
         projModel       = require('app/models/project'),
         chapterModel    = require('app/models/chapter'),
+        bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
@@ -24,6 +25,7 @@ define(function (require) {
         slider          = new PageSlider($('body')),
         ProjectList     = null,
         ChapterList     = null,
+        BookList        = null,
         spList          = null,
         lookupView      = null,
         helpView        = null,
@@ -91,6 +93,8 @@ define(function (require) {
                 }, function () {
                     // i18next is done asynchronously; this is the callback function
                     // Tell backbone we're ready to start loading the View classes.
+                    BookList = new bookModel.BookCollection();
+                    BookList.fetch({reset: true, data: {name: ""}});
                     ProjectList = new projModel.ProjectCollection();
                     ProjectList.fetch({reset: true, data: {name: ""}});
                     ChapterList = new chapterModel.ChapterCollection();
@@ -198,12 +202,24 @@ define(function (require) {
 
             adaptChapter: function (id) {
                 console.log("adaptChapter");
+                // refresh the models
                 ChapterList.fetch({reset: true, data: {name: ""}});
+                BookList.fetch({reset: true, data: {name: ""}});
+                ProjectList.fetch({reset: true, data: {name: ""}});
+                // find the chapter we want to adapt
                 var chapter = ChapterList.findWhere({chapterid: id});
                 if (chapter) {
                     var theView = new AdaptViews.ChapterView({model: chapter});
-                    var proj = ProjectList.where({id: chapter.get('projectid')});
+                    var proj = ProjectList.where({id: chapter.get('projectid').toString()})[0];
+                    var book = BookList.where({bookid: chapter.get('bookid').toString()})[0];
                     theView.project = proj;
+                    // update the last adapted book and chapter
+                    if (proj) {
+                        proj.set('lastDocument', book.get('name'));
+                        proj.set('lastAdaptedBookID', chapter.get('bookid'));
+                        proj.set('lastAdaptedChapterID', chapter.get('chapterid'));
+                        proj.set('lastAdaptedName', chapter.get('name'));
+                    }
                     window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
                 } else {
                     console.log("No chapter found matching id:" + id);

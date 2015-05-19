@@ -8,21 +8,14 @@ define(function (require) {
         Backbone    = require('backbone'),
         chapters = [],
 
-        findById = function (id) {
-            var i = 0,
-                deferred = $.Deferred(),
-                chapter = null,
-                l = chapters.length;
-            for (i = 0; i < l; i++) {
-                if (chapters[i].id === id) {
-                    chapter = chapters[i];
-                    break;
-                }
-            }
-            deferred.resolve(chapter);
+        findById = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = chapters.filter(function (element) {
+                return element.attributes.chapterid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
             return deferred.promise();
         },
-
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var results = chapters.filter(function (element) {

@@ -9,20 +9,14 @@ define(function (require) {
         i           = 0,
         books = [],
         
-        findById = function (id) {
-            var deferred = $.Deferred(),
-                book = null,
-                l = books.length;
-            for (i = 0; i < l; i++) {
-                if (books[i].id === id) {
-                    book = books[i];
-                    break;
-                }
-            }
-            deferred.resolve(book);
+        findById = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = books.filter(function (element) {
+                return element.attributes.bookid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
             return deferred.promise();
         },
-
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var results = null;
