@@ -142,6 +142,16 @@ define(function (require) {
             initialize: function () {
                 this.resetFromDB();
             },
+            
+            // Removes all books from the collection (and database)
+            clearAll: function () {
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('DELETE from book;');
+                    books.length = 0;
+                }, function (err) {
+                    console.log("DELETE error: " + err.message);
+                });
+            },
 
             sync: function (method, model, options) {
                 if (method === "read") {

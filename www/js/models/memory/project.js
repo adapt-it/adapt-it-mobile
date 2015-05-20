@@ -372,6 +372,22 @@ define(function (require) {
                 this.resetFromLocalStorage();
             },
 
+            // Removes all projects from the collection (and database)
+            clearAll: function () {
+                var i = 0,
+                    keyName = "",
+                    len = localStorage.length;
+                for (i = 0; i < len; ++i) {
+                    keyName = localStorage.key(i);
+                    if (localStorage.key(i).substr(0, 2) === "p.") {
+                        localStorage.removeItem(keyName);
+                    }
+                }
+                // clear local copy
+                projects.length = 0;
+            },
+
+
             sync: function (method, model, options) {
                 if (method === "read") {
                     findByName(options.data.name).done(function (data) {

@@ -153,6 +153,16 @@ define(function (require) {
                 this.resetFromDB();
             },
 
+            // Removes all targetunits from the collection (and database)
+            clearAll: function () {
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('DELETE from targetunit;');
+                    targetunits.length = 0;
+                }, function (err) {
+                    console.log("DELETE error: " + err.message);
+                });
+            },
+
             sync: function (method, model, options) {
                 if (method === "read") {
                     if (options.data.hasOwnProperty('id')) {

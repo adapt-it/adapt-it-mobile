@@ -142,6 +142,16 @@ define(function (require) {
                 this.resetFromDB();
             },
 
+            // Removes all chapters from the collection (and database)
+            clearAll: function () {
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('DELETE from chapter;');
+                    chapters.length = 0;
+                }, function (err) {
+                    console.log("DELETE error: " + err.message);
+                });
+            },
+
             sync: function (method, model, options) {
                 if (method === "read") {
                     findByName(options.data.name).done(function (data) {

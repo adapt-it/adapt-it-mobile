@@ -13,7 +13,15 @@ define(function (require) {
         tplGetStarted   = require('text!tpl/GetStarted.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
+        chapterModel    = require('app/models/chapter'),
+        spModel         = require('app/models/sourcephrase'),
+        kbmodel         = require('app/models/targetunit'),
+        clickCount      = 0,
         books           = null,
+        chapters        = null,
+        sourcephrases   = null,
+        targetunits     = null,
+        projects        = null,
 
         GetStartedView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplGetStarted)
@@ -32,19 +40,44 @@ define(function (require) {
             ////
             events: {
                 "click #Continue": "onContinue",
-                "click .project-item": "toggleProjectFolder"
+                "click .project-item": "toggleProjectFolder",
+                "click .topcoat-navigation-bar__title": "onClickTitle"
+            },
+            onClickTitle: function (event) {
+                clickCount++;
+                if (clickCount === 5) {
+                    console.log("Hard reset called");
+
+                    projects = new projModel.ProjectCollection();
+                    chapters = new chapterModel.ChapterCollection();
+                    sourcephrases = new spModel.SourcePhraseCollection();
+                    targetunits = new kbmodel.TargetUnitCollection();
+                    // clear all documents
+                    sourcephrases.clearAll();
+                    chapters.clearAll();
+                    books.clearAll();
+                    // clear KB
+                    targetunits.clearAll();
+                    // clear all project data
+                    projects.clearAll();
+                    
+                    Backbone.history.loadUrl();
+                    return false;
+                }
             },
             onContinue: function (event) {
                 var currentView = new GetStartedView();
                 this.$('#Container').html(currentView.render().el.childNodes);
+                clickCount = 0;
             },
             // Display / hide the contents of the selected project folder
             toggleProjectFolder: function (event) {
                 var index = event.currentTarget.id.substr(2);
                 var model = this.collection.at(index);
                 var elt = document.getElementById('folder');
-                books.fetch({reset: true, data: {name: ""}});
                 var adaptHref = "";
+                clickCount = 0;
+                books.fetch({reset: true, data: {name: ""}});
                 $('#projTitle').html($(event.currentTarget).find('.txt').html());
                 if (model) {
                     $("#settings").attr("href", "#project/" + model.get("id"));
