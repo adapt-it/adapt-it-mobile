@@ -258,18 +258,13 @@ define(function (require) {
                     // save with a key of p.<id>
                     localStorage.setItem(("p." + this.id), JSON.stringify(this));
                 }
-                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
-                });
-                
 //                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql("INSERT INTO project VALUES (\'" + this.id + "\',\'" + + "\')", ["test", 100], function (tx, res) {
-//                    });
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
+//                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
 //                });
+                
             },
             destroy: function (options) {
                 localStorage.removeItem(this.id);
@@ -319,54 +314,6 @@ define(function (require) {
                     }
                 }
             },
-            
-//            resetFromDB: function (callback) {
-//                directory.db.transaction(
-//                    function (tx) {
-//                        var sql =
-//                            "CREATE TABLE IF NOT EXISTS project ( " +
-//                            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                            "SourceFont VARCHAR(50), " +
-//                            "SourceFontSize VARCHAR(3), " +
-//                            "SourceFontColor VARCHAR(8), " +
-//                            "TargetFont VARCHAR(50), " +
-//                            "TargetFontSize VARCHAR(3), " +
-//                            "TargetFontColor VARCHAR(8), " +
-//                            "NavigationFont VARCHAR(50), " +
-//                            "NavigationFontSize VARCHAR(3), " +
-//                            "NavigationFontColor VARCHAR(8), " +
-//                            "SourceLanguageName VARCHAR(50), " +
-//                            "TargetLanguageName VARCHAR(50), " +
-//                            "SourceLanguageCode VARCHAR(50), " +
-//                            "TargetLanguageCode VARCHAR(50), " +
-//                            "SourceVariant VARCHAR(40), " +
-//                            "TargetVariant VARCHAR(40), " +
-//                            "CopyPunctuation BOOLEAN, " +
-//                            "PunctPairs VARCHAR(40), " +
-//                            "AutoCapitalization BOOLEAN, " +
-//                            "SourceHasUpperCase BOOLEAN, " +
-//                            "CasePairs VARCHAR(40), " +
-//                            "SourceDir VARCHAR(4), " +
-//                            "TargetDir VARCHAR(4), " +
-//                            "NavDir VARCHAR(4), " +
-//                            "name VARCHAR(50), " +
-//                            "LastDocument VARCHAR(50), " +
-//                            "LastAdaptedName VARCHAR(50), " +
-//                            "LastAdaptedChapter VARCHAR(50), " +
-//                            "LastAdaptedID VARCHAR(50), " +
-//                            "CustomFilters BOOLEAN, " +
-//                            "FilterMarkers VARCHAR(1000))";
-//                        console.log('Creating EMPLOYEE table');
-//                        tx.executeSql(sql);
-//                    },
-//                    function (tx, error) {
-//                        alert('Transaction error ' + error);
-//                    },
-//                    function (tx) {
-//                        callback();
-//                    }
-//                );
-//            },
             
             initialize: function () {
                 this.resetFromLocalStorage();
