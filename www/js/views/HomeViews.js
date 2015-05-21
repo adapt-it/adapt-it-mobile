@@ -77,7 +77,8 @@ define(function (require) {
                 var elt = document.getElementById('folder');
                 var adaptHref = "";
                 clickCount = 0;
-                books.fetch({reset: true, data: {name: ""}});
+                // filter out the books for the selected project
+                books.fetch({reset: true, data: {projectid: model.get('id')}});
                 $('#projTitle').html($(event.currentTarget).find('.txt').html());
                 if (model) {
                     $("#settings").attr("href", "#project/" + model.get("id"));
