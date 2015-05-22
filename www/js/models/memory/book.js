@@ -200,7 +200,7 @@ define(function (require) {
                     len = localStorage.length;
                 for (i = 0; i < len; ++i) {
                     keyName = localStorage.key(i);
-                    if (localStorage.key(i).substr(0, 2) === "b.") {
+                    if (keyName.length > 2 && keyName.substr(0, 2) === "b.") {
                         localStorage.removeItem(keyName);
                     }
                 }

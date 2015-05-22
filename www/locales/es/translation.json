@@ -162,6 +162,8 @@
         "dscCopyDocumentFound": "Documento: \"__document__.\"",
         "dscNoDocumentsFound": "No hay archivos disponibles encontrados. Por favor, copiar algunos archivos en el dispositivo y vuelva a intentarlo.",
         "lblSelect": "Seleccione Archivos",
+        "ttlReset": "Reset Adapt It Mobile",
+        "dscReset": "WARNING: this will clear all documents and projects, as well as the Knowledge Base. Are you sure you want to reset Adapt It Mobile?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

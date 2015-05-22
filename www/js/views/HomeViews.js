@@ -22,6 +22,26 @@ define(function (require) {
         sourcephrases   = null,
         targetunits     = null,
         projects        = null,
+        resetAIM = function () {
+            // user wants to reset
+            projects = new projModel.ProjectCollection();
+            chapters = new chapterModel.ChapterCollection();
+            sourcephrases = new spModel.SourcePhraseCollection();
+            targetunits = new kbmodel.TargetUnitCollection();
+            // clear all documents
+            sourcephrases.clearAll();
+            chapters.clearAll();
+            books.clearAll();
+            // clear KB
+            targetunits.clearAll();
+            // clear all project data
+            projects.clearAll();
+
+//                this.triggerMethod("render");
+            window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+            Backbone.history.loadUrl(Backbone.history.fragment);
+        },
+
 
         GetStartedView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplGetStarted)
@@ -46,23 +66,23 @@ define(function (require) {
             onClickTitle: function (event) {
                 clickCount++;
                 if (clickCount === 5) {
+                    clickCount = 0;
                     console.log("Hard reset called");
-
-                    projects = new projModel.ProjectCollection();
-                    chapters = new chapterModel.ChapterCollection();
-                    sourcephrases = new spModel.SourcePhraseCollection();
-                    targetunits = new kbmodel.TargetUnitCollection();
-                    // clear all documents
-                    sourcephrases.clearAll();
-                    chapters.clearAll();
-                    books.clearAll();
-                    // clear KB
-                    targetunits.clearAll();
-                    // clear all project data
-                    projects.clearAll();
                     
-                    Backbone.history.loadUrl();
-                    return false;
+                    if (navigator.notification) {
+                        // on mobile device
+                        navigator.notification.confirm(i18n.t('view.dscReset'), function (buttonIndex) {
+                            if (buttonIndex === 1) {
+                                resetAIM();
+                            }
+                        }, i18n.t('view.ttlReset'));
+                    } else {
+                        // in browser
+                        if (confirm(i18n.t('view.dscReset'))) {
+                            resetAIM();
+                        }
+                    }
+
                 }
             },
             onContinue: function (event) {

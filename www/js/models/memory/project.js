@@ -305,6 +305,7 @@ define(function (require) {
             resetFromLocalStorage: function () {
                 var i = 0,
                     len = 0;
+                projects.length = 0;
                 for (i = 0, len = localStorage.length; i < len; ++i) {
                     // if this is a project, add it to our collection
                     if (localStorage.key(i).substr(0, 2) === "p.") {
@@ -326,7 +327,7 @@ define(function (require) {
                     len = localStorage.length;
                 for (i = 0; i < len; ++i) {
                     keyName = localStorage.key(i);
-                    if (localStorage.key(i).substr(0, 2) === "p.") {
+                    if (keyName.length > 2 && keyName.substr(0, 2) === "p.") {
                         localStorage.removeItem(keyName);
                     }
                 }
@@ -337,9 +338,19 @@ define(function (require) {
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    findByName(options.data.name).done(function (data) {
-                        options.success(data);
-                    });
+                    if (options.data.hasOwnProperty('id')) {
+                        findById(options.data.id).done(function (data) {
+                            options.success(data);
+                        });
+                    } else if (options.data.hasOwnProperty('name')) {
+                        if (options.data.name === "") {
+                            // reset local copy and rebuild list
+                            this.resetFromLocalStorage();
+                        }
+                        findByName(options.data.name).done(function (data) {
+                            options.success(data);
+                        });
+                    }
                 }
             }
 

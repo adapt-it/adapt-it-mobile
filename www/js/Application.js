@@ -23,10 +23,6 @@ define(function (require) {
         FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
         slider          = new PageSlider($('body')),
-        ProjectList     = null,
-        ChapterList     = null,
-        BookList        = null,
-        spList          = null,
         lookupView      = null,
         helpView        = null,
         newProjectView  = null,
@@ -42,7 +38,6 @@ define(function (require) {
 
 
         Application = Marionette.Application.extend({
-
             // app initialization code. Here we'll initialize localization with the current locale 
             initialize: function (options) {
                 // add the UI regions (just the main "content" for now)
@@ -63,6 +58,12 @@ define(function (require) {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
                     this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
                 }
+                // create model collections off the Application object
+                this.BookList = null;
+                this.ProjectList = null;
+                this.ChapterList = null;
+                this.spList = null;
+
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
                     // on mobile phone
@@ -93,14 +94,14 @@ define(function (require) {
                 }, function () {
                     // i18next is done asynchronously; this is the callback function
                     // Tell backbone we're ready to start loading the View classes.
-                    BookList = new bookModel.BookCollection();
-                    BookList.fetch({reset: true, data: {name: ""}});
-                    ProjectList = new projModel.ProjectCollection();
-                    ProjectList.fetch({reset: true, data: {name: ""}});
-                    ChapterList = new chapterModel.ChapterCollection();
-                    ChapterList.fetch({reset: true, data: {name: ""}});
-                    spList = new spModel.SourcePhraseCollection();
-                    spList.fetch({reset: true, data: {name: ""}});
+                    window.Application.BookList = new bookModel.BookCollection();
+                    window.Application.BookList.fetch({reset: true, data: {name: ""}});
+                    window.Application.ProjectList = new projModel.ProjectCollection();
+                    window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+                    window.Application.ChapterList = new chapterModel.ChapterCollection();
+                    window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                    window.Application.spList = new spModel.SourcePhraseCollection();
+                    window.Application.spList.fetch({reset: true, data: {name: ""}});
 
                     Backbone.history.start();
                 });
@@ -124,7 +125,8 @@ define(function (require) {
                 // new project wizard. These objects with no id defined are only in memory;
                 // once the source and target language are defined, an id is set and
                 // the project is saved in the device's localStorage.
-                ProjectList.each(function (model, index) {
+                this.ProjectList.fetch({reset: true, data: {name: ""}});
+                this.ProjectList.each(function (model, index) {
                     console.log("Model: " + model.get('id'));
                     if (model.get('id') === 0) {
                         // empty project -- mark for removal
@@ -133,10 +135,10 @@ define(function (require) {
                 });
                 // remove the half-completed project objects
                 if (models.length > 0) {
-                    ProjectList.remove(models);
+                    this.ProjectList.remove(models);
                 }
                 // now display the home view
-                homeView = new HomeViews.HomeView({collection: ProjectList});
+                homeView = new HomeViews.HomeView({collection: this.ProjectList});
                 homeView.delegateEvents();
                 this.main.show(homeView);
             },
@@ -149,7 +151,7 @@ define(function (require) {
 
             editProject: function (id) {
                 // edit the selected project
-                var proj = ProjectList.where({id: id});
+                var proj = this.ProjectList.where({id: id});
                 if (proj !== null) {
                     window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
                 }
@@ -159,7 +161,7 @@ define(function (require) {
                 var proj = new projModel.Project();
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
                 copyProjectView.delegateEvents();
-                ProjectList.add(proj);
+                this.ProjectList.add(proj);
                 this.main.show(copyProjectView);
             },
             
@@ -167,13 +169,13 @@ define(function (require) {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
                 newProjectView.delegateEvents();
-                ProjectList.add(proj);
+                this.ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
             
             importBooks: function (id) {
                 console.log("importBooks");
-                var proj = ProjectList.where({id: id});
+                var proj = this.ProjectList.where({id: id});
                 if (proj === null) {
                     console.log("no project defined");
                     // TODO: how do we want this? ID as separate or in chapters?
@@ -185,7 +187,7 @@ define(function (require) {
             
             lookupChapter: function (id) {
                 console.log("lookupChapter");
-                var proj = ProjectList.where({id: id});
+                var proj = this.ProjectList.where({id: id});
                 if (proj === null) {
                     console.log("no project defined");
                     // TODO: how do we want this? ID as separate or in chapters?
@@ -203,15 +205,15 @@ define(function (require) {
             adaptChapter: function (id) {
                 console.log("adaptChapter");
                 // refresh the models
-                ChapterList.fetch({reset: true, data: {name: ""}});
-                BookList.fetch({reset: true, data: {name: ""}});
-                ProjectList.fetch({reset: true, data: {name: ""}});
+                this.ChapterList.fetch({reset: true, data: {name: ""}});
+                this.BookList.fetch({reset: true, data: {name: ""}});
+                this.ProjectList.fetch({reset: true, data: {name: ""}});
                 // find the chapter we want to adapt
-                var chapter = ChapterList.findWhere({chapterid: id});
+                var chapter = this.ChapterList.findWhere({chapterid: id});
                 if (chapter) {
                     var theView = new AdaptViews.ChapterView({model: chapter});
-                    var proj = ProjectList.where({id: chapter.get('projectid').toString()})[0];
-                    var book = BookList.where({bookid: chapter.get('bookid').toString()})[0];
+                    var proj = this.ProjectList.where({id: chapter.get('projectid').toString()})[0];
+                    var book = this.BookList.where({bookid: chapter.get('bookid').toString()})[0];
                     theView.project = proj;
                     // update the last adapted book and chapter
                     if (proj) {
