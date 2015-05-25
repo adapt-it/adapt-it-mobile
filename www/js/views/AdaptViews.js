@@ -35,13 +35,18 @@ define(function (require) {
         punctsSource = [],
         punctsTarget = [],
 
+        // SourcePhraseView
+        // Displays a single SourcePhrase. There's nothing important in this code; the logic
+        // is in the collection class (SourcePhraseListView) below.
         SourcePhraseView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplSourcePhrase)
         }),
         
+        // SourcePhraseListView
+        // Displays the collection of SourcePhrases for the current chapter. Also contains the logic for
+        // adapting, KB updates, etc.
         SourcePhraseListView = Marionette.CollectionView.extend({
             template: Handlebars.compile(tplSourcePhraseList),
-    //        itemView: SourcePhraseView;
 
             initialize: function () {
                 this.collection.bind('reset', this.render, this);
@@ -60,7 +65,6 @@ define(function (require) {
                 this.collection.each(this.addOne, this);
                 //edb test -- remove
                 $(".target").attr('contenteditable', 'true');
-
                 return this;
             },
 
