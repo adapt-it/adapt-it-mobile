@@ -164,6 +164,7 @@
         "lblSelect": "Seleccione Archivos",
         "ttlReset": "Reset Adapt It Mobile",
         "dscReset": "WARNING: this will clear all documents and projects, as well as the Knowledge Base. Are you sure you want to reset Adapt It Mobile?",
+        "dscAdaptComplete": "Adaptation of __chapter__ complete.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
