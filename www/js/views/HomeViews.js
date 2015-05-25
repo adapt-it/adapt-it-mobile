@@ -22,6 +22,10 @@ define(function (require) {
         sourcephrases   = null,
         targetunits     = null,
         projects        = null,
+        
+        // Helper method to completely reset AIM. Called when the user clicks on the
+        // title ("Adapt It Mobile") 5 TIMES on the Home View without clicking elsewhere,
+        // and then confirming the action in a popup dialog.
         resetAIM = function () {
             // user wants to reset
             projects = new projModel.ProjectCollection();
@@ -36,17 +40,21 @@ define(function (require) {
             targetunits.clearAll();
             // clear all project data
             projects.clearAll();
-
-//                this.triggerMethod("render");
+            // refresh the view
             window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
             Backbone.history.loadUrl(Backbone.history.fragment);
         },
 
-
+        // GetStartedView
+        // Simple view to allow the user to either create or copy a project
         GetStartedView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplGetStarted)
         }),
-        
+
+        // HomeView
+        // Main view / launchpad for projects. Displays the available projects;
+        // when the user clicks on one, it displays the available actions for that particular
+        // project. The user can also create or copy a project.
         HomeView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplHome),
             
@@ -63,6 +71,9 @@ define(function (require) {
                 "click .project-item": "toggleProjectFolder",
                 "click .topcoat-navigation-bar__title": "onClickTitle"
             },
+            // User clicked on the title ("Adapt It Mobile").
+            // Keeps track of the number of times they've clicked -- if they've clicked 5 times,
+            // displays a confirmation dialog, and then resets AIM if that's what the user wanted to do.
             onClickTitle: function (event) {
                 clickCount++;
                 if (clickCount === 5) {
@@ -85,6 +96,8 @@ define(function (require) {
 
                 }
             },
+            // User clicked on the Continue button (initial startup screen). Redirects the user to
+            // the GetStartedView
             onContinue: function (event) {
                 var currentView = new GetStartedView();
                 this.$('#Container').html(currentView.render().el.childNodes);
