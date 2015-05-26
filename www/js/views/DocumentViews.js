@@ -30,6 +30,7 @@ define(function (require) {
             var status = "";
             var reader = new FileReader();
             var i = 0;
+            var chaps = [];
             var name = "";
             var doc = null;
             // callback method for when the FileReader has finished loading in the file
@@ -88,6 +89,7 @@ define(function (require) {
                     book.trigger('change');
                     // (for now, just one chapter -- eventually we could chunk this out based on file size)
                     chapterID = Underscore.uniqueId();
+                    chaps.push(chapterID);
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
@@ -183,6 +185,8 @@ define(function (require) {
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index));
+                    book.set('chapters', chaps);
+                    chaps.length = 0; // clear the chapters array for the next book
                     // Update the status string
                     if (status.length > 0) {
                         status += "<br>";
@@ -216,7 +220,6 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
-                    var verses = [];
                     var punctIdx = 0;
                     var lastAdapted = 0;
                     var firstChapterID = "";
@@ -239,12 +242,12 @@ define(function (require) {
                                     // first, close out the previous chapter
                                     chapter.set('versecount', verseCount);
                                     chapter.trigger('change');
-                                    verses.push(verseCount); // add this chapter's verseCount to the array
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
                                     // now create the new chapter
                                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: element.attributes.item("number").nodeValue});
                                     chapterID = Underscore.uniqueId();
+                                    chaps.push(chapterID);
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
                                         bookid: bookID,
@@ -399,6 +402,7 @@ define(function (require) {
                     books.add(book);
                     book.trigger('change');
                     chapterID = Underscore.uniqueId();
+                    chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
@@ -426,11 +430,8 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount);
                     chapter.trigger('change');
-                    // update the verse count and last adapted verse for the book
-                    if (verseCount > 0) {
-                        verses.push(verseCount);
-                    }
-                    book.set('chapters', verses);
+                    book.set('chapters', chaps);
+                    chaps.length = 0; // clear the chapters array for the next book
                     // update the status
                     var curStatus = $("#status2").html();
                     if (curStatus.length > 0) {
@@ -460,7 +461,6 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
-                    var verses = [];
                     var lastAdapted = 0;
                     var firstChapterID = "";
                     var markers = "";
@@ -502,6 +502,7 @@ define(function (require) {
                     });
                     books.add(book);
                     chapterID = Underscore.uniqueId();
+                    chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
@@ -534,12 +535,12 @@ define(function (require) {
                             // update the last adapted for the previous chapter before closing it out
                             chapter.set('versecount', verseCount);
                             chapter.set('lastadapted', lastAdapted);
-                            verses.push(verseCount); // add this chapter's verseCount to the array
                             verseCount = 0; // reset for the next chapter
                             lastAdapted = 0; // reset for the next chapter
                             stridx = markers.indexOf("\\c ") + 3;
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
                             chapterID = Underscore.uniqueId();
+                            chaps.push(chapterID);
                             // create the new chapter
                             chapter = new chapModel.Chapter({
                                 chapterid: chapterID,
@@ -634,11 +635,8 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount);
                     chapter.trigger('change');
-                    // update the verse count and last adapted verse for the book
-                    if (verseCount > 0) {
-                        verses.push(verseCount);
-                    }
-                    book.set('chapters', verses);
+                    book.set('chapters', chaps);
+                    chaps.length = 0; // clear the chapters array for the next book
                     if (status.length > 0) {
                         status += "<br>";
                     }
@@ -669,7 +667,6 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
-                    var verses = [];
                     var verseCount = 0;
                     var hasPunct = false;
                     var punctIdx = 0;
@@ -712,6 +709,7 @@ define(function (require) {
                     // rather than creating a chapter 0 (which would throw off the search stuff), we'll
                     // just add the front matter to chapter 1.
                     chapterID = Underscore.uniqueId();
+                    chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
@@ -770,7 +768,6 @@ define(function (require) {
                                 // update the last adapted for the previous chapter before closing it out
                                 chapter.set('versecount', verseCount);
                                 chapter.set('lastadapted', lastAdapted);
-                                verses.push(verseCount); // add this chapter's verseCount to the array
                                 chapter.trigger('change');
                                 verseCount = 0; // reset for the next chapter
                                 lastAdapted = 0; // reset for the next chapter
@@ -785,6 +782,7 @@ define(function (require) {
                                 
                                 
                                 chapterID = Underscore.uniqueId();
+                                chaps.push(chapterID);
                                 // create the new chapter
                                 chapter = new chapModel.Chapter({
                                     chapterid: chapterID,
@@ -862,12 +860,9 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount);
                     chapter.trigger('change');
-                    // update the verse count and last adapted verse for the book
-                    if (verseCount > 0) {
-                        verses.push(verseCount);
-                    }
-                    book.set('chapters', verses);
+                    book.set('chapters', chaps);
                     book.trigger('change');
+                    chaps.length = 0; // clear the chapters array for the next book
 
                     // done parsing -- update the status
                     if (status.length > 0) {

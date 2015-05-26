@@ -13,7 +13,8 @@ define(function (require) {
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
-        chapterModel = require('app/models/Chapter'),
+        chapterModel = require('app/models/chapter'),
+        bookModel   = require('app/models/book'),
         tplChapter  = require('text!tpl/Chapter.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
@@ -163,9 +164,72 @@ define(function (require) {
                         if (selectedStart.parentElement.nextElementSibling !== null) {
                             next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
                         } else {
-                            // no more piles - get out
+                            // no more piles
                             next_edit = null;
                             console.log("reached last pile.");
+                            // Check for a chapter after the current one in the current book
+                            var nextChapter = 0;
+                            var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
+                            var chaps = book[0].get('chapters');
+                            if (chaps.length > 1) {
+                                if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
+                                        (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
+                                    // There is a chapter after this one
+                                    nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
+                                }
+                            }
+
+                            // If there is a next chapter, let the user continue or exit;
+                            // if there isn't one, just allow them to exit
+                            if (navigator.notification) {
+                                // on mobile device
+                                navigator.notification.beep(1);
+                                if (nextChapter > 0) {
+                                    navigator.notification.confirm(
+                                        i18n.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                                        function (buttonIndex) {
+                                            if (buttonIndex === 1) {
+                                                // Next chapter
+                                                window.Application.adaptChapter(nextChapter);
+
+                                            } else {
+                                                // exit
+                                                // save the model
+                                                chapter.trigger('change');
+                                                // head back to the home page
+                                                window.Application.home();
+                                            }
+                                        },
+                                        i18n.t('ttlMain'),
+                                        [i18n.t('view.lblNext'), i18n.t('view.lblFinish')]
+                                    );
+                                } else {
+                                    // no option to continue, just one to exit
+                                    navigator.notification.alert(
+                                        i18n.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
+                                        function () {
+                                            // exit
+                                            // save the model
+                                            chapter.trigger('change');
+                                            // head back to the home page
+                                            window.Application.home();
+                                        }
+                                    );
+                                }
+                            } else {
+                                // in browser
+                                if (nextChapter > 0) {
+                                    if (confirm(i18n.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
+                                        window.Application.adaptChapter(nextChapter);
+                                    } else {
+                                        window.Application.home();
+                                    }
+                                } else {
+                                    alert(i18n.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
+                                    window.Application.home();
+                                }
+                            }
+                            
                         }
                     }
                 }
@@ -622,9 +686,7 @@ define(function (require) {
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
-                    //this.Model.
                     $(selectedStart).before(placeHolderHtml);
-                    //this.$el.html(placeTpl(this.model.toJSON()));
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#Placeholder").prop('disabled', true);

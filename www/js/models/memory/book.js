@@ -47,7 +47,7 @@ define(function (require) {
                 scrid: "",
                 name: "",
                 filename: "",
-                chapters: ""
+                chapters: []
             },
             initialize: function () {
                 this.on('change', this.save, this);
