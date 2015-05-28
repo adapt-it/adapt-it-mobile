@@ -78,7 +78,7 @@ define(function (require) {
             // This method is used for KB updates
             getTimestamp: function () {
                 var curDate = new Date();
-                return curDate.getFullYear + "-" + (curDate.getMonth + 1) + "-" + curDate.getDay + "T" + curDate.getUTCHours + ":" + curDate.getUTCMinutes + ":" + curDate.getUTCSeconds + "z";
+                return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
             // Helper method to copy any punctuation from the source to the target field. This method is
             // called from unselectedAdaptation (when the focus blurs in the targt field).
