@@ -33,6 +33,8 @@ define(function (require) {
             var chaps = [];
             var name = "";
             var doc = null;
+            var result = false;
+            var errMsg = "";
             // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
                 var value = "",
@@ -187,24 +189,8 @@ define(function (require) {
                     chapter.set('versecount', -(index));
                     book.set('chapters', chaps);
                     chaps.length = 0; // clear the chapters array for the next book
-                    // Update the status string
-                    if (status.length > 0) {
-                        status += "<br>";
-                    }
-                    status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
-                    // update the status
-                    var curStatus = $("#status2").html();
-                    if (curStatus.length > 0) {
-                        curStatus += "<br>";
-                    }
-                    $("#status2").html(curStatus + status);
-                    curFileIdx++;
-                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
-                    $("#progress").attr("style", newWidth);
-                    if (fileCount === curFileIdx) {
-                        // last document -- display the OK button
-                        $("#OK").removeAttr("disabled");
-                    }
+                    return true; // success
+                    // END readTextDoc()
                 };
                 
                 // Paratext USX document
@@ -374,21 +360,23 @@ define(function (require) {
                         }
                     };
                     console.log("Reading XML file:" + file.name);
+                    bookName = file.name.substr(0, file.name.indexOf("."));
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
                     scrID = scrIDList.where({id: $($xml).find("book").attr("code")})[0];
                     if (scrID === null) {
                         console.log("No ID matching this document: " + $($xml).find("book").attr("code"));
-                        return null;
+                        errMsg = i18n.t("view.dscErrCannotFindID");
+                        return false;
                     }
                     arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                         // this book is already in the list -- just return
-                        return null;
+                        errMsg = i18n.t("view.dscErrDuplicateFile");
+                        return false;
                     }
                     index = 1;
-                    bookName = file.name.substr(0, file.name.indexOf("."));
                     bookID = Underscore.uniqueId();
                     // Create the book and chapter 
                     book = new bookModel.Book({
@@ -432,19 +420,8 @@ define(function (require) {
                     chapter.trigger('change');
                     book.set('chapters', chaps);
                     chaps.length = 0; // clear the chapters array for the next book
-                    // update the status
-                    var curStatus = $("#status2").html();
-                    if (curStatus.length > 0) {
-                        curStatus += "<br>";
-                    }
-                    $("#status2").html(curStatus + status);
-                    curFileIdx++;
-                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
-                    $("#progress").attr("style", newWidth);
-                    if (fileCount === curFileIdx) {
-                        // last document -- display the OK button
-                        $("#OK").removeAttr("disabled");
-                    }
+                    return true; // success
+                    // END readUSXDoc()
                 };
                 
                 // Adapt It XML document
@@ -466,6 +443,7 @@ define(function (require) {
                     var markers = "";
                     var i = 0;
                     console.log("Reading XML file:" + file.name);
+                    bookName = file.name.substr(0, file.name.indexOf("."));
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // Starting at the SourcePhrases ( <S ...> ), look for the \id element
                     // in the markers. We'll test this against the canonical usfm markers to learn more about this document.
@@ -473,9 +451,10 @@ define(function (require) {
                     index = contents.indexOf("\\id", i);
                     if (index === -1) {
                         // no ID found -- this is most likely not an AI xml document.
-                        // We'll just return for now
+                        // We'll return
                         console.log("No ID element found (is this an AI XML document?) -- exiting.");
-                        return null;
+                        errMsg = i18n.t("view.dscErrCannotFindID");
+                        return false;
                     }
                     // we've found the \id element in the markers -- to get the value, we have to work
                     // backwards until we find the nearest "s" attribute
@@ -485,11 +464,11 @@ define(function (require) {
                     arr = scrID.get('chapters');
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
-                        // this book is already in the list -- just return
-                        return null;
+                        // this book is already in the list -- return
+                        errMsg = i18n.t("view.dscErrDuplicateFile");
+                        return false;
                     }
                     index = 1;
-                    bookName = file.name.substr(0, file.name.indexOf("."));
                     bookID = Underscore.uniqueId();
                     // Create the book and chapter 
                     book = new bookModel.Book({
@@ -637,23 +616,8 @@ define(function (require) {
                     chapter.trigger('change');
                     book.set('chapters', chaps);
                     chaps.length = 0; // clear the chapters array for the next book
-                    if (status.length > 0) {
-                        status += "<br>";
-                    }
-                    status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
-                    // update the status
-                    var curStatus = $("#status2").html();
-                    if (curStatus.length > 0) {
-                        curStatus += "<br>";
-                    }
-                    $("#status2").html(curStatus + status);
-                    curFileIdx++;
-                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
-                    $("#progress").attr("style", newWidth);
-                    if (fileCount === curFileIdx) {
-                        // last document -- display the OK button
-                        $("#OK").removeAttr("disabled");
-                    }
+                    return true; // success
+                    // END readXMLDoc()
                 };
                 
                 // USFM document
@@ -673,24 +637,28 @@ define(function (require) {
                     var stridx = 0;
 
                     console.log("Reading USFM file:" + file.name);
+                    index = contents.indexOf("\\h ");
+                    if (index > -1) {
+                        // get the name from the usfm itself
+                        bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
+                    } else {
+                        bookName = file.name;
+                    }
                     // find the ID of this book
                     index = contents.indexOf("\\id");
                     if (index === -1) {
-                        // no ID found -- just return
-                        return null;
+                        // no ID found -- return
+                        errMsg = i18n.t("view.dscErrCannotFindID");
+                        return false;
                     }
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
                     books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
-                        // this book is already in the list -- just return
-                        return null;
-                    }
-                    index = contents.indexOf("\\h ");
-                    if (index > -1) {
-                        // get the name from the usfm itself
-                        bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
+                        // this book is already in the list -- return
+                        errMsg = i18n.t("view.dscErrDuplicateFile");
+                        return false;
                     }
                     // add a book and chapter
                     bookID = Underscore.uniqueId();
@@ -863,38 +831,51 @@ define(function (require) {
                     book.set('chapters', chaps);
                     book.trigger('change');
                     chaps.length = 0; // clear the chapters array for the next book
-
-                    // done parsing -- update the status
-                    if (status.length > 0) {
-                        status += "<br>";
-                    }
-                    status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
-                    // update the status
-                    var curStatus = $("#status2").html();
-                    if (curStatus.length > 0) {
-                        curStatus += "<br>";
-                    }
-                    $("#status2").html(curStatus + status);
-                    curFileIdx++;
-                    var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
-                    $("#progress").attr("style", newWidth);
-                    if (fileCount === curFileIdx) {
-                        // last document -- display the OK button
-                        $("#OK").removeAttr("disabled");
-                    }
+                    return true; // success
+                    // END readUSFMDoc()
                 };
 
+                ///
+                // END FILE TYPE READERS
+                ///
+                
                 // read doc as appropriate
                 if ((file.name.indexOf(".usfm") > 0) || (file.name.indexOf(".sfm") > 0)) {
-                    readUSFMDoc(this.result);
+                    result = readUSFMDoc(this.result);
                 } else if (file.name.indexOf(".usx") > 0) {
-                    readUSXDoc(this.result);
+                    result = readUSXDoc(this.result);
                            
                 } else if (file.name.indexOf(".xml") > 0) {
-                    readXMLDoc(this.result);
+                    result = readXMLDoc(this.result);
                 } else {
                     // something else -- try reading it as a text document
-                    readTextDoc(this.result);
+                    result = readTextDoc(this.result);
+                }
+                
+                // done parsing -- update the status
+                if (status.length > 0) {
+                    status += "<br>";
+                }
+                if (result === true) {
+                    // succeeded
+                    status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
+                } else {
+                    // failed
+                    status += "<em>" + i18n.t("view.dscCopyDocumentFailed", {document: bookName, reason: errMsg}) + "</em>";
+                    errMsg = "";
+                }
+                // update the status
+                var curStatus = $("#status2").html();
+                if (curStatus.length > 0) {
+                    curStatus += "<br>";
+                }
+                $("#status2").html(curStatus + status);
+                curFileIdx++;
+                var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
+                $("#progress").attr("style", newWidth);
+                if (fileCount === curFileIdx) {
+                    // last document -- display the OK button
+                    $("#OK").removeAttr("disabled");
                 }
             };
             reader.readAsText(file);
