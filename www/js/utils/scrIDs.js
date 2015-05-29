@@ -11,6 +11,7 @@ define(function (require) {
         i           = 0,
         /* OT/NT books, including apocrypha
         * versification info taken from https://github.com/digitalbiblesociety/browserbible-3/blob/master/app/js/bible/bible.data.json
+        * apocrypha versification from the New Jerusalem Bible - http://ww.catholic.org/bible
         */
         scrIDs = [
             {
@@ -412,34 +413,16 @@ define(function (require) {
             },
             
             {
-                id: "BEL",
-                name: "Bel and the Dragon",
-                num: 80,
-                chapters: []
-            },
-            {
-                id: "SUS",
-                name: "Susanna",
-                num: 81,
-                chapters: []
-            },
-            {
                 id: "JDT",
                 name: "Judith",
                 num: 82,
-                chapters: []
-            },
-            {
-                id: "MAN",
-                name: "Prayer of Manassah",
-                num: 83,
-                chapters: []
+                chapters: [16, 28, 10, 15, 24, 21, 32, 36, 14, 23, 23, 20, 20, 19, 14, 25]
             },
             {
                 id: "SIR",
-                name: "Sirach",
+                name: "Ecclesiasticus / Sirach",
                 num: 84,
-                chapters: []
+                chapters: [30, 18, 31, 31, 15, 37, 36, 19, 18, 31, 34, 18, 26, 27, 20, 30, 32, 33, 30, 31, 28, 27, 27, 34, 26, 29, 30, 26, 28, 25, 31, 24, 33, 26, 24, 27, 31, 34, 35, 30, 27, 25, 33, 23, 26, 20, 25, 25, 16, 29, 30]
             },
             {
                 id: "TOB",
@@ -451,93 +434,83 @@ define(function (require) {
                 id: "WIS",
                 name: "Wisdom of Solomon",
                 num: 87,
-                chapters: []
-            },
-            {
-                id: "S3Y",
-                name: "Prayer of Azariah",
-                num: 88,
-                chapters: []
-            },
-            {
-                id: "LJE",
-                name: "Letter of Jeremiah",
-                num: 100,
-                chapters: []
+                chapters: [16, 24, 19, 20, 23, 25, 30, 21, 18, 21, 26, 27, 19, 31, 19, 29, 21, 25, 22]
             },
             {
                 id: "BAR",
                 name: "Baruch",
                 num: 101,
-                chapters: []
-            },
-            {
-                id: "2BA",
-                name: "2 Baruch",
-                num: 103,
-                chapters: []
-            },
-            {
-                id: "LBA",
-                name: "Letter of Baruch",
-                num: 104,
-                chapters: []
+                chapters: [22, 35, 38, 37, 9, 72]
             },
             {
                 id: "MA1",
                 name: "1 Maccabees",
                 num: 110,
-                chapters: []
-            },
-            {
-                id: "MA1",
-                name: "1 Maccabees",
-                num: 111,
-                chapters: []
+                chapters: [54, 70, 60, 61, 68, 63, 50, 32, 73, 89, 74, 53, 53, 49, 41, 24]
             },
             {
                 id: "MA2",
                 name: "2 Maccabees",
                 num: 112,
-                chapters: []
-            },
-            {
-                id: "MA3",
-                name: "3 Maccabees",
-                num: 113,
-                chapters: []
-            },
-            {
-                id: "MA4",
-                name: "4 Maccabees",
-                num: 114,
-                chapters: []
-            },
-            {
-                id: "ODE",
-                name: "Odes",
-                num: 131,
-                chapters: []
-            },
-            {
-                id: "PSO",
-                name: "Prayer of Solomon",
-                num: 132,
-                chapters: []
-            },
-            {
-                id: "PJE",
-                name: "Prayer of Jeremiah",
-                num: 133,
-                chapters: []
-            },
-            {
-                id: "JUB",
-                name: "Jubilees",
-                num: 140,
-                chapters: []
+                chapters: [36, 32, 40, 50, 27, 31, 42, 36, 29, 38, 38, 45, 26, 46, 39]
             }
         ],
+        // Following are apocrypha that I was unable to retrieve versification info for:
+//            {
+//                id: "BEL",
+//                name: "Bel and the Dragon",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "SUS",
+//                name: "Susanna",
+//                num: 81,
+//                chapters: []
+//            },
+//            {
+//                id: "MAN",
+//                name: "Prayer of Manassah",
+//                num: 83,
+//                chapters: []
+//            },
+//            {
+//                id: "S3Y",
+//                name: "Prayer of Azariah",
+//                num: 88,
+//                chapters: []
+//            },
+//            {
+//                id: "LJE",
+//                name: "Letter of Jeremiah",
+//                num: 100,
+//                chapters: []
+//            },
+//            {
+//                id: "ODE",
+//                name: "Odes",
+//                num: 131,
+//                chapters: []
+//            },
+//            {
+//                id: "PSO",
+//                name: "Prayer of Solomon",
+//                num: 132,
+//                chapters: []
+//            },
+//            {
+//                id: "PJE",
+//                name: "Prayer of Jeremiah",
+//                num: 133,
+//                chapters: []
+//            },
+//            {
+//                id: "JUB",
+//                name: "Jubilees",
+//                num: 140,
+//                chapters: []
+//            }
+        
         findById = function (id) {
             var deferred = $.Deferred(),
                 scrID = null,
