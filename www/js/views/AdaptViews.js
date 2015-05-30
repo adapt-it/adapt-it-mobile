@@ -616,7 +616,7 @@ define(function (require) {
                                     }
                                 ],
                                 timestamp: this.getTimestamp(),
-                                user: "user:machine"
+                                user: ""
                             });
                         this.kblist.add(newTU);
                         newTU.trigger('change');
