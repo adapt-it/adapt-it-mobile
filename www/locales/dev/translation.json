@@ -18,7 +18,7 @@
         "ttlWelcome": "Welcome",
         "lblContinue": "Continue",
         "ttlGetStarted": "Get Started",
-        "dscGetStarted": "You can either create a new project or copy an existing one from another device.",
+        "dscGetStarted": "You can either create a new project or copy a project file that has been downloaded to this device.",
         "lblCreateProject": "Create Project",
         "dscCreateProject": "Create a new project",
         "dscProjectSourceLanguage": "<b>Step 1: Source Language</b><br>Type in the name of the source language and dialect, if any.",
