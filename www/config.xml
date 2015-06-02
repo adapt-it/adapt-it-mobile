@@ -30,7 +30,8 @@
     <gap:plugin name="cordova-plugin-globalization" source="npm" />
     <gap:plugin name="cordova-plugin-dialogs" source="npm" />
     <gap:plugin name="cordova-plugin-fonts" source="npm" />
-    <gap:plugin name="cordova-plugin-crosswalk-webview" source="npm" />
+    <!-- PG build service to support this -->
+    <!-- <gap:plugin name="cordova-plugin-crosswalk-webview" source="npm" /> -->
     <gap:plugin name="io.litehelpers.cordova.sqlite" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
