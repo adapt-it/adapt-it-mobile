@@ -70,13 +70,17 @@ define(function (require) {
 //                        console.log("SELECT ok: " + res.toString());
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
-                            tx.executeSql("UPDATE chapter SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;", [attributes.projectid, attributes.source, attributes.refstring, attributes.timestamp, attributes.user, attributes.tuid], function (tx, res) {
-//                                    console.log("UPDATE ok: " + res.toString());
+                            tx.executeSql("UPDATE chapter SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;", [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user, attributes.tuid], function (tx, res) {
+//                                console.log("UPDATE ok: " + res.toString());
+                            }, function (tx, err) {
+                                console.log("SELECT error: " + err.message);
                             });
                         } else {
                             // new record -- insert
-                            tx.executeSql("INSERT INTO targetunit (tuid,projectid,source,refstring,timestamp,user) VALUES (?,?,?,?,?,?);", [attributes.tuid, attributes.projectid, attributes.source, attributes.refstring, attributes.timestamp, attributes.user], function (tx, res) {
-//                                    console.log("INSERT ok: " + res.toString());
+                            tx.executeSql("INSERT INTO targetunit (tuid,projectid,source,refstring,timestamp,user) VALUES (?,?,?,?,?,?);", [attributes.tuid, attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user], function (tx, res) {
+//                                console.log("INSERT ok: " + res.toString());
+                            }, function (tx, err) {
+                                console.log("SELECT error: " + err.message);
                             });
                         }
                     }, function (tx, err) {
@@ -130,7 +134,7 @@ define(function (require) {
                     len = 0;
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, refstring text, timestamp text, user text);');
                 });
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
