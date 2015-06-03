@@ -8,6 +8,7 @@
 	<array>
 		<string>npm</string>
 		<string>update</string>
+		<string>-g</string>
 	</array>
 	<key>StartCalendarInterval</key>
 	<dict>
