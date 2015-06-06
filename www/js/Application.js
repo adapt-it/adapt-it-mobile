@@ -178,7 +178,6 @@ define(function (require) {
                 var proj = this.ProjectList.where({id: id});
                 if (proj === null) {
                     console.log("no project defined");
-                    // TODO: how do we want this? ID as separate or in chapters?
                 }
                 importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
                 importDocView.delegateEvents();
@@ -190,16 +189,10 @@ define(function (require) {
                 var proj = this.ProjectList.where({id: id});
                 if (proj === null) {
                     console.log("no project defined");
-                    // TODO: how do we want this? ID as separate or in chapters?
                 }
-                window.Application.main.show(new SearchViews.LookupView({model: proj}));
-//                var book = new chapterModel.Chapter({id: id});
-//                book.fetch({
-//                    success: function (data) {
-////                            slider.slidePage(new LookupView({model: data}).$el);
-//                        window.Application.main.show(new SearchViews.LookupView({model: data}));
-//                    }
-//                });
+                lookupView = new SearchViews.LookupView({model: proj[0]});
+                lookupView.delegateEvents();
+                this.main.show(lookupView);
             },
 
             adaptChapter: function (id) {
