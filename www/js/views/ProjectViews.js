@@ -29,6 +29,7 @@ define(function (require) {
         fontModel   = require('app/models/font'),
         langName    = "",
         langCode    = "",
+        innerHtml   = "",
         step        = 1,
         currentView = null,
         languages   = null,
@@ -400,6 +401,7 @@ define(function (require) {
                 $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-family:\'' + $('#font').val() + '\'; color:' + $('#color').val() + ';');
             },
             onShow: function () {
+                var theColor = 0;
                 // populate the font drop-down and color picker if the model is set
                 if (this.model) {
                     // font drop-down
@@ -436,9 +438,14 @@ define(function (require) {
                         $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
                         // select the current font
                         $("#font").val(this.model.get('typeface'));
+                        
+                        // color variations
+                        if (innerHtml.length > 0) {
+                            $('#variations').html(innerHtml);
+                        }
                     }
                     
-                    // color picker
+                    // color pickers
                     $("#color").val(this.model.get('color'));
                     $("#color").spectrum({
                         showPaletteOnly: true,
@@ -454,6 +461,58 @@ define(function (require) {
                             ["#660000", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
                         ]
                     });
+                    if ($("#spcolor").length) {
+                        theColor = $('#spcolor').val();
+                        $("#spcolor").val(theColor);
+                        $("#spcolor").spectrum({
+                            showPaletteOnly: true,
+                            showPalette: true,
+                            hideAfterPaletteSelect: true,
+                            color: theColor,
+                            palette: [
+                                ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                                ["#ff0000", "#ff9900", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#9900ff", "#ff00ff"],
+                                ["#cc0000", "#e69138", "#cccc00", "#00cc00", "#00cccc", "#0000cc", "#674ea7", "#cc00cc"],
+                                ["#aa0000", "#aa6600", "#aaaa00", "#00aa00", "#00aaaa", "#0000aa", "#6600aa", "#aa00aa"],
+                                ["#990000", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                                ["#660000", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                            ]
+                        });
+                        theColor = $('#retranscolor').val();
+                        $("#retranscolor").val(theColor);
+                        $("#retranscolor").spectrum({
+                            showPaletteOnly: true,
+                            showPalette: true,
+                            hideAfterPaletteSelect: true,
+                            color: theColor,
+                            palette: [
+                                ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                                ["#ff0000", "#ff9900", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#9900ff", "#ff00ff"],
+                                ["#cc0000", "#e69138", "#cccc00", "#00cc00", "#00cccc", "#0000cc", "#674ea7", "#cc00cc"],
+                                ["#aa0000", "#aa6600", "#aaaa00", "#00aa00", "#00aaaa", "#0000aa", "#6600aa", "#aa00aa"],
+                                ["#990000", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                                ["#660000", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                            ]
+                        });
+                    }
+                    if ($('#diffcolor').length) {
+                        theColor = $('#diffcolor').val();
+                        $("#diffcolor").val(theColor);
+                        $("#diffcolor").spectrum({
+                            showPaletteOnly: true,
+                            showPalette: true,
+                            hideAfterPaletteSelect: true,
+                            color: theColor,
+                            palette: [
+                                ["#000000", "#444444", "#666666", "#999999", "#cccccc", "#eeeeee", "#f3f3f3", "#ffffff"],
+                                ["#ff0000", "#ff9900", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#9900ff", "#ff00ff"],
+                                ["#cc0000", "#e69138", "#cccc00", "#00cc00", "#00cccc", "#0000cc", "#674ea7", "#cc00cc"],
+                                ["#aa0000", "#aa6600", "#aaaa00", "#00aa00", "#00aaaa", "#0000aa", "#6600aa", "#aa00aa"],
+                                ["#990000", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                                ["#660000", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+                            ]
+                        });
+                    }
                 }
             }
         }),
@@ -789,6 +848,10 @@ define(function (require) {
                     this.model.set('SourceFont', tempfont);
                     this.model.set('SourceFontSize', tempSize);
                     this.model.set('SourceColor', tempColor);
+                    tempColor = $('#spcolor').val();
+                    this.model.set('SpecialTextColor', tempColor);
+                    tempColor = $('#retranscolor').val();
+                    this.model.set('RetranslationColor', tempColor);
                     break;
                 case 4: // target font
                     tempfont = $('#font').val();
@@ -797,6 +860,8 @@ define(function (require) {
                     this.model.set('TargetFont', tempfont);
                     this.model.set('TargetFontSize', tempSize);
                     this.model.set('TargetColor', tempColor);
+                    tempColor = $('#diffcolor').val();
+                    this.model.set('TextDifferencesColor', tempColor);
                     break;
                 case 5: // navigation font
                     tempfont = $('#font').val();
@@ -843,6 +908,7 @@ define(function (require) {
             },
 
             ShowView: function (number) {
+                innerHtml = "";
                 // Display the frame UI
                 $("#OKCancelButtons").prop('hidden', false);
                 $("#Instructions").prop('hidden', false);
@@ -882,6 +948,11 @@ define(function (require) {
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    // color variations for source font -- special text and retranslations
+                    innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
+                    innerHtml += "</h3></div><div id='varItems'>";
+                    innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblSpecialTextColor') + " <input type=\"text\" name=\"color\" id=\'spcolor\' value=\"" + this.model.get('SpecialTextColor') + "\" /></div>";
+                    innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblRetranslationColor') + " <input type=\"text\" name=\"color\" id=\'retranscolor\' value=\"" + this.model.get('RetranslationColor') + "\" /></div></div>";
                     break;
                 case 4: // target font
                     theFont = new fontModel.Font();
@@ -893,6 +964,10 @@ define(function (require) {
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
                     $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    // color variations for target font -- text differences
+                    innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
+                    innerHtml += "</h3></div><div id='varItems'>";
+                    innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblDifferenceColor') + " <input type=\"text\" name=\"color\" id=\'diffcolor\' value=\"" + this.model.get('TextDifferencesColor') + "\" /></div></div>";
                     break;
                 case 5: // navigation font
                     theFont = new fontModel.Font();
@@ -1052,6 +1127,11 @@ define(function (require) {
                 theFont.set("color", this.model.get('SourceColor'));
                 currentView = new FontView({ model: theFont});
                 Marionette.triggerMethodOn(currentView, 'show');
+                // color variations for source font -- special text and retranslations
+                innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
+                innerHtml += "</h3></div><div id='varItems'>";
+                innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblSpecialTextColor') + " <input type=\"text\" name=\"color\" id=\'spcolor\' value=\"" + this.model.get('SpecialTextColor') + "\" /></div>";
+                innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblRetranslationColor') + " <input type=\"text\" name=\"color\" id=\'retranscolor\' value=\"" + this.model.get('RetranslationColor') + "\" /></div></div>";
                 this.container.show(currentView);
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
@@ -1066,6 +1146,11 @@ define(function (require) {
                 theFont.set("color", this.model.get('TargetColor'));
                 currentView = new FontView({ model: theFont});
                 Marionette.triggerMethodOn(currentView, 'show');
+                // color variations for target font -- text differences
+                innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblTargetFontVariations');
+                innerHtml += "</h3></div><div id='varItems'>";
+                innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblDifferenceColor') + " <input type=\"text\" name=\"color\" id=\'diffcolor\' value=\"" + this.model.get('TextDifferencesColor') + "\" /></div></div>";
+                $('#VarItems').html(innerHtml);
                 this.container.show(currentView);
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
@@ -1080,6 +1165,7 @@ define(function (require) {
                 theFont.set("color", this.model.get('NavigationColor'));
                 currentView = new FontView({ model: theFont});
                 Marionette.triggerMethodOn(currentView, 'show');
+                innerHtml = "";
                 this.container.show(currentView);
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
@@ -1100,11 +1186,14 @@ define(function (require) {
                     this.model.set('SourceFont', $('#font').val());
                     this.model.set('SourceFontSize', $('#FontSize').val());
                     this.model.set('SourceColor', $('#color').val());
+                    this.model.set('SpecialTextColor', $('#spcolor').val());
+                    this.model.set('RetranslationColor', $('#retranscolor').val());
                     break;
                 case i18n.t('view.lblTargetFont'): // target font
                     this.model.set('TargetFont', $('#font').val());
                     this.model.set('TargetFontSize', $('#FontSize').val());
                     this.model.set('TargetColor', $('#color').val());
+                    this.model.set('TextDifferencesColor', $('#diffcolor').val());
                     break;
                 case i18n.t('view.lblNavFont'): // navigation font
                 default:
@@ -1203,6 +1292,7 @@ define(function (require) {
             ShowStep: function (number) {
                 // clear out the old view (if any)
                 currentView = null;
+                innerHtml = "";
                 var newWidth = "width:" + (100 / this.numSteps * number) + "%;";
                 this.$("#progress").attr("style", newWidth);
                 switch (number) {
