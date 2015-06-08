@@ -35,6 +35,29 @@ define(function (require) {
         template = null,
         punctsSource = [],
         punctsTarget = [],
+        
+        addStyleRules = function (project) {
+            var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
+            var theRule = "";
+            // Source font
+            theRule = ".source {";
+            theRule += "font: " + parseInt(project.get('SourceFontSize'), 10) + "px \"" + project.get('SourceFont') + "\", \"Source Sans\", helvetica, arial, sans-serif; ";
+            theRule += "color: " + project.get('SourceColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Target font
+            theRule = ".target {";
+            theRule += "font: " + parseInt(project.get('TargetFontSize'), 10) + "px " + project.get('TargetFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
+            theRule += "color: " + project.get('TargetColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Navigation font
+            theRule = ".marker {";
+            theRule += "font: " + parseInt(project.get('NavigationFontSize'), 10) + "px " + project.get('NavigationFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
+            theRule += "color: " + project.get('NavigationColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+        },
 
         // SourcePhraseView
         // Displays a single SourcePhrase. There's nothing important in this code; the logic
@@ -955,6 +978,9 @@ define(function (require) {
                 this.listView.kblist = this.kblist;
                 this.listView.project = this.project;
                 return this;
+            },
+            onShow: function () {
+                addStyleRules(this.project);
             },
             ////
             // Event Handlers
