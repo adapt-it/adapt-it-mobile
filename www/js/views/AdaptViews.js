@@ -57,6 +57,21 @@ define(function (require) {
             theRule += "color: " + project.get('NavigationColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Special Text color
+            theRule = "div.strip.specialtext div.source {";
+            theRule += "color: " + project.get('SpecialTextColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Retranslation color
+            theRule = ".retranslation {";
+            theRule += "color: " + project.get('RetranslationColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Text Differences color
+            theRule = ".differences {";
+            theRule += "color: " + project.get('TextDifferencesColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
         },
 
         // SourcePhraseView

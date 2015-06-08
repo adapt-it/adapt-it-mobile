@@ -35,7 +35,6 @@ define(function (require) {
             deferred.resolve(results);
             return deferred.promise();
         },
-
         Project = Backbone.Model.extend({
             defaults: {
                 SourceFont: "Source Sans",
@@ -47,6 +46,9 @@ define(function (require) {
                 NavigationFont: "Source Sans",
                 NavigationFontSize: "16",
                 NavigationColor: "#00cc00",
+                SpecialTextColor: "#aa0000",
+                RetranslationColor: "#996633",
+                TextDifferencesColor: "rgb(40, 100, 40)",
                 SourceLanguageName: "",
                 TargetLanguageName: "",
                 SourceLanguageCode: "",
