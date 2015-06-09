@@ -62,11 +62,27 @@ define(function (require) {
                     value2 = "",
                     value3 = "",
                     value4 = "",
+                    intVal = 0,
                     i = 0,
                     s = null,
                     t = null,
                     arrPunct = [],
                     arrCases = [];
+                // helper method to convert .aic color values to an html hex color string:
+                // .aic  --> bbggrr (in base 10)
+                // .html --> #rrggbb  (in hex)
+                var getColorValue = function (strValue) {
+                    var intValue = parseInt(strValue, 10);
+                    var rValue = ("00" + (intValue & 0xff).toString(16)).slice(-2);
+                    var gValue = ("00" + ((intValue >> 8) & 0xff).toString(16)).slice(-2);
+                    var bValue = ("00" + ((intValue >> 16) & 0xff).toString(16)).slice(-2);
+                    // format in html hex, padded with leading zeroes
+                    var theValue = "#" + rValue + gValue + bValue;
+                    return theValue;
+                };
+                // Helper method to pull out the value corresponding to the named setting from the .aic file contents
+                // (the array "lines"). If the named setting isn't found at that line, it searches FORWARD to the end --
+                // returning an empty string if not found.
                 var getSettingValue = function (expectedIndex, aicSetting) {
                     var i = 0,
                         value = "";
@@ -170,6 +186,14 @@ define(function (require) {
                         }
                     );
                 }
+                // font colors
+                project.set("SourceColor", getColorValue(getSettingValue(17, "Color")));
+                project.set("TargetColor", getColorValue(getSettingValue(34, "Color")));
+                project.set("NavColor", getColorValue(getSettingValue(53, "Color")));
+                project.set("SpecialTextColor", getColorValue(getSettingValue(87, "SpecialTextColor")));
+                project.set("RetranslationColor", getColorValue(getSettingValue(88, "RetranslationTextColor")));
+                project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")));
+                
                 // done -- display the OK button
                 $("#status1").html(i18n.t("view.dscCopyProjectFound", {project: project.get("name")}));
                 $("#OK").removeAttr("disabled");
