@@ -127,7 +127,7 @@ define(function (require) {
                 // the project is saved in the device's localStorage.
                 this.ProjectList.fetch({reset: true, data: {name: ""}});
                 this.ProjectList.each(function (model, index) {
-                    console.log("Model: " + model.get('id'));
+//                    console.log("Model: " + model.get('id'));
                     if (model.get('id') === 0) {
                         // empty project -- mark for removal
                         models.push(model);
