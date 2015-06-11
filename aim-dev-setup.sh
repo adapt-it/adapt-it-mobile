@@ -1,0 +1,261 @@
+#!/bin/bash
+# aim-dev-setup.sh -- Set up environment for developing Adapt It Mobile on Ubuntu 12.04, 14.04 or higher
+# Date: 2015-06-03
+# Author: Jonathan Marsden <jmarsden@fastmail.fm>
+# Revised: 2015-06-10 by Bill Martin <bill_martin@sil.org> 
+#    - changed PROJECT_DIR default to ~/projects
+#    - add check for whether we're running in a virtual machine - if not, add qemu-kvm to install
+#      list; if we're running in a vm, ask user if the script should continue to setup for aim
+#    - add check for apt-cache availability of npm >= 2.10.0 and nodejs >= 0.12.3
+#      If the apt-cache versions of npm and/or nodejs are to old (currently normally the case), 
+#      offer to install v0.12 from NodeSource, using their install script which supports
+#      Ubuntu/Linux Mint distros 12.04LTS, 14.04LTS (see https://github.com/nodesource/distributions)
+#    - install curl early on (needed for NodeSource setup)
+#    - add g++ tools to install list (test on fresh Ubuntu VM show g++ is needed for cordova)
+#    - after download of AIM sources, rsync res dir in www back to adapt-it-mobile dir
+#    - only download Android SDK components if they haven't been downloaded (saves 10min on
+#      subsequent setup runs
+#    - ensure user's ~/tmp dir is owned by $USER rather than root
+#    - add more echo comments throughout
+#    - tweaked setting of ANDROID_HOME in .profile to be exported, ie: export ANDROID_HOME=...
+#      otherwise, the env variable does not get set in subsequent terminal sessions/logins
+#    - flesh out next steps message at end of script
+#    - ensured that this script can be run repeatedly without problems on 12.04LTS and 14.04LTS.
+
+PROJECT_DIR=${1:-~/projects}	# AIM development file location, default ~/projects/
+
+# This vercomp function from: Dennis Williamson post @ http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+# whm Note: npm is not included in installList below as it is
+# installed before these tools below via the NodeSource installation.
+installList="git inkscape default-jdk ant dpkg-dev curl g++"
+
+# Install needed Ubuntu packages
+sudo apt-get update -y
+
+# Detect if running this script within a VirtualBox or VMware VM, if not install qemu-kvm
+runningInVBVM=`sudo dmidecode |grep -i -m1 "Product Name: VirtualBox"`
+runningInVMwareVM=`sudo dmidecode |grep -i -m1 "Product Name: VMware Virtual Platform"`
+if [[ "$runningInVBVM" == ""  && "$runningInVMwareVM" == "" ]]
+then
+  echo -e "\nWe're not in a virtual machine. Adding qemu-kvm is install list"
+  #sudo apt-get install qemu-kvm -y
+  installList=$installList" qemu-kvm"
+else
+  echo -e "\nWe are running in a virtual machine..."
+  echo "The qemu-kvm tool can't be installed - hardware acceleration won't be possible."
+  echo "Therefore, running the 'cordova emulate android' command won't work in this VM."
+  read -r -p "Continue setting up for AIM on this VM? [y/N] " response
+  case $response in
+    [yY][eE][sS]|[yY]) 
+        echo "Continuing with setup..."
+        ;;
+    *)
+        echo "Aborting..."
+        exit 0
+        ;;
+  esac
+fi
+
+# Note: Android and Phonegap/Cordova are developing rapidly, so I think it is good to
+# develop Adapt It Mobile (AIM) with the most up-to-date tools.
+# Erik says building aim requires npm >= 2.10.0 and nodejs >= 0.12.3, so I'm
+# setting the starting mininum version to be those versions. In case the standard Ubuntu
+# repos have those versions, I'll first check for apt-cache version availability of 
+# those versions. Ubuntu Vivid (15.04) ships with nodejs v0.10.25 so it is not likely
+# that the required version of nodejs will be available in an LTS for some time. So, 
+# we'll notify the user that the distro's repo doesn't have the required version of  
+# nodejs, and offer to install the newer version nodejs v0.12 (and npm) from nodesource,  
+# utilizing their installation script (see https://github.com/nodesource/distributions).
+npmMinVer="2.10.0"
+nodejsMinVer="0.12.3"
+npmVerRepo=`sudo apt-cache show npm | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1`
+nodejsVerRepo=`sudo apt-cache show nodejs | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1`
+echo -e "\nChecking versions of npm and nodejs available in repos..."
+vercomp $npmMinVer $npmVerRepo
+case $? in
+   0) npmComp='=';;
+   1) npmComp='>';;
+   2) npmComp='<';;
+esac
+if [[ $npmComp = '<' ]] || [[ $npmComp = '=' ]]
+then
+  echo "  The npm version $npmVerRepo is new enough (at least v $npmMinVer)"
+else
+  echo "  The npm version $npmVerRepo is too old for AIM development."
+  echo "  At least version $npmMinVer is required to develop AIM on your system."
+fi
+vercomp $nodejsMinVer $nodejsVerRepo
+case $? in
+   0) nodejsComp='=';;
+   1) nodejsComp='>';;
+   2) nodejsComp='<';;
+esac
+if [[ $nodejsComp = '<' ]] || [[ $nodejsComp = '=' ]]
+then
+  echo "  The nodejs version $nodejsVerRepo is new enough (at least v $nodejsMinVer)"
+else
+  echo "  The nodejs version $nodejsVerRepo is too old for AIM development."
+  echo "  At least version $nodejsMinVer is required to develop AIM on your system."
+  echo "  The newer nodejs version is available from NodeSource, but requires"
+  echo "  adding nodesource.list to your /etc/apt/sources.list.d and installing"
+  echo "  other dependencies."
+  echo "  Installing nodejs from NodeSource will also upgrade your npm version."
+  # Ask user if we should continue and install the required version from nodesource
+  read -r -p "Install the newer version of nodejs/npm from NodeSource? [y/N] " response
+  case $response in
+    [yY][eE][sS]|[yY]) 
+        echo "Continuing with setup..."
+        ;;
+    *)
+        echo "Aborting..."
+        exit 0
+        ;;
+  esac
+fi
+# Retrieving and executing the NodeSource script requires curl, so make sure it is installed
+sudo apt-get install curl
+# Retrieve and execute the NodeSource script for installing nodejs v0.12
+curl -sL https://deb.nodesource.com/setup_dev | sudo bash -
+sudo apt-get install -y nodejs
+
+echo -e "\nInstalling software tools needed for building AIM..."
+# whm: added qemu-kvm and g++
+sudo apt-get install $installList -y
+
+# Allow nodejs to be run as node, then use npm to install cordova
+echo -e "\nAllowing nodejs to be run as node"
+[ -h /usr/bin/node -o -x /usr/bin/node ] || sudo ln -s /usr/bin/nodejs /usr/bin/node
+echo -e "\nUsing npm to install cordova and npm update"
+sudo npm -g install cordova i18next i18next-conv -q
+sudo npm -g update -q
+
+# Set user crontab to update cordova daily using npm
+echo -e "\nSet user crontab to update cordova daily using npm"
+if crontab -l | grep -sq 'npm update -g cordova'; then
+  :	# Crontab already updates cordova
+else
+  TMPFILE=$(mktemp)
+  crontab -l >$TMPFILE
+  echo "@daily npm update -g cordova" >>$TMPFILE
+  crontab $TMPFILE
+  rm $TMPFILE
+fi
+
+# Install extra i386 packages if running on amd64
+echo -e "\nInstall extra i386 packages if needed"
+dpkg-architecture -eamd64 && sudo apt-get install libc6:i386 libstdc++6:i386 zlib1g:i386 -y
+
+# Download AIM sources from git
+echo -e "\nDownload AIM sources from github"
+mkdir -p "${PROJECT_DIR}"
+cd ${PROJECT_DIR}
+[ -d adapt-it-mobile ] || git clone https://github.com/adapt-it/adapt-it-mobile.git
+
+# whm Added: To avoid cp errors when building the android project, I'm copying the adapt-it-mobile/www/res
+# folder to adapt-it-mobile/res/ folder
+echo -e "\nCopying res folder from www to adapt-it-mobile"
+rsync -a --update "${PROJECT_DIR}"/adapt-it-mobile/www/res/ "${PROJECT_DIR}"/adapt-it-mobile/res
+
+# Download and unpack/set up Android SDK (AOSP)
+echo -e "\nDownload and unpack/set up Android SDK (AOSP)"
+SDK_VERSION=24.2 # Latest SDK version, see https://developer.android.com/sdk/index.html#Other
+wget -c http://dl.google.com/android/android-sdk_r${SDK_VERSION}-linux.tgz
+tar Czxfp ~ "${PROJECT_DIR}/android-sdk_r${SDK_VERSION}-linux.tgz"
+grep -sq "/android-sdk-linux/tools" ~/.profile \
+  || echo 'PATH=$PATH:$HOME/android-sdk-linux/tools:$HOME/android-sdk-linux/platform-tools' >>~/.profile
+grep -sq "^export ANDROID_HOME=" ~/.profile \
+  || echo 'export ANDROID_HOME=$HOME/android-sdk-linux' >>~/.profile
+[ -z "$ANDROID_HOME" ] && source ~/.profile
+
+# Download Android SDK components needed
+# To get a full list of available SDK components, run:
+#   android list sdk --extended -a
+echo -e "\nDownload Android SDK components if needed"
+# skip the android update sdk --no-ui -a --filter $COMPONENTS call if specified android
+# version and api level already exist as targets
+andrVer=`$HOME/android-sdk-linux/tools/android list target |grep "Name: Android 5.1.1"`
+andrApi=`$HOME/android-sdk-linux/tools/android list target |grep "API level: 22"`
+if [ -z "$andrVer" ] || [ -z "$andrApi" ]
+then
+  COMPONENTS=platform-tools,build-tools-22.0.1,android-22,sys-img-x86-android-22,sys-img-armeabi-v7a-android-22
+  android update sdk --no-ui -a --filter $COMPONENTS 
+else
+  echo "$andrVer $andrApi already exists"
+fi
+
+# Create a default Android emulator to test with (one that uses API Level 22 = Android 5.1.1)
+# For speed, use an x86 emulation by default.  Use --abi default/armeabi-v7 for ARM emulator.
+echo -e "\nCreate a default Android emulator that uses API 22/Android 5.1.1"
+android list avds -c |grep -qs 'android-5.1.1-WVGA800' || \
+  android create avd --name android-5.1.1-WVGA800 -t android-22 --abi default/x86
+
+# [Optional] Install the Brackets editor.  See http://download.brackets.io/.
+
+# Build AIM for Android
+cd "${PROJECT_DIR}/adapt-it-mobile"
+# Add android platform if not already added
+# whm Note: On a fresh trusty system, the /home/$USER/tmp/ directory is owned by root.
+# While the /tmp directory is owned by root, the user's ~/tmp directory needs to be 
+# owned by the $USER in order for the 'cordova ... add ...' commands to succeed.
+# Otherwise, the 'cordova platform add android' command issues this error:
+#   Unable to fetch platform android: Error: EACCES, mkdir '/home/bill/tmp/npm-12127-zrD08_YV'
+# and the 'cordova plugin add ...' commands issue errors similar to this:
+#   Fetching from npm failed: EACCES, mkdir '/home/bill/tmp/npm-12133-X9FTvbhR'
+#   Error: EACCES, mkdir '/home/bill/tmp/npm-12133-X9FTvbhR'
+echo -e "\nEnsuring the ~/tmp directory of user: $USER is owned by $USER"
+sudo chown $USER:$USER ~/tmp
+
+echo -e "\nAdd android platform if not already added"
+cordova platform list | grep ^Installed |grep -sq android || cordova platform add android
+# Add the plugins from npm
+echo -e "\nAdd Android plugins from npm"
+cordova plugin add cordova-plugin-crosswalk-webview
+cordova plugin add cordova-plugin-dialogs
+cordova plugin add cordova-plugin-file
+cordova plugin add cordova-plugin-file-transfer
+cordova plugin add cordova-plugin-fonts
+cordova plugin add cordova-plugin-globalization
+cordova plugin add cordova-sqlite-storage
+# Build the project
+echo -e "\nBuild the Android project"
+cordova build android
+
+# Output help for the developer on next steps to take
+echo -e "\nUsage (next steps):"
+echo -e "   run: echo \$ANDROID_HOME  if variable is not set, run: source ~/.profile"
+echo -e "   cd ${PROJECT_DIR}/adapt-it-mobile"
+echo -e "   To build AIM run:\tcordova build android"
+echo -e "   To test AIM on an Android emulator run:\tcordova emulate android &"
+echo -e "   To run AIM on a connected Android device run:\tcordova run android &"
+
