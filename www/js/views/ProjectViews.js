@@ -217,7 +217,7 @@ define(function (require) {
             // saves any changes and goes back to the home page
             onOK: function (event) {
                 // save the model
-                this.model.trigger('change');
+                this.model.save();
                 // head back to the home page
                 window.history.go(-1);
             },

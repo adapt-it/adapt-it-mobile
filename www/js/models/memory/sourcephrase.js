@@ -67,28 +67,29 @@ define(function (require) {
                 });
                 
             },
-            save: function () {
-                // is there a record already?
+            create: function () {
                 var attributes = this.attributes;
+                var sql = "INSERT INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT COUNT(id) AS cnt FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
-//                        console.log("SELECT ok: " + res.toString());
-                        if (res.rows.item(0).cnt > 0) {
-                            // there's already a record for this id -- update the values
-                            tx.executeSql("UPDATE sourcephrase SET chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;", [attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target, attributes.spid], function (tx, res) {
-//                                    console.log("UPDATE ok: " + res.toString());
-                            });
-                        } else {
-                            // new record -- insert
-                            tx.executeSql("INSERT INTO sourcephrase (spid,chapterid, markers,orig,prepuncts,midpuncts,follpuncts,source,target) VALUES (?,?,?,?,?,?,?,?,?);", [attributes.spid, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
-//                                    console.log("INSERT ok: " + res.toString());
-                            });
-                        }
+                    tx.executeSql(sql, [attributes.spid, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
+//                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
                     });
                 });
             },
+            update: function () {
+                var attributes = this.attributes;
+                var sql = 'UPDATE chapter SET chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;';
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.targett, attributes.spid], function (tx, res) {
+//                        console.log("INSERT ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("SELECT error: " + err.message);
+                    });
+                });
+            },
+            
             destroy: function (options) {
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("DELETE FROM sourcephrase WHERE id=?;", [this.attributes.id], function (tx, res) {
@@ -100,10 +101,16 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
-                var theId = 0;
+                if (typeof options === 'function') {
+                    options = {
+                        success: options,
+                        error: error
+                    };
+                }
                 switch (method) {
                 case 'create':
-                    options.success(model);
+                    model.create();
+//                    options.success(model);
                     break;
                         
                 case 'read':
@@ -113,13 +120,13 @@ define(function (require) {
                     break;
                         
                 case 'update':
-                    model.save();
-                    options.success(model);
+                    model.update();
+//                    options.success(model);
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-                    options.success(model);
+//                    options.success(model);
                     break;
                 }
             }
@@ -135,8 +142,6 @@ define(function (require) {
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
-                });
-                window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from sourcephrase;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
@@ -167,9 +172,41 @@ define(function (require) {
                     console.log("DELETE error: " + err.message);
                 });
             },
+            
+//            saveBatch: function (models) {
+//                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+//                var sps = models;
+//                window.Application.db.transaction(function (tx) {
+//                    models.each(function (sp) {
+//                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target], function (tx, res) {
+//                            console.log("SELECT ok: " + res.toString());
+//                        }, function (tx, err) {
+//                            console.log("SELECT error: " + err.message);
+//                        });
+//                    });
+//                });
+//            },
 
             sync: function (method, model, options) {
-                if (method === "read") {
+                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+                var coll = null;
+                switch (method) {
+                case 'create':
+//                    coll = model;
+//                    window.Application.db.transaction(function (tx) {
+//                        console.log("sync transaction");
+//                        coll.forEach(function (sp) {
+//                            tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target], function (tx, res) {
+//                                console.log("sync INSERT OR REPLACE ok");
+//                            }, function (tx, err) {
+//                                console.log("sync error: " + err.message);
+//                            });
+//                        });
+//                    });
+                    options.success(model);
+                    break;
+                        
+                case 'read':
                     if (options.data.hasOwnProperty('id')) {
                         findById(options.data.id).done(function (data) {
                             options.success(data);
@@ -179,6 +216,15 @@ define(function (require) {
                             options.success(data);
                         });
                     }
+                    break;
+                        
+                case 'update':
+                    options.success(model);
+                    break;
+                        
+                case 'delete':
+                    options.success(model);
+                    break;
                 }
             }
 

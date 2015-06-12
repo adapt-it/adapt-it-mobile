@@ -52,23 +52,23 @@ define(function (require) {
                 });
                 return deferred.promise();
             },
-            save: function () {
-                // is there a record already?
+            create: function () {
                 var attributes = this.attributes;
+                var sql = "INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT COUNT(id) AS cnt FROM chapter WHERE chapterid=?;", [attributes.chapterid], function (tx, res) {
-//                        console.log("SELECT ok: " + res.rows.item(0).cnt + " with chapterid=" + attributes.chapterid);
-                        if (res.rows.item(0).cnt > 0) {
-                            // there's already a record for this id -- update the values
-                            tx.executeSql("UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;", [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
-//                                console.log("UPDATE ok: " + res.toString());
-                            });
-                        } else {
-                            // new record -- insert
-                            tx.executeSql("INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);", [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
-//                                console.log("INSERT ok: " + res.toString());
-                            });
-                        }
+                    tx.executeSql(sql, [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
+//                        console.log("INSERT ok: " + res.toString());
+                    }, function (tx, err) {
+//                        console.log("SELECT error: " + err.message);
+                    });
+                });
+            },
+            update: function () {
+                var attributes = this.attributes;
+                var sql = 'UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;';
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
+//                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
 //                        console.log("SELECT error: " + err.message);
                     });
@@ -87,7 +87,8 @@ define(function (require) {
             sync: function (method, model, options) {
                 switch (method) {
                 case 'create':
-                    options.success(model);
+                    model.create();
+//                    options.success(model);
                     break;
                         
                 case 'read':
@@ -97,13 +98,13 @@ define(function (require) {
                     break;
                         
                 case 'update':
-                    model.save();
-                    options.success(model);
+                    model.update();
+//                    options.success(model);
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-                    options.success(model);
+//                    options.success(model);
                     break;
                 }
             }
@@ -120,8 +121,6 @@ define(function (require) {
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
-                });
-                window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from chapter;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter

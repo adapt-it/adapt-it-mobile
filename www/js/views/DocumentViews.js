@@ -88,7 +88,6 @@ define(function (require) {
                         chapters: []
                     });
                     books.add(book);
-                    book.trigger('change');
                     // (for now, just one chapter -- eventually we could chunk this out based on file size)
                     chapterID = Underscore.uniqueId();
                     chaps.push(chapterID);
@@ -178,7 +177,7 @@ define(function (require) {
                                 punctIdx = 0;
                                 index++;
                                 sourcePhrases.add(sp);
-                                sp.trigger('change');
+                                sp.save();
                                 i++;
                             }
                         }
@@ -186,8 +185,10 @@ define(function (require) {
 
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
-                    chapter.set('versecount', -(index));
+                    chapter.set('versecount', -(index), {silent: true});
+                    chapter.save();
                     book.set('chapters', chaps);
+                    book.save();
                     chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readTextDoc()
@@ -226,8 +227,8 @@ define(function (require) {
                                 if (element.attributes.item("number").nodeValue !== "1") {
                                     // not the first chapter
                                     // first, close out the previous chapter
-                                    chapter.set('versecount', verseCount);
-                                    chapter.trigger('change');
+                                    chapter.set('versecount', verseCount, {silent: true});
+                                    chapter.save();
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
                                     // now create the new chapter
@@ -243,7 +244,6 @@ define(function (require) {
                                         versecount: 0
                                     });
                                     chapters.add(chapter);
-                                    chapter.trigger('change');
                                 }
                                 break;
                             case "verse":
@@ -346,7 +346,7 @@ define(function (require) {
                                         punctIdx = 0;
                                         index++;
                                         sourcePhrases.add(sp);
-                                        sp.trigger('change');
+                                        sp.save();
                                         i++;
                                     }
                                 }
@@ -388,7 +388,6 @@ define(function (require) {
                         chapters: []
                     });
                     books.add(book);
-                    book.trigger('change');
                     chapterID = Underscore.uniqueId();
                     chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
@@ -401,7 +400,6 @@ define(function (require) {
                         versecount: 0
                     });
                     chapters.add(chapter);
-                    chapter.trigger('change');
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (project.get('lastDocument') === "") {
                         project.set('lastDocument', bookName);
@@ -416,9 +414,10 @@ define(function (require) {
                     // now read the contents of the file
                     parseNode($($xml).find("usx"));
                     // update the last chapter's verseCount
-                    chapter.set('versecount', verseCount);
-                    chapter.trigger('change');
+                    chapter.set('versecount', verseCount, {silent: true});
+                    chapter.save();
                     book.set('chapters', chaps);
+                    book.save();
                     chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readUSXDoc()
@@ -512,8 +511,9 @@ define(function (require) {
                         markers = $(this).attr('m');
                         if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
                             // update the last adapted for the previous chapter before closing it out
-                            chapter.set('versecount', verseCount);
-                            chapter.set('lastadapted', lastAdapted);
+                            chapter.set('versecount', verseCount, {silent: true});
+                            chapter.set('lastadapted', lastAdapted, {silent: true});
+                            chapter.save();
                             verseCount = 0; // reset for the next chapter
                             lastAdapted = 0; // reset for the next chapter
                             stridx = markers.indexOf("\\c ") + 3;
@@ -530,7 +530,6 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
-                            chapter.trigger('change');
                             console.log(": " + $(this).attr('s') + ", " + chapterID);
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
@@ -570,7 +569,7 @@ define(function (require) {
                                     });
                                     index++;
                                     sourcePhrases.add(sp);
-                                    sp.trigger('change');
+                                    sp.save();
                                     markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
@@ -588,7 +587,7 @@ define(function (require) {
                                     });
                                     index++;
                                     sourcePhrases.add(sp);
-                                    sp.trigger('change');
+                                    sp.save();
                                     markers = ""; // reset
                                 }
                             });
@@ -609,12 +608,13 @@ define(function (require) {
                         });
                         index++;
                         sourcePhrases.add(sp);
-                        sp.trigger('change');
+                        sp.save();
                     });
                     // update the last chapter's verseCount
-                    chapter.set('versecount', verseCount);
-                    chapter.trigger('change');
+                    chapter.set('versecount', verseCount, {silent: true});
+                    chapter.save();
                     book.set('chapters', chaps);
+                    book.save();
                     chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readXMLDoc()
@@ -671,7 +671,6 @@ define(function (require) {
                         chapters: [] // arr
                     });
                     books.add(book);
-                    book.trigger('change');
                     // Note that we're adding chapter 1 before we reach the \c 1 marker in the file --
                     // Usually there's a fair amount of front matter before we reach the chapter itself;
                     // rather than creating a chapter 0 (which would throw off the search stuff), we'll
@@ -688,7 +687,6 @@ define(function (require) {
                         versecount: 0
                     });
                     chapters.add(chapter);
-                    chapter.trigger('change');
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (project.get('lastDocument') === "") {
                         project.set('lastDocument', bookName);
@@ -734,9 +732,9 @@ define(function (require) {
                             // (note that we've already created chapter 1, so skip it if we come across it)
                             if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
                                 // update the last adapted for the previous chapter before closing it out
-                                chapter.set('versecount', verseCount);
-                                chapter.set('lastadapted', lastAdapted);
-                                chapter.trigger('change');
+                                chapter.set('versecount', verseCount, {silent: true});
+                                chapter.set('lastadapted', lastAdapted, {silent: true});
+                                chapter.save();
                                 verseCount = 0; // reset for the next chapter
                                 lastAdapted = 0; // reset for the next chapter
                                 stridx = markers.indexOf("\\c ") + 3;
@@ -747,8 +745,6 @@ define(function (require) {
                                     // space after the chapter #
                                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
                                 }
-                                
-                                
                                 chapterID = Underscore.uniqueId();
                                 chaps.push(chapterID);
                                 // create the new chapter
@@ -761,7 +757,6 @@ define(function (require) {
                                     versecount: 0
                                 });
                                 chapters.add(chapter);
-                                chapter.trigger('change');
                                 console.log(chapterName + ": " + chapterID);
                             }
                             // also do some processing for verse markers
@@ -820,16 +815,16 @@ define(function (require) {
                                 punctIdx = 0;
                                 index++;
                                 sourcePhrases.add(sp);
-                                sp.trigger('change');
+                                sp.save();
                                 i++;
                             }
                         }
                     }
                     // update the last chapter's verseCount
-                    chapter.set('versecount', verseCount);
-                    chapter.trigger('change');
+                    chapter.set('versecount', verseCount, {silent: true});
+                    chapter.save();
                     book.set('chapters', chaps);
-                    book.trigger('change');
+                    book.save();
                     chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readUSFMDoc()
@@ -986,7 +981,7 @@ define(function (require) {
             // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
                 // save the model
-                this.model.trigger('change');
+                this.model.save();
                 // head back to the home page
                 window.history.go(-1);
             },
