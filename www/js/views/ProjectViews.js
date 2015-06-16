@@ -1234,31 +1234,35 @@ define(function (require) {
             },
 
             OnPrevStep: function (event) {
-                // pull the info from the current step
-                this.GetProjectInfo(step);
-                if (step > 1) {
-                    step--;
+                // pull the info from the current step (must pass validation)
+                if (this.GetProjectInfo(step) === true) {
+                    if (step > 1) {
+                        step--;
+                    }
+                    this.ShowStep(step);
                 }
-                this.ShowStep(step);
             },
 
             OnNextStep: function (event) {
                 var coll = null;
-                // pull the info from the current step
-                this.GetProjectInfo(step);
-                if (step < this.numSteps) {
-                    step++;
-                    this.ShowStep(step);
-                } else {
-                    // last step -- finish up
-                    // save the model
-                    this.model.trigger('change');
-                    // head back to the home page
-                    window.history.go(-1);
-//                    window.Application.home();
+                // pull the info from the current step (must pass validation)
+                if (this.GetProjectInfo(step) === true) {
+                    if (step < this.numSteps) {
+                        step++;
+                        this.ShowStep(step);
+                    } else {
+                        // last step -- finish up
+                        // save the model
+                        this.model.trigger('change');
+                        // head back to the home page
+                        window.history.go(-1);
+    //                    window.Application.home();
+                    }
                 }
             },
-
+            // Pull project information from the current step
+            // Returns true if validation passes, false if it fails
+            // (currently just checks for non-null language names in source/target language)
             GetProjectInfo: function (step) {
                 var value = null,
                     index = 0,
@@ -1267,12 +1271,32 @@ define(function (require) {
                 switch (step) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName);
+                    if (currentView.langName.trim().length === 0) {
+                        // fail - no language set
+                        if (navigator.notification) {
+                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                        } else {
+                            alert(i18n.t('view.errEnterLanguageName'));
+                        }
+                        $("#LanguageName").focus();
+                        return false;
+                    }
                     this.model.set("SourceLanguageCode", currentView.langCode);
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
+                    if (currentView.langName.trim().length === 0) {
+                        // fail - no language set
+                        if (navigator.notification) {
+                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                        } else {
+                            alert(i18n.t('view.errEnterLanguageName'));
+                        }
+                        $("#LanguageName").focus();
+                        return false;
+                    }
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
                     this.model.set("TargetDir", ($('#tRTL').is(':checked') === true) ? "rtl" : "ltr");
@@ -1302,6 +1326,7 @@ define(function (require) {
                     }
                     break;
                 }
+                return true;
             },
 
             OnNewProject: function () {
