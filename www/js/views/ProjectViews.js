@@ -1333,6 +1333,7 @@ define(function (require) {
                 // create a new project model object
                 //this.openDB();
                 this.numSteps = 6;
+                step = 1;
                 languages = new langs.LanguageCollection();
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
