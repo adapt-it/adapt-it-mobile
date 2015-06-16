@@ -326,12 +326,18 @@ define(function (require) {
             clearAll: function () {
                 var i = 0,
                     keyName = "",
+                    names = [],
                     len = localStorage.length;
+                // collect the names we want to remove
                 for (i = 0; i < len; ++i) {
                     keyName = localStorage.key(i);
                     if (keyName.length > 2 && keyName.substr(0, 2) === "p.") {
-                        localStorage.removeItem(keyName);
+                        names.push(keyName);
                     }
+                }
+                // remove the names
+                for (i = 0; i < names.length; i++) {
+                    localStorage.removeItem(names[i]);
                 }
                 // clear local copy
                 projects.length = 0;
