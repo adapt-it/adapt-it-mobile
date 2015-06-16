@@ -24,7 +24,7 @@ define(function (require) {
         tplLanguages        = require('text!tpl/LanguagesList.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
-        langs       = require('languages'),
+        langs       = require('utils/languages'),
         projModel   = require('app/models/project'),
         fontModel   = require('app/models/font'),
         langName    = "",
@@ -617,7 +617,7 @@ define(function (require) {
                 container.append(buffer);
             },
             onRender: function () {
-                this.itemViewContainer = this.$('div#name-suggestions');
+                this.itemViewContainer = this.$('#name-suggestions');
             },
             events: {
                 "keyup #SourceLanguageName":    "search",
