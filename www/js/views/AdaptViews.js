@@ -72,6 +72,32 @@ define(function (require) {
             theRule += "color: " + project.get('TextDifferencesColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Text direction
+            // Default layout is LTR in our CSS file; 
+            // if both languages are RTL, switch the layout of the chapter element and flow of text
+            if (project.get('SourceDir') === 'rtl' && project.get('TargetDir') === 'rtl') {
+                theRule = "#chapter { direction: rtl; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".pile, .strip-header {";
+                theRule += "float: right;";
+                theRule += "}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
+            // override individual text directions
+            if (project.get('SourceDir') === 'rtl') {
+                theRule = ".source { direction: rtl; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
+            // override individual text directions
+            if (project.get('TargetDir') === 'rtl') {
+                theRule = ".target { direction: rtl; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
+            // override individual text directions
+            if (project.get('NavDir') === 'rtl') {
+                theRule = ".marker { direction: rtl; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
         },
 
         // SourcePhraseView

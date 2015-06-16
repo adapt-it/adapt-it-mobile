@@ -856,13 +856,13 @@ define(function (require) {
                     this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
                     this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
-                    this.model.set("SourceDir", ($('#SourceRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
-                    this.model.set("TargetDir", ($('#TargetRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
                     break;
                 case 3: // source font
@@ -1253,7 +1253,7 @@ define(function (require) {
                     } else {
                         // last step -- finish up
                         // save the model
-                        this.model.trigger('change');
+                        this.model.save();
                         // head back to the home page
                         window.history.go(-1);
     //                    window.Application.home();
@@ -1299,7 +1299,7 @@ define(function (require) {
                     }
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
-                    this.model.set("TargetDir", ($('#tRTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     // also set the ID and name of the project, now that we (should) have both source and target defined
                     // TODO: do we need to add the variant to the ID and/or name?
 //                    value = this.model.get("SourceLanguageCode") + "." + this.model.get("TargetLanguageCode");
