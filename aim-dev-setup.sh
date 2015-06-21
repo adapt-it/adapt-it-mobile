@@ -156,6 +156,8 @@ else
 fi
 # Retrieving and executing the NodeSource script requires curl, so make sure it is installed
 sudo apt-get install curl
+# whm added: some re-install problems can be avoided by first removing any previous npm configuration at ~/.npm
+sudo rm -rf $HOME/.npm
 # Retrieve and execute the NodeSource script for installing nodejs v0.12
 curl -sL https://deb.nodesource.com/setup_dev | sudo bash -
 sudo apt-get install -y nodejs
@@ -323,7 +325,7 @@ cordova build android
 # Output help for the developer on next steps to take
 echo -e "\nUsage (next steps):"
 echo -e "   Recommended: Do a cold boot before running the cordova build and emulate"
-echo "      commands shown below (the build or emulate process may appear to hang up)"
+echo "      commands shown below (if the build or emulate process appears to hang up)"
 echo -e "   cd ${PROJECT_DIR}/adapt-it-mobile"
 echo -e "   To build AIM run:\tcordova build android"
 echo -e "   To test AIM on an Android emulator run:\tcordova emulate android &"
