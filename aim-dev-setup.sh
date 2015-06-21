@@ -110,8 +110,8 @@ fi
 # utilizing their installation script (see https://github.com/nodesource/distributions).
 npmMinVer="2.10.0"
 nodejsMinVer="0.12.3"
-npmVerRepo=`sudo apt-cache show npm | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1`
-nodejsVerRepo=`sudo apt-cache show nodejs | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1`
+npmVerRepo=`sudo apt-cache show npm | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1 | cut -d '-' -f1`
+nodejsVerRepo=`sudo apt-cache show nodejs | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1 | cut -d '-' -f1`
 echo -e "\nChecking versions of npm and nodejs available in repos..."
 vercomp $npmMinVer $npmVerRepo
 case $? in
