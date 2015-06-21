@@ -12,9 +12,12 @@
 #      Ubuntu/Linux Mint distros 12.04LTS, 14.04LTS (see https://github.com/nodesource/distributions)
 #    - install curl early on (needed for NodeSource setup)
 #    - add g++ tools to install list (test on fresh Ubuntu VM show g++ is needed for cordova)
+#    - add java 7 packages (openjdk-7-jre openjdk-7-jdk openjdk-7-jre-lib) and icedtea-7-plugin to intall list
 #    - after download of AIM sources, rsync res dir in www back to adapt-it-mobile dir
+#    - check for existing git 'user.name' and 'user.email' and ask user for them if they are not already set
+#    - set the 'push.default simple' git option
 #    - only download Android SDK components if they haven't been downloaded (saves 10min on
-#      subsequent setup runs
+#      subsequent setup runs)
 #    - ensure user's ~/tmp dir is owned by $USER rather than root
 #    - add more echo comments throughout
 #    - tweaked setting of ANDROID_HOME in .profile to be exported, ie: export ANDROID_HOME=...
@@ -56,9 +59,17 @@ vercomp () {
     return 0
 }
 
-# whm Note: npm is not included in installList below as it is
-# installed before these tools below via the NodeSource installation.
-installList="git inkscape default-jdk ant dpkg-dev curl g++"
+# whm Notes: 
+# 1. npm is not included in installList below as it is installed
+# before these tools below via the NodeSource installation.
+# 2. Erik says version 7 of the jdk should be used. openjdk-7-jdk, 
+# openjdk-7-jre and openjdk-7-jre-lib are available in both 12.04 
+# and 14.04 based Ubuntu distros, but default-jdk installs openjdk-6 
+# as the default on 12.04, so instead of installing default-jdk, 
+# we'll explicitly purge any existing openjdk-6 packages, and then
+# install the openjdk-7-jdk, openjdk-7-jre and openjdk-7-jre-lib 
+# packages if they are not already installed.
+installList="git inkscape openjdk-7-jre openjdk-7-jdk openjdk-7-jre-lib icedtea-7-plugin ant dpkg-dev curl g++"
 
 # Install needed Ubuntu packages
 sudo apt-get update -y
@@ -149,9 +160,20 @@ sudo apt-get install curl
 curl -sL https://deb.nodesource.com/setup_dev | sudo bash -
 sudo apt-get install -y nodejs
 
+# Remove/Purge any existing openjdk java 1.6.x packages from the system
+sudo apt-get purge openjdk-6-jdk openjdk-6-jre openjdk-6-jre-headless -y
+
+# Install the main list of tools (which include openjdk java 1.7 packages)
 echo -e "\nInstalling software tools needed for building AIM..."
-# whm: added qemu-kvm and g++
 sudo apt-get install $installList -y
+
+# Use update-java-alternatives to set the java runtime and development tools to point
+# to the 1.7.x java implementation. Also set all runtime and development tools to auto mode.
+# This is preferable to setting the JAVA_HOME environment variable. See the README.alternatives
+# file at: /usr/lib/jvm/java-1.7.x*/docs/README.alternatives
+JAVA17PATH=`update-java-alternatives --list | grep java-1.7 | cut -d ' ' -f3`
+sudo update-java-alternatives --set $JAVA17PATH
+sudo update-java-alternatives --auto
 
 # Allow nodejs to be run as node, then use npm to install cordova
 echo -e "\nAllowing nodejs to be run as node"
@@ -177,10 +199,57 @@ echo -e "\nInstall extra i386 packages if needed"
 dpkg-architecture -eamd64 && sudo apt-get install libc6:i386 libstdc++6:i386 zlib1g:i386 -y
 
 # Download AIM sources from git
-echo -e "\nDownload AIM sources from github"
-mkdir -p "${PROJECT_DIR}"
-cd ${PROJECT_DIR}
-[ -d adapt-it-mobile ] || git clone https://github.com/adapt-it/adapt-it-mobile.git
+# Check for an existing local adaptit repo
+if [ -f $PROJECT_DIR/adapt-it-mobile/.git/config ]; then
+  echo -e "\nPulling in any adapt-it-mobile changes to $PROJECT_DIR/adapt-it-mobile/..."
+  cd $PROJECT_DIR/adapt-it-mobile
+  git pull
+else
+  echo -e "\nCloning the Adapt It Mobile (AIM) sources to $PROJECT_DIR/adapt-it-mobile/..."
+  mkdir -p "${PROJECT_DIR}"
+  cd ${PROJECT_DIR}
+  [ -d adapt-it-mobile ] || git clone https://github.com/adapt-it/adapt-it-mobile.git
+fi
+
+# Check for an existing git user.name and user.email
+echo -e "\nTo help with AIM development you should have a GitHub user.name and user.email."
+echo "Checking for previous configuration of git user name and git user email..."
+# work from the adapt-it-mobile repo
+cd $PROJECT_DIR/adapt-it-mobile
+gitUserName=`git config user.name`
+gitUserEmail=`git config user.email`
+if [ -z  "$gitUserName" ]; then
+  echo "  A git user.name has not yet been configured."
+  read -p "Type your git user name: " gitUserName
+  if [ ! -z "$gitUserName" ]; then
+    echo "  Setting $gitUserName as your git user.name"
+    git config user.name "$gitUserName"
+  else
+    echo "  Nothing entered. No git configuration made for user.name!"
+  fi
+else
+  echo "  Found this git user.name: $gitUserName"
+  echo "  $gitUserName will be used as your git name for the adaptit repository."
+fi
+      
+if [ -z  "$gitUserEmail" ]; then
+  echo "  A git user.email has not yet been configured."
+  read -p "Type your git user email: " gitUserEmail
+  if [ ! -z "$gitUserEmail" ]; then
+    echo "  Setting $gitUserEmail as your git user.email"
+    git config user.email "$gitUserEmail"
+  else
+    echo "  Nothing entered. No git configuration made for user.email"
+  fi
+else
+  echo "  Found this git user.email: $gitUserEmail"
+  echo "  $gitUserEmail will be used as your git email for the adaptit repository."
+fi
+# Add 'git config push.default simple' command which will be the default in git version 2.0
+git config push.default simple
+echo -e "\nThe git configuration settings for the adaptit repository are:"
+git config --list
+sleep 2
 
 # whm Added: To avoid cp errors when building the android project, I'm copying the adapt-it-mobile/www/res
 # folder to adapt-it-mobile/res/ folder
@@ -225,8 +294,8 @@ android list avds -c |grep -qs 'android-5.1.1-WVGA800' || \
 # Build AIM for Android
 cd "${PROJECT_DIR}/adapt-it-mobile"
 # Add android platform if not already added
-# whm Note: On a fresh trusty system, the /home/$USER/tmp/ directory is owned by root.
-# While the /tmp directory is owned by root, the user's ~/tmp directory needs to be 
+# whm Note: On a fresh Ubuntu 14.04 system, the /home/$USER/tmp/ directory is owned by root.
+# While the standard /tmp directory is owned by root, the user's ~/tmp directory needs to be 
 # owned by the $USER in order for the 'cordova ... add ...' commands to succeed.
 # Otherwise, the 'cordova platform add android' command issues this error:
 #   Unable to fetch platform android: Error: EACCES, mkdir '/home/bill/tmp/npm-12127-zrD08_YV'
@@ -253,7 +322,8 @@ cordova build android
 
 # Output help for the developer on next steps to take
 echo -e "\nUsage (next steps):"
-echo -e "   run: echo \$ANDROID_HOME  if variable is not set, run: source ~/.profile"
+echo -e "   Recommended: Do a cold boot before running the cordova build and emulate"
+echo "      commands shown below (the build or emulate process may appear to hang up)"
 echo -e "   cd ${PROJECT_DIR}/adapt-it-mobile"
 echo -e "   To build AIM run:\tcordova build android"
 echo -e "   To test AIM on an Android emulator run:\tcordova emulate android &"
