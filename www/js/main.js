@@ -4,11 +4,13 @@ require.config({
     
     // 3rd party lib versions:
     // backbone         1.2.1
+    // backbone.babysitter 0.1.8
+    // backbone.wreqr   1.3.3
     // fastclick        1.0.6
     // handlebars       3.0.3
     // i18next          1.9.0
     // jquery           2.1.4
-    // marionette       2.4.1 (bundled; includes BabySitter / Wreqr) 
+    // marionette       2.2.0
     // require          2.1.18
     // spectrum         1.7.0
     // text             2.0.14
