@@ -10,7 +10,7 @@ require.config({
     // handlebars       3.0.3
     // i18next          1.9.0
     // jquery           2.1.4
-    // marionette       2.2.0
+    // marionette       2.4.2
     // require          2.1.18
     // spectrum         1.7.0
     // text             2.0.14
