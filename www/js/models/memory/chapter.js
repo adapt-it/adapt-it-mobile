@@ -116,7 +116,8 @@ define(function (require) {
             model: Chapter,
 
             resetFromDB: function () {
-                var i = 0,
+                var deferred = $.Deferred(),
+                    i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
@@ -132,13 +133,16 @@ define(function (require) {
                         }
                         console.log("SELECT ok: " + res.rows.length + " chapter items");
                     });
-                }, function (err) {
-                    console.log("SELECT error: " + err.message);
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
                 });
+                return deferred.promise();
             },
             
             initialize: function () {
-                this.resetFromDB();
+                return this.resetFromDB();
             },
 
             // Removes all chapters from the collection (and database)

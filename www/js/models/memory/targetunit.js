@@ -136,21 +136,22 @@ define(function (require) {
 //                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, refstring text, timestamp text, user text);');
                 });
-                window.Application.db.transaction(function (tx) {
-                    tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
-                        for (i = 0, len = res.rows.length; i < len; ++i) {
-                            // add the chapter
-                            var tu = new TargetUnit();
-                            tu.off("change");
-                            tu.set(res.rows.item(i));
-                            targetunits.push(tu);
-                            tu.on("change", tu.save, tu);
-                        }
-                        console.log("SELECT ok: " + res.rows.length + " targetunit items");
-                    });
-                }, function (err) {
-                    console.log("SELECT error: " + err.message);
-                });
+                // edb 6/18/15 - lazy-load targetunits
+//                window.Application.db.transaction(function (tx) {
+//                    tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
+//                        for (i = 0, len = res.rows.length; i < len; ++i) {
+//                            // add the chapter
+//                            var tu = new TargetUnit();
+//                            tu.off("change");
+//                            tu.set(res.rows.item(i));
+//                            targetunits.push(tu);
+//                            tu.on("change", tu.save, tu);
+//                        }
+//                        console.log("SELECT ok: " + res.rows.length + " targetunit items");
+//                    });
+//                }, function (err) {
+//                    console.log("SELECT error: " + err.message);
+//                });
             },
             
             initialize: function () {
