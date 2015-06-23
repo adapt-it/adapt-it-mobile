@@ -1,6 +1,8 @@
 #!/bin/bash
-# aim-dev-setup.sh -- Set up environment for developing Adapt It Mobile on Ubuntu 12.04, 14.04 or higher
-# Date: 2015-06-03
+# aim-dev-setup.sh -- Set up environment for developing Adapt It Mobile (AIM) on Ubuntu 12.04, 14.04 or higher
+# Note: This scipt may be called from the setup-work-dev-tools.sh script (option 2), or it 
+#       can be called independently as a stand-alone script.
+# Date: 2015-06-23
 # Author: Jonathan Marsden <jmarsden@fastmail.fm>
 # Revised: 2015-06-10 by Bill Martin <bill_martin@sil.org> 
 #    - changed PROJECT_DIR default to ~/projects
@@ -60,7 +62,7 @@ vercomp () {
 }
 
 # whm Notes: 
-# 1. npm is not included in installList below as it is installed
+# 1. npm is not included in AIM_DEV_TOOLS below as it is installed
 # before these tools below via the NodeSource installation.
 # 2. Erik says version 7 of the jdk should be used. openjdk-7-jdk, 
 # openjdk-7-jre and openjdk-7-jre-lib are available in both 12.04 
@@ -69,7 +71,10 @@ vercomp () {
 # we'll explicitly purge any existing openjdk-6 packages, and then
 # install the openjdk-7-jdk, openjdk-7-jre and openjdk-7-jre-lib 
 # packages if they are not already installed.
-installList="git inkscape openjdk-7-jre openjdk-7-jdk openjdk-7-jre-lib icedtea-7-plugin ant dpkg-dev curl g++"
+AIM_DEV_TOOLS="git inkscape openjdk-7-jre openjdk-7-jdk openjdk-7-jre-lib icedtea-7-plugin ant dpkg-dev curl g++"
+
+# Setup AIM development tools
+echo "Seting up AIM Tools..."
 
 # Install needed Ubuntu packages
 sudo apt-get update -y
@@ -81,7 +86,7 @@ if [[ "$runningInVBVM" == ""  && "$runningInVMwareVM" == "" ]]
 then
   echo -e "\nWe're not in a virtual machine. Adding qemu-kvm is install list"
   #sudo apt-get install qemu-kvm -y
-  installList=$installList" qemu-kvm"
+  AIM_DEV_TOOLS=$AIM_DEV_TOOLS" qemu-kvm"
 else
   echo -e "\nWe are running in a virtual machine..."
   echo "The qemu-kvm tool can't be installed - hardware acceleration won't be possible."
@@ -167,7 +172,7 @@ sudo apt-get purge openjdk-6-jdk openjdk-6-jre openjdk-6-jre-headless -y
 
 # Install the main list of tools (which include openjdk java 1.7 packages)
 echo -e "\nInstalling software tools needed for building AIM..."
-sudo apt-get install $installList -y
+sudo apt-get install $AIM_DEV_TOOLS -y
 
 # Use update-java-alternatives to set the java runtime and development tools to point
 # to the 1.7.x java implementation. Also set all runtime and development tools to auto mode.
@@ -248,7 +253,9 @@ else
   echo "  $gitUserEmail will be used as your git email for the adaptit repository."
 fi
 # Add 'git config push.default simple' command which will be the default in git version 2.0
-git config push.default simple
+# In Ubuntu Precise 12.04, the git version is 1.7.9 which doesn't recognize a 'simple'
+# setting for push.default, so leave any setting up to the developer.
+#git config push.default simple.
 echo -e "\nThe git configuration settings for the adaptit repository are:"
 git config --list
 sleep 2
