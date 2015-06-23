@@ -83,6 +83,17 @@ input[type="file"] {
     background: url('../svg/adapt-it-mobile.svg') no-repeat;
     background-size: cover;
 }
+.waiting {
+    height: 11px;
+    width: 43px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    /* image from http://www.ajaxload.info/, freely licensed under the WTFPL */
+    background: url('images/ajax-loader.gif') no-repeat;
+    background-size: cover;
+}
 .container {
     position: relative;
     height: 72%; 
