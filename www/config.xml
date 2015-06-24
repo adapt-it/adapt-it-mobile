@@ -37,14 +37,14 @@
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
     -->
-    <gap:config-file platform="ios" parent="UISupportedInterfaceOrientations" overwrite="true">
+    <gap:config-file platform="ios" parent="UISupportedInterfaceOrientations" mode="replace">
         <array>
           <string>UIInterfaceOrientationPortrait</string>
           <string>UIInterfaceOrientationLandscapeLeft</string>
           <string>UIInterfaceOrientationLandscapeRight</string>
         </array>
     </gap:config-file>
-    <gap:config-file platform="android" parent="/manifest" overwrite="true">
+    <gap:config-file platform="android" parent="/manifest" mode="replace">
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     </gap:config-file>
