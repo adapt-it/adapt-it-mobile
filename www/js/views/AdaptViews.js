@@ -35,6 +35,8 @@ define(function (require) {
         template = null,
         punctsSource = [],
         punctsTarget = [],
+        caseSource = [],
+        caseTarget = [],
         
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
@@ -182,6 +184,15 @@ define(function (require) {
                     return target;
                 } else {
                     return result;
+                }
+            },
+            addCapitalization: function (model, target) {
+                var i = 0,
+                    result = "",
+                    source = model.get('source');
+                // If we aren't copying punctuation for this project, just return the target (unaltered)
+                if (this.project.get('AutoCapitalization') === 'false' || this.project.get('SourceHasUpperCase') === 'false') {
+                    return target;
                 }
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
@@ -1006,9 +1017,15 @@ define(function (require) {
                 this.kblist.fetch({reset: true, data: {name: this.project.id}});
                 // fetch the source phrases in this chapter
                 this.spList.fetch({reset: true, data: {chapterid: chapterid}});
+                // load the source / target punctuation pairs
                 this.project.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);
                     punctsTarget.push(elt.t);
+                });
+                // load the source / target case pairs
+                this.project.get('CasePairs').forEach(function (elt, idx, array) {
+                    caseSource.push(elt.s);
+                    caseTarget.push(elt.t);
                 });
             },
             render: function () {
