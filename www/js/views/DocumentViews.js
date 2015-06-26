@@ -22,7 +22,7 @@ define(function (require) {
         fileCount       = 0,
         punctExp        = "",
         puncts          = [],
-        curFileIdx      = 0,
+        curIdx      = 0,
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -35,6 +35,21 @@ define(function (require) {
             var doc = null;
             var result = false;
             var errMsg = "";
+            var sps = [];
+            // helper method to increment the progress bar
+            // the progress bar is incremented TWICE for each file in the import list; once when the
+            // data has been read / parsed and once when all the sourcephrases have been added to the database
+            // (which can lag a while)
+            var updateProgressBar = function () {
+                console.log("updateProgressBar()");
+                curIdx++;
+                var newWidth = "width:" + (200 / (fileCount * 2) * curIdx) + "%;";
+                $("#progress").attr("style", newWidth);
+                if ((fileCount * 2) === curIdx) {
+                    // last document -- display the OK button
+                    $("#OK").removeAttr("disabled");
+                }
+            };
             // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
                 var value = "",
@@ -176,13 +191,21 @@ define(function (require) {
                                 follpuncts = "";
                                 punctIdx = 0;
                                 index++;
-                                sourcePhrases.add(sp);
-                                sp.save();
+                                sps.push(sp);
+//                                sourcePhrases.add(sp);
+//                                sp.save();
                                 i++;
                             }
                         }
                     }
 
+                    // add the sourcephrases
+                    if (sps.length > 0) {
+                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
+                            // update the progress bar
+                            updateProgressBar();
+                        });
+                    }
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index), {silent: true});
@@ -345,8 +368,9 @@ define(function (require) {
                                         follpuncts = "";
                                         punctIdx = 0;
                                         index++;
-                                        sourcePhrases.add(sp);
-                                        sp.save();
+                                        sps.push(sp);
+//                                        sourcePhrases.add(sp);
+//                                        sp.save();
                                         i++;
                                     }
                                 }
@@ -413,6 +437,13 @@ define(function (require) {
                     }
                     // now read the contents of the file
                     parseNode($($xml).find("usx"));
+                    // add the sourcephrases
+                    if (sps.length > 0) {
+                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
+                            // update the progress bar
+                            updateProgressBar();
+                        });
+                    }
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
@@ -530,7 +561,7 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
-                            console.log(": " + $(this).attr('s') + ", " + chapterID);
+//                            console.log(": " + $(this).attr('s') + ", " + chapterID);
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
@@ -568,8 +599,9 @@ define(function (require) {
                                         target: ""
                                     });
                                     index++;
-                                    sourcePhrases.add(sp);
-                                    sp.save();
+                                    sps.push(sp);
+//                                    sourcePhrases.add(sp);
+//                                    sp.save();
                                     markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
@@ -586,8 +618,9 @@ define(function (require) {
                                         target: ""
                                     });
                                     index++;
-                                    sourcePhrases.add(sp);
-                                    sp.save();
+                                    sps.push(sp);
+//                                    sourcePhrases.add(sp);
+//                                    sp.save();
                                     markers = ""; // reset
                                 }
                             });
@@ -607,9 +640,17 @@ define(function (require) {
                             target: $(this).attr('t')
                         });
                         index++;
-                        sourcePhrases.add(sp);
-                        sp.save();
+                        sps.push(sp);
+//                        sourcePhrases.add(sp);
+//                        sp.save();
                     });
+                    // add the sourcephrases
+                    if (sps.length > 0) {
+                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
+                            // update the progress bar
+                            updateProgressBar();
+                        });
+                    }
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
@@ -757,7 +798,7 @@ define(function (require) {
                                     versecount: 0
                                 });
                                 chapters.add(chapter);
-                                console.log(chapterName + ": " + chapterID);
+//                                console.log(chapterName + ": " + chapterID);
                             }
                             // also do some processing for verse markers
                             if (markers && markers.indexOf("\\v ") !== -1) {
@@ -814,13 +855,21 @@ define(function (require) {
                                 follpuncts = "";
                                 punctIdx = 0;
                                 index++;
-                                sourcePhrases.add(sp);
-                                sp.save();
+                                sps.push(sp);
+//                                sourcePhrases.add(sp);
+//                                sp.save();
                                 i++;
                             }
                         }
                     }
                     // update the last chapter's verseCount
+                    // add the sourcephrases
+                    if (sps.length > 0) {
+                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
+                            // update the progress bar
+                            updateProgressBar();
+                        });
+                    }
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
                     book.set('chapters', chaps);
@@ -847,6 +896,8 @@ define(function (require) {
                     result = readTextDoc(this.result);
                 }
                 
+//                // clean out the sps array
+//                sps.length = 0;
                 // done parsing -- update the status
                 if (status.length > 0) {
                     status += "<br>";
@@ -865,13 +916,8 @@ define(function (require) {
                     curStatus += "<br>";
                 }
                 $("#status2").html(curStatus + status);
-                curFileIdx++;
-                var newWidth = "width:" + (100 / fileCount * curFileIdx) + "%;";
-                $("#progress").attr("style", newWidth);
-                if (fileCount === curFileIdx) {
-                    // last document -- display the OK button
-                    $("#OK").removeAttr("disabled");
-                }
+                // update the progress bar
+                updateProgressBar();
             };
             reader.readAsText(file);
         },
@@ -917,10 +963,10 @@ define(function (require) {
             // (this is the html <input type=file> element  displayed for the browser only) --
             // file selections are returned by the browser in the event.currentTarget.files array
             browserImportDocs: function (event) {
-                console.log("browserImportDocs");
+//                console.log("browserImportDocs");
                 $(".topcoat-progress-bar").show();
                 $("#progress").attr("style", "width: 0%;");
-                curFileIdx = 0;
+                curIdx = 0;
                 var fileindex = 0;
                 var files = event.currentTarget.files;
                 fileCount = files.length;
@@ -937,7 +983,7 @@ define(function (require) {
             // from that list, then reconstitute file objects from the paths using the
             // cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
-                console.log("mobileImportDocs");
+//                console.log("mobileImportDocs");
                 $(".topcoat-progress-bar").show();
                 $("#progress").attr("style", "width: 0%;");
                 // find all the selected files
@@ -950,7 +996,7 @@ define(function (require) {
                 fileCount = selected.length;
                 // Get a "real" file object for each of the selected files.
                 // This requires using the html5 filesystem API.
-                curFileIdx = 0;
+                curIdx = 0;
                 var fileindex = 0;
                 var i = 0;
                 var project = this.model;

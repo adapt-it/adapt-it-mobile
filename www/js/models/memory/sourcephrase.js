@@ -10,7 +10,9 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        Underscore  = require('underscore'),
         sourcephrases = [],
+        sps         = [],
 
         findById = function (searchKey) {
             var deferred = $.Deferred();
@@ -42,17 +44,6 @@ define(function (require) {
                 follpuncts: "",
                 source: "",
                 target: ""
-            },
-
-            resetFromDB: function (callback) {
-                window.Application.db.transaction(
-                    function (tx) {
-                        var sql =
-                            "select * from ";
-                        console.log('Creating BOOK table');
-                        tx.executeSql(sql);
-                    }
-                );
             },
 
             initialize: function () {
@@ -173,19 +164,29 @@ define(function (require) {
                 });
             },
             
-//            saveBatch: function (models) {
-//                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
-//                var sps = models;
-//                window.Application.db.transaction(function (tx) {
-//                    models.each(function (sp) {
-//                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target], function (tx, res) {
-//                            console.log("SELECT ok: " + res.toString());
-//                        }, function (tx, err) {
-//                            console.log("SELECT error: " + err.message);
-//                        });
-//                    });
-//                });
-//            },
+            // add an array of SourcePhrase objects
+            addBatch: function (models) {
+                var deferred = $.Deferred();
+                var sql = "INSERT INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+                var start = new Date().getTime();
+                console.log("addBatch: " + models.length + " objects");
+                sps = models;
+                window.Application.db.transaction(function (tx) {
+                    Underscore.each(models, function (sp) {
+                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);
+                    });
+                    var end = new Date().getTime();
+                    console.log("addBatch: " + models.length + " objects, " + (end - start));
+                    // clear out models array
+                    models.length = 0;
+                    sps.length = 0;
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            },
 
             sync: function (method, model, options) {
                 var sql = "INSERT OR REPLACE INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
