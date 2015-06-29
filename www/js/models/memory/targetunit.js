@@ -70,7 +70,7 @@ define(function (require) {
 //                        console.log("SELECT ok: " + res.toString());
                         if (res.rows.item(0).cnt > 0) {
                             // there's already a record for this id -- update the values
-                            tx.executeSql("UPDATE chapter SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;", [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user, attributes.tuid], function (tx, res) {
+                            tx.executeSql("UPDATE targetunit SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;", [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user, attributes.tuid], function (tx, res) {
 //                                console.log("UPDATE ok: " + res.toString());
                             }, function (tx, err) {
                                 console.log("SELECT error: " + err.message);

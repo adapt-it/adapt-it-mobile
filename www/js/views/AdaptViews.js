@@ -674,8 +674,9 @@ define(function (require) {
                             refstrings.push(newRS);
                         }
                         // update the KB model
-                        tu.set({refstring: refstrings});
-                        tu.trigger('change');
+                        tu.save({refstring: refstrings});
+//                        tu.set({refstring: refstrings});
+//                        tu.trigger('change');
                     } else {
                         // no entry in KB with this source -- add one
                         var newID = Underscore.uniqueId(),
@@ -694,20 +695,15 @@ define(function (require) {
                                 user: ""
                             });
                         this.kblist.add(newTU);
-                        newTU.trigger('change');
+                        newTU.save();
+//                        newTU.trigger('change');
                     }
                 }
                 // Now update the model
                 if (trimmedValue) {
     //                console.log(model);
                     // update the model with the new target text
-                    model.set({target: trimmedValue});
-                    if (value !== trimmedValue) {
-                        // Model values changes consisting of whitespaces only are
-                        // not causing change to be triggered. Check for this condition
-                        // and trigger the change event manually if needed
-                        model.trigger('change');
-                    }
+                    model.save({target: trimmedValue});
                     // if the target differs from the source, make it display in green
                     if (model.get('source') === model.get('target')) {
                         // source === target -- remove "differences" from the class so the text is black
