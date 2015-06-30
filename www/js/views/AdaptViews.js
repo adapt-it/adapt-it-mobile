@@ -131,7 +131,7 @@ define(function (require) {
                 // go back and add the individual piles
                 this.collection.each(this.addOne, this);
                 //edb test -- remove
-                $(".target").attr('contenteditable', 'true');
+//                $(".target").attr('contenteditable', 'true');
                 return this;
             },
 
@@ -215,6 +215,7 @@ define(function (require) {
             // this also calls blur(), which saves any changes.
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
+                console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
                 $(event.currentTarget).blur();
@@ -431,6 +432,7 @@ define(function (require) {
                 // re-add the contenteditable fields
                 var tmpItem = null,
                     tmpIdx = 0;
+                console.log("selectingPilesEnd");
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
@@ -534,6 +536,7 @@ define(function (require) {
                     refstrings = null,
                     foundInKB = false;
                 // clear out any previous selection
+                console.log("selectedAdaptation");
                 this.clearSelection();
                 // set the current adaptation cursor
                 selectedStart = event.currentTarget.parentElement; // pile
@@ -573,7 +576,7 @@ define(function (require) {
                 }
                 if (foundInKB === false) {
                     // allow the user to edit the target div content
-                    $(event.currentTarget).attr('contenteditable', 'true');
+//                    $(event.currentTarget).attr('contenteditable', 'true');
                     // show the input field and set focus to it
                     $(event.currentTarget).focus();
                 }
@@ -584,6 +587,7 @@ define(function (require) {
                     strID = null,
                     model = null,
                     targetText = "";
+                console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
                     strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
@@ -593,6 +597,11 @@ define(function (require) {
                     event.preventDefault();
                     $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // make sure there is a selectedStart, so that we can navigate to the next pile
+                    if (selectedStart === null) {
+                        selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
+                        selectedEnd = selectedStart;
+                    }
                     // If tab/enter is pressed, blur and move to edit the next pile
                     if (event.shiftKey) {
                         this.moveCursor(event, false);  // shift tab/enter -- move backwards
@@ -615,7 +624,7 @@ define(function (require) {
                     strID = null,
                     tu = null,
                     model = null;
-
+                console.log("unselectedAdaptation");
                 // remove contenteditable attribute on the div
     //            $(event.currentTarget).removeAttr('contenteditable');
                 // remove any earlier kb "purple"
