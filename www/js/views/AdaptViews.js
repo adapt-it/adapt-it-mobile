@@ -130,8 +130,6 @@ define(function (require) {
                 this.$el.html(template(this.collection.toJSON()));
                 // go back and add the individual piles
                 this.collection.each(this.addOne, this);
-                //edb test -- remove
-//                $(".target").attr('contenteditable', 'true');
                 return this;
             },
 
@@ -311,7 +309,7 @@ define(function (require) {
                 }
                 if (next_edit) {
                     console.log("next edit: " + next_edit.id);
-                    next_edit.childNodes[4].click();
+                    next_edit.childNodes[4].focus();
                 }
             },
             // Helper method to clear out the selection and disable the toolbar buttons
@@ -341,7 +339,7 @@ define(function (require) {
                 "touchend .source": "selectingPilesEnd",
                 "mouseup .pile": "checkStopSelecting",
                 "mouseup .target": "checkStopSelecting",
-                "click .target": "selectedAdaptation",
+                "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
                 "blur .target": "unselectedAdaptation"
             },
@@ -353,7 +351,6 @@ define(function (require) {
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
-    //                $(selectedStart).find('.target').removeAttr('contenteditable');
                 }
                 selectedStart = event.currentTarget.parentElement; // select the pile, not the source (the currentTarget)
                 selectedEnd = selectedStart;
@@ -432,7 +429,7 @@ define(function (require) {
                 // re-add the contenteditable fields
                 var tmpItem = null,
                     tmpIdx = 0;
-                console.log("selectingPilesEnd");
+//                console.log("selectingPilesEnd");
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
@@ -536,7 +533,6 @@ define(function (require) {
                     refstrings = null,
                     foundInKB = false;
                 // clear out any previous selection
-                console.log("selectedAdaptation");
                 this.clearSelection();
                 // set the current adaptation cursor
                 selectedStart = event.currentTarget.parentElement; // pile
@@ -575,10 +571,8 @@ define(function (require) {
                     isDirty = false;
                 }
                 if (foundInKB === false) {
-                    // allow the user to edit the target div content
-//                    $(event.currentTarget).attr('contenteditable', 'true');
                     // show the input field and set focus to it
-                    $(event.currentTarget).focus();
+                    $(event.currentTarget).select();
                 }
             },
             // keydown event handler for the target field
@@ -587,7 +581,7 @@ define(function (require) {
                     strID = null,
                     model = null,
                     targetText = "";
-                console.log("editAdaptation");
+//                console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
                     strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
@@ -624,9 +618,7 @@ define(function (require) {
                     strID = null,
                     tu = null,
                     model = null;
-                console.log("unselectedAdaptation");
-                // remove contenteditable attribute on the div
-    //            $(event.currentTarget).removeAttr('contenteditable');
+//                console.log("unselectedAdaptation");
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
                     $(".target").removeClass("fromkb");
@@ -684,8 +676,6 @@ define(function (require) {
                         }
                         // update the KB model
                         tu.save({refstring: refstrings});
-//                        tu.set({refstring: refstrings});
-//                        tu.trigger('change');
                     } else {
                         // no entry in KB with this source -- add one
                         var newID = Underscore.uniqueId(),
@@ -705,7 +695,6 @@ define(function (require) {
                             });
                         this.kblist.add(newTU);
                         newTU.save();
-//                        newTU.trigger('change');
                     }
                 }
                 // Now update the model
