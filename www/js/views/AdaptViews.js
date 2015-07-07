@@ -184,7 +184,9 @@ define(function (require) {
                     return result;
                 }
             },
-            addCapitalization: function (model, target) {
+            // Helper method to automatically set the target text to initial uppercase if
+            // the source is also uppercase. This method relies on the case mappings defined for the project.
+            autoAddCaps: function (model, target) {
                 var i = 0,
                     result = "",
                     source = model.get('source');
@@ -192,6 +194,47 @@ define(function (require) {
                 if (this.project.get('AutoCapitalization') === 'false' || this.project.get('SourceHasUpperCase') === 'false') {
                     return target;
                 }
+                // is the first letter capitalized?
+                for (i = 0; i < caseSource.length; i++) {
+                    if (caseSource[i].charAt(1) === source.charAt(0)) {
+                        // uppercase -- convert the first target character to uppercase and return the result
+                        result = caseTarget[i].charAt(1) + target.substr(1);
+                        return result;
+                    }
+                }
+                // If we got here, the source didn't have any uppercase -- just return the target unaltered
+                return target;
+            },
+            // Helper method to convert theString to lower case using either the source or target case equivalencies.
+            autoRemoveCaps: function (theString, isSource) {
+                var i = 0,
+                    result = "";
+                // If we aren't copying punctuation for this project, just return theString
+                if (this.project.get('AutoCapitalization') === 'false') {
+                    return theString;
+                }
+                // is the first letter capitalized?
+                if (isSource === true) {
+                    // use source case equivalencies
+                    for (i = 0; i < caseSource.length; i++) {
+                        if (caseSource[i].charAt(1) === theString.charAt(0)) {
+                            // uppercase -- convert the first character to lowercase and return the result
+                            result = caseSource[i].charAt(0) + theString.substr(1);
+                            return result;
+                        }
+                    }
+                } else {
+                    // use target case equivalencies
+                    for (i = 0; i < caseTarget.length; i++) {
+                        if (caseTarget[i].charAt(1) === theString.charAt(0)) {
+                            // uppercase -- convert the first character to lowercase and return the result
+                            result = caseTarget[i].charAt(0) + theString.substr(1);
+                            return result;
+                        }
+                    }
+                }
+                // If we got here, the string wasn't uppercase -- just return the same string
+                return theString;
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
             // This method currently strips out all punctuation to match the words; a null is returned 
@@ -523,7 +566,7 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', false);
                 }
             },
-            // click event handler for the target field 
+            // focus event handler for the target field 
             selectedAdaptation: function (event) {
                 var tu = null,
                     strID = "",
@@ -544,11 +587,11 @@ define(function (require) {
                     strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
                     model = this.collection.get(strID);
                     sourceText = model.get('source');
-                    tu = this.findInKB(sourceText);
+                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
-                        targetText = refstrings[0].target;
+                        targetText = this.autoAddCaps(model, refstrings[0].target);
                         $(event.currentTarget).html(targetText);
                         // mark it purple
                         $(event.currentTarget).addClass('fromkb');
@@ -617,6 +660,7 @@ define(function (require) {
                     trimmedValue = null,
                     strID = null,
                     tu = null,
+                    idx = 0,
                     model = null;
 //                console.log("unselectedAdaptation");
                 // remove any earlier kb "purple"
@@ -627,7 +671,6 @@ define(function (require) {
                 // get the adaptation text
                 value = $(event.currentTarget).text();
                 trimmedValue = value.trim();
-
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
                 model = this.collection.get(strID);
@@ -637,12 +680,12 @@ define(function (require) {
                 if (isDirty === true) {
                     // something has changed -- update the KB
                     // find this source/target pair in the KB
-                    tu = this.findInKB(model.get('source'));
+                    tu = this.findInKB(this.autoRemoveCaps(model.get('source'), true));
                     if (tu) {
                         var i = 0,
                             found = false,
                             refstrings = tu.get('refstring'),
-                            oldValue = model.get('target');
+                            oldValue = this.autoRemoveCaps(model.get('target'), false);
                         // delete or decrement the old value
                         if (oldValue.length > 0) {
                             // the model has an old value -- try to find and remove the corresponding KB entry
@@ -658,7 +701,7 @@ define(function (require) {
                         }
                         // add or increment the new value
                         for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].target === trimmedValue) {
+                            if (refstrings[i].target === this.autoRemoveCaps(trimmedValue, false)) {
                                 refstrings[i].n++;
                                 found = true;
                                 break;
@@ -668,7 +711,7 @@ define(function (require) {
                             // no entry in KB with this source/target -- add one
                             var newRS = [
                                 {
-                                    'target': trimmedValue,
+                                    'target': this.autoRemoveCaps(trimmedValue, false),
                                     'n': '1'
                                 }
                             ];
@@ -683,10 +726,10 @@ define(function (require) {
                             newTU = new kbModels.TargetUnit({
                                 tuid: newID,
                                 projectid: this.project.id,
-                                source: model.get('source'),
+                                source: this.autoRemoveCaps(model.get('source'), true),
                                 refstring: [
                                     {
-                                        target: trimmedValue,
+                                        target: this.autoRemoveCaps(trimmedValue, false),
                                         n: "1"
                                     }
                                 ],
