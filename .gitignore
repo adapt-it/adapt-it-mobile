@@ -6,7 +6,7 @@ platforms/
 plugins/
 
 ## ignore copied (local) directories
-res/
+/res/
 
 #################
 ## Eclipse
