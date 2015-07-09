@@ -63,6 +63,8 @@ define(function (require) {
     // http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
         switch (operator) {
+        case 'startswith':
+            return (v1.indexOf(v2) === 0) ? options.fn(this) : options.inverse(this);
         case 'contains':
             return (v1.indexOf(v2) !== -1) ? options.fn(this) : options.inverse(this);
         case '||':

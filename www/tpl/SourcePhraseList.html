@@ -6,19 +6,43 @@
 {{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
 {{#if this.markers}}
     {{! nested ifConds -- a hacked case statement }}
+    {{#ifCond this.markers 'contains' 'rem'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
     {{#ifCond this.markers 'contains' 'mt'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
     {{#ifCond this.markers 'contains' 'id'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
-    {{#ifCond this.markers 'contains' 'hdr'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{#ifCond this.markers 'contains' 'h'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
     {{#ifCond this.markers 'contains' 's'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'lit'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'nt'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'nc'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'st'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'bn'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'ms'}}<div class="strip specialtext para" id="strip-{{this.id}}">
+    {{else}}
+    {{#ifCond this.markers 'contains' 'd'}}<div class="strip specialtext para" id="strip-{{this.id}}">
     {{else}}
     {{#ifCond this.markers 'contains' 'f +'}}{{! footnotes are displayed inline; no para class applied }}<div class="strip specialtext" id="strip-{{this.id}}">
     {{else}}
     {{#ifCond this.markers 'contains' 'p'}}{{! paragraph has no special color, but para class is applied }}<div class="strip newpara" id="strip-{{this.id}}">
     {{else}}
     {{! any other item in the markers starts a "regular" strip div }}<div class="strip" id="strip-{{this.id}}">
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
+    {{/ifCond}}
     {{/ifCond}}
     {{/ifCond}}
     {{/ifCond}}
