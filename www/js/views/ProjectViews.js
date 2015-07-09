@@ -675,12 +675,14 @@ define(function (require) {
                     filter = this.model.get('FilterMarkers'),
                     value = "false";
                 USFMMarkers.each(function (item, index, list) {
-                    value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
-                    htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
-                    if (value === "true") {
-                        htmlstring += " checked";
+                    if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
+                        value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
+                        htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
+                        if (value === "true") {
+                            htmlstring += " checked";
+                        }
+                        htmlstring += "><div class='topcoat-checkbox__checkmark'></div></label></td><td><span class='n'>" + item.get('name') + "</span></td><td>" + item.get('description') + "</td></tr>";
                     }
-                    htmlstring += "><div class='topcoat-checkbox__checkmark'></div></label></td><td><span class='n'>" + item.get('name') + "</span></td><td>" + item.get('description') + "</td></tr>";
                 });
                 $("#tb").html(htmlstring);
             },
