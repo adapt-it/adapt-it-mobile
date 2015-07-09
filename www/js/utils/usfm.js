@@ -6,2215 +6,1591 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-        /* Converted from AI_USFM.xml, with non-settable markers removed */
+        /* Converted from AI_USFM.xml, with non-settable markers at the end.
+           Many of the style-related properties are moved to the styles.css file; the markers array in AIM
+           only maintains the following properties:
+           - name: the marker name (e.g. "h" for "\h")
+           - description: brief description of the marker
+           - filter: default marker state of the marker
+           - userCanSetFilter: whether the marker can be filtered out
+           - inform: whether the marker is displayed in the UI above the pile (if not, the filter / wedge icon is displayed)
+        */
         markers = [
             {
                 name: "h",
                 description: "Running header text for a book (basic)",
-                usfm: "1",
-                png: "1",
                 filter: "0",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "hdr",
-                textType: "header",
-                styleName: "h - File - Header",
-                fontSize: "9",
-                basedOn: "_vernacular_base",
-                nextStyle: "h"
+                inform: "1"
             },
             {
                 name: "h1",
                 description: "Running header text",
-                usfm: "1",
                 filter: "0",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "hdr",
-                textType: "header",
-                styleName: "h1 - File - Header",
-                fontSize: "9",
-                justification: "center",
-                basedOn: "h",
-                nextStyle: "h1"
+                inform: "1"
             },
             {
                 name: "h2",
                 description: "Running header text, left side of page",
-                usfm: "1",
                 filter: "0",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "hdr-left",
-                textType: "header",
-                styleName: "h2 - File - Left Header",
-                fontSize: "9",
-                justification: "leading",
-                basedOn: "h1",
-                nextStyle: "h2"
+                inform: "1"
             },
             {
                 name: "h3",
                 description: "Running header text, right side of page",
-                usfm: "1",
                 filter: "0",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "hdr-rght",
-                textType: "header",
-                styleName: "h3 - File - Right Header",
-                fontSize: "9",
-                justification: "following",
-                basedOn: "h1",
-                nextStyle: "h3"
+                inform: "1"
             },
             {
                 name: "rem",
                 description: "Comments and remarks",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "comment",
-                textType: "note",
-                styleName: "rem - File - Remark",
-                fontSize: "9",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "rem"
+                inform: "1"
             },
             {
                 name: "sts",
                 description: "Status of this file",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "comment",
-                textType: "note",
-                styleName: "rem - File - Status",
-                fontSize: "9",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "sts"
+                inform: "1"
             },
             {
                 name: "lit",
                 description: "For a comment or note inserted for liturgical use",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "lit-note",
-                textType: "note",
-                styleName: "lit - Special Text - Liturgical note",
-                bold: "1",
-                justification: "following",
-                basedOn: "p",
-                nextStyle: "lit",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "nt",
                 description: "Note",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "note",
-                textType: "note",
-                styleName: "nt - Note",
-                fontSize: "9",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "nt"
+                inform: "1"
             },
             {
                 name: "nc",
                 description: "Note centered",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "note",
-                textType: "note",
-                styleName: "nc - Note centered",
-                fontSize: "9",
-                justification: "center",
-                basedOn: "nt",
-                nextStyle: "nc"
+                inform: "1"
             },
             {
                 name: "ca",
                 endMarker: "ca*",
                 description: "Second (alternate) chapter number (for coding dual versification; useful for places where different traditions of chapter breaks need to be supported in the same translation)",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                styleName: "ca...ca* - Chapter Number - Alternate",
-                styleType: "character",
-                fontSize: "16",
-                bold: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "cl",
                 description: "Chapter label used for translations that add a word such as 'Chapter' before chapter numbers (e.g. Psalms). The subsequent text is the chapter label.",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                styleName: "cl - Chapter - Publishing Label",
-                fontSize: "18",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "cp",
                 description: "Published chapter number (this is a chapter marking that would be used in the published text)",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                styleName: "cp - Chapter Number - Publishing Alternate",
-                fontSize: "18",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "cd",
                 description: "Chapter Description (Publishing option D, e.g. in Russian Bibles)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "chapter descr",
-                styleName: "cd - Chapter - Description",
-                fontSize: "11",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "va",
                 endMarker: "va*",
                 description: "Second (alternate) verse number (for coding dual numeration in Psalms; see also NRSV Exo 22.1-4)",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                styleName: "va...va* - Verse Number - Alternate",
-                styleType: "character",
-                fontSize: "10",
-                bold: "1",
-                superScript: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "vp",
                 endMarker: "vp*",
                 description: "Published verse marker - this is a verse marking that would be used in the published text",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                styleName: "vp...vp* - Verse Number - Publishing Alternate",
-                styleType: "character",
-                fontSize: "10",
-                bold: "1",
-                superScript: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "mt",
                 description: "The main title of the book (if single level)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "main title",
-                textType: "mainTitle",
-                wrap: "1",
-                styleName: "mt - Title - Major Title Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "c",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mt1",
                 description: "The main title of the book (if multiple levels) (basic)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "main title L1",
-                textType: "mainTitle",
-                wrap: "1",
-                styleName: "mt1 - Title - Major Title Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "2",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "c",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mt2",
                 description: "A secondary title usually occurring before the main title (basic)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "secondary title L2",
-                textType: "secondaryTitle",
-                wrap: "1",
-                styleName: "mt2 - Title - Major Title Level 2",
-                fontSize: "16",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "2",
-                basedOn: "_heading_base",
-                nextStyle: "mt",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mt3",
                 description: "A secondary title occurring after the main title",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "secondary title L3",
-                textType: "secondaryTitle",
-                wrap: "1",
-                styleName: "mt3 - Title - Major Title Level 3",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "2",
-                spaceBelow: "2",
-                basedOn: "_heading_base",
-                nextStyle: "c",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mt4",
                 description: "A small secondary title sometimes occuring within parentheses",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "secondary title L4",
-                textType: "secondaryTitle",
-                wrap: "1",
-                styleName: "mt4 - Title - Major Title level 4",
-                justification: "center",
-                spaceAbove: "2",
-                spaceBelow: "2",
-                basedOn: "_heading_base",
-                nextStyle: "c",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "st",
                 description: "Secondary title",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "secondary title",
-                textType: "secondaryTitle",
-                wrap: "1",
-                styleName: "st - Secondary title",
-                fontSize: "16",
-                bold: "1",
-                justification: "center",
-                spaceBelow: "2",
-                basedOn: "_heading_base",
-                nextStyle: "mt",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mte",
                 description: "The main title of the book repeated at the end of the book (if single level)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "main title at end",
-                textType: "mainTitle",
-                wrap: "1",
-                styleName: "mte - Title - [Uncommon] Major Title Ending Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                keepTogether: "1"
+                inform: "1"
             },
             {
                 name: "mte1",
                 description: "The main title of the book repeated at the end of the book (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "main title at end L1",
-                textType: "mainTitle",
-                wrap: "1",
-                styleName: "mte1 - Title - [Uncommon] Major Title Ending Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                keepTogether: "1"
+                inform: "1"
             },
             {
                 name: "mte2",
                 description: "A secondary title occurring before or after the 'ending' main title",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "secondary title at end L2",
-                textType: "secondaryTitle",
-                wrap: "1",
-                styleName: "mte2 - Title - [Uncommon] Major Title Ending Level 2",
-                fontSize: "16",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "2",
-                basedOn: "_heading_base",
-                keepTogether: "1"
+                inform: "1"
             },
             {
                 name: "div",
                 description: "Division heading",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "division head",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "div - Division heading",
-                fontSize: "16",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "s",
-                nextStyle: "dvrf",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "bn",
                 description: "Psalms book number",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "Psalm book number",
-                textType: "noType",
-                wrap: "1",
-                styleName: "bn - Psalms book number",
-                fontSize: "11",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "s",
-                nextStyle: "br",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ms",
                 description: "A major section division heading, level 1 (if single level) (basic)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "major sect head",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "ms - Heading - Major Section Level 1",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "16",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "mr",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ms1",
                 description: "A major section division heading, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "major sect head L1",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "ms1 - Heading - Major Section Level 1",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "16",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "mr",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ms2",
                 description: "A major section division heading, level 2",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "major sect head L2",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "ms2 - Heading - Major Section Level 2",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "16",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "mr",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ms3",
                 description: "A major section division heading, level 3",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "major sect head L3",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "ms3 - Heading - Major Section Level 3",
-                fontSize: "14",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "16",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "mr",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "s",
                 description: "A section heading, level 1 (if single level) (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "s - Heading - Section Level 1",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "s1",
                 description: "A section heading, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head L1",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "s1 - Heading - Section Level 1",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "s2",
                 description: "A section heading, level 2 (e.g. Proverbs 22-24)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head L2",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "s2 - Heading - Section Level 2",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "s3",
                 description: "A section heading, level 3 (e.g. Genesis 'The First Day')",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head L3",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "s3 - Heading - Section Level 3",
-                italic: "1",
-                justification: "leading",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "s4",
                 description: "A section heading, level 4",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head L4",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "s4 - Heading - Section Level 4",
-                italic: "1",
-                justification: "leading",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "sr",
                 description: "A section division references range heading",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head range refs",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "sr - Heading - Section Range References",
-                bold: "1",
-                justification: "center",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "sx",
                 description: "Extra heading 1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head extra 1",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "sx - Extra heading 1",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "sz",
                 description: "Extra heading 2",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "sect head extra 2",
-                textType: "sectionHead",
-                wrap: "1",
-                styleName: "sz - Extra heading 2",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "sp",
                 description: "A heading, to identify the speaker (e.g. Job) (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "speaker",
-                textType: "noType",
-                wrap: "1",
-                styleName: "sp - Heading - Speaker",
-                italic: "1",
-                justification: "leading",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "q",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "d",
                 description: "A Hebrew text heading, to provide description (e.g. Psalms)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "descr title",
-                wrap: "1",
-                styleName: "d - Heading - Descriptive Title - Hebrew Subtitle",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "4",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "q",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "di",
                 description: "Descriptive title (Hebrew subtitle)",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "descr title",
-                wrap: "1",
-                styleName: "di - Descr title or Heb subtitle di",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "4",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "q",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "hl",
                 description: "Hebrew letter",
-                png: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "hl - Hebrew letter",
-                justification: "center",
-                spaceAbove: "4",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "q",
-                keepTogether: "1",
-                keepWithNext: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "r",
                 description: "Parallel reference(s) (basic)",
-                usfm: "1",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "ref",
-                textType: "crossReference",
-                styleName: "r - Heading - Parallel References",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "4",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "dvrf",
                 description: "Division reference",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "div-ref",
-                textType: "noType",
-                styleName: "dvrf - Division ref",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "3",
-                basedOn: "_heading_base",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "mr",
                 description: "A major section division references range heading (basic)",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "mjr-sect-refs",
-                textType: "noType",
-                styleName: "mr - Heading - Major Section Range References",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "4",
-                basedOn: "ms",
-                nextStyle: "p",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "br",
                 description: "Psalms book reference",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "Ps-bk-ref",
-                textType: "noType",
-                styleName: "br - Psalms book ref",
-                italic: "1",
-                justification: "center",
-                spaceBelow: "4",
-                basedOn: "r",
-                nextStyle: "c",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "x",
                 endMarker: "x*",
                 description: "A list of cross references (basic)",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "x-refs",
-                textType: "crossReference",
-                styleName: "x...x* - Cross Reference",
-                styleType: "footnote_text",
-                fontSize: "10",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "x"
+                inform: "1"
             },
             {
                 name: "rr",
                 description: "Right margin reference",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "rt-marg-ref",
-                textType: "rightMarginReference",
-                styleName: "rr - Right margin ref",
-                fontSize: "9",
-                italic: "1",
-                justification: "following",
-                basedOn: "qr",
-                nextStyle: "rr"
+                inform: "1"
             },
             {
                 name: "rq",
                 endMarker: "rq*",
                 description: "A cross-reference indicating the source text for the preceding quotation",
-                usfm: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "x-ref to source",
-                textType: "rightMarginReference",
-                styleName: "rq...rq* - Cross Reference - Inline Quotation References",
-                styleType: "character",
-                fontSize: "10",
-                italic: "1",
-                justification: "following"
+                inform: "1"
             },
             {
                 name: "@",
                 description: "Cross reference, origin reference",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "x-refs orig",
-                textType: "crossReference",
-                styleName: "@ - Cross ref origin ref",
-                styleType: "character",
-                fontSize: "10",
-                bold: "1"
+                inform: "1"
             },
             {
                 name: "xr",
                 description: "Cross reference target references",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                inform: "1",
-                navigationText: "x-refs tgt",
-                textType: "crossReference",
-                styleName: "xr - Cross ref target ref",
-                styleType: "character",
-                fontSize: "10"
+                inform: "1"
             },
             {
                 name: "pc",
                 description: "Paragraph spanning chapters",
-                png: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "para spans chapters",
-                wrap: "1",
-                styleName: "pc - Paragraph spanning chapters",
-                basedOn: "m",
-                nextStyle: "pc"
+                inform: "1"
             },
             {
                 name: "pt",
                 description: "Preface title",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "preface title",
-                textType: "noType",
-                wrap: "1",
-                styleName: "pt - Preface title",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceBelow: "6",
-                basedOn: "_heading_base",
-                nextStyle: "pp",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ps",
                 description: "Preface section heading",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "preface sect head",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ps - Preface sect heading",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "4",
-                spaceBelow: "2",
-                basedOn: "s",
-                nextStyle: "pp",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ps",
                 description: "Paragraph text, no break with next paragraph text at chapter boundary",
-                usfm: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "para spans chapters",
-                wrap: "1",
-                styleName: "OBSOLETE ps - Paragraph - No Break with Next Paragraph",
-                basedOn: "m",
-                nextStyle: "ps"
+                inform: "1"
             },
             {
                 name: "pp",
                 description: "Preface paragraph",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "preface paragraph",
-                textType: "noType",
-                wrap: "1",
-                styleName: "pp - Preface paragraph",
-                fontSize: "10",
-                firstLineIndent: ".125",
-                basedOn: "p",
-                nextStyle: "pp"
+                inform: "1"
             },
             {
                 name: "pq",
                 description: "Preface poetry",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "preface poetry",
-                textType: "noType",
-                wrap: "1",
-                styleName: "pq - Preface poetry",
-                fontSize: "10",
-                leadingMargin: ".5",
-                basedOn: "q",
-                nextStyle: "pq"
+                inform: "1"
             },
             {
                 name: "pm",
                 description: "Preface continue at margin",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "preface at margin",
-                textType: "noType",
-                wrap: "1",
-                styleName: "pm - Preface continue at margin",
-                fontSize: "10",
-                basedOn: "m",
-                nextStyle: "pm"
+                inform: "1"
             },
             {
                 name: "qa",
                 description: "Poetry text, Acrostic marker/heading",
-                usfm: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "acrostic hdg",
-                textType: "poetry",
-                wrap: "1",
-                styleName: "qa - Poetry - Acrostic Heading/Marker",
-                italic: "1",
-                basedOn: "_heading_base",
-                nextStyle: "q",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "qs",
                 endMarker: "qs*",
                 description: "Poetry text, Selah",
-                usfm: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                bdryOnLast: "1",
-                textType: "none",
-                styleName: "qs...qs* - Poetry Text - Selah",
-                styleType: "character",
-                italic: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "f",
                 endMarker: "f*",
                 description: "A Footnote text item (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "footnote",
-                textType: "footnote",
-                styleName: "f...f* - Footnote",
-                styleType: "footnote_text",
-                fontSize: "10",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "f"
+                inform: "1"
             },
             {
                 name: "fe",
                 endMarker: "fe*",
                 description: "An Endnote text item",
-                usfm: "1",
                 userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "endnote",
-                textType: "footnote",
-                styleName: "fe...fe* - Endnote",
-                styleType: "footnote_text",
-                fontSize: "10",
-                justification: "leading",
-                basedOn: "_notes_base",
-                nextStyle: "fe"
+                inform: "1"
             },
             {
                 name: "pro",
                 endMarker: "pro*",
                 description: "For indicating pronunciation in CJK texts",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                textType: "none",
-                styleName: "pro...pro* - Special Text - CJK Pronunciation",
-                styleType: "character",
-                fontSize: "10"
+                userCanSetFilter: "1"
             },
             {
                 name: "imt",
                 description: "Introduction main title, level 1 (if single level) (basic)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro main title",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imt - Introduction - Major Title Level 1",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "_intro_base",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "imt1",
                 description: "Introduction major title, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imt1 - Introduction - Major Title Level 1",
-                fontSize: "14",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "imt",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "imt2",
                 description: "Introduction major title, level 2",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imt2 - Introduction - Major Title Level 2",
-                fontSize: "13",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "6",
-                spaceBelow: "3",
-                basedOn: "imt1",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "imt3",
                 description: "Introduction major title, level 3",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title L3",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imt3 - Introduction - Major Title Level 3",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "2",
-                spaceBelow: "2",
-                basedOn: "imt2",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "imt4",
                 description: "Introduction major title, level 4 (usually within parenthesis)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title L4",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imt4 - Introduction - Major Title Level 4",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "2",
-                spaceBelow: "2",
-                basedOn: "imt3",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "imte",
                 description: "Introduction major title at introduction end, level 1 (if single level)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title at end",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imte - Introduction - [Uncommon] Major Title at Introduction End Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "imt",
-                nextStyle: "ie"
+                inform: "1"
             },
             {
                 name: "imte1",
                 description: "Introduction major title at introduction end, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title at end",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imte1 - Introduction - [Uncommon] Major Title at Introduction End Level 1",
-                fontSize: "20",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "imt",
-                nextStyle: "ie"
+                inform: "1"
             },
             {
                 name: "imte2",
                 description: "Introduction major title at introduction end, level 2",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro major title at end",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imte2 - Introduction - [Uncommon] Major Title at Introduction End Level 2",
-                fontSize: "16",
-                italic: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "imt",
-                nextStyle: "ie"
+                inform: "1"
             },
             {
                 name: "is",
                 description: "Introduction section heading, level 1 (if single level) (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro sect head",
-                textType: "noType",
-                wrap: "1",
-                styleName: "is - Introduction - Section Heading Level 1",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "s",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "is1",
                 description: "Introduction section heading, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro sect head L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "is1 - Introduction - Section Heading Level 1",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "is",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "is2",
                 description: "Introduction section heading, level 2",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro sect head L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "is2 - Introduction - Section Heading Level 2",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "is1",
-                nextStyle: "ip",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "ip",
                 description: "Introduction prose paragraph (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro paragraph",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ip - Introduction - Paragraph",
-                fontSize: "10",
-                firstLineIndent: ".125",
-                basedOn: "_intro_base",
-                nextStyle: "ip"
+                inform: "1"
             },
             {
                 name: "ipi",
                 description: "Introduction prose paragraph, indented, with first line indent",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro paragraph indented",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ipi - Introduction - Indented Para - first line indent",
-                fontSize: "10",
-                leadingMargin: ".25",
-                followingMargin: ".25",
-                firstLineIndent: ".125",
-                basedOn: "ip",
-                nextStyle: "ipi"
+                inform: "1"
             },
             {
                 name: "ipq",
                 description: "Introduction prose paragraph, quote from the body text",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro para quote",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ipq - Introduction - Paragraph - quote from text",
-                fontSize: "10",
-                italic: "1",
-                leadingMargin: ".25",
-                followingMargin: ".25",
-                firstLineIndent: ".125",
-                basedOn: "ip",
-                nextStyle: "ipq"
+                inform: "1"
             },
             {
                 name: "ipr",
                 description: "Introduction prose paragraph, right aligned",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro para right align",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ipr - Introduction - Paragraph - right aligned",
-                fontSize: "10",
-                italic: "1",
-                justification: "following",
-                leadingMargin: ".25",
-                followingMargin: ".25",
-                basedOn: "ip",
-                nextStyle: "ipr"
+                inform: "1"
             },
             {
                 name: "iq",
                 description: "Introduction poetry text, level 1 (if single level)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro poetry",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iq - Introduction - Poetry Level 1",
-                fontSize: "10",
-                italic: "1",
-                leadingMargin: "1",
-                firstLineIndent: "-.75",
-                basedOn: "ip",
-                nextStyle: "iq"
+                inform: "1"
             },
             {
                 name: "iq1",
                 description: "Introduction poetry text, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro poetry L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iq1 - Introduction - Poetry Level 1",
-                fontSize: "10",
-                leadingMargin: "1",
-                firstLineIndent: "-.75",
-                basedOn: "iq",
-                nextStyle: "iq1"
+                inform: "1"
             },
             {
                 name: "iq2",
                 description: "Introduction poetry text, level 2",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro poetry L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iq2 - Introduction - Poetry Level 2",
-                fontSize: "10",
-                leadingMargin: "1",
-                firstLineIndent: "-.5",
-                basedOn: "iq",
-                nextStyle: "iq2"
+                inform: "1"
             },
             {
                 name: "iq3",
                 description: "Introduction poetry text, level 3",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro poetry L3",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iq3 - Introduction - Poetry Level 3",
-                fontSize: "10",
-                leadingMargin: "1",
-                firstLineIndent: "-.25",
-                basedOn: "iq",
-                nextStyle: "iq3"
+                inform: "1"
             },
             {
                 name: "im",
                 description: "Introduction prose paragraph, with no first line indent (may occur after poetry)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro para no indent",
-                textType: "noType",
-                wrap: "1",
-                styleName: "im - Introduction - Paragraph - no first line indent",
-                fontSize: "10",
-                basedOn: "ip",
-                nextStyle: "im"
+                inform: "1"
             },
             {
                 name: "imi",
                 description: "Introduction prose paragraph text, indented, with no first line indent",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro para no indent",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imi - Introduction - Indented Para - no first line indent",
-                fontSize: "10",
-                leadingMargin: ".25",
-                followingMargin: ".25",
-                basedOn: "ipi",
-                nextStyle: "imi"
+                inform: "1"
             },
             {
                 name: "ili",
                 description: "A list entry, level 1 (if single level)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro list L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ili - Introduction - List Entry - Level 1",
-                leadingMargin: ".625",
-                firstLineIndent: "-.375",
-                basedOn: "_list_base",
-                nextStyle: "ili"
+                inform: "1"
             },
             {
                 name: "ili1",
                 description: "A list entry, level 1 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro list L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ili1 - Introduction - List Entry - Level 1",
-                leadingMargin: ".5",
-                firstLineIndent: "-.25",
-                basedOn: "ili",
-                nextStyle: "ili1"
+                inform: "1"
             },
             {
                 name: "ili2",
                 description: "A list entry, level 2",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro list L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ili2 - Introduction - List Entry - Level 2",
-                leadingMargin: ".75",
-                firstLineIndent: "-.25",
-                basedOn: "ili1",
-                nextStyle: "ili2"
+                inform: "1"
             },
             {
                 name: "imq",
                 description: "Introduction prose paragraph, quote from the body text, with no first line indent",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro para quote no indent",
-                textType: "noType",
-                wrap: "1",
-                styleName: "imq - Introduction - Paragraph - quote from text - no first line indent",
-                fontSize: "10",
-                italic: "1",
-                leadingMargin: ".25",
-                followingMargin: ".25",
-                basedOn: "imi",
-                nextStyle: "imq"
+                inform: "1"
             },
             {
                 name: "ib",
                 description: "Introduction blank line",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                special: "1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "ib - Introduction - Blank Line",
-                basedOn: "_intro_base",
-                nextStyle: "ib"
+                userCanSetFilter: "1"
             },
             {
                 name: "iot",
                 description: "Introduction outline title (basic)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline title",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iot - Introduction - Outline Title",
-                bold: "1",
-                justification: "center",
-                spaceAbove: "8",
-                spaceBelow: "4",
-                basedOn: "imt",
-                nextStyle: "io1",
-                keepTogether: "1",
-                keepWithNext: "1"
+                inform: "1"
             },
             {
                 name: "io",
                 description: "Introduction outline text, level 1 (if single level)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline",
-                textType: "noType",
-                wrap: "1",
-                styleName: "io - Introduction - Outline Level 1",
-                fontSize: "10",
-                leadingMargin: ".5",
-                basedOn: "_intro_base",
-                nextStyle: "io"
+                inform: "1"
             },
             {
                 name: "io1",
                 description: "Introduction outline text, level 1 (if multiple levels) (basic)",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "io1 - Introduction - Outline Level 1",
-                fontSize: "10",
-                leadingMargin: ".5",
-                basedOn: "io",
-                nextStyle: "io1"
+                inform: "1"
             },
             {
                 name: "io2",
                 description: "Introduction outline text, level 2",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "io2 - Introduction - Outline Level 2",
-                fontSize: "10",
-                leadingMargin: ".75",
-                basedOn: "io1",
-                nextStyle: "io2"
+                inform: "1"
             },
             {
                 name: "io3",
                 description: "Introduction outline text, level 3",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline L3",
-                textType: "noType",
-                wrap: "1",
-                styleName: "io3 - Introduction - Outline Level 3",
-                fontSize: "10",
-                leadingMargin: "1",
-                basedOn: "io2",
-                nextStyle: "io3"
+                inform: "1"
             },
             {
                 name: "io4",
                 description: "Introduction outline text, level 4",
-                usfm: "1",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro outline L4",
-                textType: "noType",
-                wrap: "1",
-                styleName: "io4 - Introduction - Outline Level 4",
-                fontSize: "10",
-                leadingMargin: "1.25",
-                basedOn: "io3",
-                nextStyle: "io4"
+                inform: "1"
             },
             {
                 name: "ior",
                 endMarker: "ior*",
                 description: "Introduction references range for outline entry; for marking references separately",
-                usfm: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                textType: "none",
-                styleName: "ior...ior* - Introduction - Outline References Range",
-                styleType: "character",
-                fontSize: "10"
+                userCanSetFilter: "1"
             },
             {
                 name: "iex",
                 description: "Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "intro explain text",
-                textType: "noType",
-                wrap: "1",
-                styleName: "iex - Introduction - Explanatory or Bridge Text",
-                fontSize: "10",
-                spaceAbove: "4",
-                spaceBelow: "4",
-                firstLineIndent: ".125",
-                basedOn: "ip",
-                nextStyle: "iex"
+                inform: "1"
             },
             {
                 name: "iqt",
                 endMarker: "iqt*",
                 description: "For quoted scripture text appearing in the introduction",
-                usfm: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                textType: "none",
-                styleName: "iqt...iqt* - Special Text - Quoted Scripture Text in Introduction",
-                styleType: "character",
-                italic: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "gm",
                 description: "Glossary main entry",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "glossary main entry",
-                textType: "noType",
-                wrap: "1",
-                styleName: "gm - Glossary main entry",
-                basedOn: "_body_text",
-                nextStyle: "gp"
+                inform: "1"
             },
             {
                 name: "gs",
                 description: "Glossary subentry",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "glossary subentry",
-                textType: "noType",
-                wrap: "1",
-                styleName: "gs - Glossary subentry",
-                basedOn: "gm",
-                nextStyle: "gp"
+                inform: "1"
             },
             {
                 name: "gd",
                 description: "Glossary definition",
-                png: "1",
                 userCanSetFilter: "1",
-                inLine: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "glossary definition",
-                textType: "noType",
-                wrap: "1",
-                styleName: "gd - Glossary definition",
-                styleType: "character"
+                inform: "1"
             },
             {
                 name: "gp",
                 description: "Glossary paragraph",
-                png: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "glossary paragraph",
-                textType: "noType",
-                wrap: "1",
-                styleName: "gp - Glossary paragraph",
-                basedOn: "_body_text",
-                nextStyle: "gp"
+                inform: "1"
             },
             {
                 name: "tis",
                 description: "Topical index heading (level 1)",
-                png: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "topical index L1",
-                textType: "noType",
-                wrap: "1",
-                styleName: "tis - Topical index heading L1",
-                basedOn: "_heading_base",
-                nextStyle: "tpi"
+                inform: "1"
             },
             {
                 name: "tpi",
                 description: "Topical index heading (level 2)",
-                png: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "topical index L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "tpi - Topical index heading L2",
-                basedOn: "tis",
-                nextStyle: "tps"
+                inform: "1"
             },
             {
                 name: "tps",
                 description: "Topical index heading (level 3)",
-                png: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "topical index L3",
-                textType: "noType",
-                wrap: "1",
-                styleName: "tps - Topical index heading L3",
-                basedOn: "tpi",
-                nextStyle: "tir"
+                inform: "1"
             },
             {
                 name: "tir",
                 description: "Topical index reference",
-                png: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "topical index reference",
-                textType: "noType",
-                wrap: "1",
-                styleName: "tir - Topical index ref",
-                basedOn: "_body_text",
-                nextStyle: "tir"
+                inform: "1"
             },
             {
                 name: "periph",
                 description: "Periheral content division marker which should be followed by an additional division argument/title.",
-                usfm: "1",
                 userCanSetFilter: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "Periph matter div",
-                textType: "noType",
-                styleName: "periph - Peripherals - Content Division Marker",
-                fontSize: "14",
-                bold: "1",
-                spaceAbove: "16",
-                spaceBelow: "4",
-                basedOn: "_peripherals_base",
-                nextStyle: "periph"
+                inform: "1"
             },
             {
                 name: "p2",
                 description: "Front or back matter text paragraph, level 2 (if multiple levels)",
-                usfm: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "Periph matter para L2",
-                textType: "noType",
-                wrap: "1",
-                styleName: "p2 - Periph - Front/Back Matter Paragraph Level 2",
-                leadingMargin: ".125",
-                firstLineIndent: ".125",
-                basedOn: "_peripherals_base",
-                nextStyle: "p2"
+                inform: "1"
             },
             {
                 name: "xtSee",
                 endMarker: "xtSee*",
                 description: "Concordance and Names Index markup for an alternate entry target reference.",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "xtSee - Concordance and Names Index - Alternate Entry Target Reference",
-                styleType: "character",
-                italic: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "xtSeeAlso",
                 endMarker: "xtSeeAlso*",
                 description: "Concordance and Names Index markup for an additional entry target reference.",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "xtSeeAlso - Concordance and Names Index - Additional Entry Target Reference",
-                styleType: "character",
-                italic: "1"
+                userCanSetFilter: "1"
             },
             {
                 name: "pub",
                 description: "Front matter publication data",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE pub Peripherals - Front Matter Publication Data",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "pub"
+                userCanSetFilter: "1"
             },
             {
                 name: "toc",
                 description: "Front matter table of contents",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE toc Peripherals - Front Matter Table of Contents",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "toc"
+                userCanSetFilter: "1"
             },
             {
                 name: "toc1",
                 description: "Long table of contents text",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "toc1 - File - Long Table of Contents Text",
-                italic: "1",
-                bold: "1",
-                basedOn: "_peripherals_base",
-                nextStyle: "toc1"
+                userCanSetFilter: "1"
             },
             {
                 name: "toc2",
                 description: "Short table of contents text",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "toc2 - File - Short Table of Contents Text",
-                italic: "1",
-                basedOn: "_peripherals_base",
-                nextStyle: "toc2"
+                userCanSetFilter: "1"
             },
             {
                 name: "toc3",
                 description: "Book Abbreviation",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "toc3 - File - Book Abbreviation",
-                italic: "1",
-                bold: "1",
-                basedOn: "_peripherals_base",
-                nextStyle: "toc3"
+                userCanSetFilter: "1"
             },
             {
                 name: "pref",
                 description: "Front matter preface",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE pref Peripherals - Front Matter Preface",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "pref"
+                userCanSetFilter: "1"
             },
             {
                 name: "intro",
                 description: "Front matter introduction",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE intro Peripherals - Front Matter Introduction",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "intro"
+                userCanSetFilter: "1"
             },
             {
                 name: "conc",
                 description: "Back matter concordance",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE conc Peripherals - Back Matter Concordance",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "conc"
+                userCanSetFilter: "1"
             },
             {
                 name: "glo",
                 description: "Back matter glossary",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE glo Peripherals - Back Matter Glossary",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "glo"
+                userCanSetFilter: "1"
             },
             {
                 name: "idx",
                 description: "Back matter index",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE idx Peripherals - Back Matter Index",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "idx"
+                userCanSetFilter: "1"
             },
             {
                 name: "maps",
                 description: "Back matter map index",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE maps Peripherals - Back Matter Map Index",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "maps"
+                userCanSetFilter: "1"
             },
             {
                 name: "cov",
                 description: "Other peripheral materials - cover",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE cov Peripherals - Other - Cover",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "cov"
+                userCanSetFilter: "1"
             },
             {
                 name: "spine",
                 description: "Other peripheral materials - spine",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE spine Peripherals - Other - Spine",
-                fontSize: "10",
-                basedOn: "_peripherals_base",
-                nextStyle: "spine"
+                userCanSetFilter: "1"
             },
             {
                 name: "pubinfo",
                 description: "Publication information - Lang, Credit, Version, Copies, Publisher, Id, Logo",
-                usfm: "1",
-                userCanSetFilter: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "OBSOLETE pubinfo - Publication - Information",
-                basedOn: "__normal",
-                nextStyle: "pubinfo"
+                userCanSetFilter: "1"
             },
             {
                 name: "fig",
                 endMarker: "fig*",
                 description: "Illustration [Columns to span, height, filename, caption text]",
-                usfm: "1",
                 filter: "1",
-                userCanSetFilter: "1",
-                inLine: "1",
-                bdryOnLast: "1",
-                textType: "noType",
-                styleName: "fig...fig* - Auxiliary - Figure/Illustration/Map",
-                styleType: "character"
+                userCanSetFilter: "1"
             },
             {
                 name: "cap",
                 description: "Picture caption",
-                png: "1",
                 filter: "1",
                 userCanSetFilter: "1",
-                special: "1",
-                bdryOnLast: "1",
-                inform: "1",
-                navigationText: "picture caption",
-                textType: "noType",
-                styleName: "cap - Picture caption",
-                basedOn: "_body_text",
-                nextStyle: "cap"
+                inform: "1"
+            },
+            /* userCanSetFilter=0 elements -- these guys don't show up in the usfm filtering dialog;
+               they're either always visible or always filtered out, depending on the inform property */
+            {
+                name: "id",
+	            description: "File identification (BOOKID, FILENAME, EDITOR, MODIFICATION DATE)",
+	            png: "1",
+	            special: "1",
+	            inform: "1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "ide",
+	            description: "File encoding information",
+	            usfm: "1",
+	            filter: "1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "restore",
+	            description: "Project restore information",
+	            usfm: "1",
+	            filter: "1"
+            },
+            {
+                name: "c",
+	            description: "Chapter number (basic)",
+	            usfm: "1",
+	            inform: "1"
+            },
+            {
+                name: "v",
+	            description: "A verse number (basic)",
+	            usfm: "1",
+                inform: "1"
+            },
+            {
+                name: "vt",
+	            description: "Verse text",
+	            inform: "1"
+            },
+            {
+                name: "vn",
+	            description: "Verse number",
+                inform: "1"
+            },
+            {
+                name: "xo",
+                endMarker: "xo*",
+                description: "The cross reference origin reference (basic)",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xt",
+                endMarker: "xt*",
+                description: "The cross reference target reference(s), protocanon only (basic)",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xk",
+                endMarker: "xk*",
+                description: "A cross reference keyword",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xq",
+                endMarker: "xq*",
+                description: "A cross-reference quotation from the scripture text",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xot",
+                endMarker: "xot*",
+                description: "Cross-reference target reference(s), Old Testament only",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xnt",
+                endMarker: "xnt*",
+                description: "Cross-reference target reference(s), New Testament only",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "xdc",
+                endMarker: "xdc*",
+                description: "Cross-reference target reference(s), Deuterocanon only",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "p",
+                description: "Paragraph text, with first line indent (basic)",
+                inform: "1"
+            },
+            {
+                name: "pi",
+                description: "Paragraph text, level 1 indent (if sinlge level), with first line indent; often used for discourse (basic)",
+                inform: "1"
+            },
+            {
+                name: "pi1",
+                description: "Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse",
+                inform: "1"
+            },
+            {
+                name: "pi2",
+                description: "Paragraph text, level 2 indent, with first line indent; often used for discourse",
+                inform: "1"
+            },
+            {
+                name: "pi3",
+                description: "Paragraph text, level 3 indent, with first line indent; often used for discourse",
+                inform: "1"
+            },
+            {
+                name: "pgi",
+                description: "Indented paragraph",
+                inform: "1"
+            },
+            {
+                name: "ph",
+                description: "Paragraph text, with level 1 hanging indent (if single level)",
+                inform: "1"
+            },
+            {
+                name: "ph1",
+                description: "Paragraph text, with level 1 hanging indent (if multiple levels)",
+                inform: "1"
+            },
+            {
+                name: "ph2",
+                description: "Paragraph text, with level 2 hanging indent",
+                inform: "1"
+            },
+            {
+                name: "ph3",
+                description: "Paragraph text, with level 3 hanging indent",
+                inform: "1"
+            },
+            {
+                name: "phi",
+	            description: "Paragraph text, indented with hanging indent",
+                inform: "1"
+            },
+            {
+                name: "m",
+                description: "Paragraph text, with no first line indent (may occur after poetry) (basic)",
+                inform: "1"
+            },
+            {
+                name: "pmo",
+                description: "Embedded text opening",
+                inform: "1"
+            },
+            {
+                name: "mi",
+                description: "Paragraph text, indented, with no first line indent; often used for discourse",
+                inform: "1"
+            },
+            {
+                name: "pc",
+                description: "Paragraph text, centered (for Inscription)",
+                inform: "1"
+            },
+            {
+                name: "pr",
+                description: "Paragraph text, right aligned",
+                inform: "1"
+            },
+            {
+                name: "psi",
+                description: "Paragraph text, indented, with no break with next paragraph text (at chapter boundary)",
+                inform: "1"
+            },
+            {
+                name: "pm",
+                description: "Embedded text paragraph",
+                inform: "1"
+            },
+            {
+                name: "pmc",
+                description: "Embedded text closing",
+                inform: "1"
+            },
+            {
+                name: "pmr",
+                description: "Embedded text refrain (e.g. Then all the people shall say, 'Amen!')",
+                inform: "1"
+            },
+            {
+                name: "nb",
+                description: "Paragraph text, with no break from previous paragraph text (at chapter boundary) (basic)",
+                inform: "1"
+            },
+            {
+                name: "cls",
+                description: "Closure of an Epistle",
+                inform: "1"
+            },
+            {
+                name: "q",
+                description: "Poetry text, level 1 indent (if single level)",
+                inform: "1"
+            },
+            {
+                name: "q1",
+                description: "Poetry text, level 1 indent (if multiple levels) (basic)",
+                inform: "1"
+            },
+            {
+                name: "q2",
+                description: "Poetry text, level 2 indent (basic)",
+                inform: "1"
+            },
+            {
+                name: "q3",
+                description: "Poetry text, level 3 indent",
+                inform: "1"
+            },
+            {
+                name: "q4",
+                description: "Poetry text, level 4 indent",
+                inform: "1"
+            },
+            {
+                name: "qc",
+                description: "Poetry text, centered",
+                inform: "1"
+            },
+            {
+                name: "qr",
+                description: "Poetry text, Right Aligned",
+                inform: "1"
+            },
+            {
+                name: "qac",
+                endMarker: "qac*",
+                description: "Poetry text, Acrostic markup of the first character of a line of acrostic poetry"
+            },
+            {
+                name: "qm",
+                description: "Poetry, left margin",
+                inform: "1"
+            },
+            {
+                name: "qm",
+                description: "Poetry text, embedded, level 1 indent (if single level)",
+                inform: "1"
+            },
+            {
+                name: "qm1",
+                description: "Poetry text, embedded, level 1 indent (if multiple levels)",
+                inform: "1"
+            },
+            {
+                name: "qm2",
+                description: "Poetry text, embedded, level 2 indent",
+                inform: "1"
+            },
+            {
+                name: "qm3",
+                description: "Poetry text, embedded, level 3 indent",
+                inform: "1"
+            },
+            {
+                name: "fe",
+                description: "Footnote (end)"
+            },
+            {
+                name: "fr",
+                endMarker: "fr*",
+                description: "The origin reference for the footnote (basic)",
+                inform: "1"
+            },
+            {
+                name: "fk",
+                endMarker: "fk*",
+                description: "A footnote keyword (basic)",
+                inform: "1"
+            },
+            {
+                name: "fq",
+                endMarker: "fq*",
+                description: "A footnote scripture quote or alternate rendering (basic)",
+                inform: "1"
+            },
+            {
+                name: "fqa",
+                endMarker: "fqa*",
+                description: "A footnote alternate rendering for a portion of scripture text",
+                inform: "1"
+            },
+            {
+                name: "fl",
+                endMarker: "fl*",
+                description: "A footnote label text item, for marking or 'labelling' the type or alternate translation being provided in the note.",
+                inform: "1"
+            },
+            {
+                name: "fp",
+                endMarker: "fp*",
+                description: "A Footnote additional paragraph marker",
+                inform: "1"
+            },
+            {
+                name: "ft",
+                endMarker: "ft*",
+                description: "Footnote text, Protocanon (basic)",
+                inform: "1"
+            },
+            {
+                name: "fdc",
+                endMarker: "fdc*",
+                description: "Footnote text, applies to Deuterocanon only",
+                inform: "1"
+            },
+            {
+                name: "fv",
+                endMarker: "fv*",
+                description: "A verse number within the footnote text",
+                inform: "1"
+            },
+            {
+                name: "fm",
+                endMarker: "fm*",
+                description: "An additional footnote marker location for a previous footnote",
+                inform: "1"
+            },
+            {
+                name: "F",
+                description: "Footnote (end)"
+            },
+            {
+                name: "qt",
+                endMarker: "qt*",
+                description: "For Old Testament quoted text appearing in the New Testament (basic)",
+                inform: "1"
+            },
+            {
+                name: "nd",
+                endMarker: "nd*",
+                description: "For name of deity (basic)"
+            },
+            {
+                name: "tl",
+                endMarker: "tl*",
+                description: "For transliterated words"
+            },
+            {
+                name: "dc",
+                endMarker: "dc*",
+                description: "Deuterocanonical/LXX additions or insertions in the Protocanonical text"
+            },
+            {
+                name: "bk",
+                endMarker: "bk*",
+                description: "For the quoted name of a book"
+            },
+            {
+                name: "sig",
+                endMarker: "sig*",
+                description: "For the signature of the author of an Epistle"
+            },
+            {
+                name: "pn",
+                endMarker: "pn*",
+                description: "For a proper name"
+            },
+            {
+                name: "wj",
+                endMarker: "wj*",
+                description: "For marking the words of Jesus"
+            },
+            {
+                name: "k",
+                endMarker: "k*",
+                description: "For a keyword"
+            },
+            {
+                name: "sls",
+                endMarker: "sls*",
+                description: "To represent where the original text is in a secondary language or from an alternate text source"
+            },
+            {
+                name: "ord",
+                endMarker: "ord*",
+                description: "For the text portion of an ordinal number"
+            },
+            {
+                name: "add",
+                endMarker: "add*",
+                description: "For a translational addition to the text",
+                inform: "1"
+            },
+            {
+                name: "no",
+                endMarker: "no*",
+                description: "A character style, use normal text"
+            },
+            {
+                name: "bd",
+                endMarker: "bd*",
+                description: "A character style, use bold text"
+            },
+            {
+                name: "it",
+                endMarker: "it*",
+                description: "A character style, use italic text"
+            },
+            {
+                name: "bdit",
+                endMarker: "bdit*",
+                description: "A character style, use bold + italic text"
+            },
+            {
+                name: "em",
+                endMarker: "em*",
+                description: "A character style, use emphasized text style"
+            },
+            {
+                name: "sc",
+                endMarker: "sc*",
+                description: "A character style, for small capitalization text"
+            },
+            {
+                name: "ie",
+                description: "Introduction ending marker"
+            },
+            {
+                name: "li",
+                description: "A list entry, level 1 (if single level)",
+                inform: "1"
+            },
+            {
+                name: "li1",
+                description: "A list entry, level 1 (if multiple levels)",
+                inform: "1"
+            },
+            {
+                name: "li2",
+                description: "A list entry, level 2",
+                inform: "1"
+            },
+            {
+                name: "li3",
+                description: "A list entry, level 3",
+                inform: "1"
+            },
+            {
+                name: "li4",
+                description: "A list entry, level 4",
+                inform: "1"
+            },
+            {
+                name: "qh",
+                description: "List or Genealogy",
+                inform: "1"
+            },
+            {
+                name: "tr",
+                description: "A new table row",
+                inform: "1"
+            },
+            {
+                name: "tr1",
+                description: "A table Row",
+                inform: "1"
+            },
+            {
+                name: "tr2",
+                description: "A table Row",
+                inform: "1"
+            },
+            {
+                name: "th1",
+                description: "A table heading, column 1"
+            },
+            {
+                name: "th2",
+                description: "A table heading, column 2"
+            },
+            {
+                name: "th3",
+                description: "A table heading, column 3"
+            },
+            {
+                name: "th4",
+                description: "A table heading, column 4"
+            },
+            {
+                name: "thr1",
+                description: "A table heading, column 1, right aligned"
+            },
+            {
+                name: "thr2",
+                description: "A table heading, column 2, right aligned"
+            },
+            {
+                name: "thr3",
+                description: "A table heading, column 3, right aligned"
+            },
+            {
+                name: "thr4",
+                description: "A table heading, column 4, right aligned"
+            },
+            {
+                name: "tc1",
+                description: "A table cell item, column 1"
+            },
+            {
+                name: "tc2",
+                description: "A table cell item, column 2"
+            },
+            {
+                name: "tc3",
+                description: "A table cell item, column 3"
+            },
+            {
+                name: "tc4",
+                description: "A table cell item, column 4"
+            },
+            {
+                name: "tcr1",
+                description: "A table cell item, column 1, right aligned"
+            },
+            {
+                name: "tcr2",
+                description: "A table cell item, column 2, right aligned"
+            },
+            {
+                name: "tcr3",
+                description: "A table cell item, column 3, right aligned"
+            },
+            {
+                name: "tcr4",
+                description: "A table cell item, column 4, right aligned"
+            },
+            {
+                name: "w",
+                endMarker: "w*",
+                description: "A wordlist text item"
+            },
+            {
+                name: "wr",
+                endMarker: "wr*",
+                description: "A Wordlist text item"
+            },
+            {
+                name: "wh",
+                endMarker: "wh*",
+                description: "A Hebrew wordlist text item"
+            },
+            {
+                name: "wg",
+                endMarker: "wg*",
+                description: "A Greek Wordlist text item"
+            },
+            {
+                name: "ndx",
+                endMarker: "ndx*",
+                description: "A subject index text item"
+            },
+            {
+                name: "p1",
+                description: "Front or back matter text paragraph, level 1 (if multiple levels)",
+                inform: "1"
+            },
+            {
+                name: "k1",
+                description: "Concordance main entry text or keyword, level 1",
+                inform: "1"
+            },
+            {
+                name: "k2",
+                description: "Concordance main entry text or keyword, level 2",
+                inform: "1"
+            },
+            {
+                name: "pb",
+                description: "Page Break used for new reader portions and children's bibles where content is controlled by the page",
+                inform: "1"
+            },
+            {
+                name: "b",
+                description: "Poetry text stanza break (e.g. stanza break) (basic)",
+                inform: "1"
+            },
+            {
+                name: "hr",
+                description: "Horizontal rule"
+            },
+            {
+                name: "loc",
+                description: "Picture location"
+            },
+            {
+                name: "cat",
+                description: "Picture catalog number"
+            },
+            {
+                name: "des",
+                description: "Picture description"
+            },
+            {
+                name: "px",
+                description: "Paragraph extra 1",
+                inform: "1"
+            },
+            {
+                name: "pz",
+                description: "Paragraph extra 2",
+                inform: "1"
+            },
+            {
+                name: "qx",
+                description: "Poetry extra 1",
+                inform: "1"
+            },
+            {
+                name: "qz",
+                description: "Poetry extra 2",
+                inform: "1"
+            },
+            {
+                name: "addpn",
+                endMarker: "addpn*",
+                description: "For chinese words to be dot underline and underline"
+            },
+            {
+                name: "efm",
+                endMarker: "efm*",
+                description: "ID or Caller for an extended (study) note. Used within a source project duplicte (target) text when autoring study material.",
+                filter: "1"
+            },
+            {
+                name: "ef",
+                endMarker: "ef*",
+                description: "A Study Note text item",
+                filter: "1"
+            },
+            /* AI-specific markers (filtered) */
+            {
+                name: "bt",
+                description: "Back-translation (and all \bt... initial forms)",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "free",
+                endMarker: "free*",
+                description: "Free translation",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "note",
+                endMarker: "note*",
+                description: "Adapt It note",
+                filter: "1",
+                inform: "1"
+            },
+            {
+                name: "__normal",
+                description: "Normal",
+                filter: "1"
+            },
+            {
+                name: "_src_lang_interlinear",
+                description: "Source Language Interlinear Text",
+                filter: "1"
+            },
+            {
+                name: "_tgt_lang_interlinear",
+                description: "Target Language Interlinear Text",
+                filter: "1"
+            },
+            {
+                name: "_gls_lang_interlinear",
+                description: "Gloss Language Interlinear Text",
+                filter: "1"
+            },
+            {
+                name: "_nav_lang_interlinear",
+                description: "Navigation Language Interlinear Text",
+                filter: "1"
+            },
+            {
+                name: "_hdr_ftr_interlinear",
+                description: "Header-Footer Interlinear Text",
+                filter: "1"
+            },
+            {
+                name: "_small_para_break",
+                description: "Small Paragraph Break",
+                filter: "1"
+            },
+            {
+                name: "_body_text",
+                description: "Body Text",
+                filter: "1"
+            },
+            {
+                name: "_heading_base",
+                description: "Heading Base",
+                filter: "1"
+            },
+            {
+                name: "_intro_base",
+                description: "Intro Base",
+                filter: "1"
+            },
+            {
+                name: "_list_base",
+                description: "List Base",
+                filter: "1"
+            },
+            {
+                name: "_notes_base",
+                description: "Notes Base",
+                filter: "1"
+            },
+            {
+                name: "_peripherals_base",
+                description: "Peripherals Base",
+                filter: "1"
+            },
+            {
+                name: "_vernacular_base",
+                description: "Vernacular Base",
+                filter: "1"
+            },
+            {
+                name: "_annotation_ref",
+                description: "Annotation Reference",
+                filter: "1"
+            },
+            {
+                name: "_annotation_text",
+                description: "Annotation Text",
+                filter: "1"
+            },
+            {
+                name: "_dft_para_font",
+                description: "Default Paragraph Font",
+                filter: "1"
+            },
+            {
+                name: "_footnote_caller",
+                description: "Footnote Caller",
+                filter: "1"
+            },
+            {
+                name: "_normal_table",
+                description: "Normal Table",
+                filter: "1"
+            },
+            {
+                name: "_table_grid",
+                description: "Table Grid",
+                filter: "1"
+            },
+            {
+                name: "_footer",
+                description: "Footer",
+                filter: "1"
+            },
+            {
+                name: "_header",
+                description: "Header",
+                filter: "1"
+            },
+            {
+                name: "_horiz_rule",
+                description: "Horizontal Rule",
+                filter: "1"
+            },
+            {
+                name: "_single_boxed_para",
+                description: "Single Boxed Paragraph",
+                filter: "1"
+            },
+            {
+                name: "_double_boxed_para",
+                description: "Double Boxed Paragraph",
+                filter: "1"
+            },
+            {
+                name: "_unknown_para_style",
+                description: "Unknown Paragraph Style Marker",
+                filter: "1"
+            },
+            {
+                name: "_unknown_char_style",
+                description: "Unknown Character Style Marker",
+                filter: "1"
+            },
+            {
+                name: "_hidden_note",
+                description: "Hidden Note",
+                filter: "1"
             }
         ],
 
