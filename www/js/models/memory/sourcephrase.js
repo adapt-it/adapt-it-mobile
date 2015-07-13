@@ -164,6 +164,12 @@ define(function (require) {
                 });
             },
             
+            // Remove just the local sourcephrases from the collection --
+            // this keeps the in-memory objects to a minimum
+            clearLocal: function () {
+                sourcephrases.length = 0;
+            },
+            
             // add an array of SourcePhrase objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
