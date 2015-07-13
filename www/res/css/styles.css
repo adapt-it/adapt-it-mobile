@@ -83,6 +83,16 @@ input[type="file"] {
     background: url('../svg/adapt-it-mobile.svg') no-repeat;
     background-size: cover;
 }
+.filter {
+    height: 14px;
+    width: 14px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background: url('../svg/filter.svg') no-repeat;
+    background-size: cover;
+}
 .waiting {
     height: 11px;
     width: 43px;
