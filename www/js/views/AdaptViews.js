@@ -16,6 +16,7 @@ define(function (require) {
         chapterModel = require('app/models/chapter'),
         bookModel   = require('app/models/book'),
         tplChapter  = require('text!tpl/Chapter.html'),
+        tplEmptySPList = require('text!tpl/EmptySPList.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
         kblist      = null, // real value passed in constructor
@@ -114,12 +115,14 @@ define(function (require) {
         // adapting, KB updates, etc.
         SourcePhraseListView = Marionette.CollectionView.extend({
             chapterid: 0,
+            chapterName: "",
             
             template: Handlebars.compile(tplSourcePhraseList),
 
             initialize: function () {
 //                console.log("SourcePhraseListView::initialize");
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
+                this.render();
             },
             addOne: function (SourcePhrase) {
 //                console.log("SourcePhraseListView::addOne");
@@ -128,12 +131,17 @@ define(function (require) {
                 this.$('#pile-' + SourcePhrase.get('id')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
-                // add the collection
-//                console.log("SourcePhraseListView::render");
-                template = Handlebars.compile(tplSourcePhraseList);
-                this.$el.html(template(this.collection.toJSON()));
-                // go back and add the individual piles
-                this.collection.each(this.addOne, this);
+                if (this.collection.length === 0) {
+                    template = Handlebars.compile(tplEmptySPList);
+                    this.$el.html(template());
+                } else {
+                    // add the collection
+    //                console.log("SourcePhraseListView::render");
+                    template = Handlebars.compile(tplSourcePhraseList);
+                    this.$el.html(template(this.collection.toJSON()));
+                    // go back and add the individual piles
+                    this.collection.each(this.addOne, this);
+                }
                 return this;
             },
 
@@ -1067,7 +1075,7 @@ define(function (require) {
                 template = Handlebars.compile(tplChapter);
                 this.$el.html(template(this.model.toJSON()));
                 // populate the list view with the source phrase results
-                this.listView = new SourcePhraseListView({collection: this.spList, chapterid: chapterid, el: $('#chapter', this.el)});
+                this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
                 this.listView.kblist = this.kblist;
                 this.listView.project = this.project;
                 addStyleRules(this.project);

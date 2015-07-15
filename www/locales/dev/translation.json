@@ -175,7 +175,7 @@
         "dscAdaptComplete": "Adaptation of __chapter__ complete.",
         "dscAdaptContinue": "Adaptation of __chapter__ complete. Continue to the next chapter?",
         "errEnterLanguageName": "Please enter a language name.",
-        "ttlLoadingChapter": "Loading \"__chapter__\" -- please wait.",
+        "ttlLoadingChapter": "Loading... please wait.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
