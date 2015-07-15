@@ -577,7 +577,7 @@ define(function (require) {
                             $(this).attr('fi').split(re).forEach(function (elt, index, array) {
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
-                                    console.log("filter");
+//                                    console.log("filter");
                                 } else if (elt.indexOf("\\") === 0) {
                                     // starting marker
                                     markers += elt;

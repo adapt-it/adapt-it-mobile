@@ -113,19 +113,23 @@ define(function (require) {
         // Displays the collection of SourcePhrases for the current chapter. Also contains the logic for
         // adapting, KB updates, etc.
         SourcePhraseListView = Marionette.CollectionView.extend({
+            chapterid: 0,
+            
             template: Handlebars.compile(tplSourcePhraseList),
 
             initialize: function () {
-                this.collection.bind('reset', this.render, this);
-                this.render();
+//                console.log("SourcePhraseListView::initialize");
+                this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
             },
             addOne: function (SourcePhrase) {
+//                console.log("SourcePhraseListView::addOne");
                 var view = new SourcePhraseView({ model: SourcePhrase});//, el: $('#pile-' + SourcePhrase.get('id')) });
                 this.$('#pile-' + SourcePhrase.get('id')).append(view.render().el.childNodes);
                 this.$('#pile-' + SourcePhrase.get('id')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
                 // add the collection
+//                console.log("SourcePhraseListView::render");
                 template = Handlebars.compile(tplSourcePhraseList);
                 this.$el.html(template(this.collection.toJSON()));
                 // go back and add the individual piles
@@ -1041,19 +1045,15 @@ define(function (require) {
             regions: {
                 container: "#chapter"
             },
-            initialize: function () {
-                var coll = new projModel.ProjectCollection();
+            onShow: function () {
+                console.log("ChapterView::onShow");
                 var chapterid = this.model.get('chapterid');
                 chapter = this.model;
-                coll.fetch({reset: true, data: {name: ""}});
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
                 this.kblist = new kbModels.TargetUnitCollection();
-                this.project = coll.at(0);
                 // fetch the KB for this project
                 this.kblist.fetch({reset: true, data: {name: this.project.id}});
-                // fetch the source phrases in this chapter
-                this.spList.fetch({reset: true, data: {chapterid: chapterid}});
                 // load the source / target punctuation pairs
                 this.project.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);
@@ -1064,17 +1064,12 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
-            },
-            render: function () {
                 template = Handlebars.compile(tplChapter);
                 this.$el.html(template(this.model.toJSON()));
                 // populate the list view with the source phrase results
-                this.listView = new SourcePhraseListView({collection: this.spList, el: $('#chapter', this.el)});
+                this.listView = new SourcePhraseListView({collection: this.spList, chapterid: chapterid, el: $('#chapter', this.el)});
                 this.listView.kblist = this.kblist;
                 this.listView.project = this.project;
-                return this;
-            },
-            onShow: function () {
                 addStyleRules(this.project);
             },
             ////

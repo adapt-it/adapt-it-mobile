@@ -73,16 +73,13 @@ define(function (require) {
 //                    );
                     navigator.globalization.getLocaleName(
                         function (loc) {
-//                            alert('locale: ' + loc.value + '\n');
                             locale = loc.value;
                         },
                         function () {console.log('Error getting locale\n'); }
                     );
                 } else {
-//                    console.log("No navigator.globalization object - looking in browser");
                     // in web browser
                     lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
-//                    console.log("lang: " + lang);
                     locale = lang.split("-")[0];
                 }
 //                console.log("locale:" + locale);
@@ -92,26 +89,33 @@ define(function (require) {
                     debug: true,
                     fallbackLng: 'en'
                 }, function () {
-                    // i18next is done asynchronously; this is the callback function
-                    // Tell backbone we're ready to start loading the View classes.
+                    // Callback when i18next is finished initializing
+                    
+                    // Load any app-wide collections
                     window.Application.BookList = new bookModel.BookCollection();
                     window.Application.BookList.fetch({reset: true, data: {name: ""}});
                     window.Application.ProjectList = new projModel.ProjectCollection();
                     window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
                     window.Application.ChapterList = new chapterModel.ChapterCollection();
                     window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
-                    window.Application.spList = new spModel.SourcePhraseCollection();
-                    window.Application.spList.fetch({reset: true, data: {name: ""}});
+                    // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
+                    // Instead, they are instantiated on the pages that need them
+                    // (DocumentViews for doc import/export and AdaptViews for adapting)
 
+                    // Tell backbone we're ready to start loading the View classes.
                     Backbone.history.start();
                 });
 
+                // initialize the router
                 var router  = new AppRouter({controller: this});
 
+                // Attach touch screen function to avoid delay in double-click
                 $(function () {
                     FastClick.attach(document.body);
                 });
 
+                // Process back arrow button event 
+                // (not the one in the browser, the one we render on our html page).
                 $("body").on("click", ".back-button", function (event) {
                     event.preventDefault();
                     window.history.back();
@@ -215,7 +219,8 @@ define(function (require) {
                         proj.set('lastAdaptedChapterID', chapter.get('chapterid'));
                         proj.set('lastAdaptedName', chapter.get('name'));
                     }
-                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
+                    window.Application.main.show(theView);
+//                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
                 } else {
                     console.log("No chapter found matching id:" + id);
                 }

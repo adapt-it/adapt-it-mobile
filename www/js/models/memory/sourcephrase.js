@@ -131,22 +131,9 @@ define(function (require) {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
-                    tx.executeSql("SELECT * from sourcephrase;", [], function (tx, res) {
-                        for (i = 0, len = res.rows.length; i < len; ++i) {
-                            // add the chapter
-                            var sp = new SourcePhrase();
-                            sp.off("change");
-                            sp.set(res.rows.item(i));
-                            sourcephrases.push(sp);
-                            sp.on("change", sp.save, sp);
-                        }
-                        console.log("SELECT ok: " + res.rows.length + " sourcephrase items");
-//                        this.set(JSON.parse(res.rows.item(0)));
-                    });
                 }, function (err) {
-                    console.log("SELECT error: " + err.message);
+                    console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
             },
             
@@ -199,29 +186,60 @@ define(function (require) {
                 var coll = null;
                 switch (method) {
                 case 'create':
-//                    coll = model;
-//                    window.Application.db.transaction(function (tx) {
-//                        console.log("sync transaction");
-//                        coll.forEach(function (sp) {
-//                            tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target], function (tx, res) {
-//                                console.log("sync INSERT OR REPLACE ok");
-//                            }, function (tx, err) {
-//                                console.log("sync error: " + err.message);
-//                            });
-//                        });
-//                    });
                     options.success(model);
                     break;
                         
                 case 'read':
                     if (options.data.hasOwnProperty('id')) {
+                        // find specific source phrase
                         findById(options.data.id).done(function (data) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('chapterid')) {
-                        findByChapterId(options.data.chapterid).done(function (data) {
-                            options.success(data);
+                        // find all sourcephrase for the selected chapter
+                        // (might need to get them from the db)
+                        var deferred = $.Deferred();
+                        var chapterid = options.data.chapterid;
+                        var len = 0;
+                        var i = 0;
+                        var retValue = null;
+                        var results = sourcephrases.filter(function (element) {
+                            return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
                         });
+                        if (results.length === 0) {
+                            // not in collection -- retrieve them from the db
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid=?;", [chapterid], function (tx, res) {
+                                    // populate the sourcephrases collection with the query results
+                                    for (i = 0, len = res.rows.length; i < len; ++i) {
+                                        var sp = new SourcePhrase();
+                                        sp.off("change");
+                                        sp.set(res.rows.item(i));
+                                        sourcephrases.push(sp);
+                                        sp.on("change", sp.save, sp);
+                                    }
+                                    // return the filtered results (now that we have them)
+                                    console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
+                                    retValue = sourcephrases.filter(function (element) {
+                                        return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
+                                    });
+                                    options.success(retValue);
+                                    deferred.resolve(retValue);
+                                });
+                            }, function (e) {
+                                options.error();
+                                deferred.reject(e);
+                            });
+                        } else {
+                            // results already in collection -- return them
+                            console.log("sync: found " + results.length + " sourcephrases for chapterid: " + chapterid);
+                            options.success(results);
+                            deferred.resolve(results);
+                        }
+                        // return the promise
+                        return deferred.promise();
+                    } else {
+                        return Backbone.sync.apply(this, arguments);
                     }
                     break;
                         
