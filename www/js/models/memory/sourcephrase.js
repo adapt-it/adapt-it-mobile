@@ -163,16 +163,12 @@ define(function (require) {
                 var sql = "INSERT INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
-                sps = models;
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
                         tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));
-                    // clear out models array
-                    models.length = 0;
-                    sps.length = 0;
                 }, function (e) {
                     deferred.reject(e);
                 }, function () {
