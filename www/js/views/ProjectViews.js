@@ -296,15 +296,14 @@ define(function (require) {
                                     } else {
                                         if (entries[i].name.indexOf(".aic") > 0) {
                                             fileList[index] = entries[i].toURL();
-                                            fileStr += "<div class=\"autocomplete-suggestion\" id=\"" + index + "\">" + entries[i].fullPath + "</div>";
+                                            fileStr += "<tr><td><div class=\"autocomplete-suggestion\" id=\"" + index + "\">" + entries[i].fullPath + "</div></td></tr>";
                                             index++;
                                         }
                                     }
                                 }
                                 statusStr += fileStr;
                                 if (statusStr.length > 0) {
-                                    $("#mobileSelect").html(statusStr);
-                                    $("#OK").attr("disabled", true);
+                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");                                       $("#OK").attr("disabled", true);
                                 } else {
                                     // nothing to select -- inform the user
                                     $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
