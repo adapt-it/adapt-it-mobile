@@ -880,18 +880,21 @@ span.sprite{
 ***********/
 @media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
     .source, .target {
-        max-width: device-width;
+        max-width: 100%;
+/*        max-width: device-width;*/
     }
 }
 @media only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : landscape) {
     .source, .target {
-        max-width: device-width;
+        max-width: 100%;
+/*        max-width: device-width;*/
     }
 }
 
 @media screen and (max-device-width: 400px) and (orientation: landscape) {
     .source, .target {
-        max-width: device-width;
+        max-width: 100%;
+/*        max-width: device-width;*/
     }
     #content {
         right: 0;
