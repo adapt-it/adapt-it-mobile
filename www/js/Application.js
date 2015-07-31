@@ -191,12 +191,12 @@ define(function (require) {
             lookupChapter: function (id) {
                 console.log("lookupChapter");
                 var proj = this.ProjectList.where({id: id});
-                if (proj === null) {
+                if (proj !== null) {
+                    lookupView = new SearchViews.LookupView({model: proj[0]});
+                    window.Application.main.show(lookupView);
+                } else {
                     console.log("no project defined");
                 }
-                lookupView = new SearchViews.LookupView({model: proj[0]});
-                lookupView.delegateEvents();
-                this.main.show(lookupView);
             },
 
             adaptChapter: function (id) {

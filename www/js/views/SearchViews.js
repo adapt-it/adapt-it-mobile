@@ -28,7 +28,7 @@ define(function (require) {
             emptyView: NoChildrenView,
 
             initialize: function () {
-                this.render();
+//                this.render();
                 this.collection.on("reset", this.render, this);
             }
 
@@ -65,6 +65,7 @@ define(function (require) {
                 });
                 $("#book").html(options);
                 $("#book").val("");
+                $("#search").focus();
             },
             
             search: function (event) {

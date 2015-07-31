@@ -9,7 +9,8 @@ define(function (require) {
 
     return function PageSlider(container) {
 
-        var currentPage,
+        var container = container,
+            currentPage,
             stateHistory = [];
 
         this.back = function () {
@@ -39,6 +40,8 @@ define(function (require) {
 
         // Use this function directly if you want to control the sliding direction outside PageSlider
         this.slidePageFrom = function (page, from) {
+            
+            console.log("slidePageFrom: " + page + ", " + from);
 
             container.append(page);
 
@@ -51,7 +54,8 @@ define(function (require) {
             // Position the page at the starting position of the animation
             page.attr("class", "page " + from);
 
-            currentPage.one('webkitTransitionEnd', function (e) {
+            currentPage.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function (e) {
+                console.log("transitionend: " + e.target);
                 $(e.target).remove();
             });
 
