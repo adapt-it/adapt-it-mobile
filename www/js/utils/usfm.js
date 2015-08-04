@@ -883,26 +883,31 @@ define(function (require) {
             {
                 name: "p",
                 description: "Paragraph text, with first line indent (basic)",
+                filter: "0",
                 inform: "1"
             },
             {
                 name: "pi",
                 description: "Paragraph text, level 1 indent (if sinlge level), with first line indent; often used for discourse (basic)",
+                filter: "0",
                 inform: "1"
             },
             {
                 name: "pi1",
                 description: "Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse",
+                filter: "0",
                 inform: "1"
             },
             {
                 name: "pi2",
                 description: "Paragraph text, level 2 indent, with first line indent; often used for discourse",
+                filter: "0",
                 inform: "1"
             },
             {
                 name: "pi3",
                 description: "Paragraph text, level 3 indent, with first line indent; often used for discourse",
+                filter: "0",
                 inform: "1"
             },
             {

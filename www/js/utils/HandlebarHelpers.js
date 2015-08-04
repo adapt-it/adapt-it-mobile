@@ -33,6 +33,28 @@ define(function (require) {
         return new Handlebars.SafeString(result);
     });
     
+    // Return the concatenated string of marker classes for the CSS class list
+    Handlebars.registerHelper('classify', function (markerlist) {
+        var ary = this.markers.split("\\"),
+            result = "",
+            i = 0;
+        if (this.markers.length === 0) {
+            return new Handlebars.SafeString(this.markers);
+        }
+        for (i = 0; i < ary.length; i++) {
+            if (i > 0) {
+                result += " ";
+            }
+            ary[i].replace("@", "at"); // this marker breaks our css rules... replace it
+            if (ary[i].trim().length > 0) {
+                result += "usfm-" + ary[i].substring(0, (ary[i].indexOf(" ") === -1) ? ary[i].length : ary[i].indexOf(" "));
+            }
+        }
+//        var result = this.markers.replace(new RegExp('[\]+', 'g'), "usfm-");
+        return new Handlebars.SafeString(result);
+    });
+
+    
     // Return a chapter number.
     Handlebars.registerHelper('chapter', function () {
         // extract and return the chapter number from the markers
@@ -62,11 +84,19 @@ define(function (require) {
     // This block was modified from the following post:
     // http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+        var elts = [],
+            i = 0;
         switch (operator) {
         case 'startswith':
             return (v1.indexOf(v2) === 0) ? options.fn(this) : options.inverse(this);
         case 'contains':
-            return (v1.indexOf(v2) !== -1) ? options.fn(this) : options.inverse(this);
+            elts = v2.split(',');
+            for (i = 0; i < elts.length; i++) {
+                if (v1.indexOf(elts[i]) !== -1) {
+                    return options.fn(this);
+                }
+            }
+            return options.inverse(this);
         case '||':
             return (v1 || v2) ? options.fn(this) : options.inverse(this);
         case '&&':

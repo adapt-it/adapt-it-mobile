@@ -28,7 +28,6 @@ define(function (require) {
             emptyView: NoChildrenView,
 
             initialize: function () {
-//                this.render();
                 this.collection.on("reset", this.render, this);
             }
 
