@@ -38,6 +38,8 @@ define(function (require) {
 
 
         Application = Marionette.Application.extend({
+            filterlist: "",
+            
             // app initialization code. Here we'll initialize localization with the current locale 
             initialize: function (options) {
                 // add the UI regions (just the main "content" for now)
@@ -214,6 +216,7 @@ define(function (require) {
                     theView.project = proj;
                     // update the last adapted book and chapter
                     if (proj) {
+                        this.filterList += proj.get('FilterMarkers'); // static (always ON) filters + whatever is specified for the project
                         proj.set('lastDocument', book.get('name'));
                         proj.set('lastAdaptedBookID', chapter.get('bookid'));
                         proj.set('lastAdaptedChapterID', chapter.get('chapterid'));

@@ -11,6 +11,7 @@ define(function (require) {
         Backbone    = require('backbone'),
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
+        usfm        = require('utils/usfm'),
         i18n        = require('i18n');
     
     // Return the localized string corresponding to the specified key.
@@ -33,10 +34,13 @@ define(function (require) {
         return new Handlebars.SafeString(result);
     });
     
-    // Return the concatenated string of marker classes for the CSS class list
-    Handlebars.registerHelper('classify', function (markerlist) {
+    // Return the concatenated string of marker classes for the CSS class list, with an optional "filter" class for
+    // filtered text
+    Handlebars.registerHelper('classes', function () {
         var ary = this.markers.split("\\"),
             result = "",
+            filtered = false,
+            filterString = window.Application.filterList,
             i = 0;
         if (this.markers.length === 0) {
             return new Handlebars.SafeString(this.markers);
@@ -48,13 +52,17 @@ define(function (require) {
             ary[i].replace("@", "at"); // this marker breaks our css rules... replace it
             if (ary[i].trim().length > 0) {
                 result += "usfm-" + ary[i].substring(0, (ary[i].indexOf(" ") === -1) ? ary[i].length : ary[i].indexOf(" "));
+                if (filterString.indexOf("\\" + ary[i].trim() + " ") >= 0) {
+                    filtered = true;
+                }
             }
         }
-//        var result = this.markers.replace(new RegExp('[\]+', 'g'), "usfm-");
+        if (filtered === true) {
+            result += " filter";
+        }
         return new Handlebars.SafeString(result);
     });
 
-    
     // Return a chapter number.
     Handlebars.registerHelper('chapter', function () {
         // extract and return the chapter number from the markers

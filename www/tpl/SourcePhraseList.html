@@ -4,7 +4,7 @@
 {{#.}}
 {{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
 {{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
-{{#if this.markers}}<div class="strip{{ classify markers=this.markers}}" id="strip-{{this.id}}">
+{{#if this.markers}}<div class="strip{{classes}}" id="strip-{{this.id}}">
 {{! start each strip with a header (e.g. verse or chapter info) }}
 {{#ifCond this.markers 'contains' 'c '}}
     <div id="header-{{this.id}}" class="strip-header chapter-number">{{chapter}}</div>

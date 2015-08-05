@@ -83,16 +83,6 @@ input[type="file"] {
     margin-top: 6px;
     width: 96px;
 }
-.filter {
-    background: url('../svg/filter.svg') no-repeat;
-    background-size: cover;
-    height: 14px;
-    margin-bottom: 6px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 6px;
-    width: 14px;
-}
 .waiting {
     /* image from http://www.ajaxload.info/, freely licensed under the WTFPL */
     background: url('images/ajax-loader.gif') no-repeat;
@@ -658,7 +648,7 @@ div.strip.specialtext div.source {
 }
 
 /* USFM styles */
-/* special text (special="1" in ai_USFM.XML) */
+/* special text (special="1" in ai_USFM.XML). There are a lot of them. */
 .usfm-_heading_base div.source, .usfm-_intro_base div.source, .usfm-_list_base div.source, .usfm-_notes_base div.source, .usfm-_peripherals_base div.source,
 .usfm-at div.source, .usfm-add div.source,
 .usfm-bn div.source, .usfm-br div.source, .usfm-bt div.source,
@@ -680,8 +670,22 @@ div.strip.specialtext div.source {
     color: #aa0000;
 }
 
+/* Paragraph markers -- start on a new line */
 .usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c {
     clear: left;
+}
+/* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
+.filter {
+/*    display: none;*/
+    background: url('../svg/filter.svg') no-repeat;
+    background-size: cover;
+    height: 14px;
+    overflow: hidden;
+    margin-bottom: 3em;
+    margin-top: 3px;
+    width: 14px;
+    text-indent: 100%;
+    float: left;
 }
 
 /* from adapt-it-copy */
