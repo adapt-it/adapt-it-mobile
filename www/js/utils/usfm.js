@@ -807,795 +807,950 @@ define(function (require) {
                 name: "restore",
 	            description: "Project restore information",
 	            usfm: "1",
-	            filter: "1"
+	            filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "c",
 	            description: "Chapter number (basic)",
 	            usfm: "1",
-	            inform: "1"
+	            inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "v",
 	            description: "A verse number (basic)",
 	            usfm: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "vt",
 	            description: "Verse text",
-	            inform: "1"
+	            inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "vn",
 	            description: "Verse number",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xo",
                 endMarker: "xo*",
                 description: "The cross reference origin reference (basic)",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xt",
                 endMarker: "xt*",
                 description: "The cross reference target reference(s), protocanon only (basic)",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xk",
                 endMarker: "xk*",
                 description: "A cross reference keyword",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xq",
                 endMarker: "xq*",
                 description: "A cross-reference quotation from the scripture text",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xot",
                 endMarker: "xot*",
                 description: "Cross-reference target reference(s), Old Testament only",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xnt",
                 endMarker: "xnt*",
                 description: "Cross-reference target reference(s), New Testament only",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "xdc",
                 endMarker: "xdc*",
                 description: "Cross-reference target reference(s), Deuterocanon only",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "p",
                 description: "Paragraph text, with first line indent (basic)",
                 filter: "0",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pi",
                 description: "Paragraph text, level 1 indent (if sinlge level), with first line indent; often used for discourse (basic)",
                 filter: "0",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pi1",
                 description: "Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse",
                 filter: "0",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pi2",
                 description: "Paragraph text, level 2 indent, with first line indent; often used for discourse",
                 filter: "0",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pi3",
                 description: "Paragraph text, level 3 indent, with first line indent; often used for discourse",
                 filter: "0",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pgi",
                 description: "Indented paragraph",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ph",
                 description: "Paragraph text, with level 1 hanging indent (if single level)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ph1",
                 description: "Paragraph text, with level 1 hanging indent (if multiple levels)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ph2",
                 description: "Paragraph text, with level 2 hanging indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ph3",
                 description: "Paragraph text, with level 3 hanging indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "phi",
 	            description: "Paragraph text, indented with hanging indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "m",
                 description: "Paragraph text, with no first line indent (may occur after poetry) (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pmo",
                 description: "Embedded text opening",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "mi",
                 description: "Paragraph text, indented, with no first line indent; often used for discourse",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pc",
                 description: "Paragraph text, centered (for Inscription)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pr",
                 description: "Paragraph text, right aligned",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "psi",
                 description: "Paragraph text, indented, with no break with next paragraph text (at chapter boundary)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pm",
                 description: "Embedded text paragraph",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pmc",
                 description: "Embedded text closing",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pmr",
                 description: "Embedded text refrain (e.g. Then all the people shall say, 'Amen!')",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "nb",
                 description: "Paragraph text, with no break from previous paragraph text (at chapter boundary) (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "cls",
                 description: "Closure of an Epistle",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "q",
                 description: "Poetry text, level 1 indent (if single level)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "q1",
                 description: "Poetry text, level 1 indent (if multiple levels) (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "q2",
                 description: "Poetry text, level 2 indent (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "q3",
                 description: "Poetry text, level 3 indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "q4",
                 description: "Poetry text, level 4 indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qc",
                 description: "Poetry text, centered",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qr",
                 description: "Poetry text, Right Aligned",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qac",
                 endMarker: "qac*",
-                description: "Poetry text, Acrostic markup of the first character of a line of acrostic poetry"
+                description: "Poetry text, Acrostic markup of the first character of a line of acrostic poetry",
+                userCanSetFilter: "0"
             },
             {
                 name: "qm",
                 description: "Poetry, left margin",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qm",
                 description: "Poetry text, embedded, level 1 indent (if single level)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qm1",
                 description: "Poetry text, embedded, level 1 indent (if multiple levels)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qm2",
                 description: "Poetry text, embedded, level 2 indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qm3",
                 description: "Poetry text, embedded, level 3 indent",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fe",
-                description: "Footnote (end)"
+                description: "Footnote (end)",
+                userCanSetFilter: "0"
             },
             {
                 name: "fr",
                 endMarker: "fr*",
                 description: "The origin reference for the footnote (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fk",
                 endMarker: "fk*",
                 description: "A footnote keyword (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fq",
                 endMarker: "fq*",
                 description: "A footnote scripture quote or alternate rendering (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fqa",
                 endMarker: "fqa*",
                 description: "A footnote alternate rendering for a portion of scripture text",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fl",
                 endMarker: "fl*",
                 description: "A footnote label text item, for marking or 'labelling' the type or alternate translation being provided in the note.",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fp",
                 endMarker: "fp*",
                 description: "A Footnote additional paragraph marker",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ft",
                 endMarker: "ft*",
                 description: "Footnote text, Protocanon (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fdc",
                 endMarker: "fdc*",
                 description: "Footnote text, applies to Deuterocanon only",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fv",
                 endMarker: "fv*",
                 description: "A verse number within the footnote text",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "fm",
                 endMarker: "fm*",
                 description: "An additional footnote marker location for a previous footnote",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "F",
-                description: "Footnote (end)"
+                description: "Footnote (end)",
+                userCanSetFilter: "0"
             },
             {
                 name: "qt",
                 endMarker: "qt*",
                 description: "For Old Testament quoted text appearing in the New Testament (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "nd",
                 endMarker: "nd*",
-                description: "For name of deity (basic)"
+                description: "For name of deity (basic)",
+                userCanSetFilter: "0"
             },
             {
                 name: "tl",
                 endMarker: "tl*",
-                description: "For transliterated words"
+                description: "For transliterated words",
+                userCanSetFilter: "0"
             },
             {
                 name: "dc",
                 endMarker: "dc*",
-                description: "Deuterocanonical/LXX additions or insertions in the Protocanonical text"
+                description: "Deuterocanonical/LXX additions or insertions in the Protocanonical text",
+                userCanSetFilter: "0"
             },
             {
                 name: "bk",
                 endMarker: "bk*",
-                description: "For the quoted name of a book"
+                description: "For the quoted name of a book",
+                userCanSetFilter: "0"
             },
             {
                 name: "sig",
                 endMarker: "sig*",
-                description: "For the signature of the author of an Epistle"
+                description: "For the signature of the author of an Epistle",
+                userCanSetFilter: "0"
             },
             {
                 name: "pn",
                 endMarker: "pn*",
-                description: "For a proper name"
+                description: "For a proper name",
+                userCanSetFilter: "0"
             },
             {
                 name: "wj",
                 endMarker: "wj*",
-                description: "For marking the words of Jesus"
+                description: "For marking the words of Jesus",
+                userCanSetFilter: "0"
             },
             {
                 name: "k",
                 endMarker: "k*",
-                description: "For a keyword"
+                description: "For a keyword",
+                userCanSetFilter: "0"
             },
             {
                 name: "sls",
                 endMarker: "sls*",
-                description: "To represent where the original text is in a secondary language or from an alternate text source"
+                description: "To represent where the original text is in a secondary language or from an alternate text source",
+                userCanSetFilter: "0"
             },
             {
                 name: "ord",
                 endMarker: "ord*",
-                description: "For the text portion of an ordinal number"
+                description: "For the text portion of an ordinal number",
+                userCanSetFilter: "0"
             },
             {
                 name: "add",
                 endMarker: "add*",
                 description: "For a translational addition to the text",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "no",
                 endMarker: "no*",
-                description: "A character style, use normal text"
+                description: "A character style, use normal text",
+                userCanSetFilter: "0"
             },
             {
                 name: "bd",
                 endMarker: "bd*",
-                description: "A character style, use bold text"
+                description: "A character style, use bold text",
+                userCanSetFilter: "0"
             },
             {
                 name: "it",
                 endMarker: "it*",
-                description: "A character style, use italic text"
+                description: "A character style, use italic text",
+                userCanSetFilter: "0"
             },
             {
                 name: "bdit",
                 endMarker: "bdit*",
-                description: "A character style, use bold + italic text"
+                description: "A character style, use bold + italic text",
+                userCanSetFilter: "0"
             },
             {
                 name: "em",
                 endMarker: "em*",
-                description: "A character style, use emphasized text style"
+                description: "A character style, use emphasized text style",
+                userCanSetFilter: "0"
             },
             {
                 name: "sc",
                 endMarker: "sc*",
-                description: "A character style, for small capitalization text"
+                description: "A character style, for small capitalization text",
+                userCanSetFilter: "0"
             },
             {
                 name: "ie",
-                description: "Introduction ending marker"
+                description: "Introduction ending marker",
+                userCanSetFilter: "0"
             },
             {
                 name: "li",
                 description: "A list entry, level 1 (if single level)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "li1",
                 description: "A list entry, level 1 (if multiple levels)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "li2",
                 description: "A list entry, level 2",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "li3",
                 description: "A list entry, level 3",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "li4",
                 description: "A list entry, level 4",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qh",
                 description: "List or Genealogy",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "tr",
                 description: "A new table row",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "tr1",
                 description: "A table Row",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "tr2",
                 description: "A table Row",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "th1",
-                description: "A table heading, column 1"
+                description: "A table heading, column 1",
+                userCanSetFilter: "0"
             },
             {
                 name: "th2",
-                description: "A table heading, column 2"
+                description: "A table heading, column 2",
+                userCanSetFilter: "0"
             },
             {
                 name: "th3",
-                description: "A table heading, column 3"
+                description: "A table heading, column 3",
+                userCanSetFilter: "0"
             },
             {
                 name: "th4",
-                description: "A table heading, column 4"
+                description: "A table heading, column 4",
+                userCanSetFilter: "0"
             },
             {
                 name: "thr1",
-                description: "A table heading, column 1, right aligned"
+                description: "A table heading, column 1, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "thr2",
-                description: "A table heading, column 2, right aligned"
+                description: "A table heading, column 2, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "thr3",
-                description: "A table heading, column 3, right aligned"
+                description: "A table heading, column 3, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "thr4",
-                description: "A table heading, column 4, right aligned"
+                description: "A table heading, column 4, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "tc1",
-                description: "A table cell item, column 1"
+                description: "A table cell item, column 1",
+                userCanSetFilter: "0"
             },
             {
                 name: "tc2",
-                description: "A table cell item, column 2"
+                description: "A table cell item, column 2",
+                userCanSetFilter: "0"
             },
             {
                 name: "tc3",
-                description: "A table cell item, column 3"
+                description: "A table cell item, column 3",
+                userCanSetFilter: "0"
             },
             {
                 name: "tc4",
-                description: "A table cell item, column 4"
+                description: "A table cell item, column 4",
+                userCanSetFilter: "0"
             },
             {
                 name: "tcr1",
-                description: "A table cell item, column 1, right aligned"
+                description: "A table cell item, column 1, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "tcr2",
-                description: "A table cell item, column 2, right aligned"
+                description: "A table cell item, column 2, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "tcr3",
-                description: "A table cell item, column 3, right aligned"
+                description: "A table cell item, column 3, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "tcr4",
-                description: "A table cell item, column 4, right aligned"
+                description: "A table cell item, column 4, right aligned",
+                userCanSetFilter: "0"
             },
             {
                 name: "w",
                 endMarker: "w*",
-                description: "A wordlist text item"
+                description: "A wordlist text item",
+                userCanSetFilter: "0"
             },
             {
                 name: "wr",
                 endMarker: "wr*",
-                description: "A Wordlist text item"
+                description: "A Wordlist text item",
+                userCanSetFilter: "0"
             },
             {
                 name: "wh",
                 endMarker: "wh*",
-                description: "A Hebrew wordlist text item"
+                description: "A Hebrew wordlist text item",
+                userCanSetFilter: "0"
             },
             {
                 name: "wg",
                 endMarker: "wg*",
-                description: "A Greek Wordlist text item"
+                description: "A Greek Wordlist text item",
+                userCanSetFilter: "0"
             },
             {
                 name: "ndx",
                 endMarker: "ndx*",
-                description: "A subject index text item"
+                description: "A subject index text item",
+                userCanSetFilter: "0"
             },
             {
                 name: "p1",
                 description: "Front or back matter text paragraph, level 1 (if multiple levels)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "k1",
                 description: "Concordance main entry text or keyword, level 1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "k2",
                 description: "Concordance main entry text or keyword, level 2",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pb",
                 description: "Page Break used for new reader portions and children's bibles where content is controlled by the page",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "b",
                 description: "Poetry text stanza break (e.g. stanza break) (basic)",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "hr",
-                description: "Horizontal rule"
+                description: "Horizontal rule",
+                userCanSetFilter: "0"
             },
             {
                 name: "loc",
-                description: "Picture location"
+                description: "Picture location",
+                userCanSetFilter: "0"
             },
             {
                 name: "cat",
-                description: "Picture catalog number"
+                description: "Picture catalog number",
+                userCanSetFilter: "0"
             },
             {
                 name: "des",
-                description: "Picture description"
+                description: "Picture description",
+                userCanSetFilter: "0"
             },
             {
                 name: "px",
                 description: "Paragraph extra 1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "pz",
                 description: "Paragraph extra 2",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qx",
                 description: "Poetry extra 1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "qz",
                 description: "Poetry extra 2",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "addpn",
                 endMarker: "addpn*",
-                description: "For chinese words to be dot underline and underline"
+                description: "For chinese words to be dot underline and underline",
+                userCanSetFilter: "0"
             },
             {
                 name: "efm",
                 endMarker: "efm*",
                 description: "ID or Caller for an extended (study) note. Used within a source project duplicte (target) text when autoring study material.",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "ef",
                 endMarker: "ef*",
                 description: "A Study Note text item",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             /* AI-specific markers (filtered) */
             {
                 name: "bt",
                 description: "Back-translation (and all \bt... initial forms)",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "free",
                 endMarker: "free*",
                 description: "Free translation",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "note",
                 endMarker: "note*",
                 description: "Adapt It note",
                 filter: "1",
-                inform: "1"
+                inform: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "__normal",
                 description: "Normal",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_src_lang_interlinear",
                 description: "Source Language Interlinear Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_tgt_lang_interlinear",
                 description: "Target Language Interlinear Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_gls_lang_interlinear",
                 description: "Gloss Language Interlinear Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_nav_lang_interlinear",
                 description: "Navigation Language Interlinear Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_hdr_ftr_interlinear",
                 description: "Header-Footer Interlinear Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_small_para_break",
                 description: "Small Paragraph Break",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_body_text",
                 description: "Body Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_heading_base",
                 description: "Heading Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_intro_base",
                 description: "Intro Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_list_base",
                 description: "List Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_notes_base",
                 description: "Notes Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_peripherals_base",
                 description: "Peripherals Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_vernacular_base",
                 description: "Vernacular Base",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_annotation_ref",
                 description: "Annotation Reference",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_annotation_text",
                 description: "Annotation Text",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_dft_para_font",
                 description: "Default Paragraph Font",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_footnote_caller",
                 description: "Footnote Caller",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_normal_table",
                 description: "Normal Table",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_table_grid",
                 description: "Table Grid",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_footer",
                 description: "Footer",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_header",
                 description: "Header",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_horiz_rule",
                 description: "Horizontal Rule",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_single_boxed_para",
                 description: "Single Boxed Paragraph",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_double_boxed_para",
                 description: "Double Boxed Paragraph",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_unknown_para_style",
                 description: "Unknown Paragraph Style Marker",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_unknown_char_style",
                 description: "Unknown Character Style Marker",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             },
             {
                 name: "_hidden_note",
                 description: "Hidden Note",
-                filter: "1"
+                filter: "1",
+                userCanSetFilter: "0"
             }
         ],
 
