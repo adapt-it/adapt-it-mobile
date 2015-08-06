@@ -392,6 +392,8 @@ define(function (require) {
                 "touchmove .source": "selectingPilesMove",
                 "mouseup .source": "selectingPilesEnd",
                 "touchend .source": "selectingPilesEnd",
+                "mouseup .filter": "showFilter",
+                "touchend .filter": "showFilter",
                 "mouseup .pile": "checkStopSelecting",
                 "mouseup .target": "checkStopSelecting",
                 "focus .target": "selectedAdaptation",
@@ -577,6 +579,9 @@ define(function (require) {
                     }
                     $("#Placeholder").prop('disabled', false);
                 }
+            },
+            showFilter: function (event) {
+                alert("filter clicked");
             },
             // focus event handler for the target field 
             selectedAdaptation: function (event) {
