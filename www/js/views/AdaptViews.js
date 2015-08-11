@@ -10,6 +10,7 @@ define(function (require) {
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
         i18n        = require('i18n'),
+        usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
         projModel   = require('app/models/project'),
@@ -22,6 +23,7 @@ define(function (require) {
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
+        USFMMarkers = null,
         selectedStart = null,
         selectedEnd = null,
         idxStart = null,
@@ -581,7 +583,76 @@ define(function (require) {
                 }
             },
             showFilter: function (event) {
-                alert("filter clicked");
+                var userCanSetFilter = false,
+                    filterString = window.Application.filterList,
+                    markers = "",
+                    aryClasses = [],
+                    filteredText = "",
+                    idx = 0,
+                    elt = null,
+                    title = i18n.t('view.ttlFilteredText'),
+                    message = "";
+                // Get the marker(s) being filtered here
+                aryClasses = event.currentTarget.className.split(/\s+/);
+                for (idx = 0; idx < aryClasses.length; idx++) {
+                    if (aryClasses[idx].indexOf("usfm-") >= 0) {
+                        // usfm class -- is it a cause of this filter?
+                        if (filterString.indexOf(aryClasses[idx].substr(5)) >= 0) {
+                            // this marker is filtered -- add it to the markers
+                            if (markers.length > 0) {
+                                markers += ", ";
+                            }
+                            markers += "\\" + aryClasses[idx].substr(5);
+                        }
+                    }
+                }
+//                USFMMarkers.each(function (item, index, list) {
+//                    if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
+//                        value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
+//                        htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
+//                        if (value === "true") {
+//                            htmlstring += " checked";
+//                        }
+//                        htmlstring += "><div class='topcoat-checkbox__checkmark'></div></label></td><td><span class='n'>" + item.get('name') + "</span></td><td>" + item.get('description') + "</td></tr>";
+//                    }
+//                });
+                
+//                event.currentTarget
+                // Look them up in the USFM table -- are they settable?
+                // get the source text being filtered out
+                $(event.currentTarget).find(".source").each(function (idx, elt) {
+                    filteredText += elt.innerHTML.trim() + " ";
+                });
+                message = i18n.t("view.dscFilteredText", {marker: markers}) + filteredText.trim();
+
+                if (userCanSetFilter) {
+                    // User can set this filter text
+                    if (navigator.notification) {
+                        // on mobile device
+                        navigator.notification.prompt(message, function (buttonIndex) {
+//                            if (buttonIndex === 1) {
+//                                ;
+//                            }
+                        }, i18n.t('view.ttlFilteredText'), [i18n.t('view.lblOK'), i18n.t('view.lblCancel')], filteredText.trim());
+                    } else {
+                        // in browser
+                        if (prompt(message, markers)) {
+                            ;
+                        }
+                    }
+                } else {
+                    // read only -- just tell the user what was filtered
+                    message += "\n\n" + i18n.t('view.dscUserCannotSetFilter', {marker: markers});
+                    if (navigator.notification) {
+                        // on mobile device
+                        navigator.notification.alert(message, function () {},
+                                                     i18n.t('view.ttlFilteredText'));
+                    } else {
+                        // in browser
+                        alert(message);
+                    }
+                    
+                }
             },
             // focus event handler for the target field 
             selectedAdaptation: function (event) {
@@ -1084,6 +1155,8 @@ define(function (require) {
                 this.listView.kblist = this.kblist;
                 this.listView.project = this.project;
                 addStyleRules(this.project);
+                USFMMarkers = new usfm.MarkerCollection();
+                USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
             ////
             // Event Handlers

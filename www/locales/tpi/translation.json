@@ -176,6 +176,9 @@
         "dscAdaptContinue": "Adaptation of __chapter__ complete. Continue to the next chapter?",
         "errEnterLanguageName": "Please enter a language name.",
         "ttlLoadingChapter": "Loading... please wait.",
+        "ttlFilteredText": "Filtered Text",
+        "dscFilterMarker": "USFM marker: __marker__",
+        "dscFilteredText": "Text for filtered marker __marker__: ",
         "dscUserCanSetFilter": "The text associated with __marker__ can be made available for adaptation.",
         "dscUserCannotSetFilter": "The text associated with __marker__ cannot be made available for adaptation.",
         "_comment" : "****Add new strings BEFORE this line!****"
