@@ -177,10 +177,10 @@
         "errEnterLanguageName": "Please enter a language name.",
         "ttlLoadingChapter": "Loading... please wait.",
         "ttlFilteredText": "Filtered Text",
-        "dscFilterMarker": "USFM marker: __marker__",
-        "dscFilteredText": "Text for filtered marker __marker__: ",
-        "dscUserCanSetFilter": "The text associated with __marker__ can be made available for adaptation.",
-        "dscUserCannotSetFilter": "The text associated with __marker__ cannot be made available for adaptation.",
+        "dscFilterMarker": "USFM marker: ",
+        "dscFilteredText": "Text for filtered marker: ",
+        "dscUserCanSetFilter": "Le texte associé avec \"__marker__\" est disponible pour l'adaptation.",
+        "dscUserCannotSetFilter": "Le texte associé avec \"__marker__\" n'est pas disponible pour l'adaptation.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

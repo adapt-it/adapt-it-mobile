@@ -591,7 +591,7 @@ define(function (require) {
                     idx = 0,
                     elt = null,
                     title = i18n.t('view.ttlFilteredText'),
-                    message = "";
+                    message = i18n.t('view.dscFilterMarker');
                 // Get the marker(s) being filtered here
                 aryClasses = event.currentTarget.className.split(/\s+/);
                 for (idx = 0; idx < aryClasses.length; idx++) {
@@ -623,7 +623,7 @@ define(function (require) {
                 $(event.currentTarget).find(".source").each(function (idx, elt) {
                     filteredText += elt.innerHTML.trim() + " ";
                 });
-                message = i18n.t("view.dscFilteredText", {marker: markers}) + filteredText.trim();
+                message += markers + "\n" + i18n.t("view.dscFilteredText") + filteredText.trim();
 
                 if (userCanSetFilter) {
                     // User can set this filter text
