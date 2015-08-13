@@ -585,7 +585,7 @@ define(function (require) {
             showFilter: function (event) {
                 var userCanSetFilter = false,
                     filterString = window.Application.filterList,
-                    markers = "",
+                    markers = [],
                     aryClasses = [],
                     filteredText = "",
                     idx = 0,
@@ -599,44 +599,40 @@ define(function (require) {
                         // usfm class -- is it a cause of this filter?
                         if (filterString.indexOf(aryClasses[idx].substr(5)) >= 0) {
                             // this marker is filtered -- add it to the markers
-                            if (markers.length > 0) {
-                                markers += ", ";
-                            }
-                            markers += "\\" + aryClasses[idx].substr(5);
+                            markers.push(aryClasses[idx].substr(5));
                         }
                     }
                 }
-//                USFMMarkers.each(function (item, index, list) {
-//                    if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
-//                        value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
-//                        htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
-//                        if (value === "true") {
-//                            htmlstring += " checked";
-//                        }
-//                        htmlstring += "><div class='topcoat-checkbox__checkmark'></div></label></td><td><span class='n'>" + item.get('name') + "</span></td><td>" + item.get('description') + "</td></tr>";
-//                    }
-//                });
-                
-//                event.currentTarget
                 // Look them up in the USFM table -- are they settable?
+                USFMMarkers.each(function (item, index, list) {
+                    if (markers.indexOf(item.get('name')) >= 0) {
+                        // this is one of the markers -- can the user set it?
+                        if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
+                            userCanSetFilter = true;
+                        }
+                    }
+                });
                 // get the source text being filtered out
+                // ****** TODO: source or target? 
                 $(event.currentTarget).find(".source").each(function (idx, elt) {
                     filteredText += elt.innerHTML.trim() + " ";
                 });
-                message += markers + "\n" + i18n.t("view.dscFilteredText") + filteredText.trim();
+                message += markers.toString() + "\n" + i18n.t("view.dscFilteredText") + filteredText.trim();
 
                 if (userCanSetFilter) {
                     // User can set this filter text
                     if (navigator.notification) {
                         // on mobile device
-                        navigator.notification.prompt(message, function (buttonIndex) {
-//                            if (buttonIndex === 1) {
-//                                ;
-//                            }
+                        navigator.notification.prompt(message, function (results) {
+                            if (results.buttonIndex === 1 && results.input1.length > 0 && results.input1 !=== filteredText.trim()) {
+                                // text changed -- update
+                            }
                         }, i18n.t('view.ttlFilteredText'), [i18n.t('view.lblOK'), i18n.t('view.lblCancel')], filteredText.trim());
                     } else {
                         // in browser
-                        if (prompt(message, markers)) {
+                        var response = prompt(message, filteredText.trim())
+                        if (var && var !== filteredText.trim()) {
+                            // text changed -- update
                             ;
                         }
                     }
