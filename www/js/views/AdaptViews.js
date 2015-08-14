@@ -582,6 +582,13 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', false);
                 }
             },
+            // Event handler for when the user clicks on a Filter icon (the funnel thingy):
+            // display a read-only alert to the user containing:
+            // - The USFM marker that is being filtered
+            // - Any associated text for the marker
+            // If the marker is user-settable, a note is also included telling the user that they can
+            // change the setting in the project settings under USFM filtering. If it isn't user-settable,
+            // we display a note informing them.
             showFilter: function (event) {
                 var userCanSetFilter = false,
                     filterString = window.Application.filterList,
@@ -613,7 +620,6 @@ define(function (require) {
                     }
                 });
                 // get the source text being filtered out
-                // ****** TODO: source or target? 
                 $(event.currentTarget).find(".source").each(function (idx, elt) {
                     filteredText += elt.innerHTML.trim() + " ";
                 });
@@ -621,24 +627,18 @@ define(function (require) {
 
                 if (userCanSetFilter) {
                     // User can set this filter text
+                    message += "\n\n" + i18n.t('view.dscUserCanSetFilter');
                     if (navigator.notification) {
                         // on mobile device
-                        navigator.notification.prompt(message, function (results) {
-                            if (results.buttonIndex === 1 && results.input1.length > 0 && results.input1 !=== filteredText.trim()) {
-                                // text changed -- update
-                            }
-                        }, i18n.t('view.ttlFilteredText'), [i18n.t('view.lblOK'), i18n.t('view.lblCancel')], filteredText.trim());
+                        navigator.notification.alert(message, function () {},
+                                                     i18n.t('view.ttlFilteredText'));
                     } else {
                         // in browser
-                        var response = prompt(message, filteredText.trim())
-                        if (var && var !== filteredText.trim()) {
-                            // text changed -- update
-                            ;
-                        }
+                        alert(message);
                     }
                 } else {
                     // read only -- just tell the user what was filtered
-                    message += "\n\n" + i18n.t('view.dscUserCannotSetFilter', {marker: markers});
+                    message += "\n\n" + i18n.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.alert(message, function () {},

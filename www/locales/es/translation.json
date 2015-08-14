@@ -179,7 +179,7 @@
         "ttlFilteredText": "Texto filtrada",
         "dscFilterMarker": "Marcador USFM: ",
         "dscFilteredText": "Texto: ",
-        "dscUserCanSetFilter": "El Texto de \"__marker__\" puede ser capacitado para la adaptación.",
+        "dscUserCanSetFilter": "Este Texto puede ser capacitado para la adaptación, en la Configuración del Proyecto.",
         "dscUserCannotSetFilter": "El Texto de \"__marker__\" no puede ser capacitado para la adaptación.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },

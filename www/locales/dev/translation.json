@@ -179,7 +179,7 @@
         "ttlFilteredText": "Filtered Text",
         "dscFilterMarker": "USFM marker: ",
         "dscFilteredText": "Text for filtered marker: ",
-        "dscUserCanSetFilter": "The text associated with \"__marker__\" can be made available for adaptation.",
+        "dscUserCanSetFilter": "This text can be made available for adaptation in the Project Settings, under USFM Filtering.",
         "dscUserCannotSetFilter": "The text associated with \"__marker__\" cannot be made available for adaptation.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },

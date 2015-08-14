@@ -694,9 +694,22 @@ define(function (require) {
                         filterString += "\\" + $(this).find(".n").html() + " ";
                     }
                 });
+                // add always-on filters
+                filterString += "\\lit \\_table_grid \\_header \\_intro_base \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\_notes_base \\__normal \\ide \\mr \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\_list_base \\ib \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\_single_boxed_para \\sts \\hr \\loc \\cat \\des";
                 return filterString;
             },
             onClickCustomFilters: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#UseCustomFilters").is(':checked') === true) {
+                    if ($("#tb").html().length === 0) {
+                        this.BuildFilterTable();
+                    }
+                    $("#USFMFilters").prop('hidden', false);
+                } else {
+                    $("#USFMFilters").prop('hidden', true);
+                }
+            },
+            onShow: function (event) {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
                     if ($("#tb").html().length === 0) {
@@ -918,8 +931,8 @@ define(function (require) {
                     }
                     break;
                 }
-                this.model.trigger('change');
-//                this.model.save();
+//                this.model.trigger('change');
+                this.model.save();
             },
 
             OnEditProject: function () {
