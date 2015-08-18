@@ -2,7 +2,7 @@
     <widget xmlns   = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
         xmlns:android = "http://schemas.android.com/apk/res/android"
-        id          = "org.sil.aimobile"
+        id          = "org.adapt-it.aimobile"
         versionCode = "1" 
         version     = "0.3.0"
         defaultlocale = "en">
@@ -105,6 +105,10 @@
         <splash src="res/screen/ios/screen-ipad-portrait_2x.png" width="1536" height="2048" />
         <splash src="res/screen/ios/screen-ipad-landscape.png" width="1024" height="768" />
         <splash src="res/screen/ios/screen-ipad-landscape_2x.png" width="2048" height="1496" />
+        <splash src="res/screen/ios/screen-iphone6-portrait_2x.png" width="750" height="1334"/>
+        <splash src="res/screen/ios/screen-iphone6-landscape_2x.png" width="1334" height="750"/>
+        <splash src="res/screen/ios/screen-iphone6p-portrait_3x.png" width="1242" height="2208"/>
+        <splash src="res/screen/ios/screen-iphone6p-landscape_3x.png" width="2208" height="1242"/>        
     </platform>
     <platform name="firefoxos">
         <icon src="res/icon/firefoxos/icon-60.png" width="60" height="60" />
