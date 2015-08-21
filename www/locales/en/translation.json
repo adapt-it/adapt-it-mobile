@@ -175,7 +175,7 @@
         "dscAdaptComplete": "Adaptation of __chapter__ complete.",
         "dscAdaptContinue": "Adaptation of __chapter__ complete. Continue to the next chapter?",
         "errEnterLanguageName": "Please enter a language name.",
-        "ttlLoadingChapter": "Loading... please wait.",
+        "ttlLoading": "Loading... please wait.",
         "ttlFilteredText": "Filtered Text",
         "dscFilterMarker": "USFM marker: ",
         "dscFilteredText": "Text for filtered marker: ",

@@ -175,7 +175,7 @@
         "dscAdaptComplete": "Traducción de __chapter__ se ha completado.",
         "dscAdaptContinue": "Traducción de __chapter__ se ha completado. ¿Quiere continuar con el siguiente capítulo?",
         "errEnterLanguageName": "Por favor escriba el nombre de una idioma.",
-        "ttlLoadingChapter": "Espere un momento, por favor.",
+        "ttlLoading": "Espere un momento, por favor.",
         "ttlFilteredText": "Texto filtrada",
         "dscFilterMarker": "Marcador USFM: ",
         "dscFilteredText": "Texto: ",

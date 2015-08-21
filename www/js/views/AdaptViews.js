@@ -17,7 +17,7 @@ define(function (require) {
         chapterModel = require('app/models/chapter'),
         bookModel   = require('app/models/book'),
         tplChapter  = require('text!tpl/Chapter.html'),
-        tplEmptySPList = require('text!tpl/EmptySPList.html'),
+        tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
         kblist      = null, // real value passed in constructor
@@ -134,7 +134,7 @@ define(function (require) {
             },
             render: function () {
                 if (this.collection.length === 0) {
-                    template = Handlebars.compile(tplEmptySPList);
+                    template = Handlebars.compile(tplLoadingPleaseWait);
                     this.$el.html(template());
                 } else {
                     // add the collection
