@@ -10,6 +10,7 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         i18n            = require('i18n'),
+        tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
@@ -1062,12 +1063,8 @@ define(function (require) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
                     var localURLs    = [
-                        cordova.file.dataDirectory,
                         cordova.file.documentsDirectory,
-                        cordova.file.externalApplicationStorageDirectory,
-                        cordova.file.externalCacheDirectory,
                         cordova.file.externalRootDirectory,
-                        cordova.file.externalDataDirectory,
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
@@ -1085,14 +1082,17 @@ define(function (require) {
                                         // Recursive -- call back into this subdirectory
                                         addFileEntry(entries[i]);
                                     } else {
-                                        if ((entries[i].name.indexOf(".txt") > 0) ||
-                                                (entries[i].name.indexOf(".usx") > 0) ||
-                                                (entries[i].name.indexOf(".usfm") > 0) ||
-                                                (entries[i].name.indexOf(".sfm") > 0) ||
-                                                (entries[i].name.indexOf(".xml") > 0)) {
-                                            fileList[index] = entries[i].toURL();
-                                            fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
-                                            index++;
+                                        if (entries[i].fullPath.indexOf("Download") > 0 || entries[i].fullPath.indexOf("Document") > 0) {
+                                            // only take files from the Download or Document directories
+                                            if ((entries[i].name.indexOf(".txt") > 0) ||
+                                                    (entries[i].name.indexOf(".usx") > 0) ||
+                                                    (entries[i].name.indexOf(".usfm") > 0) ||
+                                                    (entries[i].name.indexOf(".sfm") > 0) ||
+                                                    (entries[i].name.indexOf(".xml") > 0)) {
+                                                fileList[index] = entries[i].toURL();
+                                                fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
+                                                index++;
+                                            }
                                         }
                                     }
                                 }
