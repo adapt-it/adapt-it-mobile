@@ -42,6 +42,30 @@ define(function (require) {
             
             // app initialization code. Here we'll initialize localization with the current locale 
             initialize: function (options) {
+                // callback function to initialize / load the localization info
+                var initialize_i18n = function (locale) {
+                    i18n.init({
+                        lng: locale,
+                        debug: true,
+                        fallbackLng: 'en'
+                    }, function () {
+                        // Callback when i18next is finished initializing
+
+                        // Load any app-wide collections
+                        window.Application.BookList = new bookModel.BookCollection();
+                        window.Application.BookList.fetch({reset: true, data: {name: ""}});
+                        window.Application.ProjectList = new projModel.ProjectCollection();
+                        window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+                        window.Application.ChapterList = new chapterModel.ChapterCollection();
+                        window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                        // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
+                        // Instead, they are instantiated on the pages that need them
+                        // (DocumentViews for doc import/export and AdaptViews for adapting)
+
+                        // Tell backbone we're ready to start loading the View classes.
+                        Backbone.history.start();
+                    });
+                };
                 // add the UI regions (just the main "content" for now)
                 this.addRegions({
                     main: '#main'
@@ -68,14 +92,10 @@ define(function (require) {
 
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
-                    // on mobile phone
-//                    navigator.globalization.getPreferredLanguage(
-//                        function (language) {alert('language: ' + language.value + '\n');},
-//                        function () {alert('Error getting language\n');}
-//                    );
                     navigator.globalization.getLocaleName(
                         function (loc) {
-                            locale = loc.value;
+                            locale = loc.value.split("-")[0];
+                            initialize_i18n(locale);
                         },
                         function () {console.log('Error getting locale\n'); }
                     );
@@ -83,30 +103,8 @@ define(function (require) {
                     // in web browser
                     lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
                     locale = lang.split("-")[0];
+                    initialize_i18n(locale);
                 }
-//                console.log("locale:" + locale);
-                // initialize / load the localization info
-                i18n.init({
-                    lng: locale,
-                    debug: true,
-                    fallbackLng: 'en'
-                }, function () {
-                    // Callback when i18next is finished initializing
-                    
-                    // Load any app-wide collections
-                    window.Application.BookList = new bookModel.BookCollection();
-                    window.Application.BookList.fetch({reset: true, data: {name: ""}});
-                    window.Application.ProjectList = new projModel.ProjectCollection();
-                    window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
-                    window.Application.ChapterList = new chapterModel.ChapterCollection();
-                    window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
-                    // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
-                    // Instead, they are instantiated on the pages that need them
-                    // (DocumentViews for doc import/export and AdaptViews for adapting)
-
-                    // Tell backbone we're ready to start loading the View classes.
-                    Backbone.history.start();
-                });
 
                 // initialize the router
                 var router  = new AppRouter({controller: this});
