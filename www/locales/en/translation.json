@@ -151,6 +151,8 @@
         "lblFilteringDefault": "Display default USFM set",
         "lblOK": "OK",
         "lblCancel": "Cancel",
+        "lblYes": "Yes",
+        "lblNo": "No",
         "ttlEditProject": "Edit Project",
         "ttlDelete": "Delete",
         "lblIsVariant": "Language is a dialect / variant",
@@ -181,6 +183,7 @@
         "dscFilteredText": "Text for filtered marker: ",
         "dscUserCanSetFilter": "This text can be made available for adaptation in the Project Settings, under USFM Filtering.",
         "dscUserCannotSetFilter": "The text associated with \"__marker__\" cannot be made available for adaptation.",
+        "lblUseLanguage": "Language found: \"__language__.\" Use this language?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

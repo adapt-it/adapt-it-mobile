@@ -151,6 +151,8 @@
         "lblFilteringDefault": "Afficher le défaut USFM ensemble",
         "lblOK": "D'accord",
         "lblCancel": "Annuler",
+        "lblYes": "Oui",
+        "lblNo": "Non",
         "ttlEditProject": "Modifier projet",
         "ttlDelete": "Effacer",
         "lblIsVariant": "Cette langue est un dialecte",
@@ -181,6 +183,7 @@
         "dscFilteredText": "Texte: ",
         "dscUserCanSetFilter": "Le texte associé avec \"__marker__\" est disponible pour l'adaptation, en Les paramètres de projet.",
         "dscUserCannotSetFilter": "Le texte associé avec \"__marker__\" n'est pas disponible pour l'adaptation.",
+        "lblUseLanguage": "Language found: \"__language__.\" Use this language?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -151,6 +151,8 @@
         "lblFilteringDefault": "Usar filtrado de marcadores USFM preseleccionado",
         "lblOK": "Aceptar",
         "lblCancel": "Cancelar",
+        "lblYes": "Sí",
+        "lblNo": "No",
         "ttlEditProject": "Editar Projecto",
         "ttlDelete": "Borrar",
         "lblIsVariant": "Esta lengua es un dialecto",
@@ -181,6 +183,7 @@
         "dscFilteredText": "Texto: ",
         "dscUserCanSetFilter": "Este Texto puede ser capacitado para la adaptación, en la Configuración del Proyecto.",
         "dscUserCannotSetFilter": "El Texto de \"__marker__\" no puede ser capacitado para la adaptación.",
+        "lblUseLanguage": "Language found: \"__language__.\" Use this language?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -151,6 +151,8 @@
         "lblFilteringDefault": "No senisim USFM na filta bilong maka",
         "lblOK": "OK",
         "lblCancel": "Kensel",
+        "lblYes": "Yes",
+        "lblNo": "No",
         "ttlEditProject": "Editim Projek",
         "ttlDelete": "Rausim",
         "lblIsVariant": "Language is a dialect / variant",
@@ -181,6 +183,7 @@
         "dscFilteredText": "Teks bilong maka: ",
         "dscUserCanSetFilter": "Teks bilong \"__marker__\" maka i ken kamap insait long wok trenslesen.",
         "dscUserCannotSetFilter": "Teks bilong \"__marker__\" maka i no inap kamap insait long wok trenslesen.",
+        "lblUseLanguage": "Language found: \"__language__.\" Use this language?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
