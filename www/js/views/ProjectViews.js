@@ -17,6 +17,7 @@ define(function (require) {
         tplCases        = require('text!tpl/ProjectCases.html'),
         tplFonts        = require('text!tpl/ProjectFonts.html'),
         tplFont         = require('text!tpl/ProjectFont.html'),
+        tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
@@ -269,20 +270,28 @@ define(function (require) {
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
+                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
 //                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
-                        cordova.file.dataDirectory,
                         cordova.file.documentsDirectory,
-                        cordova.file.externalApplicationStorageDirectory,
-                        cordova.file.externalCacheDirectory,
                         cordova.file.externalRootDirectory,
-                        cordova.file.externalDataDirectory,
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     var index = 0;
                     var i;
                     var statusStr = "";
+                    var updateStatus = function (status) {
+                        $("#mobileSelect").html("blah blah blah");
+//                        if (status.length > 0) {
+//                            $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + status + "</tbody></table>");
+//                            $("#OK").attr("disabled", true);
+//                        } else {
+//                            // nothing to select -- inform the user
+//                            $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+//                            $("#OK").removeAttr("disabled");
+//                        }
+                    };
                     var addFileEntry = function (entry) {
                         var dirReader = entry.createReader();
                         dirReader.readEntries(
@@ -303,7 +312,8 @@ define(function (require) {
                                 }
                                 statusStr += fileStr;
                                 if (statusStr.length > 0) {
-                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");                                       $("#OK").attr("disabled", true);
+                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");
+                                    $("#OK").attr("disabled", true);
                                 } else {
                                     // nothing to select -- inform the user
                                     $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
@@ -314,7 +324,7 @@ define(function (require) {
                                 console.log("readEntries error: " + error.code);
                                 statusStr += "<p>readEntries error: " + error.code + "</p>";
                             }
-                        );
+                        );//.then(updateStatus(statusStr));
                     };
                     var addError = function (error) {
                         console.log("getDirectory error: " + error.code);
@@ -324,7 +334,7 @@ define(function (require) {
                         if (localURLs[i] === null || localURLs[i].length === 0) {
                             continue; // skip blank / non-existent paths for this platform
                         }
-                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);//.done(updateStatus(statusStr));
                     }
                 } else {
                     // running in browser -- use html <input> to select file
@@ -1280,45 +1290,116 @@ define(function (require) {
             GetProjectInfo: function (step) {
                 var value = null,
                     index = 0,
+                    langstr = "",
                     punctPairs = null,
                     trimmedValue = null;
-                switch (step) {
-                case 1: // source language
-                    this.model.set("SourceLanguageName", currentView.langName);
+                var getLanguageString = function () {
+                    var fail = false,
+                        btnIndex = 0,
+                        language = "",
+                        value = null;
                     if (currentView.langName.trim().length === 0) {
                         // fail - no language set
-                        if (navigator.notification) {
-                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                        // Is there something in the language edit field?
+                        if ($("#LanguageName").val().length > 0) {
+                            // something in the language field -- attempt to get the nearest match in the languages list
+                            value = languages.at(0);
+                            if (value !== null) {
+                                // found something that matches the search text -- suggest it
+                                if (navigator.notification) {
+                                    // on mobile device -- use notification plugin API
+                                    navigator.notification.confirm(
+                                        i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}),
+                                        function (btnIndex) {
+                                            if (btnIndex === 1) {
+                                                // set the language and ID
+                                                currentView.langName = value.get("Ref_Name");
+                                                currentView.langCode = value.get("Id");
+                                                if ($('#LanguageVariant').val().trim().length > 0) {
+                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                                }
+                                            } else {
+                                                // user rejected this suggestion -- tell them to enter
+                                                // a language name and finish up
+                                                navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                            }
+                                        },
+                                        i18n.t('view.ttlMain'),
+                                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                                    );
+                                } else {
+                                    // in browser -- use window.confirm / window.alert
+                                    if (window.confirm(i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}))) {
+                                        // use the suggested language
+                                        currentView.langName = value.get("Ref_Name");
+                                        currentView.langCode = value.get("Id");
+                                        if ($('#LanguageVariant').val().trim().length > 0) {
+                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                        }
+                                    } else {
+                                        // user rejected this suggestion -- tell them to enter
+                                        // a language name and finish up
+                                        alert(i18n.t('view.errEnterLanguageName'));
+                                    }
+                                }
+                            } else {
+                                // no suggestion found (user fell on his keyboard?)
+                                // just tell them to enter something
+                                if (navigator.notification) {
+                                    // on mobile device -- use notification plugin API
+                                    navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                } else {
+                                    // in browser -- use window.confirm / window.alert
+                                    alert(i18n.t('view.errEnterLanguageName'));
+                                }
+                            }
                         } else {
-                            alert(i18n.t('view.errEnterLanguageName'));
+                            // user didn't type anything in
+                            // just tell them to enter something
+                            if (navigator.notification) {
+                                // on mobile device -- use notification plugin API
+                                navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                            } else {
+                                // in browser -- use window.confirm / window.alert
+                                alert(i18n.t('view.errEnterLanguageName'));
+                            }
                         }
+                    }
+                    // return whatever we got (could be empty)
+                    return currentView.langName;
+                };
+                switch (step) {
+                case 1: // source language
+                    // get / validate the language string
+                    langstr = getLanguageString();
+                    if (langstr.length === 0) {
+                        // unable to get the language string (or the user didn't like the suggestion we gave)
                         $("#LanguageName").focus();
                         return false;
                     }
+                    this.model.set("SourceLanguageName", currentView.langName);
                     this.model.set("SourceLanguageCode", currentView.langCode);
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
                     break;
                 case 2: // target language
-                    this.model.set("TargetLanguageName", currentView.langName);
-                    if (currentView.langName.trim().length === 0) {
-                        // fail - no language set
-                        if (navigator.notification) {
-                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
-                        } else {
-                            alert(i18n.t('view.errEnterLanguageName'));
-                        }
+                    // get / validate the language string
+                    langstr = getLanguageString();
+                    if (langstr.length === 0) {
+                        // unable to get the language string (or the user didn't like the suggestion we gave)
                         $("#LanguageName").focus();
                         return false;
                     }
+                    this.model.set("TargetLanguageName", currentView.langName);
                     this.model.set("TargetLanguageCode", currentView.langCode);
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
                     // also set the ID and name of the project, now that we (should) have both source and target defined
-                    // TODO: do we need to add the variant to the ID and/or name?
-//                    value = this.model.get("SourceLanguageCode") + "." + this.model.get("TargetLanguageCode");
-                    value = Underscore.uniqueId();
-                    this.model.set("id", value);
+                    // Do this only if we don't already have an ID
+                    if (this.model.get("id") === 0) {
+                        value = Underscore.uniqueId();
+                        this.model.set("id", value);
+                    }
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}));
                     console.log("id: " + value);
                     break;
