@@ -39,6 +39,7 @@ define(function (require) {
             // clear KB
             targetunits.clearAll();
             // clear all project data
+            window.Application.currentProject = null;
             projects.clearAll();
             // refresh the view
             window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
@@ -52,9 +53,8 @@ define(function (require) {
         }),
 
         // HomeView
-        // Main view / launchpad for projects. Displays the available projects;
-        // when the user clicks on one, it displays the available actions for that particular
-        // project. The user can also create or copy a project.
+        // Main view / launchpad for projects. Displays the available actions for the current
+        // project (window.Application.currentProject, initialized in application.js).
         HomeView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplHome),
             
@@ -68,8 +68,7 @@ define(function (require) {
             ////
             events: {
                 "click #Continue": "onContinue",
-                "click .project-item": "toggleProjectFolder",
-                "click .topcoat-navigation-bar__title": "onClickTitle"
+                "click #projTitle": "onClickTitle"
             },
             // User clicked on the title ("Adapt It Mobile").
             // Keeps track of the number of times they've clicked -- if they've clicked 5 times,
@@ -102,56 +101,6 @@ define(function (require) {
                 var currentView = new GetStartedView();
                 this.$('#Container').html(currentView.render().el.childNodes);
                 clickCount = 0;
-            },
-            // Display / hide the contents of the selected project folder
-            toggleProjectFolder: function (event) {
-                var index = event.currentTarget.id.substr(2);
-                var model = this.collection.at(index);
-                var elt = document.getElementById('folder');
-                var adaptHref = "";
-                clickCount = 0;
-                // filter out the books for the selected project
-                books.fetch({reset: true, data: {projectid: model.get('id')}});
-                $('#projTitle').html($(event.currentTarget).find('.txt').html());
-                if (model) {
-                    $("#settings").attr("href", "#project/" + model.get("id"));
-                    $("#import").attr("href", "#import/" + model.get("id"));
-                    if (books.length === 0) {
-                        // no books imported -- hide the search and adapt links
-                        $("#search").hide();
-                        $("#adapt").hide();
-                    } else {
-                        // at least one book imported -- display the search and adapt links
-                        $("#search").show();
-                        $("#adapt").show();
-                        $("#search").attr("href", "#search/" + model.get("id"));
-                        if (model.get('lastAdaptedBookID').length !== 0) {
-                            adaptHref = "#adapt/" + model.get('lastAdaptedChapterID');
-                        }
-                        $("#adapt").attr("href", adaptHref);
-                        if (model.get('lastAdaptedName').length > 0) {
-                            $('#lblAdapt').html(model.get('lastAdaptedName'));
-                        } else {
-                            // no last adapted Name
-                            $('#lblAdapt').html(i18n.t('view.lblAdapt'));
-                        }
-                    }
-                } else {
-                    // no last adapted Name
-                    $('#lblAdapt').html(i18n.t('view.lblAdapt'));
-                }
-                var cl = elt.classList;
-                if (cl.contains('project-folder-open')) {
-                    $(event.currentTarget).addClass('no-bg');
-                    $(event.currentTarget).removeClass('light-bg');
-                    cl.add('project-folder');
-                    cl.remove('project-folder-open');
-                } else {
-                    $(event.currentTarget).addClass('light-bg');
-                    $(event.currentTarget).removeClass('no-bg');
-                    cl.add('project-folder-open');
-                    cl.remove('project-folder');
-                }
             }
         });
     

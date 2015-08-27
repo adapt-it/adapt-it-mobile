@@ -2,6 +2,23 @@
     Template for adapt-it-mobile's main landing page -- used by HomeView.js.
 }}
 
+{{#if this.name.length}}
+<div class="topcoat-navigation-bar main_title">
+    <div class="topcoat-navigation-bar__item center" style="width: 100%;">
+        <h2 id="projTitle">{{this.name}}</h2>
+    </div>
+    <div class="topcoat-navigation-bar__item right">&nbsp;</div>
+</div>
+<div class="chapter-list topcoat-list__container scroller" id="Container" style="width:100%">
+
+<li class="topcoat-list__item"><a id="settings" title="{{ t 'view.lblProjectSettings'}}" href="#project/{{this.id}}"><span class="btn-settings"></span>{{ t 'view.lblProjectSettings'}}<span class="chevron"></span></a></li>
+<li class="topcoat-list__item"><a id="import" title="{{ t 'view.lblImportDocuments'}}" href="#import/{{this.id}}"><span class="btn-import"></span>{{ t 'view.lblImportDocuments'}}<span class="chevron"></span></a></li>
+{{#if this.lastDocument.length}}
+<li class="topcoat-list__item"><a id="search" title="{{ t 'view.dscSearch'}}" href="#search/{{this.id}}"><span class="btn-search"></span>{{ t 'view.lblSearch'}}<span class="chevron"></span></a></li>
+<li class="topcoat-list__item"><a id="adapt" title="{{ t 'view.dscAdapt'}}" href="#adapt/{{this.lastAdaptedChapterID}}"><span class="btn-adapt"></span><span id="lblAdapt">{{#if this.lastAdaptedName.length}}{{this.lastAdaptedName}}{{else}}{{ t 'view.lblAdapt'}}{{/if}}</span><span class="chevron"></span></a></li>
+{{/if}}
+{{!-- {{if this.lastAdaptedName}}{{this.lastAdaptedName}}{{else}}{{ t 'view.lblAdapt'}}{{/if}} --}}
+{{else}}
 <div class="topcoat-navigation-bar">
     <div class="topcoat-navigation-bar__item quarter">&nbsp;</div>
     <div class="topcoat-navigation-bar__item center half">
@@ -9,27 +26,8 @@
     </div>
     <div class="topcoat-navigation-bar__item right">{{!<a href="#help" class="topcoat-icon-button--quiet"><span id="help" class="topcoat-icon topcoat-icon--help"></span></a>}}</div>
 </div>
-
 <div class="topcoat-list__container scroller" id="Container" style="width:100%">
-{{#if items}}
-<ul class="btns">
-    <li id="newproject" class="no-bg"><a class="btn-newproject no-bg" href="#project" title="{{ t 'view.dscCreateProject'}}"><span class="sprite">&nbsp;</span><span class="txt">{{t 'view.lblCreateProject'}}</span></a></li>
-    <li id="copyproject" class="no-bg"><a class="btn-copyproject no-bg" href="#copy" title="{{ t 'view.dscCopyProject'}}"><span class="sprite">&nbsp;</span><span class="txt">{{ t 'view.lblCopyProject'}}</span></a></li>
-{{#each items}}
-    <li><a id="p-{{@index}}" class="btn-project no-bg project-item" title="{{name}}"><span class="sprite">&nbsp;</span><span class="txt">{{name}}</span></a>
-    </li>    
-{{/each}}
-</ul>
-<div id="folder" class="project-folder">
-    <div class="middle"><div class="inner">
-        <h3 id="projTitle" class="center"></h3>
-        <a id="settings" title="{{ t 'view.lblProjectSettings'}}" class="topcoat-icon-button--quiet"><span class="btn-settings"></span>{{ t 'view.lblProjectSettings'}}</a>
-        <a id="import" title="{{ t 'view.lblImportDocuments'}}" class="topcoat-icon-button--quiet"><span class="btn-import"></span>{{ t 'view.lblImportDocuments'}}</a>
-        <a id="search" title="{{ t 'view.dscSearch'}}" class="topcoat-icon-button--quiet"><span class="btn-search"></span>{{ t 'view.lblSearch'}}</a>
-        <a id="adapt" title="{{ t 'view.dscAdapt'}}" class="topcoat-icon-button--quiet"><span class="btn-adapt"></span><span id="lblAdapt"></span></a>
-    </div></div>
-</div>
-{{else}}
+
 <div class="splash-screen">
     <div class="welcome-title">
         <h2>{{ t 'view.ttlWelcome'}}</h2>

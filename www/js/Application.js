@@ -39,6 +39,7 @@ define(function (require) {
 
         Application = Marionette.Application.extend({
             filterlist: "",
+            currentProject: null,
             
             // app initialization code. Here we'll initialize localization with the current locale 
             initialize: function (options) {
@@ -141,8 +142,12 @@ define(function (require) {
                 if (models.length > 0) {
                     this.ProjectList.remove(models);
                 }
+                if (window.Application.currentProject === null) {
+                    // pick the first project in the list, if there is one
+                    window.Application.currentProject = this.ProjectList.at(0);
+                }
                 // now display the home view
-                homeView = new HomeViews.HomeView({collection: this.ProjectList});
+                homeView = new HomeViews.HomeView({model: window.Application.currentProject});
                 homeView.delegateEvents();
                 this.main.show(homeView);
             },

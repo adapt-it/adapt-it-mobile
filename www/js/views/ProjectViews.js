@@ -219,6 +219,7 @@ define(function (require) {
             onOK: function (event) {
                 // save the model
                 this.model.save();
+                window.Application.currentProject = this.model;
                 // head back to the home page
                 window.history.go(-1);
             },
@@ -1283,8 +1284,9 @@ define(function (require) {
                         // save the model
                         this.model.save();
                         // head back to the home page
+                        window.Application.currentProject = this.model;
                         window.history.go(-1);
-    //                    window.Application.home();
+//                        window.Application.home();
                     }
                 }
             },

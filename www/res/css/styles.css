@@ -1,5 +1,13 @@
 @import "spectrum.css";
 
+/* Color scheme for AIM */
+/* 
+  Base (light blue from AI icon): #2595cb;
+  Dark blue: #1d38d8; 
+  lighter blue: #1e6ee2:
+  Cyan: #1ed6e2;
+  Turquoise: #1dd8af;
+*/
 /* embedded fonts */
 @font-face {
     font-family: "Andika";
@@ -112,6 +120,15 @@ input[type="file"] {
 }
 .topcoat-navigation-bar {
     padding: 1px;
+}
+.main_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width:100%;
+/*
+    background-color: inherit;
+    color: #1e6ee2;
+*/
 }
 .small-pic {
     float: left;
@@ -414,6 +431,12 @@ ul {
 }
 #help {
     background: url("images/question.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#sandwich {
+    background: url("../svg/listview.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -773,11 +796,12 @@ span.sprite{
 	background-image: url("../svg/search.svg");
     background-position: center;
 	background-repeat: no-repeat;
-    background-size: 22px;
+    background-size: contain;
     display: inline-block;
-    height: 22px;
+    height: 25px;
+    margin-left: 6px;
     margin-right: 6px;
-    width: 22px;
+    width: 25px;
 }
 .btn-project span.sprite{
 	background-image: url("../svg/project.svg");
@@ -787,11 +811,12 @@ span.sprite{
 	background-image: url("../svg/settings.svg");
     background-position: center;
 	background-repeat: no-repeat;
-    background-size: 22px;
+    background-size: contain;
     display: inline-block;
-    height: 22px;
+    height: 25px;
+    margin-left: 6px;
     margin-right: 6px;
-    width: 22px;
+    width: 25px;
 }
 .btn-status span.sprite{
 	background-image: url("images/status.png");
@@ -801,21 +826,23 @@ span.sprite{
 	background-image: url("../svg/pencil.svg");
     background-position: center;
 	background-repeat: no-repeat;
-    background-size: 22px;
+    background-size: contain;
     display: inline-block;
-    height: 22px;
+    height: 25px;
+    margin-left: 6px;
     margin-right: 6px;
-    width: 22px;
+    width: 25px;
 }
 .btn-import{
 	background-image: url("../svg/download.svg");
     background-position: center;
 	background-repeat: no-repeat;
-    background-size: 22px;
+    background-size: contain;
     display: inline-block;
-    height: 22px;
+    height: 25px;
+    margin-left: 6px;
     margin-right: 6px;
-    width: 22px;
+    width: 25px;
 }
 .project-folder {
     display: none;
