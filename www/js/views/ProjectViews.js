@@ -271,13 +271,13 @@ define(function (require) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-//                    localURL = cordova.file.dataDirectory;
                     var localURLs    = [
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
+                    var DirsRemaining = localURLs.length;
                     var index = 0;
                     var i;
                     var statusStr = "";
@@ -311,13 +311,16 @@ define(function (require) {
                                     }
                                 }
                                 statusStr += fileStr;
-                                if (statusStr.length > 0) {
-                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");
-                                    $("#OK").attr("disabled", true);
-                                } else {
-                                    // nothing to select -- inform the user
-                                    $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
-                                    $("#OK").removeAttr("disabled");
+                                DirsRemaining--;
+                                if (DirsRemaining <= 0) {
+                                    if (statusStr.length > 0) {
+                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");
+                                        $("#OK").attr("disabled", true);
+                                    } else {
+                                        // nothing to select -- inform the user
+                                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                                        $("#OK").removeAttr("disabled");
+                                    }
                                 }
                             },
                             function (error) {
@@ -332,6 +335,7 @@ define(function (require) {
                     };
                     for (i = 0; i < localURLs.length; i++) {
                         if (localURLs[i] === null || localURLs[i].length === 0) {
+                            DirsRemaining--;
                             continue; // skip blank / non-existent paths for this platform
                         }
                         window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);//.done(updateStatus(statusStr));

@@ -1062,12 +1062,15 @@ define(function (require) {
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserSelect").hide();
+                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                     var localURLs    = [
+                        cordova.file.dataDirectory,
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
+                    var DirsRemaining = localURLs.length;
                     var index = 0;
                     var i;
                     var statusStr = "";
@@ -1082,7 +1085,8 @@ define(function (require) {
                                         // Recursive -- call back into this subdirectory
                                         addFileEntry(entries[i]);
                                     } else {
-                                        if (entries[i].fullPath.indexOf("Download") > 0 || entries[i].fullPath.indexOf("Document") > 0) {
+                                        console.log(entries[i].fullPath);
+                                        if (entries[i].fullPath.indexOf("Download") > 0 || entries[i].fullPath.indexOf("Document") > 0 || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
                                             if ((entries[i].name.indexOf(".txt") > 0) ||
                                                     (entries[i].name.indexOf(".usx") > 0) ||
@@ -1097,14 +1101,17 @@ define(function (require) {
                                     }
                                 }
                                 statusStr += fileStr;
-                                if (statusStr.length > 0) {
-                                    $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
-                                    $("#tb").html(statusStr);
-                                    $("#OK").attr("disabled", true);
-                                } else {
-                                    // nothing to select -- inform the user
-                                    $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
-                                    $("#OK").removeAttr("disabled");
+                                DirsRemaining--;
+                                if (DirsRemaining <= 0) {
+                                    if (statusStr.length > 0) {
+                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
+                                        $("#tb").html(statusStr);
+                                        $("#OK").attr("disabled", true);
+                                    } else {
+                                        // nothing to select -- inform the user
+                                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
+                                        $("#OK").removeAttr("disabled");
+                                    }
                                 }
                             },
                             function (error) {
@@ -1120,6 +1127,8 @@ define(function (require) {
                     for (i = 0; i < localURLs.length; i++) {
                         if (localURLs[i] !== null && localURLs[i].length > 0) {
                             window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                        } else {
+                            DirsRemaining--;
                         }
                     }
                 } else {
