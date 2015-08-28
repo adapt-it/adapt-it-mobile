@@ -423,6 +423,19 @@ ul {
 .right {
     float:right;
 }
+#projTitle {
+    display: inline-block;
+    width: 100%;
+}
+#projTitle h2 {
+    display: inline-block;
+    line-height: normal;
+/*    padding: 6px; */
+    text-overflow: ellipsis; 
+    vertical-align: middle; 
+    white-space: normal; 
+    word-wrap: normal; 
+}
 .project {
 	background-image: url("../svg/project.svg");
     -webkit-background-size: cover;
