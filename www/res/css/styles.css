@@ -814,6 +814,7 @@ span.sprite{
     height: 25px;
     margin-left: 6px;
     margin-right: 6px;
+    vertical-align: sub;
     width: 25px;
 }
 .btn-project span.sprite{
@@ -829,6 +830,7 @@ span.sprite{
     height: 25px;
     margin-left: 6px;
     margin-right: 6px;
+    vertical-align: sub;
     width: 25px;
 }
 .btn-status span.sprite{
@@ -844,6 +846,7 @@ span.sprite{
     height: 25px;
     margin-left: 6px;
     margin-right: 6px;
+    vertical-align: sub;
     width: 25px;
 }
 .btn-import{
@@ -855,6 +858,7 @@ span.sprite{
     height: 25px;
     margin-left: 6px;
     margin-right: 6px;
+    vertical-align: sub;
     width: 25px;
 }
 .project-folder {

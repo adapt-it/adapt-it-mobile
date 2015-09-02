@@ -196,7 +196,12 @@ define(function (require) {
                 project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")));
                 
                 // done -- display the OK button
-                $("#status1").html(i18n.t("view.dscCopyProjectFound", {project: project.get("name")}));
+                $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
+                if ($("#loading").length) {
+                    $("#loading").hide();
+                    $("#waiting").hide();
+                    $("#OK").show();
+                }
                 $("#OK").removeAttr("disabled");
             };
             reader.readAsText(file, "UTF-8");
@@ -211,7 +216,7 @@ define(function (require) {
             ////
             events: {
                 "change #selFile": "browserImportAIC",
-                "click .autocomplete-suggestion": "mobileImportAIC",
+                "click .topcoat-list__item": "mobileImportAIC",
                 "click #OK": "onOK"
             },
             // Handler for the OK button click -- 
@@ -227,6 +232,8 @@ define(function (require) {
             // reconstitutes the file object from the path and calls importSettingsFile()
             mobileImportAIC: function (event) {
                 console.log("mobileImportAIC");
+                // replace the selection UI with the import UI
+                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                 // open selected .aic file
                 var index = $(event.currentTarget).attr('id').trim();
                 var model = this.model;
@@ -236,6 +243,7 @@ define(function (require) {
                     function (entry) {
                         entry.file(
                             function (file) {
+                                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
                                 importSettingsFile(file, model);
                             },
                             function (error) {
@@ -253,6 +261,7 @@ define(function (require) {
                 // click on the html <input type=file> element (browser only) --
                 // file selection is in event.currentTarget.files[0] (no multi-select for project files)
                 console.log("browserImportAIC");
+                $("#status").html(i18n.t("view.dscStatusReading", {document: event.currentTarget.files[0]}));
                 importSettingsFile(event.currentTarget.files[0], this.model);
             },
             // Show event handler (from MarionetteJS) -
@@ -270,7 +279,7 @@ define(function (require) {
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
-                    $("#browserSelect").hide();
+                    $("#browserGroup").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                     var localURLs    = [
                         cordova.file.documentsDirectory,
@@ -282,17 +291,6 @@ define(function (require) {
                     var index = 0;
                     var i;
                     var statusStr = "";
-                    var updateStatus = function (status) {
-                        $("#mobileSelect").html("blah blah blah");
-//                        if (status.length > 0) {
-//                            $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + status + "</tbody></table>");
-//                            $("#OK").attr("disabled", true);
-//                        } else {
-//                            // nothing to select -- inform the user
-//                            $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
-//                            $("#OK").removeAttr("disabled");
-//                        }
-                    };
                     var addFileEntry = function (entry) {
                         var dirReader = entry.createReader();
                         dirReader.readEntries(
@@ -306,7 +304,7 @@ define(function (require) {
                                     } else {
                                         if (entries[i].name.indexOf(".aic") > 0) {
                                             fileList[index] = entries[i].toURL();
-                                            fileStr += "<tr><td><div class=\"autocomplete-suggestion\" id=\"" + index + "\">" + entries[i].fullPath + "</div></td></tr>";
+                                            fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
                                             index++;
                                         }
                                     }
@@ -315,7 +313,7 @@ define(function (require) {
                                 DirsRemaining--;
                                 if (DirsRemaining <= 0) {
                                     if (statusStr.length > 0) {
-                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col></colgroup><thead><tr><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\">" + statusStr + "</tbody></table>");
+                                        $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscCopyProjInstructions') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
                                         $("#OK").attr("disabled", true);
                                     } else {
                                         // nothing to select -- inform the user
@@ -328,7 +326,7 @@ define(function (require) {
                                 console.log("readEntries error: " + error.code);
                                 statusStr += "<p>readEntries error: " + error.code + "</p>";
                             }
-                        );//.then(updateStatus(statusStr));
+                        );
                     };
                     var addError = function (error) {
                         console.log("getDirectory error: " + error.code);
@@ -339,7 +337,7 @@ define(function (require) {
                             DirsRemaining--;
                             continue; // skip blank / non-existent paths for this platform
                         }
-                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);//.done(updateStatus(statusStr));
+                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
                     }
                 } else {
                     // running in browser -- use html <input> to select file
@@ -1444,8 +1442,6 @@ define(function (require) {
                 // clear out the old view (if any)
                 currentView = null;
                 innerHtml = "";
-                var newWidth = "width:" + (100 / this.numSteps * number) + "%;";
-                this.$("#progress").attr("style", newWidth);
                 switch (number) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter

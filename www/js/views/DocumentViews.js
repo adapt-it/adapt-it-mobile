@@ -23,7 +23,6 @@ define(function (require) {
         fileCount       = 0,
         punctExp        = "",
         puncts          = [],
-        curIdx      = 0,
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -37,19 +36,33 @@ define(function (require) {
             var result = false;
             var errMsg = "";
             var sps = [];
-            // helper method to increment the progress bar
-            // the progress bar is incremented TWICE for each file in the import list; once when the
-            // data has been read / parsed and once when all the sourcephrases have been added to the database
-            // (which can lag a while)
-            var updateProgressBar = function () {
-                console.log("updateProgressBar()");
-                curIdx++;
-                var newWidth = "width:" + (200 / (fileCount * 2) * curIdx) + "%;";
-                $("#progress").attr("style", newWidth);
-                if ((fileCount * 2) === curIdx) {
-                    // last document -- display the OK button
-                    $("#OK").removeAttr("disabled");
+            // Callback for when the file is imported / saved successfully
+            var importSuccess = function () {
+                console.log("importSuccess()");
+                // update status
+                $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: file.name}));
+                if ($("#loading").length) {
+                    // mobile "please wait" UI
+                    $("#loading").hide();
+                    $("#waiting").hide();
+                    $("#OK").show();
                 }
+                // display the OK button
+                $("#OK").removeAttr("disabled");
+            };
+            // Callback for when the file failed to import
+            var importFail = function (e) {
+                console.log("importFail()");
+                // update status
+                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: file.name, reason: e}));
+                if ($("#loading").length) {
+                    // mobile "please wait" UI
+                    $("#loading").hide();
+                    $("#waiting").hide();
+                    $("#OK").show();
+                }
+                // display the OK button
+                $("#OK").removeAttr("disabled");
             };
             // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
@@ -193,8 +206,6 @@ define(function (require) {
                                 punctIdx = 0;
                                 index++;
                                 sps.push(sp);
-//                                sourcePhrases.add(sp);
-//                                sp.save();
                                 i++;
                             }
                         }
@@ -202,9 +213,12 @@ define(function (require) {
 
                     // add the sourcephrases
                     if (sps.length > 0) {
+                        $("#status").html(i18n.t("view.dscStatusSaving"));
                         $.when(sourcePhrases.addBatch(sps)).done(function (value) {
                             // update the progress bar
-                            updateProgressBar();
+                            importSuccess();
+                        }).fail(function (e) {
+                            importFail(e);
                         });
                     }
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
@@ -370,8 +384,6 @@ define(function (require) {
                                         punctIdx = 0;
                                         index++;
                                         sps.push(sp);
-//                                        sourcePhrases.add(sp);
-//                                        sp.save();
                                         i++;
                                     }
                                 }
@@ -440,9 +452,12 @@ define(function (require) {
                     parseNode($($xml).find("usx"));
                     // add the sourcephrases
                     if (sps.length > 0) {
+                        $("#status").html(i18n.t("view.dscStatusSaving"));
                         $.when(sourcePhrases.addBatch(sps)).done(function (value) {
                             // update the progress bar
-                            updateProgressBar();
+                            importSuccess();
+                        }).fail(function (e) {
+                            importFail(e);
                         });
                     }
                     // update the last chapter's verseCount
@@ -647,9 +662,12 @@ define(function (require) {
                     });
                     // add the sourcephrases
                     if (sps.length > 0) {
+                        $("#status").html(i18n.t("view.dscStatusSaving"));
                         $.when(sourcePhrases.addBatch(sps)).done(function (value) {
                             // update the progress bar
-                            updateProgressBar();
+                            importSuccess();
+                        }).fail(function (e) {
+                            importFail(e);
                         });
                     }
                     // update the last chapter's verseCount
@@ -866,9 +884,12 @@ define(function (require) {
                     // update the last chapter's verseCount
                     // add the sourcephrases
                     if (sps.length > 0) {
+                        $("#status").html(i18n.t("view.dscStatusSaving"));
                         $.when(sourcePhrases.addBatch(sps)).done(function (value) {
                             // update the progress bar
-                            updateProgressBar();
+                            importSuccess();
+                        }).fail(function (e) {
+                            importFail(e);
                         });
                     }
                     chapter.set('versecount', verseCount, {silent: true});
@@ -896,29 +917,9 @@ define(function (require) {
                     // something else -- try reading it as a text document
                     result = readTextDoc(this.result);
                 }
-                
-//                // clean out the sps array
-//                sps.length = 0;
-                // done parsing -- update the status
-                if (status.length > 0) {
-                    status += "<br>";
+                if (result === false) {
+                    importFail(errMsg);
                 }
-                if (result === true) {
-                    // succeeded
-                    status += i18n.t("view.dscCopyDocumentFound", {document: bookName});
-                } else {
-                    // failed
-                    status += "<em>" + i18n.t("view.dscCopyDocumentFailed", {document: bookName, reason: errMsg}) + "</em>";
-                    errMsg = "";
-                }
-                // update the status
-                var curStatus = $("#status2").html();
-                if (curStatus.length > 0) {
-                    curStatus += "<br>";
-                }
-                $("#status2").html(curStatus + status);
-                // update the progress bar
-                updateProgressBar();
             };
             reader.readAsText(file);
         },
@@ -933,41 +934,13 @@ define(function (require) {
             ////
             events: {
                 "change #selFile": "browserImportDocs",
-                "click #Import": "mobileImportDocs",
-                "click .c": "onClickFileRow",
+                "click .topcoat-list__item": "mobileImportDocs",
                 "click #OK": "onOK"
             },
-            // Handler for when the user checks / unchecks a file in the list.
-            // Looks to see if there are any files selected, and if so, enables
-            // the Import button.
-            onClickFileRow: function (event) {
-                var found = false;
-                // if there is at least one selected row, enable the import button
-                if ($(event.currentTarget).is(':checked') === true) {
-                    // easy answer -- the current target is checked, so enable
-                    found = true;
-                } else {
-                    // harder answer -- check _all_ the file rows
-                    $("tr").each(function () {
-                        if ($(this).find(".c").is(':checked') === true) {
-                            found = true;
-                        }
-                    });
-                }
-                if (found === false) {
-                    $("#Import").attr('disabled', true);
-                } else {
-                    $("#Import").removeAttr('disabled');
-                }
-            },
-            // Handler for when the user clicks the Select button
+            // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
             // file selections are returned by the browser in the event.currentTarget.files array
             browserImportDocs: function (event) {
-//                console.log("browserImportDocs");
-                $(".topcoat-progress-bar").show();
-                $("#progress").attr("style", "width: 0%;");
-                curIdx = 0;
                 var fileindex = 0;
                 var files = event.currentTarget.files;
                 fileCount = files.length;
@@ -978,59 +951,42 @@ define(function (require) {
                     fileindex++;
                 }
             },
-            // Handler for the Import button click event (mobile only) -
-            // this handler is more of a manual process than the browserImportDocs handler;
-            // we need to look at the checkboxes in the <tr> rows and gather the file paths
-            // from that list, then reconstitute file objects from the paths using the
-            // cordova-plugin-file / filesystem API.
+            // Handler for the when the user clicks a document in the list to import (mobile only) -
+            // we gather the file path from the selection, then reconstitute file objects
+            // from the path using the cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
-//                console.log("mobileImportDocs");
-                $(".topcoat-progress-bar").show();
-                $("#progress").attr("style", "width: 0%;");
-                // find all the selected files
-                var selected = [];
-                $("tr").each(function () {
-                    if ($(this).find(".c").is(':checked') === true) {
-                        selected.push($(this).find(".c").attr('id'));
-                    }
-                });
-                fileCount = selected.length;
-                // Get a "real" file object for each of the selected files.
-                // This requires using the html5 filesystem API.
-                curIdx = 0;
-                var fileindex = 0;
-                var i = 0;
-                var project = this.model;
-                var processFile = function (url) {
-                    window.resolveLocalFileSystemURL(url,
-                        function (entry) {
-                            entry.file(
-                                function (file) {
-                                    importFile(file, project);
-                                },
-                                function (error) {
-                                    console.log("FileEntry.file error: " + error.code);
-                                }
-                            );
-                        },
-                        function (error) {
-                            console.log("resolveLocalFileSystemURL error: " + error.code);
-                        });
-                };
-                while (fileindex < selected.length) {
-                    // process just the selected ones in the file list
-                    i = selected[fileindex];
-                    console.log(i + ", fileList: " + fileList[i]);
-                    processFile(fileList[selected[fileindex]]);
-                    fileindex++;
-                }
+                // replace the selection UI with the import UI
+                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#OK").hide();
+                // find all the selected file
+                var index = $(event.currentTarget).attr('id').trim();
+                var model = this.model;
+                console.log("index: " + index + ", FileList[index]: " + fileList[index]);
+                // request the persistent file system
+                window.resolveLocalFileSystemURL(fileList[index],
+                    function (entry) {
+                        entry.file(
+                            function (file) {
+                                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                                importFile(file, model);
+                            },
+                            function (error) {
+                                console.log("FileEntry.file error: " + error.code);
+                            }
+                        );
+                    },
+                    function (error) {
+                        console.log("resolveLocalFileSystemURL error: " + error.code);
+                    });
+                
             },
             // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
                 // save the model
                 this.model.save();
+                window.Application.currentProject = this.model;
                 // head back to the home page
-                window.history.go(-1);
+                window.history.back();
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file
@@ -1061,7 +1017,7 @@ define(function (require) {
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
-                    $("#browserSelect").hide();
+                    $("#browserGroup").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                     var localURLs    = [
                         cordova.file.dataDirectory,
@@ -1094,7 +1050,8 @@ define(function (require) {
                                                     (entries[i].name.indexOf(".sfm") > 0) ||
                                                     (entries[i].name.indexOf(".xml") > 0)) {
                                                 fileList[index] = entries[i].toURL();
-                                                fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
+                                                fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
+//                                                fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
                                                 index++;
                                             }
                                         }
@@ -1104,7 +1061,8 @@ define(function (require) {
                                 DirsRemaining--;
                                 if (DirsRemaining <= 0) {
                                     if (statusStr.length > 0) {
-                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
+                                        $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
+//                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
                                         $("#tb").html(statusStr);
                                         $("#OK").attr("disabled", true);
                                     } else {

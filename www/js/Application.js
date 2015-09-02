@@ -207,29 +207,30 @@ define(function (require) {
             adaptChapter: function (id) {
                 console.log("adaptChapter");
                 // refresh the models
-                this.ChapterList.fetch({reset: true, data: {name: ""}});
-                this.BookList.fetch({reset: true, data: {name: ""}});
-                this.ProjectList.fetch({reset: true, data: {name: ""}});
-                // find the chapter we want to adapt
-                var chapter = this.ChapterList.findWhere({chapterid: id});
-                if (chapter) {
-                    var theView = new AdaptViews.ChapterView({model: chapter});
-                    var proj = this.ProjectList.where({id: chapter.get('projectid').toString()})[0];
-                    var book = this.BookList.where({bookid: chapter.get('bookid').toString()})[0];
-                    theView.project = proj;
-                    // update the last adapted book and chapter
-                    if (proj) {
-                        this.filterList = proj.get('FilterMarkers'); // static (always ON) filters + whatever is specified for the project
-                        proj.set('lastDocument', book.get('name'));
-                        proj.set('lastAdaptedBookID', chapter.get('bookid'));
-                        proj.set('lastAdaptedChapterID', chapter.get('chapterid'));
-                        proj.set('lastAdaptedName', chapter.get('name'));
+                window.Application.BookList.fetch({reset: true, data: {name: ""}});
+                window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+                $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    // find the chapter we want to adapt
+                    var chapter = window.Application.ChapterList.findWhere({chapterid: id});
+                    if (chapter) {
+                        var theView = new AdaptViews.ChapterView({model: chapter});
+                        var proj = window.Application.ProjectList.where({id: chapter.get('projectid').toString()})[0];
+                        var book = window.Application.BookList.where({bookid: chapter.get('bookid').toString()})[0];
+                        theView.project = proj;
+                        // update the last adapted book and chapter
+                        if (proj) {
+                            window.Application.filterList = proj.get('FilterMarkers'); // static (always ON) filters + whatever is specified for the project
+                            proj.set('lastDocument', book.get('name'));
+                            proj.set('lastAdaptedBookID', chapter.get('bookid'));
+                            proj.set('lastAdaptedChapterID', chapter.get('chapterid'));
+                            proj.set('lastAdaptedName', chapter.get('name'));
+                        }
+                        window.Application.main.show(theView);
+    //                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
+                    } else {
+                        console.log("No chapter found matching id:" + id);
                     }
-                    window.Application.main.show(theView);
-//                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
-                } else {
-                    console.log("No chapter found matching id:" + id);
-                }
+                });
             }
         });
     

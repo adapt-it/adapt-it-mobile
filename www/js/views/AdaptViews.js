@@ -136,6 +136,7 @@ define(function (require) {
                 if (this.collection.length === 0) {
                     template = Handlebars.compile(tplLoadingPleaseWait);
                     this.$el.html(template());
+                    $("#OK").hide();
                 } else {
                     // add the collection
     //                console.log("SourcePhraseListView::render");
