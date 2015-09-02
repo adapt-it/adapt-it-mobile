@@ -929,6 +929,11 @@ define(function (require) {
         // AIM from the device or PC, depending on where AIM is run from. 
         ImportDocumentView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplImportDoc),
+            
+            initialize: function () {
+                document.addEventListener("resume", this.onResume, false);
+            },
+            
             ////
             // Event Handlers
             ////
@@ -936,6 +941,12 @@ define(function (require) {
                 "change #selFile": "browserImportDocs",
                 "click .topcoat-list__item": "mobileImportDocs",
                 "click #OK": "onOK"
+            },
+            // Resume handler -- user placed the app in the background, then resumed.
+            // Assume the file list could have changed, and reload this page
+            onResume: function () {
+                // refresh the view
+                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
