@@ -659,6 +659,8 @@ define(function (require) {
                     sourceText = "",
                     targetText = "",
                     refstrings = null,
+                    range = null,
+                    selection = null,
                     foundInKB = false;
                 // clear out any previous selection
                 this.clearSelection();
@@ -698,9 +700,19 @@ define(function (require) {
                     clearKBInput = true;
                     isDirty = false;
                 }
+                // select any text in the edit field
                 if (foundInKB === false) {
-                    // show the input field and set focus to it
-                    $(event.currentTarget).select();
+                    if (document.body.createTextRange) {
+                        range = document.body.createTextRange();
+                        range.moveToElementText($(event.currentTarget));
+                        range.select();
+                    } else if (window.getSelection) {
+                        selection = window.getSelection();
+                        range = document.createRange();
+                        range.selectNodeContents($(event.currentTarget)[0]);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
                 }
             },
             // keydown event handler for the target field

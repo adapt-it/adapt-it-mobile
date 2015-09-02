@@ -211,6 +211,11 @@ define(function (require) {
         // Copy a project file from an .aic file on the device.
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
+
+            initialize: function () {
+                document.addEventListener("resume", this.onResume, false);
+            },
+                        
             ////
             // Event Handlers
             ////
@@ -218,6 +223,12 @@ define(function (require) {
                 "change #selFile": "browserImportAIC",
                 "click .topcoat-list__item": "mobileImportAIC",
                 "click #OK": "onOK"
+            },
+            // Resume handler -- user placed the app in the background, then resumed.
+            // Assume the file list could have changed, and reload this page
+            onResume: function () {
+                // refresh the view
+                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             // Handler for the OK button click -- 
             // saves any changes and goes back to the home page
