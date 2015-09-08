@@ -21,6 +21,7 @@
         "dscGetStarted": "Welkam long Adapt It Mobile! Yu laik mekim nupela projek o kopi projek?",
         "lblCreateProject": "Nupela projek",
         "dscCreateProject": "Mekim nupela projek",
+        "lblSelectLanguage": "Selektim tokples...",
         "dscProjectSourceLanguage": "<b>Step 1: Source Language</b><br>Enter the name and code of the source language. If you are unsure, click on the Lookup Codes button.",
         "dscProjectTargetLanguage": "<b>Step 2: Target Language</b><br>Enter the name and code of the target language. If you are unsure, click on the Lookup Codes button.",
         "dscProjectFonts": "<em>Step 3: Fonts</em><br>Specify the fonts and colors for the source, target and navigation text.",

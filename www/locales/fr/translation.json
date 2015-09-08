@@ -21,6 +21,7 @@
         "dscGetStarted": "Bienvenue à Adapt It Mobile! Pour commencer, vous pouvez soit créer un nouveau projet ou en ouvrir un existant.",
         "lblCreateProject": "Créer un projet",
         "dscCreateProject": "Créez un nouveau projet",
+        "lblSelectLanguage": "Select Language...",
         "dscProjectSourceLanguage": "<b>Étape 1: La langue d'origine</b><br>Indiquer le nom de la langue d'origine, et le cas échéant dialecte.",
         "dscProjectTargetLanguage": "<b>Étape 2: La langue cible</b><br>Indiquer le nom de la langue cible, et le cas échéant dialecte.",
         "dscProjectFonts": "<em>Step 3: Fonts</em><br>Spécifiez les polices et les couleurs de la langue d'origine, la langue cible et de la navigation texte.",

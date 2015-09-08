@@ -33,6 +33,8 @@ define(function (require) {
         isSelecting = false,
         isPlaceholder = false,
         isPhrase = false,
+        isDrafting = true,
+        MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
         isRetranslation = false,
         template = null,
@@ -271,6 +273,7 @@ define(function (require) {
             // this also calls blur(), which saves any changes.
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
+                var temp_cursor = null;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -281,7 +284,19 @@ define(function (require) {
                     if (next_edit.id.substr(0, 4) !== "pile") {
                         // Probably a header -- see if you can go to the previous strip
                         if (selectedStart.parentElement.previousElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.previousElementSibling.lastElementChild;
+                            temp_cursor = selectedStart.parentElement.previousElementSibling;
+                            if (temp_cursor.classList.contains("filter")) {
+                                // this is a filter strip -- keep going
+                                while (temp_cursor && temp_cursor.classList.contains("filter")) {
+                                    temp_cursor = temp_cursor.previousElementSibling; // back one more strip
+                                }
+                            }
+                            if (temp_cursor) {
+                                next_edit = temp_cursor.lastElementChild;
+                            } else {
+                                next_edit = null;
+                                console.log("reached first pile.");
+                            }
                         } else {
                             next_edit = null;
                             console.log("reached first pile.");
@@ -294,11 +309,26 @@ define(function (require) {
                     } else {
                         // last pile in the strip -- see if you can go to the next strip
                         if (selectedStart.parentElement.nextElementSibling !== null) {
-                            next_edit = selectedStart.parentElement.nextElementSibling.childNodes[3];
+                            temp_cursor = selectedStart.parentElement.nextElementSibling;
+                            if (temp_cursor.classList.contains("filter")) {
+                                // this is a filter strip -- keep going
+                                while (temp_cursor && temp_cursor.classList.contains("filter")) {
+                                    temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
+                                }
+                            }
+                            if (temp_cursor) {
+                                next_edit = temp_cursor.childNodes[3];
+                            } else {
+                                next_edit = null;
+                                console.log("reached last pile.");
+                            }
                         } else {
                             // no more piles
                             next_edit = null;
                             console.log("reached last pile.");
+                        }
+                        // if we reached the last pile, check to see if there's another chapter to adapt
+                        if (next_edit === null) {
                             // Check for a chapter after the current one in the current book
                             var nextChapter = 0;
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
@@ -368,6 +398,10 @@ define(function (require) {
                 if (next_edit) {
                     console.log("next edit: " + next_edit.id);
                     next_edit.childNodes[4].focus();
+                } else {
+                    // no next edit (reached the first or last pile) -- 
+                    // clear out the moving direction so we don't keep going
+                    MovingDir = 0;
                 }
             },
             // Helper method to clear out the selection and disable the toolbar buttons
@@ -664,9 +698,10 @@ define(function (require) {
                     foundInKB = false;
                 // clear out any previous selection
                 this.clearSelection();
+                
                 // set the current adaptation cursor
                 selectedStart = event.currentTarget.parentElement; // pile
-                //console.log("selectedStart: " + selectedStart.id);
+                console.log("selectedStart: " + selectedStart.id);
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -691,27 +726,49 @@ define(function (require) {
                     } else {
                         // nothing in the KB -- populate the target with the source text as the next best guess
                         $(event.currentTarget).html(sourceText);
+                        MovingDir = 0; // stop here
                         clearKBInput = true;
                         isDirty = true; // we made a change (populating from the source text)
+                        // select any text in the edit field
+                        if (document.body.createTextRange) {
+                            range = document.body.createTextRange();
+                            range.moveToElementText($(event.currentTarget));
+                            range.select();
+                        } else if (window.getSelection) {
+                            console.log("getSelection");
+                            selection = window.getSelection();
+                            range = document.createRange();
+                            range.selectNodeContents($(event.currentTarget)[0]);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        }
                     }
                 } else {
-                    // something already in the edit field -- reset the dirty bit because
-                    // we haven't made any changes yet
-                    clearKBInput = true;
-                    isDirty = false;
-                }
-                // select any text in the edit field
-                if (foundInKB === false) {
-                    if (document.body.createTextRange) {
-                        range = document.body.createTextRange();
-                        range.moveToElementText($(event.currentTarget));
-                        range.select();
-                    } else if (window.getSelection) {
-                        selection = window.getSelection();
-                        range = document.createRange();
-                        range.selectNodeContents($(event.currentTarget)[0]);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
+                    // something already in the edit field -- are we looking for the next
+                    // empty field, or did we just select this one?
+                    if (MovingDir !== 0 && isDrafting === true) {
+                        // looking for the next empty field -- keep going
+                        this.moveCursor(event, (MovingDir === 1) ? true : false);
+                    } else {
+                        // We really selected this field -- stay here.
+                        // reset the dirty bit because
+                        // we haven't made any changes yet
+                        MovingDir = 0; // stop here
+                        clearKBInput = true;
+                        isDirty = false;
+                        // select any text in the edit field
+                        if (document.body.createTextRange) {
+                            range = document.body.createTextRange();
+                            range.moveToElementText($(event.currentTarget));
+                            range.select();
+                        } else if (window.getSelection) {
+                            console.log("getSelection");
+                            selection = window.getSelection();
+                            range = document.createRange();
+                            range.selectNodeContents($(event.currentTarget)[0]);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                        }
                     }
                 }
             },
@@ -721,7 +778,7 @@ define(function (require) {
                     strID = null,
                     model = null,
                     targetText = "";
-//                console.log("editAdaptation");
+                console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
                     strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
@@ -738,8 +795,10 @@ define(function (require) {
                     }
                     // If tab/enter is pressed, blur and move to edit the next pile
                     if (event.shiftKey) {
+                        MovingDir = -1;
                         this.moveCursor(event, false);  // shift tab/enter -- move backwards
                     } else {
+                        MovingDir = 1;
                         this.moveCursor(event, true);   // normal tab/enter -- move forwards
                     }
                 } else {
@@ -759,7 +818,7 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-//                console.log("unselectedAdaptation");
+                console.log("unselectedAdaptation");
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
                     $(".target").removeClass("fromkb");
