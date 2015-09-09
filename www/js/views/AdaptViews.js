@@ -207,7 +207,7 @@ define(function (require) {
                 var i = 0,
                     result = "",
                     source = model.get('source');
-                // If we aren't copying punctuation for this project, just return the target (unaltered)
+                // If we aren't capitalizing for this project, just return the target (unaltered)
                 if (this.project.get('AutoCapitalization') === 'false' || this.project.get('SourceHasUpperCase') === 'false') {
                     return target;
                 }
@@ -226,7 +226,7 @@ define(function (require) {
             autoRemoveCaps: function (theString, isSource) {
                 var i = 0,
                     result = "";
-                // If we aren't copying punctuation for this project, just return theString
+                // If we aren't capitalizing for this project, just return theString
                 if (this.project.get('AutoCapitalization') === 'false') {
                     return theString;
                 }
@@ -747,7 +747,9 @@ define(function (require) {
                     // something already in the edit field -- are we looking for the next
                     // empty field, or did we just select this one?
                     if (MovingDir !== 0 && isDrafting === true) {
-                        // looking for the next empty field -- keep going
+                        // looking for the next empty field -- 
+                        // clear the dirty bit and keep going
+                        isDirty = false;
                         this.moveCursor(event, (MovingDir === 1) ? true : false);
                     } else {
                         // We really selected this field -- stay here.
@@ -830,11 +832,11 @@ define(function (require) {
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
                 model = this.collection.get(strID);
-                // add any punctuation back to the target field
-                $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                 // check for changes in the edit field
                 if (isDirty === true) {
                     // something has changed -- update the KB
+                    // add any punctuation back to the target field
+                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                     // find this source/target pair in the KB
                     tu = this.findInKB(this.autoRemoveCaps(model.get('source'), true));
                     if (tu) {
@@ -903,7 +905,10 @@ define(function (require) {
                     model.save({target: trimmedValue});
                     // if the target differs from the source, make it display in green
                     if (model.get('source') === model.get('target')) {
-                        // source === target -- remove "differences" from the class so the text is black
+                        // source === target --> remove "differences" from the class so the text is black
+                        $(event.currentTarget).removeClass('differences');
+                    } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                        // source + punctuation == target --> remove "differences"
                         $(event.currentTarget).removeClass('differences');
                     } else if (!$(event.currentTarget).hasClass('differences')) {
                         // source != target -- add "differences" to the class so the text is green
@@ -1194,8 +1199,17 @@ define(function (require) {
 
         ChapterView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplChapter),
+            initialize: function () {
+                document.addEventListener("resume", this.onResume, false);
+            },
             regions: {
                 container: "#chapter"
+            },
+            // Resume handler -- user placed the app in the background, then resumed.
+            // Refresh this view to wake it up.
+            onResume: function () {
+                // refresh the view
+                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             onShow: function () {
                 console.log("ChapterView::onShow");
