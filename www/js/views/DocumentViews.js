@@ -910,11 +910,21 @@ define(function (require) {
                     result = readUSFMDoc(this.result);
                 } else if (file.name.indexOf(".usx") > 0) {
                     result = readUSXDoc(this.result);
-                           
                 } else if (file.name.indexOf(".xml") > 0) {
                     result = readXMLDoc(this.result);
+                } else if (file.name.indexOf(".txt") > 0) {
+                    // .txt -- check to see if it's really USFM under the hood
+                    // find the ID of this book
+                    index = this.result.indexOf("\\id");
+                    if (index >= 0) {
+                        // _probably_ USFM under the hood -- at least try to read it as USFM
+                        result = readUSFMDoc(this.result);
+                    } else {
+                        // not USFM -- try reading it as a text document
+                        result = readTextDoc(this.result);
+                    }
                 } else {
-                    // something else -- try reading it as a text document
+                    // some other extension -- try reading it as a text document
                     result = readTextDoc(this.result);
                 }
                 if (result === false) {
