@@ -27,8 +27,6 @@
 #    - flesh out next steps message at end of script
 #    - ensured that this script can be run repeatedly without problems on 12.04LTS and 14.04LTS.
 
-PROJECT_DIR=${1:-~/projects}	# AIM development file location, default ~/projects/
-
 # This vercomp function from: Dennis Williamson post @ http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
 vercomp () {
     if [[ $1 == $2 ]]
@@ -60,6 +58,8 @@ vercomp () {
     done
     return 0
 }
+
+PROJECT_DIR=${1:-~/projects}	# AIM development file location, default ~/projects/
 
 # whm Notes: 
 # 1. npm is not included in AIM_DEV_TOOLS below as it is installed
@@ -116,7 +116,9 @@ fi
 npmMinVer="2.10.0"
 nodejsMinVer="0.12.3"
 npmVerRepo=`sudo apt-cache show npm | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1 | cut -d '-' -f1`
-nodejsVerRepo=`sudo apt-cache show nodejs | grep Version: | cut -d ' ' -f2 | cut -d '~' -f1 | cut -d '-' -f1`
+nodejsVerRepo=`sudo apt-cache show nodejs | grep -m 1 Version: | cut -d ' ' -f2 | cut -d '~' -f1 | cut -d '-' -f1`
+queryUser="FALSE"
+
 echo -e "\nChecking versions of npm and nodejs available in repos..."
 vercomp $npmMinVer $npmVerRepo
 case $? in
@@ -130,6 +132,7 @@ then
 else
   echo "  The npm version $npmVerRepo is too old for AIM development."
   echo "  At least version $npmMinVer is required to develop AIM on your system."
+  queryUser="TRUE"
 fi
 vercomp $nodejsMinVer $nodejsVerRepo
 case $? in
@@ -147,6 +150,10 @@ else
   echo "  adding nodesource.list to your /etc/apt/sources.list.d and installing"
   echo "  other dependencies."
   echo "  Installing nodejs from NodeSource will also upgrade your npm version."
+  queryUser="TRUE"
+fi
+
+if [ "$queryUser" == "TRUE" ]; then
   # Ask user if we should continue and install the required version from nodesource
   read -r -p "Install the newer version of nodejs/npm from NodeSource? [y/N] " response
   case $response in
@@ -159,6 +166,7 @@ else
         ;;
   esac
 fi
+
 # Retrieving and executing the NodeSource script requires curl, so make sure it is installed
 sudo apt-get install curl
 # whm added: some re-install problems can be avoided by first removing any previous npm configuration at ~/.npm
@@ -267,9 +275,9 @@ rsync -a --update "${PROJECT_DIR}"/adapt-it-mobile/www/res/ "${PROJECT_DIR}"/ada
 
 # Download and unpack/set up Android SDK (AOSP)
 echo -e "\nDownload and unpack/set up Android SDK (AOSP)"
-SDK_VERSION=24.2 # Latest SDK version, see https://developer.android.com/sdk/index.html#Other
+SDK_VERSION=24.3.4 # Latest SDK version, see https://developer.android.com/sdk/index.html#Other
 wget -c http://dl.google.com/android/android-sdk_r${SDK_VERSION}-linux.tgz
-tar Czxfp ~ "${PROJECT_DIR}/android-sdk_r${SDK_VERSION}-linux.tgz"
+tar Czxfp ~ "${PROJECT_DIR}/adapt-it-mobile/android-sdk_r${SDK_VERSION}-linux.tgz"
 grep -sq "/android-sdk-linux/tools" ~/.profile \
   || echo 'PATH=$PATH:$HOME/android-sdk-linux/tools:$HOME/android-sdk-linux/platform-tools' >>~/.profile
 grep -sq "^export ANDROID_HOME=" ~/.profile \
@@ -297,6 +305,10 @@ fi
 echo -e "\nCreate a default Android emulator that uses API 22/Android 5.1.1"
 android list avds -c |grep -qs 'android-5.1.1-WVGA800' || \
   android create avd --name android-5.1.1-WVGA800 -t android-22 --abi default/x86
+
+# Fix a hardware gpu problem that can cause the AIM app in the emulator to say, "Unfortunately Adapt It Mobile has stopped running."  
+echo "hw.gpu.enabled=yes" >> $HOME/.android/avd/android-5.1.1-WVGA800.avd/config.ini
+echo "hw.gpu.mode=host" >> $HOME/.android/avd/android-5.1.1-WVGA800.avd/config.ini
 
 # [Optional] Install the Brackets editor.  See http://download.brackets.io/.
 
