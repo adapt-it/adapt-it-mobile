@@ -224,6 +224,8 @@ define(function (require) {
                             proj.set('lastAdaptedBookID', chapter.get('bookid'));
                             proj.set('lastAdaptedChapterID', chapter.get('chapterid'));
                             proj.set('lastAdaptedName', chapter.get('name'));
+                            proj.save();
+                            window.Application.currentProject = proj;
                         }
                         window.Application.main.show(theView);
     //                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
