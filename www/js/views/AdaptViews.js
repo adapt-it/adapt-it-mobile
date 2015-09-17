@@ -162,7 +162,7 @@ define(function (require) {
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
             // Helper method to copy any punctuation from the source to the target field. This method is
-            // called from unselectedAdaptation (when the focus blurs in the targt field).
+            // called from unselectedAdaptation (when the focus blurs in the target field).
             // 
             copyPunctuation: function (model, target) {
                 var i = 0,
@@ -425,10 +425,13 @@ define(function (require) {
             events: {
                 "mousedown .source": "selectingPilesStart",
                 "touchstart .source": "selectingPilesStart",
+                "touchstart .marker": "selectingPilesStart",
                 "mousemove .source": "selectingPilesMove",
                 "touchmove .source": "selectingPilesMove",
+                "touchmove .marker": "selectingPilesMove",
                 "mouseup .source": "selectingPilesEnd",
                 "touchend .source": "selectingPilesEnd",
+                "touchend .marker": "selectingPilesEnd",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
                 "mouseup .pile": "checkStopSelecting",
