@@ -163,6 +163,11 @@ input[type="file"] {
 .topcoat-button-bar, .topcoat-icon-button--quiet {
     margin-top: 1px;
 }
+/* bigger hyperlink target */
+.big-link {
+    display:inline-block; 
+    width:100%;
+}
 
 h1 {
     background: transparent;
