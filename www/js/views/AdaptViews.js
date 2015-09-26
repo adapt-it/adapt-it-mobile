@@ -34,6 +34,7 @@ define(function (require) {
         isPlaceholder = false,
         isPhrase = false,
         isDrafting = true,
+        isSelectingFirstPhrase = false,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
         isRetranslation = false,
@@ -161,9 +162,34 @@ define(function (require) {
                 var curDate = new Date();
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
+            // Helper method to strip any starting / ending punctuation from the target field. 
+            // This method is called from unselectedAdaptation before the target text is stored in the KB,
+            // so we don't store items w
+            stripPunctuation: function (target) {
+                var result = target,
+                    startIdx = 0,
+                    endIdx = target.length;
+                // check for empty string
+                if (endIdx === 0) {
+                    return result;
+                }
+                // starting index
+                while (startIdx < (target.length - 1) && punctsTarget.indexOf(target.charAt(startIdx)) > -1) {
+                    startIdx++;
+                }
+                // ending index
+                while (endIdx > 0 && punctsTarget.indexOf(target.charAt(endIdx - 1)) > -1) {
+                    endIdx--;
+                }
+                // sanity check for all punctuation
+                if (endIdx <= startIdx) {
+                    return "";
+                }
+                result = target.substr(startIdx, (endIdx) - startIdx);
+                return result;
+            },
             // Helper method to copy any punctuation from the source to the target field. This method is
             // called from unselectedAdaptation (when the focus blurs in the target field).
-            // 
             copyPunctuation: function (model, target) {
                 var i = 0,
                     result = "",
@@ -260,7 +286,7 @@ define(function (require) {
                 var result = null,
                     strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
                 try {
-                    result = this.kblist.findWhere({'source': strNoPunctuation});
+                    result = this.kblist.findWhere({'source': key}); // strNoPunctuation});
                     if (typeof result === 'undefined') {
                         return null;
                     }
@@ -396,8 +422,9 @@ define(function (require) {
                     }
                 }
                 if (next_edit) {
+                    // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
-                    next_edit.childNodes[4].focus();
+                    $(next_edit.childNodes[4]).mouseup();
                 } else {
                     // no next edit (reached the first or last pile) -- 
                     // clear out the moving direction so we don't keep going
@@ -435,12 +462,15 @@ define(function (require) {
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
                 "mouseup .pile": "checkStopSelecting",
-                "mouseup .target": "checkStopSelecting",
+                "mousedown .target": "selectingAdaptation",
+                "touchstart .target": "selectingAdaptation",
+                "mouseup .target": "selectedAdaptation",
+                "touchend .target": "selectedAdaptation",
                 "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
                 "blur .target": "unselectedAdaptation"
             },
-
+            
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 var model = null,
@@ -521,12 +551,12 @@ define(function (require) {
                     $(selectedEnd).find('.source').mouseup();
                 }
             },
-            // user released the mouse here
+            // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
                 // re-add the contenteditable fields
                 var tmpItem = null,
                     tmpIdx = 0;
-//                console.log("selectingPilesEnd");
+                console.log("selectingPilesEnd");
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
@@ -619,6 +649,10 @@ define(function (require) {
                     }
                     $("#Placeholder").prop('disabled', false);
                 }
+                // EDB try -- select the first item so the user can start typing
+                // (does this remove the selection?)
+                isSelectingFirstPhrase = true;
+                $(selectedStart).find('.target').mouseup();
             },
             // Event handler for when the user clicks on a Filter icon (the funnel thingy):
             // display a read-only alert to the user containing:
@@ -688,7 +722,12 @@ define(function (require) {
                     
                 }
             },
-            // focus event handler for the target field 
+            // mouseDown / touchStart event handler for the target field
+            selectingAdaptation: function (event) {
+                selectedStart = event.currentTarget.parentElement; // pile
+                console.log("selectingAdaptation: " + selectedStart.id);
+            },
+            // mouseUp / touchEnd event handler for the target field 
             selectedAdaptation: function (event) {
                 var tu = null,
                     strID = "",
@@ -699,12 +738,46 @@ define(function (require) {
                     range = null,
                     selection = null,
                     foundInKB = false;
-                // clear out any previous selection
-                this.clearSelection();
+                
+                // ** iOS comment **
+                // iOS doesn't pass along the mouseUp event for the soft keyboard --
+                // to work around the issue, we've directed the focus event here as well. If this is
+                // NOT an iOS device, we've already handled the event and can just return
+                if ((event.type === "focus") || (event.type === "focusin")) {
+                    if (navigator.notification && device.platform === "iOS") {
+                        console.log("selectedAdaptation: responding to iOS focus event");
+                    } else {
+                        // we've already handled this in the touchend event -- just return
+                        console.log("selectedAdaptation: focus event on non-iOS device -- ignoring");
+                        return;
+                    }
+                } else {
+                    // touch or mouse event got us here
+
+                    if (isSelecting === true) {
+                        // pretend the user wanted the last selected item to be the end of the selection
+                        $(selectedEnd).find('.source').mouseup();
+                        return;
+                    }
+
+                    // Are we setting the focus on the first phrase after a selection?
+                    if (isSelectingFirstPhrase === true) {
+                        // yes -- keep the selection, but clear out the flag
+                        console.log("Selecting the first phrase -- gets a pass");
+                        isSelectingFirstPhrase = false;
+                    } else {
+                        // no -- clear out any previous selection
+                        console.log("clearing selection");
+                        this.clearSelection();
+                    }
+
+                }
                 
                 // set the current adaptation cursor
-                selectedStart = event.currentTarget.parentElement; // pile
-                console.log("selectedStart: " + selectedStart.id);
+                if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
+                    selectedStart = event.currentTarget.parentElement; // pile
+                }
+                console.log("selectedAdaptation: " + selectedStart.id);
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -713,6 +786,7 @@ define(function (require) {
                     model = this.collection.get(strID);
                     sourceText = model.get('source');
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                    console.log("Target is empty; tu = " + tu);
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
@@ -731,14 +805,14 @@ define(function (require) {
                         $(event.currentTarget).html(sourceText);
                         MovingDir = 0; // stop here
                         clearKBInput = true;
-                        isDirty = true; // we made a change (populating from the source text)
+                        // no change yet -- this is just a suggestion
+                        isDirty = false;
                         // select any text in the edit field
                         if (document.body.createTextRange) {
                             range = document.body.createTextRange();
                             range.moveToElementText($(event.currentTarget));
                             range.select();
                         } else if (window.getSelection) {
-                            console.log("getSelection");
                             selection = window.getSelection();
                             range = document.createRange();
                             range.selectNodeContents($(event.currentTarget)[0]);
@@ -749,6 +823,7 @@ define(function (require) {
                 } else {
                     // something already in the edit field -- are we looking for the next
                     // empty field, or did we just select this one?
+                    console.log("Target NOT empty; MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
                     if (MovingDir !== 0 && isDrafting === true) {
                         // looking for the next empty field -- 
                         // clear the dirty bit and keep going
@@ -767,7 +842,6 @@ define(function (require) {
                             range.moveToElementText($(event.currentTarget));
                             range.select();
                         } else if (window.getSelection) {
-                            console.log("getSelection");
                             selection = window.getSelection();
                             range = document.createRange();
                             range.selectNodeContents($(event.currentTarget)[0]);
@@ -793,6 +867,8 @@ define(function (require) {
                     event.preventDefault();
                     $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- accept the edit
+                    isDirty = true;
                     // make sure there is a selectedStart, so that we can navigate to the next pile
                     if (selectedStart === null) {
                         selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
@@ -809,6 +885,10 @@ define(function (require) {
                 } else {
                     // any other key - set the dirty bit
                     isDirty = true;
+                    // also go that toggle phrase thing if needed
+                    if (selectedEnd !== selectedStart) {
+                        $("#Phrase").click();
+                    }
                 }
             },
             // User has moved out of the current adaptation input field (blur on target field)
@@ -837,16 +917,15 @@ define(function (require) {
                 model = this.collection.get(strID);
                 // check for changes in the edit field
                 if (isDirty === true) {
+                    console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                     // something has changed -- update the KB
-                    // add any punctuation back to the target field
-                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                     // find this source/target pair in the KB
                     tu = this.findInKB(this.autoRemoveCaps(model.get('source'), true));
                     if (tu) {
                         var i = 0,
                             found = false,
                             refstrings = tu.get('refstring'),
-                            oldValue = this.autoRemoveCaps(model.get('target'), false);
+                            oldValue = this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false));
                         // delete or decrement the old value
                         if (oldValue.length > 0) {
                             // the model has an old value -- try to find and remove the corresponding KB entry
@@ -862,7 +941,7 @@ define(function (require) {
                         }
                         // add or increment the new value
                         for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].target === this.autoRemoveCaps(trimmedValue, false)) {
+                            if (refstrings[i].target === this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false))) {
                                 refstrings[i].n++;
                                 found = true;
                                 break;
@@ -872,7 +951,7 @@ define(function (require) {
                             // no entry in KB with this source/target -- add one
                             var newRS = [
                                 {
-                                    'target': this.autoRemoveCaps(trimmedValue, false),
+                                    'target': this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
                                     'n': '1'
                                 }
                             ];
@@ -890,7 +969,7 @@ define(function (require) {
                                 source: this.autoRemoveCaps(model.get('source'), true),
                                 refstring: [
                                     {
-                                        target: this.autoRemoveCaps(trimmedValue, false),
+                                        target: this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
                                         n: "1"
                                     }
                                 ],
@@ -900,9 +979,29 @@ define(function (require) {
                         this.kblist.add(newTU);
                         newTU.save();
                     }
+                    // add any punctuation back to the target field
+                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                } else {
+                    console.log("Dirty bit NOT set. Skipping save.");
+                    // dirty bit is false -- check to see if the target matches what's in the edit field
+                    if (trimmedValue) {
+                        // User clicked away without changing anything -- this is a cancel operation
+                        // Is there anything in the old target field?
+                        if (model.get('target').length === 0) {
+                            // nothing in the old target field -- clear out the edit field
+                            $(event.currentTarget).html("");
+                            trimmedValue = "";
+                        } else {
+                            // something in the old target field -- just clear the local copy so the 
+                            // model doesn't update
+                            trimmedValue = "";
+                            // add any punctuation back to the target field
+                            $(event.currentTarget).html(this.copyPunctuation(model, model.get('target')));
+                        }
+                    }
                 }
-                // Now update the model
-                if (trimmedValue) {
+                // Update the model if needed
+                if (trimmedValue && trimmedValue.length > 0) {
     //                console.log(model);
                     // update the model with the new target text
                     model.save({target: trimmedValue});
@@ -917,21 +1016,21 @@ define(function (require) {
                         // source != target -- add "differences" to the class so the text is green
                         $(event.currentTarget).addClass('differences');
                     }
-                    // if we reached a new verse, update the last adapted count
-                    if (model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
-                        // get the verse #
-                        var stridx = model.get('markers').indexOf("\\v ") + 3;
-                        var verseNum = "";
-                        if (model.get('markers').lastIndexOf(" ") < stridx) {
-                            // no space after the verse # (it's the ending of the string)
-                            verseNum = model.get('markers').substr(stridx);
-                        } else {
-                            // space after the verse #
-                            verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(" ", stridx) - stridx);
-                        }
-                        console.log("Adapting verse: " + verseNum);
-                        chapter.set('lastadapted', verseNum);
+                }
+                // if we just finished work on a new verse, update the last adapted count
+                if (model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
+                    // get the verse #
+                    var stridx = model.get('markers').indexOf("\\v ") + 3;
+                    var verseNum = "";
+                    if (model.get('markers').lastIndexOf(" ") < stridx) {
+                        // no space after the verse # (it's the ending of the string)
+                        verseNum = model.get('markers').substr(stridx);
+                    } else {
+                        // space after the verse #
+                        verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(" ", stridx) - stridx);
                     }
+                    console.log("Adapting verse: " + verseNum);
+                    chapter.set('lastadapted', verseNum);
                 }
                 // check for an old selection and remove it if needed
                 if (selectedStart !== null) {
