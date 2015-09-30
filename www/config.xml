@@ -19,7 +19,7 @@
     <!-- for Blackberry 10 -->
     <feature name="File" value="File" />
     <!-- preferences -->
-    <preference name="phonegap-version" value="cli-5.1.1" />
+    <preference name="phonegap-version" value="cli-5.2.0" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
