@@ -35,6 +35,8 @@ define(function (require) {
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
+        curIdx = 0,
+        prevIdx = 0,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
         isRetranslation = false,
@@ -850,6 +852,10 @@ define(function (require) {
                         }
                     }
                 }
+                // if we're done moving, scroll the element into view
+                if (MovingDir === 0) {
+                    $(event.currentTarget)[0].scrollIntoView(false);
+                }
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
@@ -868,6 +874,8 @@ define(function (require) {
                     $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // tab or enter key -- accept the edit
+                    event.preventDefault();
+                    event.stopPropagation();
                     isDirty = true;
                     // make sure there is a selectedStart, so that we can navigate to the next pile
                     if (selectedStart === null) {
