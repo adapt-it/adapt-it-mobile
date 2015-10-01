@@ -298,6 +298,68 @@ define(function (require) {
                 }
                 return result;
             },
+            // Helper method to store the specified source and target text in the KB.
+            saveInKB: function (sp, targetValue) {
+                var tu = this.findInKB(this.autoRemoveCaps(sp.get('source'), true));
+                if (tu) {
+                    var i = 0,
+                        found = false,
+                        refstrings = tu.get('refstring'),
+                        oldValue = this.stripPunctuation(this.autoRemoveCaps(sp.get('target'), false));
+                    // delete or decrement the old value
+                    if (oldValue.length > 0) {
+                        // the model has an old value -- try to find and remove the corresponding KB entry
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].target === oldValue) {
+                                if (refstrings[i].n !== '0') {
+                                    // more than one refcount -- decrement it
+                                    refstrings[i].n--;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    // add or increment the new value
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === this.stripPunctuation(this.autoRemoveCaps(targetValue, false))) {
+                            refstrings[i].n++;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found === false) {
+                        // no entry in KB with this source/target -- add one
+                        var newRS = [
+                            {
+                                'target': this.stripPunctuation(this.autoRemoveCaps(targetValue, false)),
+                                'n': '1'
+                            }
+                        ];
+                        refstrings.push(newRS);
+                    }
+                    // update the KB model
+                    tu.save({refstring: refstrings});
+                } else {
+                    // no entry in KB with this source -- add one
+                    var newID = Underscore.uniqueId(),
+                        currentdate = new Date(),
+                        newTU = new kbModels.TargetUnit({
+                            tuid: newID,
+                            projectid: this.project.id,
+                            source: this.autoRemoveCaps(sp.get('source'), true),
+                            refstring: [
+                                {
+                                    target: this.stripPunctuation(this.autoRemoveCaps(targetValue, false)),
+                                    n: "1"
+                                }
+                            ],
+                            timestamp: this.getTimestamp(),
+                            user: ""
+                        });
+                    this.kblist.add(newTU);
+                    newTU.save();
+                }
+            },
             // Helper method to move the editing cursor forwards or backwards one pile.
             // this also calls blur(), which saves any changes.
             moveCursor: function (event, moveForward) {
@@ -768,6 +830,8 @@ define(function (require) {
                             // either TAB or Shift+TAB -- save the previous field if it needs it
                             // (note: model still refers to the previous selection sourcephrase)
                             if (tempIOSValue && tempIOSValue.length > 0) {
+                                // save the new value to the KB
+                                this.saveInKB(model, tempIOSValue);
                                 // update the model with the new target text
                                 model.save({target: tempIOSValue});
                                 $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tempIOSValue));
@@ -784,6 +848,8 @@ define(function (require) {
                                 }
                             }
                         }
+                        // done saving -- clear out the temp value
+                        tempIOSValue = "";
                     } else {
                         // we've already handled this in the touchend event -- just return
                         console.log("selectedAdaptation: focus event on non-iOS device -- ignoring");
@@ -856,6 +922,8 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
+                        // scroll the edit field into view
+                        $(event.currentTarget)[0].scrollIntoView(false);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
@@ -885,11 +953,9 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
+                        // scroll the edit field into view
+                        $(event.currentTarget)[0].scrollIntoView(false);
                     }
-                }
-                // if we're done moving, scroll the element into view
-                if (MovingDir === 0) {
-                    $(event.currentTarget)[0].scrollIntoView(false);
                 }
             },
             // keydown event handler for the target field
@@ -962,68 +1028,11 @@ define(function (require) {
                 if (isDirty === true) {
                     console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                     // something has changed -- update the KB
-                    // find this source/target pair in the KB
-                    tu = this.findInKB(this.autoRemoveCaps(model.get('source'), true));
-                    if (tu) {
-                        var i = 0,
-                            found = false,
-                            refstrings = tu.get('refstring'),
-                            oldValue = this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false));
-                        // delete or decrement the old value
-                        if (oldValue.length > 0) {
-                            // the model has an old value -- try to find and remove the corresponding KB entry
-                            for (i = 0; i < refstrings.length; i++) {
-                                if (refstrings[i].target === oldValue) {
-                                    if (refstrings[i].n !== '0') {
-                                        // more than one refcount -- decrement it
-                                        refstrings[i].n--;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        // add or increment the new value
-                        for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].target === this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false))) {
-                                refstrings[i].n++;
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found === false) {
-                            // no entry in KB with this source/target -- add one
-                            var newRS = [
-                                {
-                                    'target': this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                    'n': '1'
-                                }
-                            ];
-                            refstrings.push(newRS);
-                        }
-                        // update the KB model
-                        tu.save({refstring: refstrings});
-                    } else {
-                        // no entry in KB with this source -- add one
-                        var newID = Underscore.uniqueId(),
-                            currentdate = new Date(),
-                            newTU = new kbModels.TargetUnit({
-                                tuid: newID,
-                                projectid: this.project.id,
-                                source: this.autoRemoveCaps(model.get('source'), true),
-                                refstring: [
-                                    {
-                                        target: this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                        n: "1"
-                                    }
-                                ],
-                                timestamp: this.getTimestamp(),
-                                user: ""
-                            });
-                        this.kblist.add(newTU);
-                        newTU.save();
-                    }
+                    this.saveInKB(model, trimmedValue);
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                    // clear out the temp IOS value, since we've already saved this value
+                    tempIOSValue = "";
                 } else {
                     console.log("Dirty bit NOT set. Skipping save.");
                     if (navigator.notification && device.platform === "iOS") {
