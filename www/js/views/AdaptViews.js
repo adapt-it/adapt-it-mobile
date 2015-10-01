@@ -45,6 +45,7 @@ define(function (require) {
         punctsTarget = [],
         caseSource = [],
         caseTarget = [],
+        tempIOSValue = "",
         
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
@@ -741,13 +742,48 @@ define(function (require) {
                     selection = null,
                     foundInKB = false;
                 
-                // ** iOS comment **
-                // iOS doesn't pass along the mouseUp event for the soft keyboard --
-                // to work around the issue, we've directed the focus event here as well. If this is
-                // NOT an iOS device, we've already handled the event and can just return
+                // ** iOS workaround block **
+                // iOS doesn't pass along the TAB event for the soft keyboard, instead just moving the focus to the
+                // next control in the tab order. To work around the issue, we've directed the focus event here as well
+                // as the touchend event. If this is a focus event AND it's an iOS device, we'll do a little extra work below;
+                // if not, we've already handled the event and can just return
                 if ((event.type === "focus") || (event.type === "focusin")) {
                     if (navigator.notification && device.platform === "iOS") {
+                        // iOS focus event
                         console.log("selectedAdaptation: responding to iOS focus event");
+                        // a side-effect of not getting the keypress event for a TAB keystroke is that our dirty bit
+                        // doesn't get set in editAdaptation() -- meaning the target text never gets saved when we lose focus on
+                        // the target field. 
+                        // Check to see if the previous selction is off by 1 element in the tab order. If it is, it's likely that
+                        // the user pressed TAB -- meaning we should save the previous field's edits (if any)
+                        prevIdx = selectedStart;
+                        // set the current adaptation cursor
+                        if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
+                            selectedStart = event.currentTarget.parentElement; // pile
+                        }
+                        if (Math.abs(parseInt(prevIdx.id.substr(5), 10) -
+                                     parseInt(selectedStart.id.substr(5), 10)) === 1) {
+                            model = this.collection.get(prevIdx.id.substr(5));
+                            console.log("Looks like TAB was hit on iOS. Saving model: " + model.get('source'));
+                            // either TAB or Shift+TAB -- save the previous field if it needs it
+                            // (note: model still refers to the previous selection sourcephrase)
+                            if (tempIOSValue && tempIOSValue.length > 0) {
+                                // update the model with the new target text
+                                model.save({target: tempIOSValue});
+                                $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tempIOSValue));
+                                // if the target differs from the source, make it display in green
+                                if (model.get('source') === model.get('target')) {
+                                    // source === target --> remove "differences" from the class so the text is black
+                                    $(prevIdx.childNodes[4]).removeClass('differences');
+                                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                                    // source + punctuation == target --> remove "differences"
+                                    $(prevIdx.childNodes[4]).removeClass('differences');
+                                } else if (!$(event.currentTarget).hasClass('differences')) {
+                                    // source != target -- add "differences" to the class so the text is green
+                                    $(prevIdx.childNodes[4]).addClass('differences');
+                                }
+                            }
+                        }
                     } else {
                         // we've already handled this in the touchend event -- just return
                         console.log("selectedAdaptation: focus event on non-iOS device -- ignoring");
@@ -774,7 +810,6 @@ define(function (require) {
                     }
 
                 }
-                
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                     selectedStart = event.currentTarget.parentElement; // pile
@@ -991,6 +1026,10 @@ define(function (require) {
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                 } else {
                     console.log("Dirty bit NOT set. Skipping save.");
+                    if (navigator.notification && device.platform === "iOS") {
+                        console.log("Hmm... running iOS, could mean someone hit TAB. Saving current value as a temp, just in case.");
+                        tempIOSValue = trimmedValue;
+                    }
                     // dirty bit is false -- check to see if the target matches what's in the edit field
                     if (trimmedValue) {
                         // User clicked away without changing anything -- this is a cancel operation
