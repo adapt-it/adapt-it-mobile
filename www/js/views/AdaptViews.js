@@ -35,6 +35,7 @@ define(function (require) {
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
+        isTBAction = false,
         curIdx = 0,
         prevIdx = 0,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
@@ -795,6 +796,7 @@ define(function (require) {
             // mouseUp / touchEnd event handler for the target field 
             selectedAdaptation: function (event) {
                 var tu = null,
+                    prevID = "",
                     strID = "",
                     model = null,
                     sourceText = "",
@@ -820,10 +822,13 @@ define(function (require) {
                     if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                         selectedStart = event.currentTarget.parentElement; // pile
                     }
-                    console.log("prevIdx: " + parseInt(selectedStart.id.substr(5), 10) + ", selectedStart: " + parseInt(selectedStart.id.substr(5), 10));
-                    if (isDirty === true || (Math.abs(parseInt(prevIdx.id.substr(5), 10) -
-                                 parseInt(selectedStart.id.substr(5), 10)) === 1)) {
-                        model = this.collection.get(prevIdx.id.substr(5));
+                    prevID = $(prevIdx).attr('id');
+                    prevID = strID.substr(prevID.indexOf("-")); // remove "pile-"
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
+                    console.log("prevIdx: " + prevIdx + ", selectedStart: " + strID);
+                    if (isDirty === true || (Math.abs(parseInt(prevID, 10) - parseInt(strID, 10)) === 1)) {
+                        model = this.collection.get(prevID);
                         console.log("selectedAdaptation: Prev/Next likely hit. Saving model: " + model.get('source'));
                         // either TAB or Shift+TAB -- save the previous field if it needs it
                         // (note: model still refers to the previous selection sourcephrase)
@@ -883,7 +888,8 @@ define(function (require) {
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
-                    strID = $(event.currentTarget.parentElement).attr('id').substring(5); // remove "pile-"
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
                     model = this.collection.get(strID);
                     sourceText = model.get('source');
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
@@ -1089,9 +1095,9 @@ define(function (require) {
                 if (selectedStart !== null) {
                     // there was an old selection -- remove the ui-selected class
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
-                    $("#Retranslation").prop('disabled', true);
-                    $("#Phrase").prop('disabled', true);
+//                    $("#Placeholder").prop('disabled', true);
+//                    $("#Retranslation").prop('disabled', true);
+//                    $("#Phrase").prop('disabled', true);
                 }
             },
             // User clicked on the Placeholder button
@@ -1180,7 +1186,8 @@ define(function (require) {
                             // check for phrases
                             if ($(value).attr('id').indexOf("phr") !== -1) {
                                 // phrase -- pull out the original target
-                                strID = $(value).attr('id').substring(5); // remove "pile-"
+                                strID = $(value).attr('id');
+                                strID = strID.substr(strID.indexOf("-")); // remove "pile-"
                                 selectedObj = coll.get(strID);
                                 origTarget += selectedObj.get("orig");
                             } else {
@@ -1196,7 +1203,8 @@ define(function (require) {
                     phraseHtml += PhraseHtmlEnd;
                     console.log("phrase: " + phraseHtml);
                     phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
-                    strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     $(selectedStart).before(phraseHtml);
@@ -1204,7 +1212,8 @@ define(function (require) {
                     $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                         if (index > idxStart && index <= (idxEnd + 1)) {
                             // remove the original sourcephrase
-                            strID = $(value).attr('id').substring(5); // remove "pile-"
+                            strID = $(value).attr('id');
+                            strID = strID.substr(strID.indexOf("-")); // remove "pile-"
                             selectedObj = coll.get(strID);
                             coll.remove(selectedObj);
                             $(value).remove();
