@@ -45,7 +45,7 @@ define(function (require) {
         punctsTarget = [],
         caseSource = [],
         caseTarget = [],
-        tempIOSValue = "",
+        tmpTargetValue = "",
         
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
@@ -804,83 +804,81 @@ define(function (require) {
                     selection = null,
                     foundInKB = false;
                 
-                // ** iOS workaround block **
-                // iOS doesn't pass along the TAB event for the soft keyboard, instead just moving the focus to the
-                // next control in the tab order. To work around the issue, we've directed the focus event here as well
-                // as the touchend event. If this is a focus event AND it's an iOS device, we'll do a little extra work below;
-                // if not, we've already handled the event and can just return
-                if ((event.type === "focus") || (event.type === "focusin")) {
-                    if (navigator.notification && device.platform === "iOS") {
-                        // iOS focus event
-                        console.log("selectedAdaptation: responding to iOS focus event");
-                        // a side-effect of not getting the keypress event for a TAB keystroke is that our dirty bit
-                        // doesn't get set in editAdaptation() -- meaning the target text never gets saved when we lose focus on
-                        // the target field. 
-                        // Check to see if the previous selction is off by 1 element in the tab order. If it is, it's likely that
-                        // the user pressed TAB -- meaning we should save the previous field's edits (if any)
-                        prevIdx = selectedStart;
-                        // set the current adaptation cursor
-                        if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
-                            selectedStart = event.currentTarget.parentElement; // pile
-                        }
-                        if (Math.abs(parseInt(prevIdx.id.substr(5), 10) -
-                                     parseInt(selectedStart.id.substr(5), 10)) === 1) {
-                            model = this.collection.get(prevIdx.id.substr(5));
-                            console.log("Looks like TAB was hit on iOS. Saving model: " + model.get('source'));
-                            // either TAB or Shift+TAB -- save the previous field if it needs it
-                            // (note: model still refers to the previous selection sourcephrase)
-                            if (tempIOSValue && tempIOSValue.length > 0) {
-                                // save the new value to the KB
-                                this.saveInKB(model, tempIOSValue);
-                                // update the model with the new target text
-                                model.save({target: tempIOSValue});
-                                $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tempIOSValue));
-                                // if the target differs from the source, make it display in green
-                                if (model.get('source') === model.get('target')) {
-                                    // source === target --> remove "differences" from the class so the text is black
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                                    // source + punctuation == target --> remove "differences"
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (!$(event.currentTarget).hasClass('differences')) {
-                                    // source != target -- add "differences" to the class so the text is green
-                                    $(prevIdx.childNodes[4]).addClass('differences');
-                                }
+                // ** focus handler block **
+                // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
+                // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
+                // to save the target value to the model and KB in the unselectedAdaptation() handler. 
+                // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
+                if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
+                    // focus event
+                    console.log("selectedAdaptation: event type:" + event.type + ", isDirty: " + isDirty);
+                    // Check to see if the previous selction is off by 1 element in the tab order. If it is,
+                    // it's likely that the user pressed TAB or the Prev/Next buttons -- meaning we should save
+                    //the previous field's edits (if any)
+                    prevIdx = selectedStart;
+                    // set the current adaptation cursor
+                    if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
+                        selectedStart = event.currentTarget.parentElement; // pile
+                    }
+                    console.log("prevIdx: " + parseInt(selectedStart.id.substr(5), 10) + ", selectedStart: " + parseInt(selectedStart.id.substr(5), 10));
+                    if (isDirty === true || (Math.abs(parseInt(prevIdx.id.substr(5), 10) -
+                                 parseInt(selectedStart.id.substr(5), 10)) === 1)) {
+                        model = this.collection.get(prevIdx.id.substr(5));
+                        console.log("selectedAdaptation: Prev/Next likely hit. Saving model: " + model.get('source'));
+                        // either TAB or Shift+TAB -- save the previous field if it needs it
+                        // (note: model still refers to the previous selection sourcephrase)
+                        if (tmpTargetValue && tmpTargetValue.length > 0) {
+                            // save the new value to the KB
+                            this.saveInKB(model, tmpTargetValue);
+                            // update the model with the new target text
+                            model.save({target: tmpTargetValue});
+                            $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
+                            // if the target differs from the source, make it display in green
+                            if (model.get('source') === model.get('target')) {
+                                // source === target --> remove "differences" from the class so the text is black
+                                $(prevIdx.childNodes[4]).removeClass('differences');
+                            } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                                // source + punctuation == target --> remove "differences"
+                                $(prevIdx.childNodes[4]).removeClass('differences');
+                            } else if (!$(event.currentTarget).hasClass('differences')) {
+                                // source != target -- add "differences" to the class so the text is green
+                                $(prevIdx.childNodes[4]).addClass('differences');
                             }
                         }
                         // done saving -- clear out the temp value
-                        tempIOSValue = "";
+                        tmpTargetValue = "";
+                        isDirty = false;
                     } else {
                         // we've already handled this in the touchend event -- just return
-                        console.log("selectedAdaptation: focus event on non-iOS device -- ignoring");
+                        console.log("selectedAdaptation: previous focus too far away to be prev/next. Ignoring...");
                         return;
                     }
-                } else {
-                    // touch or mouse event got us here
-
-                    if (isSelecting === true) {
-                        // pretend the user wanted the last selected item to be the end of the selection
-                        $(selectedEnd).find('.source').mouseup();
-                        return;
-                    }
-
-                    // Are we setting the focus on the first phrase after a selection?
-                    if (isSelectingFirstPhrase === true) {
-                        // yes -- keep the selection, but clear out the flag
-                        console.log("Selecting the first phrase -- gets a pass");
-                        isSelectingFirstPhrase = false;
-                    } else {
-                        // no -- clear out any previous selection
-                        console.log("clearing selection");
-                        this.clearSelection();
-                    }
-
                 }
+
+                if (isSelecting === true) {
+                    // pretend the user wanted the last selected item to be the end of the selection
+                    $(selectedEnd).find('.source').mouseup();
+                    return;
+                }
+
+                // Are we setting the focus on the first phrase after a selection?
+                if (isSelectingFirstPhrase === true) {
+                    // yes -- keep the selection, but clear out the flag
+                    console.log("Selecting the first phrase -- gets a pass");
+                    isSelectingFirstPhrase = false;
+                } else {
+                    // no -- clear out any previous selection
+                    console.log("clearing selection");
+                    this.clearSelection();
+                }
+
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                     selectedStart = event.currentTarget.parentElement; // pile
                 }
                 console.log("selectedAdaptation: " + selectedStart.id);
+                $("#Prev").prop('disabled', false); // enable toolbar button
+                $("#Next").prop('disabled', false); // enable toolbar button
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -924,6 +922,7 @@ define(function (require) {
                         }
                         // scroll the edit field into view
                         $(event.currentTarget)[0].scrollIntoView(false);
+                        $(event.currentTarget)[0].focus();
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
@@ -955,6 +954,7 @@ define(function (require) {
                         }
                         // scroll the edit field into view
                         $(event.currentTarget)[0].scrollIntoView(false);
+                        $(event.currentTarget)[0].focus();
                     }
                 }
             },
@@ -995,7 +995,7 @@ define(function (require) {
                     // any other key - set the dirty bit
                     isDirty = true;
                     // also go that toggle phrase thing if needed
-                    if (selectedEnd !== selectedStart) {
+                    if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
                         $("#Phrase").click();
                     }
                 }
@@ -1032,13 +1032,10 @@ define(function (require) {
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                     // clear out the temp IOS value, since we've already saved this value
-                    tempIOSValue = "";
+                    tmpTargetValue = "";
                 } else {
-                    console.log("Dirty bit NOT set. Skipping save.");
-                    if (navigator.notification && device.platform === "iOS") {
-                        console.log("Hmm... running iOS, could mean someone hit TAB. Saving current value as a temp, just in case.");
-                        tempIOSValue = trimmedValue;
-                    }
+                    console.log("Dirty bit NOT set. Skipping save, but saving value as a temp, just in case.");
+                    tmpTargetValue = trimmedValue;
                     // dirty bit is false -- check to see if the target matches what's in the edit field
                     if (trimmedValue) {
                         // User clicked away without changing anything -- this is a cancel operation
@@ -1402,33 +1399,24 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
-                "click #slide-menu-button": "toggleSlideMenu",
+                "click #Prev": "goPrevPile",
+                "click #Next": "goNextPile",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation"
             },
-            // For the slide-out menu, toggle its state (open or closed)
-            toggleSlideMenu: function (event) {
-                var elt = document.getElementById('sidebar');
-                var cl = elt.classList;
-                if (cl.contains('open')) {
-                    cl.remove('open');
-                } else {
-                    cl.add('open');
+            // go to the previous target field
+            goPrevPile: function (event) {
+                if (selectedStart !== null) {
+                    isDirty = true;
+                    this.listView.moveCursor(event, false);
                 }
-                elt = document.getElementById('content');
-                cl = elt.classList;
-                if (cl.contains('open')) {
-                    cl.remove('open');
-                } else {
-                    cl.add('open');
-                }
-                elt = document.getElementById('plus');
-                cl = elt.classList;
-                if (cl.contains('blue')) {
-                    cl.remove('blue');
-                } else {
-                    cl.add('blue');
+            },
+            // go to the next target field
+            goNextPile: function (event) {
+                if (selectedStart !== null) {
+                    isDirty = true;
+                    this.listView.moveCursor(event, true);
                 }
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle

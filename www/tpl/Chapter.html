@@ -2,41 +2,39 @@
     Template for rendering the chapter adaptation page used by ChapterView.js. Note that this will render a
     container -- the toolbar and menus, etc -- but the individual strips are rendered by the template SourcePhrase.html.
 }}
-
-<div class="topcoat-navigation-bar">
+<div class="topcoat-navigation-bar main_title">
     <div class="topcoat-navigation-bar__item">
         <a class="topcoat-icon-button--quiet back-button" href="index.html">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
     </div>
     <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title" id="{{this.id}}">{{this.name}}</h1>
-    </div>
-    <div class="topcoat-navigation-bar__item right">{{!
+        <h1 class="topcoat-navigation-bar__title" id="{{this.id}}">{{this.name}}</h2>
+    </div>{{!
+    <div class="topcoat-navigation-bar__item right">
         <a href="#help" class="topcoat-icon-button--quiet">
             <span id="help" class="topcoat-icon topcoat-icon--help"></span>
-        </a>}}
-        <a id="slide-menu-button" class="topcoat-icon-button--quiet slide-menu-button">
-            <span id="plus" class="topcoat-icon topcoat-icon--add"></span>
         </a>
+    </div>}}
+</div>
+<div class="toolbar">
+    <div class="toolbar__item left">
+         <button id="Placeholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+    </div>
+    <div class="toolbar__item left">
+         <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
+    </div>
+    <div class="toolbar__item left">
+         <button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
+    </div>
+    <div class="toolbar__item right">
+         <button id="Next" title="{{ t 'view.lblNext'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--next"></span><span class="side-nav__list__item__label">{{ t 'view.lblNext'}}</span></button>
+    </div>
+    <div class="toolbar__item right">
+         <button id="Prev" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
     </div>
 </div>
-<nav class="side-nav" id="sidebar">
-    <div class="topcoat-list__container side-nav__list__container">
-        <ul class="topcoat-list side-nav__list">
-            <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Placeholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
-            </li>
-            <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
-            </li>
-            <li class="topcoat-list__item side-nav__list__item is-active">
-             <button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="topcoat-list__container scroller" id="content">
+<div class="topcoat-list__container scroller" id="content" style="top: 7.3rem;">
 <div class="topcoat-list chapter" id="chapter">
 </div>
 </div>

@@ -49,12 +49,14 @@ input[type="file"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+/*    height: 80%;*/
     margin-left: auto;
     margin-right: auto;
     margin-top: 6px;
     overflow: hidden;
     padding: 6px;
     width: 90%;
+    vertical-align: middle;
 }
 
 .welcome-title {
@@ -117,7 +119,13 @@ input[type="file"] {
     color:  #58C0FF ;
 }
 .topcoat-navigation-bar {
+    height: auto;/*3.5rem;*/
     padding: 1px;
+}
+.topcoat-navigation-bar__item {
+    height: inherit;
+    line-height: inherit;
+    vertical-align: middle;
 }
 .main_title {
     overflow: hidden;
@@ -265,6 +273,29 @@ header h3 {
     width: 95%;
 }
 
+.toolbar {
+    background: #ccc;
+    box-shadow: inset 0 -1px #9daca9, 0 1px #d6dcdb;
+    color: #454545;
+    vertical-align: top;
+    padding: 2px;
+}
+
+.toolbar__item {
+    box-sizing: border-box;
+    background-clip: padding-box;
+    position: relative;
+    display: inline-block;
+    line-height: 3.5rem;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+.toolbar-button {
+    width: 100%;
+}
+
 .topcoat-icon--back {
     background: url("images/back_light.svg") no-repeat;
     -webkit-background-size: cover;
@@ -295,7 +326,6 @@ header h3 {
 .topcoat-icon,
 .topcoat-icon--large {
   display: inline-block;
-/*  vertical-align: top;*/
   height: 1.62rem;
   overflow: hidden;
   position: relative;
@@ -423,6 +453,20 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--prev {
+    background: url("images/back.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--next {
+    background: url("images/next.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .right {
     float:right;
 }
@@ -474,6 +518,7 @@ ul {
 /*** Temporary ***
    Topcoat hasn't defined these styles yet, so this is purloined from the topcoat.io demo page
    remove it when upgrading to a Topcoat version that supports dropdown selections */
+
 .side-nav__list__container {
     border-bottom:none;
     border-top:none;
@@ -484,8 +529,8 @@ ul {
 .side-nav__list__item {
     padding:0;
 }
-.topcoat-icon-button--quiet,
-.side-nav__button {
+/*
+.topcoat-icon-button--quiet {
     color: #454545;
     display:block;
     font: 16px "Source Sans", helvetica, arial, sans-serif;
@@ -494,11 +539,11 @@ ul {
     text-align: left;
     text-decoration: none;
     width:100%;
-}
+}*/
+
 .combo {
     border-bottom: none;
     margin: 0 14px 12px 8px;
-    /*width: 100%;*/
 }
 .combo label {
     display: inline-block;
