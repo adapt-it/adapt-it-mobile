@@ -821,12 +821,15 @@ define(function (require) {
                     // set the current adaptation cursor
                     if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                         selectedStart = event.currentTarget.parentElement; // pile
+                        if (prevIdx === null) {
+                            prevIdx = selectedStart;
+                        }
                     }
                     prevID = $(prevIdx).attr('id');
-                    prevID = strID.substr(prevID.indexOf("-")); // remove "pile-"
+                    prevID = prevID.substr(prevID.indexOf("-") + 1); // remove "pile-"
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
-                    console.log("prevIdx: " + prevIdx + ", selectedStart: " + strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
                     if (isDirty === true || (Math.abs(parseInt(prevID, 10) - parseInt(strID, 10)) === 1)) {
                         model = this.collection.get(prevID);
                         console.log("selectedAdaptation: Prev/Next likely hit. Saving model: " + model.get('source'));
@@ -889,7 +892,7 @@ define(function (require) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.get(strID);
                     sourceText = model.get('source');
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
@@ -1187,7 +1190,7 @@ define(function (require) {
                             if ($(value).attr('id').indexOf("phr") !== -1) {
                                 // phrase -- pull out the original target
                                 strID = $(value).attr('id');
-                                strID = strID.substr(strID.indexOf("-")); // remove "pile-"
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                                 selectedObj = coll.get(strID);
                                 origTarget += selectedObj.get("orig");
                             } else {
@@ -1204,7 +1207,7 @@ define(function (require) {
                     console.log("phrase: " + phraseHtml);
                     phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.indexOf("-")); // remove "pile-"
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     $(selectedStart).before(phraseHtml);
@@ -1213,7 +1216,7 @@ define(function (require) {
                         if (index > idxStart && index <= (idxEnd + 1)) {
                             // remove the original sourcephrase
                             strID = $(value).attr('id');
-                            strID = strID.substr(strID.indexOf("-")); // remove "pile-"
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                             selectedObj = coll.get(strID);
                             coll.remove(selectedObj);
                             $(value).remove();
