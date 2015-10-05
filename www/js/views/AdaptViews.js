@@ -1130,7 +1130,7 @@ define(function (require) {
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
-                    next_edit.childNodes[4].click();
+                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a placeholder -- delete it from the model and the DOM (html)
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
@@ -1230,7 +1230,7 @@ define(function (require) {
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
                     selectedStart = null;
-                    next_edit[0].childNodes[4].click();
+                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
@@ -1328,8 +1328,9 @@ define(function (require) {
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
                     // start adapting the new Phrase
+                    next_edit = $("#pile-ret-" + newID);
                     if (next_edit !== null) {
-                        next_edit.childNodes[4].click();
+                        next_edit.find('.target').mouseup();
                     }
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
