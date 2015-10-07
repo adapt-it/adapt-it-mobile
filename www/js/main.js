@@ -9,6 +9,7 @@ require.config({
     // fastclick        1.0.6
     // handlebars       3.0.3
     // i18next          1.9.0
+    // joyride          2.1
     // jquery           2.1.4
     // marionette       2.4.2
     // require          2.1.18
@@ -28,6 +29,7 @@ require.config({
         'jquery': 'jquery-2.1.4.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
+        joyride: 'jquery.joyride-2.1.js',
         colorpicker: 'spectrum'
     },
     map: {
@@ -42,6 +44,9 @@ require.config({
         marionette: {
             deps: ['backbone'],
             exports: 'Marionette'
+        },
+        joyride: {
+            deps: ['jquery']
         },
         colorpicker: {
             deps: ['jquery']
