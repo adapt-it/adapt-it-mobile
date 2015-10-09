@@ -3,7 +3,7 @@
 }}
 
 {{#if this.name.length}}
-<div class="topcoat-navigation-bar main_title">
+<div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item center" id="projTitle" style="line-height:4.375rem;">
         <h2>{{this.name}}</h2>
     </div>
@@ -19,14 +19,16 @@
 {{/if}}
 {{!-- {{if this.lastAdaptedName}}{{this.lastAdaptedName}}{{else}}{{ t 'view.lblAdapt'}}{{/if}} --}}
 {{else}}
+<!--
 <div class="topcoat-navigation-bar">
     <div class="topcoat-navigation-bar__item center" style="line-height:4.375rem; width:100%;">
         <h1 class="topcoat-navigation-bar__title center">{{ t 'view.ttlMain'}}</h1>
     </div>
 </div>
-<div class="topcoat-list__container scroller" id="Container" style="width:100%">
+-->
+<div class="topcoat-list__container scroller bg-blue" id="Container" style="width:100%; top:0;">
 
-<div class="splash-screen">
+<div class="splash-screen vertcenter bg-body">
     <div class="welcome-title">
         <h2>{{ t 'view.ttlWelcome'}}</h2>
         <h2>{{ t 'view.ttlMain'}}</h2>

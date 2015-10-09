@@ -1,9 +1,8 @@
 /* Color scheme for AIM */
 /* 
   Base (light blue from AI icon): #2595cb;
-  Dark blue: #1d38d8; 
-  lighter blue: #1e6ee2:
-  Cyan: #1ed6e2;
+  Dark blue: #1F7BA5; 
+  lighter blue: #279ED8:
   Turquoise: #1dd8af;
 */
 /* embedded fonts */
@@ -15,7 +14,31 @@
     font-family: "Gentium";
     src: url("../font/GentiumPlus-R.woff") format('woff');
 }
-
+.bg-darkblue {
+    background-color: #1F7BA5;
+    color: white;
+}
+.bg-body {
+    background-color: rgb(221, 225, 225);
+    color: #454545;
+}
+.bg-gradient {
+background: #2595cb; /* Old browsers */
+background: -moz-radial-gradient(center, ellipse cover, #2595cb 0%, #18607f 100%); /* FF3.6+ */
+background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#2595cb), color-stop(100%,#18607f)); /* Chrome,Safari4+ */
+background: -webkit-radial-gradient(center, ellipse cover, #2595cb 0%,#18607f 100%); /* Chrome10+,Safari5.1+ */
+background: -o-radial-gradient(center, ellipse cover, #2595cb 0%,#18607f 100%); /* Opera 12+ */
+background: -ms-radial-gradient(center, ellipse cover, #2595cb 0%,#18607f 100%); /* IE10+ */
+background: radial-gradient(ellipse at center, #2595cb 0%,#18607f 100%); /* W3C */
+}
+.bg-blue {
+    background-color: #2595cb;
+    color: white;
+}
+.bg-lightblue {
+    background-color: #279ED8;
+    color: white;
+}
 a {
     color: inherit;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -36,12 +59,7 @@ input[type="file"] {
 .splash-screen {
     /* fallback solid color */
     -webkit-appearance: none;
-    background-color: #ccc;
-    background-image: -webkit-linear-gradient(#eee, #ccc);
-    background-image: -o-linear-gradient(#eee, #ccc);
-    background-image: -moz-linear-gradient(#eee, #ccc);
-    background-image: linear-gradient(#eee, #ccc);
-    border: 1px solid #9daca9;
+    border: 1px solid #eee;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -49,18 +67,13 @@ input[type="file"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-/*    height: 80%;*/
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 6px;
     overflow: hidden;
-    padding: 6px;
+    padding: 22px;
     width: 90%;
     vertical-align: middle;
 }
 
 .welcome-title {
-    color: #454545;
     text-align: center;
 }
 .center {
@@ -85,10 +98,10 @@ input[type="file"] {
     background: url('../svg/adapt-it-mobile.svg') no-repeat;
     background-size: cover;
     height: 96px;
-    margin-bottom: 6px;
+    margin-bottom: 22px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 6px;
+    margin-top: 12px;
     width: 96px;
 }
 .waiting {
@@ -253,13 +266,14 @@ header h3 {
     white-space: nowrap;
 }
 .control-row {
-    padding-bottom: 2px;
-    padding-top: 2px;
+    padding-bottom: 3px;
+    padding-top: 3px;
 }
 .control-group {
     -webkit-appearance: none;
-    background: rgb(221, 225, 225);
-    border: 1px solid #9daca9;
+    background-color: #eee;
+/*    background: rgb(221, 225, 225);*/
+    border: 1px solid #fafafa;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -274,9 +288,7 @@ header h3 {
 }
 
 .toolbar {
-    background: #ccc;
     box-shadow: inset 0 -1px #9daca9, 0 1px #d6dcdb;
-    color: #454545;
     vertical-align: top;
     padding: 2px;
 }
