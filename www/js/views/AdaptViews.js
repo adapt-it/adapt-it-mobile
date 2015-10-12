@@ -1469,6 +1469,7 @@ define(function (require) {
                 this.listView.toggleRetranslation(event);
             },
             onHelp: function (event) {
+                var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
                 var tour = {
                     id: "hello-hopscotch",
@@ -1514,6 +1515,8 @@ define(function (require) {
                             title: i18n.t('view.hlpttlRetranslation'),
                             content: i18n.t('view.hlpdscRetranslation'),
                             target: "Retranslation",
+                            xOffset: "center",
+                            arrowOffset: "center",
                             placement: "bottom"
                         },
                         {
@@ -1528,7 +1531,15 @@ define(function (require) {
                             target: "back",
                             placement: "bottom"
                         }
-                    ]
+                    ],
+                    onClose: function () {
+                        // make sure the pile gets unselected
+                        $("#" + firstPileID).removeClass("ui-selected");
+                    },
+                    onError: function () {
+                        // make sure the pile gets unselected
+                        $("#" + firstPileID).removeClass("ui-selected");
+                    }
                 };
                 console.log("onHelp");
                 hopscotch.startTour(tour);
