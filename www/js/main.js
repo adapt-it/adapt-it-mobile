@@ -29,7 +29,6 @@ require.config({
         'jquery': 'jquery-2.1.4.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
-        joyride: 'jquery.joyride-2.1.js',
         colorpicker: 'spectrum'
     },
     map: {
@@ -44,9 +43,6 @@ require.config({
         marionette: {
             deps: ['backbone'],
             exports: 'Marionette'
-        },
-        joyride: {
-            deps: ['jquery']
         },
         colorpicker: {
             deps: ['jquery']

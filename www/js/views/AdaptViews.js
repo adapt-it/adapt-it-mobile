@@ -10,6 +10,7 @@ define(function (require) {
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
         i18n        = require('i18n'),
+        hopscotch   = require('hopscotch'),
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
@@ -35,7 +36,7 @@ define(function (require) {
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
-        isTBAction = false,
+        isAutoPhrase = false,
         curIdx = 0,
         prevIdx = 0,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
@@ -377,9 +378,9 @@ define(function (require) {
                         // Probably a header -- see if you can go to the previous strip
                         if (selectedStart.parentElement.previousElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.previousElementSibling;
-                            if (temp_cursor.classList.contains("filter")) {
+                            if ($(temp_cursor).hasClass("filter")) {
                                 // this is a filter strip -- keep going
-                                while (temp_cursor && temp_cursor.classList.contains("filter")) {
+                                while (temp_cursor && $(temp_cursor).hasClass("filter")) {
                                     temp_cursor = temp_cursor.previousElementSibling; // back one more strip
                                 }
                             }
@@ -402,9 +403,9 @@ define(function (require) {
                         // last pile in the strip -- see if you can go to the next strip
                         if (selectedStart.parentElement.nextElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.nextElementSibling;
-                            if (temp_cursor.classList.contains("filter")) {
+                            if ($(temp_cursor).hasClass("filter")) {
                                 // this is a filter strip -- keep going
-                                while (temp_cursor && temp_cursor.classList.contains("filter")) {
+                                while (temp_cursor && $(temp_cursor).hasClass("filter")) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
                                 }
                             }
@@ -911,8 +912,12 @@ define(function (require) {
                         this.moveCursor(event, true);
                         foundInKB = true;
                     } else {
-                        // nothing in the KB -- populate the target with the source text as the next best guess
-                        $(event.currentTarget).html(sourceText);
+                        // nothing in the KB
+                        // if this isn't a phrase, populate the target with the source text as the next best guess
+                        // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
+                        if (strID.indexOf("phr") === -1) {
+                            $(event.currentTarget).html(sourceText);
+                        }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         // no change yet -- this is just a suggestion
@@ -1003,8 +1008,13 @@ define(function (require) {
                 } else {
                     // any other key - set the dirty bit
                     isDirty = true;
-                    // also go that toggle phrase thing if needed
+                    // Check to see if this is an automatic merge phrase situation
+                    // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
                     if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
+                        // User typed after selecting a group of piles -- automatic phrase merge
+                        console.log("detect autophrase");
+                        isAutoPhrase = true;
+                        // Trigger the phrase creation
                         $("#Phrase").click();
                     }
                 }
@@ -1049,7 +1059,7 @@ define(function (require) {
                     if (trimmedValue) {
                         // User clicked away without changing anything -- this is a cancel operation
                         // Is there anything in the old target field?
-                        if (model.get('target').length === 0) {
+                        if (model && model.get('target').length === 0) {
                             // nothing in the old target field -- clear out the edit field
                             $(event.currentTarget).html("");
                             trimmedValue = "";
@@ -1058,7 +1068,9 @@ define(function (require) {
                             // model doesn't update
                             trimmedValue = "";
                             // add any punctuation back to the target field
-                            $(event.currentTarget).html(this.copyPunctuation(model, model.get('target')));
+                            if (model) {
+                                $(event.currentTarget).html(this.copyPunctuation(model, model.get('target')));
+                            }
                         }
                     }
                 }
@@ -1080,7 +1092,7 @@ define(function (require) {
                     }
                 }
                 // if we just finished work on a new verse, update the last adapted count
-                if (model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
+                if (model && model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
                     // get the verse #
                     var stridx = model.get('markers').indexOf("\\v ") + 3;
                     var verseNum = "";
@@ -1156,6 +1168,7 @@ define(function (require) {
                     phraseHtml = null,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
+                    phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
                     phraseObj = null,
@@ -1165,10 +1178,11 @@ define(function (require) {
                     bookID = null,
                     newView = null,
                     selectedObj = null,
-                    PhraseHtmlStart = "<div id=\"pile-phr-" + newID + "\" class=\"pile\">" +
-                                        "<div class=\"marker\">&nbsp;</div> <div class=\"source\">",
-                    PhraseHtmlMid = "</div> <div class=\"target\" contenteditable=\"true\">",
-                    PhraseHtmlEnd = "</div></div>";
+                    PhraseLine1 = "<div id=\"pile-phr-" + newID + "\" class=\"pile\">" +
+                                        "<div class=\"marker\">",
+                    PhraseLine2 = "</div> <div class=\"source\">",
+                    PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
                     // not a phrase -- create one from the selection
                     // first, iterate through the piles in the strip and pull out the source phrases that
@@ -1184,6 +1198,7 @@ define(function (require) {
                                 phraseTarget += " ";
                                 origTarget += "|";
                             }
+                            phraseMarkers += $(value).children(".marker").html();
                             phraseSource += $(value).children(".source").html();
                             phraseTarget += $(value).children(".target").html();
                             // check for phrases
@@ -1200,11 +1215,18 @@ define(function (require) {
                         }
                     });
                     // now build the new sourcephrase from the string
-                    phraseHtml = PhraseHtmlStart + phraseSource + PhraseHtmlMid;
-                    // if there's something already in the target, use it instead
-                    phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                    phraseHtml += PhraseHtmlEnd;
+                    // marker, source divs
+                    phraseHtml = PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
+                    // target div (only if the user didn't auto-create the phrase by typing after a selection)
+                    console.log("isAutoPhrase: " + isAutoPhrase);
+                    if (isAutoPhrase === false) {
+                        // if there's something already in the target, use it instead
+                        phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                    }
+                    isAutoPhrase = false; // clear the autophrase flag
+                    phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
+                    isDirty = false;
                     phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -1230,6 +1252,7 @@ define(function (require) {
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
                     selectedStart = null;
+                    isDirty = false; // don't save (original sourcephrase is now gone)
                     $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
@@ -1416,10 +1439,12 @@ define(function (require) {
                 "click #Next": "goNextPile",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
-                "click #Retranslation": "toggleRetranslation"
+                "click #Retranslation": "toggleRetranslation",
+                "click #help": "onHelp"
             },
             // go to the previous target field
             goPrevPile: function (event) {
+                console.log("goPrevPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
                     this.listView.moveCursor(event, false);
@@ -1427,6 +1452,7 @@ define(function (require) {
             },
             // go to the next target field
             goNextPile: function (event) {
+                console.log("goNextPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
                     this.listView.moveCursor(event, true);
@@ -1441,6 +1467,71 @@ define(function (require) {
             },
             toggleRetranslation: function (event) {
                 this.listView.toggleRetranslation(event);
+            },
+            onHelp: function (event) {
+                var firstPileID = $(".pile").first().attr("id");
+                var tour = {
+                    id: "hello-hopscotch",
+                    steps: [
+                        {
+                            title: i18n.t('view.hlpttlAdaptPage'),
+                            content: i18n.t('view.hlpdscAdaptPage'),
+                            target: "title",
+                            placement: "bottom",
+                            xOffset: "center",
+                            onNext: function () {
+                                $("#" + firstPileID).addClass("ui-selected");
+                            }
+                        },
+                        {
+                            title: i18n.t('view.hlpttlSelectOne'),
+                            content: i18n.t('view.hlpdscSelectOne'),
+                            target: firstPileID,
+                            placement: "bottom"
+                        },
+                        {
+                            title: i18n.t('view.hlpttlSelectMultiple'),
+                            content: i18n.t('view.hlpdscSelectMultiple'),
+                            target: firstPileID,
+                            placement: "bottom",
+                            onNext: function () {
+                                $("#" + firstPileID).removeClass("ui-selected");
+                            }
+                        },
+                        {
+                            title: i18n.t('view.hlpttlPlaceholder'),
+                            content: i18n.t('view.hlpdscPlaceholder'),
+                            target: "Placeholder",
+                            placement: "bottom"
+                        },
+                        {
+                            title: i18n.t('view.hlpttlPhrase'),
+                            content: i18n.t('view.hlpdscPhrase'),
+                            target: "Phrase",
+                            placement: "bottom"
+                        },
+                        {
+                            title: i18n.t('view.hlpttlRetranslation'),
+                            content: i18n.t('view.hlpdscRetranslation'),
+                            target: "Retranslation",
+                            placement: "bottom"
+                        },
+                        {
+                            title: i18n.t('view.hlpttlPrevNext'),
+                            content: i18n.t('view.hlpdscPrevNext'),
+                            target: "Prev",
+                            placement: "left"
+                        },
+                        {
+                            title: i18n.t('view.hlpttlBack'),
+                            content: i18n.t('view.hlpdscBack'),
+                            target: "back",
+                            placement: "bottom"
+                        }
+                    ]
+                };
+                console.log("onHelp");
+                hopscotch.startTour(tour);
             }
         });
 

@@ -502,7 +502,7 @@ ul {
     background-size: cover;
 }
 #help {
-    background: url("images/question.svg") no-repeat;
+    background: url("images/question-white.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
