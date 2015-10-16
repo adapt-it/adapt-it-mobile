@@ -152,6 +152,18 @@ define(function (require) {
                     this.$el.html(template(this.collection.toJSON()));
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
+                    // Do we have a placeholder from a previous adaptation session?
+                    if (this.project && this.project.get('lastAdaptedSPID').length > 0) {
+                        // yes -- select it
+                        selectedStart = $('#' + this.project.get('lastAdaptedSPID'));
+                        $(selectedStart).find('.target').mouseup();
+                    } else {
+                        // no -- select the first block
+                        selectedStart = $(".pile").first();
+                        if (selectedStart !== null) {
+                            $(selectedStart).find('.target').mouseup();
+                        }
+                    }
                 }
                 return this;
             },
@@ -573,6 +585,22 @@ define(function (require) {
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
                     // touch
+                    console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
+                    // is this multi-touch or a single touch?
+//                    if (event.targetTouches && event.targetTouches.length === 2) {
+//                        // multi-touch
+//                        
+//                        // figure out what's going to be the start and end (selectedStart / selectedEnd)
+//                        for (var i = 0; i < 2; i++) {
+//                            // sanity check -- only respond to items inside the current pile
+//                            if (event.touches[i].parentElement === selectedStart.parentElement) {
+//                                // inside the pile -- add
+//                            }
+//                        }
+//                        // don't process the rest -- just return
+//                        return;
+//                    }
+                    // assume single touch if we got here
                     var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
                     tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY).parentElement; // pile (parent)
                     event.preventDefault();
@@ -806,7 +834,6 @@ define(function (require) {
                     range = null,
                     selection = null,
                     foundInKB = false;
-                
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
@@ -886,6 +913,10 @@ define(function (require) {
                     selectedStart = event.currentTarget.parentElement; // pile
                 }
                 console.log("selectedAdaptation: " + selectedStart.id);
+                // Update lastAdaptedSPID
+                this.project.set('lastAdaptedSPID', selectedStart.id);
+
+                // enable prev / next buttons
                 $("#Prev").prop('disabled', false); // enable toolbar button
                 $("#Next").prop('disabled', false); // enable toolbar button
                 // Is the target field empty?
@@ -1251,7 +1282,8 @@ define(function (require) {
                     $("#Phrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
-                    selectedStart = null;
+//                    selectedStart = null;
+                    selectedStart = next_edit.parentElement;
                     isDirty = false; // don't save (original sourcephrase is now gone)
                     $(next_edit).find('.target').mouseup();
                 } else {
@@ -1388,6 +1420,9 @@ define(function (require) {
             }
         }),
 
+        // ChapterView
+        // Top-level frame for the Adaptation page. Loads the sourcephrases for the current chapter, sends down the events
+        // for the phrase / placeholder / retranslation / next and previous buttons, and sets up the help walkthrough code. 
         ChapterView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplChapter),
             initialize: function () {
@@ -1468,6 +1503,8 @@ define(function (require) {
             toggleRetranslation: function (event) {
                 this.listView.toggleRetranslation(event);
             },
+            // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
+            // to the UI elements on this screen.
             onHelp: function (event) {
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
