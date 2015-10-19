@@ -21,9 +21,9 @@
             <span class="sectionStatus">{{t 'view.lblStatusFullyTranslated'}}</span>
         {{else}} 
             {{#ifCond this.lastadapted '==' 0}}
-              <span class="sectionStatus">{{tr this key='view.lblStatusNotTranslated' add=this.versecount}}</span>
+              <span class="sectionStatus">{{tr this key='view.lblStatusNotTranslated'}}</span>
             {{else}}
-              <span class="sectionStatus">{{tr this key='view.lblStatusPartlyTranslated' add=this.versecount}}</span>
+              <span class="sectionStatus">{{tr this key='view.lblStatusPartlyTranslated'}}</span>
             {{/ifCond}}
         {{/ifCond}}
     {{/ifCond}}
