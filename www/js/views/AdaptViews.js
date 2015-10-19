@@ -156,9 +156,19 @@ define(function (require) {
                     if (this.project && this.project.get('lastAdaptedSPID').length > 0) {
                         // yes -- select it
                         selectedStart = $('#' + this.project.get('lastAdaptedSPID'));
-                        $(selectedStart).find('.target').mouseup();
+                        if (selectedStart.length !== 0) {
+                            // everything's okay -- select the last adapted SPID
+                            $(selectedStart).find('.target').mouseup();
+                        } else {
+                            // for some reason the last adapted SPID has gotten out of sync --
+                            // select the first block instead
+                            selectedStart = $(".pile").first();
+                            if (selectedStart !== null) {
+                                $(selectedStart).find('.target').mouseup();
+                            }
+                        }
                     } else {
-                        // no -- select the first block
+                        // no last adapted SPID defined -- select the first block
                         selectedStart = $(".pile").first();
                         if (selectedStart !== null) {
                             $(selectedStart).find('.target').mouseup();
