@@ -585,7 +585,7 @@ define(function (require) {
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
                     // touch
-                    console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
+//                    console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                     // is this multi-touch or a single touch?
 //                    if (event.targetTouches && event.targetTouches.length === 2) {
 //                        // multi-touch
@@ -649,6 +649,7 @@ define(function (require) {
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
                 // re-add the contenteditable fields
+                console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
                     tmpIdx = 0;
                 console.log("selectingPilesEnd");
