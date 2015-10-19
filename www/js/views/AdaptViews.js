@@ -845,6 +845,7 @@ define(function (require) {
                     range = null,
                     selection = null,
                     foundInKB = false;
+                console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
@@ -852,7 +853,6 @@ define(function (require) {
                 // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
                 if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
                     // focus event
-                    console.log("selectedAdaptation: event type:" + event.type + ", isDirty: " + isDirty);
                     // Check to see if the previous selction is off by 1 element in the tab order. If it is,
                     // it's likely that the user pressed TAB or the Prev/Next buttons -- meaning we should save
                     //the previous field's edits (if any)
@@ -898,6 +898,8 @@ define(function (require) {
                     } else {
                         // we've already handled this in the touchend event -- just return
                         console.log("selectedAdaptation: previous focus too far away to be prev/next. Ignoring...");
+                        event.stopPropagation();
+                        event.preventDefault();
                         return;
                     }
                 }
@@ -978,7 +980,7 @@ define(function (require) {
                         }
                         // scroll the edit field into view
                         $(event.currentTarget)[0].scrollIntoView(false);
-                        $(event.currentTarget)[0].focus();
+//                        $(event.currentTarget)[0].focus();
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
@@ -1010,7 +1012,7 @@ define(function (require) {
                         }
                         // scroll the edit field into view
                         $(event.currentTarget)[0].scrollIntoView(false);
-                        $(event.currentTarget)[0].focus();
+//                        $(event.currentTarget)[0].focus();
                     }
                 }
             },
