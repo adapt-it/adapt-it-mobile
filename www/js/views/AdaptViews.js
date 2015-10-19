@@ -153,9 +153,9 @@ define(function (require) {
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
-                    if (this.project && this.project.get('lastAdaptedSPID').length > 0) {
+                    if (project && project.get('lastAdaptedSPID').length > 0) {
                         // yes -- select it
-                        selectedStart = $('#' + this.project.get('lastAdaptedSPID'));
+                        selectedStart = $('#' + project.get('lastAdaptedSPID'));
                         if (selectedStart.length !== 0) {
                             // everything's okay -- select the last adapted SPID
                             $(selectedStart).find('.target').mouseup();
@@ -223,7 +223,7 @@ define(function (require) {
                     prepuncts = model.get('prepuncts'),
                     follpuncts = model.get('follpuncts');
                 // If we aren't copying punctuation for this project, just return the target (unaltered)
-                if (this.project.get('CopyPunctuation') === 'false') {
+                if (project.get('CopyPunctuation') === 'false') {
                     return target;
                 }
                 // add any prepuncts
@@ -261,7 +261,7 @@ define(function (require) {
                     result = "",
                     source = model.get('source');
                 // If we aren't capitalizing for this project, just return the target (unaltered)
-                if (this.project.get('AutoCapitalization') === 'false' || this.project.get('SourceHasUpperCase') === 'false') {
+                if (project.get('AutoCapitalization') === 'false' || project.get('SourceHasUpperCase') === 'false') {
                     return target;
                 }
                 // is the first letter capitalized?
@@ -280,7 +280,7 @@ define(function (require) {
                 var i = 0,
                     result = "";
                 // If we aren't capitalizing for this project, just return theString
-                if (this.project.get('AutoCapitalization') === 'false') {
+                if (project.get('AutoCapitalization') === 'false') {
                     return theString;
                 }
                 // is the first letter capitalized?
@@ -369,7 +369,7 @@ define(function (require) {
                         currentdate = new Date(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
-                            projectid: this.project.id,
+                            projectid: project.id,
                             source: this.autoRemoveCaps(sp.get('source'), true),
                             refstring: [
                                 {
@@ -925,7 +925,7 @@ define(function (require) {
                 }
                 console.log("selectedAdaptation: " + selectedStart.id);
                 // Update lastAdaptedSPID
-                this.project.set('lastAdaptedSPID', selectedStart.id);
+                project.set('lastAdaptedSPID', selectedStart.id);
 
                 // enable prev / next buttons
                 $("#Prev").prop('disabled', false); // enable toolbar button
@@ -1450,6 +1450,7 @@ define(function (require) {
             },
             onShow: function () {
                 console.log("ChapterView::onShow");
+                project = this.project;
                 var chapterid = this.model.get('chapterid');
                 chapter = this.model;
                 this.$list = $('#chapter');
@@ -1472,7 +1473,7 @@ define(function (require) {
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
                 this.listView.kblist = this.kblist;
-                this.listView.project = this.project;
+//                this.listView.project = this.project;
                 addStyleRules(this.project);
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results

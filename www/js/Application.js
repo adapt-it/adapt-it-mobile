@@ -197,7 +197,6 @@ define(function (require) {
                 console.log("lookupChapter");
                 var proj = this.ProjectList.where({id: id});
                 if (proj !== null) {
-                    proj[0].set('lastAdaptedSPID', ""); // clear out the previous selected ID
                     lookupView = new SearchViews.LookupView({model: proj[0]});
                     window.Application.main.show(lookupView);
                 } else {
