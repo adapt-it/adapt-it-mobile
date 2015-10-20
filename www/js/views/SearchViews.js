@@ -50,8 +50,7 @@ define(function (require) {
             },
 
             events: {
-                "keyup .search-key":    "search",
-                "keypress .search-key": "onkeypress",
+                "input #search":    "search",
                 "focus #book":          "onFocusBook",
                 "change #book":         "onSelectBook"
             },
@@ -68,7 +67,10 @@ define(function (require) {
             },
             
             search: function (event) {
-                var key = $('.search-key').val();
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+                var key = $('#search').val();
                 this.chapterList.fetch({reset: true, data: {name: key}});
                 if (this.chapterList.length > 0) {
                     $("#lblChooseChapter").removeAttr("style");
@@ -77,12 +79,6 @@ define(function (require) {
                 }
             },
 
-            onkeypress: function (event) {
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
-            },
-            
             onFocusBook: function (event) {
                 $("#book").val("");
             },
