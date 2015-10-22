@@ -795,6 +795,8 @@ define(function (require) {
                     languages.fetch({reset: true, data: {name: key}});
                     this.$("#name-suggestions").show();
                 }
+                // scroll the language search field to the top of the screen if necessary
+                $("#LanguageName")[0].scrollIntoView(true);
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
@@ -1082,7 +1084,7 @@ define(function (require) {
                 "click #sourceFont": "OnEditSourceFont",
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
-                "keyup #LanguageName":    "searchLanguageName",
+                "keyup #LanguageName": "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "keyup #LanguageVariant": "buildFullLanguageCode",
@@ -1111,6 +1113,8 @@ define(function (require) {
                     Underscore.first(languages.fetch({reset: true, data: {name: key}}), 100);
                     this.$("#name-suggestions").show();
                 }
+                // scroll the language search field to the top of the screen if necessary
+                $("#LanguageName")[0].scrollIntoView(true);
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
             },
 
