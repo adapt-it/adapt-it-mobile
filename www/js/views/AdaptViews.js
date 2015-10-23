@@ -155,23 +155,37 @@ define(function (require) {
                     // Do we have a placeholder from a previous adaptation session?
                     if (project && project.get('lastAdaptedSPID').length > 0) {
                         // yes -- select it
-                        selectedStart = $('#' + project.get('lastAdaptedSPID'));
-                        if (selectedStart.length !== 0) {
+                        isSelecting = true;
+                        if ($('#' + project.get('lastAdaptedSPID')).length !== 0) {
                             // everything's okay -- select the last adapted SPID
-                            $(selectedStart).find('.target').mouseup();
+//                            $(selectedStart).find('.source').mouseup();
+                            selectedStart = $('#' + project.get('lastAdaptedSPID')).get(0);
+                            selectedEnd = selectedStart;
+                            idxStart = $(selectedStart).index() - 1;
+                            idxEnd = idxStart;
+                            $(selectedStart.childNodes[4]).mouseup();
                         } else {
                             // for some reason the last adapted SPID has gotten out of sync --
                             // select the first block instead
-                            selectedStart = $(".pile").first();
+                            selectedStart = $(".pile").first().get(0);
+                            selectedEnd = selectedStart;
+                            idxStart = $(selectedStart).index() - 1;
+                            idxEnd = idxStart;
                             if (selectedStart !== null) {
-                                $(selectedStart).find('.target').mouseup();
+//                                $(selectedStart).find('.source').mouseup();
+                                $(selectedStart.childNodes[4]).mouseup();
                             }
                         }
                     } else {
                         // no last adapted SPID defined -- select the first block
-                        selectedStart = $(".pile").first();
+                        isSelecting = true;
+                        selectedStart = $(".pile").first().get(0);
+                        selectedEnd = selectedStart;
+                        idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
+                        idxEnd = idxStart;
                         if (selectedStart !== null) {
-                            $(selectedStart).find('.target').mouseup();
+//                            $(selectedStart).find('.source').mouseup();
+                            $(selectedStart.childNodes[4]).mouseup();
                         }
                     }
                 }
@@ -557,6 +571,7 @@ define(function (require) {
                 "touchend .target": "selectedAdaptation",
                 "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
+                "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
             
@@ -663,6 +678,10 @@ define(function (require) {
                 var tmpItem = null,
                     tmpIdx = 0;
                 console.log("selectingPilesEnd");
+                // sanity check -- make sure there's a selectedStart
+                if (selectedStart === null) {
+                    selectedStart = event.currentTarget.parentElement;
+                }
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
@@ -1052,15 +1071,19 @@ define(function (require) {
                 } else {
                     // any other key - set the dirty bit
                     isDirty = true;
-                    // Check to see if this is an automatic merge phrase situation
-                    // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
-                    if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
-                        // User typed after selecting a group of piles -- automatic phrase merge
-                        console.log("detect autophrase");
-                        isAutoPhrase = true;
-                        // Trigger the phrase creation
-                        $("#Phrase").click();
-                    }
+                }
+            },
+            // Input text has changed in the target field -
+            // Check to see if this is an automatic merge phrase situation
+            // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
+            checkForAutoMerge: function (event) {
+                // is the selection a range of piles?
+                if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
+                    // User typed after selecting a group of piles -- automatic phrase merge
+                    console.log("detect autophrase");
+                    isAutoPhrase = true;
+                    // Trigger the phrase creation
+                    $("#Phrase").click();
                 }
             },
             // User has moved out of the current adaptation input field (blur on target field)
@@ -1186,7 +1209,8 @@ define(function (require) {
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
-                    $(next_edit).find('.target').mouseup();
+                    selectedStart = next_edit;
+                    $(next_edit).find('.source').mouseup();
                 } else {
                     // selection is a placeholder -- delete it from the model and the DOM (html)
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
@@ -1266,6 +1290,11 @@ define(function (require) {
                     if (isAutoPhrase === false) {
                         // if there's something already in the target, use it instead
                         phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                        isDirty = false; // don't save (original sourcephrase is now gone)
+                    } else {
+                        // autophrase -- add the target for the selected start ONLY
+                        phraseHtml += $(selectedStart).find(".target").html();
+                        isDirty = true; // save
                     }
                     isAutoPhrase = false; // clear the autophrase flag
                     phraseHtml += PhraseLine4;
@@ -1295,9 +1324,7 @@ define(function (require) {
                     $("#Phrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
-//                    selectedStart = null;
-                    selectedStart = next_edit.parentElement;
-                    isDirty = false; // don't save (original sourcephrase is now gone)
+                    selectedStart = next_edit;
                     $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
