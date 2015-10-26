@@ -774,10 +774,12 @@ define(function (require) {
                     }
                     $("#Placeholder").prop('disabled', false);
                 }
-                // EDB try -- select the first item so the user can start typing
-                // (does this remove the selection?)
-                isSelectingFirstPhrase = true;
-                $(selectedStart).find('.target').mouseup();
+                // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
+                // is effecting the selection / deselection in weird ways. Punt on this until a consistent
+                // initial selection algorithm can be determined
+//                isSelectingFirstPhrase = true;
+//                $(selectedStart).find('.target').mouseup();
+                // end EDB
             },
             // Event handler for when the user clicks on a Filter icon (the funnel thingy):
             // display a read-only alert to the user containing:
