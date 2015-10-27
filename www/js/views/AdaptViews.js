@@ -1513,6 +1513,7 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
+                "click #chapter": "unselectPiles",
                 "click #Prev": "goPrevPile",
                 "click #Next": "goNextPile",
                 "click #Placeholder": "togglePlaceholder",
@@ -1545,6 +1546,19 @@ define(function (require) {
             },
             toggleRetranslation: function (event) {
                 this.listView.toggleRetranslation(event);
+            },
+            // User clicked away from 
+            unselectPiles: function (event) {
+                // only do this if we're in a blank area of the screen
+                if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
+                    console.log("UnselectPiles: clicked in a blank area; removing selection");
+                    if (selectedStart !== null) {
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $("#Placeholder").prop('disabled', true);
+                        $("#Retranslation").prop('disabled', true);
+                        $("#Phrase").prop('disabled', true);
+                    }
+                }
             },
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
