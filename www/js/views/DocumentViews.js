@@ -30,7 +30,6 @@ define(function (require) {
             var status = "";
             var reader = new FileReader();
             var i = 0;
-            var chaps = [];
             var name = "";
             var doc = null;
             var result = false;
@@ -103,6 +102,7 @@ define(function (require) {
                     var prepunct = "";
                     var follpunct = "";
                     var needsNewLine = false;
+                    var chaps = [];
                     var sp = null;
                     console.log("Reading text file:" + file.name);
                     index = 1;
@@ -111,7 +111,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         name: bookName,
                         filename: file.name,
                         chapters: []
@@ -123,7 +123,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         name: bookName,
                         lastadapted: 0,
                         versecount: 0
@@ -225,9 +225,8 @@ define(function (require) {
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index), {silent: true});
                     chapter.save();
-                    book.set('chapters', chaps);
+                    book.set('chapters', chaps, {silent: true});
                     book.save();
-                    chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readTextDoc()
                 };
@@ -239,6 +238,7 @@ define(function (require) {
                     var follpunct = "";
                     var sp = null;
                     var re = /\s+/;
+                    var chaps = [];
                     var xmlDoc = $.parseXML(contents);
                     var $xml = $(xmlDoc);
                     var chapterName = "";
@@ -276,7 +276,7 @@ define(function (require) {
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
                                         bookid: bookID,
-                                        projectid: project.get('id'),
+                                        projectid: project.get('id').toString(),
                                         name: chapterName,
                                         lastadapted: 0,
                                         versecount: 0
@@ -418,7 +418,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -431,7 +431,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -463,9 +463,8 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
-                    book.set('chapters', chaps);
+                    book.set('chapters', chaps, {silent: true});
                     book.save();
-                    chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readUSXDoc()
                 };
@@ -479,6 +478,7 @@ define(function (require) {
                     var re = /\s+/;
                     var follpunct = "";
                     var sp = null;
+                    var chaps = [];
                     var xmlDoc = $.parseXML(contents);
                     var chapterName = "";
                     // find the USFM ID of this book
@@ -519,7 +519,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -532,7 +532,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -571,7 +571,7 @@ define(function (require) {
                             chapter = new chapModel.Chapter({
                                 chapterid: chapterID,
                                 bookid: bookID,
-                                projectid: project.get('id'),
+                                projectid: project.get('id').toString(),
                                 name: chapterName,
                                 lastadapted: 0,
                                 versecount: 0
@@ -673,9 +673,8 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
-                    book.set('chapters', chaps);
+                    book.set('chapters', chaps, {silent: true});
                     book.save();
-                    chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readXMLDoc()
                 };
@@ -695,6 +694,7 @@ define(function (require) {
                     var hasPunct = false;
                     var punctIdx = 0;
                     var stridx = 0;
+                    var chaps = [];
 
                     console.log("Reading USFM file:" + file.name);
                     index = contents.indexOf("\\h ");
@@ -724,7 +724,7 @@ define(function (require) {
                     bookID = Underscore.uniqueId();
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -741,7 +741,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id'),
+                        projectid: project.get('id').toString(),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -811,7 +811,7 @@ define(function (require) {
                                 chapter = new chapModel.Chapter({
                                     chapterid: chapterID,
                                     bookid: bookID,
-                                    projectid: project.get('id'),
+                                    projectid: project.get('id').toString(),
                                     name: chapterName,
                                     lastadapted: 0,
                                     versecount: 0
@@ -894,9 +894,8 @@ define(function (require) {
                     }
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
-                    book.set('chapters', chaps);
+                    book.set('chapters', chaps, {silent: true});
                     book.save();
-                    chaps.length = 0; // clear the chapters array for the next book
                     return true; // success
                     // END readUSFMDoc()
                 };

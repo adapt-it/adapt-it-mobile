@@ -33,7 +33,7 @@ define(function (require) {
             var results = null;
             if (books !== null) {
                 results = books.filter(function (element) {
-                    return element.attributes.projectid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+                    return (element.attributes.projectid === parseInt(searchKey, 10));
                 });
             }
             deferred.resolve(results);
@@ -53,68 +53,55 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                // db
-//                var attributes = this.attributes;
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql("SELECT * from book WHERE bookid=?;", [attributes.bookid], function (tx, res) {
-//                        this.set(res.rows.item(0));
-//                    });
-//                }, function (tx, err) {
-//                    console.log("SELECT error: " + err.message);
-//                });
-
-                // localstorage
-                // search for our key - p.<id>
-                this.set(JSON.parse(localStorage.getItem("b." + this.bookid)));
+                var deferred = $.Deferred();
+                var obj = this;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from book WHERE bookid=?;", [obj.attributes.bookid], function (tx, res) {
+                        console.log("SELECT ok: " + res.rows);
+                        obj.set(res.rows.item(0));
+                        deferred.resolve(obj);
+                    });
+                }, function (err) {
+                    console.log("SELECT error: " + err.message);
+                    deferred.reject(err);
+                });
+                return deferred.promise();
             },
-            save: function () {
-                // localstorage
-                // only save if the id actually has a value
+            create: function () {
                 var attributes = this.attributes;
-                if (attributes.bookid.length > 0) {
-                    // save with a key of p.<id>
-                    localStorage.setItem(("b." + attributes.bookid), JSON.stringify(this));
-                }
-
-                // DB
-                // is there a record already?
-//                var attributes = this.attributes;
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql("SELECT COUNT(id) AS cnt FROM book WHERE projectid=? AND scrid=?;", [attributes.projectid, attributes.scrid], function (tx, res) {
-////                        console.log("SELECT ok: " + res.rows.item(0).cnt + " books with projectid=" + attributes.projectid + " and scrid=" + attributes.scrid);
-//                        if (res.rows.item(0).cnt > 0) {
-//                            // there's already a record for this id -- update the values
-//                            tx.executeSql("UPDATE book SET bookid=?, name=?, filename=?, chapters=? WHERE projectid=? and scrid=?;", [attributes.bookid, attributes.name, attributes.filename, attributes.chapters, attributes.projectid, attributes.scrid], function (tx, res) {
-////                                console.log("UPDATE ok: " + res.toString());
-//                            });
-//                        } else {
-//                            // new record -- insert
-//                            tx.executeSql("INSERT INTO book (bookid,projectid,scrid,name,filename,chapters) VALUES (?,?,?,?,?,?);", [attributes.bookid, attributes.projectid, attributes.scrid, attributes.name, attributes.filename, attributes.chapters], function (tx, res) {
-////                                console.log("INSERT ok: " + res.toString());
-//                            });
-//                        }
-//                    }, function (tx, err) {
-////                        console.log("SELECT error: " + err.message);
-//                    });
-//                });
+                var sql = "INSERT INTO book (bookid,projectid,scrid,name,filename,chapters) VALUES (?,?,?,?,?,?);";
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.bookid, attributes.projectid, attributes.scrid, attributes.name, attributes.filename, JSON.stringify(attributes.chapters)], function (tx, res) {
+                        console.log("INSERT ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("INSERT (create) error: " + err.message);
+                    });
+                });
+            },
+            update: function () {
+                var attributes = this.attributes;
+                var sql = "UPDATE book SET projectid=? scrid=?, name=?, filename=?, chapters=? WHERE bookid=?;";
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.projectid, attributes.scrid, attributes.name, attributes.filename, JSON.stringify(attributes.chapters), attributes.bookid], function (tx, res) {
+                        console.log("INSERT ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("UPDATE error: " + err.message);
+                    });
+                });
             },
             destroy: function (options) {
-                // localstorage
-                localStorage.removeItem(this.id);
-
-                // db
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
-//                    }, function (tx, err) {
-//                        console.log("DELETE error: " + err.message);
-//                    });
-//                });
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+//                        console.log("DELETE ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("DELETE error: " + err.message);
+                    });
+                });
             },
-
             sync: function (method, model, options) {
                 switch (method) {
                 case 'create':
-                    options.success(model);
+                    model.create();
                     break;
                         
                 case 'read':
@@ -124,13 +111,11 @@ define(function (require) {
                     break;
                         
                 case 'update':
-                    model.save();
-                    options.success(model);
+                    model.update();
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-                    options.success(model);
                     break;
                 }
             }
@@ -139,73 +124,44 @@ define(function (require) {
         BookCollection = Backbone.Collection.extend({
 
             model: Book,
-            
-            resetFromLocalStorage: function () {
-                var i = 0,
-                    len = 0;
-                books.length = 0;
-                for (i = 0, len = localStorage.length; i < len; ++i) {
-                    // if this is a project, add it to our collection
-                    if (localStorage.key(i).substr(0, 2) === "b.") {
-                        var book = new Book();
-                        book.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
-                        books.push(book);
-                    }
-                }
-            },
 
-//            resetFromDB: function () {
-//                var i = 0,
-//                    len = 0;
-//                window.Application.db.transaction(function (tx) {
-////                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
-//                });
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql("SELECT * from book;", [], function (tx, res) {
-//                        for (i = 0, len = res.rows.length; i < len; ++i) {
-//                            // add the chapter
-//                            var book = new Book();
-//                            book.off("change");
-//                            book.set(res.rows.item(i));
-//                            books.push(book);
-//                            book.on("change", book.save, book);
-//                        }
-//                        console.log("SELECT ok: " + res.rows.length + " book items");
-////                        this.set(JSON.parse(res.rows.item(0)));
-//                    });
-//                }, function (err) {
-//                    console.log("SELECT error: " + err.message);
-//                });
-//            },
+            resetFromDB: function () {
+                var deferred = $.Deferred(),
+                    i = 0,
+                    len = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters text);');
+                    tx.executeSql("SELECT * from book;", [], function (tx, res) {
+                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                            // add the book
+                            var book = new Book();
+                            book.off("change");
+                            book.set(res.rows.item(i));
+                            books.push(book);
+                            book.on("change", book.save, book);
+                        }
+                        console.log("SELECT ok: " + res.rows.length + " book items");
+                    });
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            },
             
             initialize: function () {
-//                this.resetFromDB();
-                this.resetFromLocalStorage();
+                return this.resetFromDB();
             },
-            
-            // Removes all books from the collection (and database)
+
+            // Removes all chapters from the collection (and database)
             clearAll: function () {
-                // DB
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('DELETE from book;');
-//                    books.length = 0;
-//                }, function (err) {
-//                    console.log("DELETE error: " + err.message);
-//                });
-                
-                // localStorage
-                var i = 0,
-                    keyName = "",
-                    len = localStorage.length;
-                for (i = 0; i < len; ++i) {
-                    keyName = localStorage.key(i);
-                    if (keyName && keyName.length > 2 && keyName.substr(0, 2) === "b.") {
-                        localStorage.removeItem(keyName);
-                    }
-                }
-                // clear local copy
-                books.length = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('DELETE from book;'); // clear out the table
+                    books.length = 0; // delete local copy
+                }, function (err) {
+                    console.log("DELETE error: " + err.message);
+                });
             },
 
             sync: function (method, model, options) {
@@ -219,13 +175,50 @@ define(function (require) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('name')) {
-                        if (options.data.name === "") {
-                            // reset local copy and rebuild list
-                            this.resetFromLocalStorage();
+                        var deferred = $.Deferred();
+                        var name = options.data.name;
+                        var len = 0;
+                        var i = 0;
+                        var retValue = null;
+                        // special case -- empty name query ==> reset local copy so we force a retrieve
+                        // from the database
+                        if (name === "") {
+                            books.length = 0;
                         }
-                        findByName(options.data.name).done(function (data) {
-                            options.success(data);
+                        var results = books.filter(function (element) {
+                            return element.attributes.name.toLowerCase().indexOf(name.toLowerCase()) > -1;
                         });
+                        if (results.length === 0) {
+                            // not in collection -- retrieve them from the db
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("SELECT * FROM book;", [], function (tx, res) {
+                                    // populate the chapter collection with the query results
+                                    for (i = 0, len = res.rows.length; i < len; ++i) {
+                                        // add the book
+                                        var book = new Book();
+                                        book.off("change");
+                                        book.set(res.rows.item(i));
+                                        books.push(book);
+                                        book.on("change", book.save, book);
+                                    }
+                                    // return the filtered results (now that we have them)
+                                    retValue = books.filter(function (element) {
+                                        return element.attributes.name.toLowerCase().indexOf(name.toLowerCase()) > -1;
+                                    });
+                                    options.success(retValue);
+                                    deferred.resolve(retValue);
+                                });
+                            }, function (e) {
+                                options.error();
+                                deferred.reject(e);
+                            });
+                        } else {
+                            // results already in collection -- return them
+                            options.success(results);
+                            deferred.resolve(results);
+                        }
+                        // return the promise
+                        return deferred.promise();
                     }
                 }
             }
