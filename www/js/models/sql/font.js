@@ -8,26 +8,7 @@ define(function (require) {
         Backbone    = require('backbone'),
         i           = 0,
         fonts = null,
-        /*[
-            {
-                id: "Source",
-                typeface: "Source Sans",
-                size: "16px;",
-                color: "#0000aa;"
-            },
-            {
-                id: "Target",
-                typeface: "Source Sans",
-                size: "16px;",
-                color: "#000;"
-            },
-            {
-                id: "Navigation",
-                typeface: "Source Sans",
-                size: "16px;",
-                color: "#00cc00;"
-            }
-        ],*/
+
         findById = function (id) {
             var deferred = $.Deferred(),
                 font = null,
@@ -82,24 +63,10 @@ define(function (require) {
                     break;
                 }
             }
-//        }),
-//
-//        FontCollection = Backbone.Collection.extend({
-//
-//            model: Font,
-//
-//            sync: function (method, model, options) {
-//                if (method === "read") {
-//                    findByName(options.data.name).done(function (data) {
-//                        options.success(data);
-//                    });
-//                }
-//            }
         });
 
     return {
         Font: Font
-//        FontCollection: FontCollection
     };
 
 });

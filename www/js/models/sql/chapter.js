@@ -59,7 +59,7 @@ define(function (require) {
                     tx.executeSql(sql, [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
-//                        console.log("SELECT error: " + err.message);
+                        console.log("INSERT (create) error: " + err.message);
                     });
                 });
             },
@@ -70,7 +70,7 @@ define(function (require) {
                     tx.executeSql(sql, [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
-//                        console.log("SELECT error: " + err.message);
+                        console.log("UPDATE error: " + err.message);
                     });
                 });
             },

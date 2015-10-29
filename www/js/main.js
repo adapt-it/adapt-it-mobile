@@ -33,7 +33,7 @@ require.config({
     },
     map: {
         '*': {
-            'app/models': 'app/models/memory'
+            'app/models': 'app/models/sql' // Use sqlite model persistence
         }
     },
     shim: {
