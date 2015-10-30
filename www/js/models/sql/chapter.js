@@ -88,7 +88,6 @@ define(function (require) {
                 switch (method) {
                 case 'create':
                     model.create();
-//                    options.success(model);
                     break;
                         
                 case 'read':
@@ -99,12 +98,10 @@ define(function (require) {
                         
                 case 'update':
                     model.update();
-//                    options.success(model);
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-//                    options.success(model);
                     break;
                 }
             }

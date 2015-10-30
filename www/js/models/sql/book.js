@@ -83,7 +83,7 @@ define(function (require) {
                 var sql = "UPDATE book SET projectid=? scrid=?, name=?, filename=?, chapters=? WHERE bookid=?;";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.projectid, attributes.scrid, attributes.name, attributes.filename, JSON.stringify(attributes.chapters), attributes.bookid], function (tx, res) {
-                        console.log("INSERT ok: " + res.toString());
+                        console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("UPDATE error: " + err.message);
                     });
