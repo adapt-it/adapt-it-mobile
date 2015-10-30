@@ -9,18 +9,12 @@ define(function (require) {
         i           = 0,
         projects = [],
         
-        findById = function (id) {
-            var i = 0,
-                deferred = $.Deferred(),
-                project = null,
-                l = projects.length;
-            for (i = 0; i < l; i++) {
-                if (projects[i].id === id) {
-                    project = projects[i];
-                    break;
-                }
-            }
-            deferred.resolve(project);
+        findById = function (searchKey) {
+            var deferred = $.Deferred();
+            var results = projects.filter(function (element) {
+                return element.attributes.projectid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
+            });
+            deferred.resolve(results);
             return deferred.promise();
         },
 
@@ -37,6 +31,7 @@ define(function (require) {
         },
         Project = Backbone.Model.extend({
             defaults: {
+                projectid: "",
                 SourceFont: "Source Sans",
                 SourceFontSize: "16",
                 SourceColor: "#0000aa",
@@ -237,7 +232,6 @@ define(function (require) {
                 SourceDir: "",
                 TargetDir: "",
                 NavDir: "",
-                id: 0,
                 name: "",
                 lastDocument: "",
                 lastAdaptedBookID: 0,
@@ -251,49 +245,74 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
-                // search for our key - p.<id>
-                this.set(JSON.parse(localStorage.getItem("p." + this.id)));
+                var deferred = $.Deferred();
+                var obj = this;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("SELECT * from project WHERE id=?;", [obj.attributes.id], function (tx, res) {
+                        console.log("SELECT ok: " + res.rows);
+                        obj.set(res.rows.item(0));
+                        deferred.resolve(obj);
+                    });
+                }, function (err) {
+                    console.log("SELECT error: " + err.message);
+                    deferred.reject(err);
+                });
+                return deferred.promise();
             },
-            save: function (attributes) {
-                // only save if the id actually has a value
-                if (this.id > 0) {
-                    // save with a key of p.<id>
-                    localStorage.setItem(("p." + this.id), JSON.stringify(this));
-                }
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid integer, source text, timestamp text, user text);');
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters integer);');
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid integer, name text, lastadapted integer, versecount integer);');
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
-//                });
-                
+            create: function () {
+                var attributes = this.attributes;
+                var sql = "INSERT INTO project (projectid, SourceFont, SourceFontSize, SourceColor, TargetFont, TargetFontSize, TargetColor, NavigationFont, NavigationFontSize, NavigationColor, SpecialTextColor, RetranslationColor, TextDifferencesColor, SourceLanguageName, SourceLanguageCode, TargetLanguageName, TargetLanguageCode, SourceVariant, TargetVariant, CopyPunctuation, PunctPairs, AutoCapitalization, SourceHasUpperCase, CasePairs, SourceDir, TargetDir, NavDir, name, lastDocument, lastAdaptedBookID, lastAdaptedChapterID, lastAdaptedSPID, lastAdaptedName, CustomFilters, FilterMarkers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.projectid, attributes.SourceFont, attributes.SourceFontSize, attributes.SourceColor, attributes.TargetFont, attributes.TargetFontSize, attributes.TargetColor, attributes.NavigationFont, attributes.NavigationFontSize, attributes.NavigationColor, attributes.SpecialTextColor, attributes.RetranslationColor, attributes.TextDifferencesColor, attributes.SourceLanguageName, attributes.SourceLanguageCode, attributes.TargetLanguageName, attributes.TargetLanguageCode, attributes.SourceVariant, attributes.TargetVariant, attributes.CopyPunctuation, JSON.stringify(attributes.PunctPairs), attributes.AutoCapitalization, attributes.SourceHasUpperCase, JSON.stringify(attributes.CasePairs), attributes.SourceDir, attributes.TargetDir, attributes.NavDir, attributes.name, attributes.lastDocument, attributes.lastAdaptedBookID, attributes.lastAdaptedChapterID, attributes.lastAdaptedSPID, attributes.lastAdaptedName, attributes.CustomFilters, attributes.FilterMarkers], function (tx, res) {
+                        console.log("INSERT ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("INSERT (create) error: " + err.message);
+                    });
+                });
+            },
+            update: function () {
+                var attributes = this.attributes;
+                var sql = "UPDATE project SET projectid=?, SourceFont=?, SourceFontSize=?, SourceColor=?, TargetFont=?, TargetFontSize=?, TargetColor=?, NavigationFont=?, NavigationFontSize=?, NavigationColor=?, SpecialTextColor=?, RetranslationColor=?, TextDifferencesColor=?, SourceLanguageName=?, SourceLanguageCode=?, TargetLanguageName=?, TargetLanguageCode=?, SourceVariant=?, TargetVariant=?, CopyPunctuation=?, PunctPairs=?, AutoCapitalization=?, SourceHasUpperCase=?, CasePairs=?, SourceDir=?, TargetDir=?, NavDir=?, name=?, lastDocument=?, lastAdaptedBookID=?, lastAdaptedChapterID=?, lastAdaptedSPID=?, lastAdaptedName=?, CustomFilters=?, FilterMarkers=? WHERE id=?;";
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [attributes.projectid, attributes.SourceFont, attributes.SourceFontSize, attributes.SourceColor, attributes.TargetFont, attributes.TargetFontSize, attributes.TargetColor, attributes.NavigationFont, attributes.NavigationFontSize, attributes.NavigationColor, attributes.SpecialTextColor, attributes.RetranslationColor, attributes.TextDifferencesColor, attributes.SourceLanguageName, attributes.SourceLanguageCode, attributes.TargetLanguageName, attributes.TargetLanguageCode, attributes.SourceVariant, attributes.TargetVariant, attributes.CopyPunctuation, JSON.stringify(attributes.PunctPairs), attributes.AutoCapitalization, attributes.SourceHasUpperCase, JSON.stringify(attributes.CasePairs), attributes.SourceDir, attributes.TargetDir, attributes.NavDir, attributes.name, attributes.lastDocument, attributes.lastAdaptedBookID, attributes.lastAdaptedChapterID, attributes.lastAdaptedSPID, attributes.lastAdaptedName, attributes.CustomFilters, attributes.FilterMarkers, attributes.id], function (tx, res) {
+                        console.log("UPDATE ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("UPDATE error: " + err.message);
+                    });
+                });
             },
             destroy: function (options) {
-                localStorage.removeItem(this.id);
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("DELETE FROM project WHERE projectid=?;", [this.attributes.projectid], function (tx, res) {
+//                        console.log("DELETE ok: " + res.toString());
+                    }, function (tx, err) {
+                        console.log("DELETE error: " + err.message);
+                    });
+                });
             },
-
+            
             sync: function (method, model, options) {
-                // read is the only method currently implemented for in-memory;
-                // the others will simply return a success state.
                 switch (method) {
                 case 'create':
-                    options.success(model);
+                    model.create();
                     break;
                         
                 case 'read':
-                    findById(this.id).done(function (data) {
+                    findById(this.projectid).done(function (data) {
                         options.success(data);
                     });
                     break;
                         
                 case 'update':
-                    model.save();
-                    options.success(model);
+                    if (this.attributes.projectid === "") {
+                        model.create();
+                    } else {
+                        model.update();
+                    }
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-                    options.success(model);
                     break;
                 }
             }
@@ -304,60 +323,111 @@ define(function (require) {
 
             model: Project,
 
-            resetFromLocalStorage: function () {
-                var i = 0,
+            resetFromDB: function () {
+                var deferred = $.Deferred(),
+                    i = 0,
                     len = 0;
-                projects.length = 0;
-                for (i = 0, len = localStorage.length; i < len; ++i) {
-                    // if this is a project, add it to our collection
-                    if (localStorage.key(i).substr(0, 2) === "p.") {
-                        var proj = new Project();
-                        proj.set(JSON.parse(localStorage.getItem(localStorage.key(i))));
-                        projects.push(proj);
-                    }
-                }
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, projectid text, SourceFont text, SourceFontSize text, SourceColor text, TargetFont text, TargetFontSize text, TargetColor text, NavigationFont text, NavigationFontSize text, NavigationColor text, SpecialTextColor text, RetranslationColor text, TextDifferencesColor text, SourceLanguageName text, SourceLanguageCode text, TargetLanguageName text, TargetLanguageCode text, SourceVariant text, TargetVariant text, CopyPunctuation text, PunctPairs text, AutoCapitalization text, SourceHasUpperCase text, CasePairs text, SourceDir text, TargetDir text, NavDir text, name text, lastDocument text, lastAdaptedBookID integer, lastAdaptedChapterID integer, lastAdaptedSPID text, lastAdaptedName text, CustomFilters text, FilterMarkers text);');
+                    
+                    tx.executeSql("SELECT * from project;", [], function (tx, res) {
+                        var tmpString = "";
+                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                            // add the project
+                            var proj = new Project();
+                            proj.off("change");
+                            proj.set(res.rows.item(i));
+                            // convert PunctPairs and CasePairs back into array objects
+                            tmpString = proj.get('PunctPairs');
+                            proj.set('PunctPairs', JSON.parse(tmpString));
+                            tmpString = proj.get('CasePairs');
+                            proj.set('CasePairs', JSON.parse(tmpString));
+                            // save the object to our collection
+                            projects.push(proj);
+                            proj.on("change", proj.save, proj);
+                        }
+                        console.log("SELECT ok: " + res.rows.length + " project items");
+                    });
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
             },
             
             initialize: function () {
-                this.resetFromLocalStorage();
+                return this.resetFromDB();
             },
 
             // Removes all projects from the collection (and database)
             clearAll: function () {
-                var i = 0,
-                    keyName = "",
-                    names = [],
-                    len = localStorage.length;
-                // collect the names we want to remove
-                for (i = 0; i < len; ++i) {
-                    keyName = localStorage.key(i);
-                    if (keyName.length > 2 && keyName.substr(0, 2) === "p.") {
-                        names.push(keyName);
-                    }
-                }
-                // remove the names
-                for (i = 0; i < names.length; i++) {
-                    localStorage.removeItem(names[i]);
-                }
-                // clear local copy
-                projects.length = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('DELETE from project;');
+                    projects.length = 0;
+                }, function (err) {
+                    console.log("DELETE error: " + err.message);
+                });
             },
-
 
             sync: function (method, model, options) {
                 if (method === "read") {
-                    if (options.data.hasOwnProperty('id')) {
-                        findById(options.data.id).done(function (data) {
+                    if (options.data.hasOwnProperty('projectid')) {
+                        findById(options.data.projectid).done(function (data) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('name')) {
-                        if (options.data.name === "") {
-                            // reset local copy and rebuild list
-                            this.resetFromLocalStorage();
+                        var deferred = $.Deferred();
+                        var name = options.data.name;
+                        var len = 0;
+                        var i = 0;
+                        var retValue = null;
+                        // special case -- empty name query ==> reset local copy so we force a retrieve
+                        // from the database
+                        if (name === "") {
+                            projects.length = 0;
                         }
-                        findByName(options.data.name).done(function (data) {
-                            options.success(data);
+                        var results = projects.filter(function (element) {
+                            return element.attributes.name.toLowerCase().indexOf(name.toLowerCase()) > -1;
                         });
+                        if (results.length === 0) {
+                            // not in collection -- retrieve them from the db
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("SELECT * FROM project;", [], function (tx, res) {
+                                    var tmpString = "";
+                                    // populate the chapter collection with the query results
+                                    for (i = 0, len = res.rows.length; i < len; ++i) {
+                                        // add the project
+                                        var proj = new Project();
+                                        proj.off("change");
+                                        proj.set(res.rows.item(i));
+                                        // convert PunctPairs and CasePairs back into array objects
+                                        tmpString = proj.get('PunctPairs');
+                                        proj.set('PunctPairs', JSON.parse(tmpString));
+                                        tmpString = proj.get('CasePairs');
+                                        proj.set('CasePairs', JSON.parse(tmpString));
+                                        // save the object to our collection
+                                        projects.push(proj);
+                                        proj.on("change", proj.save, proj);
+                                    }
+                                    // return the filtered results (now that we have them)
+                                    retValue = projects.filter(function (element) {
+                                        return element.attributes.name.toLowerCase().indexOf(name.toLowerCase()) > -1;
+                                    });
+                                    options.success(retValue);
+                                    deferred.resolve(retValue);
+                                });
+                            }, function (e) {
+                                options.error();
+                                deferred.reject(e);
+                            });
+                        } else {
+                            // results already in collection -- return them
+                            options.success(results);
+                            deferred.resolve(results);
+                        }
+                        // return the promise
+                        return deferred.promise();
                     }
                 }
             }

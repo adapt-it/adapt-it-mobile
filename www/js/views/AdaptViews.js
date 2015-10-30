@@ -383,7 +383,7 @@ define(function (require) {
                         currentdate = new Date(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
-                            projectid: project.id,
+                            projectid: project.projectid,
                             source: this.autoRemoveCaps(sp.get('source'), true),
                             refstring: [
                                 {
@@ -1488,7 +1488,7 @@ define(function (require) {
                 this.spList = new spModels.SourcePhraseCollection();
                 this.kblist = new kbModels.TargetUnitCollection();
                 // fetch the KB for this project
-                this.kblist.fetch({reset: true, data: {name: this.project.id}});
+                this.kblist.fetch({reset: true, data: {name: this.project.projectid}});
                 // load the source / target punctuation pairs
                 this.project.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);

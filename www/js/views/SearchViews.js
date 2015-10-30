@@ -57,7 +57,7 @@ define(function (require) {
             
             onShow: function () {
                 var options = "";
-                this.bookList.fetch({reset: true, data: {projectid: this.model.get('id')}});
+                this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
                 this.bookList.each(function (model, index) {
                     options += "<option value=\"" + model.get("name") +  "\">" + model.get("name") + "</option>";
                 });

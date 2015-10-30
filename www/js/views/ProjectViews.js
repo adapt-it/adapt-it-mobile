@@ -109,18 +109,18 @@ define(function (require) {
                 // We've successfully opened an Adapt It project file (.aic) -
                 // populate our AIM model object with values
                 // from the .aic file
-                project.set("SourceLanguageName", getSettingValue(55, "SourceLanguageName"));
-                project.set("TargetLanguageName", getSettingValue(56, "TargetLanguageName"));
-                project.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"));
-                project.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"));
-                project.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr");
-                project.set("TargetDir", (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr");
+                project.set("SourceLanguageName", getSettingValue(55, "SourceLanguageName"), {silent: true});
+                project.set("TargetLanguageName", getSettingValue(56, "TargetLanguageName"), {silent: true});
+                project.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"), {silent: true});
+                project.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"), {silent: true});
+                project.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr", {silent: true});
+                project.set("TargetDir", (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr", {silent: true});
                 value = getSettingValue(124, "ProjectName");
                 if (value.length > 0) {
-                    project.set("name", value);
+                    project.set("name", value, {silent: true});
                 } else {
                     // project name not found -- build it from the source & target languages
-                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: project.get("SourceLanguageName"), target: project.get("TargetLanguageName")}));
+                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: project.get("SourceLanguageName"), target: project.get("TargetLanguageName")}), {silent: true});
 
                 }
                 // filters (USFM only -- other settings are ignored)
@@ -128,13 +128,13 @@ define(function (require) {
                 if (value === "UsfmOnly") {
                     value = getSettingValue(123, "UseFilterMarkers");
                     if (value !== project.get("FilterMarkers")) {
-                        project.set("UseCustomFilters", "true");
-                        project.set("FilterMarkers", value);
+                        project.set("UseCustomFilters", "true", {silent: true});
+                        project.set("FilterMarkers", value, {silent: true});
                     }
                 }
 //                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
                 value = Underscore.uniqueId();
-                project.set("id", value);
+                project.set("projectid", value, {silent: true});
                 // The following settings require some extra work
                 // Punctuation pairs
                 value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
@@ -146,7 +146,7 @@ define(function (require) {
                         arrPunct[arrPunct.length] = {s: s, t: t};
                     }
                 }
-                project.set({PunctPairs: arrPunct});
+                project.set({PunctPairs: arrPunct}, {silent: true});
                 // Auto capitalization
                 value = getSettingValue(115, "LowerCaseSourceLanguageChars");
                 value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
@@ -159,11 +159,11 @@ define(function (require) {
                         arrCases[arrCases.length] = {s: s, t: t};
                     }
                 }
-                project.set({CasePairs: arrCases});
+                project.set({CasePairs: arrCases}, {silent: true});
                 value = getSettingValue(121, "AutoCapitalizationFlag");
-                project.set("AutoCapitalization", (value === "1") ? "true" : "false");
+                project.set("AutoCapitalization", (value === "1") ? "true" : "false", {silent: true});
                 value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
-                project.set("SourceHasUpperCase", (value === "1") ? "true" : "false");
+                project.set("SourceHasUpperCase", (value === "1") ? "true" : "false", {silent: true});
 
                 // Fonts, if they're installed on this device (getFontList is async)
                 if (navigator.Fonts) {
@@ -173,12 +173,12 @@ define(function (require) {
                                 // Source Font
                                 value = getSettingValue(16, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    project.set("SourceFont", value);
+                                    project.set("SourceFont", value, {silent: true});
                                 }
                                 // Target Font
                                 value = getSettingValue(34, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    project.set("TargetFont", value);
+                                    project.set("TargetFont", value, {silent: true});
                                 }
                             }
                         },
@@ -188,14 +188,15 @@ define(function (require) {
                     );
                 }
                 // font colors
-                project.set("SourceColor", getColorValue(getSettingValue(17, "Color")));
-                project.set("TargetColor", getColorValue(getSettingValue(34, "Color")));
-                project.set("NavColor", getColorValue(getSettingValue(53, "Color")));
-                project.set("SpecialTextColor", getColorValue(getSettingValue(87, "SpecialTextColor")));
-                project.set("RetranslationColor", getColorValue(getSettingValue(88, "RetranslationTextColor")));
-                project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")));
+                project.set("SourceColor", getColorValue(getSettingValue(17, "Color")), {silent: true});
+                project.set("TargetColor", getColorValue(getSettingValue(34, "Color")), {silent: true});
+                project.set("NavColor", getColorValue(getSettingValue(53, "Color")), {silent: true});
+                project.set("SpecialTextColor", getColorValue(getSettingValue(87, "SpecialTextColor")), {silent: true});
+                project.set("RetranslationColor", getColorValue(getSettingValue(88, "RetranslationTextColor")), {silent: true});
+                project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
                 
                 // done -- display the OK button
+                project.set("projectid", Underscore.uniqueId(), {silent: true});
                 $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
                 if ($("#loading").length) {
                     $("#loading").hide();
@@ -893,67 +894,67 @@ define(function (require) {
                     trimmedValue = null;
                 switch (step) {
                 case 1: // source language
-                    this.model.set("SourceLanguageName", currentView.langName);
-                    this.model.set("SourceLanguageCode", currentView.langCode);
-                    this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
-                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("SourceLanguageName", currentView.langName, {silent: true});
+                    this.model.set("SourceLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
+                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     break;
                 case 2: // target language
-                    this.model.set("TargetLanguageName", currentView.langName);
-                    this.model.set("TargetLanguageCode", currentView.langCode);
-                    this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()));
-                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}));
+                    this.model.set("TargetLanguageName", currentView.langName, {silent: true});
+                    this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
+                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}), {silent: true});
                     break;
                 case 3: // source font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
                     tempColor = $('#color').val();
-                    this.model.set('SourceFont', tempfont);
-                    this.model.set('SourceFontSize', tempSize);
-                    this.model.set('SourceColor', tempColor);
+                    this.model.set('SourceFont', tempfont, {silent: true});
+                    this.model.set('SourceFontSize', tempSize, {silent: true});
+                    this.model.set('SourceColor', tempColor, {silent: true});
                     tempColor = $('#spcolor').val();
-                    this.model.set('SpecialTextColor', tempColor);
+                    this.model.set('SpecialTextColor', tempColor, {silent: true});
                     tempColor = $('#retranscolor').val();
-                    this.model.set('RetranslationColor', tempColor);
+                    this.model.set('RetranslationColor', tempColor, {silent: true});
                     break;
                 case 4: // target font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
                     tempColor = $('#color').val();
-                    this.model.set('TargetFont', tempfont);
-                    this.model.set('TargetFontSize', tempSize);
-                    this.model.set('TargetColor', tempColor);
+                    this.model.set('TargetFont', tempfont, {silent: true});
+                    this.model.set('TargetFontSize', tempSize, {silent: true});
+                    this.model.set('TargetColor', tempColor, {silent: true});
                     tempColor = $('#diffcolor').val();
-                    this.model.set('TextDifferencesColor', tempColor);
+                    this.model.set('TextDifferencesColor', tempColor, {silent: true});
                     break;
                 case 5: // navigation font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
                     tempColor = $('#color').val();
-                    this.model.set('NavigationFont', tempfont);
-                    this.model.set('NavigationFontSize', tempSize);
-                    this.model.set('NavigationColor', tempColor);
+                    this.model.set('NavigationFont', tempfont, {silent: true});
+                    this.model.set('NavigationFontSize', tempSize, {silent: true});
+                    this.model.set('NavigationColor', tempColor, {silent: true});
                     break;
                 case 6: // punctuation
-                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
+                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false", {silent: true});
                     if ($('#CopyPunctuation').is(':checked')) {
                         // don't need to update this if we aren't copying punctuation
-                        this.model.set({PunctPairs: currentView.getRows()});
+                        this.model.set({PunctPairs: currentView.getRows()}, {silent: true});
                     }
                     break;
                 case 7: // cases
-                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
-                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
+                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false", {silent: true});
+                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false", {silent: true});
                     if ($('#AutoCapitalize').is(':checked')) {
                         // don't need to update this if we aren't capitalizing the target
-                        this.model.set({CasePairs: currentView.getRows()});
+                        this.model.set({CasePairs: currentView.getRows()}, {silent: true});
                     }
                     break;
                 case 8: // USFM filtering
-                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
+                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false", {silent: true});
                     if (($('#UseCustomFilters').is(':checked') === true)) {
-                        this.model.set("FilterMarkers", currentView.getFilterString());
+                        this.model.set("FilterMarkers", currentView.getFilterString(), {silent: true});
                     }
                     break;
                 }
@@ -1249,25 +1250,26 @@ define(function (require) {
                 switch ($('#ttlFont').html()) {
                 // font steps (okay, not technically steps in the work
                 case i18n.t('view.lblSourceFont'): // source font
-                    this.model.set('SourceFont', $('#font').val());
-                    this.model.set('SourceFontSize', $('#FontSize').val());
-                    this.model.set('SourceColor', $('#color').val());
-                    this.model.set('SpecialTextColor', $('#spcolor').val());
-                    this.model.set('RetranslationColor', $('#retranscolor').val());
+                    this.model.set('SourceFont', $('#font').val(), {silent: true});
+                    this.model.set('SourceFontSize', $('#FontSize').val(), {silent: true});
+                    this.model.set('SourceColor', $('#color').val(), {silent: true});
+                    this.model.set('SpecialTextColor', $('#spcolor').val(), {silent: true});
+                    this.model.set('RetranslationColor', $('#retranscolor').val(), {silent: true});
                     break;
                 case i18n.t('view.lblTargetFont'): // target font
-                    this.model.set('TargetFont', $('#font').val());
-                    this.model.set('TargetFontSize', $('#FontSize').val());
-                    this.model.set('TargetColor', $('#color').val());
-                    this.model.set('TextDifferencesColor', $('#diffcolor').val());
+                    this.model.set('TargetFont', $('#font').val(), {silent: true});
+                    this.model.set('TargetFontSize', $('#FontSize').val(), {silent: true});
+                    this.model.set('TargetColor', $('#color').val(), {silent: true});
+                    this.model.set('TextDifferencesColor', $('#diffcolor').val(), {silent: true});
                     break;
                 case i18n.t('view.lblNavFont'): // navigation font
                 default:
-                    this.model.set('NavigationFont', $('#font').val());
-                    this.model.set('NavigationFontSize', $('#FontSize').val());
-                    this.model.set('NavigationColor', $('#color').val());
+                    this.model.set('NavigationFont', $('#font').val(), {silent: true});
+                    this.model.set('NavigationFontSize', $('#FontSize').val(), {silent: true});
+                    this.model.set('NavigationColor', $('#color').val(), {silent: true});
                     break;
                 }
+                this.model.save(); // save the changes
                 // display the project settings list
                 $('#StepInstructions').show();
                 $("#OKCancelButtons").hide();
@@ -1396,10 +1398,10 @@ define(function (require) {
                         $("#LanguageName").focus();
                         return false;
                     }
-                    this.model.set("SourceLanguageName", currentView.langName);
-                    this.model.set("SourceLanguageCode", currentView.langCode);
-                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
-                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim());
+                    this.model.set("SourceLanguageName", currentView.langName, {silent: true});
+                    this.model.set("SourceLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
+                    this.model.set("SourceVariant", $('#LanguageVariant').val().trim(), {silent: true});
                     break;
                 case 2: // target language
                     // get / validate the language string
@@ -1409,37 +1411,38 @@ define(function (require) {
                         $("#LanguageName").focus();
                         return false;
                     }
-                    this.model.set("TargetLanguageName", currentView.langName);
-                    this.model.set("TargetLanguageCode", currentView.langCode);
-                    this.model.set("TargetVariant", $('#LanguageVariant').val().trim());
-                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr");
+                    this.model.set("TargetLanguageName", currentView.langName, {silent: true});
+                    this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("TargetVariant", $('#LanguageVariant').val().trim(), {silent: true});
+                    this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     // also set the ID and name of the project, now that we (should) have both source and target defined
                     // Do this only if we don't already have an ID
-                    if (this.model.get("id") === 0) {
+                    if (this.model.get("projectid") === "") {
                         value = Underscore.uniqueId();
-                        this.model.set("id", value);
+                        this.model.set("projectid", value, {silent: true});
                     }
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}));
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}), {silent: true});
                     console.log("id: " + value);
                     break;
                 case 3: // fonts
                     break;
                 case 4: // punctuation
-                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false");
-                    this.model.set({PunctPairs: currentView.getRows()});
+                    this.model.set("CopyPunctuation", ($('#CopyPunctuation').is(':checked') === true) ? "true" : "false", {silent: true});
+                    this.model.set({PunctPairs: currentView.getRows()}, {silent: true});
                     break;
                 case 5: // cases
-                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false");
-                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false");
-                    this.model.set({CasePairs: currentView.getRows()});
+                    this.model.set("SourceHasUpperCase", ($('#SourceHasCases').is(':checked') === true) ? "true" : "false", {silent: true});
+                    this.model.set("AutoCapitalization", ($('#AutoCapitalize').is(':checked') === true) ? "true" : "false", {silent: true});
+                    this.model.set({CasePairs: currentView.getRows()}, {silent: true});
                     break;
                 case 6: // USFM filtering
-                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false");
+                    this.model.set("CustomFilters", ($('#UseCustomFilters').is(':checked') === true) ? "true" : "false", {silent: true});
                     if (($('#UseCustomFilters').is(':checked') === true)) {
-                        this.model.set("FilterMarkers", currentView.getFilterString());
+                        this.model.set("FilterMarkers", currentView.getFilterString(), {silent: true});
                     }
                     break;
                 }
+                this.model.save();
                 return true;
             },
 

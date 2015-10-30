@@ -33,7 +33,7 @@ define(function (require) {
             var results = null;
             if (books !== null) {
                 results = books.filter(function (element) {
-                    return (element.attributes.projectid === parseInt(searchKey, 10));
+                    return element.attributes.projectid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
                 });
             }
             deferred.resolve(results);
@@ -43,7 +43,7 @@ define(function (require) {
         Book = Backbone.Model.extend({
             defaults: {
                 bookid: "",
-                projectid: 0,
+                projectid: "",
                 scrid: "",
                 name: "",
                 filename: "",
@@ -130,7 +130,7 @@ define(function (require) {
                     i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid integer, name text, filename text, chapters text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid text, name text, filename text, chapters text);');
                     tx.executeSql("SELECT * from book;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the book

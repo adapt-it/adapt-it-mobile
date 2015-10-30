@@ -111,7 +111,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         name: bookName,
                         filename: file.name,
                         chapters: []
@@ -123,7 +123,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         name: bookName,
                         lastadapted: 0,
                         versecount: 0
@@ -276,7 +276,7 @@ define(function (require) {
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
                                         bookid: bookID,
-                                        projectid: project.get('id').toString(),
+                                        projectid: project.get('projectid'),
                                         name: chapterName,
                                         lastadapted: 0,
                                         versecount: 0
@@ -418,7 +418,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -431,7 +431,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -519,7 +519,7 @@ define(function (require) {
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -532,7 +532,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -571,7 +571,7 @@ define(function (require) {
                             chapter = new chapModel.Chapter({
                                 chapterid: chapterID,
                                 bookid: bookID,
-                                projectid: project.get('id').toString(),
+                                projectid: project.get('projectid'),
                                 name: chapterName,
                                 lastadapted: 0,
                                 versecount: 0
@@ -724,7 +724,7 @@ define(function (require) {
                     bookID = Underscore.uniqueId();
                     book = new bookModel.Book({
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         scrid: scrID.get('id'),
                         name: bookName,
                         filename: file.name,
@@ -741,7 +741,7 @@ define(function (require) {
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
-                        projectid: project.get('id').toString(),
+                        projectid: project.get('projectid'),
                         name: chapterName,
                         lastadapted: 0,
                         versecount: 0
@@ -811,7 +811,7 @@ define(function (require) {
                                 chapter = new chapModel.Chapter({
                                     chapterid: chapterID,
                                     bookid: bookID,
-                                    projectid: project.get('id').toString(),
+                                    projectid: project.get('projectid'),
                                     name: chapterName,
                                     lastadapted: 0,
                                     versecount: 0
