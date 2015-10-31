@@ -881,6 +881,22 @@ span.sprite{
 	background-image: url("../svg/project.svg");
     background-size: 48px 48px;
 }
+.btn-export{
+	background-image: url("../svg/share.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-project span.sprite{
+	background-image: url("../svg/share.svg");
+    background-size: 48px 48px;
+}
 .btn-settings{
 	background-image: url("../svg/settings.svg");
     background-position: center;
