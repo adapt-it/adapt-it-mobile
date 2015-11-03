@@ -80,8 +80,9 @@ define(function (require) {
             },
             update: function () {
                 var attributes = this.attributes;
-                var sql = "UPDATE book SET projectid=? scrid=?, name=?, filename=?, chapters=? WHERE bookid=?;";
+                var sql = "UPDATE book SET projectid=?, scrid=?, name=?, filename=?, chapters=? WHERE bookid=?;";
                 window.Application.db.transaction(function (tx) {
+                    //JSON.stringify(attributes.chapters)
                     tx.executeSql(sql, [attributes.projectid, attributes.scrid, attributes.name, attributes.filename, JSON.stringify(attributes.chapters), attributes.bookid], function (tx, res) {
                         console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
@@ -132,11 +133,15 @@ define(function (require) {
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS book (id integer primary key, bookid text, scrid text, projectid text, name text, filename text, chapters text);');
                     tx.executeSql("SELECT * from book;", [], function (tx, res) {
+                        var tmpString = "";
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the book
                             var book = new Book();
                             book.off("change");
                             book.set(res.rows.item(i));
+                            // convert chapters back into an array object
+                            tmpString = book.get('chapters');
+                            book.set('chapters', JSON.parse(tmpString));
                             books.push(book);
                             book.on("change", book.save, book);
                         }
@@ -192,12 +197,16 @@ define(function (require) {
                             // not in collection -- retrieve them from the db
                             window.Application.db.transaction(function (tx) {
                                 tx.executeSql("SELECT * FROM book;", [], function (tx, res) {
+                                    var tmpString = "";
                                     // populate the chapter collection with the query results
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         // add the book
                                         var book = new Book();
                                         book.off("change");
                                         book.set(res.rows.item(i));
+                                        // convert chapters back into an array object
+                                        tmpString = book.get('chapters');
+                                        book.set('chapters', JSON.parse(tmpString));
                                         books.push(book);
                                         book.on("change", book.save, book);
                                     }

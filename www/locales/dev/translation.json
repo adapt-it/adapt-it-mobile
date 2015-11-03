@@ -171,6 +171,7 @@
         "dscCopyDocumentFailed": "Import failed for \"__document__\". Reason: __reason__",
         "dscErrDuplicateFile": "duplicate file.",
         "dscErrCannotFindID": "unknown book ID.",
+        "dscErrCannotFindChapter": "cannot find chapter number.",
         "dscNoDocumentsFound": "No available files found on device. Please copy files onto the device and try again.",
         "lblSelect": "Select Files",
         "ttlReset": "Reset Adapt It Mobile",

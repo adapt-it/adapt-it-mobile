@@ -171,6 +171,7 @@
         "dscCopyDocumentFailed": "Impossible d'importer \"__document__\". Raison: __reason__",
         "dscErrDuplicateFile": "ce fichier a déjà été importé.",
         "dscErrCannotFindID": "vous ne trouvez pas l'ID pour ce livre.",
+        "dscErrCannotFindChapter": "cannot find chapter number.",
         "dscNoDocumentsFound": "Aucun fichier disponible trouvé sur l'appareil. Se il vous plaît copier des fichiers sur le périphérique et réessayez.",
         "lblSelect": "Sélectionnez documents",
         "ttlReset": "Réinitialiser Adapt It Mobile",

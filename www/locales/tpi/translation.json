@@ -171,6 +171,7 @@
         "dscCopyDocumentFailed": "Import failed for \"__document__\". Reason: __reason__",
         "dscErrDuplicateFile": "wanpela projek i stap pinis.",
         "dscErrCannotFindID": "unknown buk ID.",
+        "dscErrCannotFindChapter": "cannot find chapter number.",
         "dscNoDocumentsFound": "No available files found on device. Please copy files onto the device and try again.",
         "lblSelect": "Selektim Dokumen",
         "ttlReset": "Setim basic seting i go long defol",

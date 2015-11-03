@@ -185,13 +185,18 @@ define(function (require) {
             
             importBooks: function (id) {
                 console.log("importBooks");
-                var proj = this.ProjectList.where({projectid: id});
-                if (proj === null) {
-                    console.log("no project defined");
-                }
-                importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
-                importDocView.delegateEvents();
-                this.main.show(importDocView);
+                // update the book and chapter lists, then show the import docs view
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        var proj = window.Application.ProjectList.where({projectid: id});
+                        if (proj === null) {
+                            console.log("no project defined");
+                        }
+                        importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
+                        importDocView.delegateEvents();
+                        window.Application.main.show(importDocView);
+                    });
+                });
             },
             
             lookupChapter: function (id) {
@@ -229,7 +234,6 @@ define(function (require) {
                                 window.Application.currentProject = proj;
                             }
                             window.Application.main.show(theView);
-        //                    window.Application.main.show(new AdaptViews.ChapterView({model: chapter}));
                         } else {
                             console.log("No chapter found matching id:" + id);
                         }

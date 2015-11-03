@@ -82,8 +82,8 @@ define(function (require) {
                     punctIdx = 0,
                     chapter = null,
                     book = null,
-                    books = new bookModel.BookCollection(),
-                    chapters = new chapModel.ChapterCollection(),
+                    books = window.Application.BookList,
+                    chapters = window.Application.ChapterList,
                     sourcePhrases = new spModel.SourcePhraseCollection(),
                     arr = [],
                     bookID = "",
@@ -407,7 +407,6 @@ define(function (require) {
                         return false;
                     }
                     arr = scrID.get('chapters');
-                    books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                         // this book is already in the list -- just return
                         errMsg = i18n.t("view.dscErrDuplicateFile");
@@ -487,48 +486,98 @@ define(function (require) {
                     var lastAdapted = 0;
                     var firstChapterID = "";
                     var markers = "";
+                    var firstChapterNumber = "1";
                     var i = 0;
                     console.log("Reading XML file:" + file.name);
-                    bookName = file.name.substr(0, file.name.indexOf("."));
+                    bookName = ""; // reset
+                    // Book name
+                    // Try to get the adapted book name from the \h marker, if it exists
+                    if (contents.indexOf("\\h ") > 0) {
+                        // there is a \h marker -- look backwards for the nearest "a" attribute (this is the adapted name)
+                        index = contents.indexOf("\\h ");
+                        i = contents.lastIndexOf("s=", index) + 3;
+                        // Sanity check -- this \\h element might not have an adaptation
+                        // (if it doesn't, there won't be a a="" after the s="" attribute)
+                        if (contents.lastIndexOf("a=", index) > i) {
+                            // Okay, this looks legit. Pull out the adapted book name from the file.
+                            index = contents.lastIndexOf("a=", index) + 3;
+                            bookName = contents.substr(index, contents.indexOf("\"", index) - index);
+                        }
+                    }
+                    // If that didn't work, use the filename
+                    if (bookName === "") {
+                        bookName = file.name.substr(0, file.name.indexOf("."));
+                        if (bookName.indexOf("_Collab") > -1) {
+                            // Collab document -- strip out the _Collab_ and _CH<#> for the name
+                            bookName = bookName.substr(8, bookName.lastIndexOf("_CH") - 8);
+                        }
+                    }
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // Starting at the SourcePhrases ( <S ...> ), look for the \id element
                     // in the markers. We'll test this against the canonical usfm markers to learn more about this document.
                     i = contents.indexOf("<S ");
                     index = contents.indexOf("\\id", i);
                     if (index === -1) {
-                        // no ID found -- this is most likely not an AI xml document.
-                        // We'll return
+                        // No ID found -- this is most likely not an AI xml document.
+                        // Return; we can't parse random xml files.
                         console.log("No ID element found (is this an AI XML document?) -- exiting.");
                         errMsg = i18n.t("view.dscErrCannotFindID");
                         return false;
                     }
-                    // we've found the \id element in the markers -- to get the value, we have to work
+                    // We've found the \id element in the markers -- to get the value, we have to work
                     // backwards until we find the nearest "s" attribute
                     // e.g., <S s="MAT" ...>.
                     index = contents.lastIndexOf("s=", index) + 3;
                     scrID = scrIDList.where({id: contents.substr(index, contents.indexOf("\"", index) - index)})[0];
                     arr = scrID.get('chapters');
-                    books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
-                        // this book is already in the list -- return
-                        errMsg = i18n.t("view.dscErrDuplicateFile");
-                        return false;
+                        // ** COLLABORATION SUPPORT **
+                        // This book is already in our database -
+                        // it could either be a duplicate book / file OR a different chapter from a
+                        // collaboration document. Figure out which by finding the first chapter marker
+                        // and seeing if it's already in our database
+                        book = books.where({scrid: (scrID.get('id'))})[0]; // set to the existing book
+                        bookName = book.get("name");
+                        bookID = book.get("bookid");
+                        index = contents.indexOf("\\c ", 0); // first chapter marker
+                        if (index > 0) {
+                            // pull out the chapter number
+                            firstChapterNumber = contents.substr(index + 3, contents.indexOf(" ", index + 3) - (index + 3));
+                            // look up the chapter number -- is it something we already have?
+                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
+                            if (chapters.where({name: chapterName}).length > 0) {
+                                // This is a duplicate -- return
+                                errMsg = i18n.t("view.dscErrDuplicateFile");
+                                return false;
+                            }
+                            // If we got this far, we're looking at a collaboration document -
+                            // we'll be merging in the new data into the existing book
+                            chaps = book.get("chapters"); // set to the chapters already imported in the book (we'll add to this array)
+                        } else {
+                            // No chapter found (but there is an ID) -- return
+                            errMsg = i18n.t("view.dscErrCannotFindChapter");
+                            return false;
+                        }
+                    } else {
+                        // This is a new book
+                        bookID = Underscore.uniqueId();
+                        // Create the book and chapter 
+                        book = new bookModel.Book({
+                            bookid: bookID,
+                            projectid: project.get('projectid'),
+                            scrid: scrID.get('id'),
+                            name: bookName,
+                            filename: file.name,
+                            chapters: []
+                        });
+                        books.add(book);
                     }
+                    // Reset the index to the beginning of the file
                     index = 1;
-                    bookID = Underscore.uniqueId();
-                    // Create the book and chapter 
-                    book = new bookModel.Book({
-                        bookid: bookID,
-                        projectid: project.get('projectid'),
-                        scrid: scrID.get('id'),
-                        name: bookName,
-                        filename: file.name,
-                        chapters: []
-                    });
-                    books.add(book);
+                    // Add the first chapter
                     chapterID = Underscore.uniqueId();
                     chaps.push(chapterID);
-                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
@@ -552,32 +601,39 @@ define(function (require) {
                     // create the sourcephrases
                     var $xml = $(xmlDoc);
                     var stridx = 0;
+                    var chapNum = "";
                     $($xml).find("S").each(function (i) {
                         // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
                         // create a new chapter object
                         markers = $(this).attr('m');
-                        if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
-                            // update the last adapted for the previous chapter before closing it out
-                            chapter.set('versecount', verseCount, {silent: true});
-                            chapter.set('lastadapted', lastAdapted, {silent: true});
-                            chapter.save();
-                            verseCount = 0; // reset for the next chapter
-                            lastAdapted = 0; // reset for the next chapter
+                        if (markers && markers.indexOf("\\c ") !== -1) {
+                            // is this the first chapter marker? If so, ignore it (we already created it above)
                             stridx = markers.indexOf("\\c ") + 3;
-                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
-                            chapterID = Underscore.uniqueId();
-                            chaps.push(chapterID);
-                            // create the new chapter
-                            chapter = new chapModel.Chapter({
-                                chapterid: chapterID,
-                                bookid: bookID,
-                                projectid: project.get('projectid'),
-                                name: chapterName,
-                                lastadapted: 0,
-                                versecount: 0
-                            });
-                            chapters.add(chapter);
-//                            console.log(": " + $(this).attr('s') + ", " + chapterID);
+                            chapNum = markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
+                            if (chapNum !== firstChapterNumber) {
+                                // This is not our first chapter, so we can create it
+                                // update the last adapted for the previous chapter before closing it out
+                                chapter.set('versecount', verseCount, {silent: true});
+                                chapter.set('lastadapted', lastAdapted, {silent: true});
+                                chapter.save();
+                                verseCount = 0; // reset for the next chapter
+                                lastAdapted = 0; // reset for the next chapter
+                                stridx = markers.indexOf("\\c ") + 3;
+                                chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                chapterID = Underscore.uniqueId();
+                                chaps.push(chapterID);
+                                // create the new chapter
+                                chapter = new chapModel.Chapter({
+                                    chapterid: chapterID,
+                                    bookid: bookID,
+                                    projectid: project.get('projectid'),
+                                    name: chapterName,
+                                    lastadapted: 0,
+                                    versecount: 0
+                                });
+                                chapters.add(chapter);
+    //                            console.log(": " + $(this).attr('s') + ", " + chapterID);
+                            }
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
@@ -714,7 +770,7 @@ define(function (require) {
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
-                    books.fetch({reset: true, data: {name: ""}});
+//                    books.fetch({reset: true, data: {name: ""}});
                     if (books.where({scrid: (scrID.get('id'))}).length > 0) {
                         // this book is already in the list -- return
                         errMsg = i18n.t("view.dscErrDuplicateFile");
