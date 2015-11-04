@@ -172,6 +172,7 @@
         "dscErrDuplicateFile": "el archivo ya se ha importado.",
         "dscErrCannotFindID": "no pudo encontrar el identificador del libro.",
         "dscErrCannotFindChapter": "no pudo encontrar el número del capítulo.",
+        "dscErrImportFirstChapterFirst": "this is a collaboration document; please import the first chapter before importing this chapter.",
         "dscNoDocumentsFound": "No hay archivos disponibles encontrados. Por favor, copiar algunos archivos en el dispositivo y vuelva a intentarlo.",
         "lblSelect": "Seleccione Archivos",
         "ttlReset": "Reinicializar a Adapt It Mobile",

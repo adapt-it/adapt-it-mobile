@@ -525,6 +525,7 @@ define(function (require) {
                             bookName = bookName.substr(8, bookName.lastIndexOf("_CH") - 8);
                         }
                     }
+                    // Sanity check -- this needs to be an AI XML document (we don't support other xml files right now)
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // Starting at the SourcePhrases ( <S ...> ), look for the \id element
                     // in the markers. We'll test this against the canonical usfm markers to learn more about this document.
@@ -550,8 +551,6 @@ define(function (require) {
                         // collaboration document. Figure out which by finding the first chapter marker
                         // and seeing if it's already in our database
                         book = books.where({scrid: (scrID.get('id'))})[0]; // set to the existing book
-                        bookName = book.get("name");
-                        bookID = book.get("bookid");
                         index = contents.indexOf("\\c ", 0); // first chapter marker
                         if (index > 0) {
                             // pull out the chapter number
@@ -560,7 +559,7 @@ define(function (require) {
                                 firstBook = true;
                             }
                             // look up the chapter number -- is it something we already have?
-                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
+                            chapterName = i18n.t("view.lblChapterName", {bookName: book.get("bookid"), chapterNumber: firstChapterNumber});
                             if (chapters.where({name: chapterName}).length > 0) {
                                 // This is a duplicate -- return
                                 errMsg = i18n.t("view.dscErrDuplicateFile");
@@ -569,6 +568,16 @@ define(function (require) {
                             // If we got this far, we're looking at a collaboration document -
                             // we'll be merging in the new data into the existing book
                             isMergedDoc = true;
+                            if (firstBook === true) {
+                                // The user has merged in the first chapter AFTER importing a subsequent chapter --
+                                // this shouldn't happen (see the logic block below that disallows it). Just in case,
+                                // try to offset the damage by updating the book name to what this chapter holds.
+                                book.set('name', bookName);
+                            } else {
+                                // Not the first chapter -- use the book name in the database object.
+                                bookName = book.get("name");
+                            }
+                            bookID = book.get("bookid");
                             chaps = book.get("chapters"); // set to the chapters already imported in the book (we'll add to this array)
                         } else {
                             // No chapter found (but there is an ID) -- return
@@ -577,8 +586,23 @@ define(function (require) {
                         }
                     } else {
                         // This is a new book
-                        bookID = Underscore.uniqueId();
+                        // Make a note of the first chapter number. Disallow collab documents where the first chapter is
+                        // NOT the first document being imported, as this creates a headache for book naming / lookups.
+                        index = contents.indexOf("\\c ", 0); // first chapter marker
+                        if (index > 0) {
+                            // pull out the chapter number
+                            firstChapterNumber = contents.substr(index + 3, contents.indexOf(" ", index + 3) - (index + 3));
+                            if (firstChapterNumber === "1") {
+                                firstBook = true;
+                            } else {
+                                // User attempting to import collab document without importing the first chapter first;
+                                // error out
+                                errMsg = i18n.t("view.dscErrImportFirstChapterFirst");
+                                return false;
+                            }
+                        }
                         // Create the book and chapter 
+                        bookID = Underscore.uniqueId();
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
@@ -620,7 +644,7 @@ define(function (require) {
                     var stridx = 0;
                     var chapNum = "";
                     $($xml).find("S").each(function (i) {
-                        if (i === 0 && isMergedDoc === true && firstBook === false) {
+                        if (i === 0 && firstBook === false) {
                             // merged (collaboration) documents have an extra "\id" element at the beginning of subsequent chapters;
                             // ignore this element and continue to the next one
                             return true; // jquery equivalent of continue in loop

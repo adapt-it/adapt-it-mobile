@@ -172,6 +172,7 @@
         "dscErrDuplicateFile": "duplicate file.",
         "dscErrCannotFindID": "unknown book ID.",
         "dscErrCannotFindChapter": "cannot find chapter number.",
+        "dscErrImportFirstChapterFirst": "this is a collaboration document; please import the first chapter before importing this chapter.",
         "dscNoDocumentsFound": "No available files found on device. Please copy files onto the device and try again.",
         "lblSelect": "Select Files",
         "ttlReset": "Reset Adapt It Mobile",
