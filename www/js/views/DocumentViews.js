@@ -488,6 +488,19 @@ define(function (require) {
                     var markers = "";
                     var firstChapterNumber = "1";
                     var i = 0;
+                    var firstBook = false;
+                    var isMergedDoc = false;
+//                    var reorderChapters = function (book) {
+//                        var arr = [];
+//                        var elt = [];
+//                        var result = [];
+//                        var chaps = book.get("chapters");
+//                        for (i = 0; i < chaps.length; i++) {
+//                            arr.push({chapid: chaps[i], chapname: window.Application.ChapterList.findWhere({chapterid: chaps[i]})});
+//                        }
+//                        Underscore.sortBy(arr, 'chapname');
+//                        book.set("chapters", result);
+//                    };
                     console.log("Reading XML file:" + file.name);
                     bookName = ""; // reset
                     // Book name
@@ -543,6 +556,9 @@ define(function (require) {
                         if (index > 0) {
                             // pull out the chapter number
                             firstChapterNumber = contents.substr(index + 3, contents.indexOf(" ", index + 3) - (index + 3));
+                            if (firstChapterNumber === "1") {
+                                firstBook = true;
+                            }
                             // look up the chapter number -- is it something we already have?
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
                             if (chapters.where({name: chapterName}).length > 0) {
@@ -552,6 +568,7 @@ define(function (require) {
                             }
                             // If we got this far, we're looking at a collaboration document -
                             // we'll be merging in the new data into the existing book
+                            isMergedDoc = true;
                             chaps = book.get("chapters"); // set to the chapters already imported in the book (we'll add to this array)
                         } else {
                             // No chapter found (but there is an ID) -- return
@@ -603,6 +620,11 @@ define(function (require) {
                     var stridx = 0;
                     var chapNum = "";
                     $($xml).find("S").each(function (i) {
+                        if (i === 0 && isMergedDoc === true && firstBook === false) {
+                            // merged (collaboration) documents have an extra "\id" element at the beginning of subsequent chapters;
+                            // ignore this element and continue to the next one
+                            return true; // jquery equivalent of continue in loop
+                        }
                         // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
                         // create a new chapter object
                         markers = $(this).attr('m');
