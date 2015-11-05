@@ -490,17 +490,6 @@ define(function (require) {
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
-//                    var reorderChapters = function (book) {
-//                        var arr = [];
-//                        var elt = [];
-//                        var result = [];
-//                        var chaps = book.get("chapters");
-//                        for (i = 0; i < chaps.length; i++) {
-//                            arr.push({chapid: chaps[i], chapname: window.Application.ChapterList.findWhere({chapterid: chaps[i]})});
-//                        }
-//                        Underscore.sortBy(arr, 'chapname');
-//                        book.set("chapters", result);
-//                    };
                     console.log("Reading XML file:" + file.name);
                     bookName = ""; // reset
                     // Book name
@@ -775,6 +764,26 @@ define(function (require) {
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
+                    if (isMergedDoc === true) {
+                        var chapList = [];
+                        var number = 0;
+                        var tmpString = "";
+                        // If this is a merged document, the chapters might be out of order -- 
+                        // sort them here
+                        for (i = 0; i < chaps.length; i++) {
+                            tmpString = chapters.findWhere({chapterid: chaps[i]}).get("name");
+                            number = parseInt(tmpString.substr(tmpString.lastIndexOf(" " + 1)), 10); // just the number part
+                            chapList.push({chapid: chaps[i], number: number});
+                        }
+                        var result = Underscore.sortBy(chapList, function (element) {
+                            return element.number;
+                        });
+                        // transfer the sorted list back into chaps
+                        chaps.length = 0; // clear chaps
+                        for (i = 0; i < result.length; i++) {
+                            chaps.push(result[i].chapid);
+                        }
+                    }
                     book.set('chapters', chaps, {silent: true});
                     book.save();
                     return true; // success

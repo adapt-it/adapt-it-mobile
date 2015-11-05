@@ -159,6 +159,11 @@ define(function (require) {
                     var len = 0;
                     var i = 0;
                     var retValue = null;
+                    // special case -- empty name query ==> reset local copy so we force a retrieve
+                    // from the database
+                    if (name === "") {
+                        chapters.length = 0;
+                    }
                     var results = chapters.filter(function (element) {
                         return element.attributes.name.toLowerCase().indexOf(name.toLowerCase()) > -1;
                     });
