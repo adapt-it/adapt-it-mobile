@@ -207,6 +207,8 @@
         "hlpdscPrevNext": "Click the Previous and Next buttons to accept the current translation and move to the next or previous untranslated word.",
         "hlpttlBack": "Back",
         "hlpdscBack": "When you are done, click on the Back button to return to the home screen.",
+        "lblExport": "Export",
+        "dscPassword": "Password:",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

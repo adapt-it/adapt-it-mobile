@@ -17,6 +17,7 @@ define(function (require) {
         spModel         = require('app/models/sourcephrase'),
         kbmodel         = require('app/models/targetunit'),
         clickCount      = 0,
+        strPassword     = "dangerous",
         books           = null,
         chapters        = null,
         sourcephrases   = null,
@@ -61,6 +62,7 @@ define(function (require) {
             onShow: function () {
                 books = new bookModel.BookCollection();
                 books.fetch({reset: true, data: {name: ""}});
+                clickCount = 0;
             },
 
             ////
@@ -81,18 +83,23 @@ define(function (require) {
                     
                     if (navigator.notification) {
                         // on mobile device
-                        navigator.notification.confirm(i18n.t('view.dscReset'), function (buttonIndex) {
-                            if (buttonIndex === 1) {
-                                resetAIM();
+                        navigator.notification.prompt(i18n.t('view.dscPassword'), function (results) {
+                            if (results.buttonIndex === 1 && results.input1 === strPassword) {
+                                navigator.notification.confirm(i18n.t('view.dscReset'), function (buttonIndex) {
+                                    if (buttonIndex === 1) {
+                                        resetAIM();
+                                    }
+                                }, i18n.t('view.ttlReset'));
                             }
                         }, i18n.t('view.ttlReset'));
                     } else {
                         // in browser
-                        if (confirm(i18n.t('view.dscReset'))) {
-                            resetAIM();
+                        if (prompt(i18n.t('view.dscPassword')) === strPassword) {
+                            if (confirm(i18n.t('view.dscReset'))) {
+                                resetAIM();
+                            }
                         }
                     }
-
                 }
             },
             // User clicked on the Continue button (initial startup screen). Redirects the user to
