@@ -396,7 +396,7 @@ define(function (require) {
                             });
                         }
                     };
-                    console.log("Reading XML file:" + file.name);
+                    console.log("Reading USX file:" + file.name);
                     bookName = file.name.substr(0, file.name.indexOf("."));
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
@@ -811,7 +811,7 @@ define(function (require) {
                     index = contents.indexOf("\\h ");
                     if (index > -1) {
                         // get the name from the usfm itself
-                        bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3)));
+                        bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3))).trim();
                     } else {
                         bookName = file.name;
                     }

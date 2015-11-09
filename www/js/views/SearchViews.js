@@ -84,7 +84,7 @@ define(function (require) {
             },
 
             onSelectBook: function (event) {
-                var key = $('#book').val();
+                var key = $('#book').val().trim();
                 // find each chapter of this book in the chapterlist collection
                 this.chapterList.fetch({reset: true, data: {name: key}});
                 if (this.chapterList.length > 0) {
