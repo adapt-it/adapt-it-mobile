@@ -761,7 +761,8 @@ define(function (require) {
                             importFail(e);
                         });
                     }
-                    // update the last chapter's verseCount
+                    // update the last chapter's verseCount and last adapted verse
+                    chapter.set('lastadapted', lastAdapted, {silent: true});
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
                     if (isMergedDoc === true) {
