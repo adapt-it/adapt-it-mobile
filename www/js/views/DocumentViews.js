@@ -16,13 +16,17 @@ define(function (require) {
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         chapModel       = require('app/models/chapter'),
+        kbModels        = require('app/models/targetunit'),
         scrIDs          = require('utils/scrIDs'),
         USFM            = require('utils/usfm'),
+        kblist          = null, // populated in onShow
         lines           = [],
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
         puncts          = [],
+        caseSource = [],
+        caseTarget = [],
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -63,6 +67,7 @@ define(function (require) {
                 // display the OK button
                 $("#OK").removeAttr("disabled");
             };
+            
             // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
                 var value = "",
@@ -471,7 +476,8 @@ define(function (require) {
                 // Adapt It XML document
                 // While XML is a general purpose document format, we're looking
                 // specifically for Adapt It XML document files; other files
-                // will be skipped (for now)
+                // will be skipped (for now). 
+                // This import also populates the KB and sets the last translated verse in each chapter.
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
                     var re = /\s+/;
@@ -490,6 +496,38 @@ define(function (require) {
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
+                    // Helper method to convert theString to lower case using either the source or target case equivalencies.
+                    var autoRemoveCaps = function (theString, isSource) {
+                        var i = 0,
+                            result = "";
+                        // If we aren't capitalizing for this project, just return theString
+                        if (project.get('AutoCapitalization') === 'false') {
+                            return theString;
+                        }
+                        // is the first letter capitalized?
+                        if (isSource === true) {
+                            // use source case equivalencies
+                            for (i = 0; i < caseSource.length; i++) {
+                                if (caseSource[i].charAt(1) === theString.charAt(0)) {
+                                    // uppercase -- convert the first character to lowercase and return the result
+                                    result = caseSource[i].charAt(0) + theString.substr(1);
+                                    return result;
+                                }
+                            }
+                        } else {
+                            // use target case equivalencies
+                            for (i = 0; i < caseTarget.length; i++) {
+                                if (caseTarget[i].charAt(1) === theString.charAt(0)) {
+                                    // uppercase -- convert the first character to lowercase and return the result
+                                    result = caseTarget[i].charAt(0) + theString.substr(1);
+                                    return result;
+                                }
+                            }
+                        }
+                        // If we got here, the string wasn't uppercase -- just return the same string
+                        return theString;
+                    };
+                    
                     console.log("Reading XML file:" + file.name);
                     bookName = ""; // reset
                     // Book name
@@ -707,8 +745,6 @@ define(function (require) {
                                     });
                                     index++;
                                     sps.push(sp);
-//                                    sourcePhrases.add(sp);
-//                                    sp.save();
                                     markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
@@ -726,8 +762,6 @@ define(function (require) {
                                     });
                                     index++;
                                     sps.push(sp);
-//                                    sourcePhrases.add(sp);
-//                                    sp.save();
                                     markers = ""; // reset
                                 }
                             });
@@ -748,8 +782,12 @@ define(function (require) {
                         });
                         index++;
                         sps.push(sp);
-//                        sourcePhrases.add(sp);
-//                        sp.save();
+                        // add this item to the KB
+                        // TODO: build up punctpairs
+                        if (sp.get('target').length > 0) {
+                            kblist.saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps(sp.get('target'), false),
+                                            "", project.get('projectid'));
+                        }
                     });
                     // add the sourcephrases
                     if (sps.length > 0) {
@@ -1145,6 +1183,15 @@ define(function (require) {
                     punctExp += "(\\u" + ("000" + elt.s.charCodeAt(0).toString(16)).slice(-4) + ")";
                 });
                 punctExp += "]+"; // one or more of ANY of the above will trigger a new token
+
+                // load the source / target case pairs
+                this.model.get('CasePairs').forEach(function (elt, idx, array) {
+                    caseSource.push(elt.s);
+                    caseTarget.push(elt.t);
+                });
+                // instantiate the KB in case we import an AI XML document (we'll populate the KB if that happens)
+                kblist = new kbModels.TargetUnitCollection();
+                kblist.fetch({reset: true, data: {name: this.model.get('projectid')}});
                 
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
