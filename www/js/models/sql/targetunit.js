@@ -156,9 +156,11 @@ define(function (require) {
             saveInKB: function (sourceValue, targetValue, oldTargetValue, projectid) {
                 var elts = targetunits.filter(function (element) {
                     return (element.attributes.projectid === projectid &&
-                       element.attributes.source.toLowerCase().indexOf(sourceValue.toLowerCase()) > -1);
+                       element.attributes.source.toLowerCase() === sourceValue.toLowerCase());
                 });
-                var tu = null;
+                var tu = null,
+                    curDate = new Date(),
+                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
                 if (elts.length > 0) {
                     tu = elts[0];
                 }
@@ -198,12 +200,11 @@ define(function (require) {
                         refstrings.push(newRS);
                     }
                     // update the KB model
-                    tu.save({refstring: refstrings});
+                    tu.set('refstring', refstrings);
+                    tu.set('timestamp', timestamp);
                 } else {
                     // no entry in KB with this source -- add one
                     var newID = Underscore.uniqueId(),
-                        curDate = new Date(),
-                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         newTU = new TargetUnit({
                             tuid: newID,
                             projectid: projectid,
@@ -243,9 +244,54 @@ define(function (require) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('source')) {
-                        findBySource(options.data.source).done(function (data) {
-                            options.success(data);
+                        var deferred = $.Deferred();
+                        var source = options.data.source;
+                        var len = 0;
+                        var i = 0;
+                        var retValue = null;
+                        // special case -- empty source query ==> reset local copy so we force a retrieve
+                        // from the database
+                        if (source === "") {
+                            targetunits.length = 0;
+                        }
+                        var results = targetunits.filter(function (element) {
+                            return element.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
                         });
+                        if (results.length === 0) {
+                            // not in collection -- retrieve them from the db
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
+                                    var tmpString = "";
+                                    for (i = 0, len = res.rows.length; i < len; ++i) {
+                                        // add the chapter
+                                        var tu = new TargetUnit();
+                                        tu.off("change");
+                                        tu.set(res.rows.item(i));
+                                        // convert refstring back into an array object
+                                        tmpString = tu.get('refstring');
+                                        tu.set('refstring', JSON.parse(tmpString));
+                                        targetunits.push(tu);
+                                        tu.on("change", tu.save, tu);
+                                    }
+                                    console.log("SELECT ok: " + res.rows.length + " targetunit items");
+                                    // return the filtered results (now that we have them)
+                                    retValue = targetunits.filter(function (element) {
+                                        return element.attributes.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
+                                    });
+                                    options.success(retValue);
+                                    deferred.resolve(retValue);
+                                });
+                            }, function (e) {
+                                options.error();
+                                deferred.reject(e);
+                            });
+                        } else {
+                            // results already in collection -- return them
+                            options.success(results);
+                            deferred.resolve(results);
+                        }
+                        // return the promise
+                        return deferred.promise();
                     }
                 }
             }

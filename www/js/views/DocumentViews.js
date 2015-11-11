@@ -785,7 +785,7 @@ define(function (require) {
                         // add this item to the KB
                         // TODO: build up punctpairs
                         if (sp.get('target').length > 0) {
-                            kblist.saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps(sp.get('target'), false),
+                            kblist.saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
                                             "", project.get('projectid'));
                         }
                     });
@@ -1191,7 +1191,7 @@ define(function (require) {
                 });
                 // instantiate the KB in case we import an AI XML document (we'll populate the KB if that happens)
                 kblist = new kbModels.TargetUnitCollection();
-                kblist.fetch({reset: true, data: {name: this.model.get('projectid')}});
+                kblist.fetch({reset: true, data: {source: ""}});
                 
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
