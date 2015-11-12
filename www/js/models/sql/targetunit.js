@@ -200,8 +200,9 @@ define(function (require) {
                         refstrings.push(newRS);
                     }
                     // update the KB model
-                    tu.set('refstring', refstrings);
-                    tu.set('timestamp', timestamp);
+                    tu.set('refstring', refstrings, {silent: true});
+                    tu.set('timestamp', timestamp, {silent: true});
+                    tu.update();
                 } else {
                     // no entry in KB with this source -- add one
                     var newID = Underscore.uniqueId(),
@@ -234,27 +235,64 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
+                var deferred = $.Deferred();
+                var len = 0;
+                var i = 0;
+                var retValue = null;
+                var results = null;
                 if (method === "read") {
                     if (options.data.hasOwnProperty('id')) {
                         findById(options.data.id).done(function (data) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('projectid')) {
-                        findByProjectId(options.data.projectid).done(function (data) {
-                            options.success(data);
+                        var projectid = options.data.projectid;
+                        results = targetunits.filter(function (element) {
+                            return element.attributes.projectid === projectid.toLowerCase();
                         });
+                        if (results.length === 0) {
+                            // not in collection -- retrieve them from the db
+                            window.Application.db.transaction(function (tx) {
+                                tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
+                                    var tmpString = "";
+                                    for (i = 0, len = res.rows.length; i < len; ++i) {
+                                        // add the chapter
+                                        var tu = new TargetUnit();
+                                        tu.off("change");
+                                        tu.set(res.rows.item(i));
+                                        // convert refstring back into an array object
+                                        tmpString = tu.get('refstring');
+                                        tu.set('refstring', JSON.parse(tmpString));
+                                        targetunits.push(tu);
+                                        tu.on("change", tu.save, tu);
+                                    }
+                                    console.log("SELECT ok: " + res.rows.length + " targetunit items");
+                                    // return the filtered results (now that we have them)
+                                    retValue = targetunits.filter(function (element) {
+                                        return element.attributes.projectid === projectid.toLowerCase();
+                                    });
+                                    options.success(retValue);
+                                    deferred.resolve(retValue);
+                                });
+                            }, function (e) {
+                                options.error();
+                                deferred.reject(e);
+                            });
+                        } else {
+                            // results already in collection -- return them
+                            options.success(results);
+                            deferred.resolve(results);
+                        }
+                        // return the promise
+                        return deferred.promise();
                     } else if (options.data.hasOwnProperty('source')) {
-                        var deferred = $.Deferred();
                         var source = options.data.source;
-                        var len = 0;
-                        var i = 0;
-                        var retValue = null;
                         // special case -- empty source query ==> reset local copy so we force a retrieve
                         // from the database
                         if (source === "") {
                             targetunits.length = 0;
                         }
-                        var results = targetunits.filter(function (element) {
+                        results = targetunits.filter(function (element) {
                             return element.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
                         });
                         if (results.length === 0) {

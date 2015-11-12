@@ -327,7 +327,7 @@ define(function (require) {
                 var result = null,
                     strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
                 try {
-                    result = this.kblist.findWhere({'source': key}); // strNoPunctuation});
+                    result = kblist.findWhere({'source': key}); // strNoPunctuation});
                     if (typeof result === 'undefined') {
                         return null;
                     }
@@ -335,68 +335,6 @@ define(function (require) {
                     console.log(err);
                 }
                 return result;
-            },
-            // Helper method to store the specified source and target text in the KB.
-            saveInKB: function (sp, targetValue) {
-                var tu = this.findInKB(this.autoRemoveCaps(sp.get('source'), true));
-                if (tu) {
-                    var i = 0,
-                        found = false,
-                        refstrings = tu.get('refstring'),
-                        oldValue = this.stripPunctuation(this.autoRemoveCaps(sp.get('target'), false));
-                    // delete or decrement the old value
-                    if (oldValue.length > 0) {
-                        // the model has an old value -- try to find and remove the corresponding KB entry
-                        for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].target === oldValue) {
-                                if (refstrings[i].n !== '0') {
-                                    // more than one refcount -- decrement it
-                                    refstrings[i].n--;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    // add or increment the new value
-                    for (i = 0; i < refstrings.length; i++) {
-                        if (refstrings[i].target === this.stripPunctuation(this.autoRemoveCaps(targetValue, false))) {
-                            refstrings[i].n++;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found === false) {
-                        // no entry in KB with this source/target -- add one
-                        var newRS = [
-                            {
-                                'target': this.stripPunctuation(this.autoRemoveCaps(targetValue, false)),
-                                'n': '1'
-                            }
-                        ];
-                        refstrings.push(newRS);
-                    }
-                    // update the KB model
-                    tu.save({refstring: refstrings});
-                } else {
-                    // no entry in KB with this source -- add one
-                    var newID = Underscore.uniqueId(),
-                        currentdate = new Date(),
-                        newTU = new kbModels.TargetUnit({
-                            tuid: newID,
-                            projectid: project.projectid,
-                            source: this.autoRemoveCaps(sp.get('source'), true),
-                            refstring: [
-                                {
-                                    target: this.stripPunctuation(this.autoRemoveCaps(targetValue, false)),
-                                    n: "1"
-                                }
-                            ],
-                            timestamp: this.getTimestamp(),
-                            user: ""
-                        });
-                    this.kblist.add(newTU);
-                    newTU.save();
-                }
             },
             // Helper method to move the editing cursor forwards or backwards one pile.
             // this also calls blur(), which saves any changes.
@@ -897,7 +835,10 @@ define(function (require) {
                         // (note: model still refers to the previous selection sourcephrase)
                         if (tmpTargetValue && tmpTargetValue.length > 0) {
                             // save the new value to the KB
-                            this.saveInKB(model, tmpTargetValue);
+                            kblist.saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                            this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
+                                            this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                            project.get('projectid'));
                             // update the model with the new target text
                             model.save({target: tmpTargetValue});
                             $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
@@ -1116,7 +1057,10 @@ define(function (require) {
                 if (isDirty === true) {
                     console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                     // something has changed -- update the KB
-                    this.saveInKB(model, trimmedValue);
+                    kblist.saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                    this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
+                                    this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                    project.get('projectid'));
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                     // clear out the temp IOS value, since we've already saved this value
@@ -1468,6 +1412,7 @@ define(function (require) {
         ChapterView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplChapter),
             initialize: function () {
+                kblist = new kbModels.TargetUnitCollection();
                 document.addEventListener("resume", this.onResume, false);
             },
             regions: {
@@ -1486,9 +1431,10 @@ define(function (require) {
                 chapter = this.model;
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
-                this.kblist = new kbModels.TargetUnitCollection();
                 // fetch the KB for this project
-                this.kblist.fetch({reset: true, data: {name: this.project.projectid}});
+                $.when(kblist.fetch({reset: true, data: {projectid: project.get('projectid')}})).done(function () {
+                    console.log("KB fetch complete.");
+                });
                 // load the source / target punctuation pairs
                 this.project.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);
@@ -1503,8 +1449,6 @@ define(function (require) {
                 this.$el.html(template(this.model.toJSON()));
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
-                this.listView.kblist = this.kblist;
-//                this.listView.project = this.project;
                 addStyleRules(this.project);
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
