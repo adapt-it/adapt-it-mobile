@@ -1145,9 +1145,10 @@ define(function (require) {
                 if (isPlaceholder === false) {
                     // no placeholder at the selection -- add one
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
-                    phObj.save();
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                     selectedObj = this.collection.get(strID);
+                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     $(selectedStart).before(placeHolderHtml);
                     // start adapting at this location
@@ -1248,10 +1249,11 @@ define(function (require) {
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
-                    phObj.save();
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
+                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     $(selectedStart).before(phraseHtml);
                     // finally, remove the selected piles (they were merged into this one)
@@ -1285,7 +1287,7 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: phraseTarget});
+                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
@@ -1352,9 +1354,10 @@ define(function (require) {
                     RetHtml += RetHtmlEnd;
                     console.log("Ret: " + RetHtml);
                     phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
-                    phObj.save();
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                     selectedObj = this.collection.get(strID);
+                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
@@ -1388,7 +1391,7 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: RetTarget});
+                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
