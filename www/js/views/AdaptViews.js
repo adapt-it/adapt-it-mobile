@@ -1144,7 +1144,8 @@ define(function (require) {
                 // add a placeholder before the current selection
                 if (isPlaceholder === false) {
                     // no placeholder at the selection -- add one
-                    phObj = new spModels.SourcePhrase({ id: ("plc-" + newID), source: "..."});
+                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
+                    phObj.save();
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -1246,7 +1247,8 @@ define(function (require) {
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
-                    phObj = new spModels.SourcePhrase({ id: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj.save();
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
@@ -1283,7 +1285,8 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: phraseTarget});
+                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: phraseTarget});
+                        phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
                         $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
@@ -1348,7 +1351,8 @@ define(function (require) {
                     RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
                     RetHtml += RetHtmlEnd;
                     console.log("Ret: " + RetHtml);
-                    phObj = new spModels.SourcePhrase({ id: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj.save();
                     strID = $(selectedStart).attr('id').substring(5); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -1384,7 +1388,8 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ id: (bookID + "--" + newID), source: value, target: RetTarget});
+                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), source: value, target: RetTarget});
+                        phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
                         $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
@@ -1465,19 +1470,23 @@ define(function (require) {
                 "click #Retranslation": "toggleRetranslation",
                 "click #help": "onHelp"
             },
-            // go to the previous target field
+            // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
                 console.log("goPrevPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
+                    var value = $(selectedStart).find('.target').text();
+                    tmpTargetValue = value.trim();
                     this.listView.moveCursor(event, false);
                 }
             },
-            // go to the next target field
+            // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
                 console.log("goNextPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
+                    var value = $(selectedStart).find('.target').text();
+                    tmpTargetValue = value.trim();
                     this.listView.moveCursor(event, true);
                 }
             },
