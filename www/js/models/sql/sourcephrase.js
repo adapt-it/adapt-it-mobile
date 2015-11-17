@@ -37,7 +37,7 @@ define(function (require) {
             defaults: {
                 spid: "",
                 chapterid: "",
-                
+                order: "",
                 markers: "",
                 orig: null,
                 prepuncts: "",
