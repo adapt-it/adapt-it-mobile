@@ -25,7 +25,7 @@
         "dscProjectSourceLanguage": "<b>Step 1: Sos Tokples</b><br>Taipim nem bilong <em>sos tokples</em> na taipim nem bilong daialek, sapos i gat daialek.",
         "dscProjectTargetLanguage": "<b>Step 2: Taget Tokples</b><br>Taipim nem bilong <em>taget tokples</em> na taipim nem bilong daialek, sapos i gat daialek.",
         "dscProjectFonts": "<b>Step 3: Fonts</b><br>Sapos yu laik senisim font kala bilong sos, taget o toksave teks, klikim lain. Sapos nogat, klikim Go Neks baten bilong go het.",
-        "dscProjectPunctuation": "<b>Step 4: Pangsuesen</b>
+        "dscProjectPunctuation": "<b>Step 4: Pangsuesen</b>",
         "lblPunctuation": "Taipim wanwan pangsuesen leta bliong sos tokples, wantaim poroman leta bilong taget tokples.",
         "dscProjectCases": "<b>Step 5: Kes</b>",
         "lblCases": "Taipim smol kes leta wantaim kapitel kes leta bilong sos tokples na bilong taget tokples daun bilo.",
