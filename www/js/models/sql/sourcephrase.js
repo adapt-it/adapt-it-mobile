@@ -37,6 +37,7 @@ define(function (require) {
             defaults: {
                 spid: "",
                 chapterid: "",
+                
                 markers: "",
                 orig: null,
                 prepuncts: "",
@@ -126,6 +127,8 @@ define(function (require) {
         SourcePhraseCollection = Backbone.Collection.extend({
 
             model: SourcePhrase,
+            
+            current: null,
 
             resetFromDB: function () {
                 var i = 0,
@@ -137,8 +140,23 @@ define(function (require) {
                 });
             },
             
+            setCurrent: function (index) {
+                if (index > -1 && index < this.size()) {
+                    this.current = this.at(index);
+                } else {
+                    console.log('setCurrent: cannot set index: ' + index);
+                }
+            },
+            prev: function() {
+                this.setCurrent(this.at(this.current) - 1);
+            },
+            next: function() {
+                this.setCurrent(this.at(this.current) + 1);
+            },
+            
             initialize: function () {
                 this.resetFromDB();
+                this.setCurrent(0);
             },
 
             // Removes all sourcephrases from the collection (and database)
