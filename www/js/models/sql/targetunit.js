@@ -64,9 +64,19 @@ define(function (require) {
             },
             create: function () {
                 var attributes = this.attributes;
+                var user = "";
+                if (attributes.user.length > 0) {
+                    user = attributes.user;
+                } else {
+                    if (window.sqlitePlugin) {
+                        user = device.uuid;
+                    } else {
+                        user = "Browser";
+                    }
+                }
                 var sql = "INSERT INTO targetunit (tuid,projectid,source,refstring,timestamp,user) VALUES (?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user], function (tx, res) {
+                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, user], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("INSERT (create) error: " + err.message);
@@ -75,9 +85,19 @@ define(function (require) {
             },
             update: function () {
                 var attributes = this.attributes;
+                var user = "";
+                if (attributes.user.length > 0) {
+                    user = attributes.user;
+                } else {
+                    if (window.sqlitePlugin) {
+                        user = device.uuid;
+                    } else {
+                        user = "Browser";
+                    }
+                }
                 var sql = "UPDATE targetunit SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, attributes.user, attributes.tuid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.tuid], function (tx, res) {
 //                        console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("UPDATE error: " + err.message);

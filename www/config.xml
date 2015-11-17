@@ -25,6 +25,7 @@
     <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
     <!-- PhoneGap Build - core plugins -->
+    <gap:plugin name="cordova-plugin-device" source="npm" />
     <gap:plugin name="cordova-plugin-file" source="npm" />
     <gap:plugin name="cordova-plugin-file-transfer" source="npm" />
     <gap:plugin name="cordova-plugin-globalization" source="npm" />
