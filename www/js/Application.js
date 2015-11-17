@@ -93,7 +93,7 @@ define(function (require) {
 
                 // get the user's locale - mobile or web
                 if (typeof navigator.globalization !== 'undefined') {
-                    navigator.globalization.getLocaleName(
+                    navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
                         function (loc) {
                             locale = loc.value.split("-")[0];
                             initialize_i18n(locale);
