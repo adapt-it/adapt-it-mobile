@@ -33,11 +33,10 @@ define(function (require) {
 
         SourcePhrase = Backbone.Model.extend({
             // default values
-            
             defaults: {
                 spid: "",
                 chapterid: "",
-                order: "",
+                norder: 0,
                 markers: "",
                 orig: null,
                 prepuncts: "",
@@ -61,9 +60,9 @@ define(function (require) {
             },
             create: function () {
                 var attributes = this.attributes;
-                var sql = "INSERT INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.spid, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
+                    tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
@@ -72,9 +71,9 @@ define(function (require) {
             },
             update: function () {
                 var attributes = this.attributes;
-                var sql = 'UPDATE sourcephrase SET chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;';
+                var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;';
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target, attributes.spid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target, attributes.spid], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
@@ -129,12 +128,16 @@ define(function (require) {
             model: SourcePhrase,
             
             current: null,
+            
+            comparator: function (model) {
+                return model.get("order");
+            },
 
             resetFromDB: function () {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id integer primary key, spid text, chapterid text, markers text, orig text, prepuncts text, midpuncts text, follpuncts text, source text, target text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, source TEXT, target TEXT);');
                 }, function (err) {
                     console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
@@ -147,10 +150,10 @@ define(function (require) {
                     console.log('setCurrent: cannot set index: ' + index);
                 }
             },
-            prev: function() {
+            prev: function () {
                 this.setCurrent(this.at(this.current) - 1);
             },
-            next: function() {
+            next: function () {
                 this.setCurrent(this.at(this.current) + 1);
             },
             
@@ -178,12 +181,12 @@ define(function (require) {
             // add an array of SourcePhrase objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "INSERT INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
-                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);
+                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));
@@ -196,7 +199,7 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
-                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
                 var coll = null;
                 switch (method) {
                 case 'create':

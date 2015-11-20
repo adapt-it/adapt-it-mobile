@@ -55,9 +55,9 @@ define(function (require) {
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
-                console.log("importFail()");
+                console.log("importFail(): " + e.message);
                 // update status
-                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: file.name, reason: e}));
+                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: file.name, reason: e.message}));
                 if ($("#loading").length) {
                     // mobile "please wait" UI
                     $("#loading").hide();
@@ -78,6 +78,7 @@ define(function (require) {
                     s = "",
                     t = "",
                     index = 0,
+                    norder = 1,
                     markers = "",
                     orig = null,
                     prepuncts = "",
@@ -196,6 +197,7 @@ define(function (require) {
                                 spID = Underscore.uniqueId();
                                 sp = new spModel.SourcePhrase({
                                     spid: spID,
+                                    norder: norder,
                                     chapterid: chapterID,
                                     markers: markers,
                                     orig: null,
@@ -212,6 +214,7 @@ define(function (require) {
                                 index++;
                                 sps.push(sp);
                                 i++;
+                                norder++;
                             }
                         }
                     }
@@ -374,6 +377,7 @@ define(function (require) {
                                         spID = Underscore.uniqueId();
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
+                                            norder: norder,
                                             chapterid: chapterID,
                                             markers: markers,
                                             orig: null,
@@ -388,6 +392,7 @@ define(function (require) {
                                         follpuncts = "";
                                         punctIdx = 0;
                                         index++;
+                                        norder++;
                                         sps.push(sp);
                                         i++;
                                     }
@@ -734,6 +739,7 @@ define(function (require) {
                                     spID = Underscore.uniqueId();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
+                                        norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
                                         orig: null,
@@ -744,6 +750,7 @@ define(function (require) {
                                         target: ""
                                     });
                                     index++;
+                                    norder++;
                                     sps.push(sp);
                                     markers = ""; // reset
                                 } else {
@@ -751,6 +758,7 @@ define(function (require) {
                                     spID = Underscore.uniqueId();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
+                                        norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
                                         orig: null,
@@ -761,6 +769,7 @@ define(function (require) {
                                         target: ""
                                     });
                                     index++;
+                                    norder++;
                                     sps.push(sp);
                                     markers = ""; // reset
                                 }
@@ -771,6 +780,7 @@ define(function (require) {
                         spID = Underscore.uniqueId();
                         sp = new spModel.SourcePhrase({
                             spid: spID,
+                            norder: norder,
                             chapterid: chapterID,
                             markers: $(this).attr('m'),
                             orig: null,
@@ -781,6 +791,7 @@ define(function (require) {
                             target: $(this).attr('t')
                         });
                         index++;
+                        norder++;
                         sps.push(sp);
                         // add this item to the KB
                         // TODO: build up punctpairs
@@ -1010,6 +1021,7 @@ define(function (require) {
                                 spID = Underscore.uniqueId();
                                 sp = new spModel.SourcePhrase({
                                     spid: spID,
+                                    norder: norder,
                                     chapterid: chapterID,
                                     markers: markers,
                                     orig: null,
@@ -1024,6 +1036,7 @@ define(function (require) {
                                 follpuncts = "";
                                 punctIdx = 0;
                                 index++;
+                                norder++;
                                 sps.push(sp);
 //                                sourcePhrases.add(sp);
 //                                sp.save();
