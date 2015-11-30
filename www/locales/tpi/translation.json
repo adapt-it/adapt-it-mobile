@@ -209,6 +209,13 @@
         "hlpdscBack": "Sapos yu pinis wok, klikim Go Bek baten bilong go bek long stat pes.",
         "lblExport": "Expot",
         "dscPassword": "Pasword:",
+        "ttlLanguage": "User Interface Language",
+        "lblUseDeviceLanguage": "Use the language specified on this device",
+        "lblUseCustomLanguage": "Use this language:",
+        "lblEnglish": "English",
+        "lblSpanish": "Español",
+        "lblFrench": "Français",
+        "lblTokPisin": "Tok Pisin",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

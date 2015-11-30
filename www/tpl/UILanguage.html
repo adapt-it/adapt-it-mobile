@@ -1,0 +1,36 @@
+{{! UILanguage.html
+    Template for rendering the UI Language page -- used by HomeViews.js (UILanguageView).
+}}
+
+<div class="topcoat-navigation-bar bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h1 class="topcoat-navigation-bar__title bg-lightblue">{{ t 'view.ttlLanguage'}}</h1>
+    </div>
+    <div class="topcoat-navigation-bar__item right"></div>
+</div>
+<div class="container">
+<div class="control-group">
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="deviceLanguage" name="topcoat">
+  <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseDeviceLanguage'}}
+</label></div>
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="customLanguage" name="topcoat">
+    <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseCustomLanguage'}} 
+    </label>
+    <select id="language" class="docNav" style="margin-left:2em; margin=top: 6px;">
+        <option value="en">{{ t 'view.lblEnglish'}}</option>
+        <option value="es">{{ t 'view.lblSpanish'}}</option>
+        <option value="fr">{{ t 'view.lblFrench'}}</option>
+        <option value="tpi">{{ t 'view.lblTokPisin'}}</option>
+    </select>
+</div>
+<div id="OKCancelButtons" style="margin-top: 1em;">
+        <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
+        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></span></button>
+</div>    
+</div>
+</div>

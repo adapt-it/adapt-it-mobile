@@ -11,6 +11,7 @@ define(function (require) {
         i18n            = require('i18n'),
         tplHome         = require('text!tpl/Home.html'),
         tplGetStarted   = require('text!tpl/GetStarted.html'),
+        tplUILanguage   = require('text!tpl/UILanguage.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         chapterModel    = require('app/models/chapter'),
@@ -46,6 +47,84 @@ define(function (require) {
             window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
             Backbone.history.loadUrl(Backbone.history.fragment);
         },
+
+        // UILanguageView
+        // Simple view to allow the user to either create or copy a project
+        UILanguageView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplUILanguage),
+
+            events: {
+                "change #language":   "onSelectCustomLanguage",
+                "click #OK":                "onOK",
+                "click #Cancel":            "onCancel"
+            },
+            
+            onSelectCustomLanguage: function (event) {
+                // change the radio button selection
+                $("#customLanguage").prop("checked", true);
+            },
+            
+            onShow: function (event) {
+                if (localStorage.getItem("UILang")) {
+                    // use custom language -- select the language used
+                    $('#language').val(localStorage.getItem("UILang"));
+                    $("#customLanguage").prop("checked", true); // onSelectCustomLanguage() should already do this, but just in case...
+                } else {
+                    // use device language
+                    $("#deviceLanguage").prop("checked", true);
+                }
+            },
+            
+            // call setLng() to change the language to the specified language, then return
+            onOK: function (event) {
+                var loc = "";
+                var locale = "";
+                if ($("#customLanguage").is(":checked")) {
+                    // Use a custom language
+                    loc = $('#language').val();
+                    // set the language in local storage
+                    localStorage.setItem(("UILang"), loc);
+                    // set the locale, then return
+                    i18n.setLng(loc, function (err, t) {
+                        // go back to the previous page
+                        window.history.go(-1);
+                    });
+                } else {
+                    // use the mobile device's setting
+                    // remove the language in local storage (so we get it dynamically the next time the app is launched)
+                    localStorage.removeItem("UILang");
+                    // get the user's locale - mobile or web
+                    if (typeof navigator.globalization !== 'undefined') {
+                        navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
+                            function (loc) {
+                                locale = loc.value.split("-")[0];
+                                // set the locale, then return
+                                i18n.setLng(locale, function (err, t) {
+                                    // go back to the previous page
+                                    window.history.go(-1);
+                                });
+                            },
+                            function () {console.log('Error getting locale\n'); }
+                        );
+                    } else {
+                        // in web browser
+                        var lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+                        locale = lang.split("-")[0];
+                        // set the locale, then return
+                        i18n.setLng(locale, function (err, t) {
+                            // go back to the previous page
+                            window.history.go(-1);
+                        });
+                    }
+                }
+            },
+            
+            // don't do anything -- just return
+            OnCancel: function (event) {
+                // go back to the previous page
+                window.history.go(-1);
+            }
+        }),
 
         // GetStartedView
         // Simple view to allow the user to either create or copy a project
@@ -113,6 +192,7 @@ define(function (require) {
     
     return {
         HomeView: HomeView,
+        UILanguageView: UILanguageView,
         GetStartedView: GetStartedView
     };
 

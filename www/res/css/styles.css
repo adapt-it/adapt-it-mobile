@@ -501,8 +501,19 @@ ul {
     -moz-background-size: cover;
     background-size: cover;
 }
+#lang {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+}
 #help {
     background: url("images/question-white.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#globe {
+    background: url("images/globe.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;

@@ -209,6 +209,13 @@
         "hlpdscBack": "When you are done, click on the Back button to return to the home screen.",
         "lblExport": "Export",
         "dscPassword": "Password:",
+        "ttlLanguage": "Idioma del interfaz",
+        "lblUseDeviceLanguage": "Utilice el mismo idioma que el dispositivo móvil",
+        "lblUseCustomLanguage": "Use este idioma:",
+        "lblEnglish": "English",
+        "lblSpanish": "Español",
+        "lblFrench": "Français",
+        "lblTokPisin": "Tok Pisin",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

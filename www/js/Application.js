@@ -25,6 +25,7 @@ define(function (require) {
         slider          = new PageSlider($('body')),
         lookupView      = null,
         helpView        = null,
+        langView        = null,
         newProjectView  = null,
         editProjectView = null,
         copyProjectView = null,
@@ -91,20 +92,27 @@ define(function (require) {
                 this.ChapterList = null;
                 this.spList = null;
 
-                // get the user's locale - mobile or web
-                if (typeof navigator.globalization !== 'undefined') {
-                    navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
-                        function (loc) {
-                            locale = loc.value.split("-")[0];
-                            initialize_i18n(locale);
-                        },
-                        function () {console.log('Error getting locale\n'); }
-                    );
+                // did the user specify a custom language?
+                if (localStorage.getItem("UILang")) {
+                    // custom language
+                    initialize_i18n(localStorage.getItem("UILang"));
                 } else {
-                    // in web browser
-                    lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
-                    locale = lang.split("-")[0];
-                    initialize_i18n(locale);
+                    // use normal locale settings
+                    // get the user's locale - mobile or web
+                    if (typeof navigator.globalization !== 'undefined') {
+                        navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
+                            function (loc) {
+                                locale = loc.value.split("-")[0];
+                                initialize_i18n(locale);
+                            },
+                            function () {console.log('Error getting locale\n'); }
+                        );
+                    } else {
+                        // in web browser
+                        lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+                        locale = lang.split("-")[0];
+                        initialize_i18n(locale);
+                    }
                 }
 
                 // initialize the router
@@ -157,6 +165,12 @@ define(function (require) {
                 helpView = new HelpView();
                 helpView.delegateEvents();
                 this.main.show(helpView);
+            },
+            
+            setUILanguage: function () {
+                langView = new HomeViews.UILanguageView();
+                langView.delegateEvents();
+                window.Application.main.show(langView);
             },
 
             editProject: function (id) {
