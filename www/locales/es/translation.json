@@ -58,6 +58,8 @@
         "lblPrev": "Anterior",
         "lblNext": "Próximo",
         "lblFinish": "Terminar",
+        "lblSkip": "Pasar",
+        "lblClose": "Cerrar",
         "lblSourceToTargetAdaptations": "__source__ a __target__ Adaptacíones",
         "ttlHelp": "Ayuda",
         "lblPlaceholder": "Punto de referencia",

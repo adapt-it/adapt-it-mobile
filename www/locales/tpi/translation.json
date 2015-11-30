@@ -58,6 +58,8 @@
         "lblPrev": "Go Bek",
         "lblNext": "Go Neks",
         "lblFinish": "Pinis",
+        "lblSkip": "Pasim",
+        "lblClose": "Pasim",
         "lblSourceToTargetAdaptations": "__source__ to __target__ trenslesen",
         "ttlHelp": "Help",
         "lblPlaceholder": "Plesholda",

@@ -58,6 +58,8 @@
         "lblPrev": "Previous",
         "lblNext": "Next",
         "lblFinish": "Finish",
+        "lblSkip": "Skip",
+        "lblClose": "Close",
         "lblSourceToTargetAdaptations": "__source__ to __target__ Adaptations",
         "ttlHelp": "Help",
         "lblPlaceholder": "Placeholder",

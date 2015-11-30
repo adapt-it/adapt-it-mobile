@@ -9,7 +9,7 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
-        i18n        = require('i18n'),
+        i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
@@ -415,7 +415,7 @@ define(function (require) {
                                 navigator.notification.beep(1);
                                 if (nextChapter > 0) {
                                     navigator.notification.confirm(
-                                        i18n.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                                        i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
                                         function (buttonIndex) {
                                             if (buttonIndex === 1) {
                                                 // Next chapter
@@ -429,13 +429,13 @@ define(function (require) {
                                                 window.Application.home();
                                             }
                                         },
-                                        i18n.t('ttlMain'),
-                                        [i18n.t('view.lblNext'), i18n.t('view.lblFinish')]
+                                        i18next.t('ttlMain'),
+                                        [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
                                     );
                                 } else {
                                     // no option to continue, just one to exit
                                     navigator.notification.alert(
-                                        i18n.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
+                                        i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
                                         function () {
                                             // exit
                                             // save the model
@@ -448,13 +448,13 @@ define(function (require) {
                             } else {
                                 // in browser
                                 if (nextChapter > 0) {
-                                    if (confirm(i18n.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
+                                    if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
                                         window.Application.adaptChapter(nextChapter);
                                     } else {
                                         window.Application.home();
                                     }
                                 } else {
-                                    alert(i18n.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
+                                    alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
                                     window.Application.home();
                                 }
                             }
@@ -670,13 +670,13 @@ define(function (require) {
                     if ((selectedStart.id).indexOf("plc") !== -1) {
                         // placeholder -- can remove it, but not add a new one
                         isPlaceholder = true;
-                        $("#Placeholder").prop('title', i18n.t("view.dscDelPlaceholder"));
+                        $("#Placeholder").prop('title', i18next.t("view.dscDelPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
                     } else {
                         // not a placeholder -- can add a new one
                         isPlaceholder = false;
-                        $("#Placeholder").prop('title', i18n.t("view.dscNewPlaceholder"));
+                        $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                     }
@@ -684,14 +684,14 @@ define(function (require) {
                     if (((selectedStart.id).indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
                         // phrase (single selection) -- can remove it, but not add a new one
                         isPhrase = true;
-                        $("#Phrase").prop('title', i18n.t("view.dscDelPhrase"));
+                        $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
                         $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                     } else {
                         // not a placeholder -- can add a new one
                         isPhrase = false;
-                        $("#Phrase").prop('title', i18n.t("view.dscNewPhrase"));
+                        $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                     }
@@ -699,14 +699,14 @@ define(function (require) {
                     if ((selectedStart.id).indexOf("ret") !== -1) {
                         // retranslation -- can remove it, but not add a new one
                         isRetranslation = true;
-                        $("#Retranslation").prop('title', i18n.t("view.dscDelRetranslation"));
+                        $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                     } else {
                         // not a retranslation -- can add a new one
                         isRetranslation = false;
-                        $("#Retranslation").prop('title', i18n.t("view.dscNewRetranslation"));
+                        $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     }
@@ -734,8 +734,8 @@ define(function (require) {
                     filteredText = "",
                     idx = 0,
                     elt = null,
-                    title = i18n.t('view.ttlFilteredText'),
-                    message = i18n.t('view.dscFilterMarker');
+                    title = i18next.t('view.ttlFilteredText'),
+                    message = i18next.t('view.dscFilterMarker');
                 // Get the marker(s) being filtered here
                 aryClasses = event.currentTarget.className.split(/\s+/);
                 for (idx = 0; idx < aryClasses.length; idx++) {
@@ -760,26 +760,26 @@ define(function (require) {
                 $(event.currentTarget).find(".source").each(function (idx, elt) {
                     filteredText += elt.innerHTML.trim() + " ";
                 });
-                message += markers.toString() + "\n" + i18n.t("view.dscFilteredText") + filteredText.trim();
+                message += markers.toString() + "\n" + i18next.t("view.dscFilteredText") + filteredText.trim();
 
                 if (userCanSetFilter) {
                     // User can set this filter text
-                    message += "\n\n" + i18n.t('view.dscUserCanSetFilter');
+                    message += "\n\n" + i18next.t('view.dscUserCanSetFilter');
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.alert(message, function () {},
-                                                     i18n.t('view.ttlFilteredText'));
+                                                     i18next.t('view.ttlFilteredText'));
                     } else {
                         // in browser
                         alert(message);
                     }
                 } else {
                     // read only -- just tell the user what was filtered
-                    message += "\n\n" + i18n.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
+                    message += "\n\n" + i18next.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.alert(message, function () {},
-                                                     i18n.t('view.ttlFilteredText'));
+                                                     i18next.t('view.ttlFilteredText'));
                     } else {
                         // in browser
                         alert(message);
@@ -1179,7 +1179,7 @@ define(function (require) {
                     // item has been removed, so there is no longer a selection -
                     // clean up the UI accordingly
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('title', i18n.t("view.dscNewPlaceholder"));
+                    $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
                     $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
                     $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                     $("#Placeholder").prop('disabled', true);
@@ -1316,7 +1316,7 @@ define(function (require) {
                     $(selectedStart).remove();
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Phrase").prop('title', i18n.t("view.dscNewPhrase"));
+                    $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
                     $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
                     $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                     $("#Placeholder").prop('disabled', true);
@@ -1427,7 +1427,7 @@ define(function (require) {
                     $(selectedStart).remove();
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Retranslation").prop('title', i18n.t("view.dscNewRetranslation"));
+                    $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
                     $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                     $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     $("#Placeholder").prop('disabled', true);
@@ -1546,10 +1546,18 @@ define(function (require) {
                 var firstPileID = $(".pile").first().attr("id");
                 var tour = {
                     id: "hello-hopscotch",
+                    i18n: {
+                        nextBtn: i18next.t("view.lblNext"),
+                        prevBtn: i18next.t("view.lblPrev"),
+                        doneBtn: i18next.t("view.lblFinish"),
+                        skipBtn: i18next.t("view.lblNext"),
+                        closeTooltip: i18next.t("view.lblNext"),
+                        stepNums: ["1", "2", "3", "4", "5", "6"]
+                    },
                     steps: [
                         {
-                            title: i18n.t('view.hlpttlAdaptPage'),
-                            content: i18n.t('view.hlpdscAdaptPage'),
+                            title: i18next.t('view.hlpttlAdaptPage'),
+                            content: i18next.t('view.hlpdscAdaptPage'),
                             target: "title",
                             placement: "bottom",
                             xOffset: "center",
@@ -1558,14 +1566,14 @@ define(function (require) {
                             }
                         },
                         {
-                            title: i18n.t('view.hlpttlSelectOne'),
-                            content: i18n.t('view.hlpdscSelectOne'),
+                            title: i18next.t('view.hlpttlSelectOne'),
+                            content: i18next.t('view.hlpdscSelectOne'),
                             target: firstPileID,
                             placement: "bottom"
                         },
                         {
-                            title: i18n.t('view.hlpttlSelectMultiple'),
-                            content: i18n.t('view.hlpdscSelectMultiple'),
+                            title: i18next.t('view.hlpttlSelectMultiple'),
+                            content: i18next.t('view.hlpdscSelectMultiple'),
                             target: firstPileID,
                             placement: "bottom",
                             onNext: function () {
@@ -1573,34 +1581,34 @@ define(function (require) {
                             }
                         },
                         {
-                            title: i18n.t('view.hlpttlPlaceholder'),
-                            content: i18n.t('view.hlpdscPlaceholder'),
+                            title: i18next.t('view.hlpttlPlaceholder'),
+                            content: i18next.t('view.hlpdscPlaceholder'),
                             target: "Placeholder",
                             placement: "bottom"
                         },
                         {
-                            title: i18n.t('view.hlpttlPhrase'),
-                            content: i18n.t('view.hlpdscPhrase'),
+                            title: i18next.t('view.hlpttlPhrase'),
+                            content: i18next.t('view.hlpdscPhrase'),
                             target: "Phrase",
                             placement: "bottom"
                         },
                         {
-                            title: i18n.t('view.hlpttlRetranslation'),
-                            content: i18n.t('view.hlpdscRetranslation'),
+                            title: i18next.t('view.hlpttlRetranslation'),
+                            content: i18next.t('view.hlpdscRetranslation'),
                             target: "Retranslation",
                             xOffset: "center",
                             arrowOffset: "center",
                             placement: "bottom"
                         },
                         {
-                            title: i18n.t('view.hlpttlPrevNext'),
-                            content: i18n.t('view.hlpdscPrevNext'),
+                            title: i18next.t('view.hlpttlPrevNext'),
+                            content: i18next.t('view.hlpdscPrevNext'),
                             target: "Prev",
                             placement: "left"
                         },
                         {
-                            title: i18n.t('view.hlpttlBack'),
-                            content: i18n.t('view.hlpdscBack'),
+                            title: i18next.t('view.hlpttlBack'),
+                            content: i18next.t('view.hlpdscBack'),
                             target: "back",
                             placement: "bottom"
                         }
