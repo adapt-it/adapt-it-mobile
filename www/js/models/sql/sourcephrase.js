@@ -82,9 +82,10 @@ define(function (require) {
             },
             
             destroy: function (options) {
+                var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("DELETE FROM sourcephrase WHERE id=?;", [this.attributes.id], function (tx, res) {
-//                        console.log("DELETE ok: " + res.toString());
+                    tx.executeSql("DELETE FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
+                        console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });
@@ -129,9 +130,7 @@ define(function (require) {
             
             current: null,
             
-            comparator: function (model) {
-                return model.get("order");
-            },
+            comparator: "order",
 
             resetFromDB: function () {
                 var i = 0,
@@ -226,7 +225,7 @@ define(function (require) {
                         if (results.length === 0) {
                             // not in collection -- retrieve them from the db
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid=?;", [chapterid], function (tx, res) {
+                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid=? ORDER BY norder;", [chapterid], function (tx, res) {
                                     // populate the sourcephrases collection with the query results
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         var sp = new SourcePhrase();

@@ -1276,7 +1276,8 @@ define(function (require) {
                             strID = $(value).attr('id');
                             strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
                             selectedObj = coll.get(strID);
-                            coll.remove(selectedObj);
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
                             $(value).remove();
                         }
                     });
