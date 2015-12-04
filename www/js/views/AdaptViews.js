@@ -137,8 +137,8 @@ define(function (require) {
             addOne: function (SourcePhrase) {
 //                console.log("SourcePhraseListView::addOne");
                 var view = new SourcePhraseView({ model: SourcePhrase});//, el: $('#pile-' + SourcePhrase.get('id')) });
-                this.$('#pile-' + SourcePhrase.get('id')).append(view.render().el.childNodes);
-                this.$('#pile-' + SourcePhrase.get('id')).find('.target').attr('tabindex', idx++);
+                this.$('#pile-' + SourcePhrase.get('spid')).append(view.render().el.childNodes);
+                this.$('#pile-' + SourcePhrase.get('spid')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
                 if (this.collection.length === 0) {
@@ -669,10 +669,7 @@ define(function (require) {
                         idxStart = tmpIdx;
                     }
                     // ** Icons and labels for the toolbar **
-                    strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-" etc.
-                    selectedObj = this.collection.get(strID);
-                    spid = selectedObj.get('spid');
+                    spid = $(selectedStart).attr('id');
                     // did the user select a placeholder?
                     if (spid.indexOf("plc") !== -1) {
                         // placeholder -- can remove it, but not add a new one
@@ -810,6 +807,9 @@ define(function (require) {
                     refstrings = null,
                     range = null,
                     selection = null,
+                    selectedObj = null,
+                    prevObj = null,
+                    nextOrPrevObj = false,
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
                 // ** focus handler block **
@@ -831,12 +831,18 @@ define(function (require) {
                         }
                     }
                     prevID = $(prevIdx).attr('id');
-                    prevID = prevID.substr(prevID.lastIndexOf("-") + 1); // remove "pile-"
+                    prevID = prevID.substr(prevID.indexOf("-") + 1); // remove "pile-"
+                    prevObj = this.collection.findWhere({spid: prevID});
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    if ((this.collection.at(this.collection.indexOf(selectedObj) + 1) === prevObj) ||
+                            (this.collection.at(this.collection.indexOf(selectedObj) - 1) === prevObj)) {
+                        nextOrPrevObj = true; // previous or next in our collection (ordered by norder)
+                    }
                     console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
-                    if (isDirty === true || (Math.abs(parseInt(prevID, 10) - parseInt(strID, 10)) === 1)) {
-                        model = this.collection.get(prevID);
+                    if (isDirty === true || nextOrPrevObj === true) {
+                        model = prevObj;
                         console.log("selectedAdaptation: Prev/Next likely hit. Saving model: " + model.get('source'));
                         // either TAB or Shift+TAB -- save the previous field if it needs it
                         // (note: model still refers to the previous selection sourcephrase)
@@ -906,8 +912,8 @@ define(function (require) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    model = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                     console.log("Target is empty; tu = " + tu);
@@ -995,8 +1001,8 @@ define(function (require) {
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
                     strID = $(event.currentTarget.parentElement).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    model = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                     $(event.currentTarget).html(model.get('target'));
                     event.stopPropagation();
                     event.preventDefault();
@@ -1060,8 +1066,8 @@ define(function (require) {
                 trimmedValue = value.trim();
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
-                strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-", "phr-", etc.
-                model = this.collection.get(strID);
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.collection.findWhere({spid: strID});
                 // check for changes in the edit field
                 if (isDirty === true) {
                     console.log("Dirty bit set. Saving KB value: " + trimmedValue);
@@ -1146,7 +1152,7 @@ define(function (require) {
                     strID = null,
                     newID = Underscore.uniqueId(),
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-" + newID + "\" class=\"pile\">" +
+                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile\">" +
                                         "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
                                         " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
                 console.log("placeholder: " + placeHolderHtml);
@@ -1156,13 +1162,13 @@ define(function (require) {
                     // no placeholder at the selection -- add one
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-" etc.
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
                     // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
                     // Take the average of the order # of the selected start and the item before it. This will be a float.
                     if (this.collection.indexOf(selectedObj) > 0) {
-                        nOrder = (selectedObj.get('order') + (this.collection.at(this.collection.indexOf(selectedObj) - 1).get('order'))) / 2;
+                        nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) - 1).get('norder'))) / 2;
                     } // else nOrder gets the fallback value of 0.0
                     phObj.set('norder', nOrder, {silent: true});
                     phObj.save();
@@ -1179,8 +1185,8 @@ define(function (require) {
                 } else {
                     // selection is a placeholder -- delete it from the model and the DOM (html)
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1);// remove "pile-"
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
                     $(selectedStart).remove();
@@ -1241,8 +1247,8 @@ define(function (require) {
                             if ($(value).attr('id').indexOf("phr") !== -1) {
                                 // phrase -- pull out the original target
                                 strID = $(value).attr('id');
-                                strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.get(strID);
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                                selectedObj = this.collection.findWhere({spid: strID});
                                 origTarget += selectedObj.get("orig");
                             } else {
                                 // not a phrase -- just add the target text
@@ -1254,61 +1260,59 @@ define(function (require) {
                     // model object itself
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // phrase just takes same order # as first selected object
                     phObj.save();
-                    $.when(phObj.save()).done(function () {
-                        this.collection.add(phObj);
-                        // UI representation
-                        // marker, source divs
-                        phraseHtml = PhraseLine0 + phObj.get("id") + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
-                        // target div (only if the user didn't auto-create the phrase by typing after a selection)
-                        console.log("isAutoPhrase: " + isAutoPhrase);
-                        if (isAutoPhrase === false) {
-                            // if there's something already in the target, use it instead
-                            phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                            isDirty = false; // don't save (original sourcephrase is now gone)
-                        } else {
-                            // autophrase -- add the target for the selected start ONLY
-                            phraseHtml += $(selectedStart).find(".target").html();
-                            isDirty = true; // save
+                    this.collection.add(phObj);
+                    // UI representation
+                    // marker, source divs
+                    phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
+                    // target div (only if the user didn't auto-create the phrase by typing after a selection)
+                    console.log("isAutoPhrase: " + isAutoPhrase);
+                    if (isAutoPhrase === false) {
+                        // if there's something already in the target, use it instead
+                        phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                        isDirty = false; // don't save (original sourcephrase is now gone)
+                    } else {
+                        // autophrase -- add the target for the selected start ONLY
+                        phraseHtml += $(selectedStart).find(".target").html();
+                        isDirty = true; // save
+                    }
+                    isAutoPhrase = false; // clear the autophrase flag
+                    phraseHtml += PhraseLine4;
+                    console.log("phrase: " + phraseHtml);
+                    isDirty = false;
+                    $(selectedStart).before(phraseHtml);
+                    // finally, remove the selected piles (they were merged into this one)
+                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        if (index > idxStart && index <= (idxEnd + 1)) {
+                            // remove the original sourcephrase
+                            strID = $(value).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(value).remove();
                         }
-                        isAutoPhrase = false; // clear the autophrase flag
-                        phraseHtml += PhraseLine4;
-                        console.log("phrase: " + phraseHtml);
-                        isDirty = false;
-                        $(selectedStart).before(phraseHtml);
-                        // finally, remove the selected piles (they were merged into this one)
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index > idxStart && index <= (idxEnd + 1)) {
-                                // remove the original sourcephrase
-                                strID = $(value).attr('id');
-                                strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.get(strID);
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
-                        });
-                        // update the toolbar UI
-                        $("div").removeClass("ui-selecting ui-selected");
-                        $("#Placeholder").prop('disabled', true);
-                        $("#Retranslation").prop('disabled', true);
-                        $("#Phrase").prop('disabled', true);
-                        // start adapting the new Phrase
-                        next_edit = $('#pile-phr-' + newID);
-                        selectedStart = next_edit;
-                        $(next_edit).find('.target').mouseup();
                     });
+                    // update the toolbar UI
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $("#Placeholder").prop('disabled', true);
+                    $("#Retranslation").prop('disabled', true);
+                    $("#Phrase").prop('disabled', true);
+                    // start adapting the new Phrase
+                    next_edit = $('#pile-phr-' + newID);
+                    selectedStart = next_edit;
+                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(" ").forEach(function (value, index) {
@@ -1320,9 +1324,9 @@ define(function (require) {
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
                         // add to UI
-                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
+                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('spid') + "\"></div>");
                         newView = new SourcePhraseView({ model: phObj});
-                        $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
+                        $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
                     this.collection.remove(selectedObj); // remove from collection
@@ -1382,50 +1386,49 @@ define(function (require) {
                     // model object
                     phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // retranslation just takes same order # as first selected object
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
                     // the html code depends on getting a valid ID back from the object after save() completes
-                    $.when(phObj.save()).done(function () {
-                        this.collection.add(phObj);
-                        // UI representation
-                        RetHtml = RetHtmlLine0 + phObj.get('id') + RetHtmlline1 + RetSource + RetHtmlLine2;
-                        // if there's something already in the target, use it instead
-                        RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
-                        RetHtml += RetHtmlLine3;
-                        console.log("Ret: " + RetHtml);
-                        $(selectedStart).before(RetHtml);
-                        // finally, remove the selected piles (they were merged into this one)
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index > idxStart && index <= (idxEnd + 1)) {
-                                // remove the original sourceRet
-                                strID = $(value).attr('id');
-                                strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.get(strID);
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
-                        });
-                        // update the toolbar UI
-                        $("div").removeClass("ui-selecting ui-selected");
-                        $("#Placeholder").prop('disabled', true);
-                        $("#Retranslation").prop('disabled', true);
-                        $("#Phrase").prop('disabled', true);
-                        // start adapting the new Phrase
-                        next_edit = $("#pile-ret-" + newID);
-                        if (next_edit !== null) {
-                            next_edit.find('.target').mouseup();
+                    phObj.save();
+                    this.collection.add(phObj);
+                    // UI representation
+                    RetHtml = RetHtmlLine0 + "ret-" + newID + RetHtmlline1 + RetSource + RetHtmlLine2;
+                    // if there's something already in the target, use it instead
+                    RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
+                    RetHtml += RetHtmlLine3;
+                    console.log("Ret: " + RetHtml);
+                    $(selectedStart).before(RetHtml);
+                    // finally, remove the selected piles (they were merged into this one)
+                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        if (index > idxStart && index <= (idxEnd + 1)) {
+                            // remove the original sourceRet
+                            strID = $(value).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(value).remove();
                         }
                     });
+                    // update the toolbar UI
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $("#Placeholder").prop('disabled', true);
+                    $("#Retranslation").prop('disabled', true);
+                    $("#Phrase").prop('disabled', true);
+                    // start adapting the new Phrase
+                    next_edit = $("#pile-ret-" + newID);
+                    if (next_edit !== null) {
+                        next_edit.find('.target').mouseup();
+                    }
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.get(strID);
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(" ").forEach(function (value, index) {
@@ -1437,9 +1440,9 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
-                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('id') + "\"></div>");
+                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('spid') + "\"></div>");
                         newView = new SourcePhraseView({ model: phObj});
-                        $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
+                        $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the retranslation itself
                     this.collection.remove(selectedObj); // remove from collection

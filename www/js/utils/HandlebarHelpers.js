@@ -95,6 +95,8 @@ define(function (require) {
         var elts = [],
             i = 0;
         switch (operator) {
+        case 'instring':
+            return (v1.indexOf(v2) !== -1) ? options.fn(this) : options.inverse(this);
         case 'startswith':
             return (v1.indexOf(v2) === 0) ? options.fn(this) : options.inverse(this);
         case 'contains':
