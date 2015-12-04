@@ -614,7 +614,10 @@ define(function (require) {
                 // re-add the contenteditable fields
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
-                    tmpIdx = 0;
+                    tmpIdx = 0,
+                    strID = "",
+                    selectedObj = null,
+                    spid = "";
                 console.log("selectingPilesEnd");
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
@@ -666,8 +669,12 @@ define(function (require) {
                         idxStart = tmpIdx;
                     }
                     // ** Icons and labels for the toolbar **
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-" etc.
+                    selectedObj = this.collection.get(strID);
+                    spid = selectedObj.get('spid');
                     // did the user select a placeholder?
-                    if ((selectedStart.id).indexOf("plc") !== -1) {
+                    if (spid.indexOf("plc") !== -1) {
                         // placeholder -- can remove it, but not add a new one
                         isPlaceholder = true;
                         $("#Placeholder").prop('title', i18next.t("view.dscDelPlaceholder"));
@@ -681,7 +688,7 @@ define(function (require) {
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                     }
                     // did the user select a phrase?
-                    if (((selectedStart.id).indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
+                    if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
                         // phrase (single selection) -- can remove it, but not add a new one
                         isPhrase = true;
                         $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
@@ -696,7 +703,7 @@ define(function (require) {
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                     }
                     // did the user select a retranslation?
-                    if ((selectedStart.id).indexOf("ret") !== -1) {
+                    if (spid.indexOf("ret") !== -1) {
                         // retranslation -- can remove it, but not add a new one
                         isRetranslation = true;
                         $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
@@ -1139,7 +1146,7 @@ define(function (require) {
                     strID = null,
                     newID = Underscore.uniqueId(),
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile\">" +
+                    placeHolderHtml = "<div id=\"pile-" + newID + "\" class=\"pile\">" +
                                         "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
                                         " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
                 console.log("placeholder: " + placeHolderHtml);
@@ -1174,7 +1181,8 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.lastIndexOf("-") + 1);// remove "pile-"
                     selectedObj = this.collection.get(strID);
-                    this.collection.remove(selectedObj);
+                    this.collection.remove(selectedObj); // remove from collection
+                    selectedObj.destroy(); // delete from db
                     $(selectedStart).remove();
                     // item has been removed, so there is no longer a selection -
                     // clean up the UI accordingly
@@ -1206,8 +1214,8 @@ define(function (require) {
                     bookID = null,
                     newView = null,
                     selectedObj = null,
-                    PhraseLine1 = "<div id=\"pile-phr-" + newID + "\" class=\"pile\">" +
-                                        "<div class=\"marker\">",
+                    PhraseLine0 = "<div id=\"pile-",
+                    PhraseLine1 = "\" class=\"pile\"><div class=\"marker\">",
                     PhraseLine2 = "</div> <div class=\"source\">",
                     PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
                     PhraseLine4 = "</div></div>";
@@ -1243,23 +1251,7 @@ define(function (require) {
                         }
                     });
                     // now build the new sourcephrase from the string
-                    // marker, source divs
-                    phraseHtml = PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
-                    // target div (only if the user didn't auto-create the phrase by typing after a selection)
-                    console.log("isAutoPhrase: " + isAutoPhrase);
-                    if (isAutoPhrase === false) {
-                        // if there's something already in the target, use it instead
-                        phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                        isDirty = false; // don't save (original sourcephrase is now gone)
-                    } else {
-                        // autophrase -- add the target for the selected start ONLY
-                        phraseHtml += $(selectedStart).find(".target").html();
-                        isDirty = true; // save
-                    }
-                    isAutoPhrase = false; // clear the autophrase flag
-                    phraseHtml += PhraseLine4;
-                    console.log("phrase: " + phraseHtml);
-                    isDirty = false;
+                    // model object itself
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
@@ -1267,29 +1259,49 @@ define(function (require) {
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // phrase just takes same order # as first selected object
                     phObj.save();
-                    this.collection.add(phObj);
-                    $(selectedStart).before(phraseHtml);
-                    // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index > idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourcephrase
-                            strID = $(value).attr('id');
-                            strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                            selectedObj = coll.get(strID);
-                            coll.remove(selectedObj); // remove from collection
-                            selectedObj.destroy(); // remove from database
-                            $(value).remove();
+                    $.when(phObj.save()).done(function () {
+                        this.collection.add(phObj);
+                        // UI representation
+                        // marker, source divs
+                        phraseHtml = PhraseLine0 + phObj.get("id") + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
+                        // target div (only if the user didn't auto-create the phrase by typing after a selection)
+                        console.log("isAutoPhrase: " + isAutoPhrase);
+                        if (isAutoPhrase === false) {
+                            // if there's something already in the target, use it instead
+                            phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                            isDirty = false; // don't save (original sourcephrase is now gone)
+                        } else {
+                            // autophrase -- add the target for the selected start ONLY
+                            phraseHtml += $(selectedStart).find(".target").html();
+                            isDirty = true; // save
                         }
+                        isAutoPhrase = false; // clear the autophrase flag
+                        phraseHtml += PhraseLine4;
+                        console.log("phrase: " + phraseHtml);
+                        isDirty = false;
+                        $(selectedStart).before(phraseHtml);
+                        // finally, remove the selected piles (they were merged into this one)
+                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                            if (index > idxStart && index <= (idxEnd + 1)) {
+                                // remove the original sourcephrase
+                                strID = $(value).attr('id');
+                                strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
+                                selectedObj = coll.get(strID);
+                                coll.remove(selectedObj); // remove from collection
+                                selectedObj.destroy(); // remove from database
+                                $(value).remove();
+                            }
+                        });
+                        // update the toolbar UI
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $("#Placeholder").prop('disabled', true);
+                        $("#Retranslation").prop('disabled', true);
+                        $("#Phrase").prop('disabled', true);
+                        // start adapting the new Phrase
+                        next_edit = $('#pile-phr-' + newID);
+                        selectedStart = next_edit;
+                        $(next_edit).find('.target').mouseup();
                     });
-                    // update the toolbar UI
-                    $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
-                    $("#Retranslation").prop('disabled', true);
-                    $("#Phrase").prop('disabled', true);
-                    // start adapting the new Phrase
-                    next_edit = $('#pile-phr-' + newID);
-                    selectedStart = next_edit;
-                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
@@ -1297,13 +1309,13 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
-                    nOrder = selectedObj.get('order');
+                    nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(" ").forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
@@ -1313,7 +1325,8 @@ define(function (require) {
                         $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
-                    this.collection.remove(selectedObj);
+                    this.collection.remove(selectedObj); // remove from collection
+                    selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
@@ -1341,10 +1354,10 @@ define(function (require) {
                     bookID = null,
                     newView = null,
                     selectedObj = null,
-                    RetHtmlStart = "<div id=\"pile-ret-" + newID + "\" class=\"pile\">" +
-                                        "<div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
-                    RetHtmlMid = "</div> <div class=\"target\" contenteditable=\"true\">",
-                    RetHtmlEnd = "</div></div>";
+                    RetHtmlLine0 = "<div id=\"pile-",
+                    RetHtmlline1 = "\" class=\"pile\"><div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
+                    RetHtmlLine2 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    RetHtmlLine3 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
                 // combine the selection into a new retranslation
                 if (isRetranslation === false) {
@@ -1366,41 +1379,46 @@ define(function (require) {
                         }
                     });
                     // now build the new sourcephrase from the string
-                    RetHtml = RetHtmlStart + RetSource + RetHtmlMid;
-                    // if there's something already in the target, use it instead
-                    RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
-                    RetHtml += RetHtmlEnd;
-                    console.log("Ret: " + RetHtml);
+                    // model object
                     phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // retranslation just takes same order # as first selected object
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
-                    phObj.save();
-                    this.collection.add(phObj);
-                    $(selectedStart).before(RetHtml);
-                    // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index > idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourceRet
-                            strID = $(value).attr('id');
-                            strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
-                            selectedObj = coll.get(strID);
-                            coll.remove(selectedObj);
-                            $(value).remove();
+                    // the html code depends on getting a valid ID back from the object after save() completes
+                    $.when(phObj.save()).done(function () {
+                        this.collection.add(phObj);
+                        // UI representation
+                        RetHtml = RetHtmlLine0 + phObj.get('id') + RetHtmlline1 + RetSource + RetHtmlLine2;
+                        // if there's something already in the target, use it instead
+                        RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
+                        RetHtml += RetHtmlLine3;
+                        console.log("Ret: " + RetHtml);
+                        $(selectedStart).before(RetHtml);
+                        // finally, remove the selected piles (they were merged into this one)
+                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                            if (index > idxStart && index <= (idxEnd + 1)) {
+                                // remove the original sourceRet
+                                strID = $(value).attr('id');
+                                strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
+                                selectedObj = coll.get(strID);
+                                coll.remove(selectedObj); // remove from collection
+                                selectedObj.destroy(); // remove from database
+                                $(value).remove();
+                            }
+                        });
+                        // update the toolbar UI
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $("#Placeholder").prop('disabled', true);
+                        $("#Retranslation").prop('disabled', true);
+                        $("#Phrase").prop('disabled', true);
+                        // start adapting the new Phrase
+                        next_edit = $("#pile-ret-" + newID);
+                        if (next_edit !== null) {
+                            next_edit.find('.target').mouseup();
                         }
                     });
-                    // update the toolbar UI
-                    $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
-                    $("#Retranslation").prop('disabled', true);
-                    $("#Phrase").prop('disabled', true);
-                    // start adapting the new Phrase
-                    next_edit = $("#pile-ret-" + newID);
-                    if (next_edit !== null) {
-                        next_edit.find('.target').mouseup();
-                    }
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
@@ -1408,13 +1426,13 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.lastIndexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.get(strID);
-                    nOrder = selectedObj.get('order');
+                    nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(" ").forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (bookID + "--" + newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
                         phObj.save();
                         nOrder = nOrder + 1;
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
@@ -1424,7 +1442,8 @@ define(function (require) {
                         $('#pile-' + phObj.get('id')).append(newView.render().el.childNodes);
                     });
                     // now delete the retranslation itself
-                    this.collection.remove(selectedObj);
+                    this.collection.remove(selectedObj); // remove from collection
+                    selectedObj.destroy(); // remove from db
                     $(selectedStart).remove();
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
@@ -1463,6 +1482,7 @@ define(function (require) {
                 chapter = this.model;
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
+                this.spList.clearLocal();
                 // fetch the KB for this project
                 $.when(kblist.fetch({reset: true, data: {projectid: project.get('projectid')}})).done(function () {
                     console.log("KB fetch complete.");
