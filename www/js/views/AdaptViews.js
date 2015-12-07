@@ -843,7 +843,7 @@ define(function (require) {
                     console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
                     if (isDirty === true || nextOrPrevObj === true) {
                         model = prevObj;
-                        console.log("selectedAdaptation: Prev/Next likely hit. Saving model: " + model.get('source'));
+                        console.log("selectedAdaptation: Prev/Next likely hit. Saving value \"" + tmpTargetValue + "\" for model: " + model.get('source'));
                         // either TAB or Shift+TAB -- save the previous field if it needs it
                         // (note: model still refers to the previous selection sourcephrase)
                         if (tmpTargetValue && tmpTargetValue.length > 0) {
@@ -1081,7 +1081,7 @@ define(function (require) {
                     // clear out the temp IOS value, since we've already saved this value
                     tmpTargetValue = "";
                 } else {
-                    console.log("Dirty bit NOT set. Skipping save, but saving value as a temp, just in case.");
+                    console.log("Dirty bit NOT set. Skipping save, but saving value \"" + trimmedValue + "\" as a temp, just in case.");
                     tmpTargetValue = trimmedValue;
                     // dirty bit is false -- check to see if the target matches what's in the edit field
                     if (trimmedValue) {
@@ -1525,8 +1525,7 @@ define(function (require) {
                 console.log("goPrevPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
-                    var value = $(selectedStart).find('.target').text();
-                    tmpTargetValue = value.trim();
+                    MovingDir = -1; // backwards
                     this.listView.moveCursor(event, false);
                 }
             },
@@ -1535,8 +1534,7 @@ define(function (require) {
                 console.log("goNextPile: selectedStart = " + selectedStart);
                 if (selectedStart !== null) {
                     isDirty = true;
-                    var value = $(selectedStart).find('.target').text();
-                    tmpTargetValue = value.trim();
+                    MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
             },

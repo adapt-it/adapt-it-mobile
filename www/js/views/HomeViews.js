@@ -49,21 +49,25 @@ define(function (require) {
         },
 
         // UILanguageView
-        // Simple view to allow the user to either create or copy a project
+        // Simple view to allow the user to override the language setting for the user interface.
+        // Normally we just follow the locale settings for the phone, but some devices do not support
+        // minority languages like Tok Pisin. This view allows them to either follow the device's locale settings
+        // or override the setting for AIM and select another language instead.
         UILanguageView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplUILanguage),
-
             events: {
                 "change #language":   "onSelectCustomLanguage",
                 "click #OK":                "onOK",
                 "click #Cancel":            "onCancel"
             },
-            
+            // User has selected a language from the drop-down list. Make sure "custom" is selected from
+            // the radio buttons.
             onSelectCustomLanguage: function (event) {
                 // change the radio button selection
                 $("#customLanguage").prop("checked", true);
             },
-            
+            // Load the setting from localStorage (stored with "UILang" as the key). If there's nothing there,
+            // the user has selected the standard locale on their device.
             onShow: function (event) {
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
@@ -74,8 +78,7 @@ define(function (require) {
                     $("#deviceLanguage").prop("checked", true);
                 }
             },
-            
-            // call setLng() to change the language to the specified language, then return
+            // User has clicked on the OK button. Change to the selected locale if needed, and then return.
             onOK: function (event) {
                 var loc = "";
                 var locale = "";
@@ -118,8 +121,7 @@ define(function (require) {
                     }
                 }
             },
-            
-            // don't do anything -- just return
+            // User clicked the Cancel button. Here we don't do anything -- just return
             OnCancel: function (event) {
                 // go back to the previous page
                 window.history.go(-1);
