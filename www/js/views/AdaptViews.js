@@ -953,8 +953,13 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // scroll the edit field into view
-                        $(event.currentTarget)[0].scrollIntoView(false);
+                        // if the user didn't click the next/prev field, it's possible that we went offscreen
+                        // while looking for the next available slot to adapt. Make sure the edit field is in
+                        // view by scrolling the UI
+                        if (nextOrPrevObj === true) {
+                            // scroll the edit field into view
+                            $(event.currentTarget.parentElement)[0].scrollIntoView(true);
+                        }
 //                        $(event.currentTarget)[0].focus();
                     }
                 } else {
@@ -985,8 +990,13 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // scroll the edit field into view
-                        $(event.currentTarget)[0].scrollIntoView(false);
+                        // if the user didn't click the next/prev field, it's possible that we went offscreen
+                        // while looking for the next available slot to adapt. Make sure the edit field is in
+                        // view by scrolling the UI
+                        if (nextOrPrevObj === true) {
+                            // scroll the edit field into view
+                            $(event.currentTarget.parentElement)[0].scrollIntoView(true);
+                        }
 //                        $(event.currentTarget)[0].focus();
                     }
                 }
