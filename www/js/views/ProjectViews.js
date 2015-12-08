@@ -140,6 +140,18 @@ define(function (require) {
                         arrPunct[arrPunct.length] = {s: s, t: t};
                     }
                 }
+                // add double punctuation pairs as well
+                value = getSettingValue(81, "PunctuationTwoCharacterPairsSourceSet(ditto)");
+                value2 = getSettingValue(82, "PunctuationTwoCharacterPairsTargetSet(ditto)");
+                i = 0;
+                while (i < value.length) {
+                    s = value.substr(i, 2);
+                    t = value2.substr(i, 2);
+                    if (s && s.length > 0) {
+                        arrPunct[arrPunct.length] = {s: s, t: t};
+                    }
+                    i = i + 2; // advance to the next item (each set is 2 chars in length)
+                }
                 project.set({PunctPairs: arrPunct}, {silent: true});
                 // Auto capitalization
                 value = getSettingValue(115, "LowerCaseSourceLanguageChars");
