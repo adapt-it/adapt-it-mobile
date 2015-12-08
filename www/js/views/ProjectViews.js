@@ -35,12 +35,6 @@ define(function (require) {
         currentView = null,
         languages   = null,
         USFMMarkers = null,
-        projCasesView = null,
-        projFontsView = null,
-        projSourceLanguageView = null,
-        projTargetLanguageView =  null,
-        projPunctuationView = null,
-        projUSFMFiltingView = null,
         theFont     = null,
         template    = null,
         projectURL  = "",
@@ -400,8 +394,8 @@ define(function (require) {
                     s = $(this).find(".s").val();
                     t = $(this).find(".t").val();
                     if (s && s.length > 0) {
-                        s = Handlebars.Utils.escapeExpression(s);
-                        t = Handlebars.Utils.escapeExpression(t);
+//                        s = Handlebars.Utils.escapeExpression(s);
+//                        t = Handlebars.Utils.escapeExpression(t);
                         arr[arr.length] = {s: s, t: t};
                     }
                 });
@@ -600,7 +594,7 @@ define(function (require) {
                 // show the delete button
                 $(("#d-" + index)).removeClass("hide");
                 // add a new row (with the .new-row class)
-                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row s' id='s-" + newID + "' style='width:100%;' maxlength='1' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row t' style='width:100%;' maxlength='1' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
+                $("table").append("<tr id='r-" + newID + "'><td><input type='text' class='topcoat-text-input new-row s' id='s-" + newID + "' style='width:100%;' maxlength='2' value=''></td><td><input type='text' id='t-" + newID + "' class='topcoat-text-input new-row t' style='width:100%;' maxlength='2' value=''></td><td><button class='topcoat-icon-button--quiet delete-row hide' title='" + i18n.t('view.ttlDelete') + "' id='d-" + newID + "'><span class='topcoat-icon topcoat-icon--item-delete'></span></button></td></tr>");
             },
             // returns an array of objects corresponding to the current s/t values in the table
             // (i.e., in the PunctPairs format)
@@ -613,8 +607,8 @@ define(function (require) {
                     t = $(this).find(".t").val();
                     if (s && s.length > 0) {
                         // escape the punctuation chars (avoids injection attacks)
-                        s = Handlebars.Utils.escapeExpression(s);
-                        t = Handlebars.Utils.escapeExpression(t);
+//                        s = Handlebars.Utils.escapeExpression(s);
+//                        t = Handlebars.Utils.escapeExpression(t);
                         // update the array
                         arr[arr.length] = {s: s, t: t};
                     }
@@ -1442,7 +1436,9 @@ define(function (require) {
                     }
                     break;
                 }
-                this.model.save();
+                if (this.model.get("projectid") !== "") {
+                    this.model.save();
+                }
                 return true;
             },
 
