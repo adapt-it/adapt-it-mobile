@@ -57,6 +57,7 @@ define(function (require) {
                 var sql = "INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
+                        attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("INSERT (create) error: " + err.message);
@@ -68,7 +69,7 @@ define(function (require) {
                 var sql = 'UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;';
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
-//                        console.log("INSERT ok: " + res.toString());
+//                        console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("UPDATE error: " + err.message);
                     });

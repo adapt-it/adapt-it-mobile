@@ -64,7 +64,7 @@ define(function (require) {
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
-                        console.log("INSERT ok: " + res.toString());
+//                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
                     });
@@ -86,7 +86,7 @@ define(function (require) {
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("DELETE FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
-                        console.log("DELETE ok: " + res.toString());
+//                        console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });

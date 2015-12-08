@@ -77,6 +77,7 @@ define(function (require) {
                 var sql = "INSERT INTO targetunit (tuid,projectid,source,refstring,timestamp,user) VALUES (?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, user], function (tx, res) {
+                        attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("INSERT (create) error: " + err.message);
