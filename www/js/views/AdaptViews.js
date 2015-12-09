@@ -1017,8 +1017,23 @@ define(function (require) {
                     event.stopPropagation();
                     event.preventDefault();
                     $(event.currentTarget).blur();
-                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
-                    // tab or enter key -- accept the edit
+                } else if (event.keyCode === 13) {
+                    // Return / Enter pressed - accept the edit and do NOT move the cursor
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDirty = true;
+                    if (window.getSelection) {
+                        if (window.getSelection().empty) {  // Chrome
+                            window.getSelection().empty();
+                        } else if (window.getSelection().removeAllRanges) {  // Firefox
+                            window.getSelection().removeAllRanges();
+                        }
+                    } else if (document.selection) {  // IE?
+                        document.selection.empty();
+                    }
+                    $(event.currentTarget).blur();
+                } else if (event.keyCode === 9) {
+                    // tab or enter key -- accept the edit and move the cursor
                     event.preventDefault();
                     event.stopPropagation();
                     isDirty = true;
