@@ -947,6 +947,10 @@ define(function (require) {
                             // punctuation token -- add to the prepuncts
                             prepuncts += arr[i];
                             i++;
+                        } else if (arr[i].length === 2 && puncts.indexOf(arr[i]) > -1) {
+                            // 2-char punctuation token -- add to the prepuncts
+                            prepuncts += arr[i];
+                            i++;
                         } else {
                             // "normal" sourcephrase token
                             // Before creating the sourcephrase, look to see if we need to create a chapter element
