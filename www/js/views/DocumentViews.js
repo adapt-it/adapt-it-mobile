@@ -1015,7 +1015,7 @@ define(function (require) {
                                     // trailing punct 
                                     punctIdx = s.length - 1;
                                     while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
-                                        follpuncts += s.charAt(punctIdx);
+                                        follpuncts = s.charAt(punctIdx) + follpuncts;
                                         punctIdx--;
                                     }
                                     // remove the punctuation from the "source" of the substring
