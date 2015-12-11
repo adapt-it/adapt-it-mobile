@@ -931,6 +931,12 @@ define(function (require) {
                                 markers += " ";
                             }
                             markers += arr[i];
+                            // If this is the start of a new paragraph, etc., check to see if there's a "dangling"
+                            // punctuation mark. If so, it belongs as a follPunct of the precious SourcePhrase
+                            if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
+                                sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
+                                prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
+                            }
                             // Check for markers with more than one token (and merge the two marker tokens)
                             if ((arr[i] === "\\x") || (arr[i] === "\\f") ||
                                     (arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
