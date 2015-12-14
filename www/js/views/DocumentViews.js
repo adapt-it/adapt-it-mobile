@@ -12,6 +12,7 @@ define(function (require) {
         i18n            = require('i18n'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
+        tplExportDoc    = require('text!tpl/Export.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
@@ -1299,7 +1300,7 @@ define(function (require) {
         }),
         
         ExportDocumentView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplImportDoc)
+            template: Handlebars.compile(tplExportDoc)
         });
     
     return {

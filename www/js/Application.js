@@ -31,6 +31,7 @@ define(function (require) {
         copyProjectView = null,
         homeView        = null,
         importDocView   = null,
+        exportDocView   = null,
         db              = null,
         i18n            = require('i18n'),
         lang            = "",
@@ -209,6 +210,22 @@ define(function (require) {
                         importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
                         importDocView.delegateEvents();
                         window.Application.main.show(importDocView);
+                    });
+                });
+            },
+
+            exportBooks: function (id) {
+                console.log("exportBooks");
+                // update the book and chapter lists, then show the export docs view
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        var proj = window.Application.ProjectList.where({projectid: id});
+                        if (proj === null) {
+                            console.log("no project defined");
+                        }
+                        exportDocView = new DocumentViews.ExportDocumentView({model: proj[0]});
+                        exportDocView.delegateEvents();
+                        window.Application.main.show(exportDocView);
                     });
                 });
             },
