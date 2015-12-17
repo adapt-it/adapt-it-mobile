@@ -13,6 +13,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
+        tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
@@ -1101,7 +1102,7 @@ define(function (require) {
                     result = readTextDoc(this.result);
                 }
                 if (result === false) {
-                    importFail(errMsg);
+                    importFail(new Error(errMsg));
                 }
             };
             reader.readAsText(file);
@@ -1300,7 +1301,50 @@ define(function (require) {
         }),
         
         ExportDocumentView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplExportDoc)
+            template: Handlebars.compile(tplExportDoc),
+            initialize: function () {
+                document.addEventListener("resume", this.onResume, false);
+            },
+            
+            ////
+            // Event Handlers
+            ////
+            events: {
+                "click .topcoat-list__item": "selectDoc",
+                "click #OK": "onOK",
+                "click #Cancel": "onCancel"
+            },
+            // Resume handler -- user placed the app in the background, then resumed.
+            // Assume the file list could have changed, and reload this page
+            onResume: function () {
+                // refresh the view
+                Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            // User clicked the OK button. Export the selected document to the specified format.
+            onOK: function (event) {
+                // go back to the previous page
+                window.history.go(-1);
+            },
+            // User clicked the Cancel button. Here we don't do anything -- just return
+            onCancel: function (event) {
+                // go back to the previous page
+                window.history.go(-1);
+            },
+            selectDoc: function () {
+                // show the next screen
+                $("#Container").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#exportTXT").prop("checked", true); // select a default of TXT for the export format (for now)
+            },
+            // builds the list of documents in the AIM database
+            buildDocumentList: function () {
+//                str += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";                
+            },
+            onShow: function () {
+//                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+//                    window.Application.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+//                    
+//                });
+            }
         });
     
     return {
