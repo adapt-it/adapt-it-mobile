@@ -800,6 +800,7 @@ define(function (require) {
             selectedAdaptation: function (event) {
                 var tu = null,
                     prevID = "",
+                    top = 0,
                     strID = "",
                     model = null,
                     sourceText = "",
@@ -958,12 +959,9 @@ define(function (require) {
                         // view by scrolling the UI
                         if (nextOrPrevObj === true) {
                             // scroll the edit field into view
-                            $(event.currentTarget.parentElement)[0].scrollIntoView(true);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + $(selectedStart).offset().top);
-//                            $("#content").scrollTop($(selectedStart).offset().top);
-//                            var top = $(selectedStart).offset().top - (window.innerHeight / 2);
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
 //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                            window.scrollTo(0, top);
+                            $("#content").scrollTop(top);
                         }
 //                        $(event.currentTarget)[0].focus();
                     }
@@ -1000,12 +998,9 @@ define(function (require) {
                         // view by scrolling the UI
                         if (nextOrPrevObj === true) {
                             // scroll the edit field into view
-                            $(event.currentTarget.parentElement)[0].scrollIntoView(true);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + $(selectedStart).offset().top);
-//                            $("#content").scrollTop($(selectedStart).offset().top);
-//                            var top2 = $(selectedStart).offset().top - (window.innerHeight / 2);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top2);
-//                            window.scrollTo(0, top2);
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+                            window.scrollTo(0, top);
                         }
 //                        $(event.currentTarget)[0].focus();
                     }
