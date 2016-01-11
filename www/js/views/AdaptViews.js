@@ -49,6 +49,79 @@ define(function (require) {
         caseTarget = [],
         tmpTargetValue = "",
         
+        // Helper method to store the specified source and target text in the KB.
+        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
+            var elts = kblist.filter(function (element) {
+                return (element.attributes.projectid === projectid &&
+                   element.attributes.source === sourceValue);
+            });
+            var tu = null,
+                curDate = new Date(),
+                timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+            if (elts.length > 0) {
+                tu = elts[0];
+            }
+            if (tu) {
+                var i = 0,
+                    found = false,
+                    refstrings = tu.get('refstring');
+                // delete or decrement the old value
+                if (oldTargetValue.length > 0) {
+                    // there was an old value -- try to find and remove the corresponding KB entry
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === oldTargetValue) {
+                            if (refstrings[i].n !== '0') {
+                                // more than one refcount -- decrement it
+                                refstrings[i].n--;
+                            }
+                            break;
+                        }
+                    }
+                }
+                // add or increment the new value
+                for (i = 0; i < refstrings.length; i++) {
+                    if (refstrings[i].target === targetValue) {
+                        refstrings[i].n++;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found === false) {
+                    // no entry in KB with this source/target -- add one
+                    var newRS = [
+                        {
+                            'target': targetValue,
+                            'n': '1'
+                        }
+                    ];
+                    refstrings.push(newRS);
+                }
+                // update the KB model
+                tu.set('refstring', refstrings, {silent: true});
+                tu.set('timestamp', timestamp, {silent: true});
+                tu.update();
+            } else {
+                // no entry in KB with this source -- add one
+                var newID = Underscore.uniqueId(),
+                    newTU = new kbModels.TargetUnit({
+                        tuid: newID,
+                        projectid: projectid,
+                        source: sourceValue,
+                        refstring: [
+                            {
+                                target: targetValue,
+                                n: "1"
+                            }
+                        ],
+                        timestamp: timestamp,
+                        user: ""
+                    });
+                kblist.add(newTU);
+                newTU.save();
+            }
+        },
+
+        
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
@@ -849,7 +922,7 @@ define(function (require) {
                         // (note: model still refers to the previous selection sourcephrase)
                         if (tmpTargetValue && tmpTargetValue.length > 0) {
                             // save the new value to the KB
-                            kblist.saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
                                             this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
                                             this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
                                             project.get('projectid'));
@@ -917,7 +990,7 @@ define(function (require) {
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
-                    console.log("Target is empty; tu = " + tu);
+                    console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
@@ -1104,10 +1177,10 @@ define(function (require) {
                 if (isDirty === true) {
                     console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                     // something has changed -- update the KB
-                    kblist.saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                    this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                    this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                    project.get('projectid'));
+                    saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                             this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
+                             this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                             project.get('projectid'));
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                     // clear out the temp IOS value, since we've already saved this value

@@ -151,6 +151,7 @@ define(function (require) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid text, source text, refstring text, timestamp text, user text);');
                     tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
                         var tmpString = "";
+                        targetunits.length = 0; // clear out old data
                         for (i = 0, len = res.rows.length; i < len; ++i) {
                             // add the chapter
                             var tu = new TargetUnit();
@@ -173,78 +174,6 @@ define(function (require) {
                 this.resetFromDB();
             },
             
-            // Helper method to store the specified source and target text in the KB.
-            saveInKB: function (sourceValue, targetValue, oldTargetValue, projectid) {
-                var elts = targetunits.filter(function (element) {
-                    return (element.attributes.projectid === projectid &&
-                       element.attributes.source.toLowerCase() === sourceValue.toLowerCase());
-                });
-                var tu = null,
-                    curDate = new Date(),
-                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
-                if (elts.length > 0) {
-                    tu = elts[0];
-                }
-                if (tu) {
-                    var i = 0,
-                        found = false,
-                        refstrings = tu.get('refstring');
-                    // delete or decrement the old value
-                    if (oldTargetValue.length > 0) {
-                        // there was an old value -- try to find and remove the corresponding KB entry
-                        for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].target === oldTargetValue) {
-                                if (refstrings[i].n !== '0') {
-                                    // more than one refcount -- decrement it
-                                    refstrings[i].n--;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    // add or increment the new value
-                    for (i = 0; i < refstrings.length; i++) {
-                        if (refstrings[i].target === targetValue) {
-                            refstrings[i].n++;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found === false) {
-                        // no entry in KB with this source/target -- add one
-                        var newRS = [
-                            {
-                                'target': targetValue,
-                                'n': '1'
-                            }
-                        ];
-                        refstrings.push(newRS);
-                    }
-                    // update the KB model
-                    tu.set('refstring', refstrings, {silent: true});
-                    tu.set('timestamp', timestamp, {silent: true});
-                    tu.update();
-                } else {
-                    // no entry in KB with this source -- add one
-                    var newID = Underscore.uniqueId(),
-                        newTU = new TargetUnit({
-                            tuid: newID,
-                            projectid: projectid,
-                            source: sourceValue,
-                            refstring: [
-                                {
-                                    target: targetValue,
-                                    n: "1"
-                                }
-                            ],
-                            timestamp: timestamp,
-                            user: ""
-                        });
-                    targetunits.push(newTU);
-                    newTU.save();
-                }
-            },
-
             // Removes all targetunits from the collection (and database)
             clearAll: function () {
                 window.Application.db.transaction(function (tx) {
