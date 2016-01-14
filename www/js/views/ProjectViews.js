@@ -1331,7 +1331,7 @@ define(function (require) {
                         if ($("#LanguageName").val().length > 0) {
                             // something in the language field -- attempt to get the nearest match in the languages list
                             value = languages.at(0);
-                            if (value !== null) {
+                            if (languages.length > 0) {
                                 // found something that matches the search text -- suggest it
                                 if (navigator.notification) {
                                     // on mobile device -- use notification plugin API
