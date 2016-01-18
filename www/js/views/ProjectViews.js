@@ -778,6 +778,7 @@ define(function (require) {
                 "click #Filtering": "OnEditFiltering",
                 "keyup #LanguageName":    "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
+                "keyup #LanguageVariant": "buildFullLanguageCode",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
@@ -807,6 +808,31 @@ define(function (require) {
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
+            buildFullLanguageCode: function (event) {
+                var value = currentView.langCode,
+                    newValue = value;
+                // only build if there's a language code defined
+                if (value.length > 0) {
+                    // is there anything in the language variant?
+                    if ($('#LanguageVariant').val().trim().length === 0) {
+                        // nothing in the variant -- use just the iso639 code with no -x-
+                        if (value.indexOf("-x-") > 0) {
+                            newValue = value.substr(0, value.indexOf("-x-"));
+                        }
+                    } else {
+                        // variant is defined --- code is in the form [is0639]-x-[variant]
+                        if (value.indexOf("-x-") > 0) {
+                            // replace the existing variant
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                        } else {
+                            // add a new variant
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                        }
+                    }
+                    $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
+                    currentView.langCode = newValue;
+                }
+            },
             addNewRow: function (event) {
                 currentView.addNewRow(event);
             },
@@ -825,6 +851,10 @@ define(function (require) {
             },
             selectLanguage: function (event) {
                 currentView.onSelectLanguage(event);
+                // if there's a language variant defined, rework the language code to include it
+                if ($('#LanguageVariant').val().length > 0) {
+                    this.buildFullLanguageCode(event);
+                }
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
