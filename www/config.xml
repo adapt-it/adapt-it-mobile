@@ -19,6 +19,7 @@
     <!-- for Blackberry 10 -->
     <feature name="File" value="File" />
     <!-- preferences -->
+    <preference name="android-build-tool" value="gradle" />        
     <preference name="phonegap-version" value="cli-5.2.0" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
@@ -81,6 +82,8 @@
         <splash src="res/screen/android/screen-xdpi-portrait.png" density="port-xhdpi" />
     </platform>
     <platform name="ios">
+        <!-- preferences -->
+        <preference name="Orientation" value="all" />
         <!-- icons -->
         <!-- iPhone / iPod / iPad -->
         <icon src="res/icon/ios/icon.png" width="57" height="57" />
