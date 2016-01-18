@@ -32,7 +32,8 @@
     <gap:plugin name="cordova-plugin-globalization" source="npm" />
     <gap:plugin name="cordova-plugin-dialogs" source="npm" />
     <gap:plugin name="cordova-plugin-fonts" source="npm" />
-    <gap:plugin name='org.crosswalk.engine' version='1.3.0' source='pgb' />
+    <gap:plugin name="cordova-plugin-crosswalk-webview" source="npm" />
+<!--    <gap:plugin name="org.crosswalk.engine" source="pgb" version="1.3.0" />-->
     <gap:plugin name="cordova-sqlite-storage" source="npm" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
@@ -113,8 +114,6 @@
     </platform>
     <platform name="firefoxos">
         <icon src="res/icon/firefoxos/icon-60.png" width="60" height="60" />
-    </platform>
-    <platform name="ios">
     </platform>
     <platform name="wp8">
         <icon src="res/icon/windows-phone/icon.png" gap:platform="winphone" />
