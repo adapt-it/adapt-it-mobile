@@ -184,6 +184,7 @@ define(function (require) {
                 var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
+                console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
                         tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);

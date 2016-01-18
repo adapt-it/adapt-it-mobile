@@ -27,8 +27,11 @@ define(function (require) {
         fileCount       = 0,
         punctExp        = "",
         puncts          = [],
-        caseSource = [],
-        caseTarget = [],
+        caseSource      = [],
+        caseTarget      = [],
+        deferreds       = [],
+        MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
+                                    // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -215,22 +218,27 @@ define(function (require) {
                                 punctIdx = 0;
                                 index++;
                                 sps.push(sp);
+                                // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                if ((sps.length % MAX_BATCH) === 0) {
+                                    deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                }
                                 i++;
                                 norder++;
                             }
                         }
                     }
 
-                    // add the sourcephrases
-                    if (sps.length > 0) {
+                    // add any remaining sourcephrases
+                    if ((sps.length % MAX_BATCH) > 0) {
                         $("#status").html(i18n.t("view.dscStatusSaving"));
-                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
-                            // update the progress bar
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                     }
+                    // track all those deferred calls to addBatch -- when they all complete, report the results to the user
+                    $.when.apply($, deferreds).done(function (value) {
+                        importSuccess();
+                    }).fail(function (e) {
+                        importFail(e);
+                    });
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index), {silent: true});
@@ -396,6 +404,10 @@ define(function (require) {
                                         index++;
                                         norder++;
                                         sps.push(sp);
+                                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                        if ((sps.length % MAX_BATCH) === 0) {
+                                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        }
                                         i++;
                                     }
                                 }
@@ -461,16 +473,17 @@ define(function (require) {
                     }
                     // now read the contents of the file
                     parseNode($($xml).find("usx"));
-                    // add the sourcephrases
-                    if (sps.length > 0) {
+                    // add any remaining sourcephrases
+                    if ((sps.length % MAX_BATCH) > 0) {
                         $("#status").html(i18n.t("view.dscStatusSaving"));
-                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
-                            // update the progress bar
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                     }
+                    // track all those deferred calls to addBatch -- when they all complete, report the results to the user
+                    $.when.apply($, deferreds).done(function (value) {
+                        importSuccess();
+                    }).fail(function (e) {
+                        importFail(e);
+                    });
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
@@ -754,6 +767,10 @@ define(function (require) {
                                     index++;
                                     norder++;
                                     sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
                                     markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
@@ -773,6 +790,10 @@ define(function (require) {
                                     index++;
                                     norder++;
                                     sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
                                     markers = ""; // reset
                                 }
                             });
@@ -795,6 +816,10 @@ define(function (require) {
                         index++;
                         norder++;
                         sps.push(sp);
+                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                        if ((sps.length % MAX_BATCH) === 0) {
+                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                        }
                         // add this item to the KB
                         // TODO: build up punctpairs
                         if (sp.get('target').length > 0) {
@@ -802,16 +827,17 @@ define(function (require) {
                                             "", project.get('projectid'));
                         }
                     });
-                    // add the sourcephrases
-                    if (sps.length > 0) {
+                    // add any remaining sourcephrases
+                    if ((sps.length % MAX_BATCH) > 0) {
                         $("#status").html(i18n.t("view.dscStatusSaving"));
-                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
-                            // update the progress bar
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                     }
+                    // track all those deferred calls to addBatch -- when they all complete, report the results to the user
+                    $.when.apply($, deferreds).done(function (value) {
+                        importSuccess();
+                    }).fail(function (e) {
+                        importFail(e);
+                    });
                     // update the last chapter's verseCount and last adapted verse
                     chapter.set('lastadapted', lastAdapted, {silent: true});
                     chapter.set('versecount', verseCount, {silent: true});
@@ -1050,23 +1076,26 @@ define(function (require) {
                                 index++;
                                 norder++;
                                 sps.push(sp);
-//                                sourcePhrases.add(sp);
-//                                sp.save();
+                                // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                if ((sps.length % MAX_BATCH) === 0) {
+                                    deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                }
                                 i++;
                             }
                         }
                     }
-                    // update the last chapter's verseCount
-                    // add the sourcephrases
-                    if (sps.length > 0) {
+                    // add any remaining sourcephrases
+                    if ((sps.length % MAX_BATCH) > 0) {
                         $("#status").html(i18n.t("view.dscStatusSaving"));
-                        $.when(sourcePhrases.addBatch(sps)).done(function (value) {
-                            // update the progress bar
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                     }
+                    // track all those deferred calls to addBatch -- when they all complete, report the results to the user
+                    $.when.apply($, deferreds).done(function (value) {
+                        importSuccess();
+                    }).fail(function (e) {
+                        importFail(e);
+                    });
+                    // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
                     book.set('chapters', chaps, {silent: true});
