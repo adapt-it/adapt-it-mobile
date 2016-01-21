@@ -8,13 +8,14 @@ require.config({
     // backbone.wreqr   1.3.3
     // fastclick        1.0.6
     // handlebars       3.0.3
+    // hopscotch        0.2.5
     // i18next          1.9.0
-    // joyride          2.1
     // jquery           2.1.4
     // marionette       2.4.2
     // require          2.1.18
     // spectrum         1.7.0
     // text             2.0.14
+    // typeahead        0.11.1
     // underscore       1.8.3
 
     baseUrl: 'lib',
@@ -25,6 +26,7 @@ require.config({
         utils: '../js/utils',
         tpl: '../tpl',
         // libraries
+        typeahead: 'typeahead.jquery',
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.4.min',
         'languages': '../js/utils/languages',
@@ -43,6 +45,9 @@ require.config({
         marionette: {
             deps: ['backbone'],
             exports: 'Marionette'
+        },
+        typeahead: {
+            deps: ['jquery']
         },
         colorpicker: {
             deps: ['jquery']
@@ -65,21 +70,21 @@ require.config({
 require(["app/Application"], function (Application) {
     "use strict";
 
-    var runningOnApp = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
-
-    function startTheApp() {
+    var runningOnApp = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+    
+    var startTheApp = function () {
         var theApp = new Application.Application();
         theApp.start();
         window.Application = theApp;
     };
 
-    if ( runningOnApp ) {
+    if (runningOnApp) {
         // "real" Cordova application - start the app after DeviceReady is fired
-        document.addEventListener("deviceready", startTheApp, true);        
+        document.addEventListener("deviceready", startTheApp, true);
     } else {
         // Local web page - no cordova.js installed and no access to native plugins;
         // just start up the app now
         startTheApp();
-    }    
+    }
     
 });

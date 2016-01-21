@@ -1569,7 +1569,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Lishanid Noshan"
-          },
+            },
             {
                 "Id": "aik",
                 "Part2B": "",
@@ -1578,7 +1578,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ake"
-          },
+            },
             {
                 "Id": "ail",
                 "Part2B": "",
@@ -1587,7 +1587,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aimele"
-          },
+            },
             {
                 "Id": "aim",
                 "Part2B": "",
@@ -1596,7 +1596,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aimol"
-          },
+            },
             {
                 "Id": "ain",
                 "Part2B": "ain",
@@ -1605,7 +1605,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ainu (Japan)"
-          },
+            },
             {
                 "Id": "aio",
                 "Part2B": "",
@@ -1614,7 +1614,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aiton"
-          },
+            },
             {
                 "Id": "aip",
                 "Part2B": "",
@@ -1623,7 +1623,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burumakok"
-          },
+            },
             {
                 "Id": "aiq",
                 "Part2B": "",
@@ -1632,7 +1632,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aimaq"
-          },
+            },
             {
                 "Id": "air",
                 "Part2B": "",
@@ -1641,7 +1641,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Airoran"
-          },
+            },
             {
                 "Id": "ais",
                 "Part2B": "",
@@ -1650,7 +1650,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Nataoran Amis"
-          },
+            },
             {
                 "Id": "ait",
                 "Part2B": "",
@@ -1659,7 +1659,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Arikem"
-          },
+            },
             {
                 "Id": "aiw",
                 "Part2B": "",
@@ -1668,7 +1668,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aari"
-          },
+            },
             {
                 "Id": "aix",
                 "Part2B": "",
@@ -1677,7 +1677,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aighon"
-          },
+            },
             {
                 "Id": "aiy",
                 "Part2B": "",
@@ -1686,7 +1686,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ali"
-          },
+            },
             {
                 "Id": "aja",
                 "Part2B": "",
@@ -1695,7 +1695,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aja (Sudan)"
-          },
+            },
             {
                 "Id": "ajg",
                 "Part2B": "",
@@ -1704,7 +1704,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aja (Benin)"
-          },
+            },
             {
                 "Id": "aji",
                 "Part2B": "",
@@ -1713,7 +1713,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ajië"
-          },
+            },
             {
                 "Id": "ajn",
                 "Part2B": "",
@@ -1722,7 +1722,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andajin"
-          },
+            },
             {
                 "Id": "ajp",
                 "Part2B": "",
@@ -1731,7 +1731,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "South Levantine Arabic"
-          },
+            },
             {
                 "Id": "ajt",
                 "Part2B": "",
@@ -1740,7 +1740,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Judeo-Tunisian Arabic"
-          },
+            },
             {
                 "Id": "aju",
                 "Part2B": "",
@@ -1749,7 +1749,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Judeo-Moroccan Arabic"
-          },
+            },
             {
                 "Id": "ajw",
                 "Part2B": "",
@@ -1758,7 +1758,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Ajawa"
-          },
+            },
             {
                 "Id": "ajz",
                 "Part2B": "",
@@ -1767,7 +1767,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amri Karbi"
-          },
+            },
             {
                 "Id": "aka",
                 "Part2B": "aka",
@@ -1776,7 +1776,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Akan"
-          },
+            },
             {
                 "Id": "akb",
                 "Part2B": "",
@@ -1785,7 +1785,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Angkola"
-          },
+            },
             {
                 "Id": "akc",
                 "Part2B": "",
@@ -1794,7 +1794,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mpur"
-          },
+            },
             {
                 "Id": "akd",
                 "Part2B": "",
@@ -1803,7 +1803,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ukpet-Ehom"
-          },
+            },
             {
                 "Id": "ake",
                 "Part2B": "",
@@ -1812,7 +1812,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akawaio"
-          },
+            },
             {
                 "Id": "akf",
                 "Part2B": "",
@@ -1821,7 +1821,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akpa"
-          },
+            },
             {
                 "Id": "akg",
                 "Part2B": "",
@@ -1830,7 +1830,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anakalangu"
-          },
+            },
             {
                 "Id": "akh",
                 "Part2B": "",
@@ -1839,7 +1839,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angal Heneng"
-          },
+            },
             {
                 "Id": "aki",
                 "Part2B": "",
@@ -1848,7 +1848,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aiome"
-          },
+            },
             {
                 "Id": "akj",
                 "Part2B": "",
@@ -1857,7 +1857,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aka-Jeru"
-          },
+            },
             {
                 "Id": "akk",
                 "Part2B": "akk",
@@ -1865,7 +1865,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Akkadian"
-          },
+            },
             {
                 "Id": "akl",
                 "Part2B": "",
@@ -1874,7 +1874,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aklanon"
-          },
+            },
             {
                 "Id": "akm",
                 "Part2B": "",
@@ -1883,7 +1883,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aka-Bo"
-          },
+            },
             {
                 "Id": "ako",
                 "Part2B": "",
@@ -1892,7 +1892,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akurio"
-          },
+            },
             {
                 "Id": "akp",
                 "Part2B": "",
@@ -1901,7 +1901,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Siwu"
-          },
+            },
             {
                 "Id": "akq",
                 "Part2B": "",
@@ -1910,7 +1910,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ak"
-          },
+            },
             {
                 "Id": "akr",
                 "Part2B": "",
@@ -1919,7 +1919,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Araki"
-          },
+            },
             {
                 "Id": "aks",
                 "Part2B": "",
@@ -1928,7 +1928,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akaselem"
-          },
+            },
             {
                 "Id": "akt",
                 "Part2B": "",
@@ -1937,7 +1937,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akolet"
-          },
+            },
             {
                 "Id": "aku",
                 "Part2B": "",
@@ -1946,7 +1946,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akum"
-          },
+            },
             {
                 "Id": "akv",
                 "Part2B": "",
@@ -1955,7 +1955,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akhvakh"
-          },
+            },
             {
                 "Id": "akw",
                 "Part2B": "",
@@ -1964,7 +1964,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akwa"
-          },
+            },
             {
                 "Id": "akx",
                 "Part2B": "",
@@ -1973,7 +1973,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aka-Kede"
-          },
+            },
             {
                 "Id": "aky",
                 "Part2B": "",
@@ -1982,7 +1982,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aka-Kol"
-          },
+            },
             {
                 "Id": "akz",
                 "Part2B": "",
@@ -1991,7 +1991,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alabama"
-          },
+            },
             {
                 "Id": "ala",
                 "Part2B": "",
@@ -2000,7 +2000,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alago"
-          },
+            },
             {
                 "Id": "alc",
                 "Part2B": "",
@@ -2009,7 +2009,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Qawasqar"
-          },
+            },
             {
                 "Id": "ald",
                 "Part2B": "",
@@ -2018,7 +2018,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alladian"
-          },
+            },
             {
                 "Id": "ale",
                 "Part2B": "ale",
@@ -2027,7 +2027,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aleut"
-          },
+            },
             {
                 "Id": "alf",
                 "Part2B": "",
@@ -2036,7 +2036,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alege"
-          },
+            },
             {
                 "Id": "alh",
                 "Part2B": "",
@@ -2045,7 +2045,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alawa"
-          },
+            },
             {
                 "Id": "ali",
                 "Part2B": "",
@@ -2054,7 +2054,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amaimon"
-          },
+            },
             {
                 "Id": "alj",
                 "Part2B": "",
@@ -2063,7 +2063,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alangan"
-          },
+            },
             {
                 "Id": "alk",
                 "Part2B": "",
@@ -2072,7 +2072,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alak"
-          },
+            },
             {
                 "Id": "all",
                 "Part2B": "",
@@ -2081,7 +2081,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Allar"
-          },
+            },
             {
                 "Id": "alm",
                 "Part2B": "",
@@ -2090,7 +2090,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amblong"
-          },
+            },
             {
                 "Id": "aln",
                 "Part2B": "",
@@ -2099,7 +2099,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Gheg Albanian"
-          },
+            },
             {
                 "Id": "alo",
                 "Part2B": "",
@@ -2108,7 +2108,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Larike-Wakasihu"
-          },
+            },
             {
                 "Id": "alp",
                 "Part2B": "",
@@ -2117,7 +2117,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alune"
-          },
+            },
             {
                 "Id": "alq",
                 "Part2B": "",
@@ -2126,7 +2126,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Algonquin"
-          },
+            },
             {
                 "Id": "alr",
                 "Part2B": "",
@@ -2135,7 +2135,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alutor"
-          },
+            },
             {
                 "Id": "als",
                 "Part2B": "",
@@ -2144,7 +2144,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tosk Albanian"
-          },
+            },
             {
                 "Id": "alt",
                 "Part2B": "alt",
@@ -2153,7 +2153,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Altai"
-          },
+            },
             {
                 "Id": "alu",
                 "Part2B": "",
@@ -2162,7 +2162,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "'Are'are"
-          },
+            },
             {
                 "Id": "alw",
                 "Part2B": "",
@@ -2171,7 +2171,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alaba-K’abeena"
-          },
+            },
             {
                 "Id": "alx",
                 "Part2B": "",
@@ -2180,7 +2180,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amol"
-          },
+            },
             {
                 "Id": "aly",
                 "Part2B": "",
@@ -2189,7 +2189,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alyawarr"
-          },
+            },
             {
                 "Id": "alz",
                 "Part2B": "",
@@ -2198,7 +2198,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alur"
-          },
+            },
             {
                 "Id": "ama",
                 "Part2B": "",
@@ -2207,7 +2207,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Amanayé"
-          },
+            },
             {
                 "Id": "amb",
                 "Part2B": "",
@@ -2216,7 +2216,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambo"
-          },
+            },
             {
                 "Id": "amc",
                 "Part2B": "",
@@ -2225,7 +2225,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amahuaca"
-          },
+            },
             {
                 "Id": "ame",
                 "Part2B": "",
@@ -2234,7 +2234,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Yanesha'"
-          },
+            },
             {
                 "Id": "amf",
                 "Part2B": "",
@@ -2243,7 +2243,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Hamer-Banna"
-          },
+            },
             {
                 "Id": "amg",
                 "Part2B": "",
@@ -2252,7 +2252,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amurdak"
-          },
+            },
             {
                 "Id": "amh",
                 "Part2B": "amh",
@@ -2261,7 +2261,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amharic"
-          },
+            },
             {
                 "Id": "ami",
                 "Part2B": "",
@@ -2270,7 +2270,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amis"
-          },
+            },
             {
                 "Id": "amj",
                 "Part2B": "",
@@ -2279,7 +2279,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amdang"
-          },
+            },
             {
                 "Id": "amk",
                 "Part2B": "",
@@ -2288,7 +2288,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambai"
-          },
+            },
             {
                 "Id": "aml",
                 "Part2B": "",
@@ -2297,7 +2297,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "War-Jaintia"
-          },
+            },
             {
                 "Id": "amm",
                 "Part2B": "",
@@ -2306,7 +2306,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ama (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "amn",
                 "Part2B": "",
@@ -2315,7 +2315,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amanab"
-          },
+            },
             {
                 "Id": "amo",
                 "Part2B": "",
@@ -2324,7 +2324,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amo"
-          },
+            },
             {
                 "Id": "amp",
                 "Part2B": "",
@@ -2333,7 +2333,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alamblak"
-          },
+            },
             {
                 "Id": "amq",
                 "Part2B": "",
@@ -2342,7 +2342,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amahai"
-          },
+            },
             {
                 "Id": "amr",
                 "Part2B": "",
@@ -2351,7 +2351,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amarakaeri"
-          },
+            },
             {
                 "Id": "ams",
                 "Part2B": "",
@@ -2360,7 +2360,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Amami-Oshima"
-          },
+            },
             {
                 "Id": "amt",
                 "Part2B": "",
@@ -2369,7 +2369,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Amto"
-          },
+            },
             {
                 "Id": "amu",
                 "Part2B": "",
@@ -2378,7 +2378,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Guerrero Amuzgo"
-          },
+            },
             {
                 "Id": "amv",
                 "Part2B": "",
@@ -2387,7 +2387,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambelau"
-          },
+            },
             {
                 "Id": "amw",
                 "Part2B": "",
@@ -2396,7 +2396,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Neo-Aramaic"
-          },
+            },
             {
                 "Id": "amx",
                 "Part2B": "",
@@ -2405,7 +2405,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anmatyerre"
-          },
+            },
             {
                 "Id": "amy",
                 "Part2B": "",
@@ -2414,7 +2414,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ami"
-          },
+            },
             {
                 "Id": "amz",
                 "Part2B": "",
@@ -2423,7 +2423,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Atampaya"
-          },
+            },
             {
                 "Id": "ana",
                 "Part2B": "",
@@ -2432,7 +2432,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Andaqui"
-          },
+            },
             {
                 "Id": "anb",
                 "Part2B": "",
@@ -2441,7 +2441,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Andoa"
-          },
+            },
             {
                 "Id": "anc",
                 "Part2B": "",
@@ -2450,7 +2450,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ngas"
-          },
+            },
             {
                 "Id": "and",
                 "Part2B": "",
@@ -2459,7 +2459,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ansus"
-          },
+            },
             {
                 "Id": "ane",
                 "Part2B": "",
@@ -2468,7 +2468,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Xârâcùù"
-          },
+            },
             {
                 "Id": "anf",
                 "Part2B": "",
@@ -2477,7 +2477,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Animere"
-          },
+            },
             {
                 "Id": "ang",
                 "Part2B": "ang",
@@ -2485,7 +2485,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Old English (ca. 450-1100)"
-          },
+            },
             {
                 "Id": "anh",
                 "Part2B": "",
@@ -2494,7 +2494,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Nend"
-          },
+            },
             {
                 "Id": "ani",
                 "Part2B": "",
@@ -2503,7 +2503,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andi"
-          },
+            },
             {
                 "Id": "anj",
                 "Part2B": "",
@@ -2512,7 +2512,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anor"
-          },
+            },
             {
                 "Id": "ank",
                 "Part2B": "",
@@ -2521,7 +2521,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Goemai"
-          },
+            },
             {
                 "Id": "anl",
                 "Part2B": "",
@@ -2530,7 +2530,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anu-Hkongso Chin"
-          },
+            },
             {
                 "Id": "anm",
                 "Part2B": "",
@@ -2539,7 +2539,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anal"
-          },
+            },
             {
                 "Id": "ann",
                 "Part2B": "",
@@ -2548,7 +2548,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Obolo"
-          },
+            },
             {
                 "Id": "ano",
                 "Part2B": "",
@@ -2557,7 +2557,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andoque"
-          },
+            },
             {
                 "Id": "anp",
                 "Part2B": "anp",
@@ -2566,7 +2566,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angika"
-          },
+            },
             {
                 "Id": "anq",
                 "Part2B": "",
@@ -2575,7 +2575,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jarawa (India)"
-          },
+            },
             {
                 "Id": "anr",
                 "Part2B": "",
@@ -2584,7 +2584,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andh"
-          },
+            },
             {
                 "Id": "ans",
                 "Part2B": "",
@@ -2593,7 +2593,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Anserma"
-          },
+            },
             {
                 "Id": "ant",
                 "Part2B": "",
@@ -2602,7 +2602,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Antakarinya"
-          },
+            },
             {
                 "Id": "anu",
                 "Part2B": "",
@@ -2611,7 +2611,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anuak"
-          },
+            },
             {
                 "Id": "anv",
                 "Part2B": "",
@@ -2620,7 +2620,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Denya"
-          },
+            },
             {
                 "Id": "anw",
                 "Part2B": "",
@@ -2629,7 +2629,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anaang"
-          },
+            },
             {
                 "Id": "anx",
                 "Part2B": "",
@@ -2638,7 +2638,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andra-Hus"
-          },
+            },
             {
                 "Id": "any",
                 "Part2B": "",
@@ -2647,7 +2647,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anyin"
-          },
+            },
             {
                 "Id": "anz",
                 "Part2B": "",
@@ -2656,7 +2656,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anem"
-          },
+            },
             {
                 "Id": "aoa",
                 "Part2B": "",
@@ -2665,7 +2665,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angolar"
-          },
+            },
             {
                 "Id": "aob",
                 "Part2B": "",
@@ -2674,7 +2674,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abom"
-          },
+            },
             {
                 "Id": "aoc",
                 "Part2B": "",
@@ -2683,7 +2683,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pemon"
-          },
+            },
             {
                 "Id": "aod",
                 "Part2B": "",
@@ -2692,7 +2692,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andarum"
-          },
+            },
             {
                 "Id": "aoe",
                 "Part2B": "",
@@ -2701,7 +2701,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angal Enen"
-          },
+            },
             {
                 "Id": "aof",
                 "Part2B": "",
@@ -2710,7 +2710,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bragat"
-          },
+            },
             {
                 "Id": "aog",
                 "Part2B": "",
@@ -2719,7 +2719,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angoram"
-          },
+            },
             {
                 "Id": "aoh",
                 "Part2B": "",
@@ -2728,7 +2728,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Arma"
-          },
+            },
             {
                 "Id": "aoi",
                 "Part2B": "",
@@ -2737,7 +2737,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anindilyakwa"
-          },
+            },
             {
                 "Id": "aoj",
                 "Part2B": "",
@@ -2746,7 +2746,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mufian"
-          },
+            },
             {
                 "Id": "aok",
                 "Part2B": "",
@@ -2755,7 +2755,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arhö"
-          },
+            },
             {
                 "Id": "aol",
                 "Part2B": "",
@@ -2764,7 +2764,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alor"
-          },
+            },
             {
                 "Id": "aom",
                 "Part2B": "",
@@ -2773,7 +2773,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ömie"
-          },
+            },
             {
                 "Id": "aon",
                 "Part2B": "",
@@ -2782,7 +2782,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bumbita Arapesh"
-          },
+            },
             {
                 "Id": "aor",
                 "Part2B": "",
@@ -2791,7 +2791,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aore"
-          },
+            },
             {
                 "Id": "aos",
                 "Part2B": "",
@@ -2800,7 +2800,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Taikat"
-          },
+            },
             {
                 "Id": "aot",
                 "Part2B": "",
@@ -2809,7 +2809,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "A'tong"
-          },
+            },
             {
                 "Id": "aou",
                 "Part2B": "",
@@ -2818,7 +2818,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "A'ou"
-          },
+            },
             {
                 "Id": "aox",
                 "Part2B": "",
@@ -2827,7 +2827,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atorada"
-          },
+            },
             {
                 "Id": "aoz",
                 "Part2B": "",
@@ -2836,7 +2836,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Uab Meto"
-          },
+            },
             {
                 "Id": "apb",
                 "Part2B": "",
@@ -2845,7 +2845,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sa'a"
-          },
+            },
             {
                 "Id": "apc",
                 "Part2B": "",
@@ -2854,7 +2854,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "North Levantine Arabic"
-          },
+            },
             {
                 "Id": "apd",
                 "Part2B": "",
@@ -2863,7 +2863,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sudanese Arabic"
-          },
+            },
             {
                 "Id": "ape",
                 "Part2B": "",
@@ -2872,7 +2872,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukiyip"
-          },
+            },
             {
                 "Id": "apf",
                 "Part2B": "",
@@ -2881,7 +2881,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pahanan Agta"
-          },
+            },
             {
                 "Id": "apg",
                 "Part2B": "",
@@ -2890,7 +2890,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ampanang"
-          },
+            },
             {
                 "Id": "aph",
                 "Part2B": "",
@@ -2899,7 +2899,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Athpariya"
-          },
+            },
             {
                 "Id": "api",
                 "Part2B": "",
@@ -2908,7 +2908,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apiaká"
-          },
+            },
             {
                 "Id": "apj",
                 "Part2B": "",
@@ -2917,7 +2917,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jicarilla Apache"
-          },
+            },
             {
                 "Id": "apk",
                 "Part2B": "",
@@ -2926,7 +2926,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kiowa Apache"
-          },
+            },
             {
                 "Id": "apl",
                 "Part2B": "",
@@ -2935,7 +2935,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Lipan Apache"
-          },
+            },
             {
                 "Id": "apm",
                 "Part2B": "",
@@ -2944,7 +2944,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mescalero-Chiricahua Apache"
-          },
+            },
             {
                 "Id": "apn",
                 "Part2B": "",
@@ -2953,7 +2953,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apinayé"
-          },
+            },
             {
                 "Id": "apo",
                 "Part2B": "",
@@ -2962,7 +2962,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ambul"
-          },
+            },
             {
                 "Id": "app",
                 "Part2B": "",
@@ -2971,7 +2971,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apma"
-          },
+            },
             {
                 "Id": "apq",
                 "Part2B": "",
@@ -2980,7 +2980,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "A-Pucikwar"
-          },
+            },
             {
                 "Id": "apr",
                 "Part2B": "",
@@ -2989,7 +2989,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arop-Lokep"
-          },
+            },
             {
                 "Id": "aps",
                 "Part2B": "",
@@ -2998,7 +2998,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arop-Sissano"
-          },
+            },
             {
                 "Id": "apt",
                 "Part2B": "",
@@ -3007,7 +3007,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apatani"
-          },
+            },
             {
                 "Id": "apu",
                 "Part2B": "",
@@ -3016,7 +3016,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apurinã"
-          },
+            },
             {
                 "Id": "apv",
                 "Part2B": "",
@@ -3025,7 +3025,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Alapmunte"
-          },
+            },
             {
                 "Id": "apw",
                 "Part2B": "",
@@ -3034,7 +3034,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Apache"
-          },
+            },
             {
                 "Id": "apx",
                 "Part2B": "",
@@ -3043,7 +3043,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aputai"
-          },
+            },
             {
                 "Id": "apy",
                 "Part2B": "",
@@ -3052,7 +3052,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Apalaí"
-          },
+            },
             {
                 "Id": "apz",
                 "Part2B": "",
@@ -3061,7 +3061,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Safeyoka"
-          },
+            },
             {
                 "Id": "aqc",
                 "Part2B": "",
@@ -3070,7 +3070,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Archi"
-          },
+            },
             {
                 "Id": "aqd",
                 "Part2B": "",
@@ -3079,7 +3079,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ampari Dogon"
-          },
+            },
             {
                 "Id": "aqg",
                 "Part2B": "",
@@ -3088,7 +3088,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arigidi"
-          },
+            },
             {
                 "Id": "aqm",
                 "Part2B": "",
@@ -3097,7 +3097,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atohwaim"
-          },
+            },
             {
                 "Id": "aqn",
                 "Part2B": "",
@@ -3106,7 +3106,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Northern Alta"
-          },
+            },
             {
                 "Id": "aqp",
                 "Part2B": "",
@@ -3115,7 +3115,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Atakapa"
-          },
+            },
             {
                 "Id": "aqr",
                 "Part2B": "",
@@ -3124,7 +3124,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arhâ"
-          },
+            },
             {
                 "Id": "aqt",
                 "Part2B": "",
@@ -3133,7 +3133,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Angaité"
-          },
+            },
             {
                 "Id": "aqz",
                 "Part2B": "",
@@ -3142,7 +3142,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akuntsu"
-          },
+            },
             {
                 "Id": "ara",
                 "Part2B": "ara",
@@ -3151,7 +3151,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Arabic"
-          },
+            },
             {
                 "Id": "arb",
                 "Part2B": "",
@@ -3160,7 +3160,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Standard Arabic"
-          },
+            },
             {
                 "Id": "arc",
                 "Part2B": "arc",
@@ -3168,7 +3168,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Official Aramaic (700-300 BCE)"
-          },
+            },
             {
                 "Id": "ard",
                 "Part2B": "",
@@ -3177,7 +3177,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Arabana"
-          },
+            },
             {
                 "Id": "are",
                 "Part2B": "",
@@ -3186,7 +3186,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Arrarnta"
-          },
+            },
             {
                 "Id": "arg",
                 "Part2B": "arg",
@@ -3195,7 +3195,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aragonese"
-          },
+            },
             {
                 "Id": "arh",
                 "Part2B": "",
@@ -3204,7 +3204,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arhuaco"
-          },
+            },
             {
                 "Id": "ari",
                 "Part2B": "",
@@ -3213,7 +3213,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arikara"
-          },
+            },
             {
                 "Id": "arj",
                 "Part2B": "",
@@ -3222,7 +3222,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Arapaso"
-          },
+            },
             {
                 "Id": "ark",
                 "Part2B": "",
@@ -3231,7 +3231,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arikapú"
-          },
+            },
             {
                 "Id": "arl",
                 "Part2B": "",
@@ -3240,7 +3240,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arabela"
-          },
+            },
             {
                 "Id": "arn",
                 "Part2B": "arn",
@@ -3249,7 +3249,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mapudungun"
-          },
+            },
             {
                 "Id": "aro",
                 "Part2B": "",
@@ -3258,7 +3258,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Araona"
-          },
+            },
             {
                 "Id": "arp",
                 "Part2B": "arp",
@@ -3267,7 +3267,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arapaho"
-          },
+            },
             {
                 "Id": "arq",
                 "Part2B": "",
@@ -3276,7 +3276,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Algerian Arabic"
-          },
+            },
             {
                 "Id": "arr",
                 "Part2B": "",
@@ -3285,7 +3285,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Karo (Brazil)"
-          },
+            },
             {
                 "Id": "ars",
                 "Part2B": "",
@@ -3294,7 +3294,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Najdi Arabic"
-          },
+            },
             {
                 "Id": "aru",
                 "Part2B": "",
@@ -3303,7 +3303,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aruá (Amazonas State)"
-          },
+            },
             {
                 "Id": "arv",
                 "Part2B": "",
@@ -3312,7 +3312,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arbore"
-          },
+            },
             {
                 "Id": "arw",
                 "Part2B": "arw",
@@ -3321,7 +3321,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arawak"
-          },
+            },
             {
                 "Id": "arx",
                 "Part2B": "",
@@ -3330,7 +3330,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aruá (Rodonia State)"
-          },
+            },
             {
                 "Id": "ary",
                 "Part2B": "",
@@ -3339,7 +3339,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Moroccan Arabic"
-          },
+            },
             {
                 "Id": "arz",
                 "Part2B": "",
@@ -3348,7 +3348,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Egyptian Arabic"
-          },
+            },
             {
                 "Id": "asa",
                 "Part2B": "",
@@ -3357,7 +3357,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asu (Tanzania)"
-          },
+            },
             {
                 "Id": "asb",
                 "Part2B": "",
@@ -3366,7 +3366,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Assiniboine"
-          },
+            },
             {
                 "Id": "asc",
                 "Part2B": "",
@@ -3375,7 +3375,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Casuarina Coast Asmat"
-          },
+            },
             {
                 "Id": "asd",
                 "Part2B": "",
@@ -3384,7 +3384,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asas"
-          },
+            },
             {
                 "Id": "ase",
                 "Part2B": "",
@@ -3393,7 +3393,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "American Sign Language"
-          },
+            },
             {
                 "Id": "asf",
                 "Part2B": "",
@@ -3402,7 +3402,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Australian Sign Language"
-          },
+            },
             {
                 "Id": "asg",
                 "Part2B": "",
@@ -3411,7 +3411,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Cishingini"
-          },
+            },
             {
                 "Id": "ash",
                 "Part2B": "",
@@ -3420,7 +3420,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Abishira"
-          },
+            },
             {
                 "Id": "asi",
                 "Part2B": "",
@@ -3429,7 +3429,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buruwai"
-          },
+            },
             {
                 "Id": "asj",
                 "Part2B": "",
@@ -3438,7 +3438,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sari"
-          },
+            },
             {
                 "Id": "ask",
                 "Part2B": "",
@@ -3447,7 +3447,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ashkun"
-          },
+            },
             {
                 "Id": "asl",
                 "Part2B": "",
@@ -3456,7 +3456,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asilulu"
-          },
+            },
             {
                 "Id": "asm",
                 "Part2B": "asm",
@@ -3465,7 +3465,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Assamese"
-          },
+            },
             {
                 "Id": "asn",
                 "Part2B": "",
@@ -3474,7 +3474,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Xingú Asuriní"
-          },
+            },
             {
                 "Id": "aso",
                 "Part2B": "",
@@ -3483,7 +3483,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Dano"
-          },
+            },
             {
                 "Id": "asp",
                 "Part2B": "",
@@ -3492,7 +3492,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Algerian Sign Language"
-          },
+            },
             {
                 "Id": "asq",
                 "Part2B": "",
@@ -3501,7 +3501,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Austrian Sign Language"
-          },
+            },
             {
                 "Id": "asr",
                 "Part2B": "",
@@ -3510,7 +3510,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asuri"
-          },
+            },
             {
                 "Id": "ass",
                 "Part2B": "",
@@ -3519,7 +3519,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ipulo"
-          },
+            },
             {
                 "Id": "ast",
                 "Part2B": "ast",
@@ -3528,7 +3528,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asturian"
-          },
+            },
             {
                 "Id": "asu",
                 "Part2B": "",
@@ -3537,7 +3537,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tocantins Asurini"
-          },
+            },
             {
                 "Id": "asv",
                 "Part2B": "",
@@ -3546,7 +3546,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asoa"
-          },
+            },
             {
                 "Id": "asw",
                 "Part2B": "",
@@ -3555,7 +3555,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Australian Aborigines Sign Language"
-          },
+            },
             {
                 "Id": "asx",
                 "Part2B": "",
@@ -3564,7 +3564,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Muratayak"
-          },
+            },
             {
                 "Id": "asy",
                 "Part2B": "",
@@ -3573,7 +3573,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Yaosakor Asmat"
-          },
+            },
             {
                 "Id": "asz",
                 "Part2B": "",
@@ -3582,7 +3582,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "As"
-          },
+            },
             {
                 "Id": "ata",
                 "Part2B": "",
@@ -3591,7 +3591,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pele-Ata"
-          },
+            },
             {
                 "Id": "atb",
                 "Part2B": "",
@@ -3600,7 +3600,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Zaiwa"
-          },
+            },
             {
                 "Id": "atc",
                 "Part2B": "",
@@ -3609,7 +3609,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Atsahuaca"
-          },
+            },
             {
                 "Id": "atd",
                 "Part2B": "",
@@ -3618,7 +3618,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ata Manobo"
-          },
+            },
             {
                 "Id": "ate",
                 "Part2B": "",
@@ -3627,7 +3627,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atemble"
-          },
+            },
             {
                 "Id": "atg",
                 "Part2B": "",
@@ -3636,7 +3636,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ivbie North-Okpela-Arhe"
-          },
+            },
             {
                 "Id": "ati",
                 "Part2B": "",
@@ -3645,7 +3645,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Attié"
-          },
+            },
             {
                 "Id": "atj",
                 "Part2B": "",
@@ -3654,7 +3654,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atikamekw"
-          },
+            },
             {
                 "Id": "atk",
                 "Part2B": "",
@@ -3663,7 +3663,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ati"
-          },
+            },
             {
                 "Id": "atl",
                 "Part2B": "",
@@ -3672,7 +3672,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mt. Iraya Agta"
-          },
+            },
             {
                 "Id": "atm",
                 "Part2B": "",
@@ -3681,7 +3681,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ata"
-          },
+            },
             {
                 "Id": "atn",
                 "Part2B": "",
@@ -3690,7 +3690,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ashtiani"
-          },
+            },
             {
                 "Id": "ato",
                 "Part2B": "",
@@ -3699,7 +3699,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atong"
-          },
+            },
             {
                 "Id": "atp",
                 "Part2B": "",
@@ -3708,7 +3708,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pudtol Atta"
-          },
+            },
             {
                 "Id": "atq",
                 "Part2B": "",
@@ -3717,7 +3717,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aralle-Tabulahan"
-          },
+            },
             {
                 "Id": "atr",
                 "Part2B": "",
@@ -3726,7 +3726,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Waimiri-Atroari"
-          },
+            },
             {
                 "Id": "ats",
                 "Part2B": "",
@@ -3735,7 +3735,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Gros Ventre"
-          },
+            },
             {
                 "Id": "att",
                 "Part2B": "",
@@ -3744,7 +3744,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pamplona Atta"
-          },
+            },
             {
                 "Id": "atu",
                 "Part2B": "",
@@ -3753,7 +3753,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Reel"
-          },
+            },
             {
                 "Id": "atv",
                 "Part2B": "",
@@ -3762,7 +3762,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Northern Altai"
-          },
+            },
             {
                 "Id": "atw",
                 "Part2B": "",
@@ -3771,7 +3771,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Atsugewi"
-          },
+            },
             {
                 "Id": "atx",
                 "Part2B": "",
@@ -3780,7 +3780,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arutani"
-          },
+            },
             {
                 "Id": "aty",
                 "Part2B": "",
@@ -3789,7 +3789,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aneityum"
-          },
+            },
             {
                 "Id": "atz",
                 "Part2B": "",
@@ -3798,7 +3798,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arta"
-          },
+            },
             {
                 "Id": "aua",
                 "Part2B": "",
@@ -3807,7 +3807,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asumboa"
-          },
+            },
             {
                 "Id": "aub",
                 "Part2B": "",
@@ -3816,7 +3816,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alugu"
-          },
+            },
             {
                 "Id": "auc",
                 "Part2B": "",
@@ -3825,7 +3825,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Waorani"
-          },
+            },
             {
                 "Id": "aud",
                 "Part2B": "",
@@ -3834,7 +3834,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anuta"
-          },
+            },
             {
                 "Id": "aue",
                 "Part2B": "",
@@ -3843,7 +3843,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "0"
-          },
+            },
             {
                 "Id": "aug",
                 "Part2B": "",
@@ -3852,7 +3852,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aguna"
-          },
+            },
             {
                 "Id": "auh",
                 "Part2B": "",
@@ -3861,7 +3861,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aushi"
-          },
+            },
             {
                 "Id": "aui",
                 "Part2B": "",
@@ -3870,7 +3870,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anuki"
-          },
+            },
             {
                 "Id": "auj",
                 "Part2B": "",
@@ -3879,7 +3879,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awjilah"
-          },
+            },
             {
                 "Id": "auk",
                 "Part2B": "",
@@ -3888,7 +3888,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Heyo"
-          },
+            },
             {
                 "Id": "aul",
                 "Part2B": "",
@@ -3897,7 +3897,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aulua"
-          },
+            },
             {
                 "Id": "aum",
                 "Part2B": "",
@@ -3906,7 +3906,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Asu (Nigeria)"
-          },
+            },
             {
                 "Id": "aun",
                 "Part2B": "",
@@ -3915,7 +3915,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Molmo One"
-          },
+            },
             {
                 "Id": "auo",
                 "Part2B": "",
@@ -3924,7 +3924,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Auyokawa"
-          },
+            },
             {
                 "Id": "aup",
                 "Part2B": "",
@@ -3933,7 +3933,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Makayam"
-          },
+            },
             {
                 "Id": "auq",
                 "Part2B": "",
@@ -3942,7 +3942,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anus"
-          },
+            },
             {
                 "Id": "aur",
                 "Part2B": "",
@@ -3951,7 +3951,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aruek"
-          },
+            },
             {
                 "Id": "aut",
                 "Part2B": "",
@@ -3960,7 +3960,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Austral"
-          },
+            },
             {
                 "Id": "auu",
                 "Part2B": "",
@@ -3969,7 +3969,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Auye"
-          },
+            },
             {
                 "Id": "auw",
                 "Part2B": "",
@@ -3978,7 +3978,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awyi"
-          },
+            },
             {
                 "Id": "aux",
                 "Part2B": "",
@@ -3987,7 +3987,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aurá"
-          },
+            },
             {
                 "Id": "auy",
                 "Part2B": "",
@@ -3996,7 +3996,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awiyaana"
-          },
+            },
             {
                 "Id": "auz",
                 "Part2B": "",
@@ -4005,7 +4005,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Uzbeki Arabic"
-          },
+            },
             {
                 "Id": "ava",
                 "Part2B": "ava",
@@ -4014,7 +4014,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avaric"
-          },
+            },
             {
                 "Id": "avb",
                 "Part2B": "",
@@ -4023,7 +4023,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avau"
-          },
+            },
             {
                 "Id": "avd",
                 "Part2B": "",
@@ -4032,7 +4032,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Alviri-Vidari"
-          },
+            },
             {
                 "Id": "ave",
                 "Part2B": "ave",
@@ -4040,7 +4040,7 @@ define(function (require) {
                 "Part1": "ae",
                 "Scope": "I",
                 "Ref_Name": "Avestan"
-          },
+            },
             {
                 "Id": "avi",
                 "Part2B": "",
@@ -4049,7 +4049,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avikam"
-          },
+            },
             {
                 "Id": "avk",
                 "Part2B": "",
@@ -4057,7 +4057,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Kotava"
-          },
+            },
             {
                 "Id": "avl",
                 "Part2B": "",
@@ -4066,7 +4066,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Eastern Egyptian Bedawi Arabic"
-          },
+            },
             {
                 "Id": "avm",
                 "Part2B": "",
@@ -4075,7 +4075,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Angkamuthi"
-          },
+            },
             {
                 "Id": "avn",
                 "Part2B": "",
@@ -4084,7 +4084,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avatime"
-          },
+            },
             {
                 "Id": "avo",
                 "Part2B": "",
@@ -4093,7 +4093,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Agavotaguerra"
-          },
+            },
             {
                 "Id": "avs",
                 "Part2B": "",
@@ -4102,7 +4102,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Aushiri"
-          },
+            },
             {
                 "Id": "avt",
                 "Part2B": "",
@@ -4111,7 +4111,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Au"
-          },
+            },
             {
                 "Id": "avu",
                 "Part2B": "",
@@ -4120,7 +4120,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avokaya"
-          },
+            },
             {
                 "Id": "avv",
                 "Part2B": "",
@@ -4129,7 +4129,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Avá-Canoeiro"
-          },
+            },
             {
                 "Id": "awa",
                 "Part2B": "awa",
@@ -4138,7 +4138,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awadhi"
-          },
+            },
             {
                 "Id": "awb",
                 "Part2B": "",
@@ -4147,7 +4147,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awa (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "awc",
                 "Part2B": "",
@@ -4156,7 +4156,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Cicipu"
-          },
+            },
             {
                 "Id": "awe",
                 "Part2B": "",
@@ -4165,7 +4165,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awetí"
-          },
+            },
             {
                 "Id": "awg",
                 "Part2B": "",
@@ -4174,7 +4174,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Anguthimri"
-          },
+            },
             {
                 "Id": "awh",
                 "Part2B": "",
@@ -4183,7 +4183,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awbono"
-          },
+            },
             {
                 "Id": "awi",
                 "Part2B": "",
@@ -4192,7 +4192,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aekyom"
-          },
+            },
             {
                 "Id": "awk",
                 "Part2B": "",
@@ -4201,7 +4201,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Awabakal"
-          },
+            },
             {
                 "Id": "awm",
                 "Part2B": "",
@@ -4210,7 +4210,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Arawum"
-          },
+            },
             {
                 "Id": "awn",
                 "Part2B": "",
@@ -4219,7 +4219,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awngi"
-          },
+            },
             {
                 "Id": "awo",
                 "Part2B": "",
@@ -4228,7 +4228,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awak"
-          },
+            },
             {
                 "Id": "awr",
                 "Part2B": "",
@@ -4237,7 +4237,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awera"
-          },
+            },
             {
                 "Id": "aws",
                 "Part2B": "",
@@ -4246,7 +4246,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "South Awyu"
-          },
+            },
             {
                 "Id": "awt",
                 "Part2B": "",
@@ -4255,7 +4255,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Araweté"
-          },
+            },
             {
                 "Id": "awu",
                 "Part2B": "",
@@ -4264,7 +4264,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Central Awyu"
-          },
+            },
             {
                 "Id": "awv",
                 "Part2B": "",
@@ -4273,7 +4273,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jair Awyu"
-          },
+            },
             {
                 "Id": "aww",
                 "Part2B": "",
@@ -4282,7 +4282,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awun"
-          },
+            },
             {
                 "Id": "awx",
                 "Part2B": "",
@@ -4291,7 +4291,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awara"
-          },
+            },
             {
                 "Id": "awy",
                 "Part2B": "",
@@ -4300,7 +4300,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Edera Awyu"
-          },
+            },
             {
                 "Id": "axb",
                 "Part2B": "",
@@ -4309,7 +4309,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Abipon"
-          },
+            },
             {
                 "Id": "axe",
                 "Part2B": "",
@@ -4318,7 +4318,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Ayerrerenge"
-          },
+            },
             {
                 "Id": "axg",
                 "Part2B": "",
@@ -4327,7 +4327,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Mato Grosso Arára"
-          },
+            },
             {
                 "Id": "axk",
                 "Part2B": "",
@@ -4336,7 +4336,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Yaka (Central African Republic)"
-          },
+            },
             {
                 "Id": "axl",
                 "Part2B": "",
@@ -4345,7 +4345,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Lower Southern Aranda"
-          },
+            },
             {
                 "Id": "axm",
                 "Part2B": "",
@@ -4353,7 +4353,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Middle Armenian"
-          },
+            },
             {
                 "Id": "axx",
                 "Part2B": "",
@@ -4362,7 +4362,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Xârâgurè"
-          },
+            },
             {
                 "Id": "aya",
                 "Part2B": "",
@@ -4371,7 +4371,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awar"
-          },
+            },
             {
                 "Id": "ayb",
                 "Part2B": "",
@@ -4380,7 +4380,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ayizo Gbe"
-          },
+            },
             {
                 "Id": "ayc",
                 "Part2B": "",
@@ -4389,7 +4389,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Aymara"
-          },
+            },
             {
                 "Id": "ayd",
                 "Part2B": "",
@@ -4398,7 +4398,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Ayabadhu"
-          },
+            },
             {
                 "Id": "aye",
                 "Part2B": "",
@@ -4407,7 +4407,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ayere"
-          },
+            },
             {
                 "Id": "ayg",
                 "Part2B": "",
@@ -4416,7 +4416,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ginyanga"
-          },
+            },
             {
                 "Id": "ayh",
                 "Part2B": "",
@@ -4425,7 +4425,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Hadrami Arabic"
-          },
+            },
             {
                 "Id": "ayi",
                 "Part2B": "",
@@ -4434,7 +4434,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Leyigha"
-          },
+            },
             {
                 "Id": "ayk",
                 "Part2B": "",
@@ -4443,7 +4443,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akuku"
-          },
+            },
             {
                 "Id": "ayl",
                 "Part2B": "",
@@ -4452,7 +4452,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Libyan Arabic"
-          },
+            },
             {
                 "Id": "aym",
                 "Part2B": "aym",
@@ -4461,7 +4461,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Aymara"
-          },
+            },
             {
                 "Id": "ayn",
                 "Part2B": "",
@@ -4470,7 +4470,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sanaani Arabic"
-          },
+            },
             {
                 "Id": "ayo",
                 "Part2B": "",
@@ -4479,7 +4479,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ayoreo"
-          },
+            },
             {
                 "Id": "ayp",
                 "Part2B": "",
@@ -4488,7 +4488,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "North Mesopotamian Arabic"
-          },
+            },
             {
                 "Id": "ayq",
                 "Part2B": "",
@@ -4497,7 +4497,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ayi (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "ayr",
                 "Part2B": "",
@@ -4506,7 +4506,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Central Aymara"
-          },
+            },
             {
                 "Id": "ays",
                 "Part2B": "",
@@ -4515,7 +4515,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sorsogon Ayta"
-          },
+            },
             {
                 "Id": "ayt",
                 "Part2B": "",
@@ -4524,7 +4524,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Magbukun Ayta"
-          },
+            },
             {
                 "Id": "ayu",
                 "Part2B": "",
@@ -4533,7 +4533,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ayu"
-          },
+            },
             {
                 "Id": "ayy",
                 "Part2B": "",
@@ -4542,7 +4542,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Tayabas Ayta"
-          },
+            },
             {
                 "Id": "ayz",
                 "Part2B": "",
@@ -4551,7 +4551,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mai Brat"
-          },
+            },
             {
                 "Id": "aza",
                 "Part2B": "",
@@ -4560,7 +4560,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Azha"
-          },
+            },
             {
                 "Id": "azb",
                 "Part2B": "",
@@ -4569,7 +4569,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "South Azerbaijani"
-          },
+            },
             {
                 "Id": "azd",
                 "Part2B": "",
@@ -4578,7 +4578,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Eastern Durango Nahuatl"
-          },
+            },
             {
                 "Id": "aze",
                 "Part2B": "aze",
@@ -4587,7 +4587,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Azerbaijani"
-          },
+            },
             {
                 "Id": "azg",
                 "Part2B": "",
@@ -4596,7 +4596,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "San Pedro Amuzgos Amuzgo"
-          },
+            },
             {
                 "Id": "azj",
                 "Part2B": "",
@@ -4605,7 +4605,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "North Azerbaijani"
-          },
+            },
             {
                 "Id": "azm",
                 "Part2B": "",
@@ -4614,7 +4614,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ipalapa Amuzgo"
-          },
+            },
             {
                 "Id": "azn",
                 "Part2B": "",
@@ -4623,7 +4623,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Durango Nahuatl"
-          },
+            },
             {
                 "Id": "azo",
                 "Part2B": "",
@@ -4632,7 +4632,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awing"
-          },
+            },
             {
                 "Id": "azt",
                 "Part2B": "",
@@ -4641,7 +4641,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Faire Atta"
-          },
+            },
             {
                 "Id": "azz",
                 "Part2B": "",
@@ -4650,7 +4650,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Highland Puebla Nahuatl"
-          },
+            },
             {
                 "Id": "baa",
                 "Part2B": "",
@@ -4659,7 +4659,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babatana"
-          },
+            },
             {
                 "Id": "bab",
                 "Part2B": "",
@@ -4668,7 +4668,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bainouk-Gunyuño"
-          },
+            },
             {
                 "Id": "bac",
                 "Part2B": "",
@@ -4677,7 +4677,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Badui"
-          },
+            },
             {
                 "Id": "bae",
                 "Part2B": "",
@@ -4686,7 +4686,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Baré"
-          },
+            },
             {
                 "Id": "baf",
                 "Part2B": "",
@@ -4695,7 +4695,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Nubaca"
-          },
+            },
             {
                 "Id": "bag",
                 "Part2B": "",
@@ -4704,7 +4704,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tuki"
-          },
+            },
             {
                 "Id": "bah",
                 "Part2B": "",
@@ -4713,7 +4713,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahamas Creole English"
-          },
+            },
             {
                 "Id": "baj",
                 "Part2B": "",
@@ -4722,7 +4722,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barakai"
-          },
+            },
             {
                 "Id": "bak",
                 "Part2B": "bak",
@@ -4731,7 +4731,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bashkir"
-          },
+            },
             {
                 "Id": "bal",
                 "Part2B": "bal",
@@ -4740,7 +4740,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Baluchi"
-          },
+            },
             {
                 "Id": "bam",
                 "Part2B": "bam",
@@ -4749,7 +4749,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bambara"
-          },
+            },
             {
                 "Id": "ban",
                 "Part2B": "ban",
@@ -4758,7 +4758,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balinese"
-          },
+            },
             {
                 "Id": "bao",
                 "Part2B": "",
@@ -4767,7 +4767,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Waimaha"
-          },
+            },
             {
                 "Id": "bap",
                 "Part2B": "",
@@ -4776,7 +4776,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bantawa"
-          },
+            },
             {
                 "Id": "bar",
                 "Part2B": "",
@@ -4785,7 +4785,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bavarian"
-          },
+            },
             {
                 "Id": "bas",
                 "Part2B": "bas",
@@ -4794,7 +4794,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Basa (Cameroon)"
-          },
+            },
             {
                 "Id": "bau",
                 "Part2B": "",
@@ -4803,7 +4803,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bada (Nigeria)"
-          },
+            },
             {
                 "Id": "bav",
                 "Part2B": "",
@@ -4812,7 +4812,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Vengo"
-          },
+            },
             {
                 "Id": "baw",
                 "Part2B": "",
@@ -4821,7 +4821,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bambili-Bambui"
-          },
+            },
             {
                 "Id": "bax",
                 "Part2B": "",
@@ -4830,7 +4830,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamun"
-          },
+            },
             {
                 "Id": "bay",
                 "Part2B": "",
@@ -4839,7 +4839,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batuley"
-          },
+            },
             {
                 "Id": "bba",
                 "Part2B": "",
@@ -4848,7 +4848,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baatonum"
-          },
+            },
             {
                 "Id": "bbb",
                 "Part2B": "",
@@ -4857,7 +4857,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barai"
-          },
+            },
             {
                 "Id": "bbc",
                 "Part2B": "",
@@ -4866,7 +4866,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Toba"
-          },
+            },
             {
                 "Id": "bbd",
                 "Part2B": "",
@@ -4875,7 +4875,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bau"
-          },
+            },
             {
                 "Id": "bbe",
                 "Part2B": "",
@@ -4884,7 +4884,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangba"
-          },
+            },
             {
                 "Id": "bbf",
                 "Part2B": "",
@@ -4893,7 +4893,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baibai"
-          },
+            },
             {
                 "Id": "bbg",
                 "Part2B": "",
@@ -4902,7 +4902,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barama"
-          },
+            },
             {
                 "Id": "bbh",
                 "Part2B": "",
@@ -4911,7 +4911,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bugan"
-          },
+            },
             {
                 "Id": "bbi",
                 "Part2B": "",
@@ -4920,7 +4920,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barombi"
-          },
+            },
             {
                 "Id": "bbj",
                 "Part2B": "",
@@ -4929,7 +4929,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ghomálá'"
-          },
+            },
             {
                 "Id": "bbk",
                 "Part2B": "",
@@ -4938,7 +4938,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babanki"
-          },
+            },
             {
                 "Id": "bbl",
                 "Part2B": "",
@@ -4947,7 +4947,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bats"
-          },
+            },
             {
                 "Id": "bbm",
                 "Part2B": "",
@@ -4956,7 +4956,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babango"
-          },
+            },
             {
                 "Id": "bbn",
                 "Part2B": "",
@@ -4965,7 +4965,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Uneapa"
-          },
+            },
             {
                 "Id": "bbo",
                 "Part2B": "",
@@ -4974,7 +4974,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Northern Bobo Madaré"
-          },
+            },
             {
                 "Id": "bbp",
                 "Part2B": "",
@@ -4983,7 +4983,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "West Central Banda"
-          },
+            },
             {
                 "Id": "bbq",
                 "Part2B": "",
@@ -4992,7 +4992,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamali"
-          },
+            },
             {
                 "Id": "bbr",
                 "Part2B": "",
@@ -5001,7 +5001,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Girawa"
-          },
+            },
             {
                 "Id": "bbs",
                 "Part2B": "",
@@ -5010,7 +5010,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakpinka"
-          },
+            },
             {
                 "Id": "bbt",
                 "Part2B": "",
@@ -5019,7 +5019,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mburku"
-          },
+            },
             {
                 "Id": "bbu",
                 "Part2B": "",
@@ -5028,7 +5028,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kulung (Nigeria)"
-          },
+            },
             {
                 "Id": "bbv",
                 "Part2B": "",
@@ -5037,7 +5037,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Karnai"
-          },
+            },
             {
                 "Id": "bbw",
                 "Part2B": "",
@@ -5046,7 +5046,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baba"
-          },
+            },
             {
                 "Id": "bbx",
                 "Part2B": "",
@@ -5055,7 +5055,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bubia"
-          },
+            },
             {
                 "Id": "bby",
                 "Part2B": "",
@@ -5064,7 +5064,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Befang"
-          },
+            },
             {
                 "Id": "bbz",
                 "Part2B": "",
@@ -5073,7 +5073,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babalia Creole Arabic"
-          },
+            },
             {
                 "Id": "bca",
                 "Part2B": "",
@@ -5082,7 +5082,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Central Bai"
-          },
+            },
             {
                 "Id": "bcb",
                 "Part2B": "",
@@ -5091,7 +5091,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bainouk-Samik"
-          },
+            },
             {
                 "Id": "bcc",
                 "Part2B": "",
@@ -5100,7 +5100,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Balochi"
-          },
+            },
             {
                 "Id": "bcd",
                 "Part2B": "",
@@ -5109,7 +5109,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "North Babar"
-          },
+            },
             {
                 "Id": "bce",
                 "Part2B": "",
@@ -5118,7 +5118,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamenyam"
-          },
+            },
             {
                 "Id": "bcf",
                 "Part2B": "",
@@ -5127,7 +5127,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamu"
-          },
+            },
             {
                 "Id": "bcg",
                 "Part2B": "",
@@ -5136,7 +5136,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baga Binari"
-          },
+            },
             {
                 "Id": "bch",
                 "Part2B": "",
@@ -5145,7 +5145,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bariai"
-          },
+            },
             {
                 "Id": "bci",
                 "Part2B": "",
@@ -5154,7 +5154,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baoulé"
-          },
+            },
             {
                 "Id": "bcj",
                 "Part2B": "",
@@ -5163,7 +5163,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bardi"
-          },
+            },
             {
                 "Id": "bck",
                 "Part2B": "",
@@ -5172,7 +5172,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bunaba"
-          },
+            },
             {
                 "Id": "bcl",
                 "Part2B": "",
@@ -5181,7 +5181,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Central Bikol"
-          },
+            },
             {
                 "Id": "bcm",
                 "Part2B": "",
@@ -5190,7 +5190,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bannoni"
-          },
+            },
             {
                 "Id": "bcn",
                 "Part2B": "",
@@ -5199,7 +5199,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bali (Nigeria)"
-          },
+            },
             {
                 "Id": "bco",
                 "Part2B": "",
@@ -5208,7 +5208,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kaluli"
-          },
+            },
             {
                 "Id": "bcp",
                 "Part2B": "",
@@ -5217,7 +5217,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bali (Democratic Republic of Congo)"
-          },
+            },
             {
                 "Id": "bcq",
                 "Part2B": "",
@@ -5226,7 +5226,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bench"
-          },
+            },
             {
                 "Id": "bcr",
                 "Part2B": "",
@@ -5235,7 +5235,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babine"
-          },
+            },
             {
                 "Id": "bcs",
                 "Part2B": "",
@@ -5244,7 +5244,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kohumono"
-          },
+            },
             {
                 "Id": "bct",
                 "Part2B": "",
@@ -5253,7 +5253,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bendi"
-          },
+            },
             {
                 "Id": "bcu",
                 "Part2B": "",
@@ -5262,7 +5262,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Awad Bing"
-          },
+            },
             {
                 "Id": "bcv",
                 "Part2B": "",
@@ -5271,7 +5271,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Shoo-Minda-Nye"
-          },
+            },
             {
                 "Id": "bcw",
                 "Part2B": "",
@@ -5280,7 +5280,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bana"
-          },
+            },
             {
                 "Id": "bcy",
                 "Part2B": "",
@@ -5289,7 +5289,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bacama"
-          },
+            },
             {
                 "Id": "bcz",
                 "Part2B": "",
@@ -5298,7 +5298,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bainouk-Gunyaamolo"
-          },
+            },
             {
                 "Id": "bda",
                 "Part2B": "",
@@ -5307,7 +5307,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bayot"
-          },
+            },
             {
                 "Id": "bdb",
                 "Part2B": "",
@@ -5316,7 +5316,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Basap"
-          },
+            },
             {
                 "Id": "bdc",
                 "Part2B": "",
@@ -5325,7 +5325,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Emberá-Baudó"
-          },
+            },
             {
                 "Id": "bdd",
                 "Part2B": "",
@@ -5334,7 +5334,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bunama"
-          },
+            },
             {
                 "Id": "bde",
                 "Part2B": "",
@@ -5343,7 +5343,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bade"
-          },
+            },
             {
                 "Id": "bdf",
                 "Part2B": "",
@@ -5352,7 +5352,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biage"
-          },
+            },
             {
                 "Id": "bdg",
                 "Part2B": "",
@@ -5361,7 +5361,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonggi"
-          },
+            },
             {
                 "Id": "bdh",
                 "Part2B": "",
@@ -5370,7 +5370,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baka (Sudan)"
-          },
+            },
             {
                 "Id": "bdi",
                 "Part2B": "",
@@ -5379,7 +5379,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burun"
-          },
+            },
             {
                 "Id": "bdj",
                 "Part2B": "",
@@ -5388,7 +5388,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bai"
-          },
+            },
             {
                 "Id": "bdk",
                 "Part2B": "",
@@ -5397,7 +5397,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Budukh"
-          },
+            },
             {
                 "Id": "bdl",
                 "Part2B": "",
@@ -5406,7 +5406,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Indonesian Bajau"
-          },
+            },
             {
                 "Id": "bdm",
                 "Part2B": "",
@@ -5415,7 +5415,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buduma"
-          },
+            },
             {
                 "Id": "bdn",
                 "Part2B": "",
@@ -5424,7 +5424,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baldemu"
-          },
+            },
             {
                 "Id": "bdo",
                 "Part2B": "",
@@ -5433,7 +5433,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Morom"
-          },
+            },
             {
                 "Id": "bdp",
                 "Part2B": "",
@@ -5442,7 +5442,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bende"
-          },
+            },
             {
                 "Id": "bdq",
                 "Part2B": "",
@@ -5451,7 +5451,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahnar"
-          },
+            },
             {
                 "Id": "bdr",
                 "Part2B": "",
@@ -5460,7 +5460,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "West Coast Bajau"
-          },
+            },
             {
                 "Id": "bds",
                 "Part2B": "",
@@ -5469,7 +5469,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burunge"
-          },
+            },
             {
                 "Id": "bdt",
                 "Part2B": "",
@@ -5478,7 +5478,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bokoto"
-          },
+            },
             {
                 "Id": "bdu",
                 "Part2B": "",
@@ -5487,7 +5487,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Oroko"
-          },
+            },
             {
                 "Id": "bdv",
                 "Part2B": "",
@@ -5496,7 +5496,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bodo Parja"
-          },
+            },
             {
                 "Id": "bdw",
                 "Part2B": "",
@@ -5505,7 +5505,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baham"
-          },
+            },
             {
                 "Id": "bdx",
                 "Part2B": "",
@@ -5514,7 +5514,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Budong-Budong"
-          },
+            },
             {
                 "Id": "bdy",
                 "Part2B": "",
@@ -5523,7 +5523,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bandjalang"
-          },
+            },
             {
                 "Id": "bdz",
                 "Part2B": "",
@@ -5532,7 +5532,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Badeshi"
-          },
+            },
             {
                 "Id": "bea",
                 "Part2B": "",
@@ -5541,7 +5541,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beaver"
-          },
+            },
             {
                 "Id": "beb",
                 "Part2B": "",
@@ -5550,7 +5550,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bebele"
-          },
+            },
             {
                 "Id": "bec",
                 "Part2B": "",
@@ -5559,7 +5559,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Iceve-Maci"
-          },
+            },
             {
                 "Id": "bed",
                 "Part2B": "",
@@ -5568,7 +5568,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bedoanas"
-          },
+            },
             {
                 "Id": "bee",
                 "Part2B": "",
@@ -5577,7 +5577,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Byangsi"
-          },
+            },
             {
                 "Id": "bef",
                 "Part2B": "",
@@ -5586,7 +5586,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Benabena"
-          },
+            },
             {
                 "Id": "beg",
                 "Part2B": "",
@@ -5595,7 +5595,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belait"
-          },
+            },
             {
                 "Id": "beh",
                 "Part2B": "",
@@ -5604,7 +5604,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biali"
-          },
+            },
             {
                 "Id": "bei",
                 "Part2B": "",
@@ -5613,7 +5613,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bekati'"
-          },
+            },
             {
                 "Id": "bej",
                 "Part2B": "bej",
@@ -5622,7 +5622,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beja"
-          },
+            },
             {
                 "Id": "bek",
                 "Part2B": "",
@@ -5631,7 +5631,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bebeli"
-          },
+            },
             {
                 "Id": "bel",
                 "Part2B": "bel",
@@ -5640,7 +5640,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belarusian"
-          },
+            },
             {
                 "Id": "bem",
                 "Part2B": "bem",
@@ -5649,7 +5649,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bemba (Zambia)"
-          },
+            },
             {
                 "Id": "ben",
                 "Part2B": "ben",
@@ -5658,7 +5658,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bengali"
-          },
+            },
             {
                 "Id": "beo",
                 "Part2B": "",
@@ -5667,7 +5667,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beami"
-          },
+            },
             {
                 "Id": "bep",
                 "Part2B": "",
@@ -5676,7 +5676,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Besoa"
-          },
+            },
             {
                 "Id": "beq",
                 "Part2B": "",
@@ -5685,7 +5685,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beembe"
-          },
+            },
             {
                 "Id": "bes",
                 "Part2B": "",
@@ -5694,7 +5694,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Besme"
-          },
+            },
             {
                 "Id": "bet",
                 "Part2B": "",
@@ -5703,7 +5703,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Guiberoua Béte"
-          },
+            },
             {
                 "Id": "beu",
                 "Part2B": "",
@@ -5712,7 +5712,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Blagar"
-          },
+            },
             {
                 "Id": "bev",
                 "Part2B": "",
@@ -5721,7 +5721,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Daloa Bété"
-          },
+            },
             {
                 "Id": "bew",
                 "Part2B": "",
@@ -5730,7 +5730,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Betawi"
-          },
+            },
             {
                 "Id": "bex",
                 "Part2B": "",
@@ -5739,7 +5739,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jur Modo"
-          },
+            },
             {
                 "Id": "bey",
                 "Part2B": "",
@@ -5748,7 +5748,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beli (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "bez",
                 "Part2B": "",
@@ -5757,7 +5757,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bena (Tanzania)"
-          },
+            },
             {
                 "Id": "bfa",
                 "Part2B": "",
@@ -5766,7 +5766,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bari"
-          },
+            },
             {
                 "Id": "bfb",
                 "Part2B": "",
@@ -5775,7 +5775,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pauri Bareli"
-          },
+            },
             {
                 "Id": "bfc",
                 "Part2B": "",
@@ -5784,7 +5784,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Panyi Bai"
-          },
+            },
             {
                 "Id": "bfd",
                 "Part2B": "",
@@ -5793,7 +5793,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bafut"
-          },
+            },
             {
                 "Id": "bfe",
                 "Part2B": "",
@@ -5802,7 +5802,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Betaf"
-          },
+            },
             {
                 "Id": "bff",
                 "Part2B": "",
@@ -5811,7 +5811,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bofi"
-          },
+            },
             {
                 "Id": "bfg",
                 "Part2B": "",
@@ -5820,7 +5820,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busang Kayan"
-          },
+            },
             {
                 "Id": "bfh",
                 "Part2B": "",
@@ -5829,7 +5829,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Blafe"
-          },
+            },
             {
                 "Id": "bfi",
                 "Part2B": "",
@@ -5838,7 +5838,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "British Sign Language"
-          },
+            },
             {
                 "Id": "bfj",
                 "Part2B": "",
@@ -5847,7 +5847,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bafanji"
-          },
+            },
             {
                 "Id": "bfk",
                 "Part2B": "",
@@ -5856,7 +5856,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ban Khor Sign Language"
-          },
+            },
             {
                 "Id": "bfl",
                 "Part2B": "",
@@ -5865,7 +5865,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banda-Ndélé"
-          },
+            },
             {
                 "Id": "bfm",
                 "Part2B": "",
@@ -5874,7 +5874,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mmen"
-          },
+            },
             {
                 "Id": "bfn",
                 "Part2B": "",
@@ -5883,7 +5883,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bunak"
-          },
+            },
             {
                 "Id": "bfo",
                 "Part2B": "",
@@ -5892,7 +5892,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Malba Birifor"
-          },
+            },
             {
                 "Id": "bfp",
                 "Part2B": "",
@@ -5901,7 +5901,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beba"
-          },
+            },
             {
                 "Id": "bfq",
                 "Part2B": "",
@@ -5910,7 +5910,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Badaga"
-          },
+            },
             {
                 "Id": "bfr",
                 "Part2B": "",
@@ -5919,7 +5919,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bazigar"
-          },
+            },
             {
                 "Id": "bfs",
                 "Part2B": "",
@@ -5928,7 +5928,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Bai"
-          },
+            },
             {
                 "Id": "bft",
                 "Part2B": "",
@@ -5937,7 +5937,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balti"
-          },
+            },
             {
                 "Id": "bfu",
                 "Part2B": "",
@@ -5946,7 +5946,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Gahri"
-          },
+            },
             {
                 "Id": "bfw",
                 "Part2B": "",
@@ -5955,7 +5955,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bondo"
-          },
+            },
             {
                 "Id": "bfx",
                 "Part2B": "",
@@ -5964,7 +5964,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bantayanon"
-          },
+            },
             {
                 "Id": "bfy",
                 "Part2B": "",
@@ -5973,7 +5973,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bagheli"
-          },
+            },
             {
                 "Id": "bfz",
                 "Part2B": "",
@@ -5982,7 +5982,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mahasu Pahari"
-          },
+            },
             {
                 "Id": "bga",
                 "Part2B": "",
@@ -5991,7 +5991,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Gwamhi-Wuri"
-          },
+            },
             {
                 "Id": "bgb",
                 "Part2B": "",
@@ -6000,7 +6000,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bobongko"
-          },
+            },
             {
                 "Id": "bgc",
                 "Part2B": "",
@@ -6009,7 +6009,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Haryanvi"
-          },
+            },
             {
                 "Id": "bgd",
                 "Part2B": "",
@@ -6018,7 +6018,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Rathwi Bareli"
-          },
+            },
             {
                 "Id": "bge",
                 "Part2B": "",
@@ -6027,7 +6027,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bauria"
-          },
+            },
             {
                 "Id": "bgf",
                 "Part2B": "",
@@ -6036,7 +6036,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangandu"
-          },
+            },
             {
                 "Id": "bgg",
                 "Part2B": "",
@@ -6045,7 +6045,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bugun"
-          },
+            },
             {
                 "Id": "bgi",
                 "Part2B": "",
@@ -6054,7 +6054,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Giangan"
-          },
+            },
             {
                 "Id": "bgj",
                 "Part2B": "",
@@ -6063,7 +6063,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangolan"
-          },
+            },
             {
                 "Id": "bgk",
                 "Part2B": "",
@@ -6072,7 +6072,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bit"
-          },
+            },
             {
                 "Id": "bgl",
                 "Part2B": "",
@@ -6081,7 +6081,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bo (Laos)"
-          },
+            },
             {
                 "Id": "bgm",
                 "Part2B": "",
@@ -6090,7 +6090,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baga Mboteni"
-          },
+            },
             {
                 "Id": "bgn",
                 "Part2B": "",
@@ -6099,7 +6099,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Balochi"
-          },
+            },
             {
                 "Id": "bgo",
                 "Part2B": "",
@@ -6108,7 +6108,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baga Koga"
-          },
+            },
             {
                 "Id": "bgp",
                 "Part2B": "",
@@ -6117,7 +6117,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Eastern Balochi"
-          },
+            },
             {
                 "Id": "bgq",
                 "Part2B": "",
@@ -6126,7 +6126,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bagri"
-          },
+            },
             {
                 "Id": "bgr",
                 "Part2B": "",
@@ -6135,7 +6135,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bawm Chin"
-          },
+            },
             {
                 "Id": "bgs",
                 "Part2B": "",
@@ -6144,7 +6144,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tagabawa"
-          },
+            },
             {
                 "Id": "bgt",
                 "Part2B": "",
@@ -6153,7 +6153,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bughotu"
-          },
+            },
             {
                 "Id": "bgu",
                 "Part2B": "",
@@ -6162,7 +6162,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mbongno"
-          },
+            },
             {
                 "Id": "bgv",
                 "Part2B": "",
@@ -6171,7 +6171,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Warkay-Bipim"
-          },
+            },
             {
                 "Id": "bgw",
                 "Part2B": "",
@@ -6180,7 +6180,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhatri"
-          },
+            },
             {
                 "Id": "bgx",
                 "Part2B": "",
@@ -6189,7 +6189,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balkan Gagauz Turkish"
-          },
+            },
             {
                 "Id": "bgy",
                 "Part2B": "",
@@ -6198,7 +6198,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Benggoi"
-          },
+            },
             {
                 "Id": "bgz",
                 "Part2B": "",
@@ -6207,7 +6207,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banggai"
-          },
+            },
             {
                 "Id": "bha",
                 "Part2B": "",
@@ -6216,7 +6216,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bharia"
-          },
+            },
             {
                 "Id": "bhb",
                 "Part2B": "",
@@ -6225,7 +6225,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhili"
-          },
+            },
             {
                 "Id": "bhc",
                 "Part2B": "",
@@ -6234,7 +6234,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biga"
-          },
+            },
             {
                 "Id": "bhd",
                 "Part2B": "",
@@ -6243,7 +6243,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhadrawahi"
-          },
+            },
             {
                 "Id": "bhe",
                 "Part2B": "",
@@ -6252,7 +6252,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhaya"
-          },
+            },
             {
                 "Id": "bhf",
                 "Part2B": "",
@@ -6261,7 +6261,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Odiai"
-          },
+            },
             {
                 "Id": "bhg",
                 "Part2B": "",
@@ -6270,7 +6270,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Binandere"
-          },
+            },
             {
                 "Id": "bhh",
                 "Part2B": "",
@@ -6279,7 +6279,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukharic"
-          },
+            },
             {
                 "Id": "bhi",
                 "Part2B": "",
@@ -6288,7 +6288,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhilali"
-          },
+            },
             {
                 "Id": "bhj",
                 "Part2B": "",
@@ -6297,7 +6297,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahing"
-          },
+            },
             {
                 "Id": "bhl",
                 "Part2B": "",
@@ -6306,7 +6306,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bimin"
-          },
+            },
             {
                 "Id": "bhm",
                 "Part2B": "",
@@ -6315,7 +6315,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bathari"
-          },
+            },
             {
                 "Id": "bhn",
                 "Part2B": "",
@@ -6324,7 +6324,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bohtan Neo-Aramaic"
-          },
+            },
             {
                 "Id": "bho",
                 "Part2B": "bho",
@@ -6333,7 +6333,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhojpuri"
-          },
+            },
             {
                 "Id": "bhp",
                 "Part2B": "",
@@ -6342,7 +6342,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bima"
-          },
+            },
             {
                 "Id": "bhq",
                 "Part2B": "",
@@ -6351,7 +6351,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tukang Besi South"
-          },
+            },
             {
                 "Id": "bhr",
                 "Part2B": "",
@@ -6360,7 +6360,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bara Malagasy"
-          },
+            },
             {
                 "Id": "bhs",
                 "Part2B": "",
@@ -6369,7 +6369,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buwal"
-          },
+            },
             {
                 "Id": "bht",
                 "Part2B": "",
@@ -6378,7 +6378,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhattiyali"
-          },
+            },
             {
                 "Id": "bhu",
                 "Part2B": "",
@@ -6387,7 +6387,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhunjia"
-          },
+            },
             {
                 "Id": "bhv",
                 "Part2B": "",
@@ -6396,7 +6396,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahau"
-          },
+            },
             {
                 "Id": "bhw",
                 "Part2B": "",
@@ -6405,7 +6405,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biak"
-          },
+            },
             {
                 "Id": "bhx",
                 "Part2B": "",
@@ -6414,7 +6414,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhalay"
-          },
+            },
             {
                 "Id": "bhy",
                 "Part2B": "",
@@ -6423,7 +6423,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhele"
-          },
+            },
             {
                 "Id": "bhz",
                 "Part2B": "",
@@ -6432,7 +6432,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bada (Indonesia)"
-          },
+            },
             {
                 "Id": "bia",
                 "Part2B": "",
@@ -6441,7 +6441,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Badimaya"
-          },
+            },
             {
                 "Id": "bib",
                 "Part2B": "",
@@ -6450,7 +6450,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bissa"
-          },
+            },
             {
                 "Id": "bic",
                 "Part2B": "",
@@ -6459,7 +6459,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bikaru"
-          },
+            },
             {
                 "Id": "bid",
                 "Part2B": "",
@@ -6468,7 +6468,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bidiyo"
-          },
+            },
             {
                 "Id": "bie",
                 "Part2B": "",
@@ -6477,7 +6477,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bepour"
-          },
+            },
             {
                 "Id": "bif",
                 "Part2B": "",
@@ -6486,7 +6486,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biafada"
-          },
+            },
             {
                 "Id": "big",
                 "Part2B": "",
@@ -6495,7 +6495,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biangai"
-          },
+            },
             {
                 "Id": "bij",
                 "Part2B": "",
@@ -6504,7 +6504,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Vaghat-Ya-Bijim-Legeri"
-          },
+            },
             {
                 "Id": "bik",
                 "Part2B": "bik",
@@ -6513,7 +6513,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Bikol"
-          },
+            },
             {
                 "Id": "bil",
                 "Part2B": "",
@@ -6522,7 +6522,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bile"
-          },
+            },
             {
                 "Id": "bim",
                 "Part2B": "",
@@ -6531,7 +6531,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bimoba"
-          },
+            },
             {
                 "Id": "bin",
                 "Part2B": "bin",
@@ -6540,7 +6540,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bini"
-          },
+            },
             {
                 "Id": "bio",
                 "Part2B": "",
@@ -6549,7 +6549,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Nai"
-          },
+            },
             {
                 "Id": "bip",
                 "Part2B": "",
@@ -6558,7 +6558,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bila"
-          },
+            },
             {
                 "Id": "biq",
                 "Part2B": "",
@@ -6567,7 +6567,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bipi"
-          },
+            },
             {
                 "Id": "bir",
                 "Part2B": "",
@@ -6576,7 +6576,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bisorio"
-          },
+            },
             {
                 "Id": "bis",
                 "Part2B": "bis",
@@ -6585,7 +6585,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bislama"
-          },
+            },
             {
                 "Id": "bit",
                 "Part2B": "",
@@ -6594,7 +6594,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Berinomo"
-          },
+            },
             {
                 "Id": "biu",
                 "Part2B": "",
@@ -6603,7 +6603,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biete"
-          },
+            },
             {
                 "Id": "biv",
                 "Part2B": "",
@@ -6612,7 +6612,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Birifor"
-          },
+            },
             {
                 "Id": "biw",
                 "Part2B": "",
@@ -6621,7 +6621,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kol (Cameroon)"
-          },
+            },
             {
                 "Id": "bix",
                 "Part2B": "",
@@ -6630,7 +6630,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bijori"
-          },
+            },
             {
                 "Id": "biy",
                 "Part2B": "",
@@ -6639,7 +6639,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birhor"
-          },
+            },
             {
                 "Id": "biz",
                 "Part2B": "",
@@ -6648,7 +6648,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baloi"
-          },
+            },
             {
                 "Id": "bja",
                 "Part2B": "",
@@ -6657,7 +6657,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Budza"
-          },
+            },
             {
                 "Id": "bjb",
                 "Part2B": "",
@@ -6666,7 +6666,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Banggarla"
-          },
+            },
             {
                 "Id": "bjc",
                 "Part2B": "",
@@ -6675,7 +6675,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bariji"
-          },
+            },
             {
                 "Id": "bje",
                 "Part2B": "",
@@ -6684,7 +6684,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biao-Jiao Mien"
-          },
+            },
             {
                 "Id": "bjf",
                 "Part2B": "",
@@ -6693,7 +6693,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barzani Jewish Neo-Aramaic"
-          },
+            },
             {
                 "Id": "bjg",
                 "Part2B": "",
@@ -6702,7 +6702,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bidyogo"
-          },
+            },
             {
                 "Id": "bjh",
                 "Part2B": "",
@@ -6711,7 +6711,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahinemo"
-          },
+            },
             {
                 "Id": "bji",
                 "Part2B": "",
@@ -6720,7 +6720,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burji"
-          },
+            },
             {
                 "Id": "bjj",
                 "Part2B": "",
@@ -6729,7 +6729,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kanauji"
-          },
+            },
             {
                 "Id": "bjk",
                 "Part2B": "",
@@ -6738,7 +6738,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barok"
-          },
+            },
             {
                 "Id": "bjl",
                 "Part2B": "",
@@ -6747,7 +6747,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bulu (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "bjm",
                 "Part2B": "",
@@ -6756,7 +6756,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bajelani"
-          },
+            },
             {
                 "Id": "bjn",
                 "Part2B": "",
@@ -6765,7 +6765,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banjar"
-          },
+            },
             {
                 "Id": "bjo",
                 "Part2B": "",
@@ -6774,7 +6774,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mid-Southern Banda"
-          },
+            },
             {
                 "Id": "bjp",
                 "Part2B": "",
@@ -6783,7 +6783,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Fanamaket"
-          },
+            },
             {
                 "Id": "bjr",
                 "Part2B": "",
@@ -6792,7 +6792,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Binumarien"
-          },
+            },
             {
                 "Id": "bjs",
                 "Part2B": "",
@@ -6801,7 +6801,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bajan"
-          },
+            },
             {
                 "Id": "bjt",
                 "Part2B": "",
@@ -6810,7 +6810,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balanta-Ganja"
-          },
+            },
             {
                 "Id": "bju",
                 "Part2B": "",
@@ -6819,7 +6819,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busuu"
-          },
+            },
             {
                 "Id": "bjv",
                 "Part2B": "",
@@ -6828,7 +6828,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bedjond"
-          },
+            },
             {
                 "Id": "bjw",
                 "Part2B": "",
@@ -6837,7 +6837,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakwé"
-          },
+            },
             {
                 "Id": "bjx",
                 "Part2B": "",
@@ -6846,7 +6846,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banao Itneg"
-          },
+            },
             {
                 "Id": "bjy",
                 "Part2B": "",
@@ -6855,7 +6855,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Bayali"
-          },
+            },
             {
                 "Id": "bjz",
                 "Part2B": "",
@@ -6864,7 +6864,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baruga"
-          },
+            },
             {
                 "Id": "bka",
                 "Part2B": "",
@@ -6873,7 +6873,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kyak"
-          },
+            },
             {
                 "Id": "bkc",
                 "Part2B": "",
@@ -6882,7 +6882,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baka (Cameroon)"
-          },
+            },
             {
                 "Id": "bkd",
                 "Part2B": "",
@@ -6891,7 +6891,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Binukid"
-          },
+            },
             {
                 "Id": "bkf",
                 "Part2B": "",
@@ -6900,7 +6900,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beeke"
-          },
+            },
             {
                 "Id": "bkg",
                 "Part2B": "",
@@ -6909,7 +6909,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buraka"
-          },
+            },
             {
                 "Id": "bkh",
                 "Part2B": "",
@@ -6918,7 +6918,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakoko"
-          },
+            },
             {
                 "Id": "bki",
                 "Part2B": "",
@@ -6927,7 +6927,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baki"
-          },
+            },
             {
                 "Id": "bkj",
                 "Part2B": "",
@@ -6936,7 +6936,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pande"
-          },
+            },
             {
                 "Id": "bkk",
                 "Part2B": "",
@@ -6945,7 +6945,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brokskat"
-          },
+            },
             {
                 "Id": "bkl",
                 "Part2B": "",
@@ -6954,7 +6954,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Berik"
-          },
+            },
             {
                 "Id": "bkm",
                 "Part2B": "",
@@ -6963,7 +6963,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kom (Cameroon)"
-          },
+            },
             {
                 "Id": "bkn",
                 "Part2B": "",
@@ -6972,7 +6972,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukitan"
-          },
+            },
             {
                 "Id": "bko",
                 "Part2B": "",
@@ -6981,7 +6981,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kwa'"
-          },
+            },
             {
                 "Id": "bkp",
                 "Part2B": "",
@@ -6990,7 +6990,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boko (Democratic Republic of Congo)"
-          },
+            },
             {
                 "Id": "bkq",
                 "Part2B": "",
@@ -6999,7 +6999,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakairí"
-          },
+            },
             {
                 "Id": "bkr",
                 "Part2B": "",
@@ -7008,7 +7008,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakumpai"
-          },
+            },
             {
                 "Id": "bks",
                 "Part2B": "",
@@ -7017,7 +7017,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Northern Sorsoganon"
-          },
+            },
             {
                 "Id": "bkt",
                 "Part2B": "",
@@ -7026,7 +7026,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boloki"
-          },
+            },
             {
                 "Id": "bku",
                 "Part2B": "",
@@ -7035,7 +7035,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buhid"
-          },
+            },
             {
                 "Id": "bkv",
                 "Part2B": "",
@@ -7044,7 +7044,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bekwarra"
-          },
+            },
             {
                 "Id": "bkw",
                 "Part2B": "",
@@ -7053,7 +7053,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bekwel"
-          },
+            },
             {
                 "Id": "bkx",
                 "Part2B": "",
@@ -7062,7 +7062,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baikeno"
-          },
+            },
             {
                 "Id": "bky",
                 "Part2B": "",
@@ -7071,7 +7071,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bokyi"
-          },
+            },
             {
                 "Id": "bkz",
                 "Part2B": "",
@@ -7080,7 +7080,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bungku"
-          },
+            },
             {
                 "Id": "bla",
                 "Part2B": "bla",
@@ -7089,7 +7089,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Siksika"
-          },
+            },
             {
                 "Id": "blb",
                 "Part2B": "",
@@ -7098,7 +7098,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilua"
-          },
+            },
             {
                 "Id": "blc",
                 "Part2B": "",
@@ -7107,7 +7107,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bella Coola"
-          },
+            },
             {
                 "Id": "bld",
                 "Part2B": "",
@@ -7116,7 +7116,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolango"
-          },
+            },
             {
                 "Id": "ble",
                 "Part2B": "",
@@ -7125,7 +7125,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balanta-Kentohe"
-          },
+            },
             {
                 "Id": "blf",
                 "Part2B": "",
@@ -7134,7 +7134,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buol"
-          },
+            },
             {
                 "Id": "blg",
                 "Part2B": "",
@@ -7143,7 +7143,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balau"
-          },
+            },
             {
                 "Id": "blh",
                 "Part2B": "",
@@ -7152,7 +7152,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kuwaa"
-          },
+            },
             {
                 "Id": "bli",
                 "Part2B": "",
@@ -7161,7 +7161,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolia"
-          },
+            },
             {
                 "Id": "blj",
                 "Part2B": "",
@@ -7170,7 +7170,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolongan"
-          },
+            },
             {
                 "Id": "blk",
                 "Part2B": "",
@@ -7179,7 +7179,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pa'o Karen"
-          },
+            },
             {
                 "Id": "bll",
                 "Part2B": "",
@@ -7188,7 +7188,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Biloxi"
-          },
+            },
             {
                 "Id": "blm",
                 "Part2B": "",
@@ -7197,7 +7197,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beli (Sudan)"
-          },
+            },
             {
                 "Id": "bln",
                 "Part2B": "",
@@ -7206,7 +7206,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Catanduanes Bikol"
-          },
+            },
             {
                 "Id": "blo",
                 "Part2B": "",
@@ -7215,7 +7215,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anii"
-          },
+            },
             {
                 "Id": "blp",
                 "Part2B": "",
@@ -7224,7 +7224,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Blablanga"
-          },
+            },
             {
                 "Id": "blq",
                 "Part2B": "",
@@ -7233,7 +7233,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baluan-Pam"
-          },
+            },
             {
                 "Id": "blr",
                 "Part2B": "",
@@ -7242,7 +7242,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Blang"
-          },
+            },
             {
                 "Id": "bls",
                 "Part2B": "",
@@ -7251,7 +7251,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balaesang"
-          },
+            },
             {
                 "Id": "blt",
                 "Part2B": "",
@@ -7260,7 +7260,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tai Dam"
-          },
+            },
             {
                 "Id": "blv",
                 "Part2B": "",
@@ -7269,7 +7269,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolo"
-          },
+            },
             {
                 "Id": "blw",
                 "Part2B": "",
@@ -7278,7 +7278,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balangao"
-          },
+            },
             {
                 "Id": "blx",
                 "Part2B": "",
@@ -7287,7 +7287,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mag-Indi Ayta"
-          },
+            },
             {
                 "Id": "bly",
                 "Part2B": "",
@@ -7296,7 +7296,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Notre"
-          },
+            },
             {
                 "Id": "blz",
                 "Part2B": "",
@@ -7305,7 +7305,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balantak"
-          },
+            },
             {
                 "Id": "bma",
                 "Part2B": "",
@@ -7314,7 +7314,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Lame"
-          },
+            },
             {
                 "Id": "bmb",
                 "Part2B": "",
@@ -7323,7 +7323,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bembe"
-          },
+            },
             {
                 "Id": "bmc",
                 "Part2B": "",
@@ -7332,7 +7332,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biem"
-          },
+            },
             {
                 "Id": "bmd",
                 "Part2B": "",
@@ -7341,7 +7341,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baga Manduri"
-          },
+            },
             {
                 "Id": "bme",
                 "Part2B": "",
@@ -7350,7 +7350,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Limassa"
-          },
+            },
             {
                 "Id": "bmf",
                 "Part2B": "",
@@ -7359,7 +7359,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bom"
-          },
+            },
             {
                 "Id": "bmg",
                 "Part2B": "",
@@ -7368,7 +7368,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamwe"
-          },
+            },
             {
                 "Id": "bmh",
                 "Part2B": "",
@@ -7377,7 +7377,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kein"
-          },
+            },
             {
                 "Id": "bmi",
                 "Part2B": "",
@@ -7386,7 +7386,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bagirmi"
-          },
+            },
             {
                 "Id": "bmj",
                 "Part2B": "",
@@ -7395,7 +7395,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bote-Majhi"
-          },
+            },
             {
                 "Id": "bmk",
                 "Part2B": "",
@@ -7404,7 +7404,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ghayavi"
-          },
+            },
             {
                 "Id": "bml",
                 "Part2B": "",
@@ -7413,7 +7413,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bomboli"
-          },
+            },
             {
                 "Id": "bmm",
                 "Part2B": "",
@@ -7422,7 +7422,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Northern Betsimisaraka Malagasy"
-          },
+            },
             {
                 "Id": "bmn",
                 "Part2B": "",
@@ -7431,7 +7431,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Bina (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "bmo",
                 "Part2B": "",
@@ -7440,7 +7440,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bambalang"
-          },
+            },
             {
                 "Id": "bmp",
                 "Part2B": "",
@@ -7449,7 +7449,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bulgebi"
-          },
+            },
             {
                 "Id": "bmq",
                 "Part2B": "",
@@ -7458,7 +7458,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bomu"
-          },
+            },
             {
                 "Id": "bmr",
                 "Part2B": "",
@@ -7467,7 +7467,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Muinane"
-          },
+            },
             {
                 "Id": "bms",
                 "Part2B": "",
@@ -7476,7 +7476,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilma Kanuri"
-          },
+            },
             {
                 "Id": "bmt",
                 "Part2B": "",
@@ -7485,7 +7485,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biao Mon"
-          },
+            },
             {
                 "Id": "bmu",
                 "Part2B": "",
@@ -7494,7 +7494,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Somba-Siawari"
-          },
+            },
             {
                 "Id": "bmv",
                 "Part2B": "",
@@ -7503,7 +7503,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bum"
-          },
+            },
             {
                 "Id": "bmw",
                 "Part2B": "",
@@ -7512,7 +7512,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bomwali"
-          },
+            },
             {
                 "Id": "bmx",
                 "Part2B": "",
@@ -7521,7 +7521,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baimak"
-          },
+            },
             {
                 "Id": "bmy",
                 "Part2B": "",
@@ -7530,7 +7530,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bemba (Democratic Republic of Congo)"
-          },
+            },
             {
                 "Id": "bmz",
                 "Part2B": "",
@@ -7539,7 +7539,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baramu"
-          },
+            },
             {
                 "Id": "bna",
                 "Part2B": "",
@@ -7548,7 +7548,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonerate"
-          },
+            },
             {
                 "Id": "bnb",
                 "Part2B": "",
@@ -7557,7 +7557,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bookan"
-          },
+            },
             {
                 "Id": "bnc",
                 "Part2B": "",
@@ -7566,7 +7566,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Bontok"
-          },
+            },
             {
                 "Id": "bnd",
                 "Part2B": "",
@@ -7575,7 +7575,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banda (Indonesia)"
-          },
+            },
             {
                 "Id": "bne",
                 "Part2B": "",
@@ -7584,7 +7584,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bintauna"
-          },
+            },
             {
                 "Id": "bnf",
                 "Part2B": "",
@@ -7593,7 +7593,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Masiwang"
-          },
+            },
             {
                 "Id": "bng",
                 "Part2B": "",
@@ -7602,7 +7602,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Benga"
-          },
+            },
             {
                 "Id": "bni",
                 "Part2B": "",
@@ -7611,7 +7611,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangi"
-          },
+            },
             {
                 "Id": "bnj",
                 "Part2B": "",
@@ -7620,7 +7620,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Eastern Tawbuid"
-          },
+            },
             {
                 "Id": "bnk",
                 "Part2B": "",
@@ -7629,7 +7629,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bierebo"
-          },
+            },
             {
                 "Id": "bnl",
                 "Part2B": "",
@@ -7638,7 +7638,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boon"
-          },
+            },
             {
                 "Id": "bnm",
                 "Part2B": "",
@@ -7647,7 +7647,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batanga"
-          },
+            },
             {
                 "Id": "bnn",
                 "Part2B": "",
@@ -7656,7 +7656,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bunun"
-          },
+            },
             {
                 "Id": "bno",
                 "Part2B": "",
@@ -7665,7 +7665,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bantoanon"
-          },
+            },
             {
                 "Id": "bnp",
                 "Part2B": "",
@@ -7674,7 +7674,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bola"
-          },
+            },
             {
                 "Id": "bnq",
                 "Part2B": "",
@@ -7683,7 +7683,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bantik"
-          },
+            },
             {
                 "Id": "bnr",
                 "Part2B": "",
@@ -7692,7 +7692,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Butmas-Tur"
-          },
+            },
             {
                 "Id": "bns",
                 "Part2B": "",
@@ -7701,7 +7701,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bundeli"
-          },
+            },
             {
                 "Id": "bnu",
                 "Part2B": "",
@@ -7710,7 +7710,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bentong"
-          },
+            },
             {
                 "Id": "bnv",
                 "Part2B": "",
@@ -7719,7 +7719,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonerif"
-          },
+            },
             {
                 "Id": "bnw",
                 "Part2B": "",
@@ -7728,7 +7728,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bisis"
-          },
+            },
             {
                 "Id": "bnx",
                 "Part2B": "",
@@ -7737,7 +7737,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangubangu"
-          },
+            },
             {
                 "Id": "bny",
                 "Part2B": "",
@@ -7746,7 +7746,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bintulu"
-          },
+            },
             {
                 "Id": "bnz",
                 "Part2B": "",
@@ -7755,7 +7755,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beezen"
-          },
+            },
             {
                 "Id": "boa",
                 "Part2B": "",
@@ -7764,7 +7764,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bora"
-          },
+            },
             {
                 "Id": "bob",
                 "Part2B": "",
@@ -7773,7 +7773,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Aweer"
-          },
+            },
             {
                 "Id": "bod",
                 "Part2B": "tib",
@@ -7782,7 +7782,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tibetan"
-          },
+            },
             {
                 "Id": "boe",
                 "Part2B": "",
@@ -7791,7 +7791,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mundabli"
-          },
+            },
             {
                 "Id": "bof",
                 "Part2B": "",
@@ -7800,7 +7800,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolon"
-          },
+            },
             {
                 "Id": "bog",
                 "Part2B": "",
@@ -7809,7 +7809,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamako Sign Language"
-          },
+            },
             {
                 "Id": "boh",
                 "Part2B": "",
@@ -7818,7 +7818,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boma"
-          },
+            },
             {
                 "Id": "boi",
                 "Part2B": "",
@@ -7827,7 +7827,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Barbareño"
-          },
+            },
             {
                 "Id": "boj",
                 "Part2B": "",
@@ -7836,7 +7836,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anjam"
-          },
+            },
             {
                 "Id": "bok",
                 "Part2B": "",
@@ -7845,7 +7845,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonjo"
-          },
+            },
             {
                 "Id": "bol",
                 "Part2B": "",
@@ -7854,7 +7854,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bole"
-          },
+            },
             {
                 "Id": "bom",
                 "Part2B": "",
@@ -7863,7 +7863,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Berom"
-          },
+            },
             {
                 "Id": "bon",
                 "Part2B": "",
@@ -7872,7 +7872,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bine"
-          },
+            },
             {
                 "Id": "boo",
                 "Part2B": "",
@@ -7881,7 +7881,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tiemacèwè Bozo"
-          },
+            },
             {
                 "Id": "bop",
                 "Part2B": "",
@@ -7890,7 +7890,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonkiman"
-          },
+            },
             {
                 "Id": "boq",
                 "Part2B": "",
@@ -7899,7 +7899,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bogaya"
-          },
+            },
             {
                 "Id": "bor",
                 "Part2B": "",
@@ -7908,7 +7908,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Borôro"
-          },
+            },
             {
                 "Id": "bos",
                 "Part2B": "bos",
@@ -7917,7 +7917,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bosnian"
-          },
+            },
             {
                 "Id": "bot",
                 "Part2B": "",
@@ -7926,7 +7926,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bongo"
-          },
+            },
             {
                 "Id": "bou",
                 "Part2B": "",
@@ -7935,7 +7935,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bondei"
-          },
+            },
             {
                 "Id": "bov",
                 "Part2B": "",
@@ -7944,7 +7944,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tuwuli"
-          },
+            },
             {
                 "Id": "bow",
                 "Part2B": "",
@@ -7953,7 +7953,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Rema"
-          },
+            },
             {
                 "Id": "box",
                 "Part2B": "",
@@ -7962,7 +7962,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buamu"
-          },
+            },
             {
                 "Id": "boy",
                 "Part2B": "",
@@ -7971,7 +7971,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bodo (Central African Republic)"
-          },
+            },
             {
                 "Id": "boz",
                 "Part2B": "",
@@ -7980,7 +7980,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tiéyaxo Bozo"
-          },
+            },
             {
                 "Id": "bpa",
                 "Part2B": "",
@@ -7989,7 +7989,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Daakaka"
-          },
+            },
             {
                 "Id": "bpb",
                 "Part2B": "",
@@ -7998,7 +7998,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Barbacoas"
-          },
+            },
             {
                 "Id": "bpd",
                 "Part2B": "",
@@ -8007,7 +8007,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banda-Banda"
-          },
+            },
             {
                 "Id": "bpg",
                 "Part2B": "",
@@ -8016,7 +8016,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonggo"
-          },
+            },
             {
                 "Id": "bph",
                 "Part2B": "",
@@ -8025,7 +8025,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Botlikh"
-          },
+            },
             {
                 "Id": "bpi",
                 "Part2B": "",
@@ -8034,7 +8034,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bagupi"
-          },
+            },
             {
                 "Id": "bpj",
                 "Part2B": "",
@@ -8043,7 +8043,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Binji"
-          },
+            },
             {
                 "Id": "bpk",
                 "Part2B": "",
@@ -8052,7 +8052,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Orowe"
-          },
+            },
             {
                 "Id": "bpl",
                 "Part2B": "",
@@ -8061,7 +8061,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Broome Pearling Lugger Pidgin"
-          },
+            },
             {
                 "Id": "bpm",
                 "Part2B": "",
@@ -8070,7 +8070,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biyom"
-          },
+            },
             {
                 "Id": "bpn",
                 "Part2B": "",
@@ -8079,7 +8079,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Dzao Min"
-          },
+            },
             {
                 "Id": "bpo",
                 "Part2B": "",
@@ -8088,7 +8088,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Anasi"
-          },
+            },
             {
                 "Id": "bpp",
                 "Part2B": "",
@@ -8097,7 +8097,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kaure"
-          },
+            },
             {
                 "Id": "bpq",
                 "Part2B": "",
@@ -8106,7 +8106,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banda Malay"
-          },
+            },
             {
                 "Id": "bpr",
                 "Part2B": "",
@@ -8115,7 +8115,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Koronadal Blaan"
-          },
+            },
             {
                 "Id": "bps",
                 "Part2B": "",
@@ -8124,7 +8124,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sarangani Blaan"
-          },
+            },
             {
                 "Id": "bpt",
                 "Part2B": "",
@@ -8133,7 +8133,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Barrow Point"
-          },
+            },
             {
                 "Id": "bpu",
                 "Part2B": "",
@@ -8142,7 +8142,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bongu"
-          },
+            },
             {
                 "Id": "bpv",
                 "Part2B": "",
@@ -8151,7 +8151,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bian Marind"
-          },
+            },
             {
                 "Id": "bpw",
                 "Part2B": "",
@@ -8160,7 +8160,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bo (Papua New Guinea)"
-          },
+            },
             {
                 "Id": "bpx",
                 "Part2B": "",
@@ -8169,7 +8169,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Palya Bareli"
-          },
+            },
             {
                 "Id": "bpy",
                 "Part2B": "",
@@ -8178,7 +8178,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bishnupriya"
-          },
+            },
             {
                 "Id": "bpz",
                 "Part2B": "",
@@ -8187,7 +8187,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilba"
-          },
+            },
             {
                 "Id": "bqa",
                 "Part2B": "",
@@ -8196,7 +8196,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tchumbuli"
-          },
+            },
             {
                 "Id": "bqb",
                 "Part2B": "",
@@ -8205,7 +8205,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bagusa"
-          },
+            },
             {
                 "Id": "bqc",
                 "Part2B": "",
@@ -8214,7 +8214,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boko (Benin)"
-          },
+            },
             {
                 "Id": "bqd",
                 "Part2B": "",
@@ -8223,7 +8223,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bung"
-          },
+            },
             {
                 "Id": "bqf",
                 "Part2B": "",
@@ -8232,7 +8232,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Baga Kaloum"
-          },
+            },
             {
                 "Id": "bqg",
                 "Part2B": "",
@@ -8241,7 +8241,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bago-Kusuntu"
-          },
+            },
             {
                 "Id": "bqh",
                 "Part2B": "",
@@ -8250,7 +8250,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baima"
-          },
+            },
             {
                 "Id": "bqi",
                 "Part2B": "",
@@ -8259,7 +8259,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakhtiari"
-          },
+            },
             {
                 "Id": "bqj",
                 "Part2B": "",
@@ -8268,7 +8268,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bandial"
-          },
+            },
             {
                 "Id": "bqk",
                 "Part2B": "",
@@ -8277,7 +8277,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banda-Mbrès"
-          },
+            },
             {
                 "Id": "bql",
                 "Part2B": "",
@@ -8286,7 +8286,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilakura"
-          },
+            },
             {
                 "Id": "bqm",
                 "Part2B": "",
@@ -8295,7 +8295,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Wumboko"
-          },
+            },
             {
                 "Id": "bqn",
                 "Part2B": "",
@@ -8304,7 +8304,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bulgarian Sign Language"
-          },
+            },
             {
                 "Id": "bqo",
                 "Part2B": "",
@@ -8313,7 +8313,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Balo"
-          },
+            },
             {
                 "Id": "bqp",
                 "Part2B": "",
@@ -8322,7 +8322,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busa"
-          },
+            },
             {
                 "Id": "bqq",
                 "Part2B": "",
@@ -8331,7 +8331,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biritai"
-          },
+            },
             {
                 "Id": "bqr",
                 "Part2B": "",
@@ -8340,7 +8340,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burusu"
-          },
+            },
             {
                 "Id": "bqs",
                 "Part2B": "",
@@ -8349,7 +8349,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bosngun"
-          },
+            },
             {
                 "Id": "bqt",
                 "Part2B": "",
@@ -8358,7 +8358,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamukumbit"
-          },
+            },
             {
                 "Id": "bqu",
                 "Part2B": "",
@@ -8367,7 +8367,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boguru"
-          },
+            },
             {
                 "Id": "bqv",
                 "Part2B": "",
@@ -8376,7 +8376,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Koro Wachi"
-          },
+            },
             {
                 "Id": "bqw",
                 "Part2B": "",
@@ -8385,7 +8385,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buru (Nigeria)"
-          },
+            },
             {
                 "Id": "bqx",
                 "Part2B": "",
@@ -8394,7 +8394,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baangi"
-          },
+            },
             {
                 "Id": "bqy",
                 "Part2B": "",
@@ -8403,7 +8403,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bengkala Sign Language"
-          },
+            },
             {
                 "Id": "bqz",
                 "Part2B": "",
@@ -8412,7 +8412,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bakaka"
-          },
+            },
             {
                 "Id": "bra",
                 "Part2B": "bra",
@@ -8421,7 +8421,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Braj"
-          },
+            },
             {
                 "Id": "brb",
                 "Part2B": "",
@@ -8430,7 +8430,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Lave"
-          },
+            },
             {
                 "Id": "brc",
                 "Part2B": "",
@@ -8439,7 +8439,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Berbice Creole Dutch"
-          },
+            },
             {
                 "Id": "brd",
                 "Part2B": "",
@@ -8448,7 +8448,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baraamu"
-          },
+            },
             {
                 "Id": "bre",
                 "Part2B": "bre",
@@ -8457,7 +8457,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Breton"
-          },
+            },
             {
                 "Id": "brf",
                 "Part2B": "",
@@ -8466,7 +8466,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bera"
-          },
+            },
             {
                 "Id": "brg",
                 "Part2B": "",
@@ -8475,7 +8475,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baure"
-          },
+            },
             {
                 "Id": "brh",
                 "Part2B": "",
@@ -8484,7 +8484,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brahui"
-          },
+            },
             {
                 "Id": "bri",
                 "Part2B": "",
@@ -8493,7 +8493,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mokpwe"
-          },
+            },
             {
                 "Id": "brj",
                 "Part2B": "",
@@ -8502,7 +8502,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bieria"
-          },
+            },
             {
                 "Id": "brk",
                 "Part2B": "",
@@ -8511,7 +8511,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Birked"
-          },
+            },
             {
                 "Id": "brl",
                 "Part2B": "",
@@ -8520,7 +8520,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birwa"
-          },
+            },
             {
                 "Id": "brm",
                 "Part2B": "",
@@ -8529,7 +8529,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barambu"
-          },
+            },
             {
                 "Id": "brn",
                 "Part2B": "",
@@ -8538,7 +8538,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boruca"
-          },
+            },
             {
                 "Id": "bro",
                 "Part2B": "",
@@ -8547,7 +8547,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brokkat"
-          },
+            },
             {
                 "Id": "brp",
                 "Part2B": "",
@@ -8556,7 +8556,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barapasi"
-          },
+            },
             {
                 "Id": "brq",
                 "Part2B": "",
@@ -8565,7 +8565,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Breri"
-          },
+            },
             {
                 "Id": "brr",
                 "Part2B": "",
@@ -8574,7 +8574,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birao"
-          },
+            },
             {
                 "Id": "brs",
                 "Part2B": "",
@@ -8583,7 +8583,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baras"
-          },
+            },
             {
                 "Id": "brt",
                 "Part2B": "",
@@ -8592,7 +8592,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bitare"
-          },
+            },
             {
                 "Id": "bru",
                 "Part2B": "",
@@ -8601,7 +8601,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Eastern Bru"
-          },
+            },
             {
                 "Id": "brv",
                 "Part2B": "",
@@ -8610,7 +8610,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Western Bru"
-          },
+            },
             {
                 "Id": "brw",
                 "Part2B": "",
@@ -8619,7 +8619,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bellari"
-          },
+            },
             {
                 "Id": "brx",
                 "Part2B": "",
@@ -8628,7 +8628,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bodo (India)"
-          },
+            },
             {
                 "Id": "bry",
                 "Part2B": "",
@@ -8637,7 +8637,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burui"
-          },
+            },
             {
                 "Id": "brz",
                 "Part2B": "",
@@ -8646,7 +8646,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilbil"
-          },
+            },
             {
                 "Id": "bsa",
                 "Part2B": "",
@@ -8655,7 +8655,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Abinomn"
-          },
+            },
             {
                 "Id": "bsb",
                 "Part2B": "",
@@ -8664,7 +8664,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brunei Bisaya"
-          },
+            },
             {
                 "Id": "bsc",
                 "Part2B": "",
@@ -8673,7 +8673,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bassari"
-          },
+            },
             {
                 "Id": "bse",
                 "Part2B": "",
@@ -8682,7 +8682,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Wushi"
-          },
+            },
             {
                 "Id": "bsf",
                 "Part2B": "",
@@ -8691,7 +8691,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bauchi"
-          },
+            },
             {
                 "Id": "bsg",
                 "Part2B": "",
@@ -8700,7 +8700,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bashkardi"
-          },
+            },
             {
                 "Id": "bsh",
                 "Part2B": "",
@@ -8709,7 +8709,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kati"
-          },
+            },
             {
                 "Id": "bsi",
                 "Part2B": "",
@@ -8718,7 +8718,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bassossi"
-          },
+            },
             {
                 "Id": "bsj",
                 "Part2B": "",
@@ -8727,7 +8727,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangwinji"
-          },
+            },
             {
                 "Id": "bsk",
                 "Part2B": "",
@@ -8736,7 +8736,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burushaski"
-          },
+            },
             {
                 "Id": "bsl",
                 "Part2B": "",
@@ -8745,7 +8745,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Basa-Gumna"
-          },
+            },
             {
                 "Id": "bsm",
                 "Part2B": "",
@@ -8754,7 +8754,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busami"
-          },
+            },
             {
                 "Id": "bsn",
                 "Part2B": "",
@@ -8763,7 +8763,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barasana-Eduria"
-          },
+            },
             {
                 "Id": "bso",
                 "Part2B": "",
@@ -8772,7 +8772,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buso"
-          },
+            },
             {
                 "Id": "bsp",
                 "Part2B": "",
@@ -8781,7 +8781,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baga Sitemu"
-          },
+            },
             {
                 "Id": "bsq",
                 "Part2B": "",
@@ -8790,7 +8790,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bassa"
-          },
+            },
             {
                 "Id": "bsr",
                 "Part2B": "",
@@ -8799,7 +8799,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bassa-Kontagora"
-          },
+            },
             {
                 "Id": "bss",
                 "Part2B": "",
@@ -8808,7 +8808,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Akoose"
-          },
+            },
             {
                 "Id": "bst",
                 "Part2B": "",
@@ -8817,7 +8817,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Basketo"
-          },
+            },
             {
                 "Id": "bsu",
                 "Part2B": "",
@@ -8826,7 +8826,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bahonsuai"
-          },
+            },
             {
                 "Id": "bsv",
                 "Part2B": "",
@@ -8835,7 +8835,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Baga Sobané"
-          },
+            },
             {
                 "Id": "bsw",
                 "Part2B": "",
@@ -8844,7 +8844,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baiso"
-          },
+            },
             {
                 "Id": "bsx",
                 "Part2B": "",
@@ -8853,7 +8853,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Yangkam"
-          },
+            },
             {
                 "Id": "bsy",
                 "Part2B": "",
@@ -8862,7 +8862,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sabah Bisaya"
-          },
+            },
             {
                 "Id": "bta",
                 "Part2B": "",
@@ -8871,7 +8871,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bata"
-          },
+            },
             {
                 "Id": "btc",
                 "Part2B": "",
@@ -8880,7 +8880,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bati (Cameroon)"
-          },
+            },
             {
                 "Id": "btd",
                 "Part2B": "",
@@ -8889,7 +8889,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Dairi"
-          },
+            },
             {
                 "Id": "bte",
                 "Part2B": "",
@@ -8898,7 +8898,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Gamo-Ningi"
-          },
+            },
             {
                 "Id": "btf",
                 "Part2B": "",
@@ -8907,7 +8907,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birgit"
-          },
+            },
             {
                 "Id": "btg",
                 "Part2B": "",
@@ -8916,7 +8916,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Gagnoa Bété"
-          },
+            },
             {
                 "Id": "bth",
                 "Part2B": "",
@@ -8925,7 +8925,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biatah Bidayuh"
-          },
+            },
             {
                 "Id": "bti",
                 "Part2B": "",
@@ -8934,7 +8934,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burate"
-          },
+            },
             {
                 "Id": "btj",
                 "Part2B": "",
@@ -8943,7 +8943,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bacanese Malay"
-          },
+            },
             {
                 "Id": "btl",
                 "Part2B": "",
@@ -8952,7 +8952,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhatola"
-          },
+            },
             {
                 "Id": "btm",
                 "Part2B": "",
@@ -8961,7 +8961,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Mandailing"
-          },
+            },
             {
                 "Id": "btn",
                 "Part2B": "",
@@ -8970,7 +8970,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ratagnon"
-          },
+            },
             {
                 "Id": "bto",
                 "Part2B": "",
@@ -8979,7 +8979,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Rinconada Bikol"
-          },
+            },
             {
                 "Id": "btp",
                 "Part2B": "",
@@ -8988,7 +8988,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Budibud"
-          },
+            },
             {
                 "Id": "btq",
                 "Part2B": "",
@@ -8997,7 +8997,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batek"
-          },
+            },
             {
                 "Id": "btr",
                 "Part2B": "",
@@ -9006,7 +9006,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baetora"
-          },
+            },
             {
                 "Id": "bts",
                 "Part2B": "",
@@ -9015,7 +9015,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Simalungun"
-          },
+            },
             {
                 "Id": "btt",
                 "Part2B": "",
@@ -9024,7 +9024,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bete-Bendi"
-          },
+            },
             {
                 "Id": "btu",
                 "Part2B": "",
@@ -9033,7 +9033,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batu"
-          },
+            },
             {
                 "Id": "btv",
                 "Part2B": "",
@@ -9042,7 +9042,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bateri"
-          },
+            },
             {
                 "Id": "btw",
                 "Part2B": "",
@@ -9051,7 +9051,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Butuanon"
-          },
+            },
             {
                 "Id": "btx",
                 "Part2B": "",
@@ -9060,7 +9060,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Karo"
-          },
+            },
             {
                 "Id": "bty",
                 "Part2B": "",
@@ -9069,7 +9069,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bobot"
-          },
+            },
             {
                 "Id": "btz",
                 "Part2B": "",
@@ -9078,7 +9078,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak Alas-Kluet"
-          },
+            },
             {
                 "Id": "bua",
                 "Part2B": "bua",
@@ -9087,7 +9087,7 @@ define(function (require) {
                 "Scope": "M",
                 "Language_Type": "L",
                 "Ref_Name": "Buriat"
-          },
+            },
             {
                 "Id": "bub",
                 "Part2B": "",
@@ -9096,7 +9096,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bua"
-          },
+            },
             {
                 "Id": "buc",
                 "Part2B": "",
@@ -9105,7 +9105,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bushi"
-          },
+            },
             {
                 "Id": "bud",
                 "Part2B": "",
@@ -9114,7 +9114,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ntcham"
-          },
+            },
             {
                 "Id": "bue",
                 "Part2B": "",
@@ -9123,7 +9123,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Beothuk"
-          },
+            },
             {
                 "Id": "buf",
                 "Part2B": "",
@@ -9132,7 +9132,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bushoong"
-          },
+            },
             {
                 "Id": "bug",
                 "Part2B": "bug",
@@ -9141,7 +9141,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buginese"
-          },
+            },
             {
                 "Id": "buh",
                 "Part2B": "",
@@ -9150,7 +9150,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Younuo Bunu"
-          },
+            },
             {
                 "Id": "bui",
                 "Part2B": "",
@@ -9159,7 +9159,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bongili"
-          },
+            },
             {
                 "Id": "buj",
                 "Part2B": "",
@@ -9168,7 +9168,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Basa-Gurmana"
-          },
+            },
             {
                 "Id": "buk",
                 "Part2B": "",
@@ -9177,7 +9177,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bugawac"
-          },
+            },
             {
                 "Id": "bul",
                 "Part2B": "bul",
@@ -9186,7 +9186,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bulgarian"
-          },
+            },
             {
                 "Id": "bum",
                 "Part2B": "",
@@ -9195,7 +9195,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bulu (Cameroon)"
-          },
+            },
             {
                 "Id": "bun",
                 "Part2B": "",
@@ -9204,7 +9204,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Sherbro"
-          },
+            },
             {
                 "Id": "buo",
                 "Part2B": "",
@@ -9213,7 +9213,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Terei"
-          },
+            },
             {
                 "Id": "bup",
                 "Part2B": "",
@@ -9222,7 +9222,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busoa"
-          },
+            },
             {
                 "Id": "buq",
                 "Part2B": "",
@@ -9231,7 +9231,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brem"
-          },
+            },
             {
                 "Id": "bus",
                 "Part2B": "",
@@ -9240,7 +9240,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bokobaru"
-          },
+            },
             {
                 "Id": "but",
                 "Part2B": "",
@@ -9249,7 +9249,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bungain"
-          },
+            },
             {
                 "Id": "buu",
                 "Part2B": "",
@@ -9258,7 +9258,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Budu"
-          },
+            },
             {
                 "Id": "buv",
                 "Part2B": "",
@@ -9267,7 +9267,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bun"
-          },
+            },
             {
                 "Id": "buw",
                 "Part2B": "",
@@ -9276,7 +9276,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bubi"
-          },
+            },
             {
                 "Id": "bux",
                 "Part2B": "",
@@ -9285,7 +9285,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boghom"
-          },
+            },
             {
                 "Id": "buy",
                 "Part2B": "",
@@ -9294,7 +9294,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bullom So"
-          },
+            },
             {
                 "Id": "buz",
                 "Part2B": "",
@@ -9303,7 +9303,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukwen"
-          },
+            },
             {
                 "Id": "bva",
                 "Part2B": "",
@@ -9312,7 +9312,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barein"
-          },
+            },
             {
                 "Id": "bvb",
                 "Part2B": "",
@@ -9321,7 +9321,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bube"
-          },
+            },
             {
                 "Id": "bvc",
                 "Part2B": "",
@@ -9330,7 +9330,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baelelea"
-          },
+            },
             {
                 "Id": "bvd",
                 "Part2B": "",
@@ -9339,7 +9339,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baeggu"
-          },
+            },
             {
                 "Id": "bve",
                 "Part2B": "",
@@ -9348,7 +9348,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Berau Malay"
-          },
+            },
             {
                 "Id": "bvf",
                 "Part2B": "",
@@ -9357,7 +9357,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boor"
-          },
+            },
             {
                 "Id": "bvg",
                 "Part2B": "",
@@ -9366,7 +9366,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bonkeng"
-          },
+            },
             {
                 "Id": "bvh",
                 "Part2B": "",
@@ -9375,7 +9375,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bure"
-          },
+            },
             {
                 "Id": "bvi",
                 "Part2B": "",
@@ -9384,7 +9384,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belanda Viri"
-          },
+            },
             {
                 "Id": "bvj",
                 "Part2B": "",
@@ -9393,7 +9393,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baan"
-          },
+            },
             {
                 "Id": "bvk",
                 "Part2B": "",
@@ -9402,7 +9402,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukat"
-          },
+            },
             {
                 "Id": "bvl",
                 "Part2B": "",
@@ -9411,7 +9411,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolivian Sign Language"
-          },
+            },
             {
                 "Id": "bvm",
                 "Part2B": "",
@@ -9420,7 +9420,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bamunka"
-          },
+            },
             {
                 "Id": "bvn",
                 "Part2B": "",
@@ -9429,7 +9429,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buna"
-          },
+            },
             {
                 "Id": "bvo",
                 "Part2B": "",
@@ -9438,7 +9438,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolgo"
-          },
+            },
             {
                 "Id": "bvp",
                 "Part2B": "",
@@ -9447,7 +9447,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bumang"
-          },
+            },
             {
                 "Id": "bvq",
                 "Part2B": "",
@@ -9456,7 +9456,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birri"
-          },
+            },
             {
                 "Id": "bvr",
                 "Part2B": "",
@@ -9465,7 +9465,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burarra"
-          },
+            },
             {
                 "Id": "bvt",
                 "Part2B": "",
@@ -9474,7 +9474,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bati (Indonesia)"
-          },
+            },
             {
                 "Id": "bvu",
                 "Part2B": "",
@@ -9483,7 +9483,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukit Malay"
-          },
+            },
             {
                 "Id": "bvv",
                 "Part2B": "",
@@ -9492,7 +9492,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Baniva"
-          },
+            },
             {
                 "Id": "bvw",
                 "Part2B": "",
@@ -9501,7 +9501,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boga"
-          },
+            },
             {
                 "Id": "bvx",
                 "Part2B": "",
@@ -9510,7 +9510,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Dibole"
-          },
+            },
             {
                 "Id": "bvy",
                 "Part2B": "",
@@ -9519,7 +9519,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baybayanon"
-          },
+            },
             {
                 "Id": "bvz",
                 "Part2B": "",
@@ -9528,7 +9528,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bauzi"
-          },
+            },
             {
                 "Id": "bwa",
                 "Part2B": "",
@@ -9537,7 +9537,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwatoo"
-          },
+            },
             {
                 "Id": "bwb",
                 "Part2B": "",
@@ -9546,7 +9546,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Namosi-Naitasiri-Serua"
-          },
+            },
             {
                 "Id": "bwc",
                 "Part2B": "",
@@ -9555,7 +9555,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwile"
-          },
+            },
             {
                 "Id": "bwd",
                 "Part2B": "",
@@ -9564,7 +9564,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwaidoka"
-          },
+            },
             {
                 "Id": "bwe",
                 "Part2B": "",
@@ -9573,7 +9573,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwe Karen"
-          },
+            },
             {
                 "Id": "bwf",
                 "Part2B": "",
@@ -9582,7 +9582,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boselewa"
-          },
+            },
             {
                 "Id": "bwg",
                 "Part2B": "",
@@ -9591,7 +9591,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barwe"
-          },
+            },
             {
                 "Id": "bwh",
                 "Part2B": "",
@@ -9600,7 +9600,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bishuo"
-          },
+            },
             {
                 "Id": "bwi",
                 "Part2B": "",
@@ -9609,7 +9609,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baniwa"
-          },
+            },
             {
                 "Id": "bwj",
                 "Part2B": "",
@@ -9618,7 +9618,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Láá Láá Bwamu"
-          },
+            },
             {
                 "Id": "bwk",
                 "Part2B": "",
@@ -9627,7 +9627,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bauwaki"
-          },
+            },
             {
                 "Id": "bwl",
                 "Part2B": "",
@@ -9636,7 +9636,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwela"
-          },
+            },
             {
                 "Id": "bwm",
                 "Part2B": "",
@@ -9645,7 +9645,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biwat"
-          },
+            },
             {
                 "Id": "bwn",
                 "Part2B": "",
@@ -9654,7 +9654,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Wunai Bunu"
-          },
+            },
             {
                 "Id": "bwo",
                 "Part2B": "",
@@ -9663,7 +9663,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boro (Ethiopia)"
-          },
+            },
             {
                 "Id": "bwp",
                 "Part2B": "",
@@ -9672,7 +9672,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mandobo Bawah"
-          },
+            },
             {
                 "Id": "bwq",
                 "Part2B": "",
@@ -9681,7 +9681,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Bobo Madaré"
-          },
+            },
             {
                 "Id": "bwr",
                 "Part2B": "",
@@ -9690,7 +9690,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bura-Pabir"
-          },
+            },
             {
                 "Id": "bws",
                 "Part2B": "",
@@ -9699,7 +9699,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bomboma"
-          },
+            },
             {
                 "Id": "bwt",
                 "Part2B": "",
@@ -9708,7 +9708,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bafaw-Balong"
-          },
+            },
             {
                 "Id": "bwu",
                 "Part2B": "",
@@ -9717,7 +9717,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buli (Ghana)"
-          },
+            },
             {
                 "Id": "bww",
                 "Part2B": "",
@@ -9726,7 +9726,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwa"
-          },
+            },
             {
                 "Id": "bwx",
                 "Part2B": "",
@@ -9735,7 +9735,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bu-Nao Bunu"
-          },
+            },
             {
                 "Id": "bwy",
                 "Part2B": "",
@@ -9744,7 +9744,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Cwi Bwamu"
-          },
+            },
             {
                 "Id": "bwz",
                 "Part2B": "",
@@ -9753,7 +9753,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bwisi"
-          },
+            },
             {
                 "Id": "bxa",
                 "Part2B": "",
@@ -9762,7 +9762,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Tairaha"
-          },
+            },
             {
                 "Id": "bxb",
                 "Part2B": "",
@@ -9771,7 +9771,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belanda Bor"
-          },
+            },
             {
                 "Id": "bxc",
                 "Part2B": "",
@@ -9780,7 +9780,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Molengue"
-          },
+            },
             {
                 "Id": "bxd",
                 "Part2B": "",
@@ -9789,7 +9789,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pela"
-          },
+            },
             {
                 "Id": "bxe",
                 "Part2B": "",
@@ -9798,7 +9798,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Birale"
-          },
+            },
             {
                 "Id": "bxf",
                 "Part2B": "",
@@ -9807,7 +9807,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilur"
-          },
+            },
             {
                 "Id": "bxg",
                 "Part2B": "",
@@ -9816,7 +9816,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bangala"
-          },
+            },
             {
                 "Id": "bxh",
                 "Part2B": "",
@@ -9825,7 +9825,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buhutu"
-          },
+            },
             {
                 "Id": "bxi",
                 "Part2B": "",
@@ -9834,7 +9834,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Pirlatapa"
-          },
+            },
             {
                 "Id": "bxj",
                 "Part2B": "",
@@ -9843,7 +9843,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bayungu"
-          },
+            },
             {
                 "Id": "bxk",
                 "Part2B": "",
@@ -9852,7 +9852,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bukusu"
-          },
+            },
             {
                 "Id": "bxl",
                 "Part2B": "",
@@ -9861,7 +9861,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jalkunan"
-          },
+            },
             {
                 "Id": "bxm",
                 "Part2B": "",
@@ -9870,7 +9870,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mongolia Buriat"
-          },
+            },
             {
                 "Id": "bxn",
                 "Part2B": "",
@@ -9879,7 +9879,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burduna"
-          },
+            },
             {
                 "Id": "bxo",
                 "Part2B": "",
@@ -9888,7 +9888,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Barikanchi"
-          },
+            },
             {
                 "Id": "bxp",
                 "Part2B": "",
@@ -9897,7 +9897,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bebil"
-          },
+            },
             {
                 "Id": "bxq",
                 "Part2B": "",
@@ -9906,7 +9906,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Beele"
-          },
+            },
             {
                 "Id": "bxr",
                 "Part2B": "",
@@ -9915,7 +9915,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Russia Buriat"
-          },
+            },
             {
                 "Id": "bxs",
                 "Part2B": "",
@@ -9924,7 +9924,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Busam"
-          },
+            },
             {
                 "Id": "bxu",
                 "Part2B": "",
@@ -9933,7 +9933,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "China Buriat"
-          },
+            },
             {
                 "Id": "bxv",
                 "Part2B": "",
@@ -9942,7 +9942,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Berakou"
-          },
+            },
             {
                 "Id": "bxw",
                 "Part2B": "",
@@ -9951,7 +9951,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bankagooma"
-          },
+            },
             {
                 "Id": "bxx",
                 "Part2B": "",
@@ -9960,7 +9960,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Borna (Democratic Republic of Congo)"
-          },
+            },
             {
                 "Id": "bxz",
                 "Part2B": "",
@@ -9969,7 +9969,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Binahari"
-          },
+            },
             {
                 "Id": "bya",
                 "Part2B": "",
@@ -9978,7 +9978,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Batak"
-          },
+            },
             {
                 "Id": "byb",
                 "Part2B": "",
@@ -9987,7 +9987,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bikya"
-          },
+            },
             {
                 "Id": "byc",
                 "Part2B": "",
@@ -9996,7 +9996,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Ubaghara"
-          },
+            },
             {
                 "Id": "byd",
                 "Part2B": "",
@@ -10005,7 +10005,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Benyadu'"
-          },
+            },
             {
                 "Id": "bye",
                 "Part2B": "",
@@ -10014,7 +10014,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Pouye"
-          },
+            },
             {
                 "Id": "byf",
                 "Part2B": "",
@@ -10023,7 +10023,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bete"
-          },
+            },
             {
                 "Id": "byg",
                 "Part2B": "",
@@ -10032,7 +10032,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Baygo"
-          },
+            },
             {
                 "Id": "byh",
                 "Part2B": "",
@@ -10041,7 +10041,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bhujel"
-          },
+            },
             {
                 "Id": "byi",
                 "Part2B": "",
@@ -10050,7 +10050,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buyu"
-          },
+            },
             {
                 "Id": "byj",
                 "Part2B": "",
@@ -10059,7 +10059,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bina (Nigeria)"
-          },
+            },
             {
                 "Id": "byk",
                 "Part2B": "",
@@ -10068,7 +10068,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biao"
-          },
+            },
             {
                 "Id": "byl",
                 "Part2B": "",
@@ -10077,7 +10077,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bayono"
-          },
+            },
             {
                 "Id": "bym",
                 "Part2B": "",
@@ -10086,7 +10086,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bidyara"
-          },
+            },
             {
                 "Id": "byn",
                 "Part2B": "byn",
@@ -10095,7 +10095,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bilin"
-          },
+            },
             {
                 "Id": "byo",
                 "Part2B": "",
@@ -10104,7 +10104,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Biyo"
-          },
+            },
             {
                 "Id": "byp",
                 "Part2B": "",
@@ -10113,7 +10113,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bumaji"
-          },
+            },
             {
                 "Id": "byq",
                 "Part2B": "",
@@ -10122,7 +10122,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Basay"
-          },
+            },
             {
                 "Id": "byr",
                 "Part2B": "",
@@ -10131,7 +10131,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Baruya"
-          },
+            },
             {
                 "Id": "bys",
                 "Part2B": "",
@@ -10140,7 +10140,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burak"
-          },
+            },
             {
                 "Id": "byt",
                 "Part2B": "",
@@ -10149,7 +10149,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Berti"
-          },
+            },
             {
                 "Id": "byv",
                 "Part2B": "",
@@ -10158,7 +10158,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Medumba"
-          },
+            },
             {
                 "Id": "byw",
                 "Part2B": "",
@@ -10167,7 +10167,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belhariya"
-          },
+            },
             {
                 "Id": "byx",
                 "Part2B": "",
@@ -10176,7 +10176,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Qaqet"
-          },
+            },
             {
                 "Id": "byy",
                 "Part2B": "",
@@ -10185,7 +10185,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buya"
-          },
+            },
             {
                 "Id": "byz",
                 "Part2B": "",
@@ -10194,7 +10194,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Banaro"
-          },
+            },
             {
                 "Id": "bza",
                 "Part2B": "",
@@ -10203,7 +10203,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bandi"
-          },
+            },
             {
                 "Id": "bzb",
                 "Part2B": "",
@@ -10212,7 +10212,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Andio"
-          },
+            },
             {
                 "Id": "bzc",
                 "Part2B": "",
@@ -10221,7 +10221,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Southern Betsimisaraka Malagasy"
-          },
+            },
             {
                 "Id": "bzd",
                 "Part2B": "",
@@ -10230,7 +10230,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bribri"
-          },
+            },
             {
                 "Id": "bze",
                 "Part2B": "",
@@ -10239,7 +10239,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Jenaama Bozo"
-          },
+            },
             {
                 "Id": "bzf",
                 "Part2B": "",
@@ -10248,7 +10248,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boikin"
-          },
+            },
             {
                 "Id": "bzg",
                 "Part2B": "",
@@ -10257,7 +10257,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Babuza"
-          },
+            },
             {
                 "Id": "bzh",
                 "Part2B": "",
@@ -10266,7 +10266,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Mapos Buang"
-          },
+            },
             {
                 "Id": "bzi",
                 "Part2B": "",
@@ -10275,7 +10275,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bisu"
-          },
+            },
             {
                 "Id": "bzj",
                 "Part2B": "",
@@ -10284,7 +10284,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Belize Kriol English"
-          },
+            },
             {
                 "Id": "bzk",
                 "Part2B": "",
@@ -10293,7 +10293,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Nicaragua Creole English"
-          },
+            },
             {
                 "Id": "bzl",
                 "Part2B": "",
@@ -10302,7 +10302,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boano (Sulawesi)"
-          },
+            },
             {
                 "Id": "bzm",
                 "Part2B": "",
@@ -10311,7 +10311,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bolondo"
-          },
+            },
             {
                 "Id": "bzn",
                 "Part2B": "",
@@ -10320,7 +10320,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Boano (Maluku)"
-          },
+            },
             {
                 "Id": "bzo",
                 "Part2B": "",
@@ -10329,7 +10329,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Bozaba"
-          },
+            },
             {
                 "Id": "bzp",
                 "Part2B": "",
@@ -10338,7 +10338,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kemberano"
-          },
+            },
             {
                 "Id": "bzq",
                 "Part2B": "",
@@ -10347,7 +10347,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Buli (Indonesia)"
-          },
+            },
             {
                 "Id": "bzr",
                 "Part2B": "",
@@ -10356,7 +10356,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "E",
                 "Ref_Name": "Biri"
-          },
+            },
             {
                 "Id": "bzs",
                 "Part2B": "",
@@ -10365,7 +10365,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Brazilian Sign Language"
-          },
+            },
             {
                 "Id": "bzt",
                 "Part2B": "",
@@ -10373,7 +10373,7 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "I",
                 "Ref_Name": "Brithenig"
-          },
+            },
             {
                 "Id": "bzu",
                 "Part2B": "",
@@ -10382,7 +10382,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Burmeso"
-          },
+            },
             {
                 "Id": "bzv",
                 "Part2B": "",
@@ -10391,7 +10391,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Naami"
-          },
+            },
             {
                 "Id": "bzw",
                 "Part2B": "",

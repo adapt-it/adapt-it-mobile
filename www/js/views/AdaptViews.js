@@ -11,6 +11,7 @@ define(function (require) {
         Marionette  = require('marionette'),
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
+        ta          = require('typeahead'),
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
@@ -96,6 +97,11 @@ define(function (require) {
                     ];
                     refstrings.push(newRS);
                 }
+                // sort the refstrings collection on "n" (refcount)
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
                 // update the KB model
                 tu.set('refstring', refstrings, {silent: true});
                 tu.set('timestamp', timestamp, {silent: true});
@@ -874,6 +880,7 @@ define(function (require) {
                 var tu = null,
                     prevID = "",
                     top = 0,
+                    i = 0,
                     strID = "",
                     model = null,
                     sourceText = "",
@@ -884,6 +891,7 @@ define(function (require) {
                     selectedObj = null,
                     prevObj = null,
                     nextOrPrevObj = false,
+                    options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
                 // ** focus handler block **
@@ -994,16 +1002,46 @@ define(function (require) {
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
-                        targetText = this.autoAddCaps(model, refstrings[0].target);
-                        $(event.currentTarget).html(targetText);
-                        // mark it purple
-                        $(event.currentTarget).addClass('fromkb');
-                        clearKBInput = false;
-                        // mark the field as changed (so the KB gets incremented)
-                        isDirty = true;
-                        // jump to the next field
-                        this.moveCursor(event, true);
-                        foundInKB = true;
+                        if (refstrings.length === 1) {
+                            // exactly one entry in KB -- populate and move forward
+                            targetText = this.autoAddCaps(model, refstrings[0].target);
+                            $(event.currentTarget).html(targetText);
+                            // mark it purple
+                            $(event.currentTarget).addClass('fromkb');
+                            clearKBInput = false;
+                            // mark the field as changed (so the KB gets incremented)
+                            isDirty = true;
+                            // jump to the next field
+                            this.moveCursor(event, true);
+                            foundInKB = true;
+                        } else {
+                            // more than one entry in KB -- stop here so the user can choose
+                            MovingDir = 0;
+                            isDirty = false; // no change yet
+                            options.length = 0; // clear out any old cruft
+                            // build our list of options from the refstrings
+                            for (i = 0; i < refstrings.length; i++) {
+                                options.push(refstrings[i].target);
+                            }
+                            // create the autocomplete UI
+                            $(event.currentTarget).typeahead(
+                                {
+                                    minLength: 0,
+                                    highlight: true
+                                },
+                                {
+                                    name: 'kboptions',
+                                    source: options
+                                }
+                            );
+                            $(event.currentTarget).typeahead('open');
+                            
+//                            $(event.currentTarget).addClass('typeahead');
+//                            var c = completely($(event.currentTarget).html());
+//                            c.options = options;
+//                            c.startFrom = 0;
+//                            c.setText(refstrings[0].target); // initially suggest the first refString
+                        }
                     } else {
                         // nothing in the KB
                         // if this isn't a phrase, populate the target with the source text as the next best guess
