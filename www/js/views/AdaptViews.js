@@ -1024,14 +1024,20 @@ define(function (require) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
+                            var matcher = function (strs) {
+                                return function matches(q, cb) {
+                                    cb(options);
+                                };
+                            };
                             $(event.currentTarget).typeahead(
                                 {
-                                    minLength: 0,
-                                    highlight: true
+                                    hint: true,
+                                    highlight: true,
+                                    minLength: 0
                                 },
                                 {
                                     name: 'kboptions',
-                                    source: options
+                                    source: matcher
                                 }
                             );
                             $(event.currentTarget).typeahead('open');

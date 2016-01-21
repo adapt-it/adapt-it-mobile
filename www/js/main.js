@@ -1,5 +1,6 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
 require.config({
     
     // 3rd party lib versions:
@@ -47,7 +48,13 @@ require.config({
             exports: 'Marionette'
         },
         typeahead: {
-            deps: ['jquery']
+            deps: ['jquery'],
+            init: function ($) {
+                "use strict";
+                // typeahead has a naming bug that conflicts with requirejs; 
+                // workaround is from here: https://github.com/twitter/typeahead.js/issues/1211
+                return require.s.contexts._.registry['typeahead.js'].factory($);
+            }
         },
         colorpicker: {
             deps: ['jquery']
