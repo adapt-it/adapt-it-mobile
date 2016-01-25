@@ -1024,10 +1024,12 @@ define(function (require) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
-                            var matcher = function (strs) {
-                                return function matches(q, cb) {
-                                    cb(options);
-                                };
+                            var original = $.fn.val;
+                            $.fn.val = function () {
+                                if ($(this).is('*[contenteditable=true]')) {
+                                    return $.fn.html.apply(this, arguments);
+                                }
+                                return original.apply(this, arguments);
                             };
                             $(event.currentTarget).typeahead(
                                 {
@@ -1037,16 +1039,19 @@ define(function (require) {
                                 },
                                 {
                                     name: 'kboptions',
-                                    source: matcher
+                                    source: function (request, response) {
+                                        response(options);
+                                    }
+//                                    },
+//                                    focus: function () {
+//                                        return false;
+//                                    },
+//                                    select: function (event, ui) {
+//                                        return false;
+//                                    }
                                 }
                             );
                             $(event.currentTarget).typeahead('open');
-                            
-//                            $(event.currentTarget).addClass('typeahead');
-//                            var c = completely($(event.currentTarget).html());
-//                            c.options = options;
-//                            c.startFrom = 0;
-//                            c.setText(refstrings[0].target); // initially suggest the first refString
                         }
                     } else {
                         // nothing in the KB
