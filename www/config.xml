@@ -27,14 +27,14 @@
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <!-- PhoneGap Build - core plugins -->
-    <gap:plugin name="cordova-plugin-device" source="npm" />
-    <gap:plugin name="cordova-plugin-file" source="npm" />
-    <gap:plugin name="cordova-plugin-file-transfer" source="npm" />
-    <gap:plugin name="cordova-plugin-globalization" source="npm" />
-    <gap:plugin name="cordova-plugin-dialogs" source="npm" />
-    <gap:plugin name="cordova-plugin-fonts" source="npm" />
-    <gap:plugin name="cordova-plugin-crosswalk-webview" source="npm" spec="1.4.0" />
-    <gap:plugin name="cordova-sqlite-storage" source="npm" />
+    <plugin name="cordova-plugin-device" source="npm" />
+    <plugin name="cordova-plugin-file" source="npm" />
+    <plugin name="cordova-plugin-file-transfer" source="npm" />
+    <plugin name="cordova-plugin-globalization" source="npm" />
+    <plugin name="cordova-plugin-dialogs" source="npm" />
+    <plugin name="cordova-plugin-fonts" source="npm" />
+<!--    <plugin name="cordova-plugin-crosswalk-webview" source="npm" spec="1.4.0" />-->
+    <plugin name="cordova-sqlite-storage" source="npm" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
