@@ -33,6 +33,18 @@ define(function (require) {
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
                                     // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
 
+        // Helper method to build an html list of documents in the AIM database.
+        // Used by ExportDocument.
+        buildDocumentList = function (pid) {
+            var str = "";
+            var i = 0;
+            var entries = window.Application.BookList.where({projectid: pid});
+            for (i = 0; i < entries.length; i++) {
+                str += "<li class='topcoat-list__item' id=" + i + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
+            }
+            return str;
+        },
+
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
         importFile = function (file, project) {
@@ -1364,15 +1376,14 @@ define(function (require) {
                 $("#Container").html(Handlebars.compile(tplLoadingPleaseWait));
                 $("#exportTXT").prop("checked", true); // select a default of TXT for the export format (for now)
             },
-            // builds the list of documents in the AIM database
-            buildDocumentList: function () {
-//                str += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";                
-            },
             onShow: function () {
-//                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
-//                    window.Application.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
-//                    
-//                });
+                var list = "";
+                var pid = this.model.get('projectid');
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+                    list = buildDocumentList(pid);
+                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
+                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                }));
             }
         });
     
