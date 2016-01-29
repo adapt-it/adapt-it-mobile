@@ -217,6 +217,7 @@
         "lblExportUSX": "Paratext (.USX)",
         "lblExportText": "Plain Text (.txt)",
         "lblExportFilename": "Filename:",
+        "lblDocSelected": "Documento: ",
         "dscPassword": "Contraseña:",
         "ttlLanguage": "Idioma del interfaz",
         "lblUseDeviceLanguage": "Utilice el mismo idioma que el dispositivo móvil",

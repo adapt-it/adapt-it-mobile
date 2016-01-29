@@ -26,6 +26,7 @@ define(function (require) {
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
+        bookid          = "",
         puncts          = [],
         caseSource      = [],
         caseTarget      = [],
@@ -40,7 +41,7 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             for (i = 0; i < entries.length; i++) {
-                str += "<li class='topcoat-list__item' id=" + i + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
+                str += "<li class='topcoat-list__item' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
             }
             return str;
         },
@@ -1371,9 +1372,12 @@ define(function (require) {
                 // go back to the previous page
                 window.history.go(-1);
             },
-            selectDoc: function () {
+            selectDoc: function (event) {
+                // get the info for this document
+                bookid = $(event.currentTarget).attr('id').trim();
                 // show the next screen
-                $("#Container").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#lblDirections").html(i18n.t('view.lblDocSelected') + event.currentTarget.innerText);
+                $("#Container").html(Handlebars.compile(tplExportFormat));
                 $("#exportTXT").prop("checked", true); // select a default of TXT for the export format (for now)
             },
             onShow: function () {
