@@ -217,6 +217,7 @@
         "lblExportUSX": "Paratext (.USX)",
         "lblExportText": "Plain Text (.txt)",
         "lblExportFilename": "Filename:",
+        "errNoFilename": "Please enter a file name.",
         "lblDocSelected": "Documento: ",
         "dscPassword": "Contraseña:",
         "ttlLanguage": "Idioma del interfaz",

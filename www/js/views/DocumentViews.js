@@ -1364,8 +1364,24 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
-                // go back to the previous page
-                window.history.go(-1);
+                // validate input
+                if ($("#Filename").val().length === 0) {
+                    // user didn't type anything in
+                    // just tell them to enter something
+                    if (navigator.notification) {
+                        // on mobile device -- use notification plugin API
+                        navigator.notification.alert(i18n.t('view.errNoFilename'));
+                    } else {
+                        // in browser -- use window.confirm / window.alert
+                        alert(i18n.t('view.errNoFilename'));
+                    }
+                    $("#Filename").focus();
+                } else {
+                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                    $("#OK").hide();
+                    // go back to the previous page
+                    window.history.go(-1);
+                }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
             onCancel: function (event) {

@@ -218,6 +218,7 @@
         "lblExportText": "Plain Text (.txt)",
         "lblExportFilename": "Filename:",
         "lblDocSelected": "Document selected: ",
+        "errNoFilename": "Please enter a file name.",
         "dscPassword": "Pasword:",
         "ttlLanguage": "User Interface Language",
         "lblUseDeviceLanguage": "Use the language specified on this device",
