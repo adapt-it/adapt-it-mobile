@@ -33,6 +33,12 @@ define(function (require) {
         deferreds       = [],
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
                                     // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
+        FileTypeEnum    = {
+            TXT: 1,
+            USFM: 2,
+            USX: 3,
+            XML: 4
+        },
 
         // Helper method to build an html list of documents in the AIM database.
         // Used by ExportDocument.
@@ -1150,6 +1156,14 @@ define(function (require) {
             reader.readAsText(file);
         },
         
+        exportDocument = function (bookid, format) {
+            
+        },
+        
+        // ****************************************
+        // END static methods
+        // ****************************************
+        
         // ImportDocumentView
         // Select and import documents (txt, usfm, sfm, usx, xml) into 
         // AIM from the device or PC, depending on where AIM is run from. 
@@ -1364,7 +1378,7 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
-                var format = "text";
+                var format = FileTypeEnum.TXT;
                 // validate input
                 if ($("#Filename").val().length === 0) {
                     // user didn't type anything in
@@ -1379,14 +1393,23 @@ define(function (require) {
                     $("#Filename").focus();
                 } else {
                     // get the desired format
-                    
+                    if ($("#exportXML").is(":checked")) {
+                        format = FileTypeEnum.XML;
+                    } else if ($("#exportUSX").is(":checked")) {
+                        format = FileTypeEnum.USX;
+                    } else if ($("#exportUSFM").is(":checked")) {
+                        format = FileTypeEnum.USFM;
+                    } else {
+                        // fallback to plain text
+                        format = FileTypeEnum.TXT;
+                    }
                     // update the UI
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                     $("#loading").html(i18n.t("view.lblChapterName", {file: bookid}));
                     $("#status").html(i18n.t("view.dscExporting"));
                     $("#OK").hide();
                     // perform the export
-                    exportDocument(bookid, )
+                    exportDocument(bookid, format);
                     // go back to the previous page
 //                    window.history.go(-1);
                 }
