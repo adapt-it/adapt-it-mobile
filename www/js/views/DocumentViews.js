@@ -1364,6 +1364,7 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
+                var format = "text";
                 // validate input
                 if ($("#Filename").val().length === 0) {
                     // user didn't type anything in
@@ -1377,10 +1378,17 @@ define(function (require) {
                     }
                     $("#Filename").focus();
                 } else {
+                    // get the desired format
+                    
+                    // update the UI
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                    $("#loading").html(i18n.t("view.lblChapterName", {file: bookid}));
+                    $("#status").html(i18n.t("view.dscExporting"));
                     $("#OK").hide();
+                    // perform the export
+                    exportDocument(bookid, )
                     // go back to the previous page
-                    window.history.go(-1);
+//                    window.history.go(-1);
                 }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
