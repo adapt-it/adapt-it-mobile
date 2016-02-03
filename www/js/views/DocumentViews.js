@@ -1156,8 +1156,149 @@ define(function (require) {
             reader.readAsText(file);
         },
         
-        exportDocument = function (bookid, format) {
+        // Helper method to export the given bookid to the specified file format.
+        // Called from ExportDocumentView::onOK once the book, format and filename have been chosen.
+        exportDocument = function (bookid, format, filename) {
+            var status = "";
+            var writer = null;
+            var errMsg = "";
+            var sourcephrases = null;
             
+            // Callback for when the file is imported / saved successfully
+            var exportSuccess = function () {
+                console.log("exportSuccess()");
+                // update status
+                $("#status").html(i18n.t("view.dscStatusExportSuccess", {document: filename}));
+                // display the OK button
+                $("#loading").hide();
+                $("#waiting").hide();
+                $("#OK").show();
+                $("#OK").removeAttr("disabled");
+            };
+            // Callback for when the file failed to import
+            var exportFail = function (e) {
+                console.log("exportFail(): " + e.message);
+                // update status
+                $("#status").html(i18n.t("view.dscExportFailed", {document: filename, reason: e.message}));
+                $("#loading").hide();
+                $("#waiting").hide();
+                // display the OK button
+                $("#OK").show();
+                $("#OK").removeAttr("disabled");
+            };
+            
+            ///
+            // FILE TYPE WRITERS
+            ///
+
+            // Plain Text document
+            // We assume these are just text with no markup,
+            // in a single chapter (this could change if needed)
+            var exportText = function () {
+                writer.onwriteend = function (e) {
+                    console.log("write completed.");
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                };
+                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
+                writer.write(blob);
+            };
+
+            // USFM document
+            var exportUSFM = function () {
+                writer.onwriteend = function (e) {
+                    console.log("write completed.");
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                };
+                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
+                writer.write(blob);
+            };
+
+            // USX document
+            var exportUSX = function () {
+                writer.onwriteend = function (e) {
+                    console.log("write completed.");
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                };
+                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
+                writer.write(blob);
+            };
+
+            // XML document
+            var exportXML = function () {
+                writer.onwriteend = function (e) {
+                    console.log("write completed.");
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                };
+                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
+                writer.write(blob);
+            };
+
+            if (window.sqlitePlugin) {
+                // mobile device
+                window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+                window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (directoryEntry) {
+                    console.log("Got directoryEntry.");
+                    directoryEntry.root.getFile(filename, {create: true}, function (fileEntry) {
+                        console.log("Got fileEntry for: " + filename);
+                        fileEntry.createWriter(function (fileWriter) {
+                            console.log("Got fileWriter");
+                            writer = fileWriter;
+                            // now export based on the specified format
+                            switch (format) {
+                            case FileTypeEnum.TXT:
+                                exportText();
+                                break;
+                            case FileTypeEnum.USFM:
+                                exportUSFM();
+                                break;
+                            case FileTypeEnum.USX:
+                                exportUSX();
+                                break;
+                            case FileTypeEnum.XML:
+                                exportXML();
+                                break;
+                            }
+                        }, exportFail);
+                    }, exportFail);
+                }, exportFail);
+            } else {
+                // browser
+                var requestedBytes = 10 * 1024 * 1024; // 10MB
+                window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+                navigator.webkitPersistentStorage.requestQuota(window.PERSISTENT, requestedBytes, function (grantedBytes) {
+                    window.requestFileSystem(window.PERSISTENT, grantedBytes, function (fs) {
+                        fs.root.getFile(filename, {create: true}, function (fileEntry) {
+                            fileEntry.createWriter(function (fileWriter) {
+                                console.log("Got fileWriter");
+                                writer = fileWriter;
+                                // now export based on the specified format
+                                switch (format) {
+                                case FileTypeEnum.TXT:
+                                    exportText();
+                                    break;
+                                case FileTypeEnum.USFM:
+                                    exportUSFM();
+                                    break;
+                                case FileTypeEnum.USX:
+                                    exportUSX();
+                                    break;
+                                case FileTypeEnum.XML:
+                                    exportXML();
+                                    break;
+                                }
+                            }, exportFail);
+                        }, exportFail);
+                    }, exportFail);
+                }, exportFail);
+            }
         },
         
         // ****************************************
@@ -1379,8 +1520,9 @@ define(function (require) {
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
                 var format = FileTypeEnum.TXT;
+                var filename = $("#Filename").val().trim();
                 // validate input
-                if ($("#Filename").val().length === 0) {
+                if (filename.length === 0) {
                     // user didn't type anything in
                     // just tell them to enter something
                     if (navigator.notification) {
@@ -1405,11 +1547,11 @@ define(function (require) {
                     }
                     // update the UI
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                    $("#loading").html(i18n.t("view.lblChapterName", {file: bookid}));
-                    $("#status").html(i18n.t("view.dscExporting"));
+                    $("#loading").html(i18n.t("view.lblExportingPleaseWait"));
+                    $("#status").html(i18n.t("view.dscExporting", {file: filename}));
                     $("#OK").hide();
                     // perform the export
-                    exportDocument(bookid, format);
+                    exportDocument(bookid, format, filename);
                     // go back to the previous page
 //                    window.history.go(-1);
                 }
