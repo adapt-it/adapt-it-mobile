@@ -219,6 +219,7 @@
         "lblExportText": "Plain Text (.txt)",
         "lblExportFilename": "Filename:",
         "lblDocSelected": "Document selected: ",
+        "dscStatusExportSuccess": "Export completed successfully.",
         "dscPassword": "Password:",
         "errNoFilename": "Please enter a file name.",
         "lblExportingPleaseWait": "Exporting... please wait.",

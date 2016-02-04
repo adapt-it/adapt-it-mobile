@@ -1197,21 +1197,44 @@ define(function (require) {
             var exportText = function () {
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
+                    exportSuccess();
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
+                    exportFail(e);
                 };
-                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
-                writer.write(blob);
+                // get the chapters belonging to our book
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var spList = new spModel.SourcePhraseCollection();
+                var i = 0;
+                var value = null;
+                chapters.forEach(function (entry) {
+                    // for each chapter, get the sourcephrases
+                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                        for (i = 0; i < spList.length; i++) {
+                            value = spList.at(i);
+                            // plain text -- ignore markers other than paragraph breaks
+                            if (value.get("markers").indexOf("\\p") > -1) {
+                                content += "\n"; // newline
+                            }
+                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                        }
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        writer.write(blob);
+                    });
+                });
             };
 
             // USFM document
             var exportUSFM = function () {
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
+                    exportSuccess();
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
+                    exportFail(e);
                 };
                 var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
                 writer.write(blob);
@@ -1221,9 +1244,11 @@ define(function (require) {
             var exportUSX = function () {
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
+                    exportSuccess();
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
+                    exportFail(e);
                 };
                 var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
                 writer.write(blob);
@@ -1233,9 +1258,11 @@ define(function (require) {
             var exportXML = function () {
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
+                    exportSuccess();
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
+                    exportFail(e);
                 };
                 var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
                 writer.write(blob);
@@ -1273,7 +1300,7 @@ define(function (require) {
                 // browser
                 var requestedBytes = 10 * 1024 * 1024; // 10MB
                 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-                navigator.webkitPersistentStorage.requestQuota(window.PERSISTENT, requestedBytes, function (grantedBytes) {
+                navigator.webkitPersistentStorage.requestQuota(requestedBytes, function (grantedBytes) {
                     window.requestFileSystem(window.PERSISTENT, grantedBytes, function (fs) {
                         fs.root.getFile(filename, {create: true}, function (fileEntry) {
                             fileEntry.createWriter(function (fileWriter) {

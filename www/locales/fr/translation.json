@@ -222,6 +222,7 @@
         "lblExportingPleaseWait": "Exporting... please wait.",
         "dscExporting": "Exporting document to file: __file__.",
         "lblDocSelected": "Document: ",
+        "dscStatusExportSuccess": "Export completed successfully.",
         "dscPassword": "Mot de passe:",
         "ttlLanguage": "Langue de l'interface",
         "lblUseDeviceLanguage": "Utilisez la même langue que l'appareil mobile",
