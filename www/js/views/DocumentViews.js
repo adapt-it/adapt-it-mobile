@@ -1535,6 +1535,7 @@ define(function (require) {
             ////
             events: {
                 "click .topcoat-list__item": "selectDoc",
+                "change .topcoat-radio-button": "changeType",
                 "click #OK": "onOK",
                 "click #Cancel": "onCancel"
             },
@@ -1543,6 +1544,29 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            // User changed the export format type. Add the appropriate extension
+            changeType: function (event) {
+                // strip any existing trailing extension from the filename
+                var filename = $("#Filename").val().trim();
+                if (filename.length > 0) {
+                    if ((filename.indexOf(".xml") > -1) || (filename.indexOf(".txt") > -1) || (filename.indexOf(".usfm") > -1) || (filename.indexof(".usx") > -1)) {
+                        filename = filename.substr(0, filename.length - 4);
+                    }
+                }
+                // get the desired format
+                if ($("#exportXML").is(":checked")) {
+                    filename += ".xml";
+                } else if ($("#exportUSX").is(":checked")) {
+                    filename += ".usx";
+                } else if ($("#exportUSFM").is(":checked")) {
+                    filename += ".usfm";
+                } else {
+                    // fallback to plain text
+                    filename += ".txt";
+                }
+                // replace the filename text
+                $("#Filename").html(filename);
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
@@ -1590,11 +1614,14 @@ define(function (require) {
             },
             selectDoc: function (event) {
                 // get the info for this document
+                var bookName = event.currentTarget.innerText;
                 bookid = $(event.currentTarget).attr('id').trim();
                 // show the next screen
-                $("#lblDirections").html(i18n.t('view.lblDocSelected') + event.currentTarget.innerText);
+                $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
                 $("#Container").html(Handlebars.compile(tplExportFormat));
-                $("#exportTXT").prop("checked", true); // select a default of TXT for the export format (for now)
+                // select a default of TXT for the export format (for now)
+                $("#exportTXT").prop("checked", true); 
+                $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
                 var list = "";
