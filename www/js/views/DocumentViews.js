@@ -1550,7 +1550,7 @@ define(function (require) {
                 // strip any existing trailing extension from the filename
                 var filename = $("#Filename").val().trim();
                 if (filename.length > 0) {
-                    if ((filename.indexOf(".xml") > -1) || (filename.indexOf(".txt") > -1) || (filename.indexOf(".usfm") > -1) || (filename.indexof(".usx") > -1)) {
+                    if ((filename.indexOf(".xml") > -1) || (filename.indexOf(".txt") > -1) || (filename.indexOf(".sfm") > -1) || (filename.indexOf(".usx") > -1)) {
                         filename = filename.substr(0, filename.length - 4);
                     }
                 }
@@ -1560,13 +1560,13 @@ define(function (require) {
                 } else if ($("#exportUSX").is(":checked")) {
                     filename += ".usx";
                 } else if ($("#exportUSFM").is(":checked")) {
-                    filename += ".usfm";
+                    filename += ".sfm";
                 } else {
                     // fallback to plain text
                     filename += ".txt";
                 }
                 // replace the filename text
-                $("#Filename").html(filename);
+                $("#Filename").val(filename);
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
@@ -1620,7 +1620,7 @@ define(function (require) {
                 $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // select a default of TXT for the export format (for now)
-                $("#exportTXT").prop("checked", true); 
+                $("#exportTXT").prop("checked", true);
                 $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
