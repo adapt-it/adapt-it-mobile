@@ -1163,6 +1163,7 @@ define(function (require) {
             var writer = null;
             var errMsg = "";
             var sourcephrases = null;
+            var exportDirectory = "";
             
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
@@ -1195,20 +1196,23 @@ define(function (require) {
             // We assume these are just text with no markup,
             // in a single chapter (this could change if needed)
             var exportText = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var spList = new spModel.SourcePhraseCollection();
+                var i = 0;
+                var value = null;
+                var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
-                    exportSuccess();
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
                 // get the chapters belonging to our book
-                var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var content = "";
-                var spList = new spModel.SourcePhraseCollection();
-                var i = 0;
-                var value = null;
                 chapters.forEach(function (entry) {
                     // for each chapter, get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
@@ -1221,23 +1225,56 @@ define(function (require) {
                             content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                         }
                         var blob = new Blob([content], {type: 'text/plain'});
+                        chaptersLeft--;
                         writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
                     });
                 });
             };
 
             // USFM document
             var exportUSFM = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var spList = new spModel.SourcePhraseCollection();
+                var markers = "";
+                var i = 0;
+                var value = null;
+                var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
-                    exportSuccess();
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
-                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
-                writer.write(blob);
+                // get the chapters belonging to our book
+                chapters.forEach(function (entry) {
+                    // for each chapter, get the sourcephrases
+                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                        for (i = 0; i < spList.length; i++) {
+                            value = spList.at(i);
+                            markers = value.get("markers");
+                            // add markers, and if needed, pretty-print the text on a newline
+                            if (markers.length > 0) {
+                                if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                    // pretty-printing -- add a newline so the output looks better
+                                    content += "\n"; // newline
+                                }
+                                // now add the markers and a space
+                                content += value.get("markers") + " ";
+                            }
+                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                        }
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        chaptersLeft--;
+                        writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
+                    });
+                });
             };
 
             // USX document
@@ -1270,8 +1307,14 @@ define(function (require) {
 
             if (window.sqlitePlugin) {
                 // mobile device
+                if (cordova.file.documentsDirectory.length > 0) {
+                    // prefer the documents directory; fall back on the data directory
+                    exportDirectory = cordova.file.documentsDirectory;
+                } else {
+                    exportDirectory = cordova.file.dataDirectory;
+                }
                 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-                window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (directoryEntry) {
+                window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
                     console.log("Got directoryEntry.");
                     directoryEntry.root.getFile(filename, {create: true}, function (fileEntry) {
                         console.log("Got fileEntry for: " + filename);
@@ -1570,41 +1613,45 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
-                var format = FileTypeEnum.TXT;
-                var filename = $("#Filename").val().trim();
-                // validate input
-                if (filename.length === 0) {
-                    // user didn't type anything in
-                    // just tell them to enter something
-                    if (navigator.notification) {
-                        // on mobile device -- use notification plugin API
-                        navigator.notification.alert(i18n.t('view.errNoFilename'));
-                    } else {
-                        // in browser -- use window.confirm / window.alert
-                        alert(i18n.t('view.errNoFilename'));
-                    }
-                    $("#Filename").focus();
-                } else {
-                    // get the desired format
-                    if ($("#exportXML").is(":checked")) {
-                        format = FileTypeEnum.XML;
-                    } else if ($("#exportUSX").is(":checked")) {
-                        format = FileTypeEnum.USX;
-                    } else if ($("#exportUSFM").is(":checked")) {
-                        format = FileTypeEnum.USFM;
-                    } else {
-                        // fallback to plain text
-                        format = FileTypeEnum.TXT;
-                    }
-                    // update the UI
-                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                    $("#loading").html(i18n.t("view.lblExportingPleaseWait"));
-                    $("#status").html(i18n.t("view.dscExporting", {file: filename}));
-                    $("#OK").hide();
-                    // perform the export
-                    exportDocument(bookid, format, filename);
+                if ($("#exportXML").length === 0) {
+                    // if this is the export complete page,
                     // go back to the previous page
-//                    window.history.go(-1);
+                    window.history.go(-1);
+                } else {
+                    var format = FileTypeEnum.TXT;
+                    var filename = $("#Filename").val().trim();
+                    // validate input
+                    if (filename.length === 0) {
+                        // user didn't type anything in
+                        // just tell them to enter something
+                        if (navigator.notification) {
+                            // on mobile device -- use notification plugin API
+                            navigator.notification.alert(i18n.t('view.errNoFilename'));
+                        } else {
+                            // in browser -- use window.confirm / window.alert
+                            alert(i18n.t('view.errNoFilename'));
+                        }
+                        $("#Filename").focus();
+                    } else {
+                        // get the desired format
+                        if ($("#exportXML").is(":checked")) {
+                            format = FileTypeEnum.XML;
+                        } else if ($("#exportUSX").is(":checked")) {
+                            format = FileTypeEnum.USX;
+                        } else if ($("#exportUSFM").is(":checked")) {
+                            format = FileTypeEnum.USFM;
+                        } else {
+                            // fallback to plain text
+                            format = FileTypeEnum.TXT;
+                        }
+                        // update the UI
+                        $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                        $("#loading").html(i18n.t("view.lblExportingPleaseWait"));
+                        $("#status").html(i18n.t("view.dscExporting", {file: filename}));
+                        $("#OK").hide();
+                        // perform the export
+                        exportDocument(bookid, format, filename);
+                    }
                 }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
