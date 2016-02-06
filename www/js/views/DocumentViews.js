@@ -1316,7 +1316,7 @@ define(function (require) {
                 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
                 window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
                     console.log("Got directoryEntry.");
-                    directoryEntry.root.getFile(filename, {create: true}, function (fileEntry) {
+                    directoryEntry.getFile(filename, {create: true}, function (fileEntry) {
                         console.log("Got fileEntry for: " + filename);
                         fileEntry.createWriter(function (fileWriter) {
                             console.log("Got fileWriter");
