@@ -25,7 +25,7 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
-    <preference name="AndroidPersistentFileLocation" value="Internal" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <!-- PhoneGap Build - core plugins -->
     <plugin name="cordova-plugin-device" source="npm" />
     <plugin name="cordova-plugin-file" source="npm" />

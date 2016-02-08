@@ -1307,11 +1307,15 @@ define(function (require) {
 
             if (window.sqlitePlugin) {
                 // mobile device
-                if (cordova.file.documentsDirectory.length > 0) {
-                    // prefer the documents directory; fall back on the data directory
+                if (cordova.file.documentsDirectory !== null) {
+                    // iOS, OSX
                     exportDirectory = cordova.file.documentsDirectory;
+                } else if (cordova.file.sharedDirectory !== null) {
+                    // BB10
+                    exportDirectory = cordova.file.sharedDirectory;
                 } else {
-                    exportDirectory = cordova.file.dataDirectory;
+                    // Android
+                    exportDirectory = cordova.file.externalDataDirectory;
                 }
                 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
                 window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
