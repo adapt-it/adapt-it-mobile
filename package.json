@@ -1,0 +1,27 @@
+{
+  "name": "adapt-it-mobile",
+  "version": "0.5.5",
+  "description": "Adapt It Mobile",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adapt-it/adapt-it-mobile.git"
+  },
+  "author": "Erik Brommers",
+  "license": "Apache-2.0",
+  "keywords": [
+    "cordova",
+    "translation editor",
+    "android",
+    "amazon-fireos",
+    "ios",
+    "adaptation"
+  ],
+  "devDependencies": {
+        "gulp": "latest",
+        "cordova-lib": "5.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
+  },
+  "homepage": "https://github.com/adapt-it/adapt-it-mobile"
+}
