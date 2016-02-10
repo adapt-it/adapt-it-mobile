@@ -6,7 +6,7 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 
 ## Implementation Details
 
-Adapt It Mobile is built using the cross-platform mobile framework [PhoneGap](http://phonegap.com/). We are currently developing versions for Android, iOS and Windows Phone 8 (with FirefoxOS under consideration for non-Roman script support).
+Adapt It Mobile is built using the cross-platform mobile framework [PhoneGap](http://phonegap.com/). We are currently developing versions for Android, iOS and Windows Phone 8.
 
 ## Getting Started
 
