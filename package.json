@@ -20,6 +20,16 @@
         "gulp": "latest",
         "cordova-lib": "5.4.0"
   },
+  "dependencies": {
+    "cordova-android": "^3.5.1",
+    "cordova-ios": "^3.5.0",
+    "cordova-plugin-device": "latest",
+    "cordova-plugin-file": "latest",
+    "cordova-plugin-file-transfer": "latest",
+    "cordova-plugin-globalization": "latest",
+    "cordova-plugin-dialogs": "latest",
+    "cordova-plugin-fonts": "latest"
+  },
   "bugs": {
     "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
   },
