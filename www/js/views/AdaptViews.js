@@ -89,12 +89,10 @@ define(function (require) {
                 }
                 if (found === false) {
                     // no entry in KB with this source/target -- add one
-                    var newRS = [
-                        {
+                    var newRS = {
                             'target': targetValue,
                             'n': '1'
-                        }
-                    ];
+                        };
                     refstrings.push(newRS);
                 }
                 // sort the refstrings collection on "n" (refcount)
@@ -1024,13 +1022,6 @@ define(function (require) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
-                            var original = $.fn.val;
-                            $.fn.val = function () {
-                                if ($(this).is('*[contenteditable=true]')) {
-                                    return $.fn.html.apply(this, arguments);
-                                }
-                                return original.apply(this, arguments);
-                            };
                             $(event.currentTarget).typeahead(
                                 {
                                     hint: true,
@@ -1051,7 +1042,28 @@ define(function (require) {
 //                                    }
                                 }
                             );
-                            $(event.currentTarget).typeahead('open');
+                            // select any text in the edit field
+                            if (document.body.createTextRange) {
+                                range = document.body.createTextRange();
+                                range.moveToElementText($(event.currentTarget));
+                                range.select();
+                            } else if (window.getSelection) {
+                                selection = window.getSelection();
+                                range = document.createRange();
+                                range.selectNodeContents($(event.currentTarget)[0]);
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                            }
+                            // if the user didn't click the next/prev field, it's possible that we went offscreen
+                            // while looking for the next available slot to adapt. Make sure the edit field is in
+                            // view by scrolling the UI
+                            if (nextOrPrevObj === true) {
+                                // scroll the edit field into view
+                                top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+    //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+                                $("#content").scrollTop(top);
+                            }
+//                            $(event.currentTarget).typeahead('open');
                         }
                     } else {
                         // nothing in the KB

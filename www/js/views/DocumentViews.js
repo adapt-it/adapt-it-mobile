@@ -91,12 +91,10 @@ define(function (require) {
                 }
                 if (found === false) {
                     // no entry in KB with this source/target -- add one
-                    var newRS = [
-                        {
+                    var newRS = {
                             'target': targetValue,
                             'n': '1'
-                        }
-                    ];
+                        };
                     refstrings.push(newRS);
                 }
                 // sort the refstrings collection on "n" (refcount)
