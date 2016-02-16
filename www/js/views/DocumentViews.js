@@ -51,6 +51,84 @@ define(function (require) {
             }
             return str;
         },
+        
+        // Helper method to store the specified source and target text in the KB.
+        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
+            var elts = kblist.filter(function (element) {
+                return (element.attributes.projectid === projectid &&
+                   element.attributes.source === sourceValue);
+            });
+            var tu = null,
+                curDate = new Date(),
+                timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+            if (elts.length > 0) {
+                tu = elts[0];
+            }
+            if (tu) {
+                var i = 0,
+                    found = false,
+                    refstrings = tu.get('refstring');
+                // delete or decrement the old value
+                if (oldTargetValue.length > 0) {
+                    // there was an old value -- try to find and remove the corresponding KB entry
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === oldTargetValue) {
+                            if (refstrings[i].n !== '0') {
+                                // more than one refcount -- decrement it
+                                refstrings[i].n--;
+                            }
+                            break;
+                        }
+                    }
+                }
+                // add or increment the new value
+                for (i = 0; i < refstrings.length; i++) {
+                    if (refstrings[i].target === targetValue) {
+                        refstrings[i].n++;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found === false) {
+                    // no entry in KB with this source/target -- add one
+                    var newRS = [
+                        {
+                            'target': targetValue,
+                            'n': '1'
+                        }
+                    ];
+                    refstrings.push(newRS);
+                }
+                // sort the refstrings collection on "n" (refcount)
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
+                // update the KB model
+                tu.set('refstring', refstrings, {silent: true});
+                tu.set('timestamp', timestamp, {silent: true});
+                tu.update();
+            } else {
+                // no entry in KB with this source -- add one
+                var newID = Underscore.uniqueId(),
+                    newTU = new kbModels.TargetUnit({
+                        tuid: newID,
+                        projectid: projectid,
+                        source: sourceValue,
+                        refstring: [
+                            {
+                                target: targetValue,
+                                n: "1"
+                            }
+                        ],
+                        timestamp: timestamp,
+                        user: ""
+                    });
+                kblist.add(newTU);
+                newTU.save();
+            }
+        },
+        
 
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
@@ -842,7 +920,7 @@ define(function (require) {
                         // add this item to the KB
                         // TODO: build up punctpairs
                         if (sp.get('target').length > 0) {
-                            kblist.saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
+                            saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
                                             "", project.get('projectid'));
                         }
                     });
