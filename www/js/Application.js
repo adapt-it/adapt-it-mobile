@@ -69,6 +69,15 @@ define(function (require) {
                         Backbone.history.start();
                     });
                 };
+                // typeahead contenteditable workaround
+                var original = $.fn.val;
+                $.fn.val = function () {
+                    if ($(this).is('*[contenteditable=true]')) {
+                        return $.fn.html.apply(this, arguments);
+                    }
+                    return original.apply(this, arguments);
+                };
+                
                 // add the UI regions (just the main "content" for now)
                 this.addRegions({
                     main: '#main'

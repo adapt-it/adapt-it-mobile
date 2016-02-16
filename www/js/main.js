@@ -27,7 +27,7 @@ require.config({
         utils: '../js/utils',
         tpl: '../tpl',
         // libraries
-        typeahead: 'typeahead.jquery',
+        typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.4.min',
         'languages': '../js/utils/languages',
