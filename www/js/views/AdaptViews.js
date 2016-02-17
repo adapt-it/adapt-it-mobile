@@ -1017,12 +1017,17 @@ define(function (require) {
                             MovingDir = 0;
                             isDirty = false; // no change yet
                             options.length = 0; // clear out any old cruft
+//                            // select the first result (most frequently used)
+//                            targetText = this.autoAddCaps(model, refstrings[0].target);
+//                            $(event.currentTarget).html(targetText);
+                            // mark this as a typeahead class
+                            $(event.currentTarget).addClass('typeahead');
                             // build our list of options from the refstrings
                             for (i = 0; i < refstrings.length; i++) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
-                            $(event.currentTarget).typeahead(
+                            $('.typeahead').typeahead(
                                 {
                                     hint: true,
                                     highlight: true,
