@@ -1048,40 +1048,53 @@ span.sprite{
 /*
 typeahead styles
 */
+/*
 .tt-query,
 .tt-hint {
-  width: 396px;
-  height: 30px;
-  padding: 8px 12px;
-  font-size: 24px;
-  line-height: 30px;
-  border: 2px solid #ccc;
-  -webkit-border-radius: 8px;
-     -moz-border-radius: 8px;
-          border-radius: 8px;
+background-color: #fff;
+    border: 1px solid #0036ff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px #6fb5f1;
+    color: #454545;    
+  height: 2rem;
+  padding: 6px 6px;
+  font-size: 16px;
+  line-height: 2rem;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
   outline: none;
 }
+*/
 
-.tt-query {
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+/*
+.tt-input {
+    background-color: #fff;
+    border: 1px solid #0036ff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px #6fb5f1;
+    color: #454545;    
+  height: 2rem;
+  padding: 6px 6px;
+  font-size: 16px;
+  line-height: 2rem;
+  border: 1px solid transparent;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  outline: none;
 }
-
-.tt-hint {
-  color: #999
-}
+*/
 
 .tt-menu {
-  width: 422px;
   margin: 12px 0;
   padding: 8px 0;
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  -webkit-border-radius: 8px;
-     -moz-border-radius: 8px;
-          border-radius: 8px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
@@ -1089,8 +1102,8 @@ typeahead styles
 
 .tt-suggestion {
   padding: 3px 20px;
-  font-size: 18px;
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 2rem;
 }
 
 .tt-suggestion:hover {

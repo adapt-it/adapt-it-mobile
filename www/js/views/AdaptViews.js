@@ -586,6 +586,7 @@ define(function (require) {
                 "touchend .target": "selectedAdaptation",
                 "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
+                "typeahead:select .typeahead": "selectKB",
                 "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
@@ -1201,6 +1202,11 @@ define(function (require) {
                     isDirty = true;
                 }
             },
+            // User has picked an option from the typeahead widget (a KB value)
+            selectKB: function (event, suggestion) {
+                $(".target").removeClass("typeahead");
+                $(".target").html(suggestion);
+            },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
             // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
@@ -1237,6 +1243,12 @@ define(function (require) {
                 trimmedValue = value.trim();
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
+                if (strID === undefined) {
+                    // this might be the tt-input div if we are in a typeahead (multiple KB) input -
+                    // if so, go up one more level to find the pile
+                    strID = $(event.currentTarget.parentElement.parentElement).attr('id');
+                    $('.typeahead').typeahead('destroy');
+                }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 model = this.collection.findWhere({spid: strID});
                 // check for changes in the edit field
