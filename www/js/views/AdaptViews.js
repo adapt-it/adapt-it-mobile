@@ -1021,6 +1021,9 @@ define(function (require) {
 //                            // select the first result (most frequently used)
 //                            targetText = this.autoAddCaps(model, refstrings[0].target);
 //                            $(event.currentTarget).html(targetText);
+                            if ($('.typeahead').length === 0) {
+                                $('.typeahead').typeahead('destroy');
+                            }
                             // mark this as a typeahead class
                             $(event.currentTarget).addClass('typeahead');
                             // build our list of options from the refstrings
