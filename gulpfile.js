@@ -2,6 +2,7 @@
 var gulp = require("gulp"),
     fs = require("fs"),
     ts = require("gulp-typescript"),
+    path = require("path"),
     cordova = require("cordova-lib").cordova.raw,
     buildDir = path.join(__dirname, 'build'),
     plugins = ['org.apache.cordova.file'],
@@ -17,7 +18,7 @@ var gulp = require("gulp"),
     platformsToBuild = process.platform === "darwin" ? osxPlatforms :
                        (process.platform === "linux" ? linuxPlatforms : winPlatforms);
 
-gulp.task("default", ["package"], function () {
+gulp.task("default", ["build"], function () {
     // Copy results to bin folder
     gulp.src("platforms/android/ant-build/*.apk").pipe(gulp.dest("bin/release/android"));   // Ant build
     gulp.src("platforms/android/bin/*.apk").pipe(gulp.dest("bin/release/android"));         // Gradle build
@@ -73,6 +74,6 @@ gulp.task("build-ios", ["scripts"], function () {
     return cordova.build("ios", buildArgs);
 });
 
-gulp.task("package", ["build"], function () {
-    return cordova.packageProject(platformsToBuild);
-});
+//gulp.task("package", ["build"], function () {
+//    return cordova.packageProject(platformsToBuild);
+//});
