@@ -1021,6 +1021,7 @@ define(function (require) {
 //                            // select the first result (most frequently used)
 //                            targetText = this.autoAddCaps(model, refstrings[0].target);
 //                            $(event.currentTarget).html(targetText);
+                            // We shouldn't have any old typeahead fields, but just in case...
                             if ($('.typeahead').length === 0) {
                                 $('.typeahead').typeahead('destroy');
                             }
@@ -1031,7 +1032,7 @@ define(function (require) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
-                            $('.typeahead').typeahead(
+                            $(event.currentTarget).typeahead(
                                 {
                                     hint: true,
                                     highlight: true,
@@ -1208,7 +1209,7 @@ define(function (require) {
             // User has picked an option from the typeahead widget (a KB value)
             selectKB: function (event, suggestion) {
                 $(".target").removeClass("typeahead");
-                $(".target").html(suggestion);
+                $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
@@ -1247,10 +1248,12 @@ define(function (require) {
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
                 if (strID === undefined) {
+                    console.log("value: " + value);
                     // this might be the tt-input div if we are in a typeahead (multiple KB) input -
                     // if so, go up one more level to find the pile
                     strID = $(event.currentTarget.parentElement.parentElement).attr('id');
-                    $('.typeahead').typeahead('destroy');
+                    // while we're at it, destroy the typeahead control
+                    $(event.currentTarget).typeahead('destroy');
                 }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 model = this.collection.findWhere({spid: strID});
