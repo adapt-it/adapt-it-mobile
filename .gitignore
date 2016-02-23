@@ -8,6 +8,9 @@ plugins/
 ## ignore copied (local) directories
 /res/
 
+## ignore node_modules installed locally
+node_modules/
+
 #################
 ## Eclipse
 #################

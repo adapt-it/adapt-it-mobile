@@ -17,9 +17,14 @@
     "adaptation"
   ],
   "devDependencies": {
+    "cordova-lib": "5.4.0",
     "gulp": "latest",
+    "gulp-cordova-build-android": "^1.3.0",
+    "gulp-cordova-build-ios": "^1.0.0",
+    "gulp-cordova-create": "^1.2.0",
+    "gulp-cordova-plugin": "^1.4.0",
     "gulp-typescript": "latest",
-    "cordova-lib": "5.4.0"
+    "plist": "^1.2.0"
   },
   "dependencies": {
     "cordova-android": "^3.5.1",
