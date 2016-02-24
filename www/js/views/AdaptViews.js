@@ -1021,12 +1021,6 @@ define(function (require) {
 //                            // select the first result (most frequently used)
 //                            targetText = this.autoAddCaps(model, refstrings[0].target);
 //                            $(event.currentTarget).html(targetText);
-                            // We shouldn't have any old typeahead fields, but just in case...
-                            if ($('.typeahead').length === 0) {
-                                $('.typeahead').typeahead('destroy');
-                            }
-                            // mark this as a typeahead class
-                            $(event.currentTarget).addClass('typeahead');
                             // build our list of options from the refstrings
                             for (i = 0; i < refstrings.length; i++) {
                                 options.push(refstrings[i].target);
@@ -1208,7 +1202,7 @@ define(function (require) {
             },
             // User has picked an option from the typeahead widget (a KB value)
             selectKB: function (event, suggestion) {
-                $(".target").removeClass("typeahead");
+                // fill the edit field with the selection
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
             },
             // Input text has changed in the target field -
@@ -1252,7 +1246,7 @@ define(function (require) {
                     // this might be the tt-input div if we are in a typeahead (multiple KB) input -
                     // if so, go up one more level to find the pile
                     strID = $(event.currentTarget.parentElement.parentElement).attr('id');
-                    // while we're at it, destroy the typeahead control
+                    // destroy the typeahead control in the edit field
                     $(event.currentTarget).typeahead('destroy');
                 }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
