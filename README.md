@@ -12,11 +12,11 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
 
-Adapt It Mobile is currently in alpha stage development, nearing a public beta. If you'd like to try it out and let us know how we're doing so far, take a look at our [installation guide](Using-Adapt-It-Mobile).
+Adapt It Mobile is currently in alpha stage development, nearing a public beta. If you'd like to try it out and let us know how we're doing so far, take a look at our [installation guide](https://github.com/adapt-it/adapt-it-mobile/wiki/Using-Adapt-It-Mobile).
 
 ## ![Contribute](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/build.png) Contributing to the Project
 
-For those wanting to contribute to this project, check out the [wiki pages](Contributing-to-Adapt-It-Mobile). If you're a coder, tester, interface designer, or would like to localize Adapt It Mobile to your language, we'd love to talk!
+For those wanting to contribute to this project, check out the [wiki pages](https://github.com/adapt-it/adapt-it-mobile/wiki/Contributing-to-Adapt-It-Mobile). If you're a coder, tester, interface designer, or would like to localize Adapt It Mobile to your language, we'd love to talk!
 
 ## Philosophy
 
