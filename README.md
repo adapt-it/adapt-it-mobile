@@ -4,17 +4,19 @@ Adapt It Mobile is a **simple related language translation editor** designed spe
 
 Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](http://adapt-it.org/), written -- by the same developers -- specifically for mobile devices.
 
-## Implementation Details
+## System Requirements
 
-Adapt It Mobile is built using the cross-platform mobile framework [PhoneGap](http://phonegap.com/). We are currently developing versions for Android, iOS and Windows Phone 8.
+- Android tablet or smart phone running Android 4.0.x or later
+- Apple iPad, iPod or iPhone running iOS 8.x or later
 
-## Getting Started
 
-Adapt It Mobile is currently under development. Please check back at a later date for installation details.
+## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
 
-## Contributing to the Project
+Adapt It Mobile is currently in alpha stage development, nearing a public beta. If you'd like to try it out and let us know how we're doing so far, take a look at our [installation guide](Using-Adapt-It-Mobile).
 
-For those wanting to contribute to this project, check out the [wiki pages](https://github.com/adapt-it/adapt-it-mobile/wiki). If you're a coder, tester, interface designer, or would like to localize Adapt It Mobile to your language, we'd love to talk!
+## ![Contribute](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/build.png) Contributing to the Project
+
+For those wanting to contribute to this project, check out the [wiki pages](Contributing-to-Adapt-It-Mobile). If you're a coder, tester, interface designer, or would like to localize Adapt It Mobile to your language, we'd love to talk!
 
 ## Philosophy
 
