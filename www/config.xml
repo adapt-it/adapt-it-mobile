@@ -94,9 +94,11 @@
         <icon src="res/icon/ios/icon-72@2x.png" width="144" height="144" />
         <icon src="res/icon/ios/icon-76.png" width="76" height="76" />
         <icon src="res/icon/ios/icon-76@2x.png" width="152" height="152" />
+        <icon src="res/icon/ios/icon-83@2x.png" width="167" height="167" />
         <!-- Spotlight icons -->
         <icon src="res/icon/ios/icon-small.png" width="29" height="29" />
         <icon src="res/icon/ios/icon-small@2x.png" width="58" height="58" />
+        <icon src="res/icon/ios/icon-small@3x.png" width="87" height="87" />
         <icon src="res/icon/ios/icon-40.png" width="40" height="40" />
         <icon src="res/icon/ios/icon-40@2x.png" width="80" height="80" />
         <icon src="res/icon/ios/icon-50.png" width="50" height="50" />
@@ -108,7 +110,7 @@
         <splash src="res/screen/ios/screen-ipad-portrait.png" width="768" height="1024" />
         <splash src="res/screen/ios/screen-ipad-portrait_2x.png" width="1536" height="2048" />
         <splash src="res/screen/ios/screen-ipad-landscape.png" width="1024" height="768" />
-        <splash src="res/screen/ios/screen-ipad-landscape_2x.png" width="2048" height="1496" />
+        <splash src="res/screen/ios/screen-ipad-landscape_2x.png" width="2048" height="1536" />
         <splash src="res/screen/ios/screen-iphone6-portrait_2x.png" width="750" height="1334"/>
         <splash src="res/screen/ios/screen-iphone6-landscape_2x.png" width="1334" height="750"/>
         <splash src="res/screen/ios/screen-iphone6p-portrait_3x.png" width="1242" height="2208"/>
