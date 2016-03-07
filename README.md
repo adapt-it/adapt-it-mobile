@@ -1,4 +1,4 @@
-# [Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile)
+# ![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/www/res/icon/ios/icon.png) Adapt It Mobile
 
 Adapt It Mobile is a **simple related language translation editor** designed specifically for mobile devices. Using a tablet or smartphone, you can use Adapt It Mobile to quickly translate text from one language to another related language. Previous translations are stored in a translation memory called a _Knowledge Base_, and are suggested the next time that particular word or phrase is encountered.
 
