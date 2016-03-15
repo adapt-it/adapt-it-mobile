@@ -49,7 +49,7 @@ define(function (require) {
         caseSource = [],
         caseTarget = [],
         tmpTargetValue = "",
-        
+
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -90,7 +90,7 @@ define(function (require) {
                 if (found === false) {
                     // no entry in KB with this source/target -- add one
                     var newRS = {
-                            'target': targetValue,
+                            'target': _.unescape(targetValue),  //klb
                             'n': '1'
                         };
                     refstrings.push(newRS);
@@ -113,7 +113,7 @@ define(function (require) {
                         source: sourceValue,
                         refstring: [
                             {
-                                target: targetValue,
+                                target: _.unescape(targetValue),  //klb
                                 n: "1"
                             }
                         ],
@@ -125,7 +125,7 @@ define(function (require) {
             }
         },
 
-        
+
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
@@ -163,7 +163,7 @@ define(function (require) {
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // Text direction
-            // Default layout is LTR in our CSS file; 
+            // Default layout is LTR in our CSS file;
             // if both languages are RTL, switch the layout of the chapter element and flow of text
             if (project.get('SourceDir') === 'rtl' && project.get('TargetDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
@@ -196,14 +196,14 @@ define(function (require) {
         SourcePhraseView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplSourcePhrase)
         }),
-        
+
         // SourcePhraseListView
         // Displays the collection of SourcePhrases for the current chapter. Also contains the logic for
         // adapting, KB updates, etc.
         SourcePhraseListView = Marionette.CollectionView.extend({
             chapterid: 0,
             chapterName: "",
-            
+
             template: Handlebars.compile(tplSourcePhraseList),
 
             initialize: function () {
@@ -280,7 +280,7 @@ define(function (require) {
                 var curDate = new Date();
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
-            // Helper method to strip any starting / ending punctuation from the target field. 
+            // Helper method to strip any starting / ending punctuation from the target field.
             // This method is called from unselectedAdaptation before the target text is stored in the KB,
             // so we don't store items w
             stripPunctuation: function (target) {
@@ -398,7 +398,7 @@ define(function (require) {
                 return theString;
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
-            // This method currently strips out all punctuation to match the words; a null is returned 
+            // This method currently strips out all punctuation to match the words; a null is returned
             // if there is no entry in the KB
             findInKB: function (key) {
                 var result = null,
@@ -535,7 +535,7 @@ define(function (require) {
                                     window.Application.home();
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -544,7 +544,7 @@ define(function (require) {
                     console.log("next edit: " + next_edit.id);
                     $(next_edit.childNodes[4]).mouseup();
                 } else {
-                    // no next edit (reached the first or last pile) -- 
+                    // no next edit (reached the first or last pile) --
                     // clear out the moving direction so we don't keep going
                     MovingDir = 0;
                 }
@@ -590,7 +590,7 @@ define(function (require) {
                 "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
-            
+
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 var model = null,
@@ -630,7 +630,7 @@ define(function (require) {
                     // is this multi-touch or a single touch?
 //                    if (event.targetTouches && event.targetTouches.length === 2) {
 //                        // multi-touch
-//                        
+//
 //                        // figure out what's going to be the start and end (selectedStart / selectedEnd)
 //                        for (var i = 0; i < 2; i++) {
 //                            // sanity check -- only respond to items inside the current pile
@@ -677,9 +677,9 @@ define(function (require) {
                     }
                 }
             },
-            // User released the mouse on a pile or target. Here we'll check to see if the user 
+            // User released the mouse on a pile or target. Here we'll check to see if the user
             // started selecting a phrase and had a "fat finger" moment, missing the source line when
-            // they finished their selection. If so, we'll manually fire a Mouse Up event on the 
+            // they finished their selection. If so, we'll manually fire a Mouse Up event on the
             // source line instead.
             checkStopSelecting: function (event) {
                 if (isSelecting === true) {
@@ -866,7 +866,7 @@ define(function (require) {
                         // in browser
                         alert(message);
                     }
-                    
+
                 }
             },
             // mouseDown / touchStart event handler for the target field
@@ -874,7 +874,7 @@ define(function (require) {
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
             },
-            // mouseUp / touchEnd event handler for the target field 
+            // mouseUp / touchEnd event handler for the target field
             selectedAdaptation: function (event) {
                 var tu = null,
                     prevID = "",
@@ -896,7 +896,7 @@ define(function (require) {
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
-                // to save the target value to the model and KB in the unselectedAdaptation() handler. 
+                // to save the target value to the model and KB in the unselectedAdaptation() handler.
                 // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
                 if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
                     // focus event
@@ -1108,7 +1108,7 @@ define(function (require) {
                     // empty field, or did we just select this one?
                     console.log("Target NOT empty; MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
                     if (MovingDir !== 0 && isDrafting === true) {
-                        // looking for the next empty field -- 
+                        // looking for the next empty field --
                         // clear the dirty bit and keep going
                         isDirty = false;
                         this.moveCursor(event, (MovingDir === 1) ? true : false);
@@ -1237,7 +1237,10 @@ define(function (require) {
                     clearKBInput = false;
                 }
                 // get the adaptation text
-                value = $(event.currentTarget).text();
+                //value = $(event.currentTarget).text();
+                value = _.escape($(event.currentTarget).text());
+                // if needed use regex to replace chars we don't want stored in escaped format
+                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
                 trimmedValue = value.trim();
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
@@ -1275,7 +1278,7 @@ define(function (require) {
                             $(event.currentTarget).html("");
                             trimmedValue = "";
                         } else {
-                            // something in the old target field -- just clear the local copy so the 
+                            // something in the old target field -- just clear the local copy so the
                             // model doesn't update
                             trimmedValue = "";
                             // add any punctuation back to the target field
@@ -1645,7 +1648,7 @@ define(function (require) {
 
         // ChapterView
         // Top-level frame for the Adaptation page. Loads the sourcephrases for the current chapter, sends down the events
-        // for the phrase / placeholder / retranslation / next and previous buttons, and sets up the help walkthrough code. 
+        // for the phrase / placeholder / retranslation / next and previous buttons, and sets up the help walkthrough code.
         ChapterView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplChapter),
             initialize: function () {
@@ -1731,7 +1734,7 @@ define(function (require) {
             toggleRetranslation: function (event) {
                 this.listView.toggleRetranslation(event);
             },
-            // User clicked away from 
+            // User clicked away from
             unselectPiles: function (event) {
                 // only do this if we're in a blank area of the screen
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
