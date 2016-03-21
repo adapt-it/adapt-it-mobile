@@ -172,6 +172,7 @@
         "dscCopyProjectFound": "Proyecto: \"__project__.\"",
         "dscCopyDocumentFound": "Documento: \"__document__.\"",
         "dscCopyDocumentFailed": "No se pudo importar el documento: \"__document__\". Razón: __reason__",
+        "dscExportFailed": "No se pudo exportar el \"__document__\". Razón: __reason__",
         "dscErrDuplicateFile": "el archivo ya se ha importado.",
         "dscErrCannotFindID": "no pudo encontrar el identificador del libro.",
         "dscErrCannotFindChapter": "no pudo encontrar el número del capítulo.",

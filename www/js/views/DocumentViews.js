@@ -1389,6 +1389,9 @@ define(function (require) {
                 } else if (cordova.file.sharedDirectory !== null) {
                     // BB10
                     exportDirectory = cordova.file.sharedDirectory;
+                } else if (cordova.file.externalRootDirectory !== null) {
+                    // Android, BB10
+                    exportDirectory = cordova.file.externalRootDirectory;
                 } else {
                     // Android
                     exportDirectory = cordova.file.externalDataDirectory;
@@ -1416,9 +1419,9 @@ define(function (require) {
                                 exportXML();
                                 break;
                             }
-                        }, exportFail);
-                    }, exportFail);
-                }, exportFail);
+                        }, exportFail(e));
+                    }, exportFail(e));
+                }, exportFail(e));
             } else {
                 // browser
                 var requestedBytes = 10 * 1024 * 1024; // 10MB
@@ -1444,10 +1447,10 @@ define(function (require) {
                                     exportXML();
                                     break;
                                 }
-                            }, exportFail);
-                        }, exportFail);
-                    }, exportFail);
-                }, exportFail);
+                            }, exportFail(e));
+                        }, exportFail(e));
+                    }, exportFail(e));
+                }, exportFail(e));
             }
         },
         
