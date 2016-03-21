@@ -172,6 +172,7 @@
         "dscCopyProjectFound": "Painim projek: \"__project__.\"",
         "dscCopyDocumentFound": "Painim dokumen: \"__document__.\"",
         "dscCopyDocumentFailed": "Impot no inap kisim \"__document__\". As em olsem: __reason__",
+        "dscExportFailed": "Export failed for \"__document__\". Reason: __reason__",
         "dscErrDuplicateFile": "wanpela fail i stap pinis.",
         "dscErrCannotFindID": "no save long dispela buk ID.",
         "dscErrCannotFindChapter": "no inap painim sapta namba.",
