@@ -1,0 +1,36 @@
+{{! SelectProject.html
+    Template for rendering the new project page -- used by NewProjectView.js.
+}}
+
+<div class="topcoat-navigation-bar bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="#">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle"></h1>
+    </div>
+    <div class="topcoat-navigation-bar__item right">{{!
+        <a href="#help" class="topcoat-icon-button--quiet">
+            <span id="help" class="topcoat-icon topcoat-icon--help"></span>
+        </a>}}
+    </div>
+</div>
+<div class="container">
+<div class="topcoat-list__container scroller" style="width:100%; top:0; border-bottom: 1px solid #9daca9;">
+    <div class="wizard-instructions" id="StepInstructions"></div>
+    <div id="StepContainer" style="height: calc(100% - 100px);"></div>
+</div>
+</div>
+<div id="WizardSteps">
+    <div class='topcoat-progress-bar'>
+        <span class='topcoat-progress' id="progress"></span>
+    </div>
+    <button class="topcoat-button" id="Prev"><span class="topcoat-icon topcoat-icon--back"></span> <span id="lblPrev"></span></button>
+    <button class="topcoat-button" id="Next"><span id="lblNext"></span> <span class="topcoat-icon topcoat-icon--forward" id="imgNext"></span></button>
+</div>
+<div id="OKCancelButtons" hidden="true">
+        <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
+        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></span></button>
+</div>

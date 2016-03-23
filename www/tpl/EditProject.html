@@ -1,0 +1,74 @@
+<div class="topcoat-navigation-bar bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="#">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle">{{t 'view.ttlEditProject'}}</h1>
+    </div>
+    <div class="topcoat-navigation-bar__item right">{{!
+        <a href="#help" class="topcoat-icon-button--quiet">
+            <span id="help" class="topcoat-icon topcoat-icon--help"></span>
+        </a>}}
+    </div>
+</div>
+<div class="container" style="height: calc(100% - 70px);">
+<div class="topcoat-list__container scroller" style="width:100%; top:0; border-bottom: 1px solid #9daca9;">
+    <div class="Instructions" id="StepInstructions" hidden="true"></div>
+    <div id="StepContainer" style="height: calc(100% - 100px);" hidden="true"></div>
+<ul class="chapter-list topcoat-list__container" id="ProjectItems">
+<li class="topcoat-list__item">
+    <a id="SourceLanguage">
+    <header><h3>{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</h3></header>
+    <div class="control-row">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="TargetLanguage">
+    <header><h3>{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</h3></header>
+    <div class="control-row">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="sourceFont">
+    <header><h3>{{t 'view.lblSourceFont'}}</h3></header>
+    <div style="color: {{SourceColor}}; font-size: {{SourceFontSize}}px; font-family: '{{SourceFont}}';">{{SourceFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="targetFont">
+    <header><h3>{{t 'view.lblTargetFont'}}</h3></header>
+    <div style="color: {{TargetColor}}; font-size: {{TargetFontSize}}px; font-family: '{{TargetFont}}';">{{TargetFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="navFont">
+    <header><h3>{{t 'view.lblNavFont'}}</h3></header>
+    <div style="color: {{NavigationColor}}; font-size: {{NavigationFontSize}}px; font-family:'{{NavigationFont}}';">{{NavigationFont}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="Punctuation">
+    <header><h3>{{t 'view.ttlPunctuation'}}</h3></header>
+    <div>{{#ifCond CopyPunctuation '==' 'true'}}{{ t 'view.lblCopyPunctuation'}}{{else}}{{ t 'view.lblNoPunctuationCopy'}}{{/ifCond}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="Cases">
+    <header><h3>{{t 'view.ttlCases'}}</h3></header>
+    <div>{{#ifCond AutoCapitalization '==' 'true'}}{{ t 'view.lblAutoCapitalize'}}{{else}}{{ t 'view.lblNoAutoCapitalization'}}{{/ifCond}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+<li class="topcoat-list__item">
+    <a id="Filtering">
+    <header><h3>{{t 'view.ttlFilter'}}</h3></header>
+    <div>{{#ifCond CustomFilters '==' 'true'}}{{ t 'view.lblCustomFilters'}}{{else}}{{ t 'view.lblFilteringDefault'}}{{/ifCond}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
+</ul></div>
+</div>
+<div id="OKCancelButtons" hidden="true">
+        <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
+        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></span></button>
+</div>

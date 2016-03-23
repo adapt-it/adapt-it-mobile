@@ -1,0 +1,12 @@
+<div id="source" class="control-group"><header><h3 id="ttlFont" class="center">{{name}}</h3></header>
+    <div class="control-row">
+        <label id="fontLabel" for="font">{{t 'view.lblFont'}}</label>
+        <select id="font" class="docNav" ></select>
+    </div>
+    <div class="control-row">{{t 'view.lblSize'}} <span style="font-size: 12px;">A</span><input id="FontSize" type='range' class='topcoat-range-input' name="FontSize" min="12" max="24" value="{{size}}"><span style="font-size: 24px;">A</span></div>
+    <div class="control-row">{{t 'view.lblColor'}} <input type="text" name="color" id='color' value="{{color}}" /></div>
+    <div class="control-group">
+        <div class="control-row"><span>{{t 'view.lblFontSample'}}</span> <span id="sample" style="font-size:{{size}}px; font-family:'{{typeface}}'; color:{{color}};">{{name}}</span></div>
+    </div>
+    <div class="control-row" id='variations'></div>
+</div>

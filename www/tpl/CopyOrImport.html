@@ -1,0 +1,29 @@
+{{! CopyOrImport.html
+    Template for rendering the Copy Project and Import Documents pages. 
+    Used by ProjectViews.js and DocumentViews.js.
+}}
+
+<div class="topcoat-navigation-bar bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="title"></h1>
+    </div>
+    <div class="topcoat-navigation-bar__item right">{{!
+        <a href="#help" class="topcoat-icon-button--quiet">
+            <span id="help" class="topcoat-icon topcoat-icon--help"></span>
+        </a>}}
+    </div>
+</div>
+<div id="mobileSelect"></div>
+<div class="control-group" id="browserGroup">
+    <div class="control-row" id="lblDirections"></div>
+    <div class="control-row" id="status"></div>
+    <div id="WizardSteps">
+        <div id="browserSelect" style="display:inline-block"><label for="selFile" class="topcoat-button">{{t 'view.lblSelect'}}</label><input type="file" value="" id="selFile" multiple></div>
+        <button class="topcoat-button" id="OK">{{t 'view.lblOK'}}</button>
+    </div>
+</div>
