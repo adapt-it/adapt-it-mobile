@@ -51,11 +51,11 @@ body {
 .promo {
     background-color: white;
     border-bottom: 1px solid #279ED8;
-    padding: 3rem;
+    padding: 3rem 6px 3rem 6px;
 }
 .video {
     background-color: white;
-    padding: 3rem;
+    padding: 3rem 6px 3rem 6px;
 }
 .site {
     padding: 1rem;
@@ -69,7 +69,7 @@ body {
     display: inline-block;
     margin: 6px;
     vertical-align: top;
-    width: 350px;
+    width: 31%;
 }
 .b-header {
     font-size: 1.4rem;
@@ -97,8 +97,11 @@ body {
     .title p {
         font-size: 1.4rem;
     }
+    .benefit {
+        width: 100%;
+    }
 }
-@media screen and (min-width:500px) and (max-width: 800px) {
+@media screen and (min-width:500px) and (max-width: 900px) {
   /* iPhone, Android mdpi rules here */
     .icon {
         height: 64px;
@@ -109,5 +112,8 @@ body {
     }
     .title p {
         font-size: 1.8rem;
+    }
+    .benefit {
+        width: 45%;
     }
 }
