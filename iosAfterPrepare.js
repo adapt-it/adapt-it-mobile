@@ -16,6 +16,8 @@ module.exports = function (context) {
         "UIInterfaceOrientationLandscapeLeft",
         "UIInterfaceOrientationLandscapeRight"
     ];
+    
+    obj.UIFileSharingEnabled = "YES";
 
     xml = plist.build(obj);
     fs.writeFileSync(FILEPATH, xml, { encoding: 'utf8' });
