@@ -34,7 +34,7 @@
     <plugin name="cordova-plugin-dialogs" source="npm" />
     <plugin name="cordova-plugin-fonts" source="npm" />
 <!--    <plugin name="cordova-plugin-crosswalk-webview" source="npm" spec="1.4.0" />-->
-    <plugin name="cordova-sqlite-storage" source="npm" />
+    <plugin name="cordova-sqlite-storage" source="npm" spec="0.8.2" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)

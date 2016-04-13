@@ -90,7 +90,7 @@ define(function (require) {
                 if (found === false) {
                     // no entry in KB with this source/target -- add one
                     var newRS = {
-                            'target': _.unescape(targetValue),  //klb
+                            'target': Underscore.unescape(targetValue),  //klb
                             'n': '1'
                         };
                     refstrings.push(newRS);
@@ -113,7 +113,7 @@ define(function (require) {
                         source: sourceValue,
                         refstring: [
                             {
-                                target: _.unescape(targetValue),  //klb
+                                target: Underscore.unescape(targetValue),  //klb
                                 n: "1"
                             }
                         ],
@@ -1238,7 +1238,7 @@ define(function (require) {
                 }
                 // get the adaptation text
                 //value = $(event.currentTarget).text();
-                value = _.escape($(event.currentTarget).text());
+                value = Underscore.escape($(event.currentTarget).text());
                 // if needed use regex to replace chars we don't want stored in escaped format
                 //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
                 trimmedValue = value.trim();
