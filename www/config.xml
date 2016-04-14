@@ -4,7 +4,7 @@
         xmlns:android = "http://schemas.android.com/apk/res/android"
         id          = "org.adaptit.adaptitmobile"
         versionCode = "1" 
-        version     = "0.5.5"
+        version     = "0.5.6"
         defaultlocale = "en">
     <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
@@ -20,36 +20,40 @@
     <feature name="File" value="File" />
     <!-- preferences -->
     <preference name="android-build-tool" value="gradle" />        
-    <preference name="phonegap-version" value="cli-5.2.0" />
+    <preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashMaintainAspectRatio" value="false" />
+    <preference name="SplashShowOnlyFirstTime" value="false" />
+    <preference name="AutoHideSplashScreen" value="true" />
     <!-- PhoneGap Build - core plugins -->
-    <plugin name="cordova-plugin-device" source="npm" />
-    <plugin name="cordova-plugin-file" source="npm" />
-    <plugin name="cordova-plugin-file-transfer" source="npm" />
-    <plugin name="cordova-plugin-globalization" source="npm" />
-    <plugin name="cordova-plugin-dialogs" source="npm" />
-    <plugin name="cordova-plugin-fonts" source="npm" />
-<!--    <plugin name="cordova-plugin-crosswalk-webview" source="npm" spec="1.4.0" />-->
+    <plugin name="cordova-plugin-device" source="npm" spec="1.1.1" />
+    <plugin name="cordova-plugin-file" source="npm" spec="4.1.1" />
+    <plugin name="cordova-plugin-file-transfer" source="npm" spec="1.5.0" />
+    <plugin name="cordova-plugin-globalization" source="npm" spec="1.0.3" />
+    <plugin name="cordova-plugin-dialogs" source="npm" spec="1.2.0" />
+    <plugin name="cordova-plugin-fonts" source="npm" spec="0.4.0" />
+    <plugin name="cordova-plugin-splashscreen" source="npm" spec="3.2.1" />
     <plugin name="cordova-sqlite-storage" source="npm" spec="0.8.2" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
     -->
-    <gap:config-file platform="ios" parent="UISupportedInterfaceOrientations" mode="replace">
+    <config-file platform="ios" parent="UISupportedInterfaceOrientations" mode="replace">
         <array>
           <string>UIInterfaceOrientationPortrait</string>
           <string>UIInterfaceOrientationLandscapeLeft</string>
           <string>UIInterfaceOrientationLandscapeRight</string>
         </array>
-    </gap:config-file>
-    <gap:config-file platform="android" parent="/manifest" mode="replace">
+    </config-file>
+    <config-file platform="android" parent="/manifest" mode="replace">
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    </gap:config-file>
+    </config-file>
     <feature name="fonts">
         <param name="ios-package" value="CDVFonts" />
     </feature>
