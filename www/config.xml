@@ -123,13 +123,31 @@
     <platform name="firefoxos">
         <icon src="res/icon/firefoxos/icon-60.png" width="60" height="60" />
     </platform>
+    <platform name="windows">
+        <!-- icons -->
+        <icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
+        <icon src="res/icon/windows/StoreLogo.scale-240.png" width="120" height="120" />
+        <icon src="res/icon/windows/Square30x30Logo.png" target="Square30x30Logo" />
+        <icon src="res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
+        <icon src="res/icon/windows/Square44x44Logo.scale-240.png" width="106" height="106" />
+        <icon src="res/icon/windows/Square70x70Logo.png" target="Square70x70Logo" />
+        <icon src="res/icon/windows/Square71x71Logo.png" target="Square71x71Logo" />
+        <icon src="res/icon/windows/Square71x71Logo.scale-240.png" width="170" height="170" />
+        <icon src="res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
+        <icon src="res/icon/windows/Square150x150Logo.scale-240.png" width="360" height="360" />
+        <icon src="res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
+        <icon src="res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
+        <icon src="res/icon/windows/Wide310x150Logo.scale-240.png" width="744" height="360" />
+        <!-- splash screens -->
+        <splash src="res/screen/windows/SplashScreen.scale-100.png" width="620" height="300"/>
+        <splash src="res/screen/windows/SplashScreen.scale-240.png" width="1152" height="1920"/>
+        <splash src="res/screen/windows/SplashScreenPhone.scale-240.png" width="1152" height="1920"/>
+    </platform>        
     <platform name="wp8">
-        <icon src="res/icon/windows-phone/icon.png" gap:platform="winphone" />
-        <icon src="res/icon/windows-phone/tileicon.png" gap:platform="winphone" gap:role="background" /> 
-        <splash src="res/screen/windows-phone/screen-portrait.jpg" />
+        <!-- icons -->
+        <icon src="res/icon/wp/ApplicationIcon.png" width="99" height="99" />
+        <icon src="res/icon/wp/Background.png" width="159" height="159" />
+        <!-- splash screens -->
+        <splash src="res/screen/wp/SplashScreenImage.png" width="768" height="1280" />
     </platform>
-    <platform name="windows8">
-    </platform>
-    <!-- splash screens -->
-    <gap:splash src="splash.png" />
 </widget>
