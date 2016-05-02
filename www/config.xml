@@ -65,24 +65,18 @@
         <icon src="res/icon/android/mdpi.png" density="mdpi" />
         <icon src="res/icon/android/hdpi.png" density="hdpi" />
         <icon src="res/icon/android/xhdpi.png" density="xhdpi" />
+        <icon src="res/icon/android/xxhdpi.png" density="xxhdpi" />
+        <icon src="res/icon/android/xxxhdpi.png" density="xxxhdpi" />
         <!-- splash screens -->
         <splash src="res/screen/android/screen-ldpi-portrait.png" density="port-ldpi" />
         <splash src="res/screen/android/screen-mdpi-portrait.png" density="port-mdpi" />
         <splash src="res/screen/android/screen-hdpi-portrait.png" density="port-hdpi" />
         <splash src="res/screen/android/screen-xdpi-portrait.png" density="port-xhdpi" />
     </platform>
-    <!-- amazon's fireos uses the android icons -->
-    <platform name="amazon-fireos">
+    <platform name="blackberry10">
         <!-- icons -->
-        <icon src="res/icon/android/ldpi.png" density="ldpi" />
-        <icon src="res/icon/android/mdpi.png" density="mdpi" />
-        <icon src="res/icon/android/hdpi.png" density="hdpi" />
-        <icon src="res/icon/android/xhdpi.png" density="xhdpi" />
-        <!-- splash screens -->
-        <splash src="res/screen/android/screen-ldpi-portrait.png" density="port-ldpi" />
-        <splash src="res/screen/android/screen-mdpi-portrait.png" density="port-mdpi" />
-        <splash src="res/screen/android/screen-hdpi-portrait.png" density="port-hdpi" />
-        <splash src="res/screen/android/screen-xdpi-portrait.png" density="port-xhdpi" />
+        <icon src="res/icon/blackberry/icon-86.png" />
+        <icon src="res/icon/blackberry/icon-150.png" />
     </platform>
     <platform name="ios">
         <!-- preferences -->
@@ -94,6 +88,7 @@
         <icon src="res/icon/ios/icon-60.png" width="60" height="60" />
         <icon src="res/icon/ios/icon-60@2x.png" width="120" height="120" />
         <icon src="res/icon/ios/icon-60@3x.png" width="180" height="180" />
+        <!-- ipad -->
         <icon src="res/icon/ios/icon-72.png" width="72" height="72" />
         <icon src="res/icon/ios/icon-72@2x.png" width="144" height="144" />
         <icon src="res/icon/ios/icon-76.png" width="76" height="76" />
