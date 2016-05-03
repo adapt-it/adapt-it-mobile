@@ -2,14 +2,14 @@
     Template for rendering the UI Language page -- used by HomeViews.js (UILanguageView).
 }}
 
-<div class="topcoat-navigation-bar bg-lightblue">
+<div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item">
         <a class="topcoat-icon-button--quiet back-button" href="index.html">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
     </div>
-    <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title bg-lightblue">{{ t 'view.ttlLanguage'}}</h1>
+    <div class="topcoat-navigation-bar__item half" >
+        <h2 class="topcoat-navigation-bar__title bg-lightblue" style="overflow:visible;">{{ t 'view.ttlLanguage'}}</h2>
     </div>
     <div class="topcoat-navigation-bar__item right"></div>
 </div>
@@ -30,7 +30,7 @@
 </div>
 <div id="OKCancelButtons" style="margin-top: 1em;">
         <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
-        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></span></button>
+        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>
 </div>    
 </div>
 </div>

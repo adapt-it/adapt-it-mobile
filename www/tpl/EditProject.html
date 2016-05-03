@@ -1,4 +1,4 @@
-<div class="topcoat-navigation-bar bg-lightblue">
+<div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item">
         <a class="topcoat-icon-button--quiet back-button" href="#">
             <span class="topcoat-icon topcoat-icon--back"></span>
@@ -13,10 +13,10 @@
         </a>}}
     </div>
 </div>
-<div class="container" style="height: calc(100% - 70px);">
-<div class="topcoat-list__container scroller" style="width:100%; top:0; border-bottom: 1px solid #9daca9;">
+<!-- <div class="container" style="height: calc(100% - 70px);"> -->
+<div class="topcoat-list__container scroller-notb">
     <div class="Instructions" id="StepInstructions" hidden="true"></div>
-    <div id="StepContainer" style="height: calc(100% - 100px);" hidden="true"></div>
+    <div id="StepContainer" hidden="true"></div> <!-- style="height: calc(100% - 100px);" -->
 <ul class="chapter-list topcoat-list__container" id="ProjectItems">
 <li class="topcoat-list__item">
     <a id="SourceLanguage">
@@ -66,9 +66,10 @@
     <div>{{#ifCond CustomFilters '==' 'true'}}{{ t 'view.lblCustomFilters'}}{{else}}{{ t 'view.lblFilteringDefault'}}{{/ifCond}}</div>
     <span class="chevron" style="top:1.25rem;"></span></a>
 </li>
-</ul></div>
-</div>
+</ul>
+<!-- </div> -->
 <div id="OKCancelButtons" hidden="true">
         <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
-        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></span></button>
+        <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>
+</div>
 </div>

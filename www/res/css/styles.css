@@ -144,7 +144,7 @@ input[type="file"] {
     overflow: hidden;
     text-overflow: ellipsis;
     width:100%;
-/*
+    /*
     background-color: inherit;
     color: #1e6ee2;
 */
@@ -248,12 +248,29 @@ header h3 {
 .scroller {
     bottom: 0;
     left: 0;
+    right: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     position: absolute;
     top: 70px;
 }
-
+.scroller-tb {
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    top: 117px;
+}
+.scroller-notb {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    top: 57px;
+}
 .hscroller {
     height: 200px;
     left: 10px;
