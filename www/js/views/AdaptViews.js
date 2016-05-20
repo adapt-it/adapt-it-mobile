@@ -593,6 +593,7 @@ define(function (require) {
 
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
+                console.log("selectingPilesStart");
                 var model = null,
                     strID = "";
                 // if there was an old selection, remove it
@@ -684,11 +685,13 @@ define(function (require) {
             checkStopSelecting: function (event) {
                 if (isSelecting === true) {
                     // pretend the user wanted the last selected item to be the end of the selection
+                    console.log("checkStopSelecting -- isSelecting");
                     $(selectedEnd).find('.source').mouseup();
                 }
             },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
+                console.log("selectingPilesEnd");
                 // re-add the contenteditable fields
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
@@ -696,7 +699,6 @@ define(function (require) {
                     strID = "",
                     selectedObj = null,
                     spid = "";
-                console.log("selectingPilesEnd");
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
                     selectedStart = event.currentTarget.parentElement;

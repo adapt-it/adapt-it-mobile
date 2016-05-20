@@ -39,6 +39,7 @@
     <plugin name="cordova-plugin-fonts" source="npm" spec="0.4.0" />
     <plugin name="cordova-plugin-splashscreen" source="npm" spec="3.2.1" />
     <plugin name="cordova-sqlite-storage" source="npm" spec="0.8.2" />
+    <plugin name="cordova-plugin-whitelist" source="npm" spec="1.2.2" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
