@@ -16,8 +16,6 @@
     <content src="index.html" />
     <!-- allow local access -->
     <access origin="*" />
-    <!-- for Blackberry 10 -->
-    <feature name="File" value="File" />
     <!-- preferences -->
     <preference name="android-build-tool" value="gradle" />        
     <preference name="phonegap-version" value="cli-6.0.0" />
@@ -38,7 +36,8 @@
     <plugin name="cordova-plugin-dialogs" source="npm" spec="1.2.0" />
     <plugin name="cordova-plugin-fonts" source="npm" spec="0.4.0" />
     <plugin name="cordova-plugin-splashscreen" source="npm" spec="3.2.1" />
-    <plugin name="cordova-sqlite-storage" source="npm" spec="0.8.2" />
+    <plugin name="cordova-sqlite-storage" source="npm" spec="1.4.1" /> <!-- 0.8.2 -->
+    <plugin name="cordova-plugin-whitelist" source="npm" spec="1.2.2" />
 
     <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
     (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
@@ -54,9 +53,6 @@
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     </config-file>
-    <feature name="fonts">
-        <param name="ios-package" value="CDVFonts" />
-    </feature>
     <!-- icons and splash screens for each platform -->
     <icon src="icon.png"/>
     <platform name="android">

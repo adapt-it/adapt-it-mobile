@@ -91,7 +91,7 @@ define(function (require) {
                 });
                 // sqlitePlugin -- available on DeviceReady (mobile app)
                 if (window.sqlitePlugin) {
-                    this.db = window.sqlitePlugin.openDatabase({name: "AIM"});
+                    this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
                     this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
