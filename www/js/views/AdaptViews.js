@@ -969,15 +969,15 @@ define(function (require) {
                 }
 
                 // Are we setting the focus on the first phrase after a selection?
-                if (isSelectingFirstPhrase === true) {
-                    // yes -- keep the selection, but clear out the flag
-                    console.log("Selecting the first phrase -- gets a pass");
-                    isSelectingFirstPhrase = false;
-                } else {
+//                if (isSelectingFirstPhrase === true) {
+//                    // yes -- keep the selection, but clear out the flag
+//                    console.log("Selecting the first phrase -- gets a pass");
+//                    isSelectingFirstPhrase = false;
+//                } else {
                     // no -- clear out any previous selection
                     console.log("clearing selection");
                     this.clearSelection();
-                }
+//                }
 
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
