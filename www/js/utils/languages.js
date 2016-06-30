@@ -70738,12 +70738,13 @@ define(function (require) {
             deferred.resolve(language);
             return deferred.promise();
         },
-
+        
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var fullresults = languages.filter(function (element) {
                 return (element.Ref_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
-                    (element.Id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1);
+                    (element.Id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
+                    (element.Part1.toLowerCase().indexOf(searchKey.toLowerCase()) > -1);
             });
             var results = Underscore.first(fullresults, 200);
             deferred.resolve(results);
