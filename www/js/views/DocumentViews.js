@@ -611,6 +611,19 @@ define(function (require) {
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
+                    // helper method to convert html color values to the Adapt It color string:
+                    // .html --> #rrggbb  (in hex)
+                    // Adapt It  --> 0x00bbggrr (in base 10)
+//                    var setColorValue = function (strValue) {
+//                        var hexValue = parseInt(strValue, 16);
+//                        var rValue = ("00" + (hexValue & 0xff).toString(16)).slice(-2);
+//                        var gValue = ("00" + ((hexValue >> 8) & 0xff).toString(16)).slice(-2);
+//                        var bValue = ("00" + ((hexValue >> 16) & 0xff).toString(16)).slice(-2);
+//                        // format in html hex, padded with leading zeroes
+//                        var theValue = "0x00" + bValue + gValue + rValue;
+//                        return theValue;
+//                    };
+                    
                     // Helper method to convert theString to lower case using either the source or target case equivalencies.
                     var autoRemoveCaps = function (theString, isSource) {
                         var i = 0,
@@ -1240,6 +1253,7 @@ define(function (require) {
             var errMsg = "";
             var sourcephrases = null;
             var exportDirectory = "";
+            var tabLevel = 0;
             
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
@@ -1262,6 +1276,32 @@ define(function (require) {
                 // display the OK button
                 $("#OK").show();
                 $("#OK").removeAttr("disabled");
+            };
+
+            var writeXMLNode = function (content, name, attributes, text, hasChildren) {
+                var i = 0;
+                for (i = 0; i < tabLevel; i++) {
+                    content += "  ";
+                }
+                content += "<" + name;
+                for (i = 0; i < attributes.length; i++) {
+                    content += " " + attributes[i].name + "=\"" + attributes[i].value + "\"";
+                }
+                if (hasChildren === false && text.length === 0) {
+                    content += "/";
+                }
+                content += ">" + text;
+                // [tabLevel*spaces]<name att[0]=value[0] ... (if hasContents=false --> "/">
+                tabLevel++;
+            };
+
+            var writeXMLEndNode = function (content, name) {
+                var i = 0;
+                tabLevel--;
+                for (i = 0; i < tabLevel; i++) {
+                    content += "  ";
+                }
+                content += "</" + name + ">";
             };
             
             ///
@@ -1317,6 +1357,8 @@ define(function (require) {
                 var i = 0;
                 var value = null;
                 var chaptersLeft = chapters.length;
+                var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
+                var done = false;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -1327,12 +1369,17 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
-                // get the chapters belonging to our book
-                chapters.forEach(function (entry) {
+                // get the chapters belonging to our book -- stop iterating if done === true
+                chapters.some(function (entry) {
+                //chapters.forEach(function (entry) {
                     // for each chapter, get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                         for (i = 0; i < spList.length; i++) {
                             value = spList.at(i);
+                            if (value.get('spid') === lastSPID) {
+                                // done -- quit after this sourcePhrase
+                                done = true;
+                            }
                             markers = value.get("markers");
                             // add markers, and if needed, pretty-print the text on a newline
                             if (markers.length > 0) {
@@ -1350,35 +1397,175 @@ define(function (require) {
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
                     });
+                    return (done === true);
                 });
             };
 
             // USX document
             var exportUSX = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+                var spList = new spModel.SourcePhraseCollection();
+                var markers = "";
+                var i = 0;
+                var value = null;
+                var atts = {
+                    name: [],
+                    value: []
+                };
+                var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
-                    exportSuccess();
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
-                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
-                writer.write(blob);
+                // starting material -- xml prolog and usx tag
+                content = XML_PROLOG;
+                atts.name[0] = "version";
+                atts.value[0] = "2.0";
+                writeXMLNode(content, "usx", atts, "", true);
+                atts.name.length = 0;
+                atts.value.length = 0;
+                // get the chapters belonging to our book
+                chapters.forEach(function (entry) {
+                    // for each chapter, get the sourcephrases
+                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                        for (i = 0; i < spList.length; i++) {
+                            value = spList.at(i);
+                            markers = value.get("markers");
+                            // add markers, and if needed, pretty-print the text on a newline
+                            if (markers.length > 0) {
+                                if ((markers.indexOf("\\id")) > -1) {
+                                    // book: <book code="TIT" style="id">56-TIT-web.sfm World English Bible Tuesday, 19 August 2008</book>
+                                    atts.name[0] = "code";
+                                    atts.value[0] = "";
+                                    atts.name[1] = "style";
+                                    atts.value[1] = "id";
+                                }
+                                // TODO -- list of markers...
+
+                                if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                    // pretty-printing -- add a newline so the output looks better
+                                    content += "\n"; // newline
+                                }
+                                // now add the markers and a space
+                                content += value.get("markers") + " ";
+                            }
+                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                        }
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            // done with the chapters -- add the ending node
+                            writeXMLEndNode(content, "usx");
+                        }
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
+                    });
+                });
             };
 
             // XML document
             var exportXML = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var book = window.Application.BookList.where({bookid: bookid});
+                var content = "";
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>";
+                var spList = new spModel.SourcePhraseCollection();
+                var markers = "";
+                var i = 0;
+                var value = null;
+                var atts = {
+                    name: [],
+                    value: []
+                };
+                var project = window.Application.currentProject;
+                var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
-                    exportSuccess();
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
                 };
                 writer.onerror = function (e) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
-                var blob = new Blob(['lorem ipsum'], {type: 'text/plain'});
-                writer.write(blob);
+                // opening content
+                content = XML_PROLOG;
+                content += "\n<!-- Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                // Settings: AIM doesn't do per-document settings; just copy over the project settings
+                content += "<Settings docVersion=\"9\" bookName=\"" + book.get('name') + "\" owner=\"";
+                if (window.sqlitePlugin) {
+                    content += device.uuid;
+                } else {
+                    content += "Browser";
+                }
+                content += "\" commitcnt=\"****\" revdate=\"\" actseqnum=\"0\" sizex=\"553\" sizey=\"62464\" ftsbp=\"1\"";
+                // colors
+                content += " specialcolor=\"255\" retranscolor=\"20640\" navcolor=\"65280\"";
+                // project info
+                content += " curchap=\"16:\" srcname=\"Spanish\" tgtname=\"Rioplatense\" srccode=\"spa\" tgtcode=\"spa\"";
+                // filtering
+                content += " others=\"@#@#:F:-1:0:";
+                content += project.get('FilterMarkers');
+                content += "::\"/>\n";
+                // END settings xml node
+                // CONTENT PART: get the chapters belonging to our book
+                chapters.forEach(function (entry) {
+                    // for each chapter, get the sourcephrases
+                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                        for (i = 0; i < spList.length; i++) {
+                            value = spList.at(i);
+                            // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
+                            // line 1 -- source, key, target, adaptation
+                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            // line 2 -- flags, sequNumber, SrcWords, TextType
+                            content += "f=\"\" sn=\"" + value.get('norder') + "\" w=\"\" ty=\"\"";
+                            // line 3 -- 6 atts (optional)
+                            if (value.get("prepuncts").length > 0) {
+                                content += " pp=\"" + value.get("prepuncts") + "\"";
+                            }
+                            if (value.get("follpuncts").length > 0) {
+                                content += " fp=\"" + value.get("follpuncts") + "\"";
+                            }
+                            markers = value.get("markers");
+                            // add markers, and if needed, pretty-print the text on a newline
+                            if (markers.indexOf("\\v") > -1) {
+                                // add chapter/verse
+                                content += " c=\"" + entry.get('name') + ":" +  "\"";
+                            }
+                            // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
+                            //           inline nonbinding markers, inline nonbinding end barkers
+                            if (markers.length > 0) {
+                                content += " m=\"" + markers + "\"";
+                            }
+                            // line 5-8 -- free translation, note, back translation, filtered info
+                            // line 9 -- lapat, tmpat, gmpat, pupat
+                            content += ">\n";
+                            // 3 more possible info types
+                            // medial puncts, medial markers, saved words (another <s>)
+                            if (value.get("midpuncts").length > 0) {
+                                content += "<MP mp=\"" + value.get("midpuncts") + "\"/>";
+                            }
+                            content += "</S>\n";
+                        }
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            // done with the chapters -- add the ending node
+                            content += "/n</AdaptItDoc>\n";
+                        }
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
+                    });
+                });
             };
 
             if (window.sqlitePlugin) {
@@ -1419,9 +1606,9 @@ define(function (require) {
                                 exportXML();
                                 break;
                             }
-                        }, exportFail(e));
-                    }, exportFail(e));
-                }, exportFail(e));
+                        }, exportFail);
+                    }, exportFail);
+                }, exportFail);
             } else {
                 // browser
                 var requestedBytes = 10 * 1024 * 1024; // 10MB
@@ -1447,10 +1634,10 @@ define(function (require) {
                                     exportXML();
                                     break;
                                 }
-                            }, exportFail(e));
-                        }, exportFail(e));
-                    }, exportFail(e));
-                }, exportFail(e));
+                            }, exportFail);
+                        }, exportFail);
+                    }, exportFail);
+                }, exportFail);
             }
         },
         
