@@ -1427,6 +1427,8 @@ define(function (require) {
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var markers = "";
                 var i = 0;
+                var versenum = 1;
+                var hasOpenPara = false;
                 var value = null;
                 var atts = {
                     name: [],
@@ -1470,13 +1472,36 @@ define(function (require) {
                                         atts.value[1] = "id";
                                     }
                                     // TODO -- list of markers...
-
-                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                        // pretty-printing -- add a newline so the output looks better
-                                        content += "\n"; // newline
+                                    if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                        if (hasOpenPara === true) {
+                                            content += "</para>";
+                                        }
+                                        content += "\n<para style=\"";
+                                        if (markers.indexOf("\\p") > -1) {
+                                            content += "p";
+                                        } else if (markers.indexOf("\\q") > -1) {
+                                            // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                            var qpos = markers.indexOf("\\q");
+                                            content += markers.substr(qpos, markers.length - markers.indexOf(" ", qpos));
+                                        } else if (markers.indexOf("\\ide") > -1) {
+                                            content += "ide";
+                                        } else if (markers.indexOf("\\h") > -1) {
+                                            content += "h";
+                                        } else if (markers.indexOf("\\mt") > -1) {
+                                            // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                            var mtpos = markers.indexOf("\\mt");
+                                            content += markers.substr(mtpos, markers.length - markers.indexOf(" ", mtpos));
+                                        }
+                                        content += "\">";
+                                        hasOpenPara = true;
                                     }
-                                    // now add the markers and a space
-                                    content += value.get("markers") + " ";
+                                    if (markers.indexOf("\\c") > 1) {
+                                        content += "<chapter number=\"" + entry.get('name') + "\" style=\"c\" />";
+                                    }
+                                    if (markers.indexOf("\\v") > -1) {
+                                        content += "<verse number=\"" + versenum + "\" style=\"v\" />";
+                                        versenum++;
+                                    }
                                 }
                                 content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                                 if (value.get('spid') === lastSPID) {
@@ -1492,8 +1517,16 @@ define(function (require) {
                     }
                     chaptersLeft--;
                     if (chaptersLeft === 0) {
-                        // done with the chapters -- add the ending node
-                        writeXMLEndNode(content, "usx");
+                        // done with the chapters
+                        // add a closing paragraph if necessary
+                        if (hasOpenPara === true) {
+                            content += "\n</para>";
+                        }
+                        // add the ending node
+                        content += "/n</usx>";
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
                     }
                 });
             };
