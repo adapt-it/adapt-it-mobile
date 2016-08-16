@@ -8,6 +8,7 @@ require.config({
     // backbone.babysitter 0.1.8
     // backbone.wreqr   1.3.3
     // fastclick        1.0.6
+    // hammer           2.0.8
     // handlebars       3.0.3
     // hopscotch        0.2.5
     // i18next          1.9.0
@@ -27,6 +28,7 @@ require.config({
         utils: '../js/utils',
         tpl: '../tpl',
         // libraries
+        hammer: 'hammer.min',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.4.min',
