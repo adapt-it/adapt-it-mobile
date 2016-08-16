@@ -1306,6 +1306,12 @@ define(function (require) {
             
             ///
             // FILE TYPE WRITERS
+            // 2 loops for each file type -- a chapter and source phrase loop.
+            // The AI XML export will dump out the entire book; the others use the following logic:
+            // - If the chapter has at least some adaptations in it, we'll export it
+            // - If we encounter the lastSPID, we'll break out of the export loop of the chapter.
+            // This logic works well if the user is adapting sequentially. If the user is jumping around in their adaptations,
+            // some chapters might have extraneous punctuation from areas where they haven't adapted.
             ///
 
             // Plain Text document
@@ -1317,6 +1323,7 @@ define(function (require) {
                 var spList = new spModel.SourcePhraseCollection();
                 var i = 0;
                 var value = null;
+                var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
@@ -1329,22 +1336,31 @@ define(function (require) {
                     exportFail(e);
                 };
                 // get the chapters belonging to our book
+                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
-                    // for each chapter, get the sourcephrases
-                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
-                        for (i = 0; i < spList.length; i++) {
-                            value = spList.at(i);
-                            // plain text -- ignore markers other than paragraph breaks
-                            if (value.get("markers").indexOf("\\p") > -1) {
-                                content += "\n"; // newline
+                    // for each chapter with some adaptation done, get the sourcephrases
+                    if (entry.get('lastadapted') !== 0) {
+                        spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            console.log("spList: " + spList.length + " items, last id = " + lastSPID);
+                            for (i = 0; i < spList.length; i++) {
+                                value = spList.at(i);
+                                // plain text -- ignore markers other than paragraph breaks
+                                if (value.get("markers").indexOf("\\p") > -1) {
+                                    content += "\n"; // newline
+                                }
+                                content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                if (value.get('spid') === lastSPID) {
+                                    // done -- quit after this sourcePhrase
+                                    console.log("Found last SPID: " + lastSPID);
+                                    break;
+                                }
                             }
-                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
-                        }
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        chaptersLeft--;
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
-                    });
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
+                        });
+                    }
+                    chaptersLeft--;
                 });
             };
 
@@ -1358,7 +1374,6 @@ define(function (require) {
                 var value = null;
                 var chaptersLeft = chapters.length;
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
-                var done = false;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -1369,35 +1384,37 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
-                // get the chapters belonging to our book -- stop iterating if done === true
-                chapters.some(function (entry) {
-                //chapters.forEach(function (entry) {
-                    // for each chapter, get the sourcephrases
-                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
-                        for (i = 0; i < spList.length; i++) {
-                            value = spList.at(i);
-                            if (value.get('spid') === lastSPID) {
-                                // done -- quit after this sourcePhrase
-                                done = true;
-                            }
-                            markers = value.get("markers");
-                            // add markers, and if needed, pretty-print the text on a newline
-                            if (markers.length > 0) {
-                                if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                    // pretty-printing -- add a newline so the output looks better
-                                    content += "\n"; // newline
+                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                chapters.forEach(function (entry) {
+                    // for each chapter with some adaptation done, get the sourcephrases
+                    if (entry.get('lastadapted') !== 0) {
+                        spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            console.log("spList: " + spList.length + " items, last id = " + lastSPID);
+                            for (i = 0; i < spList.length; i++) {
+                                value = spList.at(i);
+                                markers = value.get("markers");
+                                // add markers, and if needed, pretty-print the text on a newline
+                                if (markers.length > 0) {
+                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                        // pretty-printing -- add a newline so the output looks better
+                                        content += "\n"; // newline
+                                    }
+                                    // now add the markers and a space
+                                    content += value.get("markers") + " ";
                                 }
-                                // now add the markers and a space
-                                content += value.get("markers") + " ";
+                                content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                if (value.get('spid') === lastSPID) {
+                                    // done -- quit after this sourcePhrase
+                                    console.log("Found last SPID: " + lastSPID);
+                                    break;
+                                }
                             }
-                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
-                        }
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        chaptersLeft--;
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
-                    });
-                    return (done === true);
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
+                        });
+                    }
+                    chaptersLeft--;
                 });
             };
 
@@ -1407,6 +1424,7 @@ define(function (require) {
                 var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
+                var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var markers = "";
                 var i = 0;
                 var value = null;
@@ -1433,45 +1451,56 @@ define(function (require) {
                 atts.name.length = 0;
                 atts.value.length = 0;
                 // get the chapters belonging to our book
+                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
-                    // for each chapter, get the sourcephrases
-                    spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
-                        for (i = 0; i < spList.length; i++) {
-                            value = spList.at(i);
-                            markers = value.get("markers");
-                            // add markers, and if needed, pretty-print the text on a newline
-                            if (markers.length > 0) {
-                                if ((markers.indexOf("\\id")) > -1) {
-                                    // book: <book code="TIT" style="id">56-TIT-web.sfm World English Bible Tuesday, 19 August 2008</book>
-                                    atts.name[0] = "code";
-                                    atts.value[0] = "";
-                                    atts.name[1] = "style";
-                                    atts.value[1] = "id";
-                                }
-                                // TODO -- list of markers...
+                    // for each chapter with some adaptation done, get the sourcephrases
+                    if (entry.get('lastadapted') !== 0) {
+                        spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            console.log("spList: " + spList.length + " items, last id = " + lastSPID);
+                            for (i = 0; i < spList.length; i++) {
+                                value = spList.at(i);
+                                markers = value.get("markers");
+                                // add markers, and if needed, pretty-print the text on a newline
+                                if (markers.length > 0) {
+                                    if ((markers.indexOf("\\id")) > -1) {
+                                        // book: <book code="TIT" style="id">56-TIT-web.sfm World English Bible Tuesday, 19 August 2008</book>
+                                        atts.name[0] = "code";
+                                        atts.value[0] = "";
+                                        atts.name[1] = "style";
+                                        atts.value[1] = "id";
+                                    }
+                                    // TODO -- list of markers...
 
-                                if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                    // pretty-printing -- add a newline so the output looks better
-                                    content += "\n"; // newline
+                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                        // pretty-printing -- add a newline so the output looks better
+                                        content += "\n"; // newline
+                                    }
+                                    // now add the markers and a space
+                                    content += value.get("markers") + " ";
                                 }
-                                // now add the markers and a space
-                                content += value.get("markers") + " ";
+                                content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                if (value.get('spid') === lastSPID) {
+                                    // done -- quit after this sourcePhrase
+                                    console.log("Found last SPID: " + lastSPID);
+                                    break;
+                                }
                             }
-                            content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
-                        }
-                        chaptersLeft--;
-                        if (chaptersLeft === 0) {
-                            // done with the chapters -- add the ending node
-                            writeXMLEndNode(content, "usx");
-                        }
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
-                    });
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
+                        });
+                    }
+                    chaptersLeft--;
+                    if (chaptersLeft === 0) {
+                        // done with the chapters -- add the ending node
+                        writeXMLEndNode(content, "usx");
+                    }
                 });
             };
 
             // XML document
+            // Note that this export is a full dump of the document, not just the parts that have been adapted.
+            // This is because we're exporting the source as well as the target text.
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
@@ -1501,7 +1530,7 @@ define(function (require) {
                 content = XML_PROLOG;
                 content += "\n<!-- Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
-                content += "<Settings docVersion=\"9\" bookName=\"" + book.get('name') + "\" owner=\"";
+                content += "<Settings docVersion=\"9\" bookName=\"\""; //+ book.get('name') + "\" owner=\"";
                 if (window.sqlitePlugin) {
                     content += device.uuid;
                 } else {
@@ -1519,7 +1548,7 @@ define(function (require) {
                 // END settings xml node
                 // CONTENT PART: get the chapters belonging to our book
                 chapters.forEach(function (entry) {
-                    // for each chapter, get the sourcephrases
+                    // for each chapter (regardless of whether there's some adaptation done), get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                         for (i = 0; i < spList.length; i++) {
                             value = spList.at(i);
@@ -1527,7 +1556,7 @@ define(function (require) {
                             // line 1 -- source, key, target, adaptation
                             content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += "f=\"\" sn=\"" + value.get('norder') + "\" w=\"\" ty=\"\"";
+                            content += " f=\"\" sn=\"" + value.get('norder') + "\" w=\"\" ty=\"\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
@@ -1556,15 +1585,18 @@ define(function (require) {
                             }
                             content += "</S>\n";
                         }
-                        chaptersLeft--;
-                        if (chaptersLeft === 0) {
-                            // done with the chapters -- add the ending node
-                            content += "/n</AdaptItDoc>\n";
-                        }
                         var blob = new Blob([content], {type: 'text/plain'});
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
                     });
+                    chaptersLeft--;
+                    if (chaptersLeft === 0) {
+                        // done with the chapters -- add the ending node
+                        content += "/n</AdaptItDoc>\n";
+                        var blob = new Blob([content], {type: 'text/plain'});
+                        writer.write(blob);
+                        content = ""; // clear out the content string for the next chapter
+                    }
                 });
             };
 

@@ -159,7 +159,9 @@ define(function (require) {
             
             initialize: function () {
                 this.resetFromDB();
-                this.setCurrent(0);
+                if (this.size() > 0) {
+                    this.setCurrent(0);
+                }
             },
 
             // Removes all sourcephrases from the collection (and database)
