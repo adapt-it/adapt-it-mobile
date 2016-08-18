@@ -1277,32 +1277,6 @@ define(function (require) {
                 $("#OK").show();
                 $("#OK").removeAttr("disabled");
             };
-
-            var writeXMLNode = function (content, name, attributes, text, hasChildren) {
-                var i = 0;
-                for (i = 0; i < tabLevel; i++) {
-                    content += "  ";
-                }
-                content += "<" + name;
-                for (i = 0; i < attributes.length; i++) {
-                    content += " " + attributes[i].name + "=\"" + attributes[i].value + "\"";
-                }
-                if (hasChildren === false && text.length === 0) {
-                    content += "/";
-                }
-                content += ">" + text;
-                // [tabLevel*spaces]<name att[0]=value[0] ... (if hasContents=false --> "/">
-                tabLevel++;
-            };
-
-            var writeXMLEndNode = function (content, name) {
-                var i = 0;
-                tabLevel--;
-                for (i = 0; i < tabLevel; i++) {
-                    content += "  ";
-                }
-                content += "</" + name + ">";
-            };
             
             ///
             // FILE TYPE WRITERS
@@ -1322,9 +1296,12 @@ define(function (require) {
                 var content = "";
                 var spList = new spModel.SourcePhraseCollection();
                 var i = 0;
+                var idxFilters = 0;
                 var value = null;
+                var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var chaptersLeft = chapters.length;
+                var filtered = false;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -1337,6 +1314,7 @@ define(function (require) {
                 };
                 // get the chapters belonging to our book
                 lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                console.log("filterAry: " + filterAry.toString());
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
@@ -1348,7 +1326,20 @@ define(function (require) {
                                 if (value.get("markers").indexOf("\\p") > -1) {
                                     content += "\n"; // newline
                                 }
-                                content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                // check to see if this sourcephrase is filtered
+                                for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                    // sanity check for blank filter strings
+                                    if (filterAry[idxFilters].trim().length > 0) {
+                                        if (value.get("markers").indexOf(filterAry[idxFilters]) >= 0) {
+                                            console.log("filtered: " + value.get("markers"));
+                                            filtered = true;
+                                        }
+                                    }
+                                }
+                                if (filtered === false) {
+                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                }
+                                filtered = false;
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
                                     console.log("Found last SPID: " + lastSPID);
@@ -1710,7 +1701,7 @@ define(function (require) {
             
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
-                this.bookList = new bookModels.BookCollection();
+                this.bookList = new bookModel.BookCollection();
             },
             
             ////
