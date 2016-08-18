@@ -1421,6 +1421,8 @@ define(function (require) {
             // USX document
             var exportUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var book = window.Application.BookList.where({bookid: bookid});
+                var bookID = book.get('scrid');
                 var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
@@ -1430,10 +1432,6 @@ define(function (require) {
                 var versenum = 1;
                 var hasOpenPara = false;
                 var value = null;
-                var atts = {
-                    name: [],
-                    value: []
-                };
                 var chaptersLeft = chapters.length;
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
@@ -1446,12 +1444,7 @@ define(function (require) {
                     exportFail(e);
                 };
                 // starting material -- xml prolog and usx tag
-                content = XML_PROLOG;
-                atts.name[0] = "version";
-                atts.value[0] = "2.0";
-                writeXMLNode(content, "usx", atts, "", true);
-                atts.name.length = 0;
-                atts.value.length = 0;
+                content = XML_PROLOG + "\n<usx version=\"2.0\">\n";
                 // get the chapters belonging to our book
                 lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
@@ -1465,11 +1458,10 @@ define(function (require) {
                                 // add markers, and if needed, pretty-print the text on a newline
                                 if (markers.length > 0) {
                                     if ((markers.indexOf("\\id")) > -1) {
-                                        // book: <book code="TIT" style="id">56-TIT-web.sfm World English Bible Tuesday, 19 August 2008</book>
-                                        atts.name[0] = "code";
-                                        atts.value[0] = "";
-                                        atts.name[1] = "style";
-                                        atts.value[1] = "id";
+                                        content += "<book code=\"" + bookID + "\" style=\"id\">";
+                                        content += value.get("target");
+                                        content += "</book>";
+                                        continue; // skip to the next entry
                                     }
                                     // TODO -- list of markers...
                                     if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
@@ -1523,7 +1515,7 @@ define(function (require) {
                             content += "\n</para>";
                         }
                         // add the ending node
-                        content += "/n</usx>";
+                        content += "\n</usx>";
                         var blob = new Blob([content], {type: 'text/plain'});
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
@@ -1718,6 +1710,7 @@ define(function (require) {
             
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
+                this.bookList = new bookModels.BookCollection();
             },
             
             ////
