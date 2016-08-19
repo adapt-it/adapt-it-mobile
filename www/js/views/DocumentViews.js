@@ -412,6 +412,11 @@ define(function (require) {
                                 markers += "\\" + element.attributes.item("style").nodeValue;
                                 break;
                             case "char":
+                                // char-related markers, kept in the style attribute
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\" + element.attributes.item("style").nodeValue;
                                 break;
                             case "figure":
                                 break;
