@@ -1425,7 +1425,8 @@ define(function (require) {
                                             if (markers.indexOf(filterAry[idxFilters]) >= 0) {
                                                 // this is a filtered sourcephrase -- do not export it
                                                 console.log("filtered: " + markers);
-                                                // however, if there are some markers before we hit our filtered one, export them now
+                                                // however, if there are some markers before we hit our filtered one, 
+                                                // make sure they get exported now
                                                 markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
                                                 if (markers.length > 0) {
                                                     if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
@@ -1487,8 +1488,9 @@ define(function (require) {
             // USX document
             var exportUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var book = window.Application.BookList.where({bookid: bookid});
-                var bookID = book.get('scrid');
+
+//                var book = window.Application.BookList.where({bookid: bookid}).at(0);
+//                var bookID = book.get('scrid');
                 var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
@@ -1529,49 +1531,79 @@ define(function (require) {
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
                                 markers = value.get("markers");
-                                // add markers, and if needed, pretty-print the text on a newline
-                                if (markers.length > 0) {
-                                    if ((markers.indexOf("\\id")) > -1) {
-                                        content += "<book code=\"" + bookID + "\" style=\"id\">";
-                                        content += value.get("target");
-                                        content += "</book>";
-                                        continue; // skip to the next entry
-                                    }
-                                    // TODO -- list of markers...
-                                    if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                        if (hasOpenPara === true) {
-                                            content += "</para>";
+                                // check to see if this sourcephrase is filtered (only looking at the top level)
+                                if (filtered === false) {
+                                    for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                        // sanity check for blank filter strings
+                                        if (filterAry[idxFilters].trim().length > 0) {
+                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                                // this is a filtered sourcephrase -- do not export it
+                                                console.log("filtered: " + markers);
+                                                // if there is an end marker associated with this marker,
+                                                // do not export any source phrases until we come across the end marker
+                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                if (mkr[0].get("endMarker")) {
+                                                    needsEndMarker = mkr[0].get("endMarker");
+                                                }
+                                                filtered = true;
+                                            }
                                         }
-                                        content += "\n<para style=\"";
-                                        if (markers.indexOf("\\p") > -1) {
-                                            content += "p";
-                                        } else if (markers.indexOf("\\q") > -1) {
-                                            // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
-                                            var qpos = markers.indexOf("\\q");
-                                            content += markers.substr(qpos, markers.length - markers.indexOf(" ", qpos));
-                                        } else if (markers.indexOf("\\ide") > -1) {
-                                            content += "ide";
-                                        } else if (markers.indexOf("\\h") > -1) {
-                                            content += "h";
-                                        } else if (markers.indexOf("\\mt") > -1) {
-                                            // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
-                                            var mtpos = markers.indexOf("\\mt");
-                                            content += markers.substr(mtpos, markers.length - markers.indexOf(" ", mtpos));
-                                        }
-                                        content += "\">";
-                                        hasOpenPara = true;
-                                    }
-                                    if (markers.indexOf("\\c") > 1) {
-                                        content += "<chapter number=\"" + entry.get('name') + "\" style=\"c\" />";
-                                    }
-                                    if (markers.indexOf("\\v") > -1) {
-                                        content += "<verse number=\"" + versenum + "\" style=\"v\" />";
-                                        versenum++;
                                     }
                                 }
-                                content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                    // found our ending marker -- this sourcephrase is not filtered
+                                    // first, remove the marker from the markers string so it doesn't print out
+                                    markers = markers.replace(("\\" + needsEndMarker), '');
+                                    // now clear our flags so the sourcephrase exports
+                                    needsEndMarker = "";
+                                    filtered = false;
+                                }
+                                if (filtered === false) {
+                                    // not filtered -- print out the text and markers
+                                    if (markers.length > 0) {
+                                        if ((markers.indexOf("\\id")) > -1) {
+                                            content += "<book code=\"\" style=\"id\">"; // + bookID + 
+                                            content += value.get("target");
+                                            content += "</book>";
+                                            continue; // skip to the next entry
+                                        }
+                                        // TODO -- list of markers...
+                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                            if (hasOpenPara === true) {
+                                                content += "</para>";
+                                            }
+                                            content += "\n<para style=\"";
+                                            if (markers.indexOf("\\p") > -1) {
+                                                content += "p";
+                                            } else if (markers.indexOf("\\q") > -1) {
+                                                // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                                var qpos = markers.indexOf("\\q");
+                                                content += markers.substr(qpos, markers.length - markers.indexOf(" ", qpos));
+                                            } else if (markers.indexOf("\\ide") > -1) {
+                                                content += "ide";
+                                            } else if (markers.indexOf("\\h") > -1) {
+                                                content += "h";
+                                            } else if (markers.indexOf("\\mt") > -1) {
+                                                // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                                var mtpos = markers.indexOf("\\mt");
+                                                content += markers.substr(mtpos, markers.length - markers.indexOf(" ", mtpos));
+                                            }
+                                            content += "\">";
+                                            hasOpenPara = true;
+                                        }
+                                        if (markers.indexOf("\\c") > 1) {
+                                            content += "<chapter number=\"" + entry.get('name') + "\" style=\"c\" />";
+                                        }
+                                        if (markers.indexOf("\\v") > -1) {
+                                            content += "<verse number=\"" + versenum + "\" style=\"v\" />";
+                                            versenum++;
+                                        }
+                                    }
+                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                }
+                                // done dealing with the source phrase -- is it the last one?
                                 if (value.get('spid') === lastSPID) {
-                                    // done -- quit after this sourcePhrase
+                                    // last phrase -- exit
                                     console.log("Found last SPID: " + lastSPID);
                                     break;
                                 }
