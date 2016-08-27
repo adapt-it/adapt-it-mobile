@@ -22,6 +22,8 @@ define(function (require) {
         scrIDs          = require('utils/scrIDs'),
         USFM            = require('utils/usfm'),
         kblist          = null, // populated in onShow
+        bookName        = "",
+        scrID           = "",
         lines           = [],
         fileList        = [],
         fileCount       = 0,
@@ -1661,7 +1663,7 @@ define(function (require) {
                 content = XML_PROLOG;
                 content += "\n<!-- Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
-                content += "<Settings docVersion=\"9\" bookName=\"\""; //+ book.get('name') + "\" owner=\"";
+                content += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
                 if (window.sqlitePlugin) {
                     content += device.uuid;
                 } else {
@@ -1669,9 +1671,9 @@ define(function (require) {
                 }
                 content += "\" commitcnt=\"****\" revdate=\"\" actseqnum=\"0\" sizex=\"553\" sizey=\"62464\" ftsbp=\"1\"";
                 // colors
-                content += " specialcolor=\"255\" retranscolor=\"20640\" navcolor=\"65280\"";
+                content += " specialcolor=\"" + project.get('SpecialTextColor') + "\" retranscolor=\"" + project.get('RetranslationColor') + "\" navcolor=\"" + project.get('NavigationColor') + "\"";
                 // project info
-                content += " curchap=\"16:\" srcname=\"Spanish\" tgtname=\"Rioplatense\" srccode=\"spa\" tgtcode=\"spa\"";
+                content += " curchap=\"1:\" srcname=\"" + project.get('SourceLanguageName') + "\" tgtname=\"" + project.get('TargetLanguageName') + "\" srccode=\"" + project.get('SourceLanguageCode') + "\" tgtcode=\"" + project.get('TargetLanguageCode') + "\"";
                 // filtering
                 content += " others=\"@#@#:F:-1:0:";
                 content += project.get('FilterMarkers');
@@ -1685,9 +1687,9 @@ define(function (require) {
                             value = spList.at(i);
                             // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
                             // line 1 -- source, key, target, adaptation
-                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + "\" t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"\" sn=\"" + value.get('norder') + "\" w=\"\" ty=\"\"";
+                            content += " f=\"\" sn=\"" + (value.get('norder') - 1) + "\" w=\"\" ty=\"\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
@@ -1719,15 +1721,15 @@ define(function (require) {
                         var blob = new Blob([content], {type: 'text/plain'});
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            // done with the chapters -- add the ending node
+                            content += "\n</AdaptItDoc>\n";
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
+                        }
                     });
-                    chaptersLeft--;
-                    if (chaptersLeft === 0) {
-                        // done with the chapters -- add the ending node
-                        content += "/n</AdaptItDoc>\n";
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
-                    }
                 });
             };
 
@@ -2095,7 +2097,7 @@ define(function (require) {
             },
             selectDoc: function (event) {
                 // get the info for this document
-                var bookName = event.currentTarget.innerText;
+                bookName = event.currentTarget.innerText;
                 bookid = $(event.currentTarget).attr('id').trim();
                 // show the next screen
                 $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
