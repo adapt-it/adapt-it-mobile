@@ -1687,9 +1687,9 @@ define(function (require) {
                             value = spList.at(i);
                             // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
                             // line 1 -- source, key, target, adaptation
-                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + "\" t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"\" sn=\"" + value.get('norder') + "\" w=\"\" ty=\"\"";
+                            content += " f=\"\" sn=\"" + (value.get('norder') - 1) + "\" w=\"\" ty=\"\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
@@ -1721,15 +1721,15 @@ define(function (require) {
                         var blob = new Blob([content], {type: 'text/plain'});
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            // done with the chapters -- add the ending node
+                            content += "\n</AdaptItDoc>\n";
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
+                        }
                     });
-                    chaptersLeft--;
-                    if (chaptersLeft === 0) {
-                        // done with the chapters -- add the ending node
-                        content += "/n</AdaptItDoc>\n";
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
-                    }
                 });
             };
 
