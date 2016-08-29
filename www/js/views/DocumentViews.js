@@ -1638,7 +1638,8 @@ define(function (require) {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
                 var content = "";
-                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>";
+                var words = [];
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var spList = new spModel.SourcePhraseCollection();
                 var markers = "";
                 var i = 0;
@@ -1661,7 +1662,7 @@ define(function (require) {
                 };
                 // opening content
                 content = XML_PROLOG;
-                content += "\n<!-- Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                content += "\n    <!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
                 content += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
                 if (window.sqlitePlugin) {
@@ -1689,7 +1690,14 @@ define(function (require) {
                             // line 1 -- source, key, target, adaptation
                             content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + "\" t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"\" sn=\"" + (value.get('norder') - 1) + "\" w=\"\" ty=\"\"";
+                            content += " f=\"\" sn=\"" + (value.get('norder') - 1);
+                            words = value.get("source").match(/\S+/g);
+                            if (words) {
+                                content += "\" w=\"" + words.length + "\"";
+                            } else {
+                                content += "\" w=\"1\"";
+                            }
+                            content += " ty=\"\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
