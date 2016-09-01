@@ -372,6 +372,9 @@ define(function (require) {
                         // process the node itself
                         if ($(element)[0].nodeType === 1) {
                             switch ($(element)[0].tagName) {
+                            case "book":
+                                markers += "\\id " + element.attributes.item("code").nodeValue;
+                                break;
                             case "chapter":
                                 if (markers.length > 0) {
                                     markers += " ";
@@ -1563,13 +1566,23 @@ define(function (require) {
                                 if (filtered === false) {
                                     // not filtered -- print out the text and markers
                                     if (markers.length > 0) {
-                                        if ((markers.indexOf("\\id")) > -1) {
+                                        if ((markers.indexOf("\\id ")) > -1) {
                                             content += "<book code=\"\" style=\"id\">"; // + bookID + 
                                             content += value.get("target");
                                             content += "</book>";
                                             continue; // skip to the next entry
                                         }
                                         // TODO -- list of markers...
+                                        if (markers.indexOf("\\c ") > -1) {
+                                            if (hasOpenPara === true) {
+                                                content += "</para>";
+                                                hasOpenPara = false;
+                                            }
+                                            var chpos = markers.indexOf("\\c");
+                                            content += "\n<chapter number=\"";
+                                            content += markers.substr(chpos + 3, (markers.length - markers.indexOf(" ", chpos + 3)));
+                                            content += "\" style=\"c\" />\n";
+                                        }
                                         if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
                                             if (hasOpenPara === true) {
                                                 content += "</para>";
@@ -1580,7 +1593,7 @@ define(function (require) {
                                             } else if (markers.indexOf("\\q") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var qpos = markers.indexOf("\\q");
-                                                content += markers.substr(qpos, markers.length - markers.indexOf(" ", qpos));
+                                                content += markers.substr(qpos + 1, (markers.length - markers.indexOf(" ", qpos) - 1));
                                             } else if (markers.indexOf("\\ide") > -1) {
                                                 content += "ide";
                                             } else if (markers.indexOf("\\h") > -1) {
@@ -1588,7 +1601,7 @@ define(function (require) {
                                             } else if (markers.indexOf("\\mt") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var mtpos = markers.indexOf("\\mt");
-                                                content += markers.substr(mtpos, markers.length - markers.indexOf(" ", mtpos));
+                                                content += markers.substr(mtpos + 1, (markers.length - markers.indexOf(" ", mtpos) - 1));
                                             }
                                             content += "\">";
                                             hasOpenPara = true;
@@ -1610,23 +1623,38 @@ define(function (require) {
                                     break;
                                 }
                             }
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                // add a closing paragraph if necessary
+                                if (hasOpenPara === true) {
+                                    content += "\n</para>";
+                                }
+                                // add the ending node
+                                content += "\n</usx>\n";
+                            }
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
                         });
-                    }
-                    chaptersLeft--;
-                    if (chaptersLeft === 0) {
-                        // done with the chapters
-                        // add a closing paragraph if necessary
-                        if (hasOpenPara === true) {
-                            content += "\n</para>";
+                    } else {
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            // done with the chapters
+                            // add a closing paragraph if necessary
+                            if (hasOpenPara === true) {
+                                content += "\n</para>";
+                            }
+                            // add the ending node
+                            content += "\n</usx>\n";
+                            var blob = new Blob([content], {type: 'text/plain'});
+                            writer.write(blob);
+                            content = ""; // clear out the content string for the next chapter
                         }
-                        // add the ending node
-                        content += "\n</usx>";
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
                     }
                 });
             };
@@ -1634,6 +1662,13 @@ define(function (require) {
             // XML document
             // Note that this export is a full dump of the document, not just the parts that have been adapted.
             // This is because we're exporting the source as well as the target text.
+            // EDB 8/13/16: partially working. Still need:
+            // - colors in settings node converted to AI doc format (WXWidgets) from RGB
+            // ..and for each SP
+            // - Flag bitss generated (implement buildFlags() below)
+            // - type enum generated (implement buildTY() below)
+            // - "inform" bits copied over
+            // -- lower priority, but need for AI compatibility: other bits implemented
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
@@ -1650,6 +1685,17 @@ define(function (require) {
                 };
                 var project = window.Application.currentProject;
                 var chaptersLeft = chapters.length;
+                var buildFlags = function (sourcephrase) {
+                    // (code in XML.cpp ~ line 5568)
+                    var val = "";
+                    return val;
+                };
+                var buildTY = function (sourcephrase) {
+                    // (code in SourcePhrase.h ~ line 55)
+                    var val = "";
+                    val = "0"; // none
+                    return val;
+                };
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -1696,16 +1742,19 @@ define(function (require) {
                             if (value.get("follpuncts").length > 0) {
                                 content += value.get("follpuncts");
                             }
-                            content += "\" k=\"" + value.get("source") + "\" t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            content += "\" k=\"" + value.get("source") + "\"";
+                            if (value.get("target").length > 0) {
+                                content += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            }
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"\" sn=\"" + (value.get('norder') - 1);
+                            content += " f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
                             words = value.get("source").match(/\S+/g);
                             if (words) {
                                 content += "\" w=\"" + words.length + "\"";
                             } else {
                                 content += "\" w=\"1\"";
                             }
-                            content += " ty=\"\"";
+                            content += " ty=\"" + buildTY(value) + "\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
@@ -1714,6 +1763,19 @@ define(function (require) {
                                 content += " fp=\"" + value.get("follpuncts") + "\"";
                             }
                             markers = value.get("markers");
+                            // inform
+                            if (markers.indexof("\\h ") > -1) {
+                                content += " i=\"hdr\"";
+                            }
+//                            if (markers.indexof("\\mt1") > -1) {
+//                                content += " i=\"main title L1\"";
+//                            }
+//                            if (markers.indexof("\\imt1") > -1) {
+//                                content += " i=\"intro major title L1\"";
+//                            }
+//                            if (markers.indexof("\\ip") > -1) {
+//                                content += " i=\"intro paragraph\"";
+//                            }
                             // add markers, and if needed, pretty-print the text on a newline
                             if (markers.indexOf("\\v") > -1) {
                                 // add chapter/verse
