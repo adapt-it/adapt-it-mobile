@@ -372,6 +372,9 @@ define(function (require) {
                         // process the node itself
                         if ($(element)[0].nodeType === 1) {
                             switch ($(element)[0].tagName) {
+                            case "book":
+                                markers += "\\id " + element.attributes.item("code").nodeValue;
+                                break;
                             case "chapter":
                                 if (markers.length > 0) {
                                     markers += " ";
@@ -1490,9 +1493,8 @@ define(function (require) {
             // USX document
             var exportUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-
-//                var book = window.Application.BookList.where({bookid: bookid}).at(0);
-//                var bookID = book.get('scrid');
+                var book = window.Application.BookList.where({bookid: bookid})[0];
+                var bookID = book.get('scrid');
                 var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
@@ -1505,7 +1507,7 @@ define(function (require) {
                 var i = 0;
                 var idxFilters = 0;
                 var versenum = 1;
-                var hasOpenPara = false;
+                var closeNode = ""; // holds ending string for <para> and <book> XML nodes
                 var value = null;
                 var mkr = "";
                 var chaptersLeft = chapters.length;
@@ -1528,7 +1530,11 @@ define(function (require) {
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
@@ -1563,45 +1569,104 @@ define(function (require) {
                                 if (filtered === false) {
                                     // not filtered -- print out the text and markers
                                     if (markers.length > 0) {
-                                        if ((markers.indexOf("\\id")) > -1) {
-                                            content += "<book code=\"\" style=\"id\">"; // + bookID + 
-                                            content += value.get("target");
-                                            content += "</book>";
+                                        if ((markers.indexOf("\\id ")) > -1) {
+                                            chapterString += "<book code=\"" + bookID + "\" style=\"id\">";
+                                            chapterString += value.get("target");
+                                            closeNode = "</book>";
                                             continue; // skip to the next entry
                                         }
                                         // TODO -- list of markers...
-                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                            if (hasOpenPara === true) {
-                                                content += "</para>";
+                                        if (markers.indexOf("\\c ") > -1) {
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
+                                                closeNode = ""; // clear it out
                                             }
-                                            content += "\n<para style=\"";
+                                            var chpos = markers.indexOf("\\c");
+                                            chapterString += "\n<chapter number=\"";
+                                            chapterString += markers.substr(chpos + 3, (markers.indexOf(" ", chpos + 3) - (chpos + 3)));
+                                            chapterString += "\" style=\"c\" />";
+                                        }
+                                        if (markers.indexOf("\\b ") > -1) {
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
+                                                closeNode = ""; // clear it out
+                                            }
+                                            chapterString += "\n<para style=\"b\" />";
+                                        }
+                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
+                                            }
+                                            chapterString += "\n<para style=\"";
                                             if (markers.indexOf("\\p") > -1) {
-                                                content += "p";
+                                                var ppos = markers.indexOf("\\p");
+                                                if (markers.indexOf(" ", hpos) > -1) {
+                                                    chapterString += markers.substring(ppos + 1, (markers.indexOf(" ", ppos)));
+                                                } else {
+                                                    chapterString += markers.substr(ppos + 1);
+                                                }                                                
                                             } else if (markers.indexOf("\\q") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var qpos = markers.indexOf("\\q");
-                                                content += markers.substr(qpos, markers.length - markers.indexOf(" ", qpos));
+                                                if (markers.indexOf(" ", qpos) > -1) {
+                                                    chapterString += markers.substring(qpos + 1, (markers.indexOf(" ", qpos)));
+                                                } else {
+                                                    chapterString += markers.substr(qpos + 1);
+                                                }
                                             } else if (markers.indexOf("\\ide") > -1) {
-                                                content += "ide";
+                                                chapterString += "ide";
                                             } else if (markers.indexOf("\\h") > -1) {
-                                                content += "h";
+                                                var hpos = markers.indexOf("\\h");
+                                                if (markers.indexOf(" ", hpos) > -1) {
+                                                    chapterString += markers.substring(hpos + 1, (markers.indexOf(" ", hpos)));
+                                                } else {
+                                                    chapterString += markers.substr(hpos + 1);
+                                                }                                                
+                                            } else if (markers.indexOf("\\rem") > -1) {
+                                                chapterString += "rem";
+                                            } else if (markers.indexOf("\\imt") > -1) {
+                                                // extract out what kind this is (e.g., "imt2") - 
+                                                // this goes in the style attribute
+                                                var imtpos = markers.indexOf("\\imt");
+                                                if (markers.indexOf(" ", imtpos) > -1) {                                                     chapterString += markers.substring(imtpos + 1, (markers.indexOf(" ", imtpos)));
+                                                } else {
+                                                    chapterString += markers.substr(imtpos + 1);
+                                                }
                                             } else if (markers.indexOf("\\mt") > -1) {
-                                                // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                                // extract out what kind this is (e.g., "mt2") - 
+                                                // this goes in the style attribute
                                                 var mtpos = markers.indexOf("\\mt");
-                                                content += markers.substr(mtpos, markers.length - markers.indexOf(" ", mtpos));
+                                                if (markers.indexOf(" ", mtpos) > -1) {                                                     chapterString += markers.substring(mtpos + 1, (markers.indexOf(" ", mtpos)));
+                                                } else {
+                                                    chapterString += markers.substr(mtpos + 1);
+                                                }
+                                            } else if (markers.indexOf("\\toc") > -1) {
+                                                // extract out what kind this is (e.g., "toc2") - 
+                                                // this goes in the style attribute
+                                                var tocpos = markers.indexOf("\\toc");
+                                                if (markers.indexOf(" ", tocpos) > -1) {                                                     chapterString += markers.substring(tocpos + 1, (markers.indexOf(" ", tocpos)));
+                                                } else {
+                                                    chapterString += markers.substr(tocpos + 1);
+                                                }
                                             }
-                                            content += "\">";
-                                            hasOpenPara = true;
+                                            chapterString += "\">";
+                                            closeNode = "</para>";
                                         }
-                                        if (markers.indexOf("\\c") > 1) {
-                                            content += "<chapter number=\"" + entry.get('name') + "\" style=\"c\" />";
-                                        }
-                                        if (markers.indexOf("\\v") > -1) {
-                                            content += "<verse number=\"" + versenum + "\" style=\"v\" />";
-                                            versenum++;
+//                                        if (markers.indexOf("\\+ ") > -1) {
+//                                            chapterString += "<note caller=\"+\" style=\"f\">";
+//                                        }
+                                        if (markers.indexOf("\\v ") > -1) {
+                                            var vpos = markers.indexOf("\\v ");
+                                            chapterString += "<verse number=\"";
+                                            if (markers.indexOf(" ", vpos + 3) > -1) {
+                                                chapterString += markers.substring(vpos + 3, (markers.indexOf(" ", vpos + 3)));
+                                            } else {
+                                                chapterString += markers.substr(vpos + 3);
+                                            }
+                                            chapterString += "\" style=\"v\" />";
                                         }
                                     }
-                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                                 }
                                 // done dealing with the source phrase -- is it the last one?
                                 if (value.get('spid') === lastSPID) {
@@ -1610,23 +1675,42 @@ define(function (require) {
                                     break;
                                 }
                             }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                // add a closing paragraph if necessary
+                                if (closeNode.length > 0) {
+                                    content += closeNode;
+                                }
+                                // add the ending node
+                                content += "\n</usx>\n";
+                                // ** we are now done with all the chapters -- write out the file
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
+                        });
+                    } else {
+                        // BUGBUG: can we end up here if there are chapters?
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            // done with the chapters
+                            // add a closing paragraph if necessary
+                            if (closeNode.length > 0) {
+                                content += closeNode;
+                            }
+                            // add the ending node
+                            content += "\n</usx>\n";
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
-                        });
-                    }
-                    chaptersLeft--;
-                    if (chaptersLeft === 0) {
-                        // done with the chapters
-                        // add a closing paragraph if necessary
-                        if (hasOpenPara === true) {
-                            content += "\n</para>";
                         }
-                        // add the ending node
-                        content += "\n</usx>";
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
                     }
                 });
             };
@@ -1634,11 +1718,19 @@ define(function (require) {
             // XML document
             // Note that this export is a full dump of the document, not just the parts that have been adapted.
             // This is because we're exporting the source as well as the target text.
+            // EDB 8/13/16: partially working. Still need:
+            // - colors in settings node converted to AI doc format (WXWidgets) from RGB
+            // ..and for each SP
+            // - Flag bitss generated (implement buildFlags() below)
+            // - type enum generated (implement buildTY() below)
+            // - "inform" bits copied over
+            // -- lower priority, but need for AI compatibility: other bits implemented
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
                 var content = "";
-                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>";
+                var words = [];
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var spList = new spModel.SourcePhraseCollection();
                 var markers = "";
                 var i = 0;
@@ -1649,6 +1741,17 @@ define(function (require) {
                 };
                 var project = window.Application.currentProject;
                 var chaptersLeft = chapters.length;
+                var buildFlags = function (sourcephrase) {
+                    // (code in XML.cpp ~ line 5568)
+                    var val = "";
+                    return val;
+                };
+                var buildTY = function (sourcephrase) {
+                    // (code in SourcePhrase.h ~ line 55)
+                    var val = "";
+                    val = "0"; // none
+                    return val;
+                };
                 writer.onwriteend = function (e) {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -1661,7 +1764,7 @@ define(function (require) {
                 };
                 // opening content
                 content = XML_PROLOG;
-                content += "\n<!-- Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
                 content += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
                 if (window.sqlitePlugin) {
@@ -1687,9 +1790,27 @@ define(function (require) {
                             value = spList.at(i);
                             // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
                             // line 1 -- source, key, target, adaptation
-                            content += "<S s=\"" + value.get("source") + "\" k=\"" + value.get("source") + "\" t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            content += "<S s=\"";
+                            if (value.get("prepuncts").length > 0) {
+                                content += value.get("prepuncts");
+                            }
+                            content += value.get("source");
+                            if (value.get("follpuncts").length > 0) {
+                                content += value.get("follpuncts");
+                            }
+                            content += "\" k=\"" + value.get("source") + "\"";
+                            if (value.get("target").length > 0) {
+                                content += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                            }
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"\" sn=\"" + (value.get('norder') - 1) + "\" w=\"\" ty=\"\"";
+                            content += " f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
+                            words = value.get("source").match(/\S+/g);
+                            if (words) {
+                                content += "\" w=\"" + words.length + "\"";
+                            } else {
+                                content += "\" w=\"1\"";
+                            }
+                            content += " ty=\"" + buildTY(value) + "\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 content += " pp=\"" + value.get("prepuncts") + "\"";
@@ -1698,6 +1819,19 @@ define(function (require) {
                                 content += " fp=\"" + value.get("follpuncts") + "\"";
                             }
                             markers = value.get("markers");
+                            // inform
+                            if (markers.indexof("\\h ") > -1) {
+                                content += " i=\"hdr\"";
+                            }
+//                            if (markers.indexof("\\mt1") > -1) {
+//                                content += " i=\"main title L1\"";
+//                            }
+//                            if (markers.indexof("\\imt1") > -1) {
+//                                content += " i=\"intro major title L1\"";
+//                            }
+//                            if (markers.indexof("\\ip") > -1) {
+//                                content += " i=\"intro paragraph\"";
+//                            }
                             // add markers, and if needed, pretty-print the text on a newline
                             if (markers.indexOf("\\v") > -1) {
                                 // add chapter/verse
