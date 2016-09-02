@@ -1493,9 +1493,8 @@ define(function (require) {
             // USX document
             var exportUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-
-//                var book = window.Application.BookList.where({bookid: bookid}).at(0);
-//                var bookID = book.get('scrid');
+                var book = window.Application.BookList.where({bookid: bookid})[0];
+                var bookID = book.get('scrid');
                 var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
@@ -1508,7 +1507,7 @@ define(function (require) {
                 var i = 0;
                 var idxFilters = 0;
                 var versenum = 1;
-                var hasOpenPara = false;
+                var closeNode = ""; // holds ending string for <para> and <book> XML nodes
                 var value = null;
                 var mkr = "";
                 var chaptersLeft = chapters.length;
@@ -1531,7 +1530,11 @@ define(function (require) {
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
@@ -1567,54 +1570,75 @@ define(function (require) {
                                     // not filtered -- print out the text and markers
                                     if (markers.length > 0) {
                                         if ((markers.indexOf("\\id ")) > -1) {
-                                            content += "<book code=\"\" style=\"id\">"; // + bookID + 
-                                            content += value.get("target");
-                                            content += "</book>";
+                                            chapterString += "<book code=\"" + bookID + "\" style=\"id\">";
+                                            chapterString += value.get("target");
+                                            closeNode = "</book>";
                                             continue; // skip to the next entry
                                         }
                                         // TODO -- list of markers...
                                         if (markers.indexOf("\\c ") > -1) {
-                                            if (hasOpenPara === true) {
-                                                content += "</para>";
-                                                hasOpenPara = false;
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
+                                                closeNode = ""; // clear it out
                                             }
                                             var chpos = markers.indexOf("\\c");
-                                            content += "\n<chapter number=\"";
-                                            content += markers.substr(chpos + 3, (markers.length - markers.indexOf(" ", chpos + 3)));
-                                            content += "\" style=\"c\" />\n";
+                                            chapterString += "\n<chapter number=\"";
+                                            chapterString += markers.substr(chpos + 3, (markers.indexOf(" ", chpos + 3) - (chpos + 3)));
+                                            chapterString += "\" style=\"c\" />";
+                                        }
+                                        if (markers.indexOf("\\b ") > -1) {
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
+                                                closeNode = ""; // clear it out
+                                            }
+                                            chapterString += "\n<para style=\"b\" />";
                                         }
                                         if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                            if (hasOpenPara === true) {
-                                                content += "</para>";
+                                            if (closeNode.length > 0) {
+                                                chapterString += closeNode;
                                             }
-                                            content += "\n<para style=\"";
+                                            chapterString += "\n<para style=\"";
                                             if (markers.indexOf("\\p") > -1) {
-                                                content += "p";
+                                                chapterString += "p";
                                             } else if (markers.indexOf("\\q") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var qpos = markers.indexOf("\\q");
-                                                content += markers.substr(qpos + 1, (markers.length - markers.indexOf(" ", qpos) - 1));
+                                                if (markers.indexOf(" ", qpos) > -1) {
+                                                    chapterString += markers.substring(qpos + 1, (markers.indexOf(" ", qpos)));
+                                                } else {
+                                                    chapterString += markers.substr(qpos + 1);
+                                                }
                                             } else if (markers.indexOf("\\ide") > -1) {
-                                                content += "ide";
+                                                chapterString += "ide";
                                             } else if (markers.indexOf("\\h") > -1) {
-                                                content += "h";
+                                                chapterString += "h";
                                             } else if (markers.indexOf("\\mt") > -1) {
-                                                // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                                // extract out what kind of major title this is (e.g., "mt2") - 
+                                                // this goes in the style attribute
                                                 var mtpos = markers.indexOf("\\mt");
-                                                content += markers.substr(mtpos + 1, (markers.length - markers.indexOf(" ", mtpos) - 1));
+                                                if (markers.indexOf(" ", mtpos) > -1) {                                                     chapterString += markers.substring(mtpos + 1, (markers.indexOf(" ", mtpos)));
+                                                } else {
+                                                    chapterString += markers.substr(mtpos + 1);
+                                                }
                                             }
-                                            content += "\">";
-                                            hasOpenPara = true;
+                                            chapterString += "\">";
+                                            closeNode = "</para>";
                                         }
-                                        if (markers.indexOf("\\c") > 1) {
-                                            content += "<chapter number=\"" + entry.get('name') + "\" style=\"c\" />";
-                                        }
-                                        if (markers.indexOf("\\v") > -1) {
-                                            content += "<verse number=\"" + versenum + "\" style=\"v\" />";
-                                            versenum++;
+//                                        if (markers.indexOf("\\+ ") > -1) {
+//                                            chapterString += "<note caller=\"+\" style=\"f\">";
+//                                        }
+                                        if (markers.indexOf("\\v ") > -1) {
+                                            var vpos = markers.indexOf("\\v ");
+                                            chapterString += "<verse number=\"";
+                                            if (markers.indexOf(" ", vpos + 3) > -1) {
+                                                chapterString += markers.substring(vpos + 3, (markers.indexOf(" ", vpos + 3)));
+                                            } else {
+                                                chapterString += markers.substr(vpos + 3);
+                                            }
+                                            chapterString += "\" style=\"v\" />";
                                         }
                                     }
-                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                                 }
                                 // done dealing with the source phrase -- is it the last one?
                                 if (value.get('spid') === lastSPID) {
@@ -1623,31 +1647,35 @@ define(function (require) {
                                     break;
                                 }
                             }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
                                 // done with the chapters
                                 // add a closing paragraph if necessary
-                                if (hasOpenPara === true) {
-                                    content += "\n</para>";
+                                if (closeNode.length > 0) {
+                                    content += closeNode;
                                 }
                                 // add the ending node
                                 content += "\n</usx>\n";
+                                // ** we are now done with all the chapters -- write out the file
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
                             }
-                            var blob = new Blob([content], {type: 'text/plain'});
-                            writer.write(blob);
-                            content = ""; // clear out the content string for the next chapter
                         });
                     } else {
+                        // BUGBUG: can we end up here if there are chapters?
                         // no sourcephrases to export -- just decrement the chapters, and close things out if needed
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
                             // done with the chapters
                             // add a closing paragraph if necessary
-                            if (hasOpenPara === true) {
-                                content += "\n</para>";
+                            if (closeNode.length > 0) {
+                                content += closeNode;
                             }
                             // add the ending node
                             content += "\n</usx>\n";
