@@ -1593,13 +1593,18 @@ define(function (require) {
                                             }
                                             chapterString += "\n<para style=\"b\" />";
                                         }
-                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\mt") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
                                             if (closeNode.length > 0) {
                                                 chapterString += closeNode;
                                             }
                                             chapterString += "\n<para style=\"";
                                             if (markers.indexOf("\\p") > -1) {
-                                                chapterString += "p";
+                                                var ppos = markers.indexOf("\\p");
+                                                if (markers.indexOf(" ", hpos) > -1) {
+                                                    chapterString += markers.substring(ppos + 1, (markers.indexOf(" ", ppos)));
+                                                } else {
+                                                    chapterString += markers.substr(ppos + 1);
+                                                }                                                
                                             } else if (markers.indexOf("\\q") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var qpos = markers.indexOf("\\q");
@@ -1611,14 +1616,37 @@ define(function (require) {
                                             } else if (markers.indexOf("\\ide") > -1) {
                                                 chapterString += "ide";
                                             } else if (markers.indexOf("\\h") > -1) {
-                                                chapterString += "h";
+                                                var hpos = markers.indexOf("\\h");
+                                                if (markers.indexOf(" ", hpos) > -1) {
+                                                    chapterString += markers.substring(hpos + 1, (markers.indexOf(" ", hpos)));
+                                                } else {
+                                                    chapterString += markers.substr(hpos + 1);
+                                                }                                                
+                                            } else if (markers.indexOf("\\rem") > -1) {
+                                                chapterString += "rem";
+                                            } else if (markers.indexOf("\\imt") > -1) {
+                                                // extract out what kind this is (e.g., "imt2") - 
+                                                // this goes in the style attribute
+                                                var imtpos = markers.indexOf("\\imt");
+                                                if (markers.indexOf(" ", imtpos) > -1) {                                                     chapterString += markers.substring(imtpos + 1, (markers.indexOf(" ", imtpos)));
+                                                } else {
+                                                    chapterString += markers.substr(imtpos + 1);
+                                                }
                                             } else if (markers.indexOf("\\mt") > -1) {
-                                                // extract out what kind of major title this is (e.g., "mt2") - 
+                                                // extract out what kind this is (e.g., "mt2") - 
                                                 // this goes in the style attribute
                                                 var mtpos = markers.indexOf("\\mt");
                                                 if (markers.indexOf(" ", mtpos) > -1) {                                                     chapterString += markers.substring(mtpos + 1, (markers.indexOf(" ", mtpos)));
                                                 } else {
                                                     chapterString += markers.substr(mtpos + 1);
+                                                }
+                                            } else if (markers.indexOf("\\toc") > -1) {
+                                                // extract out what kind this is (e.g., "toc2") - 
+                                                // this goes in the style attribute
+                                                var tocpos = markers.indexOf("\\toc");
+                                                if (markers.indexOf(" ", tocpos) > -1) {                                                     chapterString += markers.substring(tocpos + 1, (markers.indexOf(" ", tocpos)));
+                                                } else {
+                                                    chapterString += markers.substr(tocpos + 1);
                                                 }
                                             }
                                             chapterString += "\">";
