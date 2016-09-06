@@ -1522,7 +1522,8 @@ define(function (require) {
                     exportFail(e);
                 };
                 // starting material -- xml prolog and usx tag
-                content = XML_PROLOG + "\n<usx version=\"2.0\">\n";
+                // using USX 2.5 (https://github.com/ubsicap/usx/releases/tag/v2.5)
+                content = XML_PROLOG + "\n<usx version=\"2.5\">\n";
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
