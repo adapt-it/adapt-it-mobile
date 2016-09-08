@@ -411,7 +411,9 @@ define(function (require) {
                 num: 66,
                 chapters: [20, 29, 22, 11, 14, 17, 17, 13, 21, 11, 19, 17, 18, 20, 8, 21, 18, 24, 21, 15, 27, 20]
             },
-            
+
+            // *************************************************
+            // Apocrypha, etc.
             {
                 id: "JDT",
                 name: "Judith",
@@ -420,7 +422,7 @@ define(function (require) {
             },
             {
                 id: "SIR",
-                name: "Ecclesiasticus / Sirach",
+                name: "Sirach (Ecclesiasticus)",
                 num: 84,
                 chapters: [30, 18, 31, 31, 15, 37, 36, 19, 18, 31, 34, 18, 26, 27, 20, 30, 32, 33, 30, 31, 28, 27, 27, 34, 26, 29, 30, 26, 28, 25, 31, 24, 33, 26, 24, 27, 31, 34, 35, 30, 27, 25, 33, 23, 26, 20, 25, 25, 16, 29, 30]
             },
@@ -453,9 +455,237 @@ define(function (require) {
                 name: "2 Maccabees",
                 num: 112,
                 chapters: [36, 32, 40, 50, 27, 31, 42, 36, 29, 38, 38, 45, 26, 46, 39]
+            },
+            
+            // *************************************************
+            // Colophon, etc. - 15 of them, no versification
+            {
+                id: "XXA",
+                name: "Extra Matter A",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXB",
+                name: "Extra Matter B",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXC",
+                name: "Extra Matter C",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXD",
+                name: "Extra Matter D",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXE",
+                name: "Extra Matter E",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXF",
+                name: "Extra Matter F",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "XXG",
+                name: "Extra Matter G",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "FRT",
+                name: "Front Matter",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "BAK",
+                name: "Back Matter",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "OTH",
+                name: "Other Matter",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "INT",
+                name: "Introduction",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "CNC",
+                name: "Concordance",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "GLO",
+                name: "Glossary",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "TDX",
+                name: "Topical Index",
+                num: 0,
+                chapters: []
+            },
+            {
+                id: "NDX",
+                name: "Names Index",
+                num: 0,
+                chapters: []
             }
         ],
+        
+        // *************************************************
         // Following are apocrypha that I was unable to retrieve versification info for:
+        // From USX.rnc v. 2.5 (codes and names):
+//            {
+//                id: "ESG",
+//                name: "Esther", // Esther (Greek)
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "S3Y",
+//                name: "Song of Three Young Men",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "1MA",
+//                name: "1 Maccabees",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "2MA",
+//                name: "2 Maccabees",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "3MA",
+//                name: "3 Maccabees",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "4MA",
+//                name: "4 Maccabees",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "1ES",
+//                name: "1 Esdras",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "2ES",
+//                name: "2 Esdras",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "PS2",
+//                name: "Psalm 151",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "EZA",
+//                name: "Apocalypse of Ezra",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "5EZ",
+//                name: "5 Ezra",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "6EZ",
+//                name: "6 Ezra",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "DAG",
+//                name: "Daniel (Greek)",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "PS3",
+//                name: "Psalms 152-155",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "2BA",
+//                name: "2 Baruch",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "LBA",
+//                name: "Letter of Baruch",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "4BA",
+//                name: "4 Baruch",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "ENO",
+//                name: "Enoch",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "1MQ",
+//                name: "1 Meqabyan",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "2MQ",
+//                name: "2 Meqabyan",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "3MQ",
+//                name: "3 Meqabyan",
+//                num: 80,
+//                chapters: []
+//            },
+//            {
+//                id: "REP",
+//                name: "Reproof",
+//                num: 80,
+//                chapters: []
+//            },
 //            {
 //                id: "BEL",
 //                name: "Bel and the Dragon",
@@ -475,33 +705,21 @@ define(function (require) {
 //                chapters: []
 //            },
 //            {
-//                id: "S3Y",
-//                name: "Prayer of Azariah",
-//                num: 88,
-//                chapters: []
-//            },
-//            {
 //                id: "LJE",
 //                name: "Letter of Jeremiah",
 //                num: 100,
 //                chapters: []
 //            },
 //            {
-//                id: "ODE",
+//                id: "ODA",
 //                name: "Odes",
 //                num: 131,
 //                chapters: []
 //            },
 //            {
-//                id: "PSO",
-//                name: "Prayer of Solomon",
+//                id: "PSS",
+//                name: "Psalms of Solomon",
 //                num: 132,
-//                chapters: []
-//            },
-//            {
-//                id: "PJE",
-//                name: "Prayer of Jeremiah",
-//                num: 133,
 //                chapters: []
 //            },
 //            {
@@ -510,6 +728,20 @@ define(function (require) {
 //                num: 140,
 //                chapters: []
 //            }
+
+        // Not in USX.RNC either...
+//            {
+//                id: "S3Y",
+//                name: "Prayer of Azariah",
+//                num: 88,
+//                chapters: []
+//            },
+//            {
+//                id: "PJE",
+//                name: "Prayer of Jeremiah",
+//                num: 133,
+//                chapters: []
+//            },
         
         findById = function (id) {
             var deferred = $.Deferred(),
