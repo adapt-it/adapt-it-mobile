@@ -1333,7 +1333,11 @@ define(function (require) {
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
@@ -1341,7 +1345,7 @@ define(function (require) {
                                 // line breaks for chapter, verse, paragraph marks
                                 if ((value.get("markers").indexOf("\\c") > -1) || (value.get("markers").indexOf("\\v") > -1) ||
                                         (value.get("markers").indexOf("\\h") > -1) || (value.get("markers").indexOf("\\p") > -1)) {
-                                    content += "\n"; // newline
+                                    chapterString += "\n"; // newline
                                 }
                                 // check to see if this sourcephrase is filtered (only looking at the top level)
                                 if (filtered === false) {
@@ -1368,7 +1372,7 @@ define(function (require) {
                                     filtered = false;
                                 }
                                 if (filtered === false) {
-                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                                 }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
@@ -1376,6 +1380,9 @@ define(function (require) {
                                     break;
                                 }
                             }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
@@ -1417,7 +1424,11 @@ define(function (require) {
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
@@ -1438,12 +1449,12 @@ define(function (require) {
                                                             (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) ||
                                                             (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
                                                         // pretty-printing -- add a newline so the output looks better
-                                                        content += "\n"; // newline
+                                                        chapterString += "\n"; // newline
                                                     }
                                                     // now add the markers and a space
-                                                    content += markers + " ";
+                                                    chapterString += markers + " ";
                                                 }
-                                                content += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
+                                                chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
                                                 // if there is an end marker associated with this marker,
                                                 // do not export any source phrases until we come across the end marker
                                                 mkr = markerList.where({name: filterAry[idxFilters].trim()});
@@ -1468,12 +1479,12 @@ define(function (require) {
                                     if (markers.trim().length > 0) {
                                         if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
                                             // pretty-printing -- add a newline so the output looks better
-                                            content += "\n"; // newline
+                                            chapterString += "\n"; // newline
                                         }
                                         // now add the markers and a space
-                                        content += markers + " ";
+                                        chapterString += markers + " ";
                                     }
-                                    content += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
                                 }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
@@ -1481,6 +1492,9 @@ define(function (require) {
                                     break;
                                 }
                             }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
@@ -1601,11 +1615,11 @@ define(function (require) {
                                             chapterString += "\n<para style=\"";
                                             if (markers.indexOf("\\p") > -1) {
                                                 var ppos = markers.indexOf("\\p");
-                                                if (markers.indexOf(" ", hpos) > -1) {
+                                                if (markers.indexOf(" ", ppos) > -1) {
                                                     chapterString += markers.substring(ppos + 1, (markers.indexOf(" ", ppos)));
                                                 } else {
                                                     chapterString += markers.substr(ppos + 1);
-                                                }                                                
+                                                }
                                             } else if (markers.indexOf("\\q") > -1) {
                                                 // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
                                                 var qpos = markers.indexOf("\\q");
@@ -1622,7 +1636,7 @@ define(function (require) {
                                                     chapterString += markers.substring(hpos + 1, (markers.indexOf(" ", hpos)));
                                                 } else {
                                                     chapterString += markers.substr(hpos + 1);
-                                                }                                                
+                                                }
                                             } else if (markers.indexOf("\\rem") > -1) {
                                                 chapterString += "rem";
                                             } else if (markers.indexOf("\\imt") > -1) {
@@ -1785,74 +1799,81 @@ define(function (require) {
                 // END settings xml node
                 // CONTENT PART: get the chapters belonging to our book
                 chapters.forEach(function (entry) {
+                    // add a placeholder string for this chapter, so that it ends up in order (the call to
+                    // fetch() is async, and sometimes the chapters are returned out of order)
+                    content += "**" + entry.get("chapterid") + "**";
                     // for each chapter (regardless of whether there's some adaptation done), get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                        var chapterString = "";
                         for (i = 0; i < spList.length; i++) {
                             value = spList.at(i);
                             // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
                             // line 1 -- source, key, target, adaptation
-                            content += "<S s=\"";
+                            chapterString += "<S s=\"";
                             if (value.get("prepuncts").length > 0) {
-                                content += value.get("prepuncts");
+                                chapterString += value.get("prepuncts");
                             }
-                            content += value.get("source");
+                            chapterString += value.get("source");
                             if (value.get("follpuncts").length > 0) {
-                                content += value.get("follpuncts");
+                                chapterString += value.get("follpuncts");
                             }
-                            content += "\" k=\"" + value.get("source") + "\"";
+                            chapterString += "\" k=\"" + value.get("source") + "\"";
                             if (value.get("target").length > 0) {
-                                content += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                                chapterString += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             }
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            content += " f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
+                            chapterString += " f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
                             words = value.get("source").match(/\S+/g);
                             if (words) {
-                                content += "\" w=\"" + words.length + "\"";
+                                chapterString += "\" w=\"" + words.length + "\"";
                             } else {
-                                content += "\" w=\"1\"";
+                                chapterString += "\" w=\"1\"";
                             }
-                            content += " ty=\"" + buildTY(value) + "\"";
+                            chapterString += " ty=\"" + buildTY(value) + "\"";
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
-                                content += " pp=\"" + value.get("prepuncts") + "\"";
+                                chapterString += " pp=\"" + value.get("prepuncts") + "\"";
                             }
                             if (value.get("follpuncts").length > 0) {
-                                content += " fp=\"" + value.get("follpuncts") + "\"";
+                                chapterString += " fp=\"" + value.get("follpuncts") + "\"";
                             }
                             markers = value.get("markers");
                             // inform
                             if (markers.indexof("\\h ") > -1) {
-                                content += " i=\"hdr\"";
+                                chapterString += " i=\"hdr\"";
                             }
 //                            if (markers.indexof("\\mt1") > -1) {
-//                                content += " i=\"main title L1\"";
+//                                chapterString += " i=\"main title L1\"";
 //                            }
 //                            if (markers.indexof("\\imt1") > -1) {
-//                                content += " i=\"intro major title L1\"";
+//                                chapterString += " i=\"intro major title L1\"";
 //                            }
 //                            if (markers.indexof("\\ip") > -1) {
-//                                content += " i=\"intro paragraph\"";
+//                                chapterString += " i=\"intro paragraph\"";
 //                            }
                             // add markers, and if needed, pretty-print the text on a newline
                             if (markers.indexOf("\\v") > -1) {
                                 // add chapter/verse
-                                content += " c=\"" + entry.get('name') + ":" +  "\"";
+                                chapterString += " c=\"" + entry.get('name') + ":" +  "\"";
                             }
                             // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
                             //           inline nonbinding markers, inline nonbinding end barkers
                             if (markers.length > 0) {
-                                content += " m=\"" + markers + "\"";
+                                chapterString += " m=\"" + markers + "\"";
                             }
                             // line 5-8 -- free translation, note, back translation, filtered info
                             // line 9 -- lapat, tmpat, gmpat, pupat
-                            content += ">\n";
+                            chapterString += ">\n";
                             // 3 more possible info types
                             // medial puncts, medial markers, saved words (another <s>)
                             if (value.get("midpuncts").length > 0) {
-                                content += "<MP mp=\"" + value.get("midpuncts") + "\"/>";
+                                chapterString += "<MP mp=\"" + value.get("midpuncts") + "\"/>";
                             }
-                            content += "</S>\n";
+                            chapterString += "</S>\n";
                         }
+                        // Now take the string from this chapter's sourcephrases that we've just built and
+                        // insert them into the correct location in the file's content string
+                        content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                         var blob = new Blob([content], {type: 'text/plain'});
                         writer.write(blob);
                         content = ""; // clear out the content string for the next chapter
