@@ -1383,12 +1383,27 @@ define(function (require) {
                             // Now take the string from this chapter's sourcephrases that we've just built and
                             // insert them into the correct location in the file's content string
                             content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                // ** we are now done with all the chapters -- write out the file
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
+                        });
+                    } else {
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            // done with the chapters
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
-                            content = ""; // clear out the content string for the next chapter
-                        });
+                            content = ""; // clear out the content string
+                        }
                     }
-                    chaptersLeft--;
                 });
             };
 
@@ -1495,12 +1510,27 @@ define(function (require) {
                             // Now take the string from this chapter's sourcephrases that we've just built and
                             // insert them into the correct location in the file's content string
                             content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                // ** we are now done with all the chapters -- write out the file
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
+                        });
+                    } else {
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            // done with the chapters
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
-                            content = ""; // clear out the content string for the next chapter
-                        });
+                            content = ""; // clear out the content string
+                        }
                     }
-                    chaptersLeft--;
                 });
             };
 
@@ -1874,9 +1904,6 @@ define(function (require) {
                         // Now take the string from this chapter's sourcephrases that we've just built and
                         // insert them into the correct location in the file's content string
                         content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
-                        var blob = new Blob([content], {type: 'text/plain'});
-                        writer.write(blob);
-                        content = ""; // clear out the content string for the next chapter
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             // done with the chapters -- add the ending node
