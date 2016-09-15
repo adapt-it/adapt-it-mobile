@@ -422,6 +422,7 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
+                                closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 break;
                             case "figure":
                                 break;
@@ -436,7 +437,34 @@ define(function (require) {
                                 }
                                 closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 break;
-                            case "reference":
+                            case "table":
+                                break; // do nothing -- table rows are kept
+                            case "row":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\tr";
+                                break;
+                            case "cell":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                // could be header or cell; cells also contain alignment
+                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                break;
+                            case "sidebar":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                closingMarker = "\\esbe";
+                                break;
+                            case "ref":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\x \\xt";
+                                closingMarker = "\\x*";
                                 break;
                             default: // no processing for other nodes
                                 break;
