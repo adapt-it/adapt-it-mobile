@@ -61,7 +61,7 @@
         "lblFinish": "Terminar",
         "lblSkip": "Pasar",
         "lblClose": "Cerrar",
-        "lblSourceToTargetAdaptations": "__source__ a __target__ Adaptacíones",
+        "lblSourceToTargetAdaptations": "Adaptacíones desde __source__ a __target__",
         "ttlHelp": "Ayuda",
         "lblPlaceholder": "Punto de referencia",
         "lblPhrase": "Cláusula",
