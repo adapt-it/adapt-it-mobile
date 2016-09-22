@@ -383,10 +383,10 @@ define(function (require) {
                                 // does this have alt or publishing numbers?
                                 if (element.attributes.item("pubnumber")) {
                                     // verse where the published numbering differs from the number
-                                    markers += " \\cp" + element.attributes.item("pubnuber").nodeValue;
+                                    markers += " \\cp " + element.attributes.getNamedItem("pubnumber").nodeValue;
                                 } else if (element.attributes.item("altnumber")) {
                                     // verse with an alternate numbering
-                                    markers += " \\ca" + element.attributes.item("altnuber").nodeValue + "\\ca*";
+                                    markers += " \\ca " + element.attributes.getNamedItem("altnumber").nodeValue + "\\ca*";
                                 }
                                 if (element.attributes.item("number").nodeValue !== "1") {
                                     // not the first chapter
@@ -420,10 +420,10 @@ define(function (require) {
                                 // does this have alt or publishing numbers?
                                 if (element.attributes.item("pubnumber")) {
                                     // verse where the published numbering differs from the number
-                                    markers += " \\vp" + element.attributes.item("pubnuber").nodeValue + "\\vp*";
+                                    markers += " \\vp " + element.attributes.getNamedItem("pubnumber").nodeValue + "\\vp*";
                                 } else if (element.attributes.item("altnumber")) {
                                     // verse with an alternate numbering
-                                    markers += " \\va" + element.attributes.item("altnuber").nodeValue + "\\va*";
+                                    markers += " \\va " + element.attributes.getNamedItem("altnumber").nodeValue + "\\va*";
                                 }
                                 break;
                             case "para":
@@ -1644,6 +1644,10 @@ define(function (require) {
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
                                 markers = value.get("markers");
+                                if (filtered === true && markers.length > 0 && needsEndMarker.length === 0) {
+                                    // hit the next strip; this is an implicit end to the filtering (there's no end marker)
+                                    filtered = false;
+                                }
                                 // check to see if this sourcephrase is filtered (only looking at the top level)
                                 if (filtered === false) {
                                     for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
@@ -1651,7 +1655,6 @@ define(function (require) {
                                         if (filterAry[idxFilters].trim().length > 0) {
                                             if (markers.indexOf(filterAry[idxFilters]) >= 0) {
                                                 // this is a filtered sourcephrase -- do not export it
-                                                console.log("filtered: " + markers);
                                                 // if there is an end marker associated with this marker,
                                                 // do not export any source phrases until we come across the end marker
                                                 mkr = markerList.where({name: filterAry[idxFilters].trim()});
@@ -1659,6 +1662,7 @@ define(function (require) {
                                                     needsEndMarker = mkr[0].get("endMarker");
                                                 }
                                                 filtered = true;
+                                                console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
                                             }
                                         }
                                     }
@@ -1674,33 +1678,53 @@ define(function (require) {
                                 if (filtered === false) {
                                     // not filtered -- print out the text and markers
                                     if (markers.length > 0) {
+                                        // <book> id
                                         if ((markers.indexOf("\\id ")) > -1) {
-                                            chapterString += "<book code=\"" + bookID + "\" style=\"id\">";
-                                            chapterString += value.get("target");
-                                            closeNode = "</book>";
-                                            continue; // skip to the next entry
+                                            chapterString += "<book code=\"" + bookID + "\" style=\"id\"";
+                                            if (markers.lastIndexOf("\\") === markers.indexOf("\\id")) {
+                                                chapterString += ">" + value.get("target");
+                                                // this is a simple \\id marker -- more inner text could follow, 
+                                                // so set the closeNode and skip to the next item
+                                                closeNode = "</book>";
+                                                continue; // skip to the next entry
+                                            } else {
+                                                // there are more markers after the \\id -- close out the <book> elt and keep processing
+                                                closeNode = "";
+                                                chapterString += " />\n";
+                                            }
                                         }
-                                        // TODO -- list of markers...
+                                        // <chapter>
                                         if (markers.indexOf("\\c ") > -1) {
                                             if (closeNode.length > 0) {
                                                 chapterString += closeNode;
                                                 closeNode = ""; // clear it out
                                             }
-                                            var chpos = markers.indexOf("\\c");
+                                            var chpos = markers.indexOf("\\c ");
                                             chapterString += "\n<chapter number=\"";
                                             chapterString += markers.substr(chpos + 3, (markers.indexOf(" ", chpos + 3) - (chpos + 3)));
                                             if (markers.indexOf("\\cp") > -1) {
                                                 // publishing numbering
                                                 var cppos = markers.indexOf("\\cp");
-                                                chapterString += "\" pubnumber=\"" + markers.substr(cppos + 4, (markers.indexOf(" ", cppos + 4) - (cppos + 4)));
+                                                chapterString += "\" pubnumber=\"";
+                                                if (markers.indexOf("\\", cppos + 3) < 0) {
+                                                    chapterString += markers.substr(cppos + 4);
+                                                } else {
+                                                    chapterString += markers.substr(cppos + 4, (markers.indexOf("\\", cppos + 4) - (cppos + 4)));
+                                                }
                                             }
                                             if (markers.indexOf("\\ca") > -1) {
                                                 // publishing numbering
                                                 var capos = markers.indexOf("\\ca");
-                                                chapterString += "\" pubnumber=\"" + markers.substr(capos + 4, (markers.indexOf("\\", capos + 4) - (capos + 4)));
+                                                chapterString += "\" altnumber=\"";
+                                                if (markers.indexOf("\\", capos + 3) < 0) {
+                                                    chapterString += markers.substr(capos + 4);
+                                                } else {
+                                                    chapterString += markers.substr(capos + 4, (markers.indexOf("\\", capos + 4) - (capos + 4)));
+                                                }
                                             }
                                             chapterString += "\" style=\"c\" />";
                                         }
+                                        // other <para> styles
                                         if (markers.indexOf("\\b ") > -1) {
                                             if (closeNode.length > 0) {
                                                 chapterString += closeNode;
@@ -1708,7 +1732,7 @@ define(function (require) {
                                             }
                                             chapterString += "\n<para style=\"b\" />";
                                         }
-                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\m") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
+                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\cl") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\m") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
                                             if (closeNode.length > 0) {
                                                 chapterString += closeNode;
                                             }
@@ -1728,6 +1752,9 @@ define(function (require) {
                                                 } else {
                                                     chapterString += markers.substr(qpos + 1);
                                                 }
+                                            } else if (markers.indexOf("\\cl") > -1) {
+                                                // extract out what kind of quote this is (e.g., "q2") - this goes in the style attribute
+                                                chapterString += "cl";
                                             } else if (markers.indexOf("\\ide") > -1) {
                                                 chapterString += "ide";
                                             } else if (markers.indexOf("\\h") > -1) {
@@ -1770,6 +1797,7 @@ define(function (require) {
 //                                        if (markers.indexOf("\\+ ") > -1) {
 //                                            chapterString += "<note caller=\"+\" style=\"f\">";
 //                                        }
+                                        // <verse>
                                         if (markers.indexOf("\\v ") > -1) {
                                             var vpos = markers.indexOf("\\v ");
                                             chapterString += "<verse number=\"";
@@ -1778,17 +1806,28 @@ define(function (require) {
                                             } else {
                                                 chapterString += markers.substr(vpos + 3);
                                             }
+                                            chapterString += "\" style=\"v";
                                             if (markers.indexOf("\\vp") > -1) {
                                                 // publishing numbering
                                                 var vppos = markers.indexOf("\\vp");
-                                                chapterString += "\" pubnumber=\"" + markers.substr(vppos + 4, (markers.indexOf("\\", vppos + 4) - (vppos + 4)));
+                                                chapterString += "\" pubnumber=\"";
+                                                if (markers.indexOf("\\", vppos + 3) < 0) {
+                                                    chapterString += markers.substr(vppos + 4);
+                                                } else {
+                                                    chapterString += markers.substr(vppos + 4, (markers.indexOf("\\", vppos + 4) - (vppos + 4)));
+                                                }
                                             }
                                             if (markers.indexOf("\\va") > -1) {
                                                 // publishing numbering
                                                 var vapos = markers.indexOf("\\va");
-                                                chapterString += "\" pubnumber=\"" + markers.substr(vapos + 4, (markers.indexOf("\\", vapos + 4) - (vapos + 4)));
+                                                chapterString += "\" altnumber=\"";
+                                                if (markers.indexOf("\\", vapos + 3) < 0) {
+                                                    chapterString += markers.substr(vapos + 4);
+                                                } else {
+                                                    chapterString += markers.substr(vapos + 4, (markers.indexOf("\\", vapos + 4) - (vapos + 4)));
+                                                }
                                             }
-                                            chapterString += "\" style=\"v\" />";
+                                            chapterString += "\" />";
                                         }
                                     }
                                     chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
