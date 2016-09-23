@@ -112,20 +112,6 @@
         <splash src="res/screen/ios/screen-iphone6p-portrait_3x.png" width="1242" height="2208"/>
         <splash src="res/screen/ios/screen-iphone6p-landscape_3x.png" width="2208" height="1242"/>        
     </platform>
-<!-- EXPERIMENTAL - OSX (cli-6.3.0 doesn't generate xcassets correctly -- build doesn't work)
-    <platform name="osx"> 
-        <icon src="res/icon/osx/icon_16x16.png" platform="osx" />
-        <icon src="res/icon/osx/icon_16x16@2x.png" platform="osx" />
-        <icon src="res/icon/osx/icon_32x32.png" platform="osx" />
-        <icon src="res/icon/osx/icon_32x32@2x.png" platform="osx" />
-        <icon src="res/icon/osx/icon_128x128.png" platform="osx" />
-        <icon src="res/icon/osx/icon_128x128@2x.png" platform="osx" />
-        <icon src="res/icon/osx/icon_256x256.png" platform="osx" />
-        <icon src="res/icon/osx/icon_256x256@2x.png" platform="osx" />
-        <icon src="res/icon/osx/icon_512x512.png" platform="osx" />
-        <icon src="res/icon/osx/icon_512x512@2x.png" platform="osx" />
-    </platform>
--->
     <platform name="firefoxos">
         <icon src="res/icon/firefoxos/icon-60.png" width="60" height="60" />
     </platform>
