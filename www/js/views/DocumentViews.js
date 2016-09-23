@@ -381,12 +381,12 @@ define(function (require) {
                                 }
                                 markers += "\\c " + element.attributes.item("number").nodeValue;
                                 // does this have alt or publishing numbers?
-                                if (element.attributes.item("pubnumber")) {
+                                if (element.getAttribute("pubnumber") && element.getAttribute("pubnumber").length > 0) {
                                     // verse where the published numbering differs from the number
-                                    markers += " \\cp " + element.attributes.getNamedItem("pubnumber").nodeValue;
-                                } else if (element.attributes.item("altnumber")) {
+                                    markers += " \\cp " + element.getAttribute("pubnumber");
+                                } else if (element.getAttribute("altnumber") && element.getAttribute("altnumber").length > 0) {
                                     // verse with an alternate numbering
-                                    markers += " \\ca " + element.attributes.getNamedItem("altnumber").nodeValue + "\\ca*";
+                                    markers += " \\ca " + element.getAttribute("altnumber") + "\\ca*";
                                 }
                                 if (element.attributes.item("number").nodeValue !== "1") {
                                     // not the first chapter
@@ -420,10 +420,10 @@ define(function (require) {
                                 // does this have alt or publishing numbers?
                                 if (element.attributes.item("pubnumber")) {
                                     // verse where the published numbering differs from the number
-                                    markers += " \\vp " + element.attributes.getNamedItem("pubnumber").nodeValue + "\\vp*";
+                                    markers += " \\vp " + element.getAttribute("pubnumber") + "\\vp*";
                                 } else if (element.attributes.item("altnumber")) {
                                     // verse with an alternate numbering
-                                    markers += " \\va " + element.attributes.getNamedItem("altnumber").nodeValue + "\\va*";
+                                    markers += " \\va " + element.getAttribute("altnumber") + "\\va*";
                                 }
                                 break;
                             case "para":
@@ -1653,7 +1653,7 @@ define(function (require) {
                                     for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
                                         // sanity check for blank filter strings
                                         if (filterAry[idxFilters].trim().length > 0) {
-                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                            if (markers.indexOf(filterAry[idxFilters].trim()) >= 0) {
                                                 // this is a filtered sourcephrase -- do not export it
                                                 // if there is an end marker associated with this marker,
                                                 // do not export any source phrases until we come across the end marker
