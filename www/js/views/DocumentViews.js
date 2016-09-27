@@ -1,5 +1,12 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// DocumentViews.js 
+// Document import / export functionality for AIM. Current formats supported:
+// - Plain text (no formatting, other than paragraph breaks)
+// - USFM 2.4
+// - USX 2.5
+// - Adapt It document (xml)
 define(function (require) {
 
     "use strict";
@@ -1606,6 +1613,7 @@ define(function (require) {
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var filtered = false;
+                var exportMarkers = false;
                 var needsEndMarker = "";
                 var markers = "";
                 var i = 0;
@@ -1663,6 +1671,23 @@ define(function (require) {
                                                 }
                                                 filtered = true;
                                                 console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
+                                                // We have a couple exceptions to the filter:
+                                                // - if the ending marker is in the same marker string, clear the filter flag
+                                                // - if there are markers before the filtered marker, export them
+                                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                                    // found our ending marker -- this sourcephrase is not filtered
+                                                    // first, remove the marker from the markers string so it doesn't print out
+                                                    markers = markers.replace(("\\" + needsEndMarker), '');
+                                                    // now clear our flags so the sourcephrase exports
+                                                    needsEndMarker = "";
+                                                    filtered = false;
+                                                } else {
+                                                    markers = markers.substr(0, markers.indexOf(filterAry[idxFilters].trim()) - 1);
+                                                    if (markers.length > 0) {
+                                                        // some markers before we hit the filtered marker -- export them
+                                                        exportMarkers = true;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -1675,8 +1700,8 @@ define(function (require) {
                                     needsEndMarker = "";
                                     filtered = false;
                                 }
-                                if (filtered === false) {
-                                    // not filtered -- print out the text and markers
+                                if (filtered === false || exportMarkers === true) {
+                                    // Export the markers
                                     if (markers.length > 0) {
                                         // <book> id
                                         if ((markers.indexOf("\\id ")) > -1) {
@@ -1830,7 +1855,14 @@ define(function (require) {
                                             chapterString += "\" />";
                                         }
                                     }
-                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    if (exportMarkers === true) {
+                                        // done exporting the marker subset before the filtered marker -- clear our flag
+                                        exportMarkers = false;
+                                    }
+                                    if (filtered === false) {
+                                        // only export the text if not filtered
+                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    }
                                 }
                                 // done dealing with the source phrase -- is it the last one?
                                 if (value.get('spid') === lastSPID) {
