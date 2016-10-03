@@ -1938,8 +1938,14 @@ define(function (require) {
                 var project = window.Application.currentProject;
                 var chaptersLeft = chapters.length;
                 var buildFlags = function (sourcephrase) {
+                    var markers = sourcephrase.get("markers");
                     // (code in XML.cpp ~ line 5568)
                     var val = "";
+                    val += "0"; // glossing KB entry
+                    val += "000"; // free translation masks
+                    val += (markers.indexOf("\\v ") >= 0) ? "1" : "0"; // verse mask
+                    val += (markers.indexOf("\\c ") >= 0) ? "1" : "0"; // chapter mask
+                    //val += (sourcephrase.get)
                     return val;
                 };
                 var buildTY = function (sourcephrase) {

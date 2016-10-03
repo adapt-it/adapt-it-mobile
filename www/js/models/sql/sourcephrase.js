@@ -42,6 +42,8 @@ define(function (require) {
                 prepuncts: "",
                 midpuncts: "",
                 follpuncts: "",
+                flags: "0000000000000000000000", // 22
+                texttype: 0,
                 source: "",
                 target: ""
             },
@@ -58,9 +60,23 @@ define(function (require) {
                 });
                 
             },
+            upgradeSchema: function (fromVersion) {
+                // These columns are currently only used for AI XML document round-tripping
+                var attributes = this.attributes;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
+                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function(tx,res) {
+                        
+                    });
+                    tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags char(22), ty INTEGER, gloss TEXT, freetrans TEXT, note TEXT);", function (tx, res) {
+                    });
+                }, function (tx, e) {
+                    console.log("upgradeSchema error: " + e.message);
+                });
+            },
             create: function () {
                 var attributes = this.attributes;
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
@@ -81,7 +97,6 @@ define(function (require) {
                     });
                 });
             },
-            
             destroy: function (options) {
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
@@ -138,6 +153,15 @@ define(function (require) {
                     len = 0;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, source TEXT, target TEXT);');
+                }, function (err) {
+                    console.log("resetFromDB: CREATE TABLE error: " + err.message);
+                });
+            },
+            
+            checkDBVersion: function () {
+                var ver = 0;
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';');
                 }, function (err) {
                     console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
