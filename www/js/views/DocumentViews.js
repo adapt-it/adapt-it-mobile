@@ -688,18 +688,6 @@ define(function (require) {
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
-                    // helper method to convert html color values to the Adapt It color string:
-                    // .html --> #rrggbb  (in hex)
-                    // Adapt It  --> 0x00bbggrr (in base 10)
-//                    var setColorValue = function (strValue) {
-//                        var hexValue = parseInt(strValue, 16);
-//                        var rValue = ("00" + (hexValue & 0xff).toString(16)).slice(-2);
-//                        var gValue = ("00" + ((hexValue >> 8) & 0xff).toString(16)).slice(-2);
-//                        var bValue = ("00" + ((hexValue >> 16) & 0xff).toString(16)).slice(-2);
-//                        // format in html hex, padded with leading zeroes
-//                        var theValue = "0x00" + bValue + gValue + rValue;
-//                        return theValue;
-//                    };
                     
                     // Helper method to convert theString to lower case using either the source or target case equivalencies.
                     var autoRemoveCaps = function (theString, isSource) {
@@ -1937,9 +1925,26 @@ define(function (require) {
                 };
                 var project = window.Application.currentProject;
                 var chaptersLeft = chapters.length;
+                var hexToWXColor = function (color) {
+                    // AIM (.html) --> #rrggbb  (in hex)
+                    // Adapt It  --> 0x00bbggrr (in base 10)
+                    console.log("hexToWXColor - input: " + color);
+                    var result = "0x00";
+                    result += color.substr(5, 2); // bb
+                    result += color.substr(3, 2); // gg
+                    result += color.substr(1, 2); // rr
+                    console.log("hexToWXColor - output: " + result);
+                    return result;
+                };
                 var buildFlags = function (sourcephrase) {
+                    var markers = sourcephrase.get("markers");
                     // (code in XML.cpp ~ line 5568)
                     var val = "";
+                    val += "0"; // glossing KB entry
+                    val += "000"; // free translation masks
+                    val += (markers.indexOf("\\v ") >= 0) ? "1" : "0"; // verse mask
+                    val += (markers.indexOf("\\c ") >= 0) ? "1" : "0"; // chapter mask
+                    //val += (sourcephrase.get)
                     return val;
                 };
                 var buildTY = function (sourcephrase) {
@@ -1970,7 +1975,7 @@ define(function (require) {
                 }
                 content += "\" commitcnt=\"****\" revdate=\"\" actseqnum=\"0\" sizex=\"553\" sizey=\"62464\" ftsbp=\"1\"";
                 // colors
-                content += " specialcolor=\"" + project.get('SpecialTextColor') + "\" retranscolor=\"" + project.get('RetranslationColor') + "\" navcolor=\"" + project.get('NavigationColor') + "\"";
+                content += " specialcolor=\"" + hexToWXColor(project.get('SpecialTextColor')) + "\" retranscolor=\"" + hexToWXColor(project.get('RetranslationColor')) + "\" navcolor=\"" + hexToWXColor(project.get('NavigationColor')) + "\"";
                 // project info
                 content += " curchap=\"1:\" srcname=\"" + project.get('SourceLanguageName') + "\" tgtname=\"" + project.get('TargetLanguageName') + "\" srccode=\"" + project.get('SourceLanguageCode') + "\" tgtcode=\"" + project.get('TargetLanguageCode') + "\"";
                 // filtering
@@ -2020,7 +2025,7 @@ define(function (require) {
                             }
                             markers = value.get("markers");
                             // inform
-                            if (markers.indexof("\\h ") > -1) {
+                            if (markers.indexOf("\\h ") > -1) {
                                 chapterString += " i=\"hdr\"";
                             }
 //                            if (markers.indexof("\\mt1") > -1) {
