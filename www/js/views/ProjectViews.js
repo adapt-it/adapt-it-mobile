@@ -945,29 +945,29 @@ define(function (require) {
                 case 3: // source font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
-                    tempColor = $('#color').val();
+                    tempColor = $('#color').spectrum('get').toHexString();
                     this.model.set('SourceFont', tempfont, {silent: true});
                     this.model.set('SourceFontSize', tempSize, {silent: true});
                     this.model.set('SourceColor', tempColor, {silent: true});
-                    tempColor = $('#spcolor').val();
+                    tempColor = $('#spcolor').spectrum('get').toHexString();
                     this.model.set('SpecialTextColor', tempColor, {silent: true});
-                    tempColor = $('#retranscolor').val();
+                    tempColor = $('#retranscolor').spectrum('get').toHexString();
                     this.model.set('RetranslationColor', tempColor, {silent: true});
                     break;
                 case 4: // target font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
-                    tempColor = $('#color').val();
+                    tempColor = $('#color').spectrum('get').toHexString();
                     this.model.set('TargetFont', tempfont, {silent: true});
                     this.model.set('TargetFontSize', tempSize, {silent: true});
                     this.model.set('TargetColor', tempColor, {silent: true});
-                    tempColor = $('#diffcolor').val();
+                    tempColor = $('#diffcolor').spectrum('get').toHexString();
                     this.model.set('TextDifferencesColor', tempColor, {silent: true});
                     break;
                 case 5: // navigation font
                     tempfont = $('#font').val();
                     tempSize = $('#FontSize').val();
-                    tempColor = $('#color').val();
+                    tempColor = $('#color').spectrum('get').toHexString();
                     this.model.set('NavigationFont', tempfont, {silent: true});
                     this.model.set('NavigationFontSize', tempSize, {silent: true});
                     this.model.set('NavigationColor', tempColor, {silent: true});
@@ -1288,21 +1288,21 @@ define(function (require) {
                 case i18n.t('view.lblSourceFont'): // source font
                     this.model.set('SourceFont', $('#font').val(), {silent: true});
                     this.model.set('SourceFontSize', $('#FontSize').val(), {silent: true});
-                    this.model.set('SourceColor', $('#color').val(), {silent: true});
-                    this.model.set('SpecialTextColor', $('#spcolor').val(), {silent: true});
-                    this.model.set('RetranslationColor', $('#retranscolor').val(), {silent: true});
+                    this.model.set('SourceColor', $('#color').spectrum('get').toHexString(), {silent: true});
+                    this.model.set('SpecialTextColor', $('#spcolor').spectrum('get').toHexString(), {silent: true});
+                    this.model.set('RetranslationColor', $('#retranscolor').spectrum('get').toHexString(), {silent: true});
                     break;
                 case i18n.t('view.lblTargetFont'): // target font
                     this.model.set('TargetFont', $('#font').val(), {silent: true});
                     this.model.set('TargetFontSize', $('#FontSize').val(), {silent: true});
-                    this.model.set('TargetColor', $('#color').val(), {silent: true});
-                    this.model.set('TextDifferencesColor', $('#diffcolor').val(), {silent: true});
+                    this.model.set('TargetColor', $('#color').spectrum('get').toHexString(), {silent: true});
+                    this.model.set('TextDifferencesColor', $('#diffcolor').spectrum('get').toHexString(), {silent: true});
                     break;
                 case i18n.t('view.lblNavFont'): // navigation font
                 default:
                     this.model.set('NavigationFont', $('#font').val(), {silent: true});
                     this.model.set('NavigationFontSize', $('#FontSize').val(), {silent: true});
-                    this.model.set('NavigationColor', $('#color').val(), {silent: true});
+                    this.model.set('NavigationColor', $('#color').spectrum('get').toHexString(), {silent: true});
                     break;
                 }
                 this.model.save(); // save the changes
