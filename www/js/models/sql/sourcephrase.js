@@ -65,7 +65,7 @@ define(function (require) {
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
-                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function(tx,res) {
+                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function (tx, res) {
                         
                     });
                     tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags char(22), ty INTEGER, gloss TEXT, freetrans TEXT, note TEXT);", function (tx, res) {
