@@ -1903,9 +1903,7 @@ define(function (require) {
             // Note that this export is a full dump of the document, not just the parts that have been adapted.
             // This is because we're exporting the source as well as the target text.
             // EDB 8/13/16: partially working. Still need:
-            // - colors in settings node converted to AI doc format (WXWidgets) from RGB
-            // ..and for each SP
-            // - Flag bitss generated (implement buildFlags() below)
+            // - Flag bits generated (implement buildFlags() below)
             // - type enum generated (implement buildTY() below)
             // - "inform" bits copied over
             // -- lower priority, but need for AI compatibility: other bits implemented
@@ -1918,6 +1916,8 @@ define(function (require) {
                 var spList = new spModel.SourcePhraseCollection();
                 var markers = "";
                 var i = 0;
+                var curTY = "2";
+                var lastTY = "2";
                 var value = null;
                 var atts = {
                     name: [],
@@ -1947,10 +1947,44 @@ define(function (require) {
                     //val += (sourcephrase.get)
                     return val;
                 };
-                var buildTY = function (sourcephrase) {
-                    // (code in SourcePhrase.h ~ line 55)
-                    var val = "";
-                    val = "0"; // none
+                var buildTY = function (sourcephrase, lastTY) {
+                    // (code in SourcePhrase.h ~ line 55 / CAdaptIt_Doc.cpp - line 18859)
+                    var val = (lastTY.length > 0) ? lastTY : "1"; // default -- last type (verse if not there)
+                    var markers = sourcephrase.get("markers");
+                    if (markers.indexOf("\\v ") >= 0) {
+                        val = "1"; // verse
+                    }
+                    if (markers.indexOf("\\p ") >= 0) {
+                        val = "2"; // poetry
+                    }
+                    if (markers.indexOf("\\s ") >= 0) {
+                        val = "3"; // section head
+                    }
+                    if ((markers.indexOf("\\mt2") >= 0) || (markers.indexOf("\\mt3") >= 0) || (markers.indexOf("\\mt4") >= 0)) {
+                        val = "4"; // secondary title
+                    }
+                    if (markers.indexOf("\\f ") >= 0) {
+                        // ord, bd, it, em, bdit, sc, pro, ior, w, wr, wh, wg, ndx, k, pn, qs, fk, xk
+                        val = "6"; // none
+                    }
+                    if (markers.indexOf("\\f ") >= 0) {
+                        val = "9"; // footnote
+                    }
+                    if ((markers.indexOf("\\h2") >= 0) || (markers.indexOf("\\h3") >= 0) || (markers.indexOf("\\h4") >= 0)) {
+                        val = "10"; // header
+                    }
+                    if (markers.indexOf("\\id") >= 0) {
+                        val = "11"; // identification
+                    }
+                    if (markers.indexOf("\\ref ") >= 0) {
+                        val = "32"; // right Margin reference
+                    }
+                    if (markers.indexOf("\\cr ") >= 0) {
+                        val = "33"; // cross reference
+                    }
+                    if (markers.indexOf("\\n ") >= 0) {
+                        val = "34"; // note
+                    }
                     return val;
                 };
                 writer.onwriteend = function (e) {
@@ -2015,7 +2049,9 @@ define(function (require) {
                             } else {
                                 chapterString += "\" w=\"1\"";
                             }
-                            chapterString += " ty=\"" + buildTY(value) + "\"";
+                            curTY = buildTY(value, lastTY);
+                            chapterString += " ty=\"" + curTY + "\"";
+                            lastTY = curTY; // for the next item
                             // line 3 -- 6 atts (optional)
                             if (value.get("prepuncts").length > 0) {
                                 chapterString += " pp=\"" + value.get("prepuncts") + "\"";
