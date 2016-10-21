@@ -1910,6 +1910,7 @@ define(function (require) {
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
+                var markerList = new USFM.MarkerCollection();
                 var content = "";
                 var words = [];
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
@@ -1919,6 +1920,7 @@ define(function (require) {
                 var curTY = "2";
                 var lastTY = "2";
                 var value = null;
+                var mkr = null;
                 var atts = {
                     name: [],
                     value: []
@@ -1940,10 +1942,21 @@ define(function (require) {
                     var markers = sourcephrase.get("markers");
                     // (code in XML.cpp ~ line 5568)
                     var val = "";
-                    val += "0"; // glossing KB entry
-                    val += "000"; // free translation masks
-                    val += (markers.indexOf("\\v ") >= 0) ? "1" : "0"; // verse mask
-                    val += (markers.indexOf("\\c ") >= 0) ? "1" : "0"; // chapter mask
+                    val += "0"; // unused (22)
+                    val += (markers.indexOf("\\f*") >= 0) ? "1" : "0"; // footnote end (21)
+                    val += (markers.indexOf("\\f ") >= 0) ? "1" : "0"; // footnote (20)
+                    val += "00"; // internal markers / punctuation (19/18)
+                    val += (markers.indexOf("\\c ") >= 0) ? "1" : "0"; // chapter mask (17)
+                    val += (markers.indexOf("\\v ") >= 0) ? "1" : "0"; // verse mask (16)
+                    val += "0"; // sectionByVerse (15)
+                    val += (markers.indexOf("\\n ") >= 0) ? "1" : "0"; // note mask (14)
+                    val += "000"; // free translation masks (11-13)
+                    val += "000"; // retranslation masks (8-10)
+                    val += "0"; // null source phrase (7)
+                    val += "00"; // boundary masks (5-6)
+                    val += (markers.indexOf("\\s ") >= 0) ? "1" : "0"; // special text (4)
+                    val += "0"; // glossing KB entry (3)
+                    val += "00"; // KB entries (1-2)
                     //val += (sourcephrase.get)
                     return val;
                 };
@@ -1997,6 +2010,9 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
+                // build the USFM marker list
+                markerList.fetch({reset: true, data: {name: ""}});
+                console.log("markerList count: " + markerList.length);
                 // opening content
                 content = XML_PROLOG;
                 content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
@@ -2042,7 +2058,7 @@ define(function (require) {
                                 chapterString += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             }
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            chapterString += " f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
+                            chapterString += "\n f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
                             words = value.get("source").match(/\S+/g);
                             if (words) {
                                 chapterString += "\" w=\"" + words.length + "\"";
@@ -2060,38 +2076,41 @@ define(function (require) {
                                 chapterString += " fp=\"" + value.get("follpuncts") + "\"";
                             }
                             markers = value.get("markers");
-                            // inform
-                            if (markers.indexOf("\\h ") > -1) {
-                                chapterString += " i=\"hdr\"";
+                            // inform marker
+                            var markerAry = markers.split("\\");
+                            var idxMkr = 0;
+                            var inform = markers;
+                            for (idxMkr = 0; idxMkr < markerAry.length; idxMkr++) {
+                                // sanity check for blank filter strings
+                                if (markerAry[idxMkr].trim().length > 0) {
+                                    mkr = markerList.where({name: markerAry[idxMkr].trim().substr(1)})[0];
+                                    if (mkr.get('inform') === "1") {
+                                        if (mkr.get('navigationText')) {
+                                            inform = mkr.get('navigationText');
+                                        }
+                                        chapterString += " i=\"" + inform + "\"";
+                                    }
+                                }
                             }
-//                            if (markers.indexof("\\mt1") > -1) {
-//                                chapterString += " i=\"main title L1\"";
-//                            }
-//                            if (markers.indexof("\\imt1") > -1) {
-//                                chapterString += " i=\"intro major title L1\"";
-//                            }
-//                            if (markers.indexof("\\ip") > -1) {
-//                                chapterString += " i=\"intro paragraph\"";
-//                            }
                             // add markers, and if needed, pretty-print the text on a newline
                             if (markers.indexOf("\\v") > -1) {
                                 // add chapter/verse
                                 chapterString += " c=\"" + entry.get('name') + ":" +  "\"";
                             }
                             // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
-                            //           inline nonbinding markers, inline nonbinding end barkers
+                            //           inline nonbinding markers, inline nonbinding end markers
                             if (markers.length > 0) {
-                                chapterString += " m=\"" + markers + "\"";
+                                chapterString += "\n m=\"" + markers + "\"";
                             }
                             // line 5-8 -- free translation, note, back translation, filtered info
                             // line 9 -- lapat, tmpat, gmpat, pupat
-                            chapterString += ">\n";
+                            chapterString += ">";
                             // 3 more possible info types
                             // medial puncts, medial markers, saved words (another <s>)
                             if (value.get("midpuncts").length > 0) {
-                                chapterString += "<MP mp=\"" + value.get("midpuncts") + "\"/>";
+                                chapterString += "\n<MP mp=\"" + value.get("midpuncts") + "\"/>";
                             }
-                            chapterString += "</S>\n";
+                            chapterString += "\n</S>\n";
                         }
                         // Now take the string from this chapter's sourcephrases that we've just built and
                         // insert them into the correct location in the file's content string

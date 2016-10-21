@@ -21,6 +21,7 @@ define(function (require) {
                 description: "Running header text for a book (basic)",
                 filter: "0",
                 userCanSetFilter: "1",
+                navigationText: "hdr",
                 inform: "1"
             },
             {
@@ -28,6 +29,7 @@ define(function (require) {
                 description: "Running header text",
                 filter: "0",
                 userCanSetFilter: "1",
+                navigationText: "hdr",
                 inform: "1"
             },
             {
@@ -35,6 +37,7 @@ define(function (require) {
                 description: "Running header text, left side of page",
                 filter: "0",
                 userCanSetFilter: "1",
+                navigationText: "hdr",
                 inform: "1"
             },
             {
@@ -42,6 +45,7 @@ define(function (require) {
                 description: "Running header text, right side of page",
                 filter: "0",
                 userCanSetFilter: "1",
+                navigationText: "hdr",
                 inform: "1"
             },
             {
@@ -49,6 +53,7 @@ define(function (require) {
                 description: "Comments and remarks",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "comment",
                 inform: "1"
             },
             {
@@ -56,6 +61,7 @@ define(function (require) {
                 description: "Status of this file",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "comment",
                 inform: "1"
             },
             {
@@ -63,6 +69,7 @@ define(function (require) {
                 description: "For a comment or note inserted for liturgical use",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "lit-note",
                 inform: "1"
             },
             {
@@ -70,6 +77,7 @@ define(function (require) {
                 description: "Note",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "note",
                 inform: "1"
             },
             {
@@ -77,6 +85,7 @@ define(function (require) {
                 description: "Note centered",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "note",
                 inform: "1"
             },
             {
@@ -102,6 +111,7 @@ define(function (require) {
                 name: "cd",
                 description: "Chapter Description (Publishing option D, e.g. in Russian Bibles)",
                 userCanSetFilter: "1",
+                navigationText: "chapter descr",
                 inform: "1"
             },
             {
@@ -122,35 +132,41 @@ define(function (require) {
                 name: "mt",
                 description: "The main title of the book (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "main title",
                 inform: "1"
             },
             {
                 name: "mt1",
                 description: "The main title of the book (if multiple levels) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "secondary title L1",
                 inform: "1"
             },
             {
                 name: "mt2",
                 description: "A secondary title usually occurring before the main title (basic)",
                 userCanSetFilter: "1",
+                navigationText: "secondary title L2",
                 inform: "1"
             },
             {
                 name: "mt3",
                 description: "A secondary title occurring after the main title",
                 userCanSetFilter: "1",
+                navigationText: "secondary title L3",
                 inform: "1"
             },
             {
                 name: "mt4",
                 description: "A small secondary title sometimes occuring within parentheses",
                 userCanSetFilter: "1",
+                navigationText: "main title L4",
                 inform: "1"
             },
             {
                 name: "st",
                 description: "Secondary title",
+                navigationText: "secondary title",
                 userCanSetFilter: "1",
                 inform: "1"
             },
@@ -158,54 +174,63 @@ define(function (require) {
                 name: "mte",
                 description: "The main title of the book repeated at the end of the book (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "main title at end",
                 inform: "1"
             },
             {
                 name: "mte1",
                 description: "The main title of the book repeated at the end of the book (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "main title at end L1",
                 inform: "1"
             },
             {
                 name: "mte2",
                 description: "A secondary title occurring before or after the 'ending' main title",
                 userCanSetFilter: "1",
+                navigationText: "main title at end L2",
                 inform: "1"
             },
             {
                 name: "div",
                 description: "Division heading",
                 userCanSetFilter: "1",
+                navigationText: "division head",
                 inform: "1"
             },
             {
                 name: "bn",
                 description: "Psalms book number",
                 userCanSetFilter: "1",
+                navigationText: "Psalm book number",
                 inform: "1"
             },
             {
                 name: "ms",
                 description: "A major section division heading, level 1 (if single level) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "major sect head",
                 inform: "1"
             },
             {
                 name: "ms1",
                 description: "A major section division heading, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "major sect head L1",
                 inform: "1"
             },
             {
                 name: "ms2",
                 description: "A major section division heading, level 2",
                 userCanSetFilter: "1",
+                navigationText: "major sect head L2",
                 inform: "1"
             },
             {
                 name: "ms3",
                 description: "A major section division heading, level 3",
                 userCanSetFilter: "1",
+                navigationText: "major sect head L3",
                 inform: "1"
             },
             {
@@ -218,60 +243,70 @@ define(function (require) {
                 name: "s1",
                 description: "A section heading, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "sect head L1",
                 inform: "1"
             },
             {
                 name: "s2",
                 description: "A section heading, level 2 (e.g. Proverbs 22-24)",
                 userCanSetFilter: "1",
+                navigationText: "sect head L2",
                 inform: "1"
             },
             {
                 name: "s3",
                 description: "A section heading, level 3 (e.g. Genesis 'The First Day')",
                 userCanSetFilter: "1",
+                navigationText: "sect head L3",
                 inform: "1"
             },
             {
                 name: "s4",
                 description: "A section heading, level 4",
                 userCanSetFilter: "1",
+                navigationText: "sect head L4",
                 inform: "1"
             },
             {
                 name: "sr",
                 description: "A section division references range heading",
                 userCanSetFilter: "1",
+                navigationText: "sect head range refs",
                 inform: "1"
             },
             {
                 name: "sx",
                 description: "Extra heading 1",
                 userCanSetFilter: "1",
+                navigationText: "sect head extra 1",
                 inform: "1"
             },
             {
                 name: "sz",
                 description: "Extra heading 2",
                 userCanSetFilter: "1",
+                navigationText: "sect head extra 2",
                 inform: "1"
             },
             {
                 name: "sp",
                 description: "A heading, to identify the speaker (e.g. Job) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "speaker",
                 inform: "1"
             },
             {
                 name: "d",
                 description: "A Hebrew text heading, to provide description (e.g. Psalms)",
                 userCanSetFilter: "1",
+                navigationText: "descr title",
                 inform: "1"
             },
             {
                 name: "di",
                 description: "Descriptive title (Hebrew subtitle)",
                 userCanSetFilter: "1",
+                navigationText: "descr title",
                 inform: "1"
             },
             {
