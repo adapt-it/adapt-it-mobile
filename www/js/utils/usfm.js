@@ -320,6 +320,7 @@ define(function (require) {
                 description: "Parallel reference(s) (basic)",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "ref",
                 inform: "1"
             },
             {
@@ -327,6 +328,7 @@ define(function (require) {
                 description: "Division reference",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "div-ref",
                 inform: "1"
             },
             {
@@ -334,6 +336,7 @@ define(function (require) {
                 description: "A major section division references range heading (basic)",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "mjr-sect-refs",
                 inform: "1"
             },
             {
@@ -341,6 +344,7 @@ define(function (require) {
                 description: "Psalms book reference",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "Ps-bk-ref",
                 inform: "1"
             },
             {
@@ -349,6 +353,7 @@ define(function (require) {
                 description: "A list of cross references (basic)",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "x-refs",
                 inform: "1"
             },
             {
@@ -356,6 +361,7 @@ define(function (require) {
                 description: "Right margin reference",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "rt-marg-ref",
                 inform: "1"
             },
             {
@@ -364,6 +370,7 @@ define(function (require) {
                 description: "A cross-reference indicating the source text for the preceding quotation",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "x-ref to source",
                 inform: "1"
             },
             {
@@ -371,6 +378,7 @@ define(function (require) {
                 description: "Cross reference, origin reference",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "x-refs orig",
                 inform: "1"
             },
             {
@@ -378,6 +386,7 @@ define(function (require) {
                 description: "Cross reference target references",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "x-refs tgt",
                 inform: "1"
             },
             {
@@ -390,42 +399,42 @@ define(function (require) {
                 name: "pt",
                 description: "Preface title",
                 userCanSetFilter: "1",
+                navigationText: "preface title",
                 inform: "1"
             },
             {
                 name: "ps",
                 description: "Preface section heading",
                 userCanSetFilter: "1",
+                navigationText: "preface section head",
                 inform: "1"
-            },
-            {
-                name: "ps",
-                description: "Paragraph text, no break with next paragraph text at chapter boundary",
-                userCanSetFilter: "1",
-                inform: "1"
-            },
+            }, // REMOVED PNG /ps tag (conflicts with official one above)
             {
                 name: "pp",
                 description: "Preface paragraph",
                 userCanSetFilter: "1",
+                navigationText: "preface paragraph",
                 inform: "1"
             },
             {
                 name: "pq",
                 description: "Preface poetry",
                 userCanSetFilter: "1",
+                navigationText: "preface poetry",
                 inform: "1"
             },
             {
                 name: "pm",
                 description: "Preface continue at margin",
                 userCanSetFilter: "1",
+                navigationText: "preface at margin",
                 inform: "1"
-            },
+            }, // REMOVED PNG /pm tag (conflicts with official one above)
             {
                 name: "qa",
                 description: "Poetry text, Acrostic marker/heading",
                 userCanSetFilter: "1",
+                navigationText: "acrostic hdg",
                 inform: "1"
             },
             {
@@ -932,6 +941,7 @@ define(function (require) {
                 description: "Paragraph text, with first line indent (basic)",
                 filter: "0",
                 inform: "1",
+                navigationText: "paragraph",
                 userCanSetFilter: "0"
             },
             {
@@ -939,6 +949,7 @@ define(function (require) {
                 description: "Paragraph text, level 1 indent (if sinlge level), with first line indent; often used for discourse (basic)",
                 filter: "0",
                 inform: "1",
+                navigationText: "para indented",
                 userCanSetFilter: "0"
             },
             {
@@ -946,6 +957,7 @@ define(function (require) {
                 description: "Paragraph text, level 1 indent (if multiple levels), with first line indent; often used for discourse",
                 filter: "0",
                 inform: "1",
+                navigationText: "para indented L1",
                 userCanSetFilter: "0"
             },
             {
@@ -953,6 +965,7 @@ define(function (require) {
                 description: "Paragraph text, level 2 indent, with first line indent; often used for discourse",
                 filter: "0",
                 inform: "1",
+                navigationText: "para indented L2",
                 userCanSetFilter: "0"
             },
             {
@@ -960,72 +973,77 @@ define(function (require) {
                 description: "Paragraph text, level 3 indent, with first line indent; often used for discourse",
                 filter: "0",
                 inform: "1",
+                navigationText: "para indented L3",
                 userCanSetFilter: "0"
             },
             {
                 name: "pgi",
                 description: "Indented paragraph",
                 inform: "1",
+                navigationText: "para indented",
                 userCanSetFilter: "0"
             },
             {
                 name: "ph",
                 description: "Paragraph text, with level 1 hanging indent (if single level)",
                 inform: "1",
+                navigationText: "para hang indent",
                 userCanSetFilter: "0"
             },
             {
                 name: "ph1",
                 description: "Paragraph text, with level 1 hanging indent (if multiple levels)",
                 inform: "1",
+                navigationText: "para hang indent L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "ph2",
                 description: "Paragraph text, with level 2 hanging indent",
                 inform: "1",
+                navigationText: "para hang indent L2",
                 userCanSetFilter: "0"
             },
             {
                 name: "ph3",
                 description: "Paragraph text, with level 3 hanging indent",
                 inform: "1",
+                navigationText: "para hang indent L3",
                 userCanSetFilter: "0"
             },
             {
                 name: "phi",
 	            description: "Paragraph text, indented with hanging indent",
                 inform: "1",
+                navigationText: "para indent hang indent",
                 userCanSetFilter: "0"
             },
             {
                 name: "m",
                 description: "Paragraph text, with no first line indent (may occur after poetry) (basic)",
                 inform: "1",
-                userCanSetFilter: "0"
-            },
-            {
-                name: "pmo",
-                description: "Embedded text opening",
-                inform: "1",
+                navigationText: "paragraph margin",
                 userCanSetFilter: "0"
             },
             {
                 name: "mi",
                 description: "Paragraph text, indented, with no first line indent; often used for discourse",
                 inform: "1",
+                navigationText: "para indent no 1st line indent",
                 userCanSetFilter: "0"
             },
             {
                 name: "pc",
                 description: "Paragraph text, centered (for Inscription)",
                 inform: "1",
+                navigationText: "para spans chapters",
                 userCanSetFilter: "0"
             },
             {
                 name: "pr",
                 description: "Paragraph text, right aligned",
                 inform: "1",
+                navigationText: "para right aligned",
                 userCanSetFilter: "0"
             },
             {
@@ -1035,63 +1053,66 @@ define(function (require) {
                 userCanSetFilter: "0"
             },
             {
-                name: "pm",
-                description: "Embedded text paragraph",
-                inform: "1",
-                userCanSetFilter: "0"
-            },
-            {
                 name: "pmc",
                 description: "Embedded text closing",
                 inform: "1",
+                navigationText: "para embedded text closing",
                 userCanSetFilter: "0"
             },
             {
                 name: "pmr",
                 description: "Embedded text refrain (e.g. Then all the people shall say, 'Amen!')",
                 inform: "1",
+                navigationText: "para embedded text refrain",
                 userCanSetFilter: "0"
             },
             {
                 name: "nb",
                 description: "Paragraph text, with no break from previous paragraph text (at chapter boundary) (basic)",
                 inform: "1",
+                navigationText: "para no break",
                 userCanSetFilter: "0"
             },
             {
                 name: "cls",
                 description: "Closure of an Epistle",
                 inform: "1",
+                navigationText: "Epistle close",
                 userCanSetFilter: "0"
             },
             {
                 name: "q",
                 description: "Poetry text, level 1 indent (if single level)",
                 inform: "1",
+                navigationText: "poetry",
                 userCanSetFilter: "0"
             },
             {
                 name: "q1",
                 description: "Poetry text, level 1 indent (if multiple levels) (basic)",
                 inform: "1",
+                navigationText: "poetry L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "q2",
                 description: "Poetry text, level 2 indent (basic)",
                 inform: "1",
+                navigationText: "poetry L2",
                 userCanSetFilter: "0"
             },
             {
                 name: "q3",
                 description: "Poetry text, level 3 indent",
                 inform: "1",
+                navigationText: "poetry L3",
                 userCanSetFilter: "0"
             },
             {
                 name: "q4",
                 description: "Poetry text, level 4 indent",
                 inform: "1",
+                navigationText: "poetry L4",
                 userCanSetFilter: "0"
             },
             {
@@ -1104,6 +1125,7 @@ define(function (require) {
                 name: "qr",
                 description: "Poetry text, Right Aligned",
                 inform: "1",
+                navigationText: "poetry right margin",
                 userCanSetFilter: "0"
             },
             {
@@ -1116,14 +1138,9 @@ define(function (require) {
                 name: "qm",
                 description: "Poetry, left margin",
                 inform: "1",
+                navigationText: "poetry margin",
                 userCanSetFilter: "0"
-            },
-            {
-                name: "qm",
-                description: "Poetry text, embedded, level 1 indent (if single level)",
-                inform: "1",
-                userCanSetFilter: "0"
-            },
+            }, // REMOVED PNG /qm (conflicts with above)
             {
                 name: "qm1",
                 description: "Poetry text, embedded, level 1 indent (if multiple levels)",
