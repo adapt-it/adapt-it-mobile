@@ -468,137 +468,160 @@ define(function (require) {
                 name: "imt",
                 description: "Introduction main title, level 1 (if single level) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "intro main title",
                 inform: "1"
             },
             {
                 name: "imt1",
                 description: "Introduction major title, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "intro main title L1",
                 inform: "1"
             },
             {
                 name: "imt2",
                 description: "Introduction major title, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro main title L2",
                 inform: "1"
             },
             {
                 name: "imt3",
                 description: "Introduction major title, level 3",
                 userCanSetFilter: "1",
+                navigationText: "intro main title L3",
                 inform: "1"
             },
             {
                 name: "imt4",
                 description: "Introduction major title, level 4 (usually within parenthesis)",
                 userCanSetFilter: "1",
+                navigationText: "intro main title L4",
                 inform: "1"
             },
             {
                 name: "imte",
                 description: "Introduction major title at introduction end, level 1 (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "intro major title at end",
                 inform: "1"
             },
             {
                 name: "imte1",
                 description: "Introduction major title at introduction end, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "intro major title at end",
                 inform: "1"
             },
             {
                 name: "imte2",
                 description: "Introduction major title at introduction end, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro major title at end",
                 inform: "1"
             },
             {
                 name: "is",
                 description: "Introduction section heading, level 1 (if single level) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "intro sect head",
                 inform: "1"
             },
             {
                 name: "is1",
                 description: "Introduction section heading, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "intro sect head L1",
                 inform: "1"
             },
             {
                 name: "is2",
                 description: "Introduction section heading, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro sect head L2",
                 inform: "1"
             },
             {
                 name: "ip",
                 description: "Introduction prose paragraph (basic)",
                 userCanSetFilter: "1",
+                navigationText: "intro paragraph",
                 inform: "1"
             },
             {
                 name: "ipi",
                 description: "Introduction prose paragraph, indented, with first line indent",
                 userCanSetFilter: "1",
+                navigationText: "intro paragraph indented",
                 inform: "1"
             },
             {
                 name: "ipq",
                 description: "Introduction prose paragraph, quote from the body text",
                 userCanSetFilter: "1",
+                navigationText: "intro para quote",
                 inform: "1"
             },
             {
                 name: "ipr",
                 description: "Introduction prose paragraph, right aligned",
                 userCanSetFilter: "1",
+                navigationText: "intro para right align",
                 inform: "1"
             },
             {
                 name: "iq",
                 description: "Introduction poetry text, level 1 (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "intro poetry",
                 inform: "1"
             },
             {
                 name: "iq1",
                 description: "Introduction poetry text, level 1 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "intro poetry L1",
                 inform: "1"
             },
             {
                 name: "iq2",
                 description: "Introduction poetry text, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro poetry L2",
                 inform: "1"
             },
             {
                 name: "iq3",
                 description: "Introduction poetry text, level 3",
                 userCanSetFilter: "1",
+                navigationText: "intro poetry L3",
                 inform: "1"
             },
             {
                 name: "im",
                 description: "Introduction prose paragraph, with no first line indent (may occur after poetry)",
                 userCanSetFilter: "1",
+                navigationText: "intro para no indent",
                 inform: "1"
             },
             {
                 name: "imi",
                 description: "Introduction prose paragraph text, indented, with no first line indent",
                 userCanSetFilter: "1",
+                navigationText: "intro para no indent",
                 inform: "1"
             },
             {
                 name: "ili",
                 description: "A list entry, level 1 (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "intro list L1",
                 inform: "1"
             },
             {
                 name: "ili1",
                 description: "A list entry, level 1 (if multiple levels)",
+                navigationText: "intro list L1",
                 userCanSetFilter: "1",
                 inform: "1"
             },
@@ -606,12 +629,14 @@ define(function (require) {
                 name: "ili2",
                 description: "A list entry, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro list L2",
                 inform: "1"
             },
             {
                 name: "imq",
                 description: "Introduction prose paragraph, quote from the body text, with no first line indent",
                 userCanSetFilter: "1",
+                navigationText: "intro para quote no indent",
                 inform: "1"
             },
             {
@@ -624,36 +649,42 @@ define(function (require) {
                 name: "iot",
                 description: "Introduction outline title (basic)",
                 userCanSetFilter: "1",
+                navigationText: "intro outline title",
                 inform: "1"
             },
             {
                 name: "io",
                 description: "Introduction outline text, level 1 (if single level)",
                 userCanSetFilter: "1",
+                navigationText: "intro outline",
                 inform: "1"
             },
             {
                 name: "io1",
                 description: "Introduction outline text, level 1 (if multiple levels) (basic)",
                 userCanSetFilter: "1",
+                navigationText: "intro outline L1",
                 inform: "1"
             },
             {
                 name: "io2",
                 description: "Introduction outline text, level 2",
                 userCanSetFilter: "1",
+                navigationText: "intro outline L2",
                 inform: "1"
             },
             {
                 name: "io3",
                 description: "Introduction outline text, level 3",
                 userCanSetFilter: "1",
+                navigationText: "intro outline L3",
                 inform: "1"
             },
             {
                 name: "io4",
                 description: "Introduction outline text, level 4",
                 userCanSetFilter: "1",
+                navigationText: "intro outline L4",
                 inform: "1"
             },
             {
@@ -666,6 +697,7 @@ define(function (require) {
                 name: "iex",
                 description: "Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament)",
                 userCanSetFilter: "1",
+                navigationText: "intro explain text",
                 inform: "1"
             },
             {
@@ -678,11 +710,13 @@ define(function (require) {
                 name: "gm",
                 description: "Glossary main entry",
                 userCanSetFilter: "1",
+                navigationText: "glossary main entry",
                 inform: "1"
             },
             {
                 name: "gs",
                 description: "Glossary subentry",
+                navigationText: "glossary subentry",
                 userCanSetFilter: "1",
                 inform: "1"
             },
@@ -690,48 +724,56 @@ define(function (require) {
                 name: "gd",
                 description: "Glossary definition",
                 userCanSetFilter: "1",
+                navigationText: "glossary definition",
                 inform: "1"
             },
             {
                 name: "gp",
                 description: "Glossary paragraph",
                 userCanSetFilter: "1",
+                navigationText: "glossary paragraph",
                 inform: "1"
             },
             {
                 name: "tis",
                 description: "Topical index heading (level 1)",
                 userCanSetFilter: "1",
+                navigationText: "topical index L1",
                 inform: "1"
             },
             {
                 name: "tpi",
                 description: "Topical index heading (level 2)",
                 userCanSetFilter: "1",
+                navigationText: "topical index L2",
                 inform: "1"
             },
             {
                 name: "tps",
                 description: "Topical index heading (level 3)",
                 userCanSetFilter: "1",
+                navigationText: "topical index L3",
                 inform: "1"
             },
             {
                 name: "tir",
                 description: "Topical index reference",
                 userCanSetFilter: "1",
+                navigationText: "topical index reference",
                 inform: "1"
             },
             {
                 name: "periph",
                 description: "Periheral content division marker which should be followed by an additional division argument/title.",
                 userCanSetFilter: "1",
+                navigationText: "Periph matter div",
                 inform: "1"
             },
             {
                 name: "p2",
                 description: "Front or back matter text paragraph, level 2 (if multiple levels)",
                 userCanSetFilter: "1",
+                navigationText: "Periph matter para L2",
                 inform: "1"
             },
             {
@@ -828,6 +870,7 @@ define(function (require) {
                 description: "Picture caption",
                 filter: "1",
                 userCanSetFilter: "1",
+                navigationText: "picture caption",
                 inform: "1"
             },
             /* userCanSetFilter=0 elements -- these guys don't show up in the usfm filtering dialog;
@@ -1145,30 +1188,36 @@ define(function (require) {
                 name: "qm1",
                 description: "Poetry text, embedded, level 1 indent (if multiple levels)",
                 inform: "1",
+                navigationText: "poetry embed L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "qm2",
                 description: "Poetry text, embedded, level 2 indent",
                 inform: "1",
+                navigationText: "poetry embed L2",
                 userCanSetFilter: "0"
             },
             {
                 name: "qm3",
                 description: "Poetry text, embedded, level 3 indent",
                 inform: "1",
+                navigationText: "poetry embed L3",
                 userCanSetFilter: "0"
             },
             {
                 name: "fe",
-                description: "Footnote (end)",
-                userCanSetFilter: "0"
+                description: "Endnote",
+                inform: "1",
+                navigationText: "endnote",
+                userCanSetFilter: "1"
             },
             {
                 name: "fr",
                 endMarker: "fr*",
                 description: "The origin reference for the footnote (basic)",
                 inform: "1",
+                navigationText: "ref",
                 userCanSetFilter: "0"
             },
             {
@@ -1176,6 +1225,7 @@ define(function (require) {
                 endMarker: "fk*",
                 description: "A footnote keyword (basic)",
                 inform: "1",
+                navigationText: "keyword",
                 userCanSetFilter: "0"
             },
             {
@@ -1183,6 +1233,7 @@ define(function (require) {
                 endMarker: "fq*",
                 description: "A footnote scripture quote or alternate rendering (basic)",
                 inform: "1",
+                navigationText: "quote",
                 userCanSetFilter: "0"
             },
             {
@@ -1190,6 +1241,7 @@ define(function (require) {
                 endMarker: "fqa*",
                 description: "A footnote alternate rendering for a portion of scripture text",
                 inform: "1",
+                navigationText: "alt-transln",
                 userCanSetFilter: "0"
             },
             {
@@ -1197,6 +1249,7 @@ define(function (require) {
                 endMarker: "fl*",
                 description: "A footnote label text item, for marking or 'labelling' the type or alternate translation being provided in the note.",
                 inform: "1",
+                navigationText: "label",
                 userCanSetFilter: "0"
             },
             {
@@ -1204,6 +1257,7 @@ define(function (require) {
                 endMarker: "fp*",
                 description: "A Footnote additional paragraph marker",
                 inform: "1",
+                navigationText: "new-paragr",
                 userCanSetFilter: "0"
             },
             {
@@ -1211,6 +1265,7 @@ define(function (require) {
                 endMarker: "ft*",
                 description: "Footnote text, Protocanon (basic)",
                 inform: "1",
+                navigationText: "fn-text",
                 userCanSetFilter: "0"
             },
             {
@@ -1218,6 +1273,7 @@ define(function (require) {
                 endMarker: "fdc*",
                 description: "Footnote text, applies to Deuterocanon only",
                 inform: "1",
+                navigationText: "deut-canon",
                 userCanSetFilter: "0"
             },
             {
@@ -1225,6 +1281,7 @@ define(function (require) {
                 endMarker: "fv*",
                 description: "A verse number within the footnote text",
                 inform: "1",
+                navigationText: "verse#",
                 userCanSetFilter: "0"
             },
             {
@@ -1232,6 +1289,7 @@ define(function (require) {
                 endMarker: "fm*",
                 description: "An additional footnote marker location for a previous footnote",
                 inform: "1",
+                navigationText: "call-prev",
                 userCanSetFilter: "0"
             },
             {
@@ -1244,6 +1302,7 @@ define(function (require) {
                 endMarker: "qt*",
                 description: "For Old Testament quoted text appearing in the New Testament (basic)",
                 inform: "1",
+                navigationText: "Quotation",
                 userCanSetFilter: "0"
             },
             {
@@ -1311,6 +1370,7 @@ define(function (require) {
                 endMarker: "add*",
                 description: "For a translational addition to the text",
                 inform: "1",
+                navigationText: "addl material",
                 userCanSetFilter: "0"
             },
             {
@@ -1358,54 +1418,63 @@ define(function (require) {
                 name: "li",
                 description: "A list entry, level 1 (if single level)",
                 inform: "1",
+                navigationText: "list item",
                 userCanSetFilter: "0"
             },
             {
                 name: "li1",
                 description: "A list entry, level 1 (if multiple levels)",
                 inform: "1",
+                navigationText: "list item L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "li2",
                 description: "A list entry, level 2",
                 inform: "1",
+                navigationText: "list item L2",
                 userCanSetFilter: "0"
             },
             {
                 name: "li3",
                 description: "A list entry, level 3",
                 inform: "1",
+                navigationText: "list item L3",
                 userCanSetFilter: "0"
             },
             {
                 name: "li4",
                 description: "A list entry, level 4",
                 inform: "1",
+                navigationText: "list item L4",
                 userCanSetFilter: "0"
             },
             {
                 name: "qh",
                 description: "List or Genealogy",
                 inform: "1",
+                navigationText: "list item",
                 userCanSetFilter: "0"
             },
             {
                 name: "tr",
                 description: "A new table row",
                 inform: "1",
+                navigationText: "table row",
                 userCanSetFilter: "0"
             },
             {
                 name: "tr1",
                 description: "A table Row",
                 inform: "1",
+                navigationText: "table row L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "tr2",
                 description: "A table Row",
                 inform: "1",
+                navigationText: "table row L2",
                 userCanSetFilter: "0"
             },
             {
@@ -1522,30 +1591,35 @@ define(function (require) {
                 name: "p1",
                 description: "Front or back matter text paragraph, level 1 (if multiple levels)",
                 inform: "1",
+                navigationText: "Periph matter para L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "k1",
                 description: "Concordance main entry text or keyword, level 1",
                 inform: "1",
+                navigationText: "conc main entry/keyword L1",
                 userCanSetFilter: "0"
             },
             {
                 name: "k2",
                 description: "Concordance main entry text or keyword, level 2",
                 inform: "1",
+                navigationText: "conc main entry/keyword L2",
                 userCanSetFilter: "0"
             },
             {
                 name: "pb",
                 description: "Page Break used for new reader portions and children's bibles where content is controlled by the page",
                 inform: "1",
+                navigationText: "new page",
                 userCanSetFilter: "0"
             },
             {
                 name: "b",
                 description: "Poetry text stanza break (e.g. stanza break) (basic)",
                 inform: "1",
+                navigationText: "stanza break",
                 userCanSetFilter: "0"
             },
             {
@@ -1572,24 +1646,28 @@ define(function (require) {
                 name: "px",
                 description: "Paragraph extra 1",
                 inform: "1",
+                navigationText: "para extra 1",
                 userCanSetFilter: "0"
             },
             {
                 name: "pz",
                 description: "Paragraph extra 2",
                 inform: "1",
+                navigationText: "para extra 2",
                 userCanSetFilter: "0"
             },
             {
                 name: "qx",
                 description: "Poetry extra 1",
                 inform: "1",
+                navigationText: "poetry extra 1",
                 userCanSetFilter: "0"
             },
             {
                 name: "qz",
                 description: "Poetry extra 2",
                 inform: "1",
+                navigationText: "poetry extra 2",
                 userCanSetFilter: "0"
             },
             {
@@ -1618,6 +1696,7 @@ define(function (require) {
                 description: "Back-translation (and all \bt... initial forms)",
                 filter: "1",
                 inform: "1",
+                navigationText: "back-trans",
                 userCanSetFilter: "0"
             },
             {
@@ -1626,6 +1705,7 @@ define(function (require) {
                 description: "Free translation",
                 filter: "1",
                 inform: "1",
+                navigationText: "free-trans",
                 userCanSetFilter: "0"
             },
             {
@@ -1634,6 +1714,7 @@ define(function (require) {
                 description: "Adapt It note",
                 filter: "1",
                 inform: "1",
+                navigationText: "note",
                 userCanSetFilter: "0"
             },
             {
