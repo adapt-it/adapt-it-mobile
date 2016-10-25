@@ -2084,7 +2084,7 @@ define(function (require) {
                                 // sanity check for blank filter strings
                                 if (markerAry[idxMkr].trim().length > 0) {
                                     mkr = markerList.where({name: markerAry[idxMkr].trim().substr(1)})[0];
-                                    if (mkr.get('inform') === "1") {
+                                    if (mkr && mkr.get('inform') === "1") {
                                         if (mkr.get('navigationText')) {
                                             inform = mkr.get('navigationText');
                                         }
@@ -2110,6 +2110,7 @@ define(function (require) {
                             if (value.get("midpuncts").length > 0) {
                                 chapterString += "\n<MP mp=\"" + value.get("midpuncts") + "\"/>";
                             }
+                            // line 10 -- source word break (swbk), target word break (twbk)
                             chapterString += "\n</S>\n";
                         }
                         // Now take the string from this chapter's sourcephrases that we've just built and
