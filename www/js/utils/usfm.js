@@ -881,6 +881,7 @@ define(function (require) {
 	            png: "1",
 	            special: "1",
 	            inform: "1",
+                navigationText: "id",
                 userCanSetFilter: "0"
             },
             {

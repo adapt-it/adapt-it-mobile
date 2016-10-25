@@ -1905,7 +1905,7 @@ define(function (require) {
             // EDB 8/13/16: partially working. Still need:
             // - Flag bits generated (implement buildFlags() below)
             // - type enum generated (implement buildTY() below)
-            // - "inform" bits copied over
+            // - ~FILTER text folded in
             // -- lower priority, but need for AI compatibility: other bits implemented
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
@@ -2041,6 +2041,7 @@ define(function (require) {
                     // for each chapter (regardless of whether there's some adaptation done), get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                         var chapterString = "";
+                        var addLF = false;
                         for (i = 0; i < spList.length; i++) {
                             value = spList.at(i);
                             // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
@@ -2069,10 +2070,19 @@ define(function (require) {
                             chapterString += " ty=\"" + curTY + "\"";
                             lastTY = curTY; // for the next item
                             // line 3 -- 6 atts (optional)
+                            addLF = true;
                             if (value.get("prepuncts").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n"; 
+                                    addLF = false;
+                                }
                                 chapterString += " pp=\"" + value.get("prepuncts") + "\"";
                             }
                             if (value.get("follpuncts").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n"; 
+                                    addLF = false;
+                                }
                                 chapterString += " fp=\"" + value.get("follpuncts") + "\"";
                             }
                             markers = value.get("markers");
@@ -2083,24 +2093,36 @@ define(function (require) {
                             for (idxMkr = 0; idxMkr < markerAry.length; idxMkr++) {
                                 // sanity check for blank filter strings
                                 if (markerAry[idxMkr].trim().length > 0) {
-                                    mkr = markerList.where({name: markerAry[idxMkr].trim().substr(1)})[0];
+                                    mkr = markerList.where({name: markerAry[idxMkr].trim()})[0];
                                     if (mkr && mkr.get('inform') === "1") {
                                         if (mkr.get('navigationText')) {
                                             inform = mkr.get('navigationText');
                                         }
-                                        chapterString += " i=\"" + inform + "\"";
+                                        if (addLF === true) {
+                                            chapterString += "\n"; 
+                                            addLF = false;
+                                        }
+                                        chapterString += "i=\"" + inform + "\"";
                                     }
                                 }
                             }
-                            // add markers, and if needed, pretty-print the text on a newline
                             if (markers.indexOf("\\v") > -1) {
+                                if (addLF === true) {
+                                    chapterString += "\n"; 
+                                    addLF = false;
+                                }
                                 // add chapter/verse
                                 chapterString += " c=\"" + entry.get('name') + ":" +  "\"";
                             }
                             // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
                             //           inline nonbinding markers, inline nonbinding end markers
+                            addLF = true; 
                             if (markers.length > 0) {
-                                chapterString += "\n m=\"" + markers + "\"";
+                                if (addLF === true) {
+                                    chapterString += "\n"; 
+                                    addLF = false;
+                                }
+                                chapterString += "m=\"" + markers + "\"";
                             }
                             // line 5-8 -- free translation, note, back translation, filtered info
                             // line 9 -- lapat, tmpat, gmpat, pupat
