@@ -259,7 +259,7 @@ define(function (require) {
                     }
                     // parse the text file and create the SourcePhrases
                     // insert special <p> for linefeeds, then split on whitespace (doesn't keep whitespace)
-                    arr = contents.replace(newline, " <p> ").split(spaceRE); 
+                    arr = contents.replace(newline, " <p> ").split(spaceRE);
                     arrSP = contents.replace(newline, " <p> ").split(nonSpaceRE);  // do the inverse (keep spaces)
                     i = 0;
                     while (i < arr.length) {
@@ -920,7 +920,7 @@ define(function (require) {
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
                             markers = "";
-                            $(this).attr('fi').split(re).forEach(function (elt, index, array) {
+                            $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
 //                                    console.log("filter");
@@ -2090,28 +2090,38 @@ define(function (require) {
                                 chapterString += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
                             }
                             // line 2 -- flags, sequNumber, SrcWords, TextType
-                            chapterString += "\n f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
+                            chapterString += "\n f=\"";
+                            if (value.get("flags").length > 0) {
+                                chapterString += value.get("flags");
+                            } else {
+                                chapterString += buildFlags(value);
+                            }
+                            chapterString += "\" sn=\"" + (value.get('norder') - 1);
                             words = value.get("source").match(/\S+/g);
                             if (words) {
                                 chapterString += "\" w=\"" + words.length + "\"";
                             } else {
                                 chapterString += "\" w=\"1\"";
                             }
-                            curTY = buildTY(value, lastTY);
+                            if (value.get("texttype").length > 0) {
+                                curTY = value.get("texttype");
+                            } else {
+                                curTY = buildTY(value, lastTY);
+                            }
                             chapterString += " ty=\"" + curTY + "\"";
                             lastTY = curTY; // for the next item
                             // line 3 -- 6 atts (optional)
                             addLF = true;
                             if (value.get("prepuncts").length > 0) {
                                 if (addLF === true) {
-                                    chapterString += "\n"; 
+                                    chapterString += "\n";
                                     addLF = false;
                                 }
                                 chapterString += " pp=\"" + value.get("prepuncts") + "\"";
                             }
                             if (value.get("follpuncts").length > 0) {
                                 if (addLF === true) {
-                                    chapterString += "\n"; 
+                                    chapterString += "\n";
                                     addLF = false;
                                 }
                                 chapterString += " fp=\"" + value.get("follpuncts") + "\"";
@@ -2130,7 +2140,7 @@ define(function (require) {
                                             inform = mkr.get('navigationText');
                                         }
                                         if (addLF === true) {
-                                            chapterString += "\n"; 
+                                            chapterString += "\n";
                                             addLF = false;
                                         }
                                         chapterString += "i=\"" + inform + "\"";
@@ -2139,7 +2149,7 @@ define(function (require) {
                             }
                             if (markers.indexOf("\\v") > -1) {
                                 if (addLF === true) {
-                                    chapterString += "\n"; 
+                                    chapterString += "\n";
                                     addLF = false;
                                 }
                                 // add chapter/verse
@@ -2147,23 +2157,55 @@ define(function (require) {
                             }
                             // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
                             //           inline nonbinding markers, inline nonbinding end markers
-                            addLF = true; 
+                            addLF = true;
                             if (markers.length > 0) {
                                 if (addLF === true) {
-                                    chapterString += "\n"; 
+                                    chapterString += "\n";
                                     addLF = false;
                                 }
                                 chapterString += "m=\"" + markers + "\"";
                             }
                             // line 5-8 -- free translation, note, back translation, filtered info
+                            addLF = true;
+                            if (value.get("freetrans").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n";
+                                    addLF = false;
+                                }
+                                chapterString += "ft=\"" + value.get("freetrans") + "\"";
+                            }
+                            addLF = true;
+                            if (value.get("note").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n";
+                                    addLF = false;
+                                }
+                                chapterString += "no=\"" + value.get("note") + "\"";
+                            }
                             // line 9 -- lapat, tmpat, gmpat, pupat
-                            chapterString += ">";
+//                            chapterString += ">";
                             // 3 more possible info types
                             // medial puncts, medial markers, saved words (another <s>)
                             if (value.get("midpuncts").length > 0) {
                                 chapterString += "\n<MP mp=\"" + value.get("midpuncts") + "\"/>";
                             }
                             // line 10 -- source word break (swbk), target word break (twbk)
+                            addLF = true;
+                            if (value.get("srcwordbreak").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n";
+                                    addLF = false;
+                                }
+                                chapterString += "swbk=\"" + value.get("srcwordbreak") + "\"";
+                            }
+                            if (value.get("tgtwordbreak").length > 0) {
+                                if (addLF === true) {
+                                    chapterString += "\n";
+                                    addLF = false;
+                                }
+                                chapterString += "twbk=\"" + value.get("tgtwordbreak") + "\"";
+                            }
+                            chapterString += ">";
                             chapterString += "\n</S>\n";
                         }
                         // Now take the string from this chapter's sourcephrases that we've just built and
@@ -2172,7 +2214,7 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             // done with the chapters -- add the ending node
-                            content += "\n</AdaptItDoc>\n";
+                            content += "</AdaptItDoc>\n";
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
