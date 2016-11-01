@@ -200,7 +200,8 @@ define(function (require) {
                     books = window.Application.BookList,
                     chapters = window.Application.ChapterList,
                     sourcePhrases = new spModel.SourcePhraseCollection(),
-                    arr = [],
+                    arr = [],   // array of content words (for sourcephrases)
+                    arrSP = [], // array of spaces (for )
                     bookID = "",
                     chapterID = "",
                     spID = "";
@@ -212,7 +213,8 @@ define(function (require) {
                 // We assume these are just text with no markup,
                 // in a single chapter (this could change if needed)
                 var readTextDoc = function (contents) {
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
                     var prepunct = "";
                     var follpunct = "";
@@ -256,8 +258,9 @@ define(function (require) {
                         project.set('lastAdaptedName', bookName);
                     }
                     // parse the text file and create the SourcePhrases
-                    arr = contents.replace(newline, " <p> ").split(re); // insert special <p> for linefeeds, then split on whitespace
-//                            arr = contents.split(re);
+                    // insert special <p> for linefeeds, then split on whitespace (doesn't keep whitespace)
+                    arr = contents.replace(newline, " <p> ").split(spaceRE); 
+                    arrSP = contents.replace(newline, " <p> ").split(nonSpaceRE);  // do the inverse (keep spaces)
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
@@ -313,6 +316,7 @@ define(function (require) {
                                     prepuncts: prepuncts,
                                     midpuncts: midpuncts,
                                     follpuncts: follpuncts,
+                                    srcwordbreak: arrSP[i],
                                     source: s,
                                     target: ""
                                 });
@@ -359,7 +363,8 @@ define(function (require) {
                     var prepunct = "";
                     var follpunct = "";
                     var sp = null;
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var chaps = [];
                     var xmlDoc = $.parseXML(contents);
                     var $xml = $(xmlDoc);
@@ -514,7 +519,8 @@ define(function (require) {
                         if ($(element)[0].nodeType === 3) {
                             // Split the text into an array
                             // Note that this is analogous to the AI "strip" of text, and not the whole document
-                            arr = ($(element)[0].nodeValue).trim().split(re);
+                            arr = ($(element)[0].nodeValue).trim().split(spaceRE);
+                            arrSP = ($(element)[0].nodeValue).trim().split(nonSpaceRE);
                             i = 0;
                             while (i < arr.length) {
                                 // check for a marker
@@ -566,6 +572,7 @@ define(function (require) {
                                             prepuncts: prepuncts,
                                             midpuncts: midpuncts,
                                             follpuncts: follpuncts,
+                                            srcwordbreak: arrSP[i],
                                             source: s,
                                             target: ""
                                         });
@@ -672,7 +679,8 @@ define(function (require) {
                 // This import also populates the KB and sets the last translated verse in each chapter.
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var follpunct = "";
                     var sp = null;
                     var chaps = [];
@@ -934,6 +942,13 @@ define(function (require) {
                                         prepuncts: $(this).attr('pp'),
                                         midpuncts: "",
                                         follpuncts: $(this).attr('fp'),
+                                        flags: $(this).attr('f'),
+                                        texttype: $(this).attr('ty'),
+                                        gloss: $(this).attr('g'),
+                                        freetrans: $(this).attr('ft'),
+                                        note: $(this).attr('no'),
+                                        srcwordbreak: $(this).attr('swbk'),
+                                        tgtwordbreak: $(this).attr('twbk'),
                                         source: elt.substr(0, elt.indexOf("\\") - 1),
                                         target: ""
                                     });
@@ -957,6 +972,13 @@ define(function (require) {
                                         prepuncts: $(this).attr('pp'),
                                         midpuncts: "",
                                         follpuncts: $(this).attr('fp'),
+                                        flags: $(this).attr('f'),
+                                        texttype: $(this).attr('ty'),
+                                        gloss: $(this).attr('g'),
+                                        freetrans: $(this).attr('ft'),
+                                        note: $(this).attr('no'),
+                                        srcwordbreak: $(this).attr('swbk'),
+                                        tgtwordbreak: $(this).attr('twbk'),
                                         source: elt,
                                         target: ""
                                     });
@@ -983,6 +1005,13 @@ define(function (require) {
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
                             follpuncts: $(this).attr('fp'),
+                            flags: $(this).attr('f'),
+                            texttype: $(this).attr('ty'),
+                            gloss: $(this).attr('g'),
+                            freetrans: $(this).attr('ft'),
+                            note: $(this).attr('no'),
+                            srcwordbreak: $(this).attr('swbk'),
+                            tgtwordbreak: $(this).attr('twbk'),
                             source: $(this).attr('k'), // source w/o punctuation
                             target: $(this).attr('t')
                         });
@@ -1048,7 +1077,8 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
                     var sp = null;
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
@@ -1122,7 +1152,8 @@ define(function (require) {
                     }
                     
                     // build SourcePhrases                    
-                    arr = contents.replace(/\\/gi, " \\").split(re); // add space to make sure markers get put in a separate token
+                    arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
+                    arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
