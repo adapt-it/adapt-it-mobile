@@ -44,6 +44,11 @@ define(function (require) {
                 follpuncts: "",
                 flags: "0000000000000000000000", // 22
                 texttype: 0,
+                gloss: "",
+                freetrans: "",
+                note: "",
+                srcwordbreak: "",
+                tgtwordbreak: "",
                 source: "",
                 target: ""
             },
@@ -68,7 +73,7 @@ define(function (require) {
                     tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function (tx, res) {
                         
                     });
-                    tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags char(22), ty INTEGER, gloss TEXT, freetrans TEXT, note TEXT);", function (tx, res) {
+                    tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT);", function (tx, res) {
                     });
                 }, function (tx, e) {
                     console.log("upgradeSchema error: " + e.message);
@@ -76,9 +81,9 @@ define(function (require) {
             },
             create: function () {
                 var attributes = this.attributes;
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target], function (tx, res) {
+                    tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
@@ -88,9 +93,9 @@ define(function (require) {
             },
             update: function () {
                 var attributes = this.attributes;
-                var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, source=?, target=? WHERE spid=?;';
+                var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, flags=?, texttype=?, gloss=?, freetrans=?, note=?, srcwordbreak=?, tgtwordbreak=?, source=?, target=? WHERE spid=?;';
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.source, attributes.target, attributes.spid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
@@ -152,7 +157,7 @@ define(function (require) {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, source TEXT, target TEXT);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
                 }, function (err) {
                     console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
@@ -207,13 +212,13 @@ define(function (require) {
             // add an array of SourcePhrase objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
                 console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
-                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.source, sp.attributes.target]);
+                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.flags, sp.attributes.texttype, sp.attributes.gloss, sp.attributes.freetrans, sp.attributes.note, sp.attributes.srcwordbreak, sp.attributes.tgtwordbreak, sp.attributes.source, sp.attributes.target]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));
@@ -226,7 +231,6 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
-                var sql = "INSERT OR REPLACE INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, source, target) VALUES (?,?,?,?,?,?,?,?,?,?);";
                 var coll = null;
                 switch (method) {
                 case 'create':

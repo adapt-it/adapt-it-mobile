@@ -139,7 +139,7 @@ define(function (require) {
                 name: "mt1",
                 description: "The main title of the book (if multiple levels) (basic)",
                 userCanSetFilter: "1",
-                navigationText: "secondary title L1",
+                navigationText: "main title L1",
                 inform: "1"
             },
             {
@@ -881,6 +881,7 @@ define(function (require) {
 	            png: "1",
 	            special: "1",
 	            inform: "1",
+                navigationText: "id",
                 userCanSetFilter: "0"
             },
             {

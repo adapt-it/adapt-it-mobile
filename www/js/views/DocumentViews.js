@@ -200,7 +200,8 @@ define(function (require) {
                     books = window.Application.BookList,
                     chapters = window.Application.ChapterList,
                     sourcePhrases = new spModel.SourcePhraseCollection(),
-                    arr = [],
+                    arr = [],   // array of content words (for sourcephrases)
+                    arrSP = [], // array of spaces (for )
                     bookID = "",
                     chapterID = "",
                     spID = "";
@@ -212,7 +213,8 @@ define(function (require) {
                 // We assume these are just text with no markup,
                 // in a single chapter (this could change if needed)
                 var readTextDoc = function (contents) {
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
                     var prepunct = "";
                     var follpunct = "";
@@ -256,8 +258,9 @@ define(function (require) {
                         project.set('lastAdaptedName', bookName);
                     }
                     // parse the text file and create the SourcePhrases
-                    arr = contents.replace(newline, " <p> ").split(re); // insert special <p> for linefeeds, then split on whitespace
-//                            arr = contents.split(re);
+                    // insert special <p> for linefeeds, then split on whitespace (doesn't keep whitespace)
+                    arr = contents.replace(newline, " <p> ").split(spaceRE);
+                    arrSP = contents.replace(newline, " <p> ").split(nonSpaceRE);  // do the inverse (keep spaces)
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
@@ -313,6 +316,7 @@ define(function (require) {
                                     prepuncts: prepuncts,
                                     midpuncts: midpuncts,
                                     follpuncts: follpuncts,
+                                    srcwordbreak: arrSP[i],
                                     source: s,
                                     target: ""
                                 });
@@ -359,7 +363,8 @@ define(function (require) {
                     var prepunct = "";
                     var follpunct = "";
                     var sp = null;
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var chaps = [];
                     var xmlDoc = $.parseXML(contents);
                     var $xml = $(xmlDoc);
@@ -514,7 +519,8 @@ define(function (require) {
                         if ($(element)[0].nodeType === 3) {
                             // Split the text into an array
                             // Note that this is analogous to the AI "strip" of text, and not the whole document
-                            arr = ($(element)[0].nodeValue).trim().split(re);
+                            arr = ($(element)[0].nodeValue).trim().split(spaceRE);
+                            arrSP = ($(element)[0].nodeValue).trim().split(nonSpaceRE);
                             i = 0;
                             while (i < arr.length) {
                                 // check for a marker
@@ -566,6 +572,7 @@ define(function (require) {
                                             prepuncts: prepuncts,
                                             midpuncts: midpuncts,
                                             follpuncts: follpuncts,
+                                            srcwordbreak: arrSP[i],
                                             source: s,
                                             target: ""
                                         });
@@ -672,7 +679,8 @@ define(function (require) {
                 // This import also populates the KB and sets the last translated verse in each chapter.
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var follpunct = "";
                     var sp = null;
                     var chaps = [];
@@ -912,7 +920,7 @@ define(function (require) {
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
                             markers = "";
-                            $(this).attr('fi').split(re).forEach(function (elt, index, array) {
+                            $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
 //                                    console.log("filter");
@@ -934,6 +942,13 @@ define(function (require) {
                                         prepuncts: $(this).attr('pp'),
                                         midpuncts: "",
                                         follpuncts: $(this).attr('fp'),
+                                        flags: $(this).attr('f'),
+                                        texttype: $(this).attr('ty'),
+                                        gloss: $(this).attr('g'),
+                                        freetrans: $(this).attr('ft'),
+                                        note: $(this).attr('no'),
+                                        srcwordbreak: $(this).attr('swbk'),
+                                        tgtwordbreak: $(this).attr('twbk'),
                                         source: elt.substr(0, elt.indexOf("\\") - 1),
                                         target: ""
                                     });
@@ -957,6 +972,13 @@ define(function (require) {
                                         prepuncts: $(this).attr('pp'),
                                         midpuncts: "",
                                         follpuncts: $(this).attr('fp'),
+                                        flags: $(this).attr('f'),
+                                        texttype: $(this).attr('ty'),
+                                        gloss: $(this).attr('g'),
+                                        freetrans: $(this).attr('ft'),
+                                        note: $(this).attr('no'),
+                                        srcwordbreak: $(this).attr('swbk'),
+                                        tgtwordbreak: $(this).attr('twbk'),
                                         source: elt,
                                         target: ""
                                     });
@@ -983,6 +1005,13 @@ define(function (require) {
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
                             follpuncts: $(this).attr('fp'),
+                            flags: $(this).attr('f'),
+                            texttype: $(this).attr('ty'),
+                            gloss: $(this).attr('g'),
+                            freetrans: $(this).attr('ft'),
+                            note: $(this).attr('no'),
+                            srcwordbreak: $(this).attr('swbk'),
+                            tgtwordbreak: $(this).attr('twbk'),
                             source: $(this).attr('k'), // source w/o punctuation
                             target: $(this).attr('t')
                         });
@@ -1048,7 +1077,8 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
                     var sp = null;
-                    var re = /\s+/;
+                    var spaceRE = /\s+/;        // select 1+ space chars
+                    var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var markerList = new USFM.MarkerCollection();
                     var marker = null;
                     var lastAdapted = 0;
@@ -1122,7 +1152,8 @@ define(function (require) {
                     }
                     
                     // build SourcePhrases                    
-                    arr = contents.replace(/\\/gi, " \\").split(re); // add space to make sure markers get put in a separate token
+                    arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
+                    arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
                     i = 0;
                     while (i < arr.length) {
                         // check for a marker
@@ -1903,20 +1934,27 @@ define(function (require) {
             // Note that this export is a full dump of the document, not just the parts that have been adapted.
             // This is because we're exporting the source as well as the target text.
             // EDB 8/13/16: partially working. Still need:
-            // - Flag bits generated (implement buildFlags() below)
-            // - type enum generated (implement buildTY() below)
-            // - "inform" bits copied over
+            // - ~FILTER text folded in
             // -- lower priority, but need for AI compatibility: other bits implemented
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid});
                 var markerList = new USFM.MarkerCollection();
+                var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var content = "";
                 var words = [];
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var spList = new spModel.SourcePhraseCollection();
                 var markers = "";
+                var filtered = false;
+                var exportMarkers = false;
+                var needsEndMarker = "";
+                var cNum = "";
+                var vNum = "";
                 var i = 0;
+                var idxFilters = 0;
+                var sn = 0;
+                var fi = "";
                 var curTY = "2";
                 var lastTY = "2";
                 var value = null;
@@ -2041,77 +2079,228 @@ define(function (require) {
                     // for each chapter (regardless of whether there's some adaptation done), get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                         var chapterString = "";
+                        var addLF = false;
                         for (i = 0; i < spList.length; i++) {
                             value = spList.at(i);
-                            // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
-                            // line 1 -- source, key, target, adaptation
-                            chapterString += "<S s=\"";
-                            if (value.get("prepuncts").length > 0) {
-                                chapterString += value.get("prepuncts");
-                            }
-                            chapterString += value.get("source");
-                            if (value.get("follpuncts").length > 0) {
-                                chapterString += value.get("follpuncts");
-                            }
-                            chapterString += "\" k=\"" + value.get("source") + "\"";
-                            if (value.get("target").length > 0) {
-                                chapterString += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
-                            }
-                            // line 2 -- flags, sequNumber, SrcWords, TextType
-                            chapterString += "\n f=\"" + buildFlags(value) + "\" sn=\"" + (value.get('norder') - 1);
-                            words = value.get("source").match(/\S+/g);
-                            if (words) {
-                                chapterString += "\" w=\"" + words.length + "\"";
-                            } else {
-                                chapterString += "\" w=\"1\"";
-                            }
-                            curTY = buildTY(value, lastTY);
-                            chapterString += " ty=\"" + curTY + "\"";
-                            lastTY = curTY; // for the next item
-                            // line 3 -- 6 atts (optional)
-                            if (value.get("prepuncts").length > 0) {
-                                chapterString += " pp=\"" + value.get("prepuncts") + "\"";
-                            }
-                            if (value.get("follpuncts").length > 0) {
-                                chapterString += " fp=\"" + value.get("follpuncts") + "\"";
-                            }
                             markers = value.get("markers");
-                            // inform marker
-                            var markerAry = markers.split("\\");
-                            var idxMkr = 0;
-                            var inform = markers;
-                            for (idxMkr = 0; idxMkr < markerAry.length; idxMkr++) {
-                                // sanity check for blank filter strings
-                                if (markerAry[idxMkr].trim().length > 0) {
-                                    mkr = markerList.where({name: markerAry[idxMkr].trim().substr(1)})[0];
-                                    if (mkr && mkr.get('inform') === "1") {
-                                        if (mkr.get('navigationText')) {
-                                            inform = mkr.get('navigationText');
+                            // before we begin -- do some checks for filtered sourcephrases
+                            // With the XML export, filtered text is exported in the "fi" attribute. We'll collect all the filtered
+                            // text and markers in that attribute, and then export the attribute with the first non-filtered string.
+                            if (filtered === true && markers.length > 0 && needsEndMarker.length === 0) {
+                                // hit the next strip; this is an implicit end to the filtering (there's no end marker)
+                                filtered = false;
+                                fi += " \\~FILTER*";
+                            }
+                            // check to see if this sourcephrase is filtered (only looking at the top level)
+                            if (filtered === false) {
+                                for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                    // sanity check for blank filter strings
+                                    if (filterAry[idxFilters].trim().length > 0) {
+                                        if (markers.indexOf(filterAry[idxFilters].trim()) >= 0) {
+                                            // this is a filtered sourcephrase -- do not export it; add it to the "fi" variable
+                                            // if there is an end marker associated with this marker,
+                                            // do not export any source phrases until we come across the end marker
+                                            mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                            if (mkr[0].get("endMarker")) {
+                                                needsEndMarker = mkr[0].get("endMarker");
+                                            }
+                                            filtered = true;
+                                            fi = "\\~FILTER " + markers;
+                                            console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
+                                            // We have a couple exceptions to the filter:
+                                            // - if the ending marker is in the same marker string, clear the filter flag
+                                            // - if there are markers before the filtered marker, export them
+                                            if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                                // found our ending marker -- this sourcephrase is not filtered
+                                                // first, remove the marker from the markers string so it doesn't print out
+                                                markers = markers.replace(("\\" + needsEndMarker), '');
+                                                // now clear our flags so the sourcephrase exports
+                                                needsEndMarker = "";
+                                                filtered = false;
+                                                fi += " \\~FILTER*";
+                                            }
+//                                            else {
+//                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters].trim()) - 1);
+//                                                if (markers.length > 0) {
+//                                                    // some markers before we hit the filtered marker -- export them
+//                                                    exportMarkers = true;
+//                                                }
+//                                            }
                                         }
-                                        chapterString += " i=\"" + inform + "\"";
                                     }
                                 }
                             }
-                            // add markers, and if needed, pretty-print the text on a newline
-                            if (markers.indexOf("\\v") > -1) {
-                                // add chapter/verse
-                                chapterString += " c=\"" + entry.get('name') + ":" +  "\"";
+                            if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                // found our ending marker -- this sourcephrase is not filtered
+                                // first, remove the marker from the markers string so it doesn't print out
+                                markers = markers.replace(("\\" + needsEndMarker), '');
+                                // now clear our flags so the sourcephrase exports
+                                needsEndMarker = "";
+                                filtered = false;
+                                fi += " \\~FILTER*";
                             }
-                            // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
-                            //           inline nonbinding markers, inline nonbinding end markers
-                            if (markers.length > 0) {
-                                chapterString += "\n m=\"" + markers + "\"";
+                            
+//*****************************                            
+                            if (filtered === false) {
+                                // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
+                                // line 1 -- source, key, target, adaptation
+                                chapterString += "<S s=\"";
+                                if (value.get("prepuncts").length > 0) {
+                                    chapterString += value.get("prepuncts");
+                                }
+                                chapterString += value.get("source");
+                                if (value.get("follpuncts").length > 0) {
+                                    chapterString += value.get("follpuncts");
+                                }
+                                chapterString += "\" k=\"" + value.get("source") + "\"";
+//**
+                                if (value.get("target").length > 0) {
+                                    chapterString += " t=\"" + value.get("target") + "\" a=\"";
+                                    if (value.get("follpuncts").length > 0) {
+                                        // the "a" attribute does not include following punctuation
+                                        chapterString += value.get("target").substr(0, value.get("target").indexOf(value.get("follpuncts")));
+                                    } else {
+                                        chapterString += value.get("target");
+                                    }
+                                    // extract any trailiing punct for the "a" attribute
+                                    chapterString += "\"";
+                                }
+                                // line 2 -- flags, sequNumber, SrcWords, TextType
+                                chapterString += "\n f=\"";
+                                if (value.get("flags").length > 0) {
+                                    chapterString += value.get("flags");
+                                } else {
+                                    chapterString += buildFlags(value);
+                                }
+                                chapterString += "\" sn=\"" + sn;
+                                sn++; // increment our counter
+                                words = value.get("source").match(/\S+/g);
+                                if (words) {
+                                    chapterString += "\" w=\"" + words.length + "\"";
+                                } else {
+                                    chapterString += "\" w=\"1\"";
+                                }
+                                if (value.get("texttype").length > 0) {
+                                    curTY = value.get("texttype");
+                                } else {
+                                    curTY = buildTY(value, lastTY);
+                                }
+                                chapterString += " ty=\"" + curTY + "\"";
+                                lastTY = curTY; // for the next item
+                                // line 3 -- 6 atts (optional)
+                                addLF = true;
+                                if (value.get("prepuncts").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += " pp=\"" + value.get("prepuncts") + "\"";
+                                }
+                                if (value.get("follpuncts").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += " fp=\"" + value.get("follpuncts") + "\"";
+                                }
+                                // inform marker
+                                var markerAry = markers.split("\\");
+                                var idxMkr = 0;
+                                var inform = markers;
+                                for (idxMkr = 0; idxMkr < markerAry.length; idxMkr++) {
+                                    // sanity check for blank filter strings
+                                    if (markerAry[idxMkr].trim().length > 0) {
+                                        mkr = markerList.where({name: markerAry[idxMkr].trim()})[0];
+                                        if (mkr && mkr.get('inform') === "1") {
+                                            if (mkr.get('navigationText')) {
+                                                inform = mkr.get('navigationText');
+                                            }
+                                            if (addLF === true) {
+                                                chapterString += "\n";
+                                                addLF = false;
+                                            }
+                                            chapterString += "i=\"" + inform + "\"";
+                                        }
+                                    }
+                                }
+                                if (markers.indexOf("\\v") > -1) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    if (markers.indexOf(" ", markers.indexOf("\\v") + 3) > 0) {
+                                        // embedded verse number -- go to the next space
+                                        vNum = markers.substr(markers.indexOf("\\v") + 3, markers.indexOf(" ", markers.indexOf("\\v") + 3)).trim();
+                                    } else {
+                                        // last marker -- just take the rest of the string
+                                        vNum = markers.substr(markers.indexOf("\\v") + 3);
+                                    }
+                                    cNum = entry.get("name").substr(entry.get("name").lastIndexOf(" ") + 1);
+                                    // add chapter/verse (c:v)
+                                    chapterString += " c=\"" + cNum + ":" + vNum + "\"";
+                                }
+                                // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
+                                //           inline nonbinding markers, inline nonbinding end markers
+                                addLF = true;
+                                if (markers.length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "m=\"" + markers + "\"";
+                                }
+                                // line 5-8 -- free translation, note, back translation, filtered info
+                                addLF = true;
+                                if (value.get("freetrans").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "ft=\"" + value.get("freetrans") + "\"";
+                                }
+                                addLF = true;
+                                if (value.get("note").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "no=\"" + value.get("note") + "\"";
+                                }
+                                addLF = true;
+                                if (fi.length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "fi=\"" + fi + "\"";
+                                    fi = ""; // clear out filter string
+                                }
+                                // line 9 -- lapat, tmpat, gmpat, pupat
+    //                            chapterString += ">";
+                                // 3 more possible info types
+                                // medial puncts, medial markers, saved words (another <s>)
+                                if (value.get("midpuncts").length > 0) {
+                                    chapterString += "\n<MP mp=\"" + value.get("midpuncts") + "\"/>";
+                                }
+                                // line 10 -- source word break (swbk), target word break (twbk)
+                                addLF = true;
+                                if (value.get("srcwordbreak").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "swbk=\"" + value.get("srcwordbreak") + "\"";
+                                }
+                                if (value.get("tgtwordbreak").length > 0) {
+                                    if (addLF === true) {
+                                        chapterString += "\n";
+                                        addLF = false;
+                                    }
+                                    chapterString += "twbk=\"" + value.get("tgtwordbreak") + "\"";
+                                }
+                                chapterString += ">";
+                                chapterString += "\n</S>\n";
                             }
-                            // line 5-8 -- free translation, note, back translation, filtered info
-                            // line 9 -- lapat, tmpat, gmpat, pupat
-                            chapterString += ">";
-                            // 3 more possible info types
-                            // medial puncts, medial markers, saved words (another <s>)
-                            if (value.get("midpuncts").length > 0) {
-                                chapterString += "\n<MP mp=\"" + value.get("midpuncts") + "\"/>";
-                            }
-                            // line 10 -- source word break (swbk), target word break (twbk)
-                            chapterString += "\n</S>\n";
                         }
                         // Now take the string from this chapter's sourcephrases that we've just built and
                         // insert them into the correct location in the file's content string
@@ -2119,7 +2308,7 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             // done with the chapters -- add the ending node
-                            content += "\n</AdaptItDoc>\n";
+                            content += "</AdaptItDoc>\n";
                             var blob = new Blob([content], {type: 'text/plain'});
                             writer.write(blob);
                             content = ""; // clear out the content string for the next chapter
