@@ -1949,6 +1949,8 @@ define(function (require) {
                 var filtered = false;
                 var exportMarkers = false;
                 var needsEndMarker = "";
+                var cNum = "";
+                var vNum = "";
                 var i = 0;
                 var idxFilters = 0;
                 var sn = 0;
@@ -2151,8 +2153,17 @@ define(function (require) {
                                     chapterString += value.get("follpuncts");
                                 }
                                 chapterString += "\" k=\"" + value.get("source") + "\"";
+//**
                                 if (value.get("target").length > 0) {
-                                    chapterString += " t=\"" + value.get("target") + "\" a=\"" + value.get("target") + "\"";
+                                    chapterString += " t=\"" + value.get("target") + "\" a=\"";
+                                    if (value.get("follpuncts").length > 0) {
+                                        // the "a" attribute does not include following punctuation
+                                        chapterString += value.get("target").substr(0, value.get("target").indexOf(value.get("follpuncts")));
+                                    } else {
+                                        chapterString += value.get("target");
+                                    }
+                                    // extract any trailiing punct for the "a" attribute
+                                    chapterString += "\"";
                                 }
                                 // line 2 -- flags, sequNumber, SrcWords, TextType
                                 chapterString += "\n f=\"";
@@ -2217,8 +2228,16 @@ define(function (require) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    // add chapter/verse
-                                    chapterString += " c=\"" + entry.get('name') + ":" +  "\"";
+                                    if (markers.indexOf(" ", markers.indexOf("\\v") + 3) > 0) {
+                                        // embedded verse number -- go to the next space
+                                        vNum = markers.substr(markers.indexOf("\\v") + 3, markers.indexOf(" ", markers.indexOf("\\v") + 3)).trim();
+                                    } else {
+                                        // last marker -- just take the rest of the string
+                                        vNum = markers.substr(markers.indexOf("\\v") + 3);
+                                    }
+                                    cNum = entry.get("name").substr(entry.get("name").lastIndexOf(" ") + 1);
+                                    // add chapter/verse (c:v)
+                                    chapterString += " c=\"" + cNum + ":" + vNum + "\"";
                                 }
                                 // line 4 -- markers, end markers, inline binding markers, inline binding end markers,
                                 //           inline nonbinding markers, inline nonbinding end markers
