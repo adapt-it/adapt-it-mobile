@@ -1976,13 +1976,10 @@ define(function (require) {
                     result += color.substr(5, 2); // bb
                     result += color.substr(3, 2); // gg
                     result += color.substr(1, 2); // rr
+                    var tmpInt = parseInt(result, 16);
+                    result = tmpInt.toString(10);
                     console.log("hexToWXColor - output: " + result);
                     return result;
-                };
-                var htmlEncode = function (value) {
-                    //create a in-memory div, set it's inner text(which jQuery automatically encodes)
-                    //then grab the encoded contents back out.
-                    return $('<div/>').text(value).html();
                 };
                 var buildFlags = function (sourcephrase) {
                     var markers = sourcephrase.get("markers");
@@ -2158,11 +2155,11 @@ define(function (require) {
                                 // line 1 -- source, key, target, adaptation
                                 chapterString += "<S s=\"";
                                 if (value.get("prepuncts").length > 0) {
-                                    chapterString += htmlEncode(value.get("prepuncts"));
+                                    chapterString += Underscore.escape(value.get("prepuncts"));
                                 }
                                 chapterString += value.get("source");
                                 if (value.get("follpuncts").length > 0) {
-                                    chapterString += htmlEncode(value.get("follpuncts"));
+                                    chapterString += Underscore.escape(value.get("follpuncts"));
                                 }
                                 chapterString += "\" k=\"" + value.get("source") + "\"";
                                 if (value.get("target").length > 0) {
@@ -2207,14 +2204,14 @@ define(function (require) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += " pp=\"" + htmlEncode(value.get("prepuncts")) + "\"";
+                                    chapterString += " pp=\"" + Underscore.escape(value.get("prepuncts")) + "\"";
                                 }
                                 if (value.get("follpuncts").length > 0) {
                                     if (addLF === true) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += " fp=\"" + htmlEncode(value.get("follpuncts")) + "\"";
+                                    chapterString += " fp=\"" + Underscore.escape(value.get("follpuncts")) + "\"";
                                 }
                                 // inform marker
                                 var markerAry = markers.split("\\");
@@ -2285,7 +2282,7 @@ define(function (require) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += "fi=\"" + htmlEncode(fi) + "\"";
+                                    chapterString += "fi=\"" + Underscore.escape(fi) + "\"";
                                     fi = ""; // clear out filter string
                                 }
                                 // line 9 -- lapat, tmpat, gmpat, pupat
