@@ -939,17 +939,17 @@ define(function (require) {
                                         chapterid: chapterID,
                                         markers: markers,
                                         orig: null,
-                                        prepuncts: $(this).attr('pp'),
+                                        prepuncts: "",
                                         midpuncts: "",
-                                        follpuncts: $(this).attr('fp'),
-                                        flags: $(this).attr('f'),
-                                        texttype: $(this).attr('ty'),
-                                        gloss: $(this).attr('g'),
-                                        freetrans: $(this).attr('ft'),
-                                        note: $(this).attr('no'),
+                                        follpuncts: "",
+                                        flags: "",
+                                        texttype: 0,
+                                        gloss: "",
+                                        freetrans: "",
+                                        note: "",
                                         srcwordbreak: $(this).attr('swbk'),
                                         tgtwordbreak: $(this).attr('twbk'),
-                                        source: elt.substr(0, elt.indexOf("\\") - 1),
+                                        source: elt.substr(0, elt.indexOf("\\")),
                                         target: ""
                                     });
                                     index++;
@@ -969,14 +969,14 @@ define(function (require) {
                                         chapterid: chapterID,
                                         markers: markers,
                                         orig: null,
-                                        prepuncts: $(this).attr('pp'),
+                                        prepuncts: "",
                                         midpuncts: "",
-                                        follpuncts: $(this).attr('fp'),
-                                        flags: $(this).attr('f'),
-                                        texttype: $(this).attr('ty'),
-                                        gloss: $(this).attr('g'),
-                                        freetrans: $(this).attr('ft'),
-                                        note: $(this).attr('no'),
+                                        follpuncts: "",
+                                        flags: "",
+                                        texttype: 0,
+                                        gloss: "",
+                                        freetrans: "",
+                                        note: "",
                                         srcwordbreak: $(this).attr('swbk'),
                                         tgtwordbreak: $(this).attr('twbk'),
                                         source: elt,
@@ -1814,7 +1814,8 @@ define(function (require) {
                                                 // extract out what kind this is (e.g., "imt2") - 
                                                 // this goes in the style attribute
                                                 var imtpos = markers.indexOf("\\imt");
-                                                if (markers.indexOf(" ", imtpos) > -1) {                                                     chapterString += markers.substring(imtpos + 1, (markers.indexOf(" ", imtpos)));
+                                                if (markers.indexOf(" ", imtpos) > -1) {
+                                                    chapterString += markers.substring(imtpos + 1, (markers.indexOf(" ", imtpos)));
                                                 } else {
                                                     chapterString += markers.substr(imtpos + 1);
                                                 }
@@ -1822,7 +1823,8 @@ define(function (require) {
                                                 // extract out what kind this is (e.g., "m" or "mt2", etc.) - 
                                                 // this goes in the style attribute
                                                 var mpos = markers.indexOf("\\m");
-                                                if (markers.indexOf(" ", mpos) > -1) {                                                     chapterString += markers.substring(mpos + 1, (markers.indexOf(" ", mpos)));
+                                                if (markers.indexOf(" ", mpos) > -1) {
+                                                    chapterString += markers.substring(mpos + 1, (markers.indexOf(" ", mpos)));
                                                 } else {
                                                     chapterString += markers.substr(mpos + 1);
                                                 }
@@ -1830,7 +1832,8 @@ define(function (require) {
                                                 // extract out what kind this is (e.g., "toc2") - 
                                                 // this goes in the style attribute
                                                 var tocpos = markers.indexOf("\\toc");
-                                                if (markers.indexOf(" ", tocpos) > -1) {                                                     chapterString += markers.substring(tocpos + 1, (markers.indexOf(" ", tocpos)));
+                                                if (markers.indexOf(" ", tocpos) > -1) {
+                                                    chapterString += markers.substring(tocpos + 1, (markers.indexOf(" ", tocpos)));
                                                 } else {
                                                     chapterString += markers.substr(tocpos + 1);
                                                 }
@@ -1973,6 +1976,8 @@ define(function (require) {
                     result += color.substr(5, 2); // bb
                     result += color.substr(3, 2); // gg
                     result += color.substr(1, 2); // rr
+                    var tmpInt = parseInt(result, 16);
+                    result = tmpInt.toString(10);
                     console.log("hexToWXColor - output: " + result);
                     return result;
                 };
@@ -1999,6 +2004,7 @@ define(function (require) {
                     return val;
                 };
                 var buildTY = function (sourcephrase, lastTY) {
+                    console.log("buildTY");
                     // (code in SourcePhrase.h ~ line 55 / CAdaptIt_Doc.cpp - line 18859)
                     var val = (lastTY.length > 0) ? lastTY : "1"; // default -- last type (verse if not there)
                     var markers = sourcephrase.get("markers");
@@ -2105,7 +2111,7 @@ define(function (require) {
                                                 needsEndMarker = mkr[0].get("endMarker");
                                             }
                                             filtered = true;
-                                            fi = "\\~FILTER " + markers;
+                                            fi = "\\~FILTER ";
                                             console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
                                             // We have a couple exceptions to the filter:
                                             // - if the ending marker is in the same marker string, clear the filter flag
@@ -2117,7 +2123,8 @@ define(function (require) {
                                                 // now clear our flags so the sourcephrase exports
                                                 needsEndMarker = "";
                                                 filtered = false;
-                                                fi += " \\~FILTER*";
+                                                // build the rest of the fi string
+                                                fi += markers + value.get("prepuncts") + value.get("source") + value.get("follpuncts") + " \\~FILTER*";
                                             }
 //                                            else {
 //                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters].trim()) - 1);
@@ -2131,29 +2138,30 @@ define(function (require) {
                                 }
                             }
                             if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
-                                // found our ending marker -- this sourcephrase is not filtered
-                                // first, remove the marker from the markers string so it doesn't print out
-                                markers = markers.replace(("\\" + needsEndMarker), '');
-                                // now clear our flags so the sourcephrase exports
+                                // found our ending marker
+                                // add this sourcephrase to the filter string, with the end marker last (with no space before it)
+                                fi += value.get("prepuncts") + value.get("source") + value.get("follpuncts") + markers + " " + "\\~FILTER*";
+                                // clear our flags so the next sourcephrase exports
                                 needsEndMarker = "";
                                 filtered = false;
-                                fi += " \\~FILTER*";
+                                continue;
                             }
-                            
-//*****************************                            
+                            if (filtered === true) {
+                                // add this sourcephrase to the filter string
+                                fi += markers + " " + value.get("prepuncts") + value.get("source") + value.get("follpuncts") + " ";
+                            }
                             if (filtered === false) {
                                 // format for <S> nodes found in CSourcePhrase::MakeXML (SourcePhrase.cpp)
                                 // line 1 -- source, key, target, adaptation
                                 chapterString += "<S s=\"";
                                 if (value.get("prepuncts").length > 0) {
-                                    chapterString += value.get("prepuncts");
+                                    chapterString += Underscore.escape(value.get("prepuncts"));
                                 }
                                 chapterString += value.get("source");
                                 if (value.get("follpuncts").length > 0) {
-                                    chapterString += value.get("follpuncts");
+                                    chapterString += Underscore.escape(value.get("follpuncts"));
                                 }
                                 chapterString += "\" k=\"" + value.get("source") + "\"";
-//**
                                 if (value.get("target").length > 0) {
                                     chapterString += " t=\"" + value.get("target") + "\" a=\"";
                                     if (value.get("follpuncts").length > 0) {
@@ -2180,9 +2188,11 @@ define(function (require) {
                                 } else {
                                     chapterString += "\" w=\"1\"";
                                 }
-                                if (value.get("texttype").length > 0) {
+                                if (value.get("srcwordbreak").length > 0) {
+                                    // this doc was imported from AI -- just copy over the existing ty value
                                     curTY = value.get("texttype");
                                 } else {
+                                    // this doc didn't come form AI -- need to build the ty value
                                     curTY = buildTY(value, lastTY);
                                 }
                                 chapterString += " ty=\"" + curTY + "\"";
@@ -2194,14 +2204,14 @@ define(function (require) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += " pp=\"" + value.get("prepuncts") + "\"";
+                                    chapterString += " pp=\"" + Underscore.escape(value.get("prepuncts")) + "\"";
                                 }
                                 if (value.get("follpuncts").length > 0) {
                                     if (addLF === true) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += " fp=\"" + value.get("follpuncts") + "\"";
+                                    chapterString += " fp=\"" + Underscore.escape(value.get("follpuncts")) + "\"";
                                 }
                                 // inform marker
                                 var markerAry = markers.split("\\");
@@ -2209,7 +2219,7 @@ define(function (require) {
                                 var inform = markers;
                                 for (idxMkr = 0; idxMkr < markerAry.length; idxMkr++) {
                                     // sanity check for blank filter strings
-                                    if (markerAry[idxMkr].trim().length > 0) {
+                                    if ((markerAry[idxMkr].trim().length > 0) && markerAry[idxMkr].trim() !== "p") {
                                         mkr = markerList.where({name: markerAry[idxMkr].trim()})[0];
                                         if (mkr && mkr.get('inform') === "1") {
                                             if (mkr.get('navigationText')) {
@@ -2219,7 +2229,7 @@ define(function (require) {
                                                 chapterString += "\n";
                                                 addLF = false;
                                             }
-                                            chapterString += "i=\"" + inform + "\"";
+                                            chapterString += " i=\"" + inform + "\"";
                                         }
                                     }
                                 }
@@ -2272,7 +2282,7 @@ define(function (require) {
                                         chapterString += "\n";
                                         addLF = false;
                                     }
-                                    chapterString += "fi=\"" + fi + "\"";
+                                    chapterString += "fi=\"" + Underscore.escape(fi) + "\"";
                                     fi = ""; // clear out filter string
                                 }
                                 // line 9 -- lapat, tmpat, gmpat, pupat
