@@ -1,5 +1,9 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// HomeViews.js
+// Getting Started, Home (main) screen, UI language screen.
+// Also handles the (hidden) reset functionality for AIM.
 define(function (require) {
 
     "use strict";
