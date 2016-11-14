@@ -1,5 +1,8 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// ProjectViews.js
+// Project creation / import functionality for AIM.
 define(function (require) {
 
     "use strict";

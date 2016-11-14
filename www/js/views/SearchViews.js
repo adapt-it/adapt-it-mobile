@@ -1,5 +1,9 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// SearchViews.js
+// Passage / document lookup functionality. Allows the user to search for a document / book and chapter
+// to start adapting.
 define(function (require) {
 
     "use strict";

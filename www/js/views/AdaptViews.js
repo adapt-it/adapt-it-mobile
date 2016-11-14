@@ -1,5 +1,8 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
+
+// AdaptViews.js
+// Adaptation page functionality for AIM.
 define(function (require) {
 
     "use strict";
@@ -38,6 +41,7 @@ define(function (require) {
         isDrafting = true,
         isSelectingFirstPhrase = false,
         isAutoPhrase = false,
+        isSelectingKB = false,
         curIdx = 0,
         prevIdx = 0,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
@@ -975,8 +979,8 @@ define(function (require) {
 //                    isSelectingFirstPhrase = false;
 //                } else {
                     // no -- clear out any previous selection
-                    console.log("clearing selection");
-                    this.clearSelection();
+                console.log("clearing selection");
+                this.clearSelection();
 //                }
 
                 // set the current adaptation cursor
@@ -1039,15 +1043,9 @@ define(function (require) {
                                     source: function (request, response) {
                                         response(options);
                                     }
-//                                    },
-//                                    focus: function () {
-//                                        return false;
-//                                    },
-//                                    select: function (event, ui) {
-//                                        return false;
-//                                    }
                                 }
                             );
+                            isSelectingKB = true;
                             // select any text in the edit field
                             if (document.body.createTextRange) {
                                 range = document.body.createTextRange();
@@ -1205,7 +1203,9 @@ define(function (require) {
             // User has picked an option from the typeahead widget (a KB value)
             selectKB: function (event, suggestion) {
                 // fill the edit field with the selection
+                console.log("selectKB - selected: " + suggestion);
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
+                isSelectingKB = false; // we've now chosen something - OK to blur
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
@@ -1233,6 +1233,10 @@ define(function (require) {
                     idx = 0,
                     model = null;
                 console.log("unselectedAdaptation");
+                // ignore this event if the user hasn't picked a translation
+                if (isSelectingKB === true) {
+                    return;
+                }
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
                     $(".target").removeClass("fromkb");
