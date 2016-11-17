@@ -85,6 +85,7 @@ require(["app/Application"], function (Application) {
         var theApp = new Application.Application();
         theApp.start();
         window.Application = theApp;
+        theApp.checkDBSchema();
     };
 
     if (runningOnApp) {

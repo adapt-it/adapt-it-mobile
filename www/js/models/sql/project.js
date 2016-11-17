@@ -7,7 +7,118 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         i           = 0,
-        projects = [],
+        projects    = [],
+        CURRSCHEMA  = 1,
+        
+        // ---
+        // STATIC METHODS
+        // ---
+        
+        // upgradeSchema
+        // Helper method to upgrade the database schema from the specified version
+        upgradeSchema = function (fromVersion) {
+            console.log("upgradeSchema: fromVersion=" + fromVersion);
+            if (fromVersion < 1) {
+                // pre-beta (beta = 1)
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
+                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?);', [1], function (tx, res) {
+                        console.log("version table created -- schema version 1");
+                    }, function (err) {
+                        console.log("failed to set the version schema");
+                    });
+                    // the "real" change for beta -- 7 new columns for AI XML round-tripping
+                    // SQLite only supports adding the columns one at a time via ALTER TABLE
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN flags TEXT;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN texttype INTEGER;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN gloss TEXT;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN freetrans TEXT;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN note TEXT;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN srcwordbreak TEXT;");
+                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN tgtwordbreak TEXT;");
+                }, function (e) {
+                    console.log("upgradeSchema error: " + e.message);
+                });
+            }
+        },
+        // checkSchema
+        // Helper method to make sure we're at the latest database schema version. Does the following tests:
+        // - check for new DB (missing sourcephrase table) - adds a version table if the DB is new
+        // - check for missing version table AND existing sourcephrase table -- indicates pre-beta schema
+        // - check for version table with schemaver < CURRSCHEMA
+        checkSchema = function () {
+            var i = 0,
+                theSQL = "",
+                len = 0;
+            console.log("checkSchema: entry");
+            window.Application.db.transaction(function (tx) {
+                // Check 1: is there a sourcephrase table? 
+                // If not, this is a new DB
+                if (window.sqlitePlugin) {
+                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                } else {
+                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                }
+                tx.executeSql(theSQL, [], function (tx, res) {
+                    if (res.rows.length > 0) {
+                        // sourcephrase table exists -- check the DB version
+                        console.log("checkSchema: sourcephrase table exists");
+                        var ver = 0;
+                        window.Application.db.transaction(function (tx) {
+                            // Check 2: is there a version table? 
+                            if (window.sqlitePlugin) {
+                                theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
+                            } else {
+                                theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                if (res.rows.length > 0) {
+                                    console.log("checkSchema: version table exists");
+                                    window.Application.db.transaction(function (tx) {
+                                        // Check 3: what's the schema version?
+                                        tx.executeSql("SELECT * FROM version;", [], function (tx, res) {
+                                            var schemaVer = parseInt(res.rows.item(0), 10);
+                                            if (schemaVer < CURRSCHEMA) {
+                                                // not the current schema -- upgrade the DB as appropriate
+                                                upgradeSchema(schemaVer);
+                                            } else {
+                                                console.log("checkSchema: running on latest DB schema");
+                                            }
+                                        });
+                                    });
+                                } else {
+                                    console.log("checkSchema: no version table found - upgrading DB schema");
+                                    // no rows in result -- table doesn't exist
+                                    upgradeSchema(0); // beta is schema ver 1
+                                }
+                            }, function (err) {
+                                // exception thrown -- assume table doesn't exist
+                                console.log("checkSchema: version SELECT error: " + err.message);
+                                upgradeSchema(0);
+                            });
+                        }, function (err) {
+                            console.log("checkSchema: SELECT transaction error: " + err.message);
+                        });
+                    } else {
+                        console.log("checkSchema: new DB -- adding version table");
+                        // no sourcephrase table -- meaning new DB
+                        // Add a version table with version = CURRSCHEMA (the sourcephrase
+                        // table will be added in the resetFromDB call in sourcephrase.js).
+                        window.Application.db.transaction(function (tx) {
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
+                            tx.executeSql('INSERT INTO version (schemaver) VALUES (?);', [CURRSCHEMA], function (tx, res) {
+                                console.log("version table created -- schema version 1");
+                            });
+                        }, function (err) {
+                            console.log("checkSchema: CREATE TABLE error: " + err.message);
+                        });
+                    }
+                }, function (err) {
+                    console.log("checkSchema: CREATE TABLE error: " + err.message);
+                });
+            });
+            
+        },
         
         findById = function (searchKey) {
             var deferred = $.Deferred();
@@ -436,6 +547,7 @@ define(function (require) {
         });
     
     return {
+        checkSchema: checkSchema,
         Project: Project,
         ProjectCollection: ProjectCollection
     };

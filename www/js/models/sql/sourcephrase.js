@@ -13,30 +13,11 @@ define(function (require) {
         Underscore  = require('underscore'),
         sourcephrases = [],
         sps         = [],
-        CURRSCHEMA  = 1,
         
         // ***
         // STATIC METHODS
         // ***
-        
-        // upgradeSchema
-        // static helper method to upgrade the database schema
-        // Currently only 1 upgrade needed (pre-beta to beta)
-        upgradeSchema = function (fromVersion) {
-            if (fromVersion < 1) {
-                // pre-beta (beta = 1)
-                window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
-                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function (tx, res) {
-                        console.log("version table created -- schema version 1");
-                    });
-                    tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags TEXT, texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT);", function (tx, res) {
-                    });
-                }, function (tx, e) {
-                    console.log("upgradeSchema error: " + e.message);
-                });
-            }
-        },
+
         findById = function (searchKey) {
             var deferred = $.Deferred();
             var results = sourcephrases.filter(function (element) {
@@ -164,70 +145,12 @@ define(function (require) {
             resetFromDB: function () {
                 var i = 0,
                     len = 0;
-                console.log("resetFromDB");
                 window.Application.db.transaction(function (tx) {
-                    console.log("resetFromDB:2");
-                    tx.executeSql('SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';', function (tx, res) {
-                        console.log("resetFromDB: sourcephrase returned length: " + res.rows.length);
-                        if (res.rows.length > 0) {
-                            // sourcephrase table exists -- check the DB version
-                            var ver = 0;
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql('SELECT * FROM version;', function (tx, res) {
-                                    console.log("resetFromDB: version table returned length:" + res.rows.length);
-                                    if (res.rows.length > 0) {
-                                        var schemaVer = parseInt(res.rows.item(0), 10);
-                                        if (schemaVer < CURRSCHEMA) {
-                                            upgradeSchema(schemaVer);
-                                        }
-                                    } else {
-                                        // no results -- assume table doesn't exist
-                                        upgradeSchema(0); // beta is schema ver 1
-                                    }
-                                }, function (err) {
-                                    // probably can't find the versiontable
-                                    console.log("resetFromDB: version SELECT error: " + err.message);
-                                    upgradeSchema(0);
-                                });
-                            }, function (err) {
-                                console.log("resetFromDB: SELECT transaction error: " + err.message);
-                            });
-                        } else {
-                            // no sourcephrase table -- create it and the version table
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags TEXT, texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
-                                tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function (tx, res) {
-                                    console.log("version table created -- schema version 1");
-                                });
-                            }, function (err) {
-                                console.log("resetFromDB: CREATE TABLE error: " + err.message);
-                            });
-                        }
-                    }, function (err) {
-                        console.log("resetFromDB: CREATE TABLE error: " + err.message);
-                    });
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
+                }, function (err) {
+                    console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
             },
-//            
-//            checkDBVersion: function () {
-//                var ver = 0;
-//                window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';', function (tx, res) {
-//                        if (res.rows.length > 0) {
-//                            var schemaVer = parseInt(res.rows.item(0), 10);
-//                            if (schemaVer < CURRSCHEMA) {
-//                                upgradeSchema(schemaVer);
-//                            }
-//                        } else {
-//                            // no results -- assume table doesn't exist
-//                            upgradeSchema(0); // beta is schema ver 1
-//                        }
-//                    });
-//                }, function (err) {
-//                    console.log("resetFromDB: CREATE TABLE error: " + err.message);
-//                });
-//            },
             
             setCurrent: function (index) {
                 if (index > -1 && index < this.size()) {
