@@ -905,6 +905,7 @@ define(function (require) {
                 // to save the target value to the model and KB in the unselectedAdaptation() handler.
                 // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
                 if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
+                    var goingForward = false;
                     // focus event
                     // Check to see if the previous selction is off by 1 element in the tab order. If it is,
                     // it's likely that the user pressed TAB or the Prev/Next buttons -- meaning we should save
@@ -923,9 +924,12 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
-                    if ((this.collection.at(this.collection.indexOf(selectedObj) + 1) === prevObj) ||
-                            (this.collection.at(this.collection.indexOf(selectedObj) - 1) === prevObj)) {
-                        nextOrPrevObj = true; // previous or next in our collection (ordered by norder)
+                    if (this.collection.at(this.collection.indexOf(selectedObj) + 1) === prevObj) {
+                        nextOrPrevObj = true; // next in our collection (ordered by norder)
+                        goingForward = false;
+                    } else if (this.collection.at(this.collection.indexOf(selectedObj) - 1) === prevObj) {
+                        nextOrPrevObj = true; // previous in our collection (ordered by norder)
+                        goingForward = true;
                     }
                     console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
                     if (isDirty === true || nextOrPrevObj === true) {
@@ -957,6 +961,12 @@ define(function (require) {
                         // done saving -- clear out the temp value
                         tmpTargetValue = "";
                         isDirty = false;
+                        // If this is a filtered field, keep moving
+                        if ($(event.currentTarget.parentElement.parentElement).hasClass("filter")) {
+                            // this is a filter strip -- keep going
+                            this.moveCursor(event, goingForward);
+                            return; // no more handling here
+                        }
                     } else {
                         // we've already handled this in the touchend event -- just return
                         console.log("selectedAdaptation: previous focus too far away to be prev/next. Ignoring...");

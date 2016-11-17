@@ -13,6 +13,10 @@ define(function (require) {
         Underscore  = require('underscore'),
         sourcephrases = [],
         sps         = [],
+        
+        // ***
+        // STATIC METHODS
+        // ***
 
         findById = function (searchKey) {
             var deferred = $.Deferred();
@@ -65,20 +69,6 @@ define(function (require) {
                 });
                 
             },
-            upgradeSchema: function (fromVersion) {
-                // These columns are currently only used for AI XML document round-tripping
-                var attributes = this.attributes;
-                window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
-                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?)', [1], function (tx, res) {
-                        
-                    });
-                    tx.executeSql("ALTER TABLE AIM.sourcephrase ADD COLUMN (flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT);", function (tx, res) {
-                    });
-                }, function (tx, e) {
-                    console.log("upgradeSchema error: " + e.message);
-                });
-            },
             create: function () {
                 var attributes = this.attributes;
                 var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -95,7 +85,7 @@ define(function (require) {
                 var attributes = this.attributes;
                 var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, flags=?, texttype=?, gloss=?, freetrans=?, note=?, srcwordbreak=?, tgtwordbreak=?, source=?, target=? WHERE spid=?;';
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
@@ -112,7 +102,6 @@ define(function (require) {
                     });
                 });
             },
-
             sync: function (method, model, options) {
                 if (typeof options === 'function') {
                     options = {
@@ -158,15 +147,6 @@ define(function (require) {
                     len = 0;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
-                }, function (err) {
-                    console.log("resetFromDB: CREATE TABLE error: " + err.message);
-                });
-            },
-            
-            checkDBVersion: function () {
-                var ver = 0;
-                window.Application.db.transaction(function (tx) {
-                    tx.executeSql('SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';');
                 }, function (err) {
                     console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });

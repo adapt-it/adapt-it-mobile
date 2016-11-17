@@ -128,6 +128,7 @@ define(function (require) {
                 // initialize the router
                 var router  = new AppRouter({controller: this});
 
+                
                 // Attach touch screen function to avoid delay in double-click
                 $(function () {
                     FastClick.attach(document.body);
@@ -169,6 +170,11 @@ define(function (require) {
                     homeView.delegateEvents();
                     window.Application.main.show(homeView);
                 });
+            },
+            
+            checkDBSchema: function() {
+                // verify we're on the latest DB schema (upgrade if necessary)
+                projModel.checkSchema();
             },
 
             help: function () {

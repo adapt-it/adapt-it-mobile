@@ -118,7 +118,6 @@ define(function (require) {
                     i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-//                    tx.executeSql('CREATE TABLE IF NOT EXISTS project (id integer primary key, data text, data_num integer);');
                     tx.executeSql('CREATE TABLE IF NOT EXISTS chapter (id integer primary key, chapterid text, bookid text, projectid text, name text, lastadapted integer, versecount integer);');
                     tx.executeSql("SELECT * from chapter;", [], function (tx, res) {
                         for (i = 0, len = res.rows.length; i < len; ++i) {
