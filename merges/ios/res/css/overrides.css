@@ -11,9 +11,9 @@
     top: 132px;
 }
 /* iOS -- hide the prev/next toolbar buttons (they are on the on-screen keyboard) */
-#Next {
+#NextSP {
     display: none;
 }
-#Prev {
+#PrevSP {
     display: none;
 }
