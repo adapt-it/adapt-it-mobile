@@ -1002,8 +1002,8 @@ define(function (require) {
                 project.set('lastAdaptedSPID', selectedStart.id);
 
                 // enable prev / next buttons
-                $("#Prev").prop('disabled', false); // enable toolbar button
-                $("#Next").prop('disabled', false); // enable toolbar button
+                $("#PrevSP").prop('disabled', false); // enable toolbar button
+                $("#NextSP").prop('disabled', false); // enable toolbar button
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -1715,8 +1715,8 @@ define(function (require) {
             ////
             events: {
                 "click #chapter": "unselectPiles",
-                "click #Prev": "goPrevPile",
-                "click #Next": "goNextPile",
+                "click #PrevSP": "goPrevPile",
+                "click #NextSP": "goNextPile",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
