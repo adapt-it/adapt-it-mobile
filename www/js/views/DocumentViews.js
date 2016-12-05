@@ -1349,6 +1349,7 @@ define(function (require) {
             var errMsg = "";
             var sourcephrases = null;
             var exportDirectory = "";
+            var subdir = "AIM_Exports_";
             var tabLevel = 0;
             
             // Callback for when the file is imported / saved successfully
@@ -2326,6 +2327,9 @@ define(function (require) {
                     });
                 });
             };
+            
+            // add the project's target language code to the subdirectory
+            subdir += window.Application.currentProject.get("TargetLanguageCode");
 
             if (window.sqlitePlugin) {
                 // mobile device
@@ -2339,32 +2343,33 @@ define(function (require) {
                     // Android, BB10
                     exportDirectory = cordova.file.externalRootDirectory;
                 } else {
-                    // Android
-                    exportDirectory = cordova.file.externalDataDirectory;
+                    // iOS, Android, BlackBerry 10, windows
+                    exportDirectory = cordova.file.DataDirectory;
                 }
-                window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
                 window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
-                    console.log("Got directoryEntry.");
-                    directoryEntry.getFile(filename, {create: true}, function (fileEntry) {
-                        console.log("Got fileEntry for: " + filename);
-                        fileEntry.createWriter(function (fileWriter) {
-                            console.log("Got fileWriter");
-                            writer = fileWriter;
-                            // now export based on the specified format
-                            switch (format) {
-                            case FileTypeEnum.TXT:
-                                exportText();
-                                break;
-                            case FileTypeEnum.USFM:
-                                exportUSFM();
-                                break;
-                            case FileTypeEnum.USX:
-                                exportUSX();
-                                break;
-                            case FileTypeEnum.XML:
-                                exportXML();
-                                break;
-                            }
+                    console.log("Got directoryEntry. Attempting to open / create subdirectory:" + subdir);
+                    directoryEntry.getDirectory(subdir, {create: true}, function (subdirEntry) {
+                        subdirEntry.getFile(filename, {create: true}, function (fileEntry) {
+                            console.log("Got fileEntry for: " + filename);
+                            fileEntry.createWriter(function (fileWriter) {
+                                console.log("Got fileWriter");
+                                writer = fileWriter;
+                                // now export based on the specified format
+                                switch (format) {
+                                case FileTypeEnum.TXT:
+                                    exportText();
+                                    break;
+                                case FileTypeEnum.USFM:
+                                    exportUSFM();
+                                    break;
+                                case FileTypeEnum.USX:
+                                    exportUSX();
+                                    break;
+                                case FileTypeEnum.XML:
+                                    exportXML();
+                                    break;
+                                }
+                            }, exportFail);
                         }, exportFail);
                     }, exportFail);
                 }, exportFail);
