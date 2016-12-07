@@ -10,7 +10,7 @@ require.config({
     // fastclick        1.0.6
     // hammer           2.0.8
     // handlebars       3.0.3
-    // hopscotch        0.2.5
+    // hopscotch        0.2.6
     // i18next          1.9.0
     // jquery           2.1.4
     // marionette       2.4.2
