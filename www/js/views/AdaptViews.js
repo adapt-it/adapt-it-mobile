@@ -1768,6 +1768,75 @@ define(function (require) {
             onHelp: function (event) {
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
+                var step1 = [
+                    {
+                        title: i18next.t('view.hlpttlAdaptPage'),
+                        content: i18next.t('view.hlpdscAdaptPage'),
+                        target: "title",
+                        placement: "bottom",
+                        xOffset: "center",
+                        onNext: function () {
+                            $("#" + firstPileID).addClass("ui-selected");
+                        }
+                    },
+                    {
+                        title: i18next.t('view.hlpttlSelectOne'),
+                        content: i18next.t('view.hlpdscSelectOne'),
+                        target: firstPileID,
+                        placement: "bottom"
+                    },
+                    {
+                        title: i18next.t('view.hlpttlSelectMultiple'),
+                        content: i18next.t('view.hlpdscSelectMultiple'),
+                        target: firstPileID,
+                        placement: "bottom",
+                        onNext: function () {
+                            $("#" + firstPileID).removeClass("ui-selected");
+                        }
+                    },
+                    {
+                        title: i18next.t('view.hlpttlPlaceholder'),
+                        content: i18next.t('view.hlpdscPlaceholder'),
+                        target: "Placeholder",
+                        placement: "bottom"
+                    },
+                    {
+                        title: i18next.t('view.hlpttlPhrase'),
+                        content: i18next.t('view.hlpdscPhrase'),
+                        target: "Phrase",
+                        placement: "bottom"
+                    },
+                    {
+                        title: i18next.t('view.hlpttlRetranslation'),
+                        content: i18next.t('view.hlpdscRetranslation'),
+                        target: "Retranslation",
+                        arrowOffset: "center",
+                        placement: "bottom"
+                    }
+                ];
+                var step2 = [
+                    {
+                        title: i18next.t('view.hlpttlPrevNext'),
+                        content: i18next.t('view.hlpdscPrevNext'),
+                        target: "PrevSP",
+                        placement: "bottom"
+                    }
+                ];
+                var step3 = [
+                    {
+                        title: i18next.t('view.hlpttlBack'),
+                        content: i18next.t('view.hlpdscBack'),
+                        target: "back",
+                        placement: "bottom"
+                    }
+                ];
+                var theSteps = [];
+                if (typeof device !== 'undefined' && device.platform === "iOS") {
+                    // forward/back buttons are on the software keyboard
+                    theSteps = step1.concat(step3);
+                } else {
+                    theSteps = step1.concat(step2, step3);
+                }
                 var tour = {
                     id: "hello-hopscotch",
                     i18n: {
@@ -1778,65 +1847,7 @@ define(function (require) {
                         closeTooltip: i18next.t("view.lblNext"),
                         stepNums: ["1", "2", "3", "4", "5", "6"]
                     },
-                    steps: [
-                        {
-                            title: i18next.t('view.hlpttlAdaptPage'),
-                            content: i18next.t('view.hlpdscAdaptPage'),
-                            target: "title",
-                            placement: "bottom",
-                            xOffset: "center",
-                            onNext: function () {
-                                $("#" + firstPileID).addClass("ui-selected");
-                            }
-                        },
-                        {
-                            title: i18next.t('view.hlpttlSelectOne'),
-                            content: i18next.t('view.hlpdscSelectOne'),
-                            target: firstPileID,
-                            placement: "bottom"
-                        },
-                        {
-                            title: i18next.t('view.hlpttlSelectMultiple'),
-                            content: i18next.t('view.hlpdscSelectMultiple'),
-                            target: firstPileID,
-                            placement: "bottom",
-                            onNext: function () {
-                                $("#" + firstPileID).removeClass("ui-selected");
-                            }
-                        },
-                        {
-                            title: i18next.t('view.hlpttlPlaceholder'),
-                            content: i18next.t('view.hlpdscPlaceholder'),
-                            target: "Placeholder",
-                            placement: "bottom"
-                        },
-                        {
-                            title: i18next.t('view.hlpttlPhrase'),
-                            content: i18next.t('view.hlpdscPhrase'),
-                            target: "Phrase",
-                            placement: "bottom"
-                        },
-                        {
-                            title: i18next.t('view.hlpttlRetranslation'),
-                            content: i18next.t('view.hlpdscRetranslation'),
-                            target: "Retranslation",
-                            xOffset: "center",
-                            arrowOffset: "center",
-                            placement: "bottom"
-                        },
-                        {
-                            title: i18next.t('view.hlpttlPrevNext'),
-                            content: i18next.t('view.hlpdscPrevNext'),
-                            target: "Prev",
-                            placement: "left"
-                        },
-                        {
-                            title: i18next.t('view.hlpttlBack'),
-                            content: i18next.t('view.hlpdscBack'),
-                            target: "back",
-                            placement: "bottom"
-                        }
-                    ],
+                    steps: theSteps,
                     onClose: function () {
                         // make sure the pile gets unselected
                         $("#" + firstPileID).removeClass("ui-selected");

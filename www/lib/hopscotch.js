@@ -720,6 +720,26 @@
         left += utils.getScrollLeft();
       }
 
+      // EDB HACK - taken from @kamranyub 5/29/2015 comments in hopscotch issue #30
+      // ADJUST FOR VIEWPORT
+      var wd = { width: $(window).outerWidth(), height: $(window).outerHeight() };
+      var right = (left + bubbleBoundingWidth),
+          bottom = (top + bubbleBoundingHeight);
+
+      if (right > wd.width) {
+         left -= (right - wd.width + 20);
+         if (arrowOffset !== 'center' && (step.placement === 'bottom' || step.placement === 'top')) {
+            arrowEl.style.left = (arrowOffset + (right - wd.width + 20)) + "px";
+         }
+      }
+      if (left < 0) {
+         left += (-left + 20);
+      }
+      if (bottom > wd.height) {
+         top -= (bottom - wd.height + 20);
+      }   
+    // END EDB HACK
+        
       // ACCOUNT FOR FIXED POSITION ELEMENTS
       el.style.position = (step.fixedElement ? 'fixed' : 'absolute');
 
