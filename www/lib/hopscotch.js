@@ -1,6 +1,6 @@
-/**! hopscotch - v0.2.5
+/**! hopscotch - v0.2.6
 *
-* Copyright 2015 LinkedIn Corp. All rights reserved.
+* Copyright 2016 LinkedIn Corp. All rights reserved.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -720,6 +720,26 @@
         left += utils.getScrollLeft();
       }
 
+      // EDB HACK - taken from @kamranyub 5/29/2015 comments in hopscotch issue #30
+      // ADJUST FOR VIEWPORT
+      var wd = { width: $(window).outerWidth(), height: $(window).outerHeight() };
+      var right = (left + bubbleBoundingWidth),
+          bottom = (top + bubbleBoundingHeight);
+
+      if (right > wd.width) {
+         left -= (right - wd.width + 20);
+         if (arrowOffset !== 'center' && (step.placement === 'bottom' || step.placement === 'top')) {
+            arrowEl.style.left = (arrowOffset + (right - wd.width + 20)) + "px";
+         }
+      }
+      if (left < 0) {
+         left += (-left + 20);
+      }
+      if (bottom > wd.height) {
+         top -= (bottom - wd.height + 20);
+      }   
+    // END EDB HACK
+        
       // ACCOUNT FOR FIXED POSITION ELEMENTS
       el.style.position = (step.fixedElement ? 'fixed' : 'absolute');
 
@@ -744,6 +764,7 @@
           totalStepsI18n,
           nextBtnText,
           isLast,
+          i,
           opts;
 
       // Cache current step information.
@@ -1958,8 +1979,12 @@
      * @returns {Object} Hopscotch
      */
     this.showStep = function(stepNum) {
-      var step = currTour.steps[stepNum];
+      var step = currTour.steps[stepNum],
+          prevStepNum = currStepNum;
       if(!utils.getStepTarget(step)) {
+        currStepNum = stepNum;
+        utils.invokeEventCallbacks('error');
+        currStepNum = prevStepNum;
         return;
       }
 
@@ -2142,7 +2167,7 @@
           len;
 
       for (i = 0, len = evtCallbacks.length; i < len; ++i) {
-        if (evtCallbacks[i] === cb) {
+        if (evtCallbacks[i].cb === cb) {
           evtCallbacks.splice(i, 1);
         }
       }
