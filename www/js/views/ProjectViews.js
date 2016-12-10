@@ -795,7 +795,7 @@ define(function (require) {
                                                        
             searchLanguageName: function (event) {
                 // pull out the value from the input field
-                var key = $('#LanguageName').val();
+                var key = $('#LanguageName').val().trim();
                 if (key.trim() === "") {
                     // Fix problem where an empty value returns all results.
                     // Here if there's no _real_ value, fetch nothing.
