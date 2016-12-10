@@ -230,6 +230,18 @@ define(function (require) {
                     {
                         s: "’",
                         t: "’"
+                    },
+                    {
+                        s: "'",
+                        t: "'"
+                    },
+                    {
+                        s: "«",
+                        t: "«"
+                    },
+                    {
+                        s: "»",
+                        t: "»"
                     }
                 ],
                 AutoCapitalization: "false",
