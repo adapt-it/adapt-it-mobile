@@ -1498,9 +1498,14 @@ define(function (require) {
             },
 
             ShowStep: function (number) {
+                var totalSteps = 6;
+                var progressPct = ((number * 1.0 / totalSteps) * 100).toFixed(1);
                 // clear out the old view (if any)
                 currentView = null;
                 innerHtml = "";
+                // set the progress bar
+                $("#progress").attr("style", "width: " + progressPct + "%;");
+                
                 switch (number) {
                 case 1: // source language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
