@@ -4,7 +4,7 @@
         xmlns:android = "http://schemas.android.com/apk/res/android"
         id          = "org.adaptit.adaptitmobile"
         versionCode = "1" 
-        version     = "0.6.0"
+        version     = "0.7.0"
         defaultlocale = "en">
     <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
@@ -36,6 +36,7 @@
     <plugin name="cordova-plugin-dialogs" source="npm" spec="1.3.0" />
     <plugin name="cordova-plugin-fonts" source="npm" spec="0.6.5" />
     <plugin name="cordova-plugin-splashscreen" source="npm" spec="4.0.0" />
+    <plugin name="cordova-plugin-statusbar" source="npm" spec="2.2.1" />
     <!-- sqlite plugin version compatible w/PG build -->
     <plugin name="cordova-sqlite-evcore-extbuild-free" source="npm" spec="0.8.2" />
     <plugin name="cordova-plugin-whitelist" source="npm" spec="1.3.0" />
@@ -57,6 +58,8 @@
     <!-- icons and splash screens for each platform -->
     <icon src="icon.png"/>
     <platform name="android">
+        <!-- preferences -->
+        <preference name="StatusBarOverlaysWebView" value="true" />
         <!-- icons -->
         <icon src="res/icon/android/ldpi.png" density="ldpi" />
         <icon src="res/icon/android/mdpi.png" density="mdpi" />
@@ -79,6 +82,7 @@
         <!-- preferences -->
         <preference name="Orientation" value="all" />
         <preference name="BackupWebStorage" value="local" /> <!-- local backups via iTunes sync -->
+        <preference name="StatusBarOverlaysWebView" value="true" />
         <!-- icons -->
         <!-- iPhone / iPod / iPad -->
         <icon src="res/icon/ios/icon.png" width="57" height="57" />
@@ -119,6 +123,7 @@
     <platform name="windows">
         <!-- preferences -->
         <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
+        <preference name="StatusBarOverlaysWebView" value="true" />
         <!-- icons -->
         <icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
         <icon src="res/icon/windows/StoreLogo.scale-240.png" width="120" height="120" />
