@@ -422,6 +422,8 @@ define(function (require) {
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
+                var model = null;
+                var strID = "";
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -477,6 +479,34 @@ define(function (require) {
                         }
                         // if we reached the last pile, check to see if there's another chapter to adapt
                         if (next_edit === null) {
+                            // first, save the sourcephrase
+                            strID = $(selectedStart).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            model = this.collection.findWhere({spid: strID});
+                            if (tmpTargetValue && tmpTargetValue.length > 0) {
+                                // save the new value to the KB
+                                saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                                this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
+                                                this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                                project.get('projectid'));
+                                // update the model with the new target text
+                                model.save({target: tmpTargetValue});
+                                $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
+                                // if the target differs from the source, make it display in green
+                                if (model.get('source') === model.get('target')) {
+                                    // source === target --> remove "differences" from the class so the text is black
+                                    $(prevIdx.childNodes[4]).removeClass('differences');
+                                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                                    // source + punctuation == target --> remove "differences"
+                                    $(prevIdx.childNodes[4]).removeClass('differences');
+                                } else if (!$(event.currentTarget).hasClass('differences')) {
+                                    // source != target -- add "differences" to the class so the text is green
+                                    $(prevIdx.childNodes[4]).addClass('differences');
+                                }
+                            }
+                            // done saving -- clear out the temp value
+                            tmpTargetValue = "";
+                            isDirty = false;
                             // Check for a chapter after the current one in the current book
                             var nextChapter = 0;
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid')});

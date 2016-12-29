@@ -91,7 +91,21 @@ define(function (require) {
                 });
                 // sqlitePlugin -- available on DeviceReady (mobile app)
                 if (window.sqlitePlugin) {
+                    // edb 12/20/16 - issue #204: moved the database out of the apps data directory, as it will
+                    // get deleted along with the app. 
+                    // test for older database location
+                    // open the database
                     this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
+//                    if (device.platform === "iOS") {
+//                        // ios
+//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});   
+//                    } else if (device.platform === "Android") {
+//                        // android
+//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaseLocation: externalDataDirectoryEntry.toURL()});
+//                    } else {
+//                        // windows?
+//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
+//                    }
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
                     this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
@@ -172,7 +186,7 @@ define(function (require) {
                 });
             },
             
-            checkDBSchema: function() {
+            checkDBSchema: function () {
                 // verify we're on the latest DB schema (upgrade if necessary)
                 projModel.checkSchema();
             },
