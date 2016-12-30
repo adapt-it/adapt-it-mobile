@@ -59,7 +59,6 @@
     <icon src="icon.png"/>
     <platform name="android">
         <!-- preferences -->
-        <preference name="StatusBarOverlaysWebView" value="true" />
         <!-- icons -->
         <icon src="res/icon/android/ldpi.png" density="ldpi" />
         <icon src="res/icon/android/mdpi.png" density="mdpi" />

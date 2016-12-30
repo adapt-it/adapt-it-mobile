@@ -133,6 +133,7 @@ define(function (require) {
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
+            var scrollTop = 0;
             // Source font
             theRule = ".source {";
             theRule += "font: " + parseInt(project.get('SourceFontSize'), 10) + "px \"" + project.get('SourceFont') + "\", \"Source Sans\", helvetica, arial, sans-serif; ";
@@ -190,6 +191,14 @@ define(function (require) {
             // override individual text directions
             if (project.get('NavDir') === 'rtl') {
                 theRule = ".marker { direction: rtl; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
+            // Address possible toolbar clipping (#192) on Android
+            if (typeof device !== 'undefined' && device.platform === "Android") {
+                // This _should_ be 117px, but we've come across an instance where the scroller is pushed down
+                // by the status bar
+                scrollTop = $(".toolbar").height() + $(".toolbar").offset().top + 3;
+                theRule = ".scroller-tb { top: " + scrollTop + "px; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
