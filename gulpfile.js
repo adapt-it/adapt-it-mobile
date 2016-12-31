@@ -1,13 +1,13 @@
 // Gulpfile for Adapt It Mobile builds
 var gulp = require("gulp"),
-    create = require('gulp-cordova-create'),
-    plugin = require('gulp-cordova-plugin'),
-    android = require('gulp-cordova-build-android'), 
-    ios = require('gulp-cordova-build-ios'),
+//    create = require('gulp-cordova-create'),
+//    plugin = require('gulp-cordova-plugin'),
+//    android = require('gulp-cordova-build-android'), 
+//    ios = require('gulp-cordova-build-ios'),
     fs = require("fs"),
     ts = require("gulp-typescript"),
     path = require("path"),
-    cordova = require("cordova-lib").cordova.raw,
+    cordova = require("cordova-lib").cordova,
     buildDir = path.join(__dirname, 'build'),
     plugins = ['org.apache.cordova.file'],
     winPlatforms = ["android", "windows", "wp8"],
@@ -85,7 +85,7 @@ gulp.task("build-android", function () {
         .pipe(plugin('cordova-plugin-splashscreen'))
         .pipe(plugin('cordova-plugin-whitelist'))
         .pipe(plugin('cordova-sqlite-storage'))
-        .pipe(android())
+        .pipe(cordova.build("ios", buildArgs))
         .pipe(gulp.dest('apk'));
 });
 
@@ -101,7 +101,7 @@ gulp.task("build-ios", ["plugins"], function () {
         .pipe(plugin('cordova-plugin-splashscreen'))
         .pipe(plugin('cordova-plugin-whitelist'))
         .pipe(plugin('cordova-sqlite-storage'))
-        .pipe(ios());
+        .pipe(cordova.build("ios", buildArgs));
 });
 
 gulp.task("build-win", ["plugins"], function () {
