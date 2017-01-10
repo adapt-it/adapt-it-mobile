@@ -622,6 +622,7 @@ define(function (require) {
                 "touchend .marker": "selectingPilesEnd",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
+                "touchend .pile": "checkStopSelecting",
                 "mouseup .pile": "checkStopSelecting",
                 "mousedown .target": "selectingAdaptation",
                 "touchstart .target": "selectingAdaptation",
