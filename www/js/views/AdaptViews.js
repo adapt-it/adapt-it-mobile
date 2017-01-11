@@ -539,7 +539,9 @@ define(function (require) {
                                         function (buttonIndex) {
                                             if (buttonIndex === 1) {
                                                 // Next chapter
-                                                window.Application.adaptChapter(nextChapter);
+                                                // update the URL, but replace the history (so we go back to the welcome screen)
+                                                window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+//                                                window.Application.adaptChapter(nextChapter);
 
                                             } else {
                                                 // exit
@@ -569,7 +571,9 @@ define(function (require) {
                                 // in browser
                                 if (nextChapter > 0) {
                                     if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
-                                        window.Application.adaptChapter(nextChapter);
+                                        // update the URL, but replace the history (so we go back to the welcome screen)
+                                        window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+//                                        window.Application.adaptChapter(nextChapter);
                                     } else {
                                         window.Application.home();
                                     }

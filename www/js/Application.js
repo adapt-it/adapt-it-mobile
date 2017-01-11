@@ -33,6 +33,7 @@ define(function (require) {
         importDocView   = null,
         exportDocView   = null,
         db              = null,
+        router          = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -140,7 +141,7 @@ define(function (require) {
                 }
 
                 // initialize the router
-                var router  = new AppRouter({controller: this});
+                this.router = new AppRouter({controller: this});
 
                 
                 // Attach touch screen function to avoid delay in double-click
