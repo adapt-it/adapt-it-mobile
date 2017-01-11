@@ -325,9 +325,9 @@
      borderopacity="0.32941176"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
+     inkscape:zoom="4"
      inkscape:cx="19.753247"
-     inkscape:cy="19.267114"
+     inkscape:cy="49.767114"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -386,7 +386,7 @@
        id="path4267" />
     <path
        style="fill:none;stroke:#ee0000;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 4,4 36,36 z"
+       d="M 34,6 6,34 z"
        id="path3062"
        inkscape:connector-curvature="0"
        transform="translate(0,8)"

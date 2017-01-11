@@ -420,7 +420,7 @@ ul {
 
 /* AI mobile icons */
 .topcoat-icon--placeholder-new {
-    background: url("images/placeholder-new_black.svg") no-repeat;
+    background: url("images/placeholder-new.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -428,7 +428,7 @@ ul {
 }
 
 .topcoat-icon--placeholder-delete {
-    background: url("images/placeholder-delete_black.svg") no-repeat;
+    background: url("images/placeholder-delete.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -436,7 +436,7 @@ ul {
 }
 
 .topcoat-icon--phrase-new {
-    background: url("images/phrase-new_black.svg") no-repeat;
+    background: url("images/phrase-new.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -444,7 +444,7 @@ ul {
 }
 
 .topcoat-icon--phrase-delete {
-    background: url("images/phrase-delete_black.svg") no-repeat;
+    background: url("images/phrase-delete.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -452,7 +452,7 @@ ul {
 }
 
 .topcoat-icon--retranslation-new {
-    background: url("images/retranslation-new_black.svg") no-repeat;
+    background: url("images/retranslation-new.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -460,7 +460,7 @@ ul {
 }
 
 .topcoat-icon--retranslation-delete {
-    background: url("images/retranslation-delete_black.svg") no-repeat;
+    background: url("images/retranslation-delete.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
