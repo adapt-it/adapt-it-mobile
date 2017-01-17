@@ -615,12 +615,10 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
-                "mousedown .source": "selectingPilesStart",
-                "touchstart .source": "selectingPilesStart",
-                "touchstart .marker": "selectingPilesStart",
-                "mousemove .source": "selectingPilesMove",
-                "touchmove .source": "selectingPilesMove",
-                "touchmove .marker": "selectingPilesMove",
+                "mousedown .pile": "selectingPilesStart",
+                "touchstart .pile": "selectingPilesStart",
+                "mousemove .pile": "selectingPilesMove",
+                "touchmove .pile": "selectingPilesMove",
                 "mouseup .source": "selectingPilesEnd",
                 "touchend .source": "selectingPilesEnd",
                 "touchend .marker": "selectingPilesEnd",
@@ -642,13 +640,14 @@ define(function (require) {
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart");
+                event.stopPropagation();
                 var model = null,
                     strID = "";
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
                 }
-                selectedStart = event.currentTarget.parentElement; // select the pile, not the source (the currentTarget)
+                selectedStart = event.currentTarget; // select the pile
                 selectedEnd = selectedStart;
 
                 idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
@@ -665,13 +664,14 @@ define(function (require) {
                 }
                 // change the class of the mousedown area to let the user know
                 // we're tracking the selection
-                $(event.currentTarget.parentElement).addClass("ui-selecting");
+                $(event.currentTarget).addClass("ui-selecting");
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
                 if (isRetranslation === true) {
                     return; // cannot select other items
                 }
+                event.stopPropagation();
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
                     // touch
@@ -692,11 +692,11 @@ define(function (require) {
 //                    }
                     // assume single touch if we got here
                     var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
-                    tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY).parentElement; // pile (parent)
+                    tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY); // pile (parent)
                     event.preventDefault();
                 } else {
                     // mouse (web app)
-                    tmpEnd = event.currentTarget.parentElement; // pile
+                    tmpEnd = event.currentTarget; // pile
                 }
                 // only interested if we're selecting in the same strip
                 if ((isSelecting === true) &&
@@ -706,11 +706,11 @@ define(function (require) {
                     idxEnd = $(tmpEnd).index() - 1;
                     //console.log("selectedEnd: " + selectedEnd.id);
                     // remove ui-selecting from all piles in the strip
-                    $(event.currentTarget.parentElement.parentElement.childNodes).removeClass("ui-selecting");
+                    $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
                     // add ui-selecting to the currently selected range
                     if (idxStart === idxEnd) {
                         // one item selected
-                        $(event.currentTarget.parentElement).addClass("ui-selecting");
+                        $(event.currentTarget).addClass("ui-selecting");
                     } else if (idxStart < idxEnd) {
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
@@ -943,6 +943,10 @@ define(function (require) {
                     options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
+                if (isSelecting === true) {
+                    // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
+                    return;
+                }
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
