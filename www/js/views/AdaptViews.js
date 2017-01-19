@@ -53,6 +53,7 @@ define(function (require) {
         caseSource = [],
         caseTarget = [],
         tmpTargetValue = "",
+        lastTapTime = null,
 
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
@@ -619,13 +620,10 @@ define(function (require) {
                 "touchstart .pile": "selectingPilesStart",
                 "mousemove .pile": "selectingPilesMove",
                 "touchmove .pile": "selectingPilesMove",
-                "mouseup .source": "selectingPilesEnd",
-                "touchend .source": "selectingPilesEnd",
-                "touchend .marker": "selectingPilesEnd",
+                "mouseup .pile": "selectingPilesEnd",
+                "touchend .pile": "selectingPilesEnd",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
-                "touchend .pile": "checkStopSelecting",
-                "mouseup .pile": "checkStopSelecting",
                 "mousedown .target": "selectingAdaptation",
                 "touchstart .target": "selectingAdaptation",
                 "mouseup .target": "selectedAdaptation",
@@ -726,17 +724,6 @@ define(function (require) {
                     }
                 }
             },
-            // User released the mouse on a pile or target. Here we'll check to see if the user
-            // started selecting a phrase and had a "fat finger" moment, missing the source line when
-            // they finished their selection. If so, we'll manually fire a Mouse Up event on the
-            // source line instead.
-            checkStopSelecting: function (event) {
-                if (isSelecting === true) {
-                    // pretend the user wanted the last selected item to be the end of the selection
-                    console.log("checkStopSelecting -- isSelecting");
-                    $(selectedEnd).find('.source').mouseup();
-                }
-            },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
                 console.log("selectingPilesEnd");
@@ -749,13 +736,34 @@ define(function (require) {
                     spid = "";
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
-                    selectedStart = event.currentTarget.parentElement;
+                    selectedStart = event.currentTarget;
                 }
+                // check for retranslation
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
                     selectedEnd = selectedStart;
                 }
+                // check for double-tap
+                if (lastTapTime === null) {
+                    lastTapTime = new Date().getTime();
+                    console.log("setting lastTapTime");
+                } else {
+                    var now = new Date().getTime();
+                    var delay = now - lastTapTime;
+                    console.log("delay: " + delay);
+                    if ((delay < 500) && (delay > 0)) {
+                        // double-tap -- select the strip
+                        console.log("double-tap detected -- selecting strip");
+                        selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
+                        selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                        idxStart = $(selectedStart).index() - 1;
+                        idxEnd = $(selectedEnd).index() - 1;
+                        isSelecting = true; // change the UI color
+                    }
+                    lastTapTime = now; // update the last tap time
+                }
+                
                 if (isSelecting === true) {
                     isSelecting = false;
                     // change the class of the mousedown area to let the user know
@@ -947,6 +955,10 @@ define(function (require) {
                     // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
                     return;
                 }
+                // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
+                // event to the parent (pile) element when we're done
+                event.stopPropagation();
+                
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
