@@ -15,6 +15,7 @@ define(function (require) {
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
         ta          = require('typeahead'),
+        hammer      = require('hammerjs'),
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
@@ -241,6 +242,7 @@ define(function (require) {
     //                console.log("SourcePhraseListView::render");
                     template = Handlebars.compile(tplSourcePhraseList);
                     this.$el.html(template(this.collection.toJSON()));
+                    this.$el.hammer({domEvents: true});
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
@@ -621,7 +623,8 @@ define(function (require) {
                 "mousemove .pile": "selectingPilesMove",
                 "touchmove .pile": "selectingPilesMove",
                 "mouseup .pile": "selectingPilesEnd",
-                "touchend .pile": "selectingPilesEnd",
+//                "touchend .pile": "selectingPilesEnd",
+                "doubletap .pile": "onDblTapPile",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
                 "mousedown .target": "selectingAdaptation",
@@ -724,6 +727,17 @@ define(function (require) {
                     }
                 }
             },
+            // user double-tapped on the Pile element -- select the entire strip
+            onDblTapPile: function(event) {
+                console.log("onDblTapPile");
+                selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
+                selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                idxStart = $(selectedStart).index() - 1;
+                idxEnd = $(selectedEnd).index() - 1;
+                isSelecting = true; // change the UI color 
+                // trigger an end on the last pile elt
+                $(selectedEnd).trigger("touchend");
+            },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
                 console.log("selectingPilesEnd");
@@ -745,24 +759,24 @@ define(function (require) {
                     selectedEnd = selectedStart;
                 }
                 // check for double-tap
-                if (lastTapTime === null) {
-                    lastTapTime = new Date().getTime();
-                    console.log("setting lastTapTime");
-                } else {
-                    var now = new Date().getTime();
-                    var delay = now - lastTapTime;
-                    console.log("delay: " + delay);
-                    if ((delay < 500) && (delay > 0)) {
-                        // double-tap -- select the strip
-                        console.log("double-tap detected -- selecting strip");
-                        selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
-                        selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
-                        idxStart = $(selectedStart).index() - 1;
-                        idxEnd = $(selectedEnd).index() - 1;
-                        isSelecting = true; // change the UI color
-                    }
-                    lastTapTime = now; // update the last tap time
-                }
+//                if (lastTapTime === null) {
+//                    lastTapTime = new Date().getTime();
+//                    console.log("setting lastTapTime");
+//                } else {
+//                    var now = new Date().getTime();
+//                    var delay = now - lastTapTime;
+//                    console.log("delay: " + delay);
+//                    if ((delay < 500) && (delay > 0)) {
+//                        // double-tap -- select the strip
+//                        console.log("double-tap detected -- selecting strip");
+//                        selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
+//                        selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+//                        idxStart = $(selectedStart).index() - 1;
+//                        idxEnd = $(selectedEnd).index() - 1;
+//                        isSelecting = true; // change the UI color
+//                    }
+//                    lastTapTime = now; // update the last tap time
+//                }
                 
                 if (isSelecting === true) {
                     isSelecting = false;

@@ -29,7 +29,8 @@ require.config({
         utils: '../js/utils',
         tpl: '../tpl',
         // libraries
-        hammer: 'hammer.min',
+        'hammerjs': 'hammer',
+        'jquery-hammerjs': 'jquery.hammer',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min',
         'jquery': 'jquery-2.1.4.min',
@@ -63,7 +64,8 @@ require.config({
             deps: ['jquery']
         },
         'backbone': {
-            deps: ['underscore', 'jquery'],
+//            deps: ['underscore', 'jquery'],
+            deps: ['jquery-hammerjs', 'underscore'],
             exports: 'Backbone'
         },
         'underscore': {
