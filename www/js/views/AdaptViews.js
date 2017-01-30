@@ -15,6 +15,7 @@ define(function (require) {
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
         ta          = require('typeahead'),
+        hammer      = require('hammerjs'),
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
@@ -53,6 +54,7 @@ define(function (require) {
         caseSource = [],
         caseTarget = [],
         tmpTargetValue = "",
+        lastTapTime = null,
 
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
@@ -240,6 +242,7 @@ define(function (require) {
     //                console.log("SourcePhraseListView::render");
                     template = Handlebars.compile(tplSourcePhraseList);
                     this.$el.html(template(this.collection.toJSON()));
+                    this.$el.hammer({domEvents: true, interval: 500});
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
@@ -615,19 +618,15 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
-                "mousedown .source": "selectingPilesStart",
-                "touchstart .source": "selectingPilesStart",
-                "touchstart .marker": "selectingPilesStart",
-                "mousemove .source": "selectingPilesMove",
-                "touchmove .source": "selectingPilesMove",
-                "touchmove .marker": "selectingPilesMove",
-                "mouseup .source": "selectingPilesEnd",
-                "touchend .source": "selectingPilesEnd",
-                "touchend .marker": "selectingPilesEnd",
+                "mousedown .pile": "selectingPilesStart",
+                "touchstart .pile": "selectingPilesStart",
+                "mousemove .pile": "selectingPilesMove",
+                "touchmove .pile": "selectingPilesMove",
+                "mouseup .pile": "selectingPilesEnd",
+                "touchend .pile": "selectingPilesEnd",
+                "doubletap .pile": "onDblTapPile",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
-                "touchend .pile": "checkStopSelecting",
-                "mouseup .pile": "checkStopSelecting",
                 "mousedown .target": "selectingAdaptation",
                 "touchstart .target": "selectingAdaptation",
                 "mouseup .target": "selectedAdaptation",
@@ -642,13 +641,14 @@ define(function (require) {
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart");
+                event.stopPropagation();
                 var model = null,
                     strID = "";
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
                 }
-                selectedStart = event.currentTarget.parentElement; // select the pile, not the source (the currentTarget)
+                selectedStart = event.currentTarget; // select the pile
                 selectedEnd = selectedStart;
 
                 idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
@@ -665,13 +665,14 @@ define(function (require) {
                 }
                 // change the class of the mousedown area to let the user know
                 // we're tracking the selection
-                $(event.currentTarget.parentElement).addClass("ui-selecting");
+                $(event.currentTarget).addClass("ui-selecting");
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
                 if (isRetranslation === true) {
                     return; // cannot select other items
                 }
+                event.stopPropagation();
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
                     // touch
@@ -692,11 +693,11 @@ define(function (require) {
 //                    }
                     // assume single touch if we got here
                     var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
-                    tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY).parentElement; // pile (parent)
+                    tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY); // pile (parent)
                     event.preventDefault();
                 } else {
                     // mouse (web app)
-                    tmpEnd = event.currentTarget.parentElement; // pile
+                    tmpEnd = event.currentTarget; // pile
                 }
                 // only interested if we're selecting in the same strip
                 if ((isSelecting === true) &&
@@ -706,11 +707,11 @@ define(function (require) {
                     idxEnd = $(tmpEnd).index() - 1;
                     //console.log("selectedEnd: " + selectedEnd.id);
                     // remove ui-selecting from all piles in the strip
-                    $(event.currentTarget.parentElement.parentElement.childNodes).removeClass("ui-selecting");
+                    $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
                     // add ui-selecting to the currently selected range
                     if (idxStart === idxEnd) {
                         // one item selected
-                        $(event.currentTarget.parentElement).addClass("ui-selecting");
+                        $(event.currentTarget).addClass("ui-selecting");
                     } else if (idxStart < idxEnd) {
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
@@ -726,15 +727,21 @@ define(function (require) {
                     }
                 }
             },
-            // User released the mouse on a pile or target. Here we'll check to see if the user
-            // started selecting a phrase and had a "fat finger" moment, missing the source line when
-            // they finished their selection. If so, we'll manually fire a Mouse Up event on the
-            // source line instead.
-            checkStopSelecting: function (event) {
-                if (isSelecting === true) {
-                    // pretend the user wanted the last selected item to be the end of the selection
-                    console.log("checkStopSelecting -- isSelecting");
-                    $(selectedEnd).find('.source').mouseup();
+            // user double-tapped on the Pile element -- select the entire strip
+            onDblTapPile: function (event) {
+                console.log("onDblTapPile");
+                selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
+                selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                idxStart = $(selectedStart).index() - 1;
+                idxEnd = $(selectedEnd).index() - 1;
+                isSelecting = true; // change the UI color 
+                // trigger an end on the last pile elt
+                if (navigator.notification) {
+                    // on mobile device
+                    $(selectedEnd).trigger("touchend");
+                } else {
+                    // in browser
+                    $(selectedEnd).trigger("mouseup");
                 }
             },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
@@ -749,13 +756,36 @@ define(function (require) {
                     spid = "";
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
-                    selectedStart = event.currentTarget.parentElement;
+                    selectedStart = event.currentTarget;
                 }
+                // check for retranslation
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
                     idxEnd = idxStart;
                     selectedEnd = selectedStart;
                 }
+                // check for double-tap (browser only)
+                if (!navigator.notification && event.type === "mouseup") {
+                    if (lastTapTime === null) {
+                        lastTapTime = new Date().getTime();
+                        console.log("setting lastTapTime");
+                    } else {
+                        var now = new Date().getTime();
+                        var delay = now - lastTapTime;
+                        console.log("delay: " + delay);
+                        if ((delay < 500) && (delay > 0)) {
+                            // double-tap -- select the strip
+                            console.log("double-tap detected -- selecting strip");
+                            selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
+                            selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                            idxStart = $(selectedStart).index() - 1;
+                            idxEnd = $(selectedEnd).index() - 1;
+                            isSelecting = true; // change the UI color
+                        }
+                        lastTapTime = now; // update the last tap time
+                    }
+                }
+                
                 if (isSelecting === true) {
                     isSelecting = false;
                     // change the class of the mousedown area to let the user know
@@ -943,6 +973,14 @@ define(function (require) {
                     options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
+                if (isSelecting === true) {
+                    // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
+                    return;
+                }
+                // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
+                // event to the parent (pile) element when we're done
+                event.stopPropagation();
+                
                 // ** focus handler block **
                 // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
                 // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
