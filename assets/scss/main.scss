@@ -1,0 +1,212 @@
+
+/* Color scheme for AIM */
+/* 
+  Base (light blue from AI icon): #2595cb;
+  Dark blue: #0d75bb; 
+  lighter blue: #279ED8:
+  Turquoise: #1dd8af;
+*/
+$dark-blue: #0d75bb; 
+$lighter-blue: #279ED8;
+$turquoise: #1dd8af;
+$dark-grey: #333;
+$light-grey: #eee;
+
+.announce {
+    background-color: $lighter-blue;
+    color: white;
+    padding: 6px;
+}
+.small-icon {
+    background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    border: 0;
+    display: inline-block;
+    height: 22px;
+    margin-right: .5rem;
+    overflow: hidden;
+    padding: 6px;    
+    vertical-align: baseline;
+    width: 22px;
+}
+.large-icon {
+    background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    border: 1px solid #fafafa;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 96px;
+    margin-right: 2rem;
+    overflow: hidden;
+    padding: 6px;    
+    vertical-align: middle;
+    width: 96px;
+}
+.hero {
+    background-color: $dark-blue;
+    background: -moz-linear-gradient($dark-blue, $lighter-blue);
+    background: -o-linear-gradient($dark-blue, $lighter-blue);
+    background: -webkit-linear-gradient($dark-blue, $lighter-blue);
+    background: linear-gradient($dark-blue, $lighter-blue);
+    color: white;
+    height: 450px;
+    overflow-y: hidden;
+    text-align: center;
+}
+.small-hero {
+    background-color: $dark-blue;
+    color: white;
+    padding-bottom: 2rem;
+    padding-top: 2rem;
+}
+.title {
+    font-size: 2.5rem;
+    font-weight: normal; 
+}
+.desc {
+    font-size: 1.5rem;
+    font-weight: normal;
+    padding-top: 1rem;
+}
+.content {
+    background-color: white;
+    color: $dark-grey;
+    padding: 1em 0;
+}
+.tag-line {
+    font-size: 2rem;
+    font-weight: 200; 
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+.post-meta {
+    padding-top: 9px;
+    margin-bottom: 0;
+}
+.promo {
+    background-color: white;
+    border-bottom: 1px solid $lighter-blue;
+    padding: 3rem 6px 3rem 6px;
+}
+.site {
+    background-color: #ccc;
+    padding: 1rem;
+}
+.benefits, .osnote {
+    display: block;
+//    padding-bottom: 1rem;
+    width: 100%;
+}
+.benefit {
+    display: inline-block;
+    margin: 6px;
+    vertical-align: top;
+    width: 31%;
+}
+.b-header {
+    font-size: 1.4rem;
+    margin-bottom: 6px;
+}
+.b-desc {
+    font-size: 1rem;
+}
+.button {
+    background-color: $light-grey;
+}
+
+/* zurb foundation classes */
+/* general stuff */
+.wrap {
+    width: 94%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.off-canvas-wrapper {
+    background-color: $dark-grey;
+}
+/* mobile nav */
+.title-bar {
+    background-color: $dark-grey;
+//    height: 60px;
+    padding-top: 17px;
+}
+#mobile-menu {
+    background-color: $dark-grey;
+    padding: 10px;
+}
+#mobile-menu li {
+    list-style: none;
+}
+#mobile-menu a {
+    color: rgba(255,255,255,0.6);
+    font-weight: bold;
+    line-height: 2;
+}
+/* desktop nav */
+.nav-desktop {
+    background-color: $dark-grey;
+    height: 64px;
+    padding: 0;
+}
+
+.site-logo {
+    color: $dark-grey;
+    font-size: 28px;
+}
+.site-logo a {
+    color: inherit;
+}
+.site-logo a:hover {
+    color: inherit;
+}
+.nav-desktop .menu-desktop {
+    line-height: 64px;
+    background-color: transparent;
+}
+
+.menu > li > a {
+    display: inline-block;
+    line-height: 64px;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: $dark-grey;
+}
+
+.menu > li > a:hover {
+    color: $dark-blue;
+}
+
+.pad-right {
+    padding-right: 6px;
+}
+
+footer {
+    max-width: inherit;
+}
+
+/* 
+*
+* MEDIA QUERIES
+*
+*/
+
+@media (max-width: 639px) {
+    .nav-desktop {
+        display: none;
+    }
+    .tag-line {
+        font-size: 1.7rem;
+    }
+    .benefit {
+        width: 100%;
+    }
+}

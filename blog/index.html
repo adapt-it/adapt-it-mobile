@@ -1,0 +1,55 @@
+---
+layout: page
+title:  Blog
+desc:   Adapt It Mobile news, product announcements, and more.
+---
+
+<!-- This loops through the paginated posts -->
+{% for post in paginator.posts %}
+    
+    <div class="row">
+        <div class="column small-12 medium-2">
+            <p class="post-meta"><a href="{{ post.url }}">{{ post.date | date_to_string }}</a></p>
+            <small>{{ post.categories }}</small>
+        </div>
+        <div class="column emall-12 medium-10">
+            {{ post.content }}
+        </div>
+    </div>
+    
+    {% unless forloop.last %}
+    <hr>
+    {% endunless %}
+
+{% endfor %}
+
+<br><br>
+
+<!-- Pagination links -->
+{% if paginator.total_pages > 1 %}
+<nav>
+    <ul class="pagination">
+        {% if paginator.previous_page %}
+            <li class="arrow"><a href="{{ paginator.previous_page_path | replace: '/index.html', '' }}">&laquo;</a></li>
+        {% else %}
+            <li class="arrow unavailable"><a>&laquo;</a></li>
+        {% endif %}
+
+        {% for page in (1..paginator.total_pages) %}
+            {% if page == paginator.page %}
+                <li class="current"><a>{{ page }}</a></li>
+            {% elsif page == 1 %}
+                <li><a href="{{ site.paginate_path | replace: '/seite:num', '' }}">{{ page }}</a></li>
+            {% else %}
+                <li><a href="{{ site.paginate_path | replace: ':num', page }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if paginator.next_page %}
+            <li class="arrow"><a href="{{ paginator.next_page_path }}">&raquo;</a></li>
+        {% else %}
+            <li class="arrow unavailable"><a>&raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
