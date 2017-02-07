@@ -1,11 +1,11 @@
 - link: Get Started
-  url: /getstarted
+  url: {{ site.baseurl }}/getstarted
 
 - link: About
-  url: /about
+  url: {{ site.baseurl }}/about
 
 - link: Support
-  url: /support
+  url: {{ site.baseurl }}/support
 
 - link: Blog
-  url: /blog
+  url: {{ site.baseurl }}/blog
