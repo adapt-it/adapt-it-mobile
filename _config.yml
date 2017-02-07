@@ -35,6 +35,7 @@ incremental:      true
 # Serving
 # url:            ""
 # baseurl:        "" # does not include hostname
+baseurl:        "/adapt-it-mobile"
 
 # Outputting
 permalink:        "/blog/:year/:title/"
