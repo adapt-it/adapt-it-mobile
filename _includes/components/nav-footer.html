@@ -1,6 +1,6 @@
 <div class="column">
-    <a href="{{ site.baseurl }}"><div class="small-icon"></div></a>    
+    <a href="{{ site.baseurl }}/"><div class="small-icon"></div></a>    
     {% for item in site.data.nav-footer %}
-      <a class="pad-right" href="{{ item.url }}">{{ item.link }}</a>
+      <a class="pad-right" href="{{ site.baseurl }}{{ item.url }}">{{ item.link }}</a>
     {% endfor %}
 </div>
