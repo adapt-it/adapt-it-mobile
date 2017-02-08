@@ -14,10 +14,12 @@ date:   2017-01-03 12:21
 ----
 
 <a id="install-issues"></a>
+
 # Installation issues
 
 
 <a id="system-requirements"></a>
+
 ### Adapt It Mobile system requirements: 
 
 - Apple iPad, iPod or iPhone running iOS 8.x or later
@@ -26,9 +28,11 @@ date:   2017-01-03 12:21
 ----
 
 <a id="adapting-issues"></a>
+
 # Adapting Issues
 
 <a id="auto-caps"></a>
+
 ## Each field is capitalized
 
 Both Android and iOS have system settings that control the capitalization of text input. If you are having problems with the on-screen keyboard automatically capitalizing each word of text, you can turn this feature off for your mobile device:
@@ -39,6 +43,7 @@ Both Android and iOS have system settings that control the capitalization of tex
 ----
 
 <a id="new-issue-or-feature"></a>
+
 ## Creating a new issue or feature request
 
 If you have come across a problem in the Adapt It Mobile software -- or if you would like to request a new feature -- you can write up a new issue in our [issue tracker](https://github.com/adapt-it/adapt-it-mobile/issues).
