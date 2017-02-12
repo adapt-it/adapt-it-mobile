@@ -1,8 +1,8 @@
-- link: Get Started
-  url: /getstarted
-
 - link: About
   url: /about
+
+- link: Get Started
+  url: /getstarted
 
 - link: Support
   url: /support
