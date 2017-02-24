@@ -15,7 +15,7 @@
    id="svg249"
    sodipodi:version="0.32"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="retranslation-new_black.svg"
+   sodipodi:docname="retranslation-delete.svg"
    inkscape:export-filename="C:\dev\res\aimobile icons\png\retranslation-new@2x.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
@@ -320,8 +320,8 @@
      inkscape:pageshadow="2"
      inkscape:zoom="6.1091087"
      inkscape:cx="14.442155"
-     inkscape:cy="2.3692867"
-     inkscape:current-layer="layer6"
+     inkscape:cy="0.8142317"
+     inkscape:current-layer="layer4"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
@@ -368,13 +368,13 @@
      style="display:inline"
      transform="translate(0,-8)">
     <path
-       style="fill:#000000;stroke:#000000;stroke-width:0.82811522000000004px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.82811522000000004px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
        d="m 30.710937,12.414057 2.578128,0 0,3.191966 2.578126,-2.393974 1.718753,2.393974 -3.437503,2.393976 c -0.664609,-0.366522 3.437503,2.393976 3.437503,2.393976 l -1.718753,1.595983 -2.578126,-1.595983 0,3.191967 -2.578128,0 0,-3.191967 -2.578126,1.595983 -1.718753,-1.595983 3.666956,-2.393976 c -0.24742,-0.379346 -3.666956,-2.393976 -3.666956,-2.393976 l 1.718753,-2.393974 2.578126,2.393974 z"
        id="path4038"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccccccccccc" />
     <path
-       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
        d="m 8.5,14.5 0,4 -4,0 0,2 4,0 0,2 -4,0 0,2 4,0 0,4 2,0 0,-4 2,0 0,4 2,0 0,-4 4,0 0,-2 -4,0 0,-2 4,0 0,-2 -4,0 0,-4 -2,0 0,4 -2,0 0,-4 z"
        id="path4036"
        inkscape:connector-curvature="0"
@@ -387,7 +387,7 @@
      style="display:inline"
      transform="translate(0,-8)">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.74420749999999991px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;display:inline"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.74420749999999991px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;display:inline"
        d="m 2.8721037,32.872104 0,12.255793 34.2557933,0 0,-12.255793 z"
        id="path3848"
        inkscape:connector-curvature="0"

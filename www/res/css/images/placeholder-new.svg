@@ -14,8 +14,8 @@
    height="40"
    id="svg249"
    sodipodi:version="0.32"
-   inkscape:version="0.48.2 r9819"
-   sodipodi:docname="placeholder-new_black.svg"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="placeholder-new.svg"
    inkscape:export-filename="C:\dev\res\aimobile icons\png\placeholder-new.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45"
@@ -254,7 +254,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.9983453"
      inkscape:cx="-172.06171"
-     inkscape:cy="0.9703693"
+     inkscape:cy="-8.5453764"
      inkscape:current-layer="layer4"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -314,7 +314,7 @@
      style="display:inline"
      transform="translate(0,-8)">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.33325468999999996;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.33325468999999996;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 4.65625 8.65625 L 4.65625 31.34375 L 35.34375 31.34375 L 35.34375 8.65625 L 4.65625 8.65625 z M 10.09375 24.09375 L 13.90625 24.09375 L 13.90625 27.90625 L 10.09375 27.90625 L 10.09375 24.09375 z M 18.09375 24.09375 L 21.90625 24.09375 L 21.90625 27.90625 L 18.09375 27.90625 L 18.09375 24.09375 z M 26.09375 24.09375 L 29.90625 24.09375 L 29.90625 27.90625 L 26.09375 27.90625 L 26.09375 24.09375 z "
        transform="translate(0,8)"
        id="path4079" />
