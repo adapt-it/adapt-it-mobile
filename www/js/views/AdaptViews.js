@@ -26,6 +26,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
+        SimpleUndo  = require('simple-undo'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
