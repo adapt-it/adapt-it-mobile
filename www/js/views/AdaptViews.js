@@ -3,6 +3,18 @@
 
 // AdaptViews.js
 // Adaptation page functionality for AIM.
+// --
+// States: 
+// S1 - nothing selected
+// S2 - walkthrough help displayed (onHelp handler)
+// S3 - selecting source phrases (isSelecting == true)
+// S4 - source phrases selected (also the initial state - see SourcePhraseListView:Render())
+// S5 - filter dialog displayed
+// S6 - target edit field displayed / focused
+// S7 - select KB dropdown displayed (typeahead)
+// S8 - KB auto-inserting
+// S9 - finished adapting chapter dialog displayed
+// S10 - More (...) actions dropdown menu displayed
 define(function (require) {
 
     "use strict";
@@ -54,9 +66,8 @@ define(function (require) {
         punctsTarget = [],
         caseSource = [],
         caseTarget = [],
-        tmpTargetValue = "",
         lastTapTime = null,
-
+        
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -131,7 +142,6 @@ define(function (require) {
                 newTU.save();
             }
         },
-
 
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
@@ -454,13 +464,20 @@ define(function (require) {
                 }
                 return result;
             },
-            // Helper method to move the editing cursor forwards or backwards one pile.
-            // this also calls blur(), which saves any changes.
+            // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
+            // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
+            // - next source phrase has exactly 1 possible translation in the KB -> auto-insert and continue moving
+            // - next source phrase is already translataed (i.e., has something in the target field) -> skip and continue
+            //   moving
+            // - next source phrase has no possible translation -> suggest the source and stop here
+            // - next source phrase has more than one possible translation -> show a drop-down menu (that also allows
+            //   for a new translation) and stop here
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var model = null;
                 var strID = "";
+                var top = 0;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -516,34 +533,6 @@ define(function (require) {
                         }
                         // if we reached the last pile, check to see if there's another chapter to adapt
                         if (next_edit === null) {
-                            // first, save the sourcephrase
-                            strID = $(selectedStart).attr('id');
-                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                            model = this.collection.findWhere({spid: strID});
-                            if (tmpTargetValue && tmpTargetValue.length > 0) {
-                                // save the new value to the KB
-                                saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                                this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
-                                                this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                                project.get('projectid'));
-                                // update the model with the new target text
-                                model.save({target: tmpTargetValue});
-                                $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
-                                // if the target differs from the source, make it display in green
-                                if (model.get('source') === model.get('target')) {
-                                    // source === target --> remove "differences" from the class so the text is black
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                                    // source + punctuation == target --> remove "differences"
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (!$(event.currentTarget).hasClass('differences')) {
-                                    // source != target -- add "differences" to the class so the text is green
-                                    $(prevIdx.childNodes[4]).addClass('differences');
-                                }
-                            }
-                            // done saving -- clear out the temp value
-                            tmpTargetValue = "";
-                            isDirty = false;
                             // Check for a chapter after the current one in the current book
                             var nextChapter = 0;
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
@@ -619,12 +608,40 @@ define(function (require) {
                     console.log("next edit: " + next_edit.id);
                     $(next_edit.childNodes[4]).mouseup();
                 } else {
+                    // the user is either at the first or last pile. Select it,
+                    // but don't set focus on the target edit field.
+                    if (MovingDir === -1) {
+                        // select the FIRST pile
+                        selectedStart = $(".pile").first().get(0);
+                        selectedEnd = selectedStart;
+                        idxStart = $(selectedStart).index() - 1;
+                        idxEnd = idxStart;
+                        isSelecting = true;
+                        MovingDir = 0; // don't move
+                        // scroll to it if necessary (which it probably is)
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        $("#content").scrollTop(top);
+                        // now select it
+                        $(selectedStart).mouseup();
+                    } else {
+                        // select the LAST pile
+                        selectedStart = $(".pile").last().get(0);
+                        selectedEnd = selectedStart;
+                        idxStart = $(selectedStart).index() - 1;
+                        idxEnd = idxStart;
+                        isSelecting = true;
+                        MovingDir = 0; // don't move
+                        // scroll to it if necessary (which it probably is)
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        $("#content").scrollTop(top);
+                        // now select it
+                        $(selectedStart).mouseup();
+                    }
                     // no next edit (reached the first or last pile) --
-                    // clear out the moving direction so we don't keep going
-                    MovingDir = 0;
                 }
             },
-            // Helper method to clear out the selection and disable the toolbar buttons
+            // Helper method to clear out the selection and disable the toolbar buttons 
+            // (Move to S1 in our state machine)
             clearSelection: function () {
                 selectedStart = selectedEnd = null;
                 idxStart = idxEnd = null;
@@ -1000,6 +1017,8 @@ define(function (require) {
             selectingAdaptation: function (event) {
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
+                // do NOT propogate this up to the Pile - the user is clicking in the edit field
+                event.stopPropagation();
             },
             // mouseUp / touchEnd event handler for the target field
             selectedAdaptation: function (event) {
@@ -1016,7 +1035,6 @@ define(function (require) {
                     selection = null,
                     selectedObj = null,
                     prevObj = null,
-                    nextOrPrevObj = false,
                     options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
@@ -1032,105 +1050,12 @@ define(function (require) {
                 
                 if (isSelecting === true) {
                     // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
+                    console.log("isSelecting=TRUE. Exiting selectedAdaptation so pile can pick the event up.");
                     return;
                 }
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
-                
-                // ** focus handler block **
-                // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
-                // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
-                // to save the target value to the model and KB in the unselectedAdaptation() handler.
-                // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
-                if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
-                    var goingForward = false;
-                    // focus event
-                    // Check to see if the previous selction is off by 1 element in the tab order. If it is,
-                    // it's likely that the user pressed TAB or the Prev/Next buttons -- meaning we should save
-                    //the previous field's edits (if any)
-                    prevIdx = selectedStart;
-                    // set the current adaptation cursor
-                    if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
-                        selectedStart = event.currentTarget.parentElement; // pile
-                        if (prevIdx === null) {
-                            prevIdx = selectedStart;
-                        }
-                    }
-                    prevID = $(prevIdx).attr('id');
-                    prevID = prevID.substr(prevID.indexOf("-") + 1); // remove "pile-"
-                    prevObj = this.collection.findWhere({spid: prevID});
-                    strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.findWhere({spid: strID});
-                    if (this.collection.at(this.collection.indexOf(selectedObj) + 1) === prevObj) {
-                        nextOrPrevObj = true; // next in our collection (ordered by norder)
-                        goingForward = false;
-                    } else if (this.collection.at(this.collection.indexOf(selectedObj) - 1) === prevObj) {
-                        nextOrPrevObj = true; // previous in our collection (ordered by norder)
-                        goingForward = true;
-                    }
-                    console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
-                    if (isDirty === true || nextOrPrevObj === true) {
-                        model = prevObj;
-                        console.log("selectedAdaptation: Prev/Next likely hit. Saving value \"" + tmpTargetValue + "\" for model: " + model.get('source'));
-                        // either TAB or Shift+TAB -- save the previous field if it needs it
-                        // (note: model still refers to the previous selection sourcephrase)
-                        if (tmpTargetValue && tmpTargetValue.length > 0) {
-                            // save the new value to the KB
-                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                            this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
-                                            this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                            project.get('projectid'));
-                            // update the model with the new target text
-                            model.save({target: tmpTargetValue});
-                            $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
-                            // if the target differs from the source, make it display in green
-                            if (model.get('source') === model.get('target')) {
-                                // source === target --> remove "differences" from the class so the text is black
-                                $(prevIdx.childNodes[4]).removeClass('differences');
-                            } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                                // source + punctuation == target --> remove "differences"
-                                $(prevIdx.childNodes[4]).removeClass('differences');
-                            } else if (!$(event.currentTarget).hasClass('differences')) {
-                                // source != target -- add "differences" to the class so the text is green
-                                $(prevIdx.childNodes[4]).addClass('differences');
-                            }
-                        }
-                        // done saving -- clear out the temp value
-                        tmpTargetValue = "";
-                        isDirty = false;
-                        // If this is a filtered field, keep moving
-                        if ($(event.currentTarget.parentElement.parentElement).hasClass("filter")) {
-                            // this is a filter strip -- keep going
-                            this.moveCursor(event, goingForward);
-                            return; // no more handling here
-                        }
-                    } else {
-                        // we've already handled this in the touchend event -- just return
-                        console.log("selectedAdaptation: previous focus too far away to be prev/next. Ignoring...");
-                        event.stopPropagation();
-                        event.preventDefault();
-                        return;
-                    }
-                }
-
-                if (isSelecting === true) {
-                    // pretend the user wanted the last selected item to be the end of the selection
-                    $(selectedEnd).find('.source').mouseup();
-                    return;
-                }
-
-                // Are we setting the focus on the first phrase after a selection?
-//                if (isSelectingFirstPhrase === true) {
-//                    // yes -- keep the selection, but clear out the flag
-//                    console.log("Selecting the first phrase -- gets a pass");
-//                    isSelectingFirstPhrase = false;
-//                } else {
-                    // no -- clear out any previous selection
-                console.log("clearing selection");
-                this.clearSelection();
-//                }
 
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
@@ -1207,16 +1132,12 @@ define(function (require) {
                                 selection.removeAllRanges();
                                 selection.addRange(range);
                             }
-                            // if the user didn't click the next/prev field, it's possible that we went offscreen
-                            // while looking for the next available slot to adapt. Make sure the edit field is in
-                            // view by scrolling the UI
-                            if (nextOrPrevObj === true) {
-                                // scroll the edit field into view
-                                top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-    //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                                $("#content").scrollTop(top);
-                            }
-//                            $(event.currentTarget).typeahead('open');
+                            // it's possible that we went offscreen while looking for the next available slot to adapt.
+                            // Make sure the edit field is in view by scrolling the UI
+                            // scroll the edit field into view
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+                            $("#content").scrollTop(top);
                         }
                     } else {
                         // nothing in the KB
@@ -1228,7 +1149,7 @@ define(function (require) {
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         // no change yet -- this is just a suggestion
-                        isDirty = false;
+                        isDirty = true;
                         // select any text in the edit field
                         if (document.body.createTextRange) {
                             range = document.body.createTextRange();
@@ -1241,21 +1162,17 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // if the user didn't click the next/prev field, it's possible that we went offscreen
-                        // while looking for the next available slot to adapt. Make sure the edit field is in
-                        // view by scrolling the UI
-                        if (nextOrPrevObj === true) {
-                            // scroll the edit field into view
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        // it's possible that we went offscreen while looking for the next available slot to adapt.
+                        // Make sure the edit field is in view by scrolling the UI
+                        // scroll the edit field into view
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
 //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                            $("#content").scrollTop(top);
-                        }
-//                        $(event.currentTarget)[0].focus();
+                        $("#content").scrollTop(top);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
                     // empty field, or did we just select this one?
-                    console.log("Target NOT empty; MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
+                    console.log("Target NOT empty (text=" + $(event.currentTarget).text().trim() + "); MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
                     if (MovingDir !== 0 && isDrafting === true) {
                         // looking for the next empty field --
                         // clear the dirty bit and keep going
@@ -1280,16 +1197,6 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // if the user didn't click the next/prev field, it's possible that we went offscreen
-                        // while looking for the next available slot to adapt. Make sure the edit field is in
-                        // view by scrolling the UI
-//                        if (nextOrPrevObj === true) {
-//                            // scroll the edit field into view
-//                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                            window.scrollTo(0, top);
-//                        }
-//                        $(event.currentTarget)[0].focus();
                     }
                 }
             },
@@ -1385,9 +1292,10 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-                console.log("unselectedAdaptation");
+                console.log("unselectedAdaptation: isDirty=" + isDirty);
                 // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
+                    console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
                     return;
                 }
 
@@ -1436,33 +1344,6 @@ define(function (require) {
                              project.get('projectid'));
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
-                    // clear out the temp IOS value, since we've already saved this value
-                    tmpTargetValue = "";
-                } else {
-                    console.log("Dirty bit NOT set. Skipping save, but saving value \"" + trimmedValue + "\" as a temp, just in case.");
-                    tmpTargetValue = trimmedValue;
-                    // dirty bit is false -- check to see if the target matches what's in the edit field
-                    if (trimmedValue) {
-                        // User clicked away without changing anything -- this is a cancel operation
-                        // Is there anything in the old target field?
-                        if (model && model.get('target').length === 0) {
-                            // nothing in the old target field -- clear out the edit field
-                            $(event.currentTarget).html("");
-                            trimmedValue = "";
-                        } else {
-                            // something in the old target field -- just clear the local copy so the
-                            // model doesn't update
-                            trimmedValue = "";
-                            // add any punctuation back to the target field
-                            if (model) {
-                                $(event.currentTarget).html(this.copyPunctuation(model, model.get('target')));
-                            }
-                        }
-                    }
-                }
-                // Update the model if needed
-                if (trimmedValue && trimmedValue.length > 0) {
-    //                console.log(model);
                     // update the model with the new target text
                     model.save({target: trimmedValue});
                     // if the target differs from the source, make it display in green
