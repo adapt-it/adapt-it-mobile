@@ -239,7 +239,9 @@ define(function (require) {
             template: Handlebars.compile(tplSourcePhraseList),
 
             initialize: function () {
-//                console.log("SourcePhraseListView::initialize");
+                // place two calls to render:
+                // - one deferred, when we get all the source phrases for the chapter back from the DB 
+                // - one right now to say "please wait..."
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
             },
@@ -250,11 +252,14 @@ define(function (require) {
                 this.$('#pile-' + SourcePhrase.get('spid')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
+                var top = 0;
                 if (this.collection.length === 0) {
+                    // nothing to display yet -- show the "please wait" view
                     template = Handlebars.compile(tplLoadingPleaseWait);
                     this.$el.html(template());
                     $("#OK").hide();
                 } else {
+                    // we have info to display -- do it now
                     // add the collection
     //                console.log("SourcePhraseListView::render");
                     template = Handlebars.compile(tplSourcePhraseList);
@@ -268,12 +273,15 @@ define(function (require) {
                         isSelecting = true;
                         if ($('#' + project.get('lastAdaptedSPID')).length !== 0) {
                             // everything's okay -- select the last adapted SPID
-//                            $(selectedStart).find('.source').mouseup();
                             selectedStart = $('#' + project.get('lastAdaptedSPID')).get(0);
                             selectedEnd = selectedStart;
                             idxStart = $(selectedStart).index() - 1;
                             idxEnd = idxStart;
-                            $(selectedStart.childNodes[4]).mouseup();
+                            // scroll to it if necessary (which it probably is)
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                            $("#content").scrollTop(top);
+                            // now select it
+                            $(selectedStart).mouseup();
                         } else {
                             // for some reason the last adapted SPID has gotten out of sync --
                             // select the first block instead
@@ -283,7 +291,7 @@ define(function (require) {
                             idxEnd = idxStart;
                             if (selectedStart !== null) {
 //                                $(selectedStart).find('.source').mouseup();
-                                $(selectedStart.childNodes[4]).mouseup();
+                                $(selectedStart).mouseup();
                             }
                         }
                     } else {
@@ -294,8 +302,7 @@ define(function (require) {
                         idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
                         idxEnd = idxStart;
                         if (selectedStart !== null) {
-//                            $(selectedStart).find('.source').mouseup();
-                            $(selectedStart.childNodes[4]).mouseup();
+                            $(selectedStart).mouseup();
                         }
                     }
                 }
@@ -861,12 +868,16 @@ define(function (require) {
                         $("#Placeholder").prop('title', i18next.t("view.dscDelPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
+                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
+                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
                     } else {
                         // not a placeholder -- can add a new one
                         isPlaceholder = false;
                         $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
+                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
+                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                     }
                     // did the user select a phrase?
                     if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
@@ -875,6 +886,8 @@ define(function (require) {
                         $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
+                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
+                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
                         $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                     } else {
                         // not a placeholder -- can add a new one
@@ -882,6 +895,8 @@ define(function (require) {
                         $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
+                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                     }
                     // did the user select a retranslation?
                     if (spid.indexOf("ret") !== -1) {
@@ -890,6 +905,8 @@ define(function (require) {
                         $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
+                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
+                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                     } else {
                         // not a retranslation -- can add a new one
@@ -897,6 +914,8 @@ define(function (require) {
                         $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
+                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     }
                     $("#Placeholder").prop('disabled', false);
                     $("#mnuPlaceholder").prop('disabled', false);
@@ -1348,6 +1367,10 @@ define(function (require) {
                     // Trigger the phrase creation
                     $("#Phrase").click();
                 }
+            },
+            // User clicked on the Undo button.
+            onUndo: function (event) {
+                console.log("onUndo: entry");
             },
             // User has moved out of the current adaptation input field (blur on target field)
             // this can be called either programatically (tab / shift+tab keydown response) or
@@ -1867,6 +1890,7 @@ define(function (require) {
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
+                "click #Undo": "UndoClick",
                 "click #More": "toggleMoreMenu",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
@@ -1876,9 +1900,22 @@ define(function (require) {
                 "click #mnuRetranslation": "toggleRetranslation",
                 "click #help": "onHelp"
             },
+            UndoClick: function (event) {
+                // dismiss the More (...) menu if visible
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // just pass this along to the list view
+                this.listView.onUndo(event);
+            },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
                 console.log("goPrevPile: selectedStart = " + selectedStart);
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 if (selectedStart !== null) {
                     isDirty = true;
                     MovingDir = -1; // backwards
@@ -1888,6 +1925,10 @@ define(function (require) {
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
                 console.log("goNextPile: selectedStart = " + selectedStart);
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 if (selectedStart !== null) {
                     isDirty = true;
                     MovingDir = 1; // forwards
@@ -1900,16 +1941,32 @@ define(function (require) {
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.togglePlaceholder(event);
             },
             togglePhrase: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.togglePhrase(event);
             },
             toggleRetranslation: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.toggleRetranslation(event);
             },
             // User clicked away from
             unselectPiles: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 // only do this if we're in a blank area of the screen
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
@@ -1927,6 +1984,10 @@ define(function (require) {
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
                 var step1 = [
