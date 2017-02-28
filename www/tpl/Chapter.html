@@ -2,36 +2,54 @@
     Template for rendering the chapter adaptation page used by ChapterView.js. Note that this will render a
     container -- the toolbar and menus, etc -- but the individual strips are rendered by the template SourcePhrase.html.
 }}
-<div id="title" class="topcoat-navigation-bar main_title bg-lightblue" style="box-shadow:none;">
-    <div class="topcoat-navigation-bar__item">
+<div id="title" class="topcoat-navigation-bar main_title bg-lightblue">
+    <div class="topcoat-navigation-bar__item left">
         <a id="back" class="topcoat-icon-button--quiet back-button" href="index.html">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
     </div>
-    <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="{{this.id}}">{{this.name}}</h2>
+    <div class="topcoat-navigation-bar__item left">
+        <button id="Undo" title="{{ t 'view.dscUndo'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--undo"></span><span class="side-nav__list__item__label">{{ t 'view.lblUndo'}}</span></button>
     </div>
-    <div class="topcoat-navigation-bar__item right">
+    <div class="topcoat-navigation-bar__item left" id="DocTitle">
+        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="{{this.id}}">{{this.name}}</h1>
+    </div>
+
+    <div class="topcoat-navigation-bar__item right" id="HelpBtn">
         <a class="topcoat-icon-button--quiet">
             <span id="help" class="topcoat-icon topcoat-icon--help"></span>
         </a>
     </div>
-</div>
-<div class="toolbar">
-    <div class="toolbar__item left">
-         <button id="Placeholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+    <div class="topcoat-navigation-bar__item right">
+        <button id="NextSP" title="{{ t 'view.lblNext'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--next"></span><span class="side-nav__list__item__label">{{ t 'view.lblNext'}}</span></button>
     </div>
-    <div class="toolbar__item left">
-         <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
+    <div class="topcoat-navigation-bar__item right">
+        <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
     </div>
-    <div class="toolbar__item left">
-         <button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
+    <div class="topcoat-navigation-bar__item right">
+        <button id="More" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--more"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+        <div id="MoreActionsMenu" class="dropdown">
+            <div class="topcoat-navigation-bar__item left">
+                <button id="mnuPlaceholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+            </div>
+            <div class="topcoat-navigation-bar__item left">
+                <button id="mnuPhrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
+            </div>
+            <div class="topcoat-navigation-bar__item left">
+                <button id="mnuRetranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
+            </div>
+        </div>    
     </div>
-    <div class="toolbar__item right">
-         <button id="NextSP" title="{{ t 'view.lblNext'}}" class="topcoat-icon-button toolbar-button" disabled><span class="topcoat-icon topcoat-icon--next"></span><span class="side-nav__list__item__label">{{ t 'view.lblNext'}}</span></button>
+    <div class="tb-action-toggles right"> {{! hidden on small screens }}
+    <div class="topcoat-navigation-bar__item left">
+        <button id="Placeholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
     </div>
-    <div class="toolbar__item right">
-         <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
+    <div class="topcoat-navigation-bar__item left">
+        <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
+    </div>
+    <div class="topcoat-navigation-bar__item left">
+        <button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
+    </div>
     </div>
 </div>
 <div class="topcoat-list__container scroller-tb" id="content">

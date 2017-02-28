@@ -135,6 +135,7 @@ define(function (require) {
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
+            var totalHeight = 0;
             var scrollTop = 0;
             // Source font
             theRule = ".source {";
@@ -152,6 +153,22 @@ define(function (require) {
             theRule = ".marker {";
             theRule += "font: " + parseInt(project.get('NavigationFontSize'), 10) + "px " + project.get('NavigationFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
             theRule += "color: " + project.get('NavigationColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // pile (just the height)
+            theRule = ".pile {";
+            theRule += "height: ";
+            // total height = source + target + marker + (20px extra space)
+            totalHeight = ((parseInt(project.get('NavigationFontSize'), 10) + parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += totalHeight + "px; ";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // condensed-pile (w/o the marker line)
+            theRule = ".condensed-pile {";
+            theRule += "height: ";
+            // total height = source + target + (20px extra space)
+            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // Special Text color
@@ -612,6 +629,9 @@ define(function (require) {
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
+                $("#mnuPlaceholder").prop('disabled', true);
+                $("#mnuRetranslation").prop('disabled', true);
+                $("#mnuPhrase").prop('disabled', true);
             },
 
             ////
@@ -797,12 +817,16 @@ define(function (require) {
                         // the button below if they've selected an existing retranslation or phrase
                         $("#Phrase").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
+                        $("#mnuRetranslation").prop('disabled', true);
+                        $("#mnuPhrase").prop('disabled', true);
                         // set the class to ui-selected
                         $(selectedStart).addClass("ui-selected");
                     } else if (idxStart < idxEnd) {
                         // more than one item selected -- can create a placeholder, phrase, retrans
                         $("#Phrase").prop('disabled', false);
                         $("#Retranslation").prop('disabled', false);
+                        $("#mnuRetranslation").prop('disabled', false);
+                        $("#mnuPhrase").prop('disabled', false);
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
                                 $(value).addClass("ui-selected");
@@ -812,6 +836,8 @@ define(function (require) {
                         // more than one item selected -- can create a placeholder, phrase, retrans
                         $("#Phrase").prop('disabled', false);
                         $("#Retranslation").prop('disabled', false);
+                        $("#mnuRetranslation").prop('disabled', false);
+                        $("#mnuPhrase").prop('disabled', false);
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxEnd && index <= idxStart) {
                                 $(value).addClass("ui-selected");
@@ -873,6 +899,7 @@ define(function (require) {
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     }
                     $("#Placeholder").prop('disabled', false);
+                    $("#mnuPlaceholder").prop('disabled', false);
                 }
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
@@ -973,6 +1000,16 @@ define(function (require) {
                     options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
+                // iOS nonsense
+                $(".main_title").css({position: "absolute"});
+                $(".scroller-tb").css({position: "absolute"});
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").addClass("hide");
+                    $(".pile").addClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+                
                 if (isSelecting === true) {
                     // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
                     return;
@@ -1226,12 +1263,12 @@ define(function (require) {
                         // if the user didn't click the next/prev field, it's possible that we went offscreen
                         // while looking for the next available slot to adapt. Make sure the edit field is in
                         // view by scrolling the UI
-                        if (nextOrPrevObj === true) {
-                            // scroll the edit field into view
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                            window.scrollTo(0, top);
-                        }
+//                        if (nextOrPrevObj === true) {
+//                            // scroll the edit field into view
+//                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+//                            window.scrollTo(0, top);
+//                        }
 //                        $(event.currentTarget)[0].focus();
                     }
                 }
@@ -1329,6 +1366,19 @@ define(function (require) {
                 if (isSelectingKB === true) {
                     return;
                 }
+
+                // iOS nonsense
+//                $(".main_title").removeClass("fixfixed");
+//                $(".scroller-tb").removeClass("fixfixed");
+                $(".main_title").css({position: "fixed"});
+                $(".scroller-tb").css({position: "fixed"});
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
                     $(".target").removeClass("fromkb");
@@ -1463,6 +1513,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
                     selectedStart = next_edit;
                     $(next_edit).find('.source').mouseup();
@@ -1483,6 +1536,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             },
             // User clicked on the Phrase button
@@ -1586,6 +1642,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
                     selectedStart = next_edit;
@@ -1624,6 +1683,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             },
             // User clicked on the Retranslation button
@@ -1701,6 +1763,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $("#pile-ret-" + newID);
                     if (next_edit !== null) {
@@ -1740,6 +1805,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             }
         }),
@@ -1799,9 +1867,13 @@ define(function (require) {
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
+                "click #More": "toggleMoreMenu",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
+                "click #mnuPlaceholder": "togglePlaceholder",
+                "click #mnuPhrase": "togglePhrase",
+                "click #mnuRetranslation": "toggleRetranslation",
                 "click #help": "onHelp"
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
@@ -1821,6 +1893,10 @@ define(function (require) {
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
+            },
+            // More (...) menu toggle
+            toggleMoreMenu: function (event) {
+                $("#MoreActionsMenu").toggleClass("show");
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
@@ -1842,6 +1918,9 @@ define(function (require) {
                         $("#Placeholder").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
+                        $("#mnuPlaceholder").prop('disabled', true);
+                        $("#mnuRetranslation").prop('disabled', true);
+                        $("#mnuPhrase").prop('disabled', true);
                     }
                 }
             },
@@ -1868,6 +1947,12 @@ define(function (require) {
                         placement: "bottom"
                     },
                     {
+                        title: i18next.t('view.hlpttlUndo'),
+                        content: i18next.t('view.hlpdscUndo'),
+                        target: "Undo",
+                        placement: "bottom"
+                    },
+                    {
                         title: i18next.t('view.hlpttlSelectMultiple'),
                         content: i18next.t('view.hlpdscSelectMultiple'),
                         target: firstPileID,
@@ -1875,7 +1960,17 @@ define(function (require) {
                         onNext: function () {
                             $("#" + firstPileID).removeClass("ui-selected");
                         }
-                    },
+                    }
+                ];
+                var stepMoreBtn = [
+                    {
+                        title: i18next.t('view.hlpttlMore'),
+                        content: i18next.t('view.hlpdscMore'),
+                        target: "More",
+                        placement: "bottom"
+                    }
+                ];
+                var stepToggleBtns = [
                     {
                         title: i18next.t('view.hlpttlPlaceholder'),
                         content: i18next.t('view.hlpdscPlaceholder'),
@@ -1896,15 +1991,13 @@ define(function (require) {
                         placement: "bottom"
                     }
                 ];
-                var step2 = [
+                var stepLastBtns = [
                     {
                         title: i18next.t('view.hlpttlPrevNext'),
                         content: i18next.t('view.hlpdscPrevNext'),
                         target: "PrevSP",
                         placement: "bottom"
-                    }
-                ];
-                var step3 = [
+                    },
                     {
                         title: i18next.t('view.hlpttlBack'),
                         content: i18next.t('view.hlpdscBack'),
@@ -1913,11 +2006,12 @@ define(function (require) {
                     }
                 ];
                 var theSteps = [];
-                if (typeof device !== 'undefined' && device.platform === "iOS") {
-                    // forward/back buttons are on the software keyboard
-                    theSteps = step1.concat(step3);
+                if (width < 480) {
+                    // More (...) button instead of toggles
+                    theSteps = step1.concat(stepMoreBtn, stepLastBtns);
                 } else {
-                    theSteps = step1.concat(step2, step3);
+                    // Toggle buttons
+                    theSteps = step1.concat(stepToggleBtns, stepLastBtns);
                 }
                 var tour = {
                     id: "hello-hopscotch",
@@ -1927,7 +2021,7 @@ define(function (require) {
                         doneBtn: i18next.t("view.lblFinish"),
                         skipBtn: i18next.t("view.lblNext"),
                         closeTooltip: i18next.t("view.lblNext"),
-                        stepNums: ["1", "2", "3", "4", "5", "6"]
+                        stepNums: ["1", "2", "3", "4", "5", "6", "7"]
                     },
                     steps: theSteps,
                     onClose: function () {
