@@ -1056,6 +1056,8 @@ define(function (require) {
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
 
+                // clear out any old selection
+                $("div").removeClass("ui-selecting ui-selected");
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                     selectedStart = event.currentTarget.parentElement; // pile

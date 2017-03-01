@@ -242,6 +242,7 @@ header h3 {
     margin: 4px 0;
     text-align: center;
 }
+/* main page scrolling content*/
 .scroller {
     bottom: 0;
     left: 0;
@@ -251,7 +252,8 @@ header h3 {
     position: fixed;
     top: 70px;
 }
-.scroller-tb {
+/* most pages - top title bar, no toolbar */
+.scroller-notb {
     bottom: 0;
     left: 0;
     overflow: auto;
@@ -260,14 +262,22 @@ header h3 {
     position: fixed;
     top: 57px;
 }
-.scroller-notb {
+/* wizard page scrolling content - leave room for ok / cancel / progress bar */
+.scroller-bottom-tb {
+    bottom: 57px;
+    left: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    right: 0;
+    position: fixed;
+    top: 65px;
+}
+.bottom-tb {
+    position: fixed;
+    padding-bottom: 6px;
     bottom: 0;
     left: 0;
     right: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    position: fixed;
-    top: 57px;
 }
 .hscroller {
     height: 200px;
