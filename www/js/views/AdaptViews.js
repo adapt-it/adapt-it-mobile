@@ -1208,6 +1208,7 @@ define(function (require) {
                 console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards
                     strID = $(event.currentTarget.parentElement).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
@@ -1261,6 +1262,7 @@ define(function (require) {
                 console.log("selectKB - selected: " + suggestion);
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
                 isSelectingKB = false; // we've now chosen something - OK to blur
+                isDirty = true;
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
