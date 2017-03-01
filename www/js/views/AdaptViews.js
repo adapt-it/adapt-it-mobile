@@ -676,7 +676,6 @@ define(function (require) {
                 "touchstart .target": "selectingAdaptation",
                 "mouseup .target": "selectedAdaptation",
                 "touchend .target": "selectedAdaptation",
-                "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
                 "typeahead:select .typeahead": "selectKB",
                 "input .target": "checkForAutoMerge",
@@ -1037,7 +1036,7 @@ define(function (require) {
                     prevObj = null,
                     options = [],
                     foundInKB = false;
-                console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
+                console.log("selectedAdaptation entry / event type:" + event.type);
                 // iOS nonsense
                 $(".main_title").css({position: "absolute"});
                 $(".scroller-tb").css({position: "absolute"});
@@ -1072,6 +1071,7 @@ define(function (require) {
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
+                    isDirty = true;
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
@@ -1088,15 +1088,13 @@ define(function (require) {
                             // mark it purple
                             $(event.currentTarget).addClass('fromkb');
                             clearKBInput = false;
-                            // mark the field as changed (so the KB gets incremented)
-                            isDirty = true;
                             // jump to the next field
                             this.moveCursor(event, true);
                             foundInKB = true;
                         } else {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
-                            isDirty = false; // no change yet
+                            isDirty = false; // no change yet (user needs to select something first)
                             options.length = 0; // clear out any old cruft
 //                            // select the first result (most frequently used)
 //                            targetText = this.autoAddCaps(model, refstrings[0].target);
@@ -1199,6 +1197,7 @@ define(function (require) {
                         }
                     }
                 }
+                console.log("selectedAdaptation exit / isDirty = " + isDirty);
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
