@@ -3,6 +3,18 @@
 
 // AdaptViews.js
 // Adaptation page functionality for AIM.
+// --
+// States: 
+// S1 - nothing selected
+// S2 - walkthrough help displayed (onHelp handler)
+// S3 - selecting source phrases (isSelecting == true)
+// S4 - source phrases selected (also the initial state - see SourcePhraseListView:Render())
+// S5 - filter dialog displayed
+// S6 - target edit field displayed / focused
+// S7 - select KB dropdown displayed (typeahead)
+// S8 - KB auto-inserting
+// S9 - finished adapting chapter dialog displayed
+// S10 - More (...) actions dropdown menu displayed
 define(function (require) {
 
     "use strict";
@@ -26,6 +38,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
+        SimpleUndo  = require('simple-undo'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
@@ -53,9 +66,8 @@ define(function (require) {
         punctsTarget = [],
         caseSource = [],
         caseTarget = [],
-        tmpTargetValue = "",
         lastTapTime = null,
-
+        
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -131,10 +143,10 @@ define(function (require) {
             }
         },
 
-
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
+            var totalHeight = 0;
             var scrollTop = 0;
             // Source font
             theRule = ".source {";
@@ -152,6 +164,23 @@ define(function (require) {
             theRule = ".marker {";
             theRule += "font: " + parseInt(project.get('NavigationFontSize'), 10) + "px " + project.get('NavigationFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
             theRule += "color: " + project.get('NavigationColor') + ";";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // block-height (standard height for all strip elements - pile, chapter/verse, etc.)
+            theRule = ".block-height {";
+            theRule += "height: ";
+            // total height = source + target + marker + (20px extra space)
+            totalHeight = ((parseInt(project.get('NavigationFontSize'), 10) + parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += Math.floor(totalHeight) + "px; ";
+            theRule += "line-height: " + Math.floor(totalHeight) + "px; ";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // condensed-pile (w/o the marker line)
+            theRule = ".condensed-pile {";
+            theRule += "height: ";
+            // total height = source + target + (20px extra space)
+            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // Special Text color
@@ -200,7 +229,7 @@ define(function (require) {
                 // This _should_ be 117px, but we've come across an instance where the scroller is pushed down
                 // by the status bar
                 scrollTop = $(".toolbar").height() + $(".toolbar").offset().top + 3;
-                theRule = ".scroller-tb { top: " + scrollTop + "px; }";
+                theRule = ".scroller-notb { top: " + scrollTop + "px; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
@@ -222,7 +251,9 @@ define(function (require) {
             template: Handlebars.compile(tplSourcePhraseList),
 
             initialize: function () {
-//                console.log("SourcePhraseListView::initialize");
+                // place two calls to render:
+                // - one deferred, when we get all the source phrases for the chapter back from the DB 
+                // - one right now to say "please wait..."
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
             },
@@ -233,11 +264,14 @@ define(function (require) {
                 this.$('#pile-' + SourcePhrase.get('spid')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
+                var top = 0;
                 if (this.collection.length === 0) {
+                    // nothing to display yet -- show the "please wait" view
                     template = Handlebars.compile(tplLoadingPleaseWait);
                     this.$el.html(template());
                     $("#OK").hide();
                 } else {
+                    // we have info to display -- do it now
                     // add the collection
     //                console.log("SourcePhraseListView::render");
                     template = Handlebars.compile(tplSourcePhraseList);
@@ -251,12 +285,15 @@ define(function (require) {
                         isSelecting = true;
                         if ($('#' + project.get('lastAdaptedSPID')).length !== 0) {
                             // everything's okay -- select the last adapted SPID
-//                            $(selectedStart).find('.source').mouseup();
                             selectedStart = $('#' + project.get('lastAdaptedSPID')).get(0);
                             selectedEnd = selectedStart;
                             idxStart = $(selectedStart).index() - 1;
                             idxEnd = idxStart;
-                            $(selectedStart.childNodes[4]).mouseup();
+                            // scroll to it if necessary (which it probably is)
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                            $("#content").scrollTop(top);
+                            // now select it
+                            $(selectedStart).mouseup();
                         } else {
                             // for some reason the last adapted SPID has gotten out of sync --
                             // select the first block instead
@@ -266,7 +303,7 @@ define(function (require) {
                             idxEnd = idxStart;
                             if (selectedStart !== null) {
 //                                $(selectedStart).find('.source').mouseup();
-                                $(selectedStart.childNodes[4]).mouseup();
+                                $(selectedStart).mouseup();
                             }
                         }
                     } else {
@@ -277,8 +314,7 @@ define(function (require) {
                         idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
                         idxEnd = idxStart;
                         if (selectedStart !== null) {
-//                            $(selectedStart).find('.source').mouseup();
-                            $(selectedStart.childNodes[4]).mouseup();
+                            $(selectedStart).mouseup();
                         }
                     }
                 }
@@ -429,13 +465,20 @@ define(function (require) {
                 }
                 return result;
             },
-            // Helper method to move the editing cursor forwards or backwards one pile.
-            // this also calls blur(), which saves any changes.
+            // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
+            // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
+            // - next source phrase has exactly 1 possible translation in the KB -> auto-insert and continue moving
+            // - next source phrase is already translataed (i.e., has something in the target field) -> skip and continue
+            //   moving
+            // - next source phrase has no possible translation -> suggest the source and stop here
+            // - next source phrase has more than one possible translation -> show a drop-down menu (that also allows
+            //   for a new translation) and stop here
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var model = null;
                 var strID = "";
+                var top = 0;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -491,34 +534,6 @@ define(function (require) {
                         }
                         // if we reached the last pile, check to see if there's another chapter to adapt
                         if (next_edit === null) {
-                            // first, save the sourcephrase
-                            strID = $(selectedStart).attr('id');
-                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                            model = this.collection.findWhere({spid: strID});
-                            if (tmpTargetValue && tmpTargetValue.length > 0) {
-                                // save the new value to the KB
-                                saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                                this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
-                                                this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                                project.get('projectid'));
-                                // update the model with the new target text
-                                model.save({target: tmpTargetValue});
-                                $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
-                                // if the target differs from the source, make it display in green
-                                if (model.get('source') === model.get('target')) {
-                                    // source === target --> remove "differences" from the class so the text is black
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                                    // source + punctuation == target --> remove "differences"
-                                    $(prevIdx.childNodes[4]).removeClass('differences');
-                                } else if (!$(event.currentTarget).hasClass('differences')) {
-                                    // source != target -- add "differences" to the class so the text is green
-                                    $(prevIdx.childNodes[4]).addClass('differences');
-                                }
-                            }
-                            // done saving -- clear out the temp value
-                            tmpTargetValue = "";
-                            isDirty = false;
                             // Check for a chapter after the current one in the current book
                             var nextChapter = 0;
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
@@ -594,12 +609,40 @@ define(function (require) {
                     console.log("next edit: " + next_edit.id);
                     $(next_edit.childNodes[4]).mouseup();
                 } else {
+                    // the user is either at the first or last pile. Select it,
+                    // but don't set focus on the target edit field.
+                    if (MovingDir === -1) {
+                        // select the FIRST pile
+                        selectedStart = $(".pile").first().get(0);
+                        selectedEnd = selectedStart;
+                        idxStart = $(selectedStart).index() - 1;
+                        idxEnd = idxStart;
+                        isSelecting = true;
+                        MovingDir = 0; // don't move
+                        // scroll to it if necessary (which it probably is)
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        $("#content").scrollTop(top);
+                        // now select it
+                        $(selectedStart).mouseup();
+                    } else {
+                        // select the LAST pile
+                        selectedStart = $(".pile").last().get(0);
+                        selectedEnd = selectedStart;
+                        idxStart = $(selectedStart).index() - 1;
+                        idxEnd = idxStart;
+                        isSelecting = true;
+                        MovingDir = 0; // don't move
+                        // scroll to it if necessary (which it probably is)
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        $("#content").scrollTop(top);
+                        // now select it
+                        $(selectedStart).mouseup();
+                    }
                     // no next edit (reached the first or last pile) --
-                    // clear out the moving direction so we don't keep going
-                    MovingDir = 0;
                 }
             },
-            // Helper method to clear out the selection and disable the toolbar buttons
+            // Helper method to clear out the selection and disable the toolbar buttons 
+            // (Move to S1 in our state machine)
             clearSelection: function () {
                 selectedStart = selectedEnd = null;
                 idxStart = idxEnd = null;
@@ -612,6 +655,9 @@ define(function (require) {
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
+                $("#mnuPlaceholder").prop('disabled', true);
+                $("#mnuRetranslation").prop('disabled', true);
+                $("#mnuPhrase").prop('disabled', true);
             },
 
             ////
@@ -631,7 +677,6 @@ define(function (require) {
                 "touchstart .target": "selectingAdaptation",
                 "mouseup .target": "selectedAdaptation",
                 "touchend .target": "selectedAdaptation",
-                "focus .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
                 "typeahead:select .typeahead": "selectKB",
                 "input .target": "checkForAutoMerge",
@@ -797,12 +842,16 @@ define(function (require) {
                         // the button below if they've selected an existing retranslation or phrase
                         $("#Phrase").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
+                        $("#mnuRetranslation").prop('disabled', true);
+                        $("#mnuPhrase").prop('disabled', true);
                         // set the class to ui-selected
                         $(selectedStart).addClass("ui-selected");
                     } else if (idxStart < idxEnd) {
                         // more than one item selected -- can create a placeholder, phrase, retrans
                         $("#Phrase").prop('disabled', false);
                         $("#Retranslation").prop('disabled', false);
+                        $("#mnuRetranslation").prop('disabled', false);
+                        $("#mnuPhrase").prop('disabled', false);
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
                                 $(value).addClass("ui-selected");
@@ -812,6 +861,8 @@ define(function (require) {
                         // more than one item selected -- can create a placeholder, phrase, retrans
                         $("#Phrase").prop('disabled', false);
                         $("#Retranslation").prop('disabled', false);
+                        $("#mnuRetranslation").prop('disabled', false);
+                        $("#mnuPhrase").prop('disabled', false);
                         $(selectedStart.parentElement).children(".pile").each(function (index, value) {
                             if (index >= idxEnd && index <= idxStart) {
                                 $(value).addClass("ui-selected");
@@ -835,12 +886,16 @@ define(function (require) {
                         $("#Placeholder").prop('title', i18next.t("view.dscDelPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
+                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
+                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
                     } else {
                         // not a placeholder -- can add a new one
                         isPlaceholder = false;
                         $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
                         $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
                         $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
+                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
+                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
                     }
                     // did the user select a phrase?
                     if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
@@ -849,6 +904,8 @@ define(function (require) {
                         $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
+                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
+                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
                         $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                     } else {
                         // not a placeholder -- can add a new one
@@ -856,6 +913,8 @@ define(function (require) {
                         $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
                         $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
                         $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
+                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
                     }
                     // did the user select a retranslation?
                     if (spid.indexOf("ret") !== -1) {
@@ -864,6 +923,8 @@ define(function (require) {
                         $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
+                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
+                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                     } else {
                         // not a retranslation -- can add a new one
@@ -871,8 +932,11 @@ define(function (require) {
                         $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
                         $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
+                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     }
                     $("#Placeholder").prop('disabled', false);
+                    $("#mnuPlaceholder").prop('disabled', false);
                 }
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
@@ -953,6 +1017,8 @@ define(function (require) {
             selectingAdaptation: function (event) {
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
+                // do NOT propogate this up to the Pile - the user is clicking in the edit field
+                event.stopPropagation();
             },
             // mouseUp / touchEnd event handler for the target field
             selectedAdaptation: function (event) {
@@ -969,112 +1035,30 @@ define(function (require) {
                     selection = null,
                     selectedObj = null,
                     prevObj = null,
-                    nextOrPrevObj = false,
                     options = [],
                     foundInKB = false;
-                console.log("selectedAdaptation entry / event type:" + event.type + ", isDirty: " + isDirty);
+                console.log("selectedAdaptation entry / event type:" + event.type);
+                // iOS nonsense
+                $(".main_title").css({position: "absolute"});
+                $(".scroller-notb").css({position: "absolute"});
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").addClass("hide");
+                    $(".pile").addClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+                
                 if (isSelecting === true) {
                     // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
+                    console.log("isSelecting=TRUE. Exiting selectedAdaptation so pile can pick the event up.");
                     return;
                 }
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
-                
-                // ** focus handler block **
-                // If the user clicks on the Prev / Next buttons in the toolbar -- or clicks the TAB button or the
-                // Prev/Next buttons on the soft keyboard for iOS -- the TAB event does not get fired and we don't know
-                // to save the target value to the model and KB in the unselectedAdaptation() handler.
-                // To handle these Prev/Next cases, we need to do some extra processing for the focus event.
-                if (isDirty === true || (event.type === "focus") || (event.type === "focusin")) {
-                    var goingForward = false;
-                    // focus event
-                    // Check to see if the previous selction is off by 1 element in the tab order. If it is,
-                    // it's likely that the user pressed TAB or the Prev/Next buttons -- meaning we should save
-                    //the previous field's edits (if any)
-                    prevIdx = selectedStart;
-                    // set the current adaptation cursor
-                    if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
-                        selectedStart = event.currentTarget.parentElement; // pile
-                        if (prevIdx === null) {
-                            prevIdx = selectedStart;
-                        }
-                    }
-                    prevID = $(prevIdx).attr('id');
-                    prevID = prevID.substr(prevID.indexOf("-") + 1); // remove "pile-"
-                    prevObj = this.collection.findWhere({spid: prevID});
-                    strID = $(selectedStart).attr('id');
-                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                    selectedObj = this.collection.findWhere({spid: strID});
-                    if (this.collection.at(this.collection.indexOf(selectedObj) + 1) === prevObj) {
-                        nextOrPrevObj = true; // next in our collection (ordered by norder)
-                        goingForward = false;
-                    } else if (this.collection.at(this.collection.indexOf(selectedObj) - 1) === prevObj) {
-                        nextOrPrevObj = true; // previous in our collection (ordered by norder)
-                        goingForward = true;
-                    }
-                    console.log("prevIdx: " + prevID + ", selectedStart: " + strID);
-                    if (isDirty === true || nextOrPrevObj === true) {
-                        model = prevObj;
-                        console.log("selectedAdaptation: Prev/Next likely hit. Saving value \"" + tmpTargetValue + "\" for model: " + model.get('source'));
-                        // either TAB or Shift+TAB -- save the previous field if it needs it
-                        // (note: model still refers to the previous selection sourcephrase)
-                        if (tmpTargetValue && tmpTargetValue.length > 0) {
-                            // save the new value to the KB
-                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                            this.stripPunctuation(this.autoRemoveCaps(tmpTargetValue, false)),
-                                            this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                            project.get('projectid'));
-                            // update the model with the new target text
-                            model.save({target: tmpTargetValue});
-                            $(prevIdx.childNodes[4]).html(this.copyPunctuation(model, tmpTargetValue));
-                            // if the target differs from the source, make it display in green
-                            if (model.get('source') === model.get('target')) {
-                                // source === target --> remove "differences" from the class so the text is black
-                                $(prevIdx.childNodes[4]).removeClass('differences');
-                            } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                                // source + punctuation == target --> remove "differences"
-                                $(prevIdx.childNodes[4]).removeClass('differences');
-                            } else if (!$(event.currentTarget).hasClass('differences')) {
-                                // source != target -- add "differences" to the class so the text is green
-                                $(prevIdx.childNodes[4]).addClass('differences');
-                            }
-                        }
-                        // done saving -- clear out the temp value
-                        tmpTargetValue = "";
-                        isDirty = false;
-                        // If this is a filtered field, keep moving
-                        if ($(event.currentTarget.parentElement.parentElement).hasClass("filter")) {
-                            // this is a filter strip -- keep going
-                            this.moveCursor(event, goingForward);
-                            return; // no more handling here
-                        }
-                    } else {
-                        // we've already handled this in the touchend event -- just return
-                        console.log("selectedAdaptation: previous focus too far away to be prev/next. Ignoring...");
-                        event.stopPropagation();
-                        event.preventDefault();
-                        return;
-                    }
-                }
 
-                if (isSelecting === true) {
-                    // pretend the user wanted the last selected item to be the end of the selection
-                    $(selectedEnd).find('.source').mouseup();
-                    return;
-                }
-
-                // Are we setting the focus on the first phrase after a selection?
-//                if (isSelectingFirstPhrase === true) {
-//                    // yes -- keep the selection, but clear out the flag
-//                    console.log("Selecting the first phrase -- gets a pass");
-//                    isSelectingFirstPhrase = false;
-//                } else {
-                    // no -- clear out any previous selection
-                console.log("clearing selection");
-                this.clearSelection();
-//                }
-
+                // clear out any old selection
+                $("div").removeClass("ui-selecting ui-selected");
                 // set the current adaptation cursor
                 if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
                     selectedStart = event.currentTarget.parentElement; // pile
@@ -1090,6 +1074,7 @@ define(function (require) {
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
+                    isDirty = true;
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
@@ -1106,15 +1091,13 @@ define(function (require) {
                             // mark it purple
                             $(event.currentTarget).addClass('fromkb');
                             clearKBInput = false;
-                            // mark the field as changed (so the KB gets incremented)
-                            isDirty = true;
                             // jump to the next field
                             this.moveCursor(event, true);
                             foundInKB = true;
                         } else {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
-                            isDirty = false; // no change yet
+                            isDirty = false; // no change yet (user needs to select something first)
                             options.length = 0; // clear out any old cruft
 //                            // select the first result (most frequently used)
 //                            targetText = this.autoAddCaps(model, refstrings[0].target);
@@ -1150,16 +1133,12 @@ define(function (require) {
                                 selection.removeAllRanges();
                                 selection.addRange(range);
                             }
-                            // if the user didn't click the next/prev field, it's possible that we went offscreen
-                            // while looking for the next available slot to adapt. Make sure the edit field is in
-                            // view by scrolling the UI
-                            if (nextOrPrevObj === true) {
-                                // scroll the edit field into view
-                                top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-    //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                                $("#content").scrollTop(top);
-                            }
-//                            $(event.currentTarget).typeahead('open');
+                            // it's possible that we went offscreen while looking for the next available slot to adapt.
+                            // Make sure the edit field is in view by scrolling the UI
+                            // scroll the edit field into view
+                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+                            $("#content").scrollTop(top);
                         }
                     } else {
                         // nothing in the KB
@@ -1171,7 +1150,7 @@ define(function (require) {
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         // no change yet -- this is just a suggestion
-                        isDirty = false;
+                        isDirty = true;
                         // select any text in the edit field
                         if (document.body.createTextRange) {
                             range = document.body.createTextRange();
@@ -1184,21 +1163,17 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // if the user didn't click the next/prev field, it's possible that we went offscreen
-                        // while looking for the next available slot to adapt. Make sure the edit field is in
-                        // view by scrolling the UI
-                        if (nextOrPrevObj === true) {
-                            // scroll the edit field into view
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        // it's possible that we went offscreen while looking for the next available slot to adapt.
+                        // Make sure the edit field is in view by scrolling the UI
+                        // scroll the edit field into view
+                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
 //                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                            $("#content").scrollTop(top);
-                        }
-//                        $(event.currentTarget)[0].focus();
+                        $("#content").scrollTop(top);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
                     // empty field, or did we just select this one?
-                    console.log("Target NOT empty; MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
+                    console.log("Target NOT empty (text=" + $(event.currentTarget).text().trim() + "); MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
                     if (MovingDir !== 0 && isDrafting === true) {
                         // looking for the next empty field --
                         // clear the dirty bit and keep going
@@ -1223,18 +1198,9 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
-                        // if the user didn't click the next/prev field, it's possible that we went offscreen
-                        // while looking for the next available slot to adapt. Make sure the edit field is in
-                        // view by scrolling the UI
-                        if (nextOrPrevObj === true) {
-                            // scroll the edit field into view
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                            window.scrollTo(0, top);
-                        }
-//                        $(event.currentTarget)[0].focus();
                     }
                 }
+                console.log("selectedAdaptation exit / isDirty = " + isDirty);
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
@@ -1245,6 +1211,7 @@ define(function (require) {
                 console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards
                     strID = $(event.currentTarget.parentElement).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
@@ -1298,6 +1265,7 @@ define(function (require) {
                 console.log("selectKB - selected: " + suggestion);
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
                 isSelectingKB = false; // we've now chosen something - OK to blur
+                isDirty = true;
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
@@ -1312,6 +1280,10 @@ define(function (require) {
                     $("#Phrase").click();
                 }
             },
+            // User clicked on the Undo button.
+            onUndo: function (event) {
+                console.log("onUndo: entry");
+            },
             // User has moved out of the current adaptation input field (blur on target field)
             // this can be called either programatically (tab / shift+tab keydown response) or
             // by a selection of something else on the page.
@@ -1324,11 +1296,25 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-                console.log("unselectedAdaptation");
+                console.log("unselectedAdaptation: isDirty=" + isDirty);
                 // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
+                    console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
                     return;
                 }
+
+                // iOS nonsense
+//                $(".main_title").removeClass("fixfixed");
+//                $(".scroller-notb").removeClass("fixfixed");
+                $(".main_title").css({position: "fixed"});
+                $(".scroller-notb").css({position: "fixed"});
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
                     $(".target").removeClass("fromkb");
@@ -1362,33 +1348,6 @@ define(function (require) {
                              project.get('projectid'));
                     // add any punctuation back to the target field
                     $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
-                    // clear out the temp IOS value, since we've already saved this value
-                    tmpTargetValue = "";
-                } else {
-                    console.log("Dirty bit NOT set. Skipping save, but saving value \"" + trimmedValue + "\" as a temp, just in case.");
-                    tmpTargetValue = trimmedValue;
-                    // dirty bit is false -- check to see if the target matches what's in the edit field
-                    if (trimmedValue) {
-                        // User clicked away without changing anything -- this is a cancel operation
-                        // Is there anything in the old target field?
-                        if (model && model.get('target').length === 0) {
-                            // nothing in the old target field -- clear out the edit field
-                            $(event.currentTarget).html("");
-                            trimmedValue = "";
-                        } else {
-                            // something in the old target field -- just clear the local copy so the
-                            // model doesn't update
-                            trimmedValue = "";
-                            // add any punctuation back to the target field
-                            if (model) {
-                                $(event.currentTarget).html(this.copyPunctuation(model, model.get('target')));
-                            }
-                        }
-                    }
-                }
-                // Update the model if needed
-                if (trimmedValue && trimmedValue.length > 0) {
-    //                console.log(model);
                     // update the model with the new target text
                     model.save({target: trimmedValue});
                     // if the target differs from the source, make it display in green
@@ -1463,6 +1422,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
                     selectedStart = next_edit;
                     $(next_edit).find('.source').mouseup();
@@ -1483,6 +1445,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             },
             // User clicked on the Phrase button
@@ -1586,6 +1551,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $('#pile-phr-' + newID);
                     selectedStart = next_edit;
@@ -1624,6 +1592,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             },
             // User clicked on the Retranslation button
@@ -1701,6 +1672,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Phrase
                     next_edit = $("#pile-ret-" + newID);
                     if (next_edit !== null) {
@@ -1740,6 +1714,9 @@ define(function (require) {
                     $("#Placeholder").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
+                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
                 }
             }
         }),
@@ -1799,14 +1776,32 @@ define(function (require) {
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
+                "click #Undo": "UndoClick",
+                "click #More": "toggleMoreMenu",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
+                "click #mnuPlaceholder": "togglePlaceholder",
+                "click #mnuPhrase": "togglePhrase",
+                "click #mnuRetranslation": "toggleRetranslation",
                 "click #help": "onHelp"
+            },
+            UndoClick: function (event) {
+                // dismiss the More (...) menu if visible
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // just pass this along to the list view
+                this.listView.onUndo(event);
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
                 console.log("goPrevPile: selectedStart = " + selectedStart);
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 if (selectedStart !== null) {
                     isDirty = true;
                     MovingDir = -1; // backwards
@@ -1816,24 +1811,48 @@ define(function (require) {
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
                 console.log("goNextPile: selectedStart = " + selectedStart);
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 if (selectedStart !== null) {
                     isDirty = true;
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
             },
+            // More (...) menu toggle
+            toggleMoreMenu: function (event) {
+                $("#MoreActionsMenu").toggleClass("show");
+            },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.togglePlaceholder(event);
             },
             togglePhrase: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.togglePhrase(event);
             },
             toggleRetranslation: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 this.listView.toggleRetranslation(event);
             },
             // User clicked away from
             unselectPiles: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 // only do this if we're in a blank area of the screen
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
@@ -1842,12 +1861,19 @@ define(function (require) {
                         $("#Placeholder").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
+                        $("#mnuPlaceholder").prop('disabled', true);
+                        $("#mnuRetranslation").prop('disabled', true);
+                        $("#mnuPhrase").prop('disabled', true);
                     }
                 }
             },
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
                 var step1 = [
@@ -1868,6 +1894,12 @@ define(function (require) {
                         placement: "bottom"
                     },
                     {
+                        title: i18next.t('view.hlpttlUndo'),
+                        content: i18next.t('view.hlpdscUndo'),
+                        target: "Undo",
+                        placement: "bottom"
+                    },
+                    {
                         title: i18next.t('view.hlpttlSelectMultiple'),
                         content: i18next.t('view.hlpdscSelectMultiple'),
                         target: firstPileID,
@@ -1875,7 +1907,17 @@ define(function (require) {
                         onNext: function () {
                             $("#" + firstPileID).removeClass("ui-selected");
                         }
-                    },
+                    }
+                ];
+                var stepMoreBtn = [
+                    {
+                        title: i18next.t('view.hlpttlMore'),
+                        content: i18next.t('view.hlpdscMore'),
+                        target: "More",
+                        placement: "bottom"
+                    }
+                ];
+                var stepToggleBtns = [
                     {
                         title: i18next.t('view.hlpttlPlaceholder'),
                         content: i18next.t('view.hlpdscPlaceholder'),
@@ -1896,15 +1938,13 @@ define(function (require) {
                         placement: "bottom"
                     }
                 ];
-                var step2 = [
+                var stepLastBtns = [
                     {
                         title: i18next.t('view.hlpttlPrevNext'),
                         content: i18next.t('view.hlpdscPrevNext'),
                         target: "PrevSP",
                         placement: "bottom"
-                    }
-                ];
-                var step3 = [
+                    },
                     {
                         title: i18next.t('view.hlpttlBack'),
                         content: i18next.t('view.hlpdscBack'),
@@ -1913,11 +1953,12 @@ define(function (require) {
                     }
                 ];
                 var theSteps = [];
-                if (typeof device !== 'undefined' && device.platform === "iOS") {
-                    // forward/back buttons are on the software keyboard
-                    theSteps = step1.concat(step3);
+                if (width < 480) {
+                    // More (...) button instead of toggles
+                    theSteps = step1.concat(stepMoreBtn, stepLastBtns);
                 } else {
-                    theSteps = step1.concat(step2, step3);
+                    // Toggle buttons
+                    theSteps = step1.concat(stepToggleBtns, stepLastBtns);
                 }
                 var tour = {
                     id: "hello-hopscotch",
@@ -1927,7 +1968,7 @@ define(function (require) {
                         doneBtn: i18next.t("view.lblFinish"),
                         skipBtn: i18next.t("view.lblNext"),
                         closeTooltip: i18next.t("view.lblNext"),
-                        stepNums: ["1", "2", "3", "4", "5", "6"]
+                        stepNums: ["1", "2", "3", "4", "5", "6", "7"]
                     },
                     steps: theSteps,
                     onClose: function () {

@@ -1,3 +1,7 @@
+/* iOS-specific styles */
+/* Most of these are due to the top status line that overlaps HTML text. Apple
+*  recommends padding the top with the same color (i.e., the padding-top on the main_title style below);
+*  the other scroller styles are also bumped down to accomodate for this extra space. */
 .main_title {
     padding-top: 20px;
 }
@@ -8,12 +12,5 @@
     top: 72px;
 }
 .scroller-tb {
-    top: 132px;
-}
-/* iOS -- hide the prev/next toolbar buttons (they are on the on-screen keyboard) */
-#NextSP {
-    display: none;
-}
-#PrevSP {
-    display: none;
+    top: 72px;
 }

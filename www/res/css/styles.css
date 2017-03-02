@@ -144,10 +144,8 @@ input[type="file"] {
     overflow: hidden;
     text-overflow: ellipsis;
     width:100%;
-    /*
-    background-color: inherit;
-    color: #1e6ee2;
-*/
+    position: fixed;
+    z-index: 999;
 }
 .small-pic {
     float: left;
@@ -244,32 +242,42 @@ header h3 {
     margin: 4px 0;
     text-align: center;
 }
-
+/* main page scrolling content*/
 .scroller {
     bottom: 0;
     left: 0;
     right: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    position: absolute;
+    position: fixed;
     top: 70px;
 }
-.scroller-tb {
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    position: absolute;
-    top: 117px;
-}
+/* most pages - top title bar, no toolbar */
 .scroller-notb {
     bottom: 0;
     left: 0;
-    right: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    position: absolute;
+    right: 0;
+    position: fixed;
     top: 57px;
+}
+/* wizard page scrolling content - leave room for ok / cancel / progress bar */
+.scroller-bottom-tb {
+    bottom: 57px;
+    left: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    right: 0;
+    position: fixed;
+    top: 65px;
+}
+.bottom-tb {
+    position: fixed;
+    padding-bottom: 6px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 .hscroller {
     height: 200px;
@@ -281,6 +289,11 @@ header h3 {
     right: 10px;
     top: 80px;
     white-space: nowrap;
+}
+.fixfixed .scroller-tb,
+.fixfixed .dropdown,
+.fixfixed .main_title {
+    position:absolute;
 }
 .control-row {
     padding-bottom: 3px;
@@ -304,6 +317,7 @@ header h3 {
     width: 95%;
 }
 
+/*
 .toolbar {
     box-shadow: inset 0 -1px #9daca9, 0 1px #d6dcdb;
     vertical-align: top;
@@ -324,6 +338,7 @@ header h3 {
 .toolbar-button {
     width: 100%;
 }
+*/
 
 .topcoat-icon--back {
     background: url("images/back_light.svg") no-repeat;
@@ -418,7 +433,32 @@ ul {
     top: 64px;
 }
 
+.tb-action-toggles {
+    display: inline-block;
+}
+
 /* AI mobile icons */
+.topcoat-icon--cancel {
+    background: url("images/cancel.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--undo {
+    background: url("images/undo.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--more {
+    background: url("images/more.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--placeholder-new {
     background: url("images/placeholder-new.svg") no-repeat;
     -webkit-background-size: cover;
@@ -483,18 +523,21 @@ ul {
     padding: 0;
 }
 .topcoat-icon--prev {
-    background: url("images/back.svg") no-repeat;
+    background: url("images/arrow_left.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     padding: 0;
 }
 .topcoat-icon--next {
-    background: url("images/next.svg") no-repeat;
+    background: url("images/arrow_right.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     padding: 0;
+}
+.left {
+    float: left;
 }
 .right {
     float:right;
@@ -569,17 +612,10 @@ ul {
 .side-nav__list__item {
     padding:0;
 }
-/*
 .topcoat-icon-button--quiet {
-    color: #454545;
-    display:block;
-    font: 16px "Source Sans", helvetica, arial, sans-serif;
-    height:100%;
-    padding: 1.25rem;
-    text-align: left;
-    text-decoration: none;
-    width:100%;
-}*/
+    color: white;
+    text-shadow: none;
+}
 
 .combo {
     border-bottom: none;
@@ -633,14 +669,16 @@ select.docNav {
 .strip {
     display: block; 
 }
+/* standard height for a pile / strip-header / chapter-number / filter:
+*  gets overridden by a "real" computed height in addStyleRules (AdaptViews) */
+.block-height {
+    height: 80px;
+    line-height: 80px; /* needed for vertical alignment of chapter / verse numbers */
+}
 .strip-header {
     color: black;
     float: left;
-    /* edb 6/10/14 Firefox and Chrome -- 1px is too much; Safari is just right, just comment out for now */
-    /*padding-bottom: 1px; /* total height needs to == that of .pile */
-    height: 3.8em;
     padding: 0 0.3em;
-    padding-top: 1.2em;
     text-align: center;
 }
 .topcoat-list__item {
@@ -648,11 +686,12 @@ select.docNav {
 }
 .chapter-number {
     font: 26px "Source Sans", helvetica, arial, sans-serif;
-    height: 2.3em;
-    padding-bottom: 3px;
-    padding-top: .7em;
+    /* vertical placement is centered by default -- no change needed */
 }
 .verse-number {
+    /* vertical placement needs to be lined up with the source line */
+    line-height: normal;
+    padding-top: 22px;
 }
 .ui-selecting {
     background-color: rgb(116, 183, 241);
@@ -665,7 +704,6 @@ select.docNav {
 .pile {
     color: black;
     float: left;
-    height: 5em;
     padding: 0 0.3em;
 }
 .source, .marker {
@@ -809,7 +847,6 @@ div.strip.specialtext div.source {
     width: 14px;
     text-indent: 100%;
     float: left;
-    
     padding: 2px;
     line-height: 3rem;
     color: #454545;
@@ -1062,6 +1099,12 @@ span.sprite{
   width: 100%;
 }
 
+.hide {
+    display: none;
+}
+
+
+
 /*
 typeahead styles
 */
@@ -1139,287 +1182,182 @@ background-color: #fff;
   margin: 0;
 }
 
+.dropdown {
+    display: none;
+    position: fixed;
+    right: 103px;
+    z-index: 2147483647; /* on top */
+	background: #1F7BA5;
+	border: 3px solid #fff;
+    -webkit-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+}
+.dropdown:after, .dropdown:before {
+	bottom: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.dropdown:after {
+	border-color: rgba(31, 123, 165, 0);
+	border-bottom-color: #1F7BA5;
+	border-width: 10px;
+	margin-left: -10px;
+}
+.dropdown:before {
+	border-color: rgba(255, 255, 255, 0);
+	border-bottom-color: #ffffff;
+	border-width: 13px;
+	margin-left: -13px;
+}
+
+.show {
+    display: block;
+}
+
 /***********
 * media queries - for specific device sizes / screen resolutions
 ***********/
-@media screen and (device-height: 568px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
-    .source, .target {
-        max-width: 100%;
-/*        max-width: device-width;*/
-    }
-}
-@media only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : landscape) {
-    .source, .target {
-        max-width: 100%;
-/*        max-width: device-width;*/
-    }
-}
 
-@media screen and (max-device-width: 400px) and (orientation: landscape) {
-    .source, .target {
-        max-width: 100%;
-/*        max-width: device-width;*/
-    }
-    #content {
-        right: 0;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-    }
-    #content.open {
-        right: 250px;
-    }
-    #sidebar {
-        display: none;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-        width: 249px;
-    }
-    #sidebar:before{
-        background: #9daca9;
-        bottom: 0;
-        content: '';
-        left: -1px;
-        position: absolute;
-        top: 0;
-        width: 1px;
-    }
-    #sidebar.open {
-        bottom: 0;
-        display:block;
-        position:absolute;
-        right: 0;
-        top:4.377rem;
-    }
-}
-@media screen and (device-width: 768px) and (orientation: landscape) {
-  /* rules for iPad in landscape orientation */
-    .source, .target {
-        max-width: 740px;
-    }
-    /* we have room to display the label - width should be 250px */
-    .side-nav__list__item__label {
-        display: inline;
-        padding-left: 8px;
-    }
-    #content {
-        right: 0;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-    }
-    #content.open {
-        right: 250px;
-    }
-    #sidebar {
-        display: none;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-        width: 249px;
-    }
-    #sidebar:before{
-        background: #9daca9;
-        bottom: 0;
-        content: '';
-        left: -1px;
-        position: absolute;
-        top: 0;
-        width: 1px;
-    }
-    #sidebar.open {
-        bottom: 0;
-        display:block;
-        position:absolute;
-        right: 0;
-        top:4.377rem;
-    }
-}
-@media screen and (min-device-width: 240px) and (max-device-width: 319px) {
-  /* Android ldpi rules here */
+/* Smallest screen sizes
+* display: more button
+* hide: document title, toggle buttons, all button labels, help button
+* example devices: Android ldpi phones
+*/
+@media screen and (min-width: 240px) and (max-width: 319px) {
     .source, .target {
         max-width: 240px;
     }
+    /* hidden items */
     .side-nav__list__item__label {
-        /* don't display the label */
         display: none;
     }
-    #content {
-        right: 0;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-    }
-    #content.open {
-        right: 80px;
-    }
-    #sidebar {
+    #DocTitle {
         display: none;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-        width: 79px;
     }
-    #sidebar:before{
-        background: #9daca9;
-        bottom: 0;
-        content: '';
-        left: -1px;
-        position: absolute;
-        top: 0;
-        width: 1px;
+    .tb-action-toggles {
+        display: none;
     }
-    #sidebar.open {
-        bottom: 0;
-        display:block;
-        position:absolute;
-        right: 0;
-        top:4.377rem;
+    #HelpBtn {
+        display: none;
     }
 }
-@media screen and (min-device-width: 320px) {
-  /* iPhone, Android mdpi rules here */
+
+/* Small screen sizes (like smallest, but wider areas for source/target fields)
+* display: more button
+* hide: doc title, toggle buttons, all button labels
+* example devices: iPhone 4, Android mdpi phones
+*/
+@media screen and (min-width: 320px) and (max-width : 479px) {
     .source, .target {
         max-width: 320px;
     }
+    /* hidden items */
+    #DocTitle {
+        display: none;
+    }
+    .tb-action-toggles {
+        display: none;
+    }
     .side-nav__list__item__label {
-        /* don't display the label */
         display: none;
     }
-    #content {
-        right: 0;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-    }
-    #content.open {
-        right: 80px;
-    }
-    #sidebar {
-        display: none;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-        width: 79px;
-    }
-    #sidebar:before{
-        background: #9daca9;
-        bottom: 0;
-        content: '';
-        left: -1px;
-        position: absolute;
-        top: 0;
-        width: 1px;
-    }
-    #sidebar.open {
-        bottom: 0;
-        display:block;
-        position:absolute;
-        right: 0;
-        top:4.377rem;
+    /* displayed items */
+    #HelpBtn {
+        display: inline-block;
     }
 }
-@media screen and (min-width: 700px) {
+
+/* Medium screen sizes
+* display: more button, toggle buttons
+* hide: doc title, all button labels
+* example devices: iPhone 5, Android mdpi phones
+*/
+@media screen and (min-width: 480px) and (max-width : 639px) {
+    .source, .target {
+        max-width: 480px;
+    }
+    /* hidden items */
+    #More {
+        display: none;
+    }
+    #DocTitle {
+        display: none;
+    }
+    .side-nav__list__item__label {
+        display: none;
+    }
+    /* displayed items */
+    .tb-action-toggles {
+        display: inline-block;
+    }
+    #HelpBtn {
+        display: inline-block;
+    }
+}
+
+/* Larger screen sizes
+* display: doc title, toggle buttons
+* hide: more button, all button labels
+* example devices: ipad, browser, Android tablets
+*/
+@media screen and (min-width: 640px) and (max-width : 999px) {
   /* iPhone, Android mdpi rules here */
     .source, .target {
         max-width: 480px;
     }
-    .side-nav__list__item__label {
-        /* we have room to display the label */
-        display: inline;
-        padding-left: 8px;
-    }
-    #content {
-        right: 0;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-    }
-    #content.open {
-        right: 250px;
-    }
-    #sidebar {
+    /* hidden items */
+    #More {
         display: none;
-        -moz-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        -o-transform: translate3d(0, 0, 0);
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-        -moz-transition: all 0.2s ease-out;
-        -o-transition: all 0.2s ease-out;
-        -webkit-transition: all 0.2s ease-out;
-        transition: all 0.2s ease-out;
-        width: 249px;
     }
-    #sidebar:before{
-        background: #9daca9;
-        bottom: 0;
-        content: '';
-        left: -1px;
-        position: absolute;
-        top: 0;
-        width: 1px;
+    .side-nav__list__item__label {
+        display: none;
     }
-    #sidebar.open {
-        bottom: 0;
-        display:block;
-        position:absolute;
-        right: 0;
-        top:4.377rem;
+    #DocTitle {
+        display: none;
+    }
+    /* displayed items */
+    .tb-action-toggles {
+        display: inline-block;
+    }
+    #HelpBtn {
+        display: inline-block;
+    }
+}
+
+/* Largest screen sizes
+* display: doc title, toggle buttons, all button labels
+* hide: more button
+* example devices: browser, ipad (landscape)
+*/
+@media screen and (min-width: 1000px) {
+  /* larger screen (browser?) */
+    .source, .target {
+        max-width: 480px;
+    }
+    /* shown items */
+    .tb-action-toggles {
+        display: inline-block;
+        padding-right: 8px;
+    }
+    #HelpBtn {
+        display: inline-block;
+    }
+    /* hidden items */
+    #DocTitle {
+        display: none;
+    }
+    #More {
+        display: none;
+    }
+    /* display the button labels */
+    .side-nav__list__item__label {
+        display: inline;
     }
 }

@@ -7,16 +7,16 @@
 {{#if this.markers}}<div class="strip{{classes}}" id="strip-{{this.id}}">
 {{! start each strip with a header (e.g. verse or chapter info) }}
 {{#ifCond this.markers 'contains' 'c '}}
-    <div id="header-{{this.id}}" class="strip-header chapter-number">{{chapter}}</div>
+    <div id="header-{{this.id}}" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div>
 {{else}}
 {{#ifCond this.markers 'contains' 'v'}}
-    <div id="header-{{this.id}}" class="strip-header verse-number">{{verse}}</div>
+    <div id="header-{{this.id}}" class="strip-header block-height"><div class="verse-number">{{verse}}</div></div>
 {{else}}
-    <div id="header-{{this.id}}" class="strip-header" style="display:none;"></div>
+    <div id="header-{{this.id}}" class="strip-header block-height" style="display:none;"></div>
 {{/ifCond}}
 {{/ifCond}}
 {{/if}}
-<div id="pile-{{this.spid}}" class="pile"></div>
+<div id="pile-{{this.spid}}" class="pile block-height"></div>
 {{! if this is the last sourcephrase, close out the strip div }}
 {{#if @last}}</div>{{/if}}
 {{/.}}

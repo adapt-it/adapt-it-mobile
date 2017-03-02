@@ -90,6 +90,12 @@ define(function (require) {
                   // with the region via `this`
                     slider.slidePage(view.$el);
                 });
+                // keyboard plugin (mobile app only)
+                if (window.sqlitePlugin) {
+                    // a couple iOS-specific settings
+                    Keyboard.shrinkView(true); // resize the view when the keyboard displays
+                    Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
+                }
                 // sqlitePlugin -- available on DeviceReady (mobile app)
                 if (window.sqlitePlugin) {
                     // edb 12/20/16 - issue #204: moved the database out of the apps data directory, as it will
