@@ -669,14 +669,16 @@ select.docNav {
 .strip {
     display: block; 
 }
+/* standard height for a pile / strip-header / chapter-number / filter:
+*  gets overridden by a "real" computed height in addStyleRules (AdaptViews) */
+.block-height {
+    height: 80px;
+    line-height: 80px; /* needed for vertical alignment of chapter / verse numbers */
+}
 .strip-header {
     color: black;
     float: left;
-    /* edb 6/10/14 Firefox and Chrome -- 1px is too much; Safari is just right, just comment out for now */
-    /*padding-bottom: 1px; /* total height needs to == that of .pile */
-    height: 3.8em;
     padding: 0 0.3em;
-    padding-top: 1.2em;
     text-align: center;
 }
 .topcoat-list__item {
@@ -684,9 +686,12 @@ select.docNav {
 }
 .chapter-number {
     font: 26px "Source Sans", helvetica, arial, sans-serif;
-    height: 80px;
-    padding-bottom: 3px;
-    padding-top: .7em;
+    /* vertical placement is centered by default -- no change needed */
+}
+.verse-number {
+    /* vertical placement needs to be lined up with the source line */
+    line-height: normal;
+    padding-top: 22px;
 }
 .ui-selecting {
     background-color: rgb(116, 183, 241);
@@ -699,7 +704,6 @@ select.docNav {
 .pile {
     color: black;
     float: left;
-    height: 80px;
     padding: 0 0.3em;
 }
 .source, .marker {
@@ -843,7 +847,6 @@ div.strip.specialtext div.source {
     width: 14px;
     text-indent: 100%;
     float: left;
-    
     padding: 2px;
     line-height: 3rem;
     color: #454545;

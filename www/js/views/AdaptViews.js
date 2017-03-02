@@ -166,12 +166,13 @@ define(function (require) {
             theRule += "color: " + project.get('NavigationColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            // pile (just the height)
-            theRule = ".pile {";
+            // block-height (standard height for all strip elements - pile, chapter/verse, etc.)
+            theRule = ".block-height {";
             theRule += "height: ";
             // total height = source + target + marker + (20px extra space)
             totalHeight = ((parseInt(project.get('NavigationFontSize'), 10) + parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += totalHeight + "px; ";
+            theRule += Math.floor(totalHeight) + "px; ";
+            theRule += "line-height: " + Math.floor(totalHeight) + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // condensed-pile (w/o the marker line)
@@ -228,7 +229,7 @@ define(function (require) {
                 // This _should_ be 117px, but we've come across an instance where the scroller is pushed down
                 // by the status bar
                 scrollTop = $(".toolbar").height() + $(".toolbar").offset().top + 3;
-                theRule = ".scroller-tb { top: " + scrollTop + "px; }";
+                theRule = ".scroller-notb { top: " + scrollTop + "px; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
@@ -1039,7 +1040,7 @@ define(function (require) {
                 console.log("selectedAdaptation entry / event type:" + event.type);
                 // iOS nonsense
                 $(".main_title").css({position: "absolute"});
-                $(".scroller-tb").css({position: "absolute"});
+                $(".scroller-notb").css({position: "absolute"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1304,9 +1305,9 @@ define(function (require) {
 
                 // iOS nonsense
 //                $(".main_title").removeClass("fixfixed");
-//                $(".scroller-tb").removeClass("fixfixed");
+//                $(".scroller-notb").removeClass("fixfixed");
                 $(".main_title").css({position: "fixed"});
-                $(".scroller-tb").css({position: "fixed"});
+                $(".scroller-notb").css({position: "fixed"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
