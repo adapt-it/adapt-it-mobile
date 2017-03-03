@@ -1296,7 +1296,7 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-                console.log("unselectedAdaptation: isDirty=" + isDirty);
+                console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty);
                 // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
                     console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
@@ -1773,6 +1773,7 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
+                "click .main_title": "unselectPiles",
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
@@ -1794,6 +1795,8 @@ define(function (require) {
                 }
                 // just pass this along to the list view
                 this.listView.onUndo(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
@@ -1807,6 +1810,8 @@ define(function (require) {
                     MovingDir = -1; // backwards
                     this.listView.moveCursor(event, false);
                 }
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
@@ -1820,10 +1825,14 @@ define(function (require) {
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // More (...) menu toggle
             toggleMoreMenu: function (event) {
                 $("#MoreActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
@@ -1832,6 +1841,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePlaceholder(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             togglePhrase: function (event) {
                 // dismiss the More (...) menu if visible
@@ -1839,6 +1850,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePhrase(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             toggleRetranslation: function (event) {
                 // dismiss the More (...) menu if visible
@@ -1846,6 +1859,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.toggleRetranslation(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // User clicked away from
             unselectPiles: function (event) {
@@ -1874,6 +1889,8 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var firstPileID = $(".pile").first().attr("id");
                 var step1 = [

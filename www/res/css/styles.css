@@ -317,29 +317,6 @@ header h3 {
     width: 95%;
 }
 
-/*
-.toolbar {
-    box-shadow: inset 0 -1px #9daca9, 0 1px #d6dcdb;
-    vertical-align: top;
-    padding: 2px;
-}
-
-.toolbar__item {
-    box-sizing: border-box;
-    background-clip: padding-box;
-    position: relative;
-    display: inline-block;
-    line-height: 3.5rem;
-    padding: 0;
-    margin: 0;
-    vertical-align: middle;
-}
-
-.toolbar-button {
-    width: 100%;
-}
-*/
-
 .topcoat-icon--back {
     background: url("images/back_light.svg") no-repeat;
     -webkit-background-size: cover;
@@ -615,6 +592,14 @@ ul {
 .topcoat-icon-button--quiet {
     color: white;
     text-shadow: none;
+}
+.topcoat-icon-button--quiet:hover {
+    background-color: #3ca8dc; 
+}
+.topcoat-icon-button--quiet:focus,
+.topcoat-icon-button--quiet:hover:focus {
+    background-color: #2595cb; 
+    border: 0;
 }
 
 .combo {
@@ -1187,7 +1172,7 @@ background-color: #fff;
     position: fixed;
     right: 103px;
     z-index: 2147483647; /* on top */
-	background: #1F7BA5;
+	background: #2595cb;
 	border: 3px solid #fff;
     -webkit-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
@@ -1206,7 +1191,7 @@ background-color: #fff;
 
 .dropdown:after {
 	border-color: rgba(31, 123, 165, 0);
-	border-bottom-color: #1F7BA5;
+	border-bottom-color: #2595cb;
 	border-width: 10px;
 	margin-left: -10px;
 }
