@@ -1554,6 +1554,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             },
             // User clicked on the Phrase button
@@ -1701,6 +1703,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             },
             // User clicked on the Retranslation button
@@ -1823,6 +1827,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             }
         }),
@@ -1996,10 +2002,12 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
-                // do not bubble this event up to the title bar
+                // scroll to the top of the content, just in case
+                var firstPileID = $(".pile").first().attr("id");
+                var top = $(".pile").first().offsetTop - (($(window).height() - $(".pile").first().outerHeight(true)) / 2);
+                $("#content").scrollTop(top);                // do not bubble this event up to the title bar
                 event.stopPropagation();
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-                var firstPileID = $(".pile").first().attr("id");
                 var step1 = [
                     {
                         title: i18next.t('view.hlpttlAdaptPage'),

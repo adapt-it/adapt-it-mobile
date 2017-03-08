@@ -264,13 +264,13 @@ header h3 {
 }
 /* wizard page scrolling content - leave room for ok / cancel / progress bar */
 .scroller-bottom-tb {
-    bottom: 57px;
+    bottom: 61px;
     left: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     right: 0;
     position: fixed;
-    top: 65px;
+    top: 57px;
 }
 .bottom-tb {
     position: fixed;
