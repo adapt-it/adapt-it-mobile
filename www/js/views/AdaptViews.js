@@ -38,7 +38,6 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
-        SimpleUndo  = require('simple-undo'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
@@ -67,7 +66,13 @@ define(function (require) {
         caseSource = [],
         caseTarget = [],
         lastTapTime = null,
+        origText = "",
+        lastPile = null,
         
+        /////
+        // Static methods
+        /////
+
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -87,14 +92,19 @@ define(function (require) {
                 // delete or decrement the old value
                 if (oldTargetValue.length > 0) {
                     // there was an old value -- try to find and remove the corresponding KB entry
-                    for (i = 0; i < refstrings.length; i++) {
+                    while (found === false && i < refstrings.length) {
                         if (refstrings[i].target === oldTargetValue) {
+                            found = true;
                             if (refstrings[i].n !== '0') {
                                 // more than one refcount -- decrement it
                                 refstrings[i].n--;
                             }
-                            break;
+                            // if we've decremented to 0, remove the refstring
+                            if (refstrings[i].n === '0') {
+                                refstrings.splice(i, 1); // remove the item
+                            }
                         }
+                        i++;
                     }
                 }
                 // add or increment the new value
@@ -142,7 +152,60 @@ define(function (require) {
                 newTU.save();
             }
         },
-
+        // Helper method to remove a target value from the KB. Called from onUndo().
+        removeFromKB = function (sourceValue, targetValue, projectid) {
+            console.log("removeFromKB - sourceValue=" + sourceValue + ", targetValue=" + targetValue + ", projectid=" + projectid);
+            var elts = kblist.filter(function (element) {
+                return (element.attributes.projectid === projectid &&
+                   element.attributes.source === sourceValue);
+            });
+            var tu = null,
+                curDate = new Date(),
+                timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+            if (elts.length > 0) {
+                tu = elts[0];
+            }
+            if (tu) {
+                var i = 0,
+                    found = false,
+                    refstrings = tu.get('refstring');
+                // delete or decrement the target value
+                while (found === false && i < refstrings.length) {
+                    if (refstrings[i].target === targetValue) {
+                        found = true;
+                        if (refstrings[i].n !== '0') {
+                            // more than one refcount -- decrement it
+                            refstrings[i].n--;
+                        }
+                        // if we've decremented to 0, remove the refstring
+                        if (refstrings[i].n === 0) {
+                            refstrings.splice(i, 1); // remove the item
+                        }
+                    }
+                    i++;
+                }
+                if (found === false) {
+                    console.log("unable to find target:" + targetValue);
+                }
+                if (refstrings.length === 0) {
+                    // we removed the only refstring -- 
+                    // this is an empty target unit and should be removed from the KB collection
+                    console.log("Removing empty TU for sourceValue: " + sourceValue);
+                    kblist.remove(tu);
+                } else {
+                    // there's still something in the target unit -- update the object in the KB
+                    console.log("Updating TU for sourceValue: " + sourceValue);
+                    tu.set('refstring', refstrings, {silent: true});
+                    tu.set('timestamp', timestamp, {silent: true});
+                    tu.update();
+                }
+            } else {
+                // ERROR - shouldn't happen (no KB entry at all)
+                console.log("ERROR: unable to find KB entry to remove.");
+            }
+        },
+        
+        // Helper method to add overrides to the CSS stylesheet
         addStyleRules = function (project) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
@@ -1041,6 +1104,8 @@ define(function (require) {
                 // iOS nonsense
                 $(".main_title").css({position: "absolute"});
                 $(".scroller-notb").css({position: "absolute"});
+                $(".dropdown").css({position: "absolute"});
+                $(".chapter").css({position: "absolute"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1074,6 +1139,8 @@ define(function (require) {
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
                     // First, see if there are any available adaptations in the KB
+                    origText = ""; // no text
+                    lastPile = selectedStart;
                     isDirty = true;
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -1183,6 +1250,8 @@ define(function (require) {
                         // We really selected this field -- stay here.
                         // reset the dirty bit because
                         // we haven't made any changes yet
+                        origText = $(event.currentTarget).text().trim();
+                        lastPile = selectedStart;
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         isDirty = false;
@@ -1200,7 +1269,10 @@ define(function (require) {
                         }
                     }
                 }
-                console.log("selectedAdaptation exit / isDirty = " + isDirty);
+                if (isDirty === true) {
+                    $("#Undo").prop('disabled', false);
+                }
+                console.log("selectedAdaptation exit / isDirty = " + isDirty + ", origText = " + origText);
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
@@ -1258,6 +1330,9 @@ define(function (require) {
                     // any other key - set the dirty bit
                     isDirty = true;
                 }
+                if (isDirty === true) {
+                    $("#Undo").prop('disabled', false);
+                }
             },
             // User has picked an option from the typeahead widget (a KB value)
             selectKB: function (event, suggestion) {
@@ -1283,6 +1358,36 @@ define(function (require) {
             // User clicked on the Undo button.
             onUndo: function (event) {
                 console.log("onUndo: entry");
+                // find the model object associated with this edit field
+                var strID = $(lastPile).attr('id');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                var model = this.collection.findWhere({spid: strID});
+                // remove the KB entry
+                removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false)),
+                             project.get('projectid'));
+                // set the edit field back to its previous value
+                $(lastPile).find(".target").html(origText);
+                // update the model with the new target text
+                model.save({target: origText});
+                // if the target differs from the source, make it display in green
+                if (model.get('source') === model.get('target')) {
+                    // source === target --> remove "differences" from the class so the text is black
+                    $(event.currentTarget).removeClass('differences');
+                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                    // source + punctuation == target --> remove "differences"
+                    $(event.currentTarget).removeClass('differences');
+                } else if (!$(event.currentTarget).hasClass('differences')) {
+                    // source != target -- add "differences" to the class so the text is green
+                    $(event.currentTarget).addClass('differences');
+                }
+                // Now disable the Undo button...
+                $("#Undo").prop("disabled", true);
+                // ...and select the pile
+                isSelecting = true;
+                selectedStart = lastPile;
+                selectedEnd = lastPile;
+                $(lastPile).mouseup();
             },
             // User has moved out of the current adaptation input field (blur on target field)
             // this can be called either programatically (tab / shift+tab keydown response) or
@@ -1296,7 +1401,7 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-                console.log("unselectedAdaptation: isDirty=" + isDirty);
+                console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty);
                 // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
                     console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
@@ -1308,12 +1413,16 @@ define(function (require) {
 //                $(".scroller-notb").removeClass("fixfixed");
                 $(".main_title").css({position: "fixed"});
                 $(".scroller-notb").css({position: "fixed"});
+                $(".dropdown").css({position: "fixed"});
+                $(".chapter").css({position: "fixed"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
                     $(".pile").removeClass("condensed-pile");
 //                    $(".pile").css({})
                 }
+                // disable the undo button (no longer editing)
+//                $("#Undo").prop('disabled', true);
 
                 // remove any earlier kb "purple"
                 if (clearKBInput === true) {
@@ -1448,6 +1557,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             },
             // User clicked on the Phrase button
@@ -1595,6 +1706,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             },
             // User clicked on the Retranslation button
@@ -1717,6 +1830,8 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
                 }
             }
         }),
@@ -1773,6 +1888,7 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
+                "click .main_title": "unselectPiles",
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
@@ -1787,6 +1903,7 @@ define(function (require) {
                 "click #help": "onHelp"
             },
             UndoClick: function (event) {
+                console.log("UndoClick: entry");
                 // dismiss the More (...) menu if visible
                 // dismiss the More (...) menu if visible
                 if ($("#MoreActionsMenu").hasClass("show")) {
@@ -1794,6 +1911,8 @@ define(function (require) {
                 }
                 // just pass this along to the list view
                 this.listView.onUndo(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
@@ -1807,6 +1926,8 @@ define(function (require) {
                     MovingDir = -1; // backwards
                     this.listView.moveCursor(event, false);
                 }
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
@@ -1820,10 +1941,14 @@ define(function (require) {
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // More (...) menu toggle
             toggleMoreMenu: function (event) {
                 $("#MoreActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
@@ -1832,6 +1957,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePlaceholder(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             togglePhrase: function (event) {
                 // dismiss the More (...) menu if visible
@@ -1839,6 +1966,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePhrase(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             toggleRetranslation: function (event) {
                 // dismiss the More (...) menu if visible
@@ -1846,6 +1975,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.toggleRetranslation(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             // User clicked away from
             unselectPiles: function (event) {
@@ -1874,8 +2005,12 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
-                var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+                // scroll to the top of the content, just in case
                 var firstPileID = $(".pile").first().attr("id");
+                var top = $(".pile").first().offsetTop - (($(window).height() - $(".pile").first().outerHeight(true)) / 2);
+                $("#content").scrollTop(top);                // do not bubble this event up to the title bar
+                event.stopPropagation();
+                var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var step1 = [
                     {
                         title: i18next.t('view.hlpttlAdaptPage'),
