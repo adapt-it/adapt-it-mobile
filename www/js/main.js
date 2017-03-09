@@ -16,7 +16,6 @@ require.config({
     // jquery           2.1.4
     // marionette       2.4.2
     // require          2.1.18
-    // simple-undo      1.0.1
     // spectrum         1.7.0
     // text             2.0.14
     // typeahead        0.11.1

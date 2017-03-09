@@ -38,7 +38,6 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
-        SimpleUndo  = require('simple-undo'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
@@ -1105,6 +1104,8 @@ define(function (require) {
                 // iOS nonsense
                 $(".main_title").css({position: "absolute"});
                 $(".scroller-notb").css({position: "absolute"});
+                $(".dropdown").css({position: "absolute"});
+                $(".chapter").css({position: "absolute"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1412,6 +1413,8 @@ define(function (require) {
 //                $(".scroller-notb").removeClass("fixfixed");
                 $(".main_title").css({position: "fixed"});
                 $(".scroller-notb").css({position: "fixed"});
+                $(".dropdown").css({position: "fixed"});
+                $(".chapter").css({position: "fixed"});
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");

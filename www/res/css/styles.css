@@ -58,6 +58,7 @@ input[type="file"] {
 
 .splash-screen {
     /* fallback solid color */
+    -moz-appearance: none;
     -webkit-appearance: none;
     border: 1px solid #eee;
     -moz-border-radius: 6px;
@@ -69,8 +70,8 @@ input[type="file"] {
     box-sizing: border-box;
     overflow: hidden;
     padding: 22px;
-    width: 90%;
     vertical-align: middle;
+    width: 90%;
 }
 
 .welcome-title {
@@ -94,14 +95,10 @@ input[type="file"] {
     width: 6rem;
 }
 .welcome-logo {
-/*    float: left;*/
     background: url('../svg/adapt-it-mobile.svg') no-repeat;
     background-size: cover;
     height: 96px;
-    margin-bottom: 22px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 12px;
+    margin: 12px auto 22px auto;
     width: 96px;
 }
 .waiting {
@@ -119,7 +116,9 @@ input[type="file"] {
     left: 50%;
     position: absolute;
     top: 50%;
+    -o-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
@@ -248,7 +247,6 @@ header h3 {
     left: 0;
     right: 0;
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
     position: fixed;
     top: 70px;
 }
@@ -257,7 +255,6 @@ header h3 {
     bottom: 0;
     left: 0;
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
     right: 0;
     position: fixed;
     top: 57px;
@@ -267,7 +264,6 @@ header h3 {
     bottom: 61px;
     left: 0;
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
     right: 0;
     position: fixed;
     top: 57px;
@@ -300,6 +296,7 @@ header h3 {
     padding-top: 3px;
 }
 .control-group {
+    -moz-appearance: none;
     -webkit-appearance: none;
     background-color: #eee;
 /*    background: rgb(221, 225, 225);*/
@@ -1168,25 +1165,25 @@ background-color: #fff;
 }
 
 .dropdown {
-    display: none;
-    position: fixed;
-    right: 103px;
-    z-index: 2147483647; /* on top */
 	background: #2595cb;
 	border: 3px solid #fff;
     -webkit-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
     box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    display: none;
+    position: fixed;
+    right: 103px;
+    z-index: 2147483647; /* on top */
 }
 .dropdown:after, .dropdown:before {
-	bottom: 100%;
-	left: 50%;
 	border: solid transparent;
+	bottom: 100%;
 	content: " ";
 	height: 0;
-	width: 0;
-	position: absolute;
+	left: 50%;
 	pointer-events: none;
+	position: absolute;
+	width: 0;
 }
 
 .dropdown:after {
