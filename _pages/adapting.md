@@ -62,20 +62,23 @@ For a quick walkthrough of the controls on the Adaptation page, click on the hel
 Click on the area just below the source word. You should see an edit box display (and the software keyboard open up if you don't have an external keyboard attached). Type in the equivalent word in the target language.
 
 ## To translate a phrase
-1. Drag over the words that make up the phrase you want to translate. You should see them highlight in blue as you do so.
-2. Click the Phrase button in the toolbar. You should see the words combine into a single phrase, with a new target edit field just below it. Type in the equivalent phrase in the target language.
+To create a translation for a phrase of text, you will need to select that text. There are a couple ways to do this:
 
-![Create a phrase]({{ site.baseurl }}/assets/img/phrase.gif)
+### Drag to select
+To select a specific phrase you want to translate, drag over the words that make up that phrase. You should see the words highlight in blue as you do so.
+
+### Double-tap
+To select the entire strip of text, tap twice quickly on a source word within that strip. You should see the entire strip of text highlight.
+
+The following animation shows these two methods of selection:
+
+![Selection]({{ site.baseurl }}/assets/img/sel.gif)
+
+Once you have selected the words you want to translate, click the Phrase button in either the title bar or from the More Actions (...) dropdown menu. You should see the words combine into a single phrase, with a new target edit field just below it. Type in the equivalent phrase in the target language.
 
 ## To move to the next / previous edit field
 
-**Android**
-
-Most Android software keyboards do not include a forward / backward arrow key. To get around this, Adapt It Mobile has two buttons on the toolbar [ < ] and [ > ], that allow you to go to the previous and next untranslated fields, respectively.
-
-**iOS**
-
-Apple's on-screen / software keyboard does have a previous / next button. These should be used to navigate to the previous and next untranslated fields.
+Click on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to the previous and next untranslated fields, respectively.
 
 ----
 
@@ -86,7 +89,7 @@ Apple's on-screen / software keyboard does have a previous / next button. These 
 Placeholders are used when there is a word or phrase in the target language that is *not* in the source language. To insert a placeholder, follow these steps:
 
 1. Click on the source word (or phrase) just after where you need to insert a placeholder.
-2. Click on the Placeholder button in the toolbar. You should see an extra place to the left of your old selection, with an edit field. Enter in the word or phrase in the target language.
+2. Click on the Placeholder button in either the title bar or from the More Actions (...) dropdown menu. You should see an extra place to the left of your old selection, with an edit field. Enter in the word or phrase in the target language.
 
 ----
 
@@ -99,4 +102,6 @@ Retranslations are used when the syntax or exegesis of the adaptation is incorre
 To create a retranslation, complete the following steps:
 
 1. Click or drag over the word(s) in the source language that you'll be providing a retranslation for.
-2. Click on the Retranslation button in the toolbar. You'll see the words combine into one unit, with an edit field below it. Type in the retranslation.
+2. Click on the Retranslation button in either the title bar or from the More Actions (...) dropdown menu. You'll see the words combine into one unit, with an edit field below it. Type in the retranslation.
+
+![Retranslation]({{ site.baseurl }}/assets/img/ret.gif)
