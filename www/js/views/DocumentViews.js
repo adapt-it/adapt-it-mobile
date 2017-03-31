@@ -2613,6 +2613,8 @@ define(function (require) {
             ////
             events: {
                 "click .topcoat-list__item": "selectDoc",
+                "mouseup #Filename": "editFilename",
+                "blur #Filename": "blurFilename",
                 "change .topcoat-radio-button": "changeType",
                 "click #OK": "onOK",
                 "click #Cancel": "onCancel"
@@ -2622,6 +2624,17 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            editFilename: function (event) {
+                console.log("editFilename");
+                // scroll up if there's not enough room for the keyboard
+                if (($(window).height() - $(".control-group").height()) < 300) {
+                    var top = event.currentTarget.offsetTop - $("#Filename").outerHeight();
+                    $("#mobileSelect").scrollTop(top);
+                }
+            },
+            blurFilename: function (event) {
+                $("#mobileSelect").scrollTop(0);  
             },
             // User changed the export format type. Add the appropriate extension
             changeType: function (event) {
@@ -2703,6 +2716,11 @@ define(function (require) {
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // select a default of TXT for the export format (for now)
                 $("#exportTXT").prop("checked", true);
+                if (bookName.length > 0) {
+                    if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
+                        bookName = bookName.substr(0, bookName.length - 4);
+                    }
+                }
                 $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
