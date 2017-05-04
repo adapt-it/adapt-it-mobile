@@ -49,6 +49,24 @@ define(function (require) {
         ////
         // Helper methods
         ////
+
+        // Helper method to hide the prev/next buttons and increase the scroller size
+        // if the screen is too small
+        // (Issue #232)
+        HideTinyUI = function () {
+            if ((window.innerHeight / 2) < ($("#StepInstructions").height() + $("#StepContainer").height() + $("#WizardSteps").height())) {
+                $(".scroller-bottom-tb").css({bottom: "0"});
+                $(".bottom-tb").hide();
+                $("#Spacer").show();
+            }
+        },
+
+        // Helper method to show the prev/next buttons and decrease the scroller size
+        ShowTinyUI = function () {
+            $(".scroller-bottom-tb").css({bottom: "61px"});
+            $(".bottom-tb").show();
+            $("#Spacer").hide();
+        },
         
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
@@ -374,8 +392,17 @@ define(function (require) {
         CasesView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCases),
             events: {
+                "focus .topcoat-text-input": "onFocusInput",
+                "blur .topcoat-text-input": "onBlurInput",
                 "click #SourceHasCases": "onClickSourceHasCases",
                 "click #AutoCapitalize": "onClickAutoCapitalize"
+            },
+            onFocusInput: function (event) {
+                HideTinyUI();
+                event.currentTarget.scrollIntoView(true);
+            },
+            onBlurInput: function (event) {
+                ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
                 // find the current row
@@ -579,7 +606,16 @@ define(function (require) {
         PunctuationView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplPunctuation),
             events: {
+                "focus .topcoat-text-input": "onFocusInput",
+                "blur .topcoat-text-input": "onBlurInput",
                 "click #CopyPunctuation": "onClickCopyPunctuation"
+            },
+            onFocusInput: function (event) {
+                HideTinyUI();
+                event.currentTarget.scrollIntoView(true);
+            },
+            onBlurInput: function (event) {
+                ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
                 // find the current row
@@ -1124,10 +1160,15 @@ define(function (require) {
                 "click #sourceFont": "OnEditSourceFont",
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
+                "focus #LanguageName": "onFocusLanguageName",
                 "keyup #LanguageName": "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
+                "blur #LanguageName": "onBlurLanguageName",
                 "click .autocomplete-suggestion": "selectLanguage",
+                "focus #LanguageVariant": "onFocusLanguageVariant",
+                "click #LanguageVariant": "onClickLanguageVariant",
                 "keyup #LanguageVariant": "buildFullLanguageCode",
+                "blur #LanguageVariant": "onBlurLanguageVariant",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -1140,6 +1181,24 @@ define(function (require) {
                 "click #Next": "OnNextStep"
             },
 
+            onFocusLanguageName: function (event) {
+                HideTinyUI();
+                $("#LanguageName")[0].scrollIntoView(true);
+            },
+
+            onBlurLanguageName: function (event) {
+                ShowTinyUI();
+            },
+            
+            onFocusLanguageVariant: function (event) {
+                HideTinyUI();
+                $("#LanguageVariant")[0].scrollIntoView(true);
+            },
+
+            onBlurLanguageVariant: function (event) {
+                ShowTinyUI();
+            },
+            
             searchLanguageName: function (event) {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val();
@@ -1163,6 +1222,13 @@ define(function (require) {
 //                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
+                }
+            },
+            onClickLanguageVariant: function (event) {
+                // scroll up if there's not enough room for the keyboard
+                if (($(window).height() - $(".StepContainer").height()) < 300) {
+                    var top = event.currentTarget.offsetTop - $("#LanguageVariant").outerHeight();
+                    $("#LanguageVariant").scrollTop(top);
                 }
             },
             buildFullLanguageCode: function (event) {
@@ -1322,6 +1388,7 @@ define(function (require) {
                     if (step > 1) {
                         step--;
                     }
+                    ShowTinyUI();
                     this.ShowStep(step);
                 }
             },
@@ -1332,6 +1399,7 @@ define(function (require) {
                 if (this.GetProjectInfo(step) === true) {
                     if (step < this.numSteps) {
                         step++;
+                        ShowTinyUI();
                         this.ShowStep(step);
                     } else {
                         // last step -- finish up

@@ -275,6 +275,10 @@ header h3 {
     left: 0;
     right: 0;
 }
+#Spacer {
+    height: 280px;
+    width: 100%;
+}
 .hscroller {
     height: 200px;
     left: 10px;
