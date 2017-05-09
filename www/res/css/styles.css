@@ -824,7 +824,6 @@ div.strip.specialtext div.source {
 }
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
 .filter {
-/*    display: none;*/
     background: url('../svg/filter.svg') no-repeat;
     background-size: cover;
     height: 14px;
@@ -840,6 +839,10 @@ div.strip.specialtext div.source {
     vertical-align: top;
     background-color: #e5e9e8;
     box-shadow: inset 0 1px #fff;
+}
+/* secondary filters (not displayed in UI) */
+.moreFilter {
+    display: none;
 }
 
 /* from adapt-it-copy */

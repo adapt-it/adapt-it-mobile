@@ -12,6 +12,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         usfm        = require('utils/usfm'),
+        wasFiltered = false,
         i18n        = require('i18n');
     
     // Return the localized string corresponding to the specified key.
@@ -59,6 +60,13 @@ define(function (require) {
         }
         if (filtered === true) {
             result += " filter";
+            // check for a filter in the previous string...
+            if (wasFiltered === true) {
+                result += " moreFilter";
+            }
+            wasFiltered = true;
+        } else {
+            wasFiltered = false;
         }
         return new Handlebars.SafeString(result);
     });
