@@ -24,6 +24,7 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
+        featherlight = require('featherlight'),
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
         ta          = require('typeahead'),
@@ -73,6 +74,61 @@ define(function (require) {
         // Static methods
         /////
 
+        // Helper method to scroll to the specified element in the view
+        // This method also takes into account the software / on-screen keyboard
+        scrollToView = function (element) {
+//            var docViewTop = $(window).scrollTop();
+//            var docViewBottom = docViewTop + window.innerHeight;
+            var docViewTop = $("#content").scrollTop();
+            var docViewHeight = document.documentElement.clientHeight - $("#title").outerHeight(); // height of #content element
+            var docViewBottom = 0; // viewport area to work with -- calculated below
+            var eltTop = $(element).position().top;
+            var eltBottom = eltTop + $(element).height();
+            var offset = 0;
+
+//            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//            $("#content").scrollTop(top);
+            
+            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+            // check to see if we're on a mobile device
+            if (navigator.notification && !Keyboard.isVisible) {
+                // on mobile device -- the height is going to shrink when the software keyboard displays
+                // HACK: subtract the software keyboard from the visible area end -
+                // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
+                // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
+                // work cross-platform
+                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+                if (window.orientation === 90 || window.orientation === -90) {
+//                if ($(window).height() > $(window).width()) {
+                    // landscape
+                    docViewHeight -= 162; // observed / hard-coded "best effort" value
+                } else {
+                    // portrait
+                    docViewHeight -= 248; // observed / hard-coded "best effort" value
+                }
+            }
+            // now calculate docViewBottom
+            docViewBottom = docViewTop + docViewHeight;
+            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
+            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
+            // now check to see if the content needs scrolling
+            if ((eltBottom > docViewBottom) || (eltTop < docViewTop)) {
+                 // Not in view -- scroll to the element
+                if (($(element).height() * 2) < docViewHeight) {
+                    // more than 2 rows available in viewport -- center it
+                    offset = eltTop - (docViewHeight / 2);
+                } else {
+                    // viewport height is too small -- scroll to element itself
+                    offset = eltTop;
+                }
+                console.log("Scrolling to: " + offset);
+                $("#content").stop(true, true).animate({scrollTop: offset}, 500);
+                return false;
+            }
+            console.log("No scrolling needed.");
+            return true;
+        },
+    
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -95,13 +151,10 @@ define(function (require) {
                     while (found === false && i < refstrings.length) {
                         if (refstrings[i].target === oldTargetValue) {
                             found = true;
-                            if (refstrings[i].n !== '0') {
-                                // more than one refcount -- decrement it
+                            // decrement the refcount until it is -1
+                            // (-1 means "this refstring has been removed")
+                            if (parseInt(refstrings[i].n, 10) >= 0) {
                                 refstrings[i].n--;
-                            }
-                            // if we've decremented to 0, remove the refstring
-                            if (refstrings[i].n === '0') {
-                                refstrings.splice(i, 1); // remove the item
                             }
                         }
                         i++;
@@ -110,7 +163,13 @@ define(function (require) {
                 // add or increment the new value
                 for (i = 0; i < refstrings.length; i++) {
                     if (refstrings[i].target === targetValue) {
-                        refstrings[i].n++;
+                        if (refstrings[i].n < 0) {
+                            // special case -- this value was removed, but now we've got it again:
+                            // reset the count to 1 in this case
+                            refstrings[i].n = '1';
+                        } else {
+                            refstrings[i].n++;
+                        }
                         found = true;
                         break;
                     }
@@ -173,13 +232,10 @@ define(function (require) {
                 while (found === false && i < refstrings.length) {
                     if (refstrings[i].target === targetValue) {
                         found = true;
-                        if (refstrings[i].n !== '0') {
-                            // more than one refcount -- decrement it
+                        // decrement the refcount until it is -1
+                        // (-1 means "this refstring has been removed")
+                        if (parseInt(refstrings[i].n, 10) >= 0) {
                             refstrings[i].n--;
-                        }
-                        // if we've decremented to 0, remove the refstring
-                        if (refstrings[i].n === 0) {
-                            refstrings.splice(i, 1); // remove the item
                         }
                     }
                     i++;
@@ -187,18 +243,11 @@ define(function (require) {
                 if (found === false) {
                     console.log("unable to find target:" + targetValue);
                 }
-                if (refstrings.length === 0) {
-                    // we removed the only refstring -- 
-                    // this is an empty target unit and should be removed from the KB collection
-                    console.log("Removing empty TU for sourceValue: " + sourceValue);
-                    kblist.remove(tu);
-                } else {
-                    // there's still something in the target unit -- update the object in the KB
-                    console.log("Updating TU for sourceValue: " + sourceValue);
-                    tu.set('refstring', refstrings, {silent: true});
-                    tu.set('timestamp', timestamp, {silent: true});
-                    tu.update();
-                }
+                // there's still something in the target unit -- update the object in the KB
+                console.log("Updating TU for sourceValue: " + sourceValue);
+                tu.set('refstring', refstrings, {silent: true});
+                tu.set('timestamp', timestamp, {silent: true});
+                tu.update();
             } else {
                 // ERROR - shouldn't happen (no KB entry at all)
                 console.log("ERROR: unable to find KB entry to remove.");
@@ -354,6 +403,7 @@ define(function (require) {
                             idxEnd = idxStart;
                             // scroll to it if necessary (which it probably is)
                             top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                            console.log("scrollTop: " + top);
                             $("#content").scrollTop(top);
                             // now select it
                             $(selectedStart).mouseup();
@@ -684,6 +734,7 @@ define(function (require) {
                         MovingDir = 0; // don't move
                         // scroll to it if necessary (which it probably is)
                         top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        console.log("scrollTop: " + top);
                         $("#content").scrollTop(top);
                         // now select it
                         $(selectedStart).mouseup();
@@ -697,6 +748,7 @@ define(function (require) {
                         MovingDir = 0; // don't move
                         // scroll to it if necessary (which it probably is)
                         top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                        console.log("scrollTop: " + top);
                         $("#content").scrollTop(top);
                         // now select it
                         $(selectedStart).mouseup();
@@ -745,7 +797,7 @@ define(function (require) {
                 "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
-
+            
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart");
@@ -1054,6 +1106,7 @@ define(function (require) {
                 if (userCanSetFilter) {
                     // User can set this filter text
                     message += "\n\n" + i18next.t('view.dscUserCanSetFilter');
+                    $.featherlight(message);
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.alert(message, function () {},
@@ -1065,6 +1118,7 @@ define(function (require) {
                 } else {
                     // read only -- just tell the user what was filtered
                     message += "\n\n" + i18next.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
+                    $.featherlight(message);
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.alert(message, function () {},
@@ -1203,9 +1257,11 @@ define(function (require) {
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
                             // scroll the edit field into view
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                            $("#content").scrollTop(top);
+                            scrollToView(selectedStart);
+//                            top = $(selectedStart)[0].offsetTop;// - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//                            console.log("scrollTop: " + top);
+////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+//                            $("#content").scrollTop(top);
                         }
                     } else {
                         // nothing in the KB
@@ -1233,9 +1289,12 @@ define(function (require) {
                         // it's possible that we went offscreen while looking for the next available slot to adapt.
                         // Make sure the edit field is in view by scrolling the UI
                         // scroll the edit field into view
-                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-                        $("#content").scrollTop(top);
+                        scrollToView(selectedStart);
+//                        var offset = $(selectedStart)[0].offset().top - $(window).scrollTop();
+//                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+//                        console.log("offsetTop: " + $(selectedStart)[0].offsetTop + ", window height: " + $(window).height() + ", scrollTop: " + top);
+////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
+//                        $("#content").scrollTop(top);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
@@ -1267,6 +1326,8 @@ define(function (require) {
                             selection.removeAllRanges();
                             selection.addRange(range);
                         }
+                        // Make sure the edit field is in view by scrolling the UI
+                        scrollToView(selectedStart);
                     }
                 }
                 if (isDirty === true) {
@@ -2008,6 +2069,7 @@ define(function (require) {
                 // scroll to the top of the content, just in case
                 var firstPileID = $(".pile").first().attr("id");
                 var top = $(".pile").first().offsetTop - (($(window).height() - $(".pile").first().outerHeight(true)) / 2);
+                console.log("scrollTop: " + top);
                 $("#content").scrollTop(top);                // do not bubble this event up to the title bar
                 event.stopPropagation();
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
