@@ -25,6 +25,7 @@ define(function (require) {
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
         featherlight = require('featherlight'),
+        featherlightGallery = require('featherlightGallery'),
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
         ta          = require('typeahead'),
@@ -39,6 +40,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
+        tplFilters  = require('text!tpl/FilterList.html'),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
@@ -77,29 +79,26 @@ define(function (require) {
         // Helper method to scroll to the specified element in the view
         // This method also takes into account the software / on-screen keyboard
         scrollToView = function (element) {
-//            var docViewTop = $(window).scrollTop();
-//            var docViewBottom = docViewTop + window.innerHeight;
+            // viewport dimensions
             var docViewTop = $("#content").scrollTop();
             var docViewHeight = document.documentElement.clientHeight - $("#title").outerHeight(); // height of #content element
             var docViewBottom = 0; // viewport area to work with -- calculated below
+            // element dimensions
             var eltTop = $(element).position().top;
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
-
-//            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//            $("#content").scrollTop(top);
             
             console.log("scrollToView() looking at element: " + $(element).attr("id"));
             // check to see if we're on a mobile device
             if (navigator.notification && !Keyboard.isVisible) {
-                // on mobile device -- the height is going to shrink when the software keyboard displays
+                // on mobile device AND the keyboard hasn't displayed yet:
+                // the viewport height is going to shrink when the software keyboard displays
                 // HACK: subtract the software keyboard from the visible area end -
                 // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
                 // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
                 // work cross-platform
                 console.log("Adjusting docViewBottom - original value: " + docViewBottom);
                 if (window.orientation === 90 || window.orientation === -90) {
-//                if ($(window).height() > $(window).width()) {
                     // landscape
                     docViewHeight -= 162; // observed / hard-coded "best effort" value
                 } else {
@@ -1075,8 +1074,10 @@ define(function (require) {
                     filteredText = "",
                     idx = 0,
                     elt = null,
+                    filterID = "",
                     title = i18next.t('view.ttlFilteredText'),
-                    message = i18next.t('view.dscFilterMarker');
+                    message = i18next.t('view.dscFilterMarker'),
+                    aryFilters = [];
                 // Get the marker(s) being filtered here
                 aryClasses = event.currentTarget.className.split(/\s+/);
                 for (idx = 0; idx < aryClasses.length; idx++) {
@@ -1086,6 +1087,9 @@ define(function (require) {
                             // this marker is filtered -- add it to the markers
                             markers.push(aryClasses[idx].substr(5));
                         }
+                    }
+                    if (aryClasses[idx].indexOf("fid-") >= 0) {
+                        filterID = "." + aryClasses[idx];
                     }
                 }
                 // Look them up in the USFM table -- are they settable?
@@ -1102,32 +1106,27 @@ define(function (require) {
                     filteredText += elt.innerHTML.trim() + " ";
                 });
                 message += markers.toString() + "\n" + i18next.t("view.dscFilteredText") + filteredText.trim();
+                // push new object onto Filters array
+                aryFilters.push({
+                    marker: markers.toString(),
+                    text: filteredText,
+                    canSet: userCanSetFilter
+                });
 
                 if (userCanSetFilter) {
                     // User can set this filter text
                     message += "\n\n" + i18next.t('view.dscUserCanSetFilter');
-                    $.featherlight(message);
-                    if (navigator.notification) {
-                        // on mobile device
-                        navigator.notification.alert(message, function () {},
-                                                     i18next.t('view.ttlFilteredText'));
-                    } else {
-                        // in browser
-                        alert(message);
-                    }
+                    // fill in the filter information div block
+                    $("#FilterInfo").html(message);
+                    // manually call featherlight gallery
+//                    $().featherlightGallery($("#FilterInfo"));
+                    $.featherlight($("#FilterInfo"));
                 } else {
                     // read only -- just tell the user what was filtered
                     message += "\n\n" + i18next.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
-                    $.featherlight(message);
-                    if (navigator.notification) {
-                        // on mobile device
-                        navigator.notification.alert(message, function () {},
-                                                     i18next.t('view.ttlFilteredText'));
-                    } else {
-                        // in browser
-                        alert(message);
-                    }
-
+                    $("#FilterInfo").html(message);
+//                    $().featherlightGallery($("#FilterInfo"));
+                    $.featherlight($("#FilterInfo"));
                 }
             },
             // mouseDown / touchStart event handler for the target field

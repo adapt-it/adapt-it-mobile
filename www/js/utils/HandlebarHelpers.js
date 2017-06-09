@@ -12,7 +12,7 @@ define(function (require) {
         Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         usfm        = require('utils/usfm'),
-        wasFiltered = false,
+        filterID    = "",
         i18n        = require('i18n');
     
     // Return the localized string corresponding to the specified key.
@@ -59,14 +59,16 @@ define(function (require) {
             }
         }
         if (filtered === true) {
-            result += " filter";
-            // check for a filter in the previous string...
-            if (wasFiltered === true) {
-                result += " moreFilter";
+            result += " filter ";
+            if (filterID.length > 0) {
+                result += "moreFilter ";
+            } else {
+                // new filter -- create an ID
+                filterID = "fid-" + Handlebars.SafeString(Underscore.uniqueId());
             }
-            wasFiltered = true;
+            result += filterID;
         } else {
-            wasFiltered = false;
+            filterID = ""; // no longer filtering
         }
         return new Handlebars.SafeString(result);
     });
