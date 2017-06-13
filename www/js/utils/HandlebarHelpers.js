@@ -42,6 +42,7 @@ define(function (require) {
             result = "",
             filtered = false,
             filterString = window.Application.filterList,
+            newID = Underscore.uniqueId(),
             i = 0;
         if (this.markers.length === 0) {
             return new Handlebars.SafeString(this.markers);
@@ -64,7 +65,7 @@ define(function (require) {
                 result += "moreFilter ";
             } else {
                 // new filter -- create an ID
-                filterID = "fid-" + Handlebars.SafeString(Underscore.uniqueId());
+                filterID = "fid-" + Handlebars.SafeString(newID);
             }
             result += filterID;
         } else {

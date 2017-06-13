@@ -41,6 +41,7 @@ define(function (require) {
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
         tplFilters  = require('text!tpl/FilterList.html'),
+        theFilters  = Handlebars.compile(tplFilters),
         kblist      = null, // real value passed in constructor
         project     = null, // real value passed in constructor
         chapter     = null, // real value passed in constructor
@@ -1078,56 +1079,48 @@ define(function (require) {
                     title = i18next.t('view.ttlFilteredText'),
                     message = i18next.t('view.dscFilterMarker'),
                     aryFilters = [];
-                // Get the marker(s) being filtered here
                 aryClasses = event.currentTarget.className.split(/\s+/);
+                // First, get the filter ID for this filter
                 for (idx = 0; idx < aryClasses.length; idx++) {
-                    if (aryClasses[idx].indexOf("usfm-") >= 0) {
-                        // usfm class -- is it a cause of this filter?
-                        if (filterString.indexOf(aryClasses[idx].substr(5)) >= 0) {
-                            // this marker is filtered -- add it to the markers
-                            markers.push(aryClasses[idx].substr(5));
-                        }
-                    }
                     if (aryClasses[idx].indexOf("fid-") >= 0) {
                         filterID = "." + aryClasses[idx];
                     }
                 }
-                // Look them up in the USFM table -- are they settable?
-                USFMMarkers.each(function (item, index, list) {
-                    if (markers.indexOf(item.get('name')) >= 0) {
-                        // this is one of the markers -- can the user set it?
-                        if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
-                            userCanSetFilter = true;
+                $(filterID).each(function (index) {
+                    // Get the marker(s) being filtered here
+                    for (idx = 0; idx < aryClasses.length; idx++) {
+                        if (aryClasses[idx].indexOf("usfm-") >= 0) {
+                            // usfm class -- is it a cause of this filter?
+                            if (filterString.indexOf(aryClasses[idx].substr(5)) >= 0) {
+                                // this marker is filtered -- add it to the markers
+                                markers.push(aryClasses[idx].substr(5));
+                            }
                         }
                     }
-                });
-                // get the source text being filtered out
-                $(event.currentTarget).find(".source").each(function (idx, elt) {
-                    filteredText += elt.innerHTML.trim() + " ";
-                });
-                message += markers.toString() + "\n" + i18next.t("view.dscFilteredText") + filteredText.trim();
-                // push new object onto Filters array
-                aryFilters.push({
-                    marker: markers.toString(),
-                    text: filteredText,
-                    canSet: userCanSetFilter
-                });
-
-                if (userCanSetFilter) {
-                    // User can set this filter text
-                    message += "\n\n" + i18next.t('view.dscUserCanSetFilter');
-                    // fill in the filter information div block
-                    $("#FilterInfo").html(message);
-                    // manually call featherlight gallery
-//                    $().featherlightGallery($("#FilterInfo"));
-                    $.featherlight($("#FilterInfo"));
-                } else {
-                    // read only -- just tell the user what was filtered
-                    message += "\n\n" + i18next.t('view.dscUserCannotSetFilter', {marker: markers.toString()});
-                    $("#FilterInfo").html(message);
-//                    $().featherlightGallery($("#FilterInfo"));
-                    $.featherlight($("#FilterInfo"));
-                }
+                    // Look them up in the USFM table -- are they settable?
+                    USFMMarkers.each(function (item, index, list) {
+                        if (markers.indexOf(item.get('name')) >= 0) {
+                            // this is one of the markers -- can the user set it?
+                            if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
+                                userCanSetFilter = true;
+                            }
+                        }
+                    });
+                    // get the source text being filtered out
+                    $(event.currentTarget).find(".source").each(function (idx, elt) {
+                        filteredText += elt.innerHTML.trim() + " ";
+                    });
+                    // push new object onto Filters array
+                    aryFilters.push({
+                        marker: markers.toString(),
+                        text: filteredText.trim(),
+                        canSet: userCanSetFilter
+                    });
+                }); // each filter ID
+                
+                // done building the aryFilters array -- now display the filters
+                $("#FilterInfo").html(theFilters(aryFilters));
+                $.featherlightGallery($(".slides"));
             },
             // mouseDown / touchStart event handler for the target field
             selectingAdaptation: function (event) {
