@@ -1087,6 +1087,9 @@ define(function (require) {
                     }
                 }
                 $(filterID).each(function (index) {
+                    aryClasses = this.className.split(/\s+/);
+                    filteredText = "";
+                    markers.length = 0;
                     // Get the marker(s) being filtered here
                     for (idx = 0; idx < aryClasses.length; idx++) {
                         if (aryClasses[idx].indexOf("usfm-") >= 0) {
@@ -1107,7 +1110,7 @@ define(function (require) {
                         }
                     });
                     // get the source text being filtered out
-                    $(event.currentTarget).find(".source").each(function (idx, elt) {
+                    $(this).find(".source").each(function (idx, elt) {
                         filteredText += elt.innerHTML.trim() + " ";
                     });
                     // push new object onto Filters array

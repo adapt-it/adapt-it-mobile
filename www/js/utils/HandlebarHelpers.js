@@ -65,7 +65,7 @@ define(function (require) {
                 result += "moreFilter ";
             } else {
                 // new filter -- create an ID
-                filterID = "fid-" + Handlebars.SafeString(newID);
+                filterID = "fid-" + newID.toString();
             }
             result += filterID;
         } else {
