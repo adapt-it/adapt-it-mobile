@@ -1101,7 +1101,7 @@ define(function (require) {
                         }
                     }
                     // Look them up in the USFM table -- are they settable?
-                    USFMMarkers.each(function (item, index, list) {
+                    USFMMarkers.each(function (item, index2, list) {
                         if (markers.indexOf(item.get('name')) >= 0) {
                             // this is one of the markers -- can the user set it?
                             if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
@@ -1900,6 +1900,8 @@ define(function (require) {
             initialize: function () {
                 kblist = new kbModels.TargetUnitCollection();
                 document.addEventListener("resume", this.onResume, false);
+                USFMMarkers = new usfm.MarkerCollection();
+                USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
             regions: {
                 container: "#chapter"
@@ -1937,8 +1939,6 @@ define(function (require) {
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
                 addStyleRules(this.project);
-                USFMMarkers = new usfm.MarkerCollection();
-                USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
             ////
             // Event Handlers
