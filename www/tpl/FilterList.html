@@ -1,0 +1,15 @@
+{{! FilterList.html
+    Template for displaying the USFM marker and text being filtered out of the UI. Used by showFilter() in AdaptViews.js.
+}}
+{{#each this}}
+<a class="slides" href=".slide-{{@index}}"><div class="slide-{{@index}}">
+<h2>{{ t 'view.ttlFilteredText'}}</h2>
+<div class="control-row">{{ t 'view.dscFilterMarker'}}{{this.marker}}</div>
+<div class="control-row">{{ t 'view.dscFilteredText'}}{{this.text}}</div>
+{{#if this.canSet}}
+<div class="control-row">{{tr this key='view.dscUserCanSetFilter'}}</div>
+{{else}}
+<div class="control-row">{{tr this key='view.dscUserCannotSetFilter'}}</div>
+{{/if}}
+</div></a>
+{{/each}}

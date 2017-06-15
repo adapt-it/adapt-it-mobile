@@ -101,17 +101,19 @@ define(function (require) {
                     // edb 12/20/16 - issue #204: moved the database out of the apps data directory, as it will
                     // get deleted along with the app. 
                     // test for older database location
+//                    window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
+                        
+//                    });
                     // open the database
-                    this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
 //                    if (device.platform === "iOS") {
-//                        // ios
-//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});   
+//                        // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
+//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});
 //                    } else if (device.platform === "Android") {
-//                        // android
-//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaseLocation: externalDataDirectoryEntry.toURL()});
+//                        // Android --  
+//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaselocation: cordova.file.externalRootDirectory.toURL()});
 //                    } else {
-//                        // windows?
-//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
+                        // something else -- just use the default location
+                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
 //                    }
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)

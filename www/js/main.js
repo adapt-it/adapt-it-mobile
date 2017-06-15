@@ -8,6 +8,8 @@ require.config({
     // backbone.babysitter 0.1.8
     // backbone.wreqr   1.3.3
     // fastclick        1.0.6
+    // featherlight     1.7.6
+    // featherlight.gallery 1.7.6
     // hammer           2.0.8
     // handlebars       3.0.3
     // hopscotch        0.2.6+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
@@ -36,6 +38,8 @@ require.config({
         'jquery': 'jquery-2.1.4.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
+        featherlight: 'featherlight.min',
+        'featherlightGallery': 'featherlight.gallery.min',
         colorpicker: 'spectrum'
     },
     map: {
