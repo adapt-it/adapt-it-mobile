@@ -30,7 +30,7 @@ desc:   Adapt It Mobile news, product announcements, and more.
 <nav>
     <ul class="pagination">
         {% if paginator.previous_page %}
-            <li class="arrow"><a href="{{ paginator.previous_page_path | replace: '/index.html', '' }}">&laquo;</a></li>
+            <li class="arrow"><a href="{{ site.baseurl }}{{ paginator.previous_page_path | replace: '/index.html', '' }}">&laquo;</a></li>
         {% else %}
             <li class="arrow unavailable"><a>&laquo;</a></li>
         {% endif %}
