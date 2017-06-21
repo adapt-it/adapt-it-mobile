@@ -56,6 +56,10 @@ input[type="file"] {
     width: 100%;
 }
 
+.featherlight-content {
+    width: 90%;
+}
+
 .splash-screen {
     /* fallback solid color */
     -moz-appearance: none;
