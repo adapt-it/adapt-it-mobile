@@ -39,7 +39,7 @@ desc:   Adapt It Mobile news, product announcements, and more.
             {% if page == paginator.page %}
                 <li class="current"><a>{{ page }}</a></li>
             {% elsif page == 1 %}
-                <li><a href="{{ site.baseurl }}{{ site.paginate_path | replace: '/seite:num', '' }}">{{ page }}</a></li>
+                <li><a href="{{ site.baseurl }}{{ site.paginate_path | replace: ':num', '' }}">{{ page }}</a></li>
             {% else %}
                 <li><a href="{{ site.baseurl }}{{ site.paginate_path | replace: ':num', page }}">{{ page }}</a></li>
             {% endif %}
