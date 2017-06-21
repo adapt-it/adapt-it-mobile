@@ -788,6 +788,7 @@ define(function (require) {
                 "doubletap .pile": "onDblTapPile",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
+                "click .filter": "showFilter",
                 "mousedown .target": "selectingAdaptation",
                 "touchstart .target": "selectingAdaptation",
                 "mouseup .target": "selectedAdaptation",
@@ -1068,6 +1069,24 @@ define(function (require) {
             // change the setting in the project settings under USFM filtering. If it isn't user-settable,
             // we display a note informing them.
             showFilter: function (event) {
+                // make sure we're on the right event for the right platform
+                if (navigator.notification) {
+                    // on mobile device
+                    if (event.type === "click" && device.platform === "iOS") {
+                        console.log("iOS click -- ignoring");
+                        return;
+                    }
+                    if ((event.type === "mouseup" || event.type === "touchend") && device.platform === "Android") {
+                        console.log("Android mouse/touch end event -- ignoring");
+                        return;
+                    }
+                } else {
+                    // in browser
+                    if (event.type === "mouseup" || event.type === "touchend") {
+                        console.log("Browser mouse / touch end event -- ignoring");
+                        return;
+                    }
+                }
                 var userCanSetFilter = false,
                     filterString = window.Application.filterList,
                     markers = [],
