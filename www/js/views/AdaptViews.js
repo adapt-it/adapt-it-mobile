@@ -1966,7 +1966,11 @@ define(function (require) {
                 "click .main_title": "unselectPiles",
                 "click #chapter": "unselectPiles",
                 "click #PrevSP": "goPrevPile",
+                "touchend #PrevSP": "goPrevPile",
+                "mouseup #PrevSP": "goPrevPile",
                 "click #NextSP": "goNextPile",
+                "touchend #NextSP": "goNextPile",
+                "mouseup #NextSP": "goNextPile",
                 "click #Undo": "UndoClick",
                 "click #More": "toggleMoreMenu",
                 "click #Placeholder": "togglePlaceholder",
@@ -1991,6 +1995,24 @@ define(function (require) {
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
+                // make sure we're on the right event for the right platform
+                if (navigator.notification) {
+                    // on mobile device
+                    if (event.type === "click" && device.platform === "iOS") {
+                        console.log("iOS click -- ignoring");
+                        return;
+                    }
+                    if ((event.type === "mouseup" || event.type === "touchend") && device.platform === "Android") {
+                        console.log("Android mouse/touch end event -- ignoring");
+                        return;
+                    }
+                } else {
+                    // in browser
+                    if (event.type === "mouseup" || event.type === "touchend") {
+                        console.log("Browser mouse / touch end event -- ignoring");
+                        return;
+                    }
+                }
                 console.log("goPrevPile: selectedStart = " + selectedStart);
                 // dismiss the More (...) menu if visible
                 if ($("#MoreActionsMenu").hasClass("show")) {
@@ -2006,6 +2028,24 @@ define(function (require) {
             },
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
+                // make sure we're on the right event for the right platform
+                if (navigator.notification) {
+                    // on mobile device
+                    if (event.type === "click" && device.platform === "iOS") {
+                        console.log("iOS click -- ignoring");
+                        return;
+                    }
+                    if ((event.type === "mouseup" || event.type === "touchend") && device.platform === "Android") {
+                        console.log("Android mouse/touch end event -- ignoring");
+                        return;
+                    }
+                } else {
+                    // in browser
+                    if (event.type === "mouseup" || event.type === "touchend") {
+                        console.log("Browser mouse / touch end event -- ignoring");
+                        return;
+                    }
+                }
                 console.log("goNextPile: selectedStart = " + selectedStart);
                 // dismiss the More (...) menu if visible
                 if ($("#MoreActionsMenu").hasClass("show")) {
