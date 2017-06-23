@@ -14,7 +14,6 @@ define(function (require) {
         appRoutes: {
             "":             "home",             // (top level)
             "lang":         "setUILanguage",    // #lang (set UI language)
-            "help":         "help",             // #help
             "copy":        "copyProject",       // #copy
             "project":      "newProject",       // #project
             "project/:id":  "editProject",      // #project/projectID
