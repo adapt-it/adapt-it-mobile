@@ -10,7 +10,6 @@ define(function (require) {
         Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
         HomeViews       = require('app/views/HomeViews'),
-        HelpView        = require('app/views/HelpView'),
         ProjectViews    = require('app/views/ProjectViews'),
         DocumentViews   = require('app/views/DocumentViews'),
         SearchViews     = require('app/views/SearchViews'),
@@ -24,7 +23,6 @@ define(function (require) {
         PageSlider      = require('app/utils/pageslider'),
         slider          = new PageSlider($('body')),
         lookupView      = null,
-        helpView        = null,
         langView        = null,
         newProjectView  = null,
         editProjectView = null,
@@ -198,12 +196,6 @@ define(function (require) {
             checkDBSchema: function () {
                 // verify we're on the latest DB schema (upgrade if necessary)
                 projModel.checkSchema();
-            },
-
-            help: function () {
-                helpView = new HelpView();
-                helpView.delegateEvents();
-                this.main.show(helpView);
             },
             
             setUILanguage: function () {
