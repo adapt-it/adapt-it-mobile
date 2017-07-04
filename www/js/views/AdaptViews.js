@@ -160,6 +160,8 @@ define(function (require) {
                         i++;
                     }
                 }
+                // reset the "found" flag for the next search
+                found = false;
                 // add or increment the new value
                 for (i = 0; i < refstrings.length; i++) {
                     if (refstrings[i].target === targetValue) {
@@ -1272,10 +1274,6 @@ define(function (require) {
                             // Make sure the edit field is in view by scrolling the UI
                             // scroll the edit field into view
                             scrollToView(selectedStart);
-//                            top = $(selectedStart)[0].offsetTop;// - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrollTop: " + top);
-////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                            $("#content").scrollTop(top);
                         }
                     } else {
                         // nothing in the KB
@@ -1304,11 +1302,6 @@ define(function (require) {
                         // Make sure the edit field is in view by scrolling the UI
                         // scroll the edit field into view
                         scrollToView(selectedStart);
-//                        var offset = $(selectedStart)[0].offset().top - $(window).scrollTop();
-//                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                        console.log("offsetTop: " + $(selectedStart)[0].offsetTop + ", window height: " + $(window).height() + ", scrollTop: " + top);
-////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                        $("#content").scrollTop(top);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
