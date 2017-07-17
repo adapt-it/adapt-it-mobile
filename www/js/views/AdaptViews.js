@@ -72,6 +72,7 @@ define(function (require) {
         lastTapTime = null,
         origText = "",
         lastPile = null,
+        lastOffset = 0,
         
         /////
         // Static methods
@@ -85,7 +86,7 @@ define(function (require) {
             var docViewHeight = document.documentElement.clientHeight - $("#title").outerHeight(); // height of #content element
             var docViewBottom = 0; // viewport area to work with -- calculated below
             // element dimensions
-            var eltTop = $(element).position().top;
+            var eltTop = $(element).position().top + docViewTop; // adding scrolltop of div
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
             
@@ -116,13 +117,18 @@ define(function (require) {
                  // Not in view -- scroll to the element
                 if (($(element).height() * 2) < docViewHeight) {
                     // more than 2 rows available in viewport -- center it
+                    console.log("More than two rows visible -- centering focused area");
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
+                    console.log("Small viewport -- scrolling to the element itself");
                     offset = eltTop;
                 }
+                offset = Math.round(offset); // round it to the nearest integer
                 console.log("Scrolling to: " + offset);
-                $("#content").stop(true, true).animate({scrollTop: offset}, 500);
+//                $("#content").stop(true, true).animate({scrollTop: offset});
+                $("#content").scrollTop(offset);
+                lastOffset = offset;
                 return false;
             }
             console.log("No scrolling needed.");
@@ -160,6 +166,8 @@ define(function (require) {
                         i++;
                     }
                 }
+                // reset the "found" flag for the next search
+                found = false;
                 // add or increment the new value
                 for (i = 0; i < refstrings.length; i++) {
                     if (refstrings[i].target === targetValue) {
@@ -405,6 +413,7 @@ define(function (require) {
                             top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
                             console.log("scrollTop: " + top);
                             $("#content").scrollTop(top);
+                            lastOffset = top;
                             // now select it
                             $(selectedStart).mouseup();
                         } else {
@@ -736,6 +745,7 @@ define(function (require) {
                         top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
                         console.log("scrollTop: " + top);
                         $("#content").scrollTop(top);
+                        lastOffset = top;
                         // now select it
                         $(selectedStart).mouseup();
                     } else {
@@ -750,6 +760,7 @@ define(function (require) {
                         top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
                         console.log("scrollTop: " + top);
                         $("#content").scrollTop(top);
+                        lastOffset = top;
                         // now select it
                         $(selectedStart).mouseup();
                     }
@@ -1169,11 +1180,19 @@ define(function (require) {
                     options = [],
                     foundInKB = false;
                 console.log("selectedAdaptation entry / event type:" + event.type);
-                // iOS nonsense
-                $(".main_title").css({position: "absolute"});
-                $(".scroller-notb").css({position: "absolute"});
-                $(".dropdown").css({position: "absolute"});
-                $(".chapter").css({position: "absolute"});
+                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
+                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
+                // they are displayed in) on Android's browser. 
+                // Work around this issue by setting everything to the same position.
+                if (navigator.notification && device.platform === "Android") {
+                    $(".main_title").css({position: "absolute"});
+                    $(".scroller-notb").css({position: "absolute"});
+                    $(".dropdown").css({position: "absolute"});
+                    $(".chapter").css({position: "absolute"});
+                }
+                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1211,6 +1230,10 @@ define(function (require) {
                     lastPile = selectedStart;
                     isDirty = true;
                     strID = $(selectedStart).attr('id');
+                    if (typeof strID === 'undefined') {
+                        // we've probably run into the typeahead dropdown
+                        return;
+                    }
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
@@ -1271,11 +1294,8 @@ define(function (require) {
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
                             // scroll the edit field into view
+                            console.log("Scrolling to view...");
                             scrollToView(selectedStart);
-//                            top = $(selectedStart)[0].offsetTop;// - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                            console.log("scrollTop: " + top);
-////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                            $("#content").scrollTop(top);
                         }
                     } else {
                         // nothing in the KB
@@ -1303,12 +1323,8 @@ define(function (require) {
                         // it's possible that we went offscreen while looking for the next available slot to adapt.
                         // Make sure the edit field is in view by scrolling the UI
                         // scroll the edit field into view
+                        console.log("Scrolling to view...");
                         scrollToView(selectedStart);
-//                        var offset = $(selectedStart)[0].offset().top - $(window).scrollTop();
-//                        top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-//                        console.log("offsetTop: " + $(selectedStart)[0].offsetTop + ", window height: " + $(window).height() + ", scrollTop: " + top);
-////                            console.log("scrolling to (" + $(selectedStart).attr('id') + "): " + top);
-//                        $("#content").scrollTop(top);
                     }
                 } else {
                     // something already in the edit field -- are we looking for the next
@@ -1341,6 +1357,7 @@ define(function (require) {
                             selection.addRange(range);
                         }
                         // Make sure the edit field is in view by scrolling the UI
+                        console.log("Scrolling to view...");                        
                         scrollToView(selectedStart);
                     }
                 }
@@ -1476,20 +1493,23 @@ define(function (require) {
                     tu = null,
                     idx = 0,
                     model = null;
-                console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty);
+                console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
                 // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
                     console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
                     return;
                 }
-
-                // iOS nonsense
-//                $(".main_title").removeClass("fixfixed");
-//                $(".scroller-notb").removeClass("fixfixed");
-                $(".main_title").css({position: "fixed"});
-                $(".scroller-notb").css({position: "fixed"});
-                $(".dropdown").css({position: "fixed"});
-                $(".chapter").css({position: "fixed"});
+                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
+                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
+                // they are displayed in) on Android's browser. 
+                // Work around this issue by setting everything to the same position.
+                if (navigator.notification && device.platform === "Android") {
+                    $(".main_title").css({position: "fixed"});
+                    $(".scroller-notb").css({position: "fixed"});
+                    $(".dropdown").css({position: "fixed"});
+                    $(".chapter").css({position: "fixed"});
+                }
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
@@ -1569,6 +1589,8 @@ define(function (require) {
 //                    $("#Retranslation").prop('disabled', true);
 //                    $("#Phrase").prop('disabled', true);
                 }
+                // re-scroll if necessary
+//                $("#content").scrollTop(lastOffset);
             },
             // User clicked on the Placeholder button
             togglePlaceholder: function (event) {
@@ -1995,6 +2017,8 @@ define(function (require) {
             },
             // go to the previous target field, marking the current field as dirty so that it gets saved
             goPrevPile: function (event) {
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
                 // make sure we're on the right event for the right platform
                 if (navigator.notification) {
                     // on mobile device
@@ -2024,10 +2048,12 @@ define(function (require) {
                     this.listView.moveCursor(event, false);
                 }
                 // do not bubble this event up to the title bar
-                event.stopPropagation();
+//                event.stopPropagation();
             },
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
                 // make sure we're on the right event for the right platform
                 if (navigator.notification) {
                     // on mobile device
@@ -2057,7 +2083,7 @@ define(function (require) {
                     this.listView.moveCursor(event, true);
                 }
                 // do not bubble this event up to the title bar
-                event.stopPropagation();
+//                event.stopPropagation();
             },
             // More (...) menu toggle
             toggleMoreMenu: function (event) {
@@ -2122,9 +2148,8 @@ define(function (require) {
                 }
                 // scroll to the top of the content, just in case
                 var firstPileID = $(".pile").first().attr("id");
-                var top = $(".pile").first().offsetTop - (($(window).height() - $(".pile").first().outerHeight(true)) / 2);
-                console.log("scrollTop: " + top);
-                $("#content").scrollTop(top);                // do not bubble this event up to the title bar
+                $("#content").scrollTop(0);                // do not bubble this event up to the title bar
+                lastOffset = 0;
                 event.stopPropagation();
                 var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
                 var step1 = [
