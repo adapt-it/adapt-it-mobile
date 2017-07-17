@@ -1139,6 +1139,11 @@ background-color: #fff;
 }
 */
 
+/* EDB 7/5/17 hacky hack: move dropdown up into target text as well as possible */
+.twitter-typeahead {
+    top: -1.8rem;
+}
+
 .tt-menu {
   margin: 12px 0;
   padding: 8px 0;
