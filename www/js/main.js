@@ -40,7 +40,7 @@ require.config({
         'jquery': 'jquery-3.2.1.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
-        featherlight: 'featherlight.min',
+        'featherlight': 'featherlight.min',
         'featherlightGallery': 'featherlight.gallery.min',
         colorpicker: 'spectrum'
     },
@@ -50,6 +50,10 @@ require.config({
         }
     },
     shim: {
+        'featherlightGallery': {
+            deps: ['featherlight', 'jquery'],
+            exports: 'featherlightGallery'
+        },
         'handlebars': {
             exports: 'Handlebars'
         },
