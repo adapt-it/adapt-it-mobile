@@ -56,10 +56,33 @@ input[type="file"] {
     width: 100%;
 }
 
+/* featherlight / filter style overrides */
 .featherlight-content {
     width: 90%;
 }
+.featherlight-inner {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+.featherlight-inner h2 {
+    font-weight: 800;
+    border-bottom: 1px solid #333;
+}
+.featherlight-previous span {
+    left: 0;
+    color: #333;
+}
+.featherlight-next span {
+    color: #333;
+}
+.read-only {
+    color: #933;
+}
+.read-write {
+    color: #060;
+}
 
+/* welcome screen styles */
 .splash-screen {
     /* fallback solid color */
     -moz-appearance: none;
