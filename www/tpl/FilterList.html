@@ -3,13 +3,13 @@
 }}
 {{#each this}}
 <a class="slides" href=".slide-{{@index}}"><div class="slide-{{@index}}">
-<h2>{{ t 'view.ttlFilteredText'}}</h2>
+    <h2>{{ t 'view.ttlFilteredText'}} <span class="right">({{inc @index}} / {{../this.length}})</span></h2>
 <div class="control-row">{{ t 'view.dscFilterMarker'}}{{this.marker}}</div>
 <div class="control-row">{{ t 'view.dscFilteredText'}}{{this.text}}</div>
 {{#if this.canSet}}
-<div class="control-row">{{tr this key='view.dscUserCanSetFilter'}}</div>
+<div class="control-row read-write">{{tr this key='view.dscUserCanSetFilter'}}</div>
 {{else}}
-<div class="control-row">{{tr this key='view.dscUserCannotSetFilter'}}</div>
+<div class="control-row read-only">{{tr this key='view.dscUserCannotSetFilter'}}</div>
 {{/if}}
 </div></a>
 {{/each}}

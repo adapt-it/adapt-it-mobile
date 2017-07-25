@@ -21,6 +21,13 @@ define(function (require) {
 //        console.log(i18n_key + ":" + result);
         return new Handlebars.SafeString(result);
     });
+
+    // add one to the given number -- used to print out the index+offset for
+    // the filtered text items
+    Handlebars.registerHelper("inc", function (value, options) {
+        var result = parseInt(value) + 1;
+        return new Handlebars.SafeString(result);
+    });
     
     // Return the localized string corresponding to the specified key,
     // with the passed in options. Use this method if you need to pass in
