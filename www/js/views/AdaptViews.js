@@ -24,7 +24,6 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
-        featherlight = require('featherlight'),
         featherlightGallery = require('featherlightGallery'),
         i18next     = require('i18n'),
         hopscotch   = require('hopscotch'),
