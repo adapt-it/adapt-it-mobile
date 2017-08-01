@@ -41,6 +41,8 @@ By default, Adapt It Mobile will attempt to use the same user interface language
 
 ***Note on contributing***: If you are interested in localizing Adapt It Mobile's user interface to a language you know, we'd love to work with you! Send us an email at `developers at adapt-it dot org` and let's talk.
 
+----
+
 <a id="filtered-text"></a>
 
 ## Working with Filtered Text
