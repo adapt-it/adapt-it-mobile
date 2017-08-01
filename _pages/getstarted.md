@@ -112,6 +112,7 @@ Now that you have installed Adapt It Mobile, you'll want to take a look at our s
 ## Advanced topics
 
 * [Changing the user interface language]({{ site.baseurl }}/advanced-topics#changing-ui-language)
+* [Working with Filtered Text]({{ site.baseurl }}/advanced-topics#filtered-text)
 
 ## Troubleshooting
 
