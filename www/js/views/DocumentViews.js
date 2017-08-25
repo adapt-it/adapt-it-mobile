@@ -871,6 +871,7 @@ define(function (require) {
                     var $xml = $(xmlDoc);
                     var stridx = 0;
                     var chapNum = "";
+                    markers = "";
                     $($xml).find("S").each(function (i) {
                         if (i === 0 && firstBook === false) {
                             // merged (collaboration) documents have an extra "\id" element at the beginning of subsequent chapters;
@@ -879,7 +880,11 @@ define(function (require) {
                         }
                         // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
                         // create a new chapter object
-                        markers = $(this).attr('m');
+                        // EDB 22 Aug 17 note: we're adding to the markers rather than setting; for the \x* ending marker, we need to
+                        // move it forward to the next source phrase. MAKE SURE [markers] GETS CLEARED OUT IN OTHER CASES.
+                        if ($(this).attr('m')) {
+                            markers += $(this).attr('m');
+                        }
                         if (markers && markers.indexOf("\\c ") !== -1) {
                             // is this the first chapter marker? If so, ignore it (we already created it above)
                             stridx = markers.indexOf("\\c ") + 3;
@@ -919,8 +924,10 @@ define(function (require) {
                         }
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
-                            markers = "";
+                            console.log("fi: " + $(this).attr('fi'));
+//                            markers = "";
                             $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
+                                console.log("- " + elt);
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
 //                                    console.log("filter");
@@ -929,9 +936,7 @@ define(function (require) {
                                     markers += elt;
                                 } else if (elt.indexOf("\\") > 0) {
                                     // ending marker - it's concatenated with the preceding token, no space
-                                    // create a sourcephrase with the first part of the token, using the marker
-                                    // from the end
-                                    markers += elt.substr(elt.indexOf("\\"));
+                                    // (1) create a sourcephrase with the first part of the token (without the ending marker)
                                     spID = Underscore.uniqueId();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -959,7 +964,9 @@ define(function (require) {
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
-                                    markers = ""; // reset
+                                    // (2) now set the markers to the ending marker, for the next sourcephrase
+                                    markers = elt.substr(elt.indexOf("\\"));
+                                    //markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
                                     spID = Underscore.uniqueId();
@@ -1000,7 +1007,7 @@ define(function (require) {
                             spid: spID,
                             norder: norder,
                             chapterid: chapterID,
-                            markers: $(this).attr('m'),
+                            markers: markers, //$(this).attr('m'),
                             orig: null,
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
@@ -1028,6 +1035,7 @@ define(function (require) {
                             saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
                                             "", project.get('projectid'));
                         }
+                        markers = ""; // clear out the markers for the next wourcephrase
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
@@ -2634,7 +2642,7 @@ define(function (require) {
                 }
             },
             blurFilename: function (event) {
-                $("#mobileSelect").scrollTop(0);  
+                $("#mobileSelect").scrollTop(0);
             },
             // User changed the export format type. Add the appropriate extension
             changeType: function (event) {
