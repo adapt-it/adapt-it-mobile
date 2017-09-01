@@ -693,6 +693,7 @@ define(function (require) {
                     var firstChapterID = "";
                     var markers = "";
                     var firstChapterNumber = "1";
+                    var origTarget = "";
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
@@ -872,7 +873,8 @@ define(function (require) {
                     var stridx = 0;
                     var chapNum = "";
                     markers = "";
-                    $($xml).find("S").each(function (i) {
+                    $($xml).find("AdaptItDoc > S").each(function (i) {
+                        origTarget = ""; // initialize merge original target text
                         if (i === 0 && firstBook === false) {
                             // merged (collaboration) documents have an extra "\id" element at the beginning of subsequent chapters;
                             // ignore this element and continue to the next one
@@ -922,6 +924,18 @@ define(function (require) {
                                 lastAdapted++;
                             }
                         }
+                        
+                        // phrase -- collect the original target words
+                        if ($(this).attr('w') > 1) {
+                            // child sourcephrases -- a merge?
+                            $(this).children().each(function (childIdx, childVal) {
+                                if (childIdx > 0) {
+                                    origTarget += "|";
+                                }
+                                origTarget += $(childVal).children(".target").html();
+                            });
+                        }
+                        
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
                             console.log("fi: " + $(this).attr('fi'));
@@ -937,13 +951,18 @@ define(function (require) {
                                 } else if (elt.indexOf("\\") > 0) {
                                     // ending marker - it's concatenated with the preceding token, no space
                                     // (1) create a sourcephrase with the first part of the token (without the ending marker)
-                                    spID = Underscore.uniqueId();
+                                    if (origTarget.length > 0) {
+                                        // phrase -- spID has a prefix of "phr-"
+                                        spID = "phr-" + Underscore.uniqueId();
+                                    } else {
+                                        spID = Underscore.uniqueId();
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
-                                        orig: null,
+                                        orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
                                         midpuncts: "",
                                         follpuncts: "",
@@ -969,13 +988,18 @@ define(function (require) {
                                     //markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
-                                    spID = Underscore.uniqueId();
+                                    if (origTarget.length > 0) {
+                                        // phrase -- spID has a prefix of "phr-"
+                                        spID = "phr-" + Underscore.uniqueId();
+                                    } else {
+                                        spID = Underscore.uniqueId();
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
-                                        orig: null,
+                                        orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
                                         midpuncts: "",
                                         follpuncts: "",
@@ -1002,13 +1026,18 @@ define(function (require) {
                         }
                         // create the next sourcephrase
 //                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
-                        spID = Underscore.uniqueId();
+                        if (origTarget.length > 0) {
+                            // phrase -- spID has a prefix of "phr-"
+                            spID = "phr-" + Underscore.uniqueId();
+                        } else {
+                            spID = Underscore.uniqueId();
+                        }
                         sp = new spModel.SourcePhrase({
                             spid: spID,
                             norder: norder,
                             chapterid: chapterID,
                             markers: markers, //$(this).attr('m'),
-                            orig: null,
+                            orig: (origTarget.length > 0) ? origTarget : null,
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
                             follpuncts: $(this).attr('fp'),
