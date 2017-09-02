@@ -693,6 +693,7 @@ define(function (require) {
                     var firstChapterID = "";
                     var markers = "";
                     var firstChapterNumber = "1";
+                    var origTarget = "";
                     var i = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
@@ -871,7 +872,9 @@ define(function (require) {
                     var $xml = $(xmlDoc);
                     var stridx = 0;
                     var chapNum = "";
-                    $($xml).find("S").each(function (i) {
+                    markers = "";
+                    $($xml).find("AdaptItDoc > S").each(function (i) {
+                        origTarget = ""; // initialize merge original target text
                         if (i === 0 && firstBook === false) {
                             // merged (collaboration) documents have an extra "\id" element at the beginning of subsequent chapters;
                             // ignore this element and continue to the next one
@@ -879,7 +882,11 @@ define(function (require) {
                         }
                         // If this is a new chapter (starting for ch 2 -- chapter 1 is created above),
                         // create a new chapter object
-                        markers = $(this).attr('m');
+                        // EDB 22 Aug 17 note: we're adding to the markers rather than setting; for the \x* ending marker, we need to
+                        // move it forward to the next source phrase. MAKE SURE [markers] GETS CLEARED OUT IN OTHER CASES.
+                        if ($(this).attr('m')) {
+                            markers += $(this).attr('m');
+                        }
                         if (markers && markers.indexOf("\\c ") !== -1) {
                             // is this the first chapter marker? If so, ignore it (we already created it above)
                             stridx = markers.indexOf("\\c ") + 3;
@@ -917,10 +924,24 @@ define(function (require) {
                                 lastAdapted++;
                             }
                         }
+                        
+                        // phrase -- collect the original target words
+                        if ($(this).attr('w') > 1) {
+                            // child sourcephrases -- a merge?
+                            $(this).children().each(function (childIdx, childVal) {
+                                if (childIdx > 0) {
+                                    origTarget += "|";
+                                }
+                                origTarget += $(childVal).children(".target").html();
+                            });
+                        }
+                        
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
-                            markers = "";
+                            console.log("fi: " + $(this).attr('fi'));
+//                            markers = "";
                             $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
+                                console.log("- " + elt);
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
 //                                    console.log("filter");
@@ -929,16 +950,19 @@ define(function (require) {
                                     markers += elt;
                                 } else if (elt.indexOf("\\") > 0) {
                                     // ending marker - it's concatenated with the preceding token, no space
-                                    // create a sourcephrase with the first part of the token, using the marker
-                                    // from the end
-                                    markers += elt.substr(elt.indexOf("\\"));
-                                    spID = Underscore.uniqueId();
+                                    // (1) create a sourcephrase with the first part of the token (without the ending marker)
+                                    if (origTarget.length > 0) {
+                                        // phrase -- spID has a prefix of "phr-"
+                                        spID = "phr-" + Underscore.uniqueId();
+                                    } else {
+                                        spID = Underscore.uniqueId();
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
-                                        orig: null,
+                                        orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
                                         midpuncts: "",
                                         follpuncts: "",
@@ -959,16 +983,23 @@ define(function (require) {
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
-                                    markers = ""; // reset
+                                    // (2) now set the markers to the ending marker, for the next sourcephrase
+                                    markers = elt.substr(elt.indexOf("\\"));
+                                    //markers = ""; // reset
                                 } else {
                                     // regular token - add as a new sourcephrase
-                                    spID = Underscore.uniqueId();
+                                    if (origTarget.length > 0) {
+                                        // phrase -- spID has a prefix of "phr-"
+                                        spID = "phr-" + Underscore.uniqueId();
+                                    } else {
+                                        spID = Underscore.uniqueId();
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
                                         markers: markers,
-                                        orig: null,
+                                        orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
                                         midpuncts: "",
                                         follpuncts: "",
@@ -995,13 +1026,18 @@ define(function (require) {
                         }
                         // create the next sourcephrase
 //                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
-                        spID = Underscore.uniqueId();
+                        if (origTarget.length > 0) {
+                            // phrase -- spID has a prefix of "phr-"
+                            spID = "phr-" + Underscore.uniqueId();
+                        } else {
+                            spID = Underscore.uniqueId();
+                        }
                         sp = new spModel.SourcePhrase({
                             spid: spID,
                             norder: norder,
                             chapterid: chapterID,
-                            markers: $(this).attr('m'),
-                            orig: null,
+                            markers: markers, //$(this).attr('m'),
+                            orig: (origTarget.length > 0) ? origTarget : null,
                             prepuncts: $(this).attr('pp'),
                             midpuncts: "",
                             follpuncts: $(this).attr('fp'),
@@ -1028,6 +1064,7 @@ define(function (require) {
                             saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
                                             "", project.get('projectid'));
                         }
+                        markers = ""; // clear out the markers for the next wourcephrase
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
@@ -2634,7 +2671,7 @@ define(function (require) {
                 }
             },
             blurFilename: function (event) {
-                $("#mobileSelect").scrollTop(0);  
+                $("#mobileSelect").scrollTop(0);
             },
             // User changed the export format type. Add the appropriate extension
             changeType: function (event) {
