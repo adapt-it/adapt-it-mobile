@@ -89,7 +89,7 @@ define(function (require) {
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
             
-            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+//            console.log("scrollToView() looking at element: " + $(element).attr("id"));
             // check to see if we're on a mobile device
             if (navigator.notification && !Keyboard.isVisible) {
                 // on mobile device AND the keyboard hasn't displayed yet:
@@ -98,7 +98,7 @@ define(function (require) {
                 // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
                 // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
                 // work cross-platform
-                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+//                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
                 if (window.orientation === 90 || window.orientation === -90) {
                     // landscape
                     docViewHeight -= 162; // observed / hard-coded "best effort" value
@@ -109,14 +109,14 @@ define(function (require) {
             }
             // now calculate docViewBottom
             docViewBottom = docViewTop + docViewHeight;
-            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
-            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
+//            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
+//            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
             // now check to see if the content needs scrolling
             if ((eltBottom > docViewBottom) || (eltTop < docViewTop)) {
                  // Not in view -- scroll to the element
                 if (($(element).height() * 2) < docViewHeight) {
                     // more than 2 rows available in viewport -- center it
-                    console.log("More than two rows visible -- centering focused area");
+//                    console.log("More than two rows visible -- centering focused area");
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
@@ -124,13 +124,12 @@ define(function (require) {
                     offset = eltTop;
                 }
                 offset = Math.round(offset); // round it to the nearest integer
-                console.log("Scrolling to: " + offset);
-//                $("#content").stop(true, true).animate({scrollTop: offset});
+//                console.log("Scrolling to: " + offset);
                 $("#content").scrollTop(offset);
                 lastOffset = offset;
                 return false;
             }
-            console.log("No scrolling needed.");
+//            console.log("No scrolling needed.");
             return true;
         },
     
@@ -597,6 +596,7 @@ define(function (require) {
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
+                var keep_going = true;
                 var model = null;
                 var strID = "";
                 var top = 0;
@@ -606,19 +606,27 @@ define(function (require) {
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
-                    next_edit = selectedStart.previousElementSibling;
-                    if (next_edit.id.substr(0, 4) !== "pile") {
-                        // Probably a header -- see if you can go to the previous strip
+                    if (selectedStart.previousElementSibling !== null) {
+                        next_edit = selectedStart.previousElementSibling;
+                    } else {
+                        // No previous sibling -- see if you can go to the previous strip
                         if (selectedStart.parentElement.previousElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.previousElementSibling;
-                            if ($(temp_cursor).hasClass("filter")) {
-                                // this is a filter strip -- keep going
-                                while (temp_cursor && $(temp_cursor).hasClass("filter")) {
-                                    temp_cursor = temp_cursor.previousElementSibling; // back one more strip
+                            // handle filtered strips and strip header elements
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
+                                // continue on to the previous strip that ISN'T a strip header or filtered out of the UI
+                                while (temp_cursor && keep_going === true) {
+                                    temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
+                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                        // found a stopping point
+                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
+                                        keep_going = false;
+                                    }
                                 }
                             }
                             if (temp_cursor) {
-                                next_edit = temp_cursor.lastElementChild;
+                                next_edit = $(temp_cursor).children(".pile").last()[0];
                             } else {
                                 next_edit = null;
                                 console.log("reached first pile.");
@@ -633,17 +641,24 @@ define(function (require) {
                     if (selectedStart.nextElementSibling !== null) {
                         next_edit = selectedStart.nextElementSibling;
                     } else {
-                        // last pile in the strip -- see if you can go to the next strip
+                        // no next sibling in this strip -- see if you can go to the next strip
                         if (selectedStart.parentElement.nextElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.nextElementSibling;
-                            if ($(temp_cursor).hasClass("filter")) {
-                                // this is a filter strip -- keep going
-                                while (temp_cursor && $(temp_cursor).hasClass("filter")) {
+                            // handle filtered strips and strip header elements
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
+                                // continue on to the next strip that ISN'T a strip header or filtered out of the UI
+                                while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
+                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                        // found a stopping point
+                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
+                                        keep_going = false;
+                                    }
                                 }
                             }
                             if (temp_cursor) {
-                                next_edit = temp_cursor.childNodes[3];
+                                next_edit = $(temp_cursor).children(".pile").first()[0];
                             } else {
                                 next_edit = null;
                                 console.log("reached last pile.");
@@ -1178,8 +1193,8 @@ define(function (require) {
                     prevObj = null,
                     options = [],
                     foundInKB = false;
-                console.log("selectedAdaptation entry / event type:" + event.type);
-                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+//                console.log("selectedAdaptation entry / event type:" + event.type);
+//                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
                 // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
                 // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
                 // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
@@ -1363,7 +1378,7 @@ define(function (require) {
                 if (isDirty === true) {
                     $("#Undo").prop('disabled', false);
                 }
-                console.log("selectedAdaptation exit / isDirty = " + isDirty + ", origText = " + origText);
+//                console.log("selectedAdaptation exit / isDirty = " + isDirty + ", origText = " + origText);
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
