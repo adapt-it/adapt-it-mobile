@@ -4,17 +4,15 @@
 {{#.}}
 {{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
 {{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
-{{#if this.markers}}<div class="strip{{classes}}" id="strip-{{this.id}}">
-{{! start each strip with a header (e.g. verse or chapter info) }}
+{{#if this.markers}}
 {{#ifCond this.markers 'contains' 'c '}}
-    <div id="header-{{this.id}}" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div>
+<div class="strip" id="strip-{{this.id}}-sh"><div id="header-{{this.id}}-c" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div></div>
 {{else}}
 {{#ifCond this.markers 'contains' 'v'}}
-    <div id="header-{{this.id}}" class="strip-header block-height"><div class="verse-number">{{verse}}</div></div>
-{{else}}
-    <div id="header-{{this.id}}" class="strip-header block-height" style="display:none;"></div>
+<div class="strip" id="strip-{{this.id}}-sh"><div id="header-{{this.id}}-v" class="strip-header block-height"><div class="verse-number">{{verse}}</div></div></div>
 {{/ifCond}}
 {{/ifCond}}
+<div class="strip{{classes}}" id="strip-{{this.id}}">
 {{/if}}
 <div id="pile-{{this.spid}}" class="pile block-height"></div>
 {{! if this is the last sourcephrase, close out the strip div }}

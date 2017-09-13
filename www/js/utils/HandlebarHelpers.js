@@ -25,7 +25,7 @@ define(function (require) {
     // add one to the given number -- used to print out the index+offset for
     // the filtered text items
     Handlebars.registerHelper("inc", function (value, options) {
-        var result = parseInt(value) + 1;
+        var result = parseInt(value, 10) + 1;
         return new Handlebars.SafeString(result);
     });
     
