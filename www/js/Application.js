@@ -103,16 +103,16 @@ define(function (require) {
                         
 //                    });
                     // open the database
-//                    if (device.platform === "iOS") {
-//                        // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
-//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});
+                    if (device.platform === "iOS") {
+                        // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
+                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});
 //                    } else if (device.platform === "Android") {
 //                        // Android --  
 //                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaselocation: cordova.file.externalRootDirectory.toURL()});
-//                    } else {
+                    } else {
                         // something else -- just use the default location
                         this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
-//                    }
+                    }
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
                     this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
