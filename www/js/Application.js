@@ -42,32 +42,14 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             
-            // app initialization code. Here we'll initialize localization with the current locale 
+            // App initialization code. App initialization comes in a few callbacks:
+            // 1. Cordova initialization (startTheApp() in main.js)
+            // 2. Database initialization (this code)
+            // 3. Locale / i18next initialization (onInitDB() below)
+            // 4. The actual view display loading
             initialize: function (options) {
-                // callback function to initialize / load the localization info
-                var initialize_i18n = function (locale) {
-                    i18n.init({
-                        lng: locale,
-                        debug: true,
-                        fallbackLng: 'en'
-                    }, function () {
-                        // Callback when i18next is finished initializing
+                var dir = null;
 
-                        // Load any app-wide collections
-                        window.Application.BookList = new bookModel.BookCollection();
-                        window.Application.BookList.fetch({reset: true, data: {name: ""}});
-                        window.Application.ProjectList = new projModel.ProjectCollection();
-                        window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
-                        window.Application.ChapterList = new chapterModel.ChapterCollection();
-                        window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
-                        // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
-                        // Instead, they are instantiated on the pages that need them
-                        // (DocumentViews for doc import/export and AdaptViews for adapting)
-
-                        // Tell backbone we're ready to start loading the View classes.
-                        Backbone.history.start();
-                    });
-                };
                 // typeahead contenteditable workaround
                 var original = $.fn.val;
                 $.fn.val = function () {
@@ -94,35 +76,77 @@ define(function (require) {
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
                 }
-                // sqlitePlugin -- available on DeviceReady (mobile app)
+                // create / open the database
                 if (window.sqlitePlugin) {
-                    // edb 12/20/16 - issue #204: moved the database out of the apps data directory, as it will
-                    // get deleted along with the app. 
-                    // test for older database location
-//                    window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
-                        
-//                    });
-                    // open the database
+                    // on mobile device
                     if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
                         this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});
-//                    } else if (device.platform === "Android") {
-//                        // Android --  
-//                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaselocation: cordova.file.externalRootDirectory.toURL()});
+                        this.onInitDB();
+                    } else if (device.platform === "Android") {
+                        // Android -- this could either be on an external SD card or on the device itself
+                        if (cordova.file.externalDataDirectory !== null) {
+                            // has SD card -- use it
+                            dir = cordova.file.externalDataDirectory;
+                        } else {
+                            // no SD card -- use the device itself
+                            dir = cordova.file.DataDirectory;
+                        }
+                        // now attempt to get the directory
+                        window.resolveLocalFileSystemURL(dir, function (directoryEntry) {
+                            console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
+                            // Attempt to create / open our AIM database now
+                            window.Application.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaseLocation: directoryEntry.toURL()});
+                            window.Application.onInitDB();
+                        }, function (err) {
+                            console.log("resolveLocalFileSustemURL error: " + err.message);
+                        });
                     } else {
                         // something else -- just use the default location
                         this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
+                        this.onInitDB();
                     }
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
                     this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
+                    this.onInitDB();
                 }
+                
+            },
+            
+            // Callback to finish initialization once the AIM database has successfully been created / opened.
+            // This code was moved from initialize() above, and is called from there once the DB is okay to use.
+            onInitDB: function () {
+                // callback function to initialize / load the localization info
+                var initialize_i18n = function (locale) {
+                    i18n.init({
+                        lng: locale,
+                        debug: true,
+                        fallbackLng: 'en'
+                    }, function () {
+                        // Callback when i18next is finished initializing
+
+                        // Load any app-wide collections
+                        window.Application.BookList = new bookModel.BookCollection();
+                        window.Application.BookList.fetch({reset: true, data: {name: ""}});
+                        window.Application.ProjectList = new projModel.ProjectCollection();
+                        window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+                        window.Application.ChapterList = new chapterModel.ChapterCollection();
+                        window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                        // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
+                        // Instead, they are instantiated on the pages that need them
+                        // (DocumentViews for doc import/export and AdaptViews for adapting)
+
+                        // Tell backbone we're ready to start loading the View classes.
+                        Backbone.history.start();
+                    });
+                };
                 // create model collections off the Application object
                 this.BookList = null;
                 this.ProjectList = null;
                 this.ChapterList = null;
                 this.spList = null;
-
+                
                 // did the user specify a custom language?
                 if (localStorage.getItem("UILang")) {
                     // custom language
@@ -161,6 +185,11 @@ define(function (require) {
                     event.preventDefault();
                     window.history.back();
                 });
+            },
+            
+            onStart: function (app, options) {
+                // check the database schema now that we've created / opened it
+                this.checkDBSchema();
             },
             
             // Routes from AppRouter (router.js)
