@@ -35,6 +35,7 @@ define(function (require) {
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
+        DB_NAME         = "AIM",
         locale          = "en-AU",  // default
 
 
@@ -48,8 +49,7 @@ define(function (require) {
             // 3. Locale / i18next initialization (onInitDB() below)
             // 4. The actual view display loading
             initialize: function (options) {
-                var dir = null;
-
+                
                 // typeahead contenteditable workaround
                 var original = $.fn.val;
                 $.fn.val = function () {
@@ -81,34 +81,35 @@ define(function (require) {
                     // on mobile device
                     if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
-                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", iosDatabaseLocation: 'Documents'});
+                        this.db = window.sqlitePlugin.openDatabase({name: DB_NAME, iosDatabaseLocation: 'Documents'});
                         this.onInitDB();
+
                     } else if (device.platform === "Android") {
                         // Android -- this could either be on an external SD card or on the device itself
                         if (cordova.file.externalDataDirectory !== null) {
                             // has SD card -- use it
-                            dir = cordova.file.externalDataDirectory;
+                            db_dir = cordova.file.externalDataDirectory;
                         } else {
                             // no SD card -- use the device itself
-                            dir = cordova.file.DataDirectory;
+                            db_dir = cordova.file.DataDirectory;
                         }
                         // now attempt to get the directory
-                        window.resolveLocalFileSystemURL(dir, function (directoryEntry) {
+                        window.resolveLocalFileSystemURL(db_dir, function (directoryEntry) {
                             console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
                             // Attempt to create / open our AIM database now
-                            window.Application.db = window.sqlitePlugin.openDatabase({name: "AIM", androidDatabaseLocation: directoryEntry.toURL()});
+                            window.Application.db = window.sqlitePlugin.openDatabase({name: DB_NAME, androidDatabaseLocation: directoryEntry.toURL()});
                             window.Application.onInitDB();
                         }, function (err) {
                             console.log("resolveLocalFileSustemURL error: " + err.message);
                         });
                     } else {
                         // something else -- just use the default location
-                        this.db = window.sqlitePlugin.openDatabase({name: "AIM", location: 'default'});
+                        this.db = window.sqlitePlugin.openDatabase({name: DB_NAME, location: 'default'});
                         this.onInitDB();
                     }
                 } else {
                     // running in browser -- use WebSQL (Chrome / Safari ONLY)
-                    this.db = openDatabase('AIM', '1', 'AIM database', 2 * 1024 * 1024);
+                    this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
                     this.onInitDB();
                 }
                 
