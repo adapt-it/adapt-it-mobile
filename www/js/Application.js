@@ -36,6 +36,7 @@ define(function (require) {
         lang            = "",
         models          = [],
         DB_NAME         = "AIM",
+        db_dir          = "",
         locale          = "en-AU",  // default
 
 

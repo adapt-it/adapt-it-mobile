@@ -27,7 +27,7 @@
         "plist": "^1.2.0"
     },
     "dependencies": {
-        "cordova-android": "^3.5.1",
+        "cordova-android": "^6.2.3",
         "cordova-ios": "^4.4.0",
         "cordova-lib": "^6.0.0",
         "cordova-plugin-device": "1.1.6",
@@ -67,6 +67,7 @@
             "cordova-sqlite-evcore-extbuild-free": {}
         },
         "platforms": [
+            "android",
             "ios"
         ]
     }
