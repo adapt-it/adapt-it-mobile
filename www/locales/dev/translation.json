@@ -1,6 +1,7 @@
 {
     "view": {
         "ttlMain": "Adapt It Mobile",
+        "lblTagline": "Translate between related languages",
         "lblSearch": "Search",
         "lblAdapt": "Adapt",
         "dscSearch": "Look up a passage to start adapting",
