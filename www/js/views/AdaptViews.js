@@ -58,8 +58,6 @@ define(function (require) {
         isSelectingFirstPhrase = false,
         isAutoPhrase = false,
         isSelectingKB = false,
-        curIdx = 0,
-        prevIdx = 0,
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
         isRetranslation = false,
@@ -1371,7 +1369,7 @@ define(function (require) {
                             selection.addRange(range);
                         }
                         // Make sure the edit field is in view by scrolling the UI
-                        console.log("Scrolling to view...");                        
+                        console.log("Scrolling to view...");
                         scrollToView(selectedStart);
                     }
                 }
@@ -1382,10 +1380,8 @@ define(function (require) {
             },
             // keydown event handler for the target field
             editAdaptation: function (event) {
-                var next_edit = null,
-                    strID = null,
-                    model = null,
-                    targetText = "";
+                var strID = null,
+                    model = null;
                 console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
@@ -1504,8 +1500,6 @@ define(function (require) {
                 var value = null,
                     trimmedValue = null,
                     strID = null,
-                    tu = null,
-                    idx = 0,
                     model = null;
                 console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
                 // ignore this event if the user hasn't picked a translation
@@ -1683,7 +1677,6 @@ define(function (require) {
                     phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
-                    phraseObj = null,
                     origTarget = "",
                     nOrder = 0.0,
                     phObj = null,
