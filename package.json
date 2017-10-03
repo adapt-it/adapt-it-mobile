@@ -52,6 +52,14 @@
         "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
     },
     "homepage": "https://github.com/adapt-it/adapt-it-mobile",
+    "eslintConfig": {
+        "env": {
+            "browser": true
+        },
+        "rules": {
+            "no-console": "off"
+        }
+    },
     "cordova": {
         "plugins": {
             "cordova-plugin-device": {},

@@ -595,8 +595,6 @@ define(function (require) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var keep_going = true;
-                var model = null;
-                var strID = "";
                 var top = 0;
                 console.log("moveCursor");
                 event.stopPropagation();
@@ -826,8 +824,6 @@ define(function (require) {
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart");
                 event.stopPropagation();
-                var model = null,
-                    strID = "";
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
@@ -935,8 +931,6 @@ define(function (require) {
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
                     tmpIdx = 0,
-                    strID = "",
-                    selectedObj = null,
                     spid = "";
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
@@ -1177,8 +1171,6 @@ define(function (require) {
             // mouseUp / touchEnd event handler for the target field
             selectedAdaptation: function (event) {
                 var tu = null,
-                    prevID = "",
-                    top = 0,
                     i = 0,
                     strID = "",
                     model = null,
@@ -1187,8 +1179,6 @@ define(function (require) {
                     refstrings = null,
                     range = null,
                     selection = null,
-                    selectedObj = null,
-                    prevObj = null,
                     options = [],
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
@@ -1822,7 +1812,6 @@ define(function (require) {
                     newID = Underscore.uniqueId(),
                     RetSource = "",
                     RetTarget = "",
-                    RetObj = null,
                     nOrder = 0.0,
                     origTarget = "",
                     phObj = null,
