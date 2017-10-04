@@ -816,7 +816,7 @@ define(function (require) {
                 "touchend .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
                 "typeahead:select .typeahead": "selectKB",
-                "input .target": "checkForAutoMerge",
+//                "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
             
@@ -1040,6 +1040,7 @@ define(function (require) {
                         $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
                         $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
                         $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
+                        $("#mnuPhrase").prop('disabled', false); // enable toolbar button (to delete phrase)
                     } else {
                         // not a placeholder -- can add a new one
                         isPhrase = false;
@@ -1059,6 +1060,7 @@ define(function (require) {
                         $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
                         $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
                         $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
+                        $("#mnuRetranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
                     } else {
                         // not a retranslation -- can add a new one
                         isRetranslation = false;
@@ -1074,7 +1076,7 @@ define(function (require) {
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
                 // initial selection algorithm can be determined
-//                isSelectingFirstPhrase = true;
+                isSelectingFirstPhrase = true;
 //                $(selectedStart).find('.target').mouseup();
                 // end EDB
             },
@@ -1110,10 +1112,7 @@ define(function (require) {
                     aryClasses = [],
                     filteredText = "",
                     idx = 0,
-                    elt = null,
                     filterID = "",
-                    title = i18next.t('view.ttlFilteredText'),
-                    message = i18next.t('view.dscFilterMarker'),
                     aryFilters = [];
                 aryClasses = event.currentTarget.className.split(/\s+/);
                 // First, get the filter ID for this filter
@@ -1437,16 +1436,16 @@ define(function (require) {
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
             // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
-            checkForAutoMerge: function (event) {
-                // is the selection a range of piles?
-                if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
-                    // User typed after selecting a group of piles -- automatic phrase merge
-                    console.log("detect autophrase");
-                    isAutoPhrase = true;
-                    // Trigger the phrase creation
-                    $("#Phrase").click();
-                }
-            },
+//            checkForAutoMerge: function (event) {
+//                // is the selection a range of piles?
+//                if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
+//                    // User typed after selecting a group of piles -- automatic phrase merge
+//                    console.log("detect autophrase");
+//                    isAutoPhrase = true;
+//                    // Trigger the phrase creation
+//                    $("#Phrase").click();
+//                }
+//            },
             // User clicked on the Undo button.
             onUndo: function (event) {
                 console.log("onUndo: entry");
@@ -1741,14 +1740,17 @@ define(function (require) {
                     $(selectedStart).before(phraseHtml);
                     // finally, remove the selected piles (they were merged into this one)
                     $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index > idxStart && index <= (idxEnd + 1)) {
+                        if (index >= idxStart && index <= (idxEnd + 1)) {
                             // remove the original sourcephrase
                             strID = $(value).attr('id');
-                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                            selectedObj = coll.findWhere({spid: strID});
-                            coll.remove(selectedObj); // remove from collection
-                            selectedObj.destroy(); // remove from database
-                            $(value).remove();
+                            // skip our phrase
+                            if (strID.indexOf("phr") === -1) {
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                                selectedObj = coll.findWhere({spid: strID});
+                                coll.remove(selectedObj); // remove from collection
+                                selectedObj.destroy(); // remove from database
+                                $(value).remove();
+                            }
                         }
                     });
                     // update the toolbar UI
@@ -1781,7 +1783,7 @@ define(function (require) {
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
                         // add to UI
-                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('spid') + "\"></div>");
+                        $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
                         newView = new SourcePhraseView({ model: phObj});
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
@@ -1863,14 +1865,17 @@ define(function (require) {
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
                     $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index > idxStart && index <= (idxEnd + 1)) {
+                        if (index >= idxStart && index <= (idxEnd + 1)) {
                             // remove the original sourceRet
                             strID = $(value).attr('id');
-                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                            selectedObj = coll.findWhere({spid: strID});
-                            coll.remove(selectedObj); // remove from collection
-                            selectedObj.destroy(); // remove from database
-                            $(value).remove();
+                            // skip our retranslation
+                            if (strID.indexOf("ret") === -1) {
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                                selectedObj = coll.findWhere({spid: strID});
+                                coll.remove(selectedObj); // remove from collection
+                                selectedObj.destroy(); // remove from database
+                                $(value).remove();
+                            }
                         }
                     });
                     // update the toolbar UI
@@ -1904,7 +1909,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         // add to UI
-                        $(selectedStart).before("<div class=\"pile\" id=\"pile-" + phObj.get('spid') + "\"></div>");
+                        $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
                         newView = new SourcePhraseView({ model: phObj});
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
