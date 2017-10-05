@@ -31,7 +31,6 @@ define(function (require) {
         kblist          = null, // populated in onShow
         bookName        = "",
         scrID           = "",
-        lines           = [],
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
