@@ -831,7 +831,7 @@ define(function (require) {
                 selectedStart = event.currentTarget; // select the pile
                 selectedEnd = selectedStart;
 
-                idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
+                idxStart = $(selectedStart).index();
                 idxEnd = idxStart;
                 //console.log("selectedStart: " + selectedStart.id);
                 //console.log("selectedEnd: " + selectedEnd.id);
@@ -884,7 +884,7 @@ define(function (require) {
                         (tmpEnd.parentElement === selectedStart.parentElement)) {
                     // recalculate the new selectedEnd
                     selectedEnd = tmpEnd;
-                    idxEnd = $(tmpEnd).index() - 1;
+                    idxEnd = $(tmpEnd).index();
                     //console.log("selectedEnd: " + selectedEnd.id);
                     // remove ui-selecting from all piles in the strip
                     $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
@@ -1598,7 +1598,7 @@ define(function (require) {
                     strID = null,
                     newID = Underscore.uniqueId(),
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile\">" +
+                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">" +
                                         "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
                                         " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
                 console.log("placeholder: " + placeHolderHtml);
@@ -1674,7 +1674,7 @@ define(function (require) {
                     newView = null,
                     selectedObj = null,
                     PhraseLine0 = "<div id=\"pile-",
-                    PhraseLine1 = "\" class=\"pile\"><div class=\"marker\">",
+                    PhraseLine1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     PhraseLine2 = "</div> <div class=\"source\">",
                     PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
                     PhraseLine4 = "</div></div>";
@@ -1822,7 +1822,7 @@ define(function (require) {
                     newView = null,
                     selectedObj = null,
                     RetHtmlLine0 = "<div id=\"pile-",
-                    RetHtmlline1 = "\" class=\"pile\"><div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
+                    RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
                     RetHtmlLine2 = "</div> <div class=\"target\" contenteditable=\"true\">",
                     RetHtmlLine3 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
