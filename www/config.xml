@@ -4,7 +4,7 @@
         xmlns:android = "http://schemas.android.com/apk/res/android"
         id          = "org.adaptit.adaptitmobile"
         versionCode = "1" 
-        version     = "0.9.5"
+        version     = "0.9.6"
         defaultlocale = "en">
     <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
