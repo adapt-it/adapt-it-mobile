@@ -85,6 +85,7 @@ input[type="file"] {
 /* welcome screen styles */
 .splash-screen {
     /* fallback solid color */
+/*
     -moz-appearance: none;
     -webkit-appearance: none;
     border: 1px solid #eee;
@@ -95,8 +96,9 @@ input[type="file"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+*/
     overflow: hidden;
-    padding: 22px;
+/*    padding: 22px;*/
     vertical-align: middle;
     width: 90%;
 }
@@ -108,12 +110,16 @@ input[type="file"] {
     text-align: center;
 }
 .welcome-title h1 {
-    font-size: 3rem;
-    font-weight: 400;
-}
-.welcome-title h2 {
     font-size: 2rem;
     font-weight: 200;
+    line-height: 100%;
+/*    padding-bottom: 0.5rem;*/
+}
+.welcome-title h2 {
+    font-size: 1.1rem;
+    font-weight: 200;
+    padding-top: .5rem;
+    padding-bottom: 2rem;
 }
 .x-small-input {
     width: 4rem;
@@ -122,10 +128,10 @@ input[type="file"] {
     width: 6rem;
 }
 .welcome-logo {
-    background: url('../svg/adapt-it-mobile.svg') no-repeat;
+    background: url('../svg/adapt-it-mobile-white.svg') no-repeat;
     background-size: cover;
     height: 96px;
-    margin: 12px auto 22px auto;
+    margin: 0 auto 6px auto;
     width: 96px;
 }
 .waiting {
@@ -143,7 +149,7 @@ input[type="file"] {
     left: 50%;
     position: absolute;
     top: 50%;
-    -o-transform: translate(-50%, -50%);
+    -o-transform: translate(-70%, -50%);
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
