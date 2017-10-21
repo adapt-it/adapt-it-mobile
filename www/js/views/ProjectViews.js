@@ -326,6 +326,10 @@ define(function (require) {
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
+//                    if (device.platform === "Android") {
+//                        // Android -- add some known directories
+//                        localURLs.push("file:///storage/sdcard/"); // weird.
+//                    }
                     var DirsRemaining = localURLs.length;
                     var index = 0;
                     var i;
@@ -338,10 +342,13 @@ define(function (require) {
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
                                     if (entries[i].isDirectory === true) {
+                                        fileStr += "<p>dir: " + entries[i].fullPath + "</p>";
                                         // Recursive -- call back into this subdirectory
+                                        DirsRemaining++;
                                         addFileEntry(entries[i]);
                                     } else {
-                                        if (entries[i].name.indexOf(".aic") > 0) {
+                                        fileStr += "<p>" + entries[i].fullPath + "</p>";
+                                        if (entries[i].name.toLowerCase().indexOf(".aic") > 0) {
                                             fileList[index] = entries[i].toURL();
                                             fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
                                             index++;
@@ -356,8 +363,13 @@ define(function (require) {
                                         $("#OK").attr("disabled", true);
                                     } else {
                                         // nothing to select -- inform the user
-                                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
-                                        $("#OK").removeAttr("disabled");
+                                        $("#status").html(i18n.t("view.dscNoDocumentsFound"));
+                                        if ($("#loading").length) {
+                                            $("#loading").hide();
+                                            $("#waiting").hide();
+                                            $("#OK").show();
+                                        }
+                                        $("#OK").removeAttr("disabled");                                        
                                     }
                                 }
                             },
@@ -368,8 +380,9 @@ define(function (require) {
                         );
                     };
                     var addError = function (error) {
+                        // log the error and continue processing
                         console.log("getDirectory error: " + error.code);
-                        statusStr += "<p>getDirectory error: " + error.code + ", " + error.message + "</p>";
+                        DirsRemaining--;
                     };
                     for (i = 0; i < localURLs.length; i++) {
                         if (localURLs[i] === null || localURLs[i].length === 0) {

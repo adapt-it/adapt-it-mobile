@@ -2568,6 +2568,10 @@ define(function (require) {
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
+//                    if (device.platform === "Android") {
+//                        // Android -- add some known directories
+//                        localURLs.push("file:///storage/sdcard/"); // weird.
+//                    }
                     var DirsRemaining = localURLs.length;
                     var index = 0;
                     var i;
@@ -2581,16 +2585,17 @@ define(function (require) {
                                 for (i = 0; i < entries.length; i++) {
                                     if (entries[i].isDirectory === true) {
                                         // Recursive -- call back into this subdirectory
+                                        DirsRemaining++;
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
-                                        if (entries[i].fullPath.indexOf("Download") > 0 || entries[i].fullPath.indexOf("Document") > 0 || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
-                                            if ((entries[i].name.indexOf(".txt") > 0) ||
-                                                    (entries[i].name.indexOf(".usx") > 0) ||
-                                                    (entries[i].name.indexOf(".usfm") > 0) ||
-                                                    (entries[i].name.indexOf(".sfm") > 0) ||
-                                                    (entries[i].name.indexOf(".xml") > 0)) {
+                                            if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
+                                                    (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
+                                                    (entries[i].name.toLowerCase().indexOf(".usfm") > 0) ||
+                                                    (entries[i].name.toLowerCase().indexOf(".sfm") > 0) ||
+                                                    (entries[i].name.toLowerCase().indexOf(".xml") > 0)) {
                                                 fileList[index] = entries[i].toURL();
                                                 fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
 //                                                fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
@@ -2621,8 +2626,9 @@ define(function (require) {
                         );
                     };
                     var addError = function (error) {
+                        // log the error and continue processing
                         console.log("getDirectory error: " + error.code);
-                        statusStr += "<p>getDirectory error: " + error.code + ", " + error.message + "</p>";
+                        DirsRemaining--;
                     };
                     for (i = 0; i < localURLs.length; i++) {
                         if (localURLs[i] !== null && localURLs[i].length > 0) {
