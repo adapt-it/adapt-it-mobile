@@ -43,6 +43,7 @@ define(function (require) {
         Application = Marionette.Application.extend({
             filterlist: "",
             currentProject: null,
+            localURLs: [],
             
             // App initialization code. App initialization comes in a few callbacks:
             // 1. Cordova initialization (startTheApp() in main.js)
@@ -76,6 +77,32 @@ define(function (require) {
                     // a couple iOS-specific settings
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
+                }
+                // local dirs (mobile app only)
+                if (window.sqlitePlugin) {
+                    // initialize localURLs
+                    this.localURLs    = [
+                        cordova.file.documentsDirectory,
+                        cordova.file.externalRootDirectory,
+                        cordova.file.sharedDirectory,
+                        cordova.file.syncedDataDirectory
+                    ];
+                    if (device.platform === "Android") {
+                        // request read access to the external storage if we don't have it
+                        cordova.plugins.diagnostic.getExternalStorageAuthorizationStatus(function (status) {
+                            if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED) {
+                                console.log("External storage use is authorized");
+                            } else {
+                                cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (result) {
+                                    console.log("Authorization request for external storage use was " + (result === cordova.plugins.diagnostic.permissionStatus.GRANTED ? "granted" : "denied"));
+                                }, function (error) {
+                                    console.error(error);
+                                });
+                            }
+                        }, function (error) {
+                            console.error("The following error occurred: " + error);
+                        });
+                    }
                 }
                 // create / open the database
                 if (window.sqlitePlugin) {
