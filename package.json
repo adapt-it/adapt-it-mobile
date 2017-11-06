@@ -43,6 +43,7 @@
         "cordova-plugin-whitelist": "1.3.2",
         "cordova-sqlite-evcore-extbuild-free": "0.8.6",
         "cordova-sqlite-storage": "1.4.7",
+        "cordova.plugins.diagnostic": "^3.7.1",
         "fs": "0.0.2",
         "gulp": "^3.9.1",
         "gulp-typescript": "^2.11.0",
@@ -73,7 +74,8 @@
             "cordova-plugin-splashscreen": {},
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
-            "cordova-sqlite-evcore-extbuild-free": {}
+            "cordova-sqlite-evcore-extbuild-free": {},
+            "cordova.plugins.diagnostic": {}
         },
         "platforms": [
             "android",

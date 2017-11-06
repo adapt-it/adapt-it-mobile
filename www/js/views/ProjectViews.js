@@ -45,7 +45,7 @@ define(function (require) {
         lines       = [],
         ft          = null,
         fileList    = [],
-
+ 
         ////
         // Helper methods
         ////
@@ -239,6 +239,7 @@ define(function (require) {
         // Copy a project file from an .aic file on the device.
         CopyProjectView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplCopyOrImport),
+            localURLs: null,
 
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
@@ -320,17 +321,7 @@ define(function (require) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserGroup").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                    var localURLs    = [
-                        cordova.file.documentsDirectory,
-                        cordova.file.externalRootDirectory,
-                        cordova.file.sharedDirectory,
-                        cordova.file.syncedDataDirectory
-                    ];
-//                    if (device.platform === "Android") {
-//                        // Android -- add some known directories
-//                        localURLs.push("file:///storage/sdcard/"); // weird.
-//                    }
-                    var DirsRemaining = localURLs.length;
+                    var DirsRemaining = window.Application.localURLs.length;
                     var index = 0;
                     var i;
                     var statusStr = "";
@@ -342,12 +333,10 @@ define(function (require) {
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
                                     if (entries[i].isDirectory === true) {
-                                        fileStr += "<p>dir: " + entries[i].fullPath + "</p>";
                                         // Recursive -- call back into this subdirectory
                                         DirsRemaining++;
                                         addFileEntry(entries[i]);
                                     } else {
-                                        fileStr += "<p>" + entries[i].fullPath + "</p>";
                                         if (entries[i].name.toLowerCase().indexOf(".aic") > 0) {
                                             fileList[index] = entries[i].toURL();
                                             fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
@@ -369,7 +358,7 @@ define(function (require) {
                                             $("#waiting").hide();
                                             $("#OK").show();
                                         }
-                                        $("#OK").removeAttr("disabled");                                        
+                                        $("#OK").removeAttr("disabled");
                                     }
                                 }
                             },
@@ -384,12 +373,12 @@ define(function (require) {
                         console.log("getDirectory error: " + error.code);
                         DirsRemaining--;
                     };
-                    for (i = 0; i < localURLs.length; i++) {
-                        if (localURLs[i] === null || localURLs[i].length === 0) {
+                    for (i = 0; i < window.Application.localURLs.length; i++) {
+                        if (window.Application.localURLs[i] === null || window.Application.localURLs[i].length === 0) {
                             DirsRemaining--;
                             continue; // skip blank / non-existent paths for this platform
                         }
-                        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                        window.resolveLocalFileSystemURL(window.Application.localURLs[i], addFileEntry, addError);
                     }
                 } else {
                     // running in browser -- use html <input> to select file
