@@ -795,6 +795,7 @@ select.docNav {
     -webkit-user-select: auto !important;
     -moz-user-select: auto !important;
     -ms-user-select: auto !important;
+    user-select: auto !important;
 }
 /* force a paragraph break */
 .para {
