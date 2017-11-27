@@ -824,6 +824,7 @@ define(function (require) {
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart");
                 event.stopPropagation();
+                event.preventDefault();
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
@@ -853,6 +854,7 @@ define(function (require) {
                     return; // cannot select other items
                 }
                 event.stopPropagation();
+                event.preventDefault();
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
                     // touch
@@ -936,6 +938,9 @@ define(function (require) {
                 if (selectedStart === null) {
                     selectedStart = event.currentTarget;
                 }
+                // prevent weird edit menu appearances (long click)
+                event.preventDefault();
+                event.stopPropagation();
                 // check for retranslation
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
@@ -1166,6 +1171,7 @@ define(function (require) {
                 console.log("selectingAdaptation: " + selectedStart.id);
                 // do NOT propogate this up to the Pile - the user is clicking in the edit field
                 event.stopPropagation();
+                event.preventDefault();
             },
             // mouseUp / touchEnd event handler for the target field
             selectedAdaptation: function (event) {
@@ -1209,6 +1215,7 @@ define(function (require) {
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
+                event.preventDefault();
 
                 // clear out any old selection
                 $("div").removeClass("ui-selecting ui-selected");
