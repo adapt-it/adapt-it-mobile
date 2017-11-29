@@ -9,6 +9,8 @@ date:   2017-01-03 12:21
 * [Installation issues](#install-issues)
 * [Adapting issues](#adapting-issues)
   * [Each field is capitalized](#auto-caps)
+  * [My translations get auto-corrected](#auto-correct)
+  * [I have a CUT/COPY/PASTE menu over my text](#edit-popup-menu)
 * [My issue isn't listed here (or I'd like a new feature)](#new-issue-or-feature)
 
 ----
@@ -23,7 +25,7 @@ date:   2017-01-03 12:21
 ### Adapt It Mobile system requirements: 
 
 - Apple iPad, iPod or iPhone running iOS 8.x or later
-- Android device running Android 4.0.x or later
+- Android device running Android 4.4.x or later
 
 ----
 
@@ -38,7 +40,28 @@ date:   2017-01-03 12:21
 Both Android and iOS have system settings that control the capitalization of text input. If you are having problems with the on-screen keyboard automatically capitalizing each word of text, you can turn this feature off for your mobile device:
 
 - On an Android device, go to Settings / Language & Input / Keyboard & input methods; you will need to open the preferences of your selected keyboard and check for a preference labeled "auto capitalization"
-- on an iOS device, go to Settings / General / Keyboard and select "Auto-Capitalization"
+- on an iOS device, go to Settings / General / Keyboard and turn off "Auto-Capitalization"
+
+<a id="auto-correct"></a>
+
+## My translations get auto-corrected
+
+Both Android and iOS have system settings that control the auto-correction of text input. Normally this is helpful for entering text in your mobile device, but with Adapt It Mobile you are probably working in a language that isn't directly supported by your device. If you are having problems with the on-screen keyboard automatically correcting each word of text -- to a language you aren't translating to -- you can turn this feature off for your mobile device:
+
+- On an Android device, go to Settings / Language & Input / Keyboard & input methods; you will need to open the preferences of your selected keyboard and check for a preference labeled "Auto-correction." Make sure this setting is turned off.
+- on an iOS device, go to Settings / General / Keyboard and turn off "Auto-Correction"
+
+<a id="edit-popup-menu"></a>
+
+## I have a CUT/COPY/PASTE menu over my text
+
+Both Android and iOS have a system menu that allows you to cut, copy, and paste text like you can on a computer. This menu is displayed when you press and hold your finger on the mobile device screen (what's known as a "long click"). This can be useful when copying text between fields or apps on your device, but it can also block you from seeing the text on your screen.
+
+If you get stuck with this menu over your text, you can perform the following steps to dismiss the menu.
+
+- On Android 5, the menu appears at the top of the screen. To dismiss it, click on the Left arrow in the menu bar.
+- On Android versions 6 and newer, click on the `COPY` button to dismiss the menu.
+- On iOS, click again on the text edit field to dismiss the menu.
 
 ----
 
