@@ -11,7 +11,9 @@ date:   2017-01-03 12:21
   * [Each field is capitalized](#auto-caps)
   * [My translations get auto-corrected](#auto-correct)
   * [I have a CUT/COPY/PASTE menu over my text](#edit-popup-menu)
-* [My issue isn't listed here (or I'd like a new feature)](#new-issue-or-feature)
+* [My issue isn't listed here (or I'd like a new feature)](#other)
+  * [Report a bug or request a feature](#new-issue-or-feature)
+  * [Contacting us](#contacting)
 
 ----
 
@@ -42,6 +44,8 @@ Both Android and iOS have system settings that control the capitalization of tex
 - On an Android device, go to Settings / Language & Input / Keyboard & input methods; you will need to open the preferences of your selected keyboard and check for a preference labeled "auto capitalization"
 - on an iOS device, go to Settings / General / Keyboard and turn off "Auto-Capitalization"
 
+----
+
 <a id="auto-correct"></a>
 
 ## My translations get auto-corrected
@@ -50,6 +54,8 @@ Both Android and iOS have system settings that control the auto-correction of te
 
 - On an Android device, go to Settings / Language & Input / Keyboard & input methods; you will need to open the preferences of your selected keyboard and check for a preference labeled "Auto-correction." Make sure this setting is turned off.
 - on an iOS device, go to Settings / General / Keyboard and turn off "Auto-Correction"
+
+----
 
 <a id="edit-popup-menu"></a>
 
@@ -65,12 +71,22 @@ If you get stuck with this menu over your text, you can perform the following st
 
 ----
 
+<a id="other"></a>
+
+# My issue isn't listed here (or I'd like a new feature)
+
 <a id="new-issue-or-feature"></a>
 
-## Creating a new issue or feature request
+## Report a bug or request a feature
 
 If you have come across a problem in the Adapt It Mobile software -- or if you would like to request a new feature -- you can write up a new issue in our [issue tracker](https://github.com/adapt-it/adapt-it-mobile/issues).
 
 We will try to respond to new issues in a timely manner. To help us find and address the problem quickly, please fill out as much of the form as possible. Thanks!
 
 For those that are testing Adapt It Mobile in more depth, please take a look at this helpful [article on writing up a good bug report](http://www.softwaretestinghelp.com/how-to-write-good-bug-report/). It gives some good tips on how to write up a defect report that is succinct and reproducible.
+
+<a id="contacting"></a>
+
+## Contacting us
+
+We can also be reached by sending an email to `support at adapt-it dot org`
