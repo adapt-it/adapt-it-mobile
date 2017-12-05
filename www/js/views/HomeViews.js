@@ -101,20 +101,15 @@ define(function (require) {
                     // remove the language in local storage (so we get it dynamically the next time the app is launched)
                     localStorage.removeItem("UILang");
                     // get the user's locale - mobile or web
-                    if (typeof navigator.globalization !== 'undefined') {
-                        navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
-                            function (loc) {
-                                locale = loc.value.split("-")[0];
-                                // set the locale, then return
-                                i18n.setLng(locale, function (err, t) {
-                                    // go back to the previous page
-                                    window.history.go(-1);
-                                });
-                            },
-                            function () {console.log('Error getting locale\n'); }
-                        );
+                    if (window.Intl && typeof window.Intl === 'object') {
+                        // device supports ECMA Internationalization API
+                        locale = navigator.language.split("-")[0];
+                        i18n.setLng(locale, function (err, t) {
+                            // go back to the previous page
+                            window.history.go(-1);
+                        });
                     } else {
-                        // in web browser
+                        // fallback - use web browser's language metadata
                         var lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
                         locale = lang.split("-")[0];
                         // set the locale, then return
