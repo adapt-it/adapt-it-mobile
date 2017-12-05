@@ -330,12 +330,10 @@ echo -e "\nAdd android platform if not already added"
 cordova platform list | grep ^Installed |grep -sq android || cordova platform add android
 # Add the plugins from npm
 echo -e "\nAdd Android plugins from npm"
-cordova plugin add cordova-plugin-crosswalk-webview
 cordova plugin add cordova-plugin-dialogs
 cordova plugin add cordova-plugin-file
 cordova plugin add cordova-plugin-file-transfer
 cordova plugin add cordova-plugin-fonts
-cordova plugin add cordova-plugin-globalization
 cordova plugin add cordova-sqlite-storage
 # Build the project
 echo -e "\nBuild the Android project"

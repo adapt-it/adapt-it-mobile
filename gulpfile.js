@@ -64,7 +64,6 @@ gulp.task("plugins", ["scripts"], function () {
     cordova.plugin('add', 'cordova-plugin-file');
     cordova.plugin('add', 'cordova-plugin-file-transfer');
     cordova.plugin('add', 'cordova-plugin-fonts');
-    cordova.plugin('add', 'cordova-plugin-globalization');
     cordova.plugin('add', 'cordova-plugin-splashscreen');
     cordova.plugin('add', 'cordova-plugin-whitelist');
     cordova.plugin('add', 'cordova-sqlite-storage');
@@ -81,7 +80,6 @@ gulp.task("build-android", function () {
         .pipe(plugin('cordova-plugin-file'))
         .pipe(plugin('cordova-plugin-file-transfer'))
         .pipe(plugin('cordova-plugin-fonts'))
-        .pipe(plugin('cordova-plugin-globalization'))
         .pipe(plugin('cordova-plugin-splashscreen'))
         .pipe(plugin('cordova-plugin-whitelist'))
         .pipe(plugin('cordova-sqlite-storage'))
@@ -97,7 +95,6 @@ gulp.task("build-ios", ["plugins"], function () {
         .pipe(plugin('cordova-plugin-file'))
         .pipe(plugin('cordova-plugin-file-transfer'))
         .pipe(plugin('cordova-plugin-fonts'))
-        .pipe(plugin('cordova-plugin-globalization'))
         .pipe(plugin('cordova-plugin-splashscreen'))
         .pipe(plugin('cordova-plugin-whitelist'))
         .pipe(plugin('cordova-sqlite-storage'))
@@ -112,7 +109,6 @@ gulp.task("build-win", ["plugins"], function () {
         .pipe(cordova.plugin('add', 'cordova-plugin-file'))
         .pipe(cordova.plugin('add', 'cordova-plugin-file-transfer'))
         .pipe(cordova.plugin('add', 'cordova-plugin-fonts'))
-        .pipe(cordova.plugin('add', 'cordova-plugin-globalization'))
         .pipe(cordova.plugin('add', 'cordova-plugin-splashscreen'))
         .pipe(cordova.plugin('add', 'cordova-plugin-whitelist'))
         .pipe(cordova.plugin('add', 'cordova-sqlite-storage'))
@@ -127,7 +123,6 @@ gulp.task("build-wp8", ["plugins"], function () {
         .pipe(cordova.plugin('add', 'cordova-plugin-file'))
         .pipe(cordova.plugin('add', 'cordova-plugin-file-transfer'))
         .pipe(cordova.plugin('add', 'cordova-plugin-fonts'))
-        .pipe(cordova.plugin('add', 'cordova-plugin-globalization'))
         .pipe(cordova.plugin('add', 'cordova-plugin-splashscreen'))
         .pipe(cordova.plugin('add', 'cordova-plugin-whitelist'))
         .pipe(cordova.plugin('add', 'cordova-sqlite-storage'))

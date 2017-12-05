@@ -183,16 +183,12 @@ define(function (require) {
                 } else {
                     // use normal locale settings
                     // get the user's locale - mobile or web
-                    if (typeof navigator.globalization !== 'undefined') {
-                        navigator.globalization.getPreferredLanguage( // per docs, falls back on getLocaleName
-                            function (loc) {
-                                locale = loc.value.split("-")[0];
-                                initialize_i18n(locale);
-                            },
-                            function () {console.log('Error getting locale\n'); }
-                        );
+                    if (window.Intl && typeof window.Intl === 'object') {
+                        // device supports ECMA Internationalization API
+                        locale = navigator.language.split("-")[0];
+                        initialize_i18n(locale);
                     } else {
-                        // in web browser
+                        // fall back on web browser languages metadata
                         lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
                         locale = lang.split("-")[0];
                         initialize_i18n(locale);
