@@ -1257,8 +1257,10 @@ define(function (require) {
                             // mark it purple
                             $(event.currentTarget).addClass('fromkb');
                             clearKBInput = false;
-                            // jump to the next field
-                            this.moveCursor(event, true);
+                            // jump to the next field -- ONLY IF ALREADY MOVING
+                            if (MovingDir !== 0) {
+                                this.moveCursor(event, true);
+                            }
                             foundInKB = true;
                         } else {
                             // more than one entry in KB -- stop here so the user can choose
@@ -1948,12 +1950,23 @@ define(function (require) {
             template: Handlebars.compile(tplChapter),
             initialize: function () {
                 kblist = new kbModels.TargetUnitCollection();
+                document.addEventListener("pause", this.onPause, false);
                 document.addEventListener("resume", this.onResume, false);
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
             regions: {
                 container: "#chapter"
+            },
+            // Pause handler -- user is placing the app in the background.
+            // Save the current selection if needed.
+            onPause: function () {
+                if (selectedStart !== null && isDirty === true) {
+                    // unsaved change -- save it now
+                    console.log("onPause - saving");
+                    $(selectedStart).find(".target").blur();
+                    
+                }
             },
             // Resume handler -- user placed the app in the background, then resumed.
             // Refresh this view to wake it up.
