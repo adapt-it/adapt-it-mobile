@@ -99,7 +99,7 @@ define(function (require) {
                 var sql = "UPDATE targetunit SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.projectid, attributes.source, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.tuid], function (tx, res) {
-//                        console.log("UPDATE ok: " + res.toString());
+                        console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("UPDATE error: " + err.message);
                     });
