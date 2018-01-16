@@ -680,7 +680,6 @@ select.docNav {
     -webkit-writing-mode: horizontal-tb;
 }
 /*** end temporary topcoat stylings ***/
-
 .marker {
 	color: #009900; /*green*/
 	display: block;
@@ -1261,6 +1260,10 @@ background-color: #fff;
     .source, .target {
         max-width: 240px;
     }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 8px;
+    }
     /* hidden items */
     .side-nav__list__item__label {
         display: none;
@@ -1299,6 +1302,10 @@ background-color: #fff;
     #HelpBtn {
         display: inline-block;
     }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 8px;
+    }
 }
 
 /* Medium screen sizes
@@ -1326,6 +1333,10 @@ background-color: #fff;
     }
     #HelpBtn {
         display: inline-block;
+    }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 8px;
     }
 }
 
@@ -1355,6 +1366,10 @@ background-color: #fff;
     }
     #HelpBtn {
         display: inline-block;
+    }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 16px;
     }
 }
 
@@ -1386,5 +1401,9 @@ background-color: #fff;
     /* display the button labels */
     .side-nav__list__item__label {
         display: inline;
+    }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 16px;
     }
 }
