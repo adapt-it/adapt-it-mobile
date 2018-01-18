@@ -87,7 +87,7 @@ define(function (require) {
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
             
-//            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+            console.log("scrollToView() looking at element: " + $(element).attr("id"));
             // check to see if we're on a mobile device
             if (navigator.notification && !Keyboard.isVisible) {
                 // on mobile device AND the keyboard hasn't displayed yet:
@@ -96,7 +96,7 @@ define(function (require) {
                 // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
                 // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
                 // work cross-platform
-//                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
                 if (window.orientation === 90 || window.orientation === -90) {
                     // landscape
                     docViewHeight -= 162; // observed / hard-coded "best effort" value
@@ -107,14 +107,14 @@ define(function (require) {
             }
             // now calculate docViewBottom
             docViewBottom = docViewTop + docViewHeight;
-//            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
-//            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
+            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
+            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
             // now check to see if the content needs scrolling
             if ((eltBottom > docViewBottom) || (eltTop < docViewTop)) {
                  // Not in view -- scroll to the element
                 if (($(element).height() * 2) < docViewHeight) {
                     // more than 2 rows available in viewport -- center it
-//                    console.log("More than two rows visible -- centering focused area");
+                    console.log("More than two rows visible -- centering focused area");
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
@@ -122,12 +122,12 @@ define(function (require) {
                     offset = eltTop;
                 }
                 offset = Math.round(offset); // round it to the nearest integer
-//                console.log("Scrolling to: " + offset);
+                console.log("Scrolling to: " + offset);
                 $("#content").scrollTop(offset);
                 lastOffset = offset;
                 return false;
             }
-//            console.log("No scrolling needed.");
+            console.log("No scrolling needed.");
             return true;
         },
     
@@ -1251,14 +1251,33 @@ define(function (require) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
                         if (refstrings.length === 1) {
-                            // exactly one entry in KB -- populate and move forward
+                            // exactly one entry in KB -- populate the field
                             targetText = this.autoAddCaps(model, refstrings[0].target);
                             $(event.currentTarget).html(targetText);
-                            // mark it purple
-                            $(event.currentTarget).addClass('fromkb');
-                            clearKBInput = false;
-                            // jump to the next field -- ONLY IF ALREADY MOVING
-                            if (MovingDir !== 0) {
+                            // Are we moving?
+                            if (MovingDir === 0) {
+                                // not moving (user clicked on this node) - leave the
+                                // cursor here for the user to make adjustments as necessary
+                                clearKBInput = true;
+                                // no change yet -- this is just a suggestion
+                                isDirty = true;
+                                // select any text in the edit field
+                                if (document.body.createTextRange) {
+                                    range = document.body.createTextRange();
+                                    range.moveToElementText($(event.currentTarget));
+                                    range.select();
+                                } else if (window.getSelection) {
+                                    selection = window.getSelection();
+                                    range = document.createRange();
+                                    range.selectNodeContents($(event.currentTarget)[0]);
+                                    selection.removeAllRanges();
+                                    selection.addRange(range);
+                                }
+                            } else {
+                                // moving (user clicked forward/back at some point)
+                                // mark the current target purple and move the cursor
+                                $(event.currentTarget).addClass('fromkb');
+                                clearKBInput = false;
                                 this.moveCursor(event, true);
                             }
                             foundInKB = true;
@@ -1550,26 +1569,34 @@ define(function (require) {
                 model = this.collection.findWhere({spid: strID});
                 // check for changes in the edit field
                 if (isDirty === true) {
-                    console.log("Dirty bit set. Saving KB value: " + trimmedValue);
-                    // something has changed -- update the KB
-                    saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                             this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                             project.get('projectid'));
-                    // add any punctuation back to the target field
-                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
-                    // update the model with the new target text
-                    model.save({target: trimmedValue});
-                    // if the target differs from the source, make it display in green
-                    if (model.get('source') === model.get('target')) {
-                        // source === target --> remove "differences" from the class so the text is black
-                        $(event.currentTarget).removeClass('differences');
-                    } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                        // source + punctuation == target --> remove "differences"
-                        $(event.currentTarget).removeClass('differences');
-                    } else if (!$(event.currentTarget).hasClass('differences')) {
-                        // source != target -- add "differences" to the class so the text is green
-                        $(event.currentTarget).addClass('differences');
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. If there was a KB entry, clean it out.
+//                        removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+//                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+//                                     project.get('projectid'));
+//                        
+                    } else {
+                        console.log("Dirty bit set. Saving KB value: " + trimmedValue);
+                        // something has changed -- update the KB
+                        saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                 this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
+                                 this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                 project.get('projectid'));
+                        // add any punctuation back to the target field
+                        $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                        // update the model with the new target text
+                        model.save({target: trimmedValue});
+                        // if the target differs from the source, make it display in green
+                        if (model.get('source') === model.get('target')) {
+                            // source === target --> remove "differences" from the class so the text is black
+                            $(event.currentTarget).removeClass('differences');
+                        } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                            // source + punctuation == target --> remove "differences"
+                            $(event.currentTarget).removeClass('differences');
+                        } else if (!$(event.currentTarget).hasClass('differences')) {
+                            // source != target -- add "differences" to the class so the text is green
+                            $(event.currentTarget).addClass('differences');
+                        }
                     }
                 }
                 // if we just finished work on a new verse, update the last adapted count
