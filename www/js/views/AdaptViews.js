@@ -87,16 +87,17 @@ define(function (require) {
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
             
-            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+//            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+//            console.log("-- Currently chapter position = " + $(".chapter").css("position"));
             // check to see if we're on a mobile device
-            if (navigator.notification && !Keyboard.isVisible) {
+            if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
                 // on mobile device AND the keyboard hasn't displayed yet:
                 // the viewport height is going to shrink when the software keyboard displays
                 // HACK: subtract the software keyboard from the visible area end -
                 // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
                 // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
                 // work cross-platform
-                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+//                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
                 if (window.orientation === 90 || window.orientation === -90) {
                     // landscape
                     docViewHeight -= 162; // observed / hard-coded "best effort" value
@@ -107,27 +108,29 @@ define(function (require) {
             }
             // now calculate docViewBottom
             docViewBottom = docViewTop + docViewHeight;
-            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
-            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
+//            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
+//            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
             // now check to see if the content needs scrolling
             if ((eltBottom > docViewBottom) || (eltTop < docViewTop)) {
                  // Not in view -- scroll to the element
                 if (($(element).height() * 2) < docViewHeight) {
                     // more than 2 rows available in viewport -- center it
-                    console.log("More than two rows visible -- centering focused area");
+//                    console.log("More than two rows visible -- centering focused area");
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
-                    console.log("Small viewport -- scrolling to the element itself");
+//                    console.log("Small viewport -- scrolling to the element itself");
                     offset = eltTop;
                 }
                 offset = Math.round(offset); // round it to the nearest integer
-                console.log("Scrolling to: " + offset);
+//                console.log("Scrolling to: " + offset);
                 $("#content").scrollTop(offset);
                 lastOffset = offset;
+//                docViewTop = $("#content").scrollTop();
+//                console.log("Content scroll top is now: " + docViewTop);
                 return false;
             }
-            console.log("No scrolling needed.");
+//            console.log("No scrolling needed.");
             return true;
         },
     
@@ -1188,18 +1191,7 @@ define(function (require) {
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
-                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
-                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
-                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
-                // they are displayed in) on Android's browser. 
-                // Work around this issue by setting everything to the same position.
-                if (navigator.notification && device.platform === "Android") {
-                    $(".main_title").css({position: "absolute"});
-                    $(".scroller-notb").css({position: "absolute"});
-                    $(".dropdown").css({position: "absolute"});
-                    $(".chapter").css({position: "absolute"});
-                }
-                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1437,7 +1429,6 @@ define(function (require) {
                         selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
                         selectedEnd = selectedStart;
                     }
-                    // If tab/enter is pressed, blur and move to edit the next pile
                     if (event.shiftKey) {
                         MovingDir = -1;
                         this.moveCursor(event, false);  // shift tab/enter -- move backwards
@@ -1448,8 +1439,6 @@ define(function (require) {
                 } else {
                     // any other key - set the dirty bit
                     isDirty = true;
-                }
-                if (isDirty === true) {
                     $("#Undo").prop('disabled', false);
                 }
             },
@@ -1460,6 +1449,7 @@ define(function (require) {
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
                 isSelectingKB = false; // we've now chosen something - OK to blur
                 isDirty = true;
+                $("#Undo").prop('disabled', false);
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
@@ -1523,17 +1513,6 @@ define(function (require) {
                 if (isSelectingKB === true) {
                     console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
                     return;
-                }
-                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
-                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
-                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
-                // they are displayed in) on Android's browser. 
-                // Work around this issue by setting everything to the same position.
-                if (navigator.notification && device.platform === "Android") {
-                    $(".main_title").css({position: "fixed"});
-                    $(".scroller-notb").css({position: "fixed"});
-                    $(".dropdown").css({position: "fixed"});
-                    $(".chapter").css({position: "fixed"});
                 }
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line

@@ -176,8 +176,7 @@ input[type="file"] {
     overflow: hidden;
     text-overflow: ellipsis;
     width:100%;
-    position: fixed;
-    z-index: 999;
+    position: absolute;
 }
 .small-pic {
     float: left;
@@ -1304,7 +1303,7 @@ background-color: #fff;
     }
     #chapter {
         background-color: rgb(223,226,226);
-        margin-right: 8px;
+        margin-right: .5rem;
     }
 }
 
@@ -1336,7 +1335,7 @@ background-color: #fff;
     }
     #chapter {
         background-color: rgb(223,226,226);
-        margin-right: 8px;
+        margin-right: .8rem;
     }
 }
 
@@ -1369,7 +1368,7 @@ background-color: #fff;
     }
     #chapter {
         background-color: rgb(223,226,226);
-        margin-right: 16px;
+        margin-right: 1rem;
     }
 }
 
@@ -1404,6 +1403,6 @@ background-color: #fff;
     }
     #chapter {
         background-color: rgb(223,226,226);
-        margin-right: 16px;
+        margin-right: 1rem;
     }
 }
