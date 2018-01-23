@@ -88,8 +88,9 @@ define(function (require) {
             var offset = 0;
             
 //            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+//            console.log("-- Currently chapter position = " + $(".chapter").css("position"));
             // check to see if we're on a mobile device
-            if (navigator.notification && !Keyboard.isVisible) {
+            if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
                 // on mobile device AND the keyboard hasn't displayed yet:
                 // the viewport height is going to shrink when the software keyboard displays
                 // HACK: subtract the software keyboard from the visible area end -
@@ -118,13 +119,15 @@ define(function (require) {
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
-                    console.log("Small viewport -- scrolling to the element itself");
+//                    console.log("Small viewport -- scrolling to the element itself");
                     offset = eltTop;
                 }
                 offset = Math.round(offset); // round it to the nearest integer
 //                console.log("Scrolling to: " + offset);
                 $("#content").scrollTop(offset);
                 lastOffset = offset;
+//                docViewTop = $("#content").scrollTop();
+//                console.log("Content scroll top is now: " + docViewTop);
                 return false;
             }
 //            console.log("No scrolling needed.");
@@ -1188,18 +1191,7 @@ define(function (require) {
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
-                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
-                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
-                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
-                // they are displayed in) on Android's browser. 
-                // Work around this issue by setting everything to the same position.
-                if (navigator.notification && device.platform === "Android") {
-                    $(".main_title").css({position: "absolute"});
-                    $(".scroller-notb").css({position: "absolute"});
-                    $(".dropdown").css({position: "absolute"});
-                    $(".chapter").css({position: "absolute"});
-                }
-                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").addClass("hide");
@@ -1251,14 +1243,33 @@ define(function (require) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
                         if (refstrings.length === 1) {
-                            // exactly one entry in KB -- populate and move forward
+                            // exactly one entry in KB -- populate the field
                             targetText = this.autoAddCaps(model, refstrings[0].target);
                             $(event.currentTarget).html(targetText);
-                            // mark it purple
-                            $(event.currentTarget).addClass('fromkb');
-                            clearKBInput = false;
-                            // jump to the next field -- ONLY IF ALREADY MOVING
-                            if (MovingDir !== 0) {
+                            // Are we moving?
+                            if (MovingDir === 0) {
+                                // not moving (user clicked on this node) - leave the
+                                // cursor here for the user to make adjustments as necessary
+                                clearKBInput = true;
+                                // no change yet -- this is just a suggestion
+                                isDirty = true;
+                                // select any text in the edit field
+                                if (document.body.createTextRange) {
+                                    range = document.body.createTextRange();
+                                    range.moveToElementText($(event.currentTarget));
+                                    range.select();
+                                } else if (window.getSelection) {
+                                    selection = window.getSelection();
+                                    range = document.createRange();
+                                    range.selectNodeContents($(event.currentTarget)[0]);
+                                    selection.removeAllRanges();
+                                    selection.addRange(range);
+                                }
+                            } else {
+                                // moving (user clicked forward/back at some point)
+                                // mark the current target purple and move the cursor
+                                $(event.currentTarget).addClass('fromkb');
+                                clearKBInput = false;
                                 this.moveCursor(event, true);
                             }
                             foundInKB = true;
@@ -1418,7 +1429,6 @@ define(function (require) {
                         selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
                         selectedEnd = selectedStart;
                     }
-                    // If tab/enter is pressed, blur and move to edit the next pile
                     if (event.shiftKey) {
                         MovingDir = -1;
                         this.moveCursor(event, false);  // shift tab/enter -- move backwards
@@ -1429,8 +1439,6 @@ define(function (require) {
                 } else {
                     // any other key - set the dirty bit
                     isDirty = true;
-                }
-                if (isDirty === true) {
                     $("#Undo").prop('disabled', false);
                 }
             },
@@ -1441,6 +1449,7 @@ define(function (require) {
                 $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
                 isSelectingKB = false; // we've now chosen something - OK to blur
                 isDirty = true;
+                $("#Undo").prop('disabled', false);
             },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
@@ -1505,17 +1514,6 @@ define(function (require) {
                     console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
                     return;
                 }
-                // EDB workaround / stacking context weirdness (https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
-                // The dropdown "More" menu gets hidden behind the content on Android due to stacking context /
-                // position (fixed/absolute) rules (i.e., each position has its own stack, fouling up the z-order
-                // they are displayed in) on Android's browser. 
-                // Work around this issue by setting everything to the same position.
-                if (navigator.notification && device.platform === "Android") {
-                    $(".main_title").css({position: "fixed"});
-                    $(".scroller-notb").css({position: "fixed"});
-                    $(".dropdown").css({position: "fixed"});
-                    $(".chapter").css({position: "fixed"});
-                }
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
@@ -1550,26 +1548,34 @@ define(function (require) {
                 model = this.collection.findWhere({spid: strID});
                 // check for changes in the edit field
                 if (isDirty === true) {
-                    console.log("Dirty bit set. Saving KB value: " + trimmedValue);
-                    // something has changed -- update the KB
-                    saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                             this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                             project.get('projectid'));
-                    // add any punctuation back to the target field
-                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
-                    // update the model with the new target text
-                    model.save({target: trimmedValue});
-                    // if the target differs from the source, make it display in green
-                    if (model.get('source') === model.get('target')) {
-                        // source === target --> remove "differences" from the class so the text is black
-                        $(event.currentTarget).removeClass('differences');
-                    } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                        // source + punctuation == target --> remove "differences"
-                        $(event.currentTarget).removeClass('differences');
-                    } else if (!$(event.currentTarget).hasClass('differences')) {
-                        // source != target -- add "differences" to the class so the text is green
-                        $(event.currentTarget).addClass('differences');
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. If there was a KB entry, clean it out.
+//                        removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+//                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+//                                     project.get('projectid'));
+//                        
+                    } else {
+                        console.log("Dirty bit set. Saving KB value: " + trimmedValue);
+                        // something has changed -- update the KB
+                        saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                 this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
+                                 this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                 project.get('projectid'));
+                        // add any punctuation back to the target field
+                        $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                        // update the model with the new target text
+                        model.save({target: trimmedValue});
+                        // if the target differs from the source, make it display in green
+                        if (model.get('source') === model.get('target')) {
+                            // source === target --> remove "differences" from the class so the text is black
+                            $(event.currentTarget).removeClass('differences');
+                        } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                            // source + punctuation == target --> remove "differences"
+                            $(event.currentTarget).removeClass('differences');
+                        } else if (!$(event.currentTarget).hasClass('differences')) {
+                            // source != target -- add "differences" to the class so the text is green
+                            $(event.currentTarget).addClass('differences');
+                        }
                     }
                 }
                 // if we just finished work on a new verse, update the last adapted count
