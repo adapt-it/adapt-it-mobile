@@ -876,6 +876,10 @@ div.strip.specialtext div.source {
     display: none;
 }
 
+#FilterInfo {
+    display: none;
+}
+
 /* from adapt-it-copy */
 ul.btns {
 	display: block;

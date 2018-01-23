@@ -944,6 +944,15 @@ define(function (require) {
                 // prevent weird edit menu appearances (long click)
                 event.preventDefault();
                 event.stopPropagation();
+                
+                // If this was a click on a filter element, make sure that gets a direct event
+                if ($(event.currentTarget.parentElement).hasClass('filter')) {
+                    if (navigator.notification && device.platform === "iOS") {
+                        $(event.currentTarget.parentElement).trigger("touchend");
+                    } else {
+                        $(event.currentTarget.parentElement).trigger("click");
+                    }
+                }
                 // check for retranslation
                 if (isRetranslation === true) {
                     // for retranslations, we only want the first item selected (no multiple selections)
@@ -1096,6 +1105,7 @@ define(function (require) {
             // change the setting in the project settings under USFM filtering. If it isn't user-settable,
             // we display a note informing them.
             showFilter: function (event) {
+                console.log("showFilter - entry");
                 // make sure we're on the right event for the right platform
                 if (navigator.notification) {
                     // on mobile device
