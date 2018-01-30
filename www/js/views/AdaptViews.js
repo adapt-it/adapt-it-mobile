@@ -50,14 +50,14 @@ define(function (require) {
         idxStart = null,
         idxEnd = null,
         clearKBInput = false,
-        isDirty = false,
-        isSelecting = false,
+        isDirty = false,        // does the target text need to be saved?
+        isSelecting = false,    // is the user selecting a pile / range of piles?
         isPlaceholder = false,
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
         isAutoPhrase = false,
-        isSelectingKB = false,
+        isSelectingKB = false,  // is the user working with a select target text dropdown?
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
         isRetranslation = false,
@@ -89,6 +89,10 @@ define(function (require) {
             
 //            console.log("scrollToView() looking at element: " + $(element).attr("id"));
 //            console.log("-- Currently chapter position = " + $(".chapter").css("position"));
+            // if we're scrolling to show the possible KB entries, add some space for the drop-down
+            if (isSelectingKB === true) {
+                eltBottom += 36; // guess 2 entries
+            }
             // check to see if we're on a mobile device
             if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
                 // on mobile device AND the keyboard hasn't displayed yet:
@@ -818,20 +822,37 @@ define(function (require) {
                 "mouseup .target": "selectedAdaptation",
                 "touchend .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
-                "typeahead:select .typeahead": "selectKB",
 //                "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
             
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
-                console.log("selectingPilesStart");
+                console.log("selectingPilesStart: " + $(event.target).attr('id'));
+                if (isSelectingKB === true) {
+                    var theSelection = "";
+                    // pull out the tt-suggestion (the menu item the user selected)
+                    if ($(event.target.parentElement).hasClass("tt-suggestion")) {
+                        theSelection = $(event.target.parentElement).text();
+                    } else {
+                        theSelection = $(event.target).text();
+                    }
+                    console.log("User selected KB value:" + theSelection);
+                    isSelectingKB = false; // we've now chosen something - OK to blur
+                    isDirty = true;
+                    $('.tt-menu').css('display', 'none');
+                    $(event.currentTarget).find(".target").typeahead('destroy');
+                    $(event.currentTarget).find(".target").html(theSelection);
+                    $("#Undo").prop('disabled', false);
+                }
                 event.stopPropagation();
                 event.preventDefault();
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
                     $("div").removeClass("ui-selecting ui-selected");
+                    $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
                 }
+                // if there was an old target in focus, blur it
                 selectedStart = event.currentTarget; // select the pile
                 selectedEnd = selectedStart;
 
@@ -937,13 +958,13 @@ define(function (require) {
                 var tmpItem = null,
                     tmpIdx = 0,
                     spid = "";
+                // prevent weird edit menu appearances (long click)
+                event.preventDefault();
+                event.stopPropagation();
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
                     selectedStart = event.currentTarget;
                 }
-                // prevent weird edit menu appearances (long click)
-                event.preventDefault();
-                event.stopPropagation();
                 
                 // If this was a click on a filter element, make sure that gets a direct event
                 if ($(event.currentTarget.parentElement).hasClass('filter')) {
@@ -982,6 +1003,7 @@ define(function (require) {
                 }
                 
                 if (isSelecting === true) {
+                    console.log("selectingPilesEnd: ending selection / updating UI")
                     isSelecting = false;
                     // change the class of the mousedown area to let the user know
                     // we've finished tracking the selection
@@ -1209,10 +1231,11 @@ define(function (require) {
 //                    $(".pile").css({})
                 }
                 
-                if (isSelecting === true) {
-                    // mouseup / touch end on target element, after selecting -- exit (pile handler will catch this event later)
-                    console.log("isSelecting=TRUE. Exiting selectedAdaptation so pile can pick the event up.");
-                    return;
+                if (isSelecting === false) {
+                    // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
+                    // event to the parent (pile) element when we're done
+                    event.stopPropagation();
+                    event.preventDefault();
                 }
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
@@ -1296,6 +1319,7 @@ define(function (require) {
                                 options.push(refstrings[i].target);
                             }
                             // create the autocomplete UI
+                            console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
                             $(event.currentTarget).typeahead(
                                 {
                                     hint: true,
@@ -1375,6 +1399,42 @@ define(function (require) {
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         isDirty = false;
+                        // special case: check to see if there are multiple KB entries for this field; 
+                        // add a typeahead dropdown menu if so
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        model = this.collection.findWhere({spid: strID});
+                        sourceText = model.get('source');
+                        tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                        refstrings = tu.get('refstring');
+                        if (refstrings.length > 1) {
+                            // more than one KB entry -- add the typahead dropdown
+                            options.length = 0; // clear out any old cruft
+//                            // select the first result (most frequently used)
+//                            targetText = this.autoAddCaps(model, refstrings[0].target);
+//                            $(event.currentTarget).html(targetText);
+                            // build our list of options from the refstrings
+                            for (i = 0; i < refstrings.length; i++) {
+                                options.push(refstrings[i].target);
+                            }
+                            // create the autocomplete UI
+                            console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
+                            $(event.currentTarget).typeahead(
+                                {
+                                    hint: true,
+                                    highlight: true,
+                                    minLength: 0
+                                },
+                                {
+                                    name: 'kboptions',
+                                    source: function (request, response) {
+                                        response(options);
+                                    }
+                                }
+                            );
+                            isSelectingKB = true;
+                        }
+                        
                         // select any text in the edit field
                         if (document.body.createTextRange) {
                             range = document.body.createTextRange();
@@ -1452,15 +1512,6 @@ define(function (require) {
                     $("#Undo").prop('disabled', false);
                 }
             },
-            // User has picked an option from the typeahead widget (a KB value)
-            selectKB: function (event, suggestion) {
-                // fill the edit field with the selection
-                console.log("selectKB - selected: " + suggestion);
-                $(event.currentTarget.parentElement.parentElement).find(".target").html(suggestion);
-                isSelectingKB = false; // we've now chosen something - OK to blur
-                isDirty = true;
-                $("#Undo").prop('disabled', false);
-            },
             // Input text has changed in the target field -
             // Check to see if this is an automatic merge phrase situation
             // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
@@ -1519,10 +1570,8 @@ define(function (require) {
                     strID = null,
                     model = null;
                 console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
-                // ignore this event if the user hasn't picked a translation
                 if (isSelectingKB === true) {
-                    console.log("isSelectingKB === true. Exiting unselectedAdaptation.");
-                    return;
+                    isSelectingKB = false;
                 }
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
@@ -1548,6 +1597,9 @@ define(function (require) {
                 strID = $(event.currentTarget.parentElement).attr('id');
                 if (strID === undefined) {
                     console.log("value: " + value);
+                    // make sure the typeahead gets cleaned out and the value saved
+                    isDirty = true;
+                    isSelectingKB = false;
                     // this might be the tt-input div if we are in a typeahead (multiple KB) input -
                     // if so, go up one more level to find the pile
                     strID = $(event.currentTarget.parentElement.parentElement).attr('id');
@@ -1611,6 +1663,8 @@ define(function (require) {
 //                    $("#Retranslation").prop('disabled', true);
 //                    $("#Phrase").prop('disabled', true);
                 }
+                // remove any old selection ranges
+                window.getSelection().removeAllRanges();
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
             },
