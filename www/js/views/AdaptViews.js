@@ -1611,11 +1611,15 @@ define(function (require) {
                 // check for changes in the edit field
                 if (isDirty === true) {
                     if (trimmedValue.length === 0) {
-                        // empty value entered. If there was a KB entry, clean it out.
-//                        removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-//                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-//                                     project.get('projectid'));
-//                        
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from KB and DB.");
+                            // There was a target text, but the user deleted it. Remove the old text from the KB.
+                            removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+                                     origText, project.get('projectid'));
+                            // update the model with the new target text (nothing)
+                            model.save({target: trimmedValue});
+                        }
                     } else {
                         console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                         // something has changed -- update the KB
