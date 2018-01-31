@@ -1003,7 +1003,7 @@ define(function (require) {
                 }
                 
                 if (isSelecting === true) {
-                    console.log("selectingPilesEnd: ending selection / updating UI")
+                    console.log("selectingPilesEnd: ending selection / updating UI");
                     isSelecting = false;
                     // change the class of the mousedown area to let the user know
                     // we've finished tracking the selection
@@ -1275,7 +1275,14 @@ define(function (require) {
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
-                        if (refstrings.length === 1) {
+                        // first, make sure these refstrings are actually being used
+                        options.length = 0; // clear out any old cruft
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].n > 0) {
+                                options.push(refstrings[i].target);
+                            }
+                        }
+                        if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
                             targetText = this.autoAddCaps(model, refstrings[0].target);
                             $(event.currentTarget).html(targetText);
@@ -1310,14 +1317,6 @@ define(function (require) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
                             isDirty = false; // no change yet (user needs to select something first)
-                            options.length = 0; // clear out any old cruft
-//                            // select the first result (most frequently used)
-//                            targetText = this.autoAddCaps(model, refstrings[0].target);
-//                            $(event.currentTarget).html(targetText);
-                            // build our list of options from the refstrings
-                            for (i = 0; i < refstrings.length; i++) {
-                                options.push(refstrings[i].target);
-                            }
                             // create the autocomplete UI
                             console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
                             $(event.currentTarget).typeahead(
@@ -1407,16 +1406,14 @@ define(function (require) {
                         sourceText = model.get('source');
                         tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                         refstrings = tu.get('refstring');
-                        if (refstrings.length > 1) {
-                            // more than one KB entry -- add the typahead dropdown
-                            options.length = 0; // clear out any old cruft
-//                            // select the first result (most frequently used)
-//                            targetText = this.autoAddCaps(model, refstrings[0].target);
-//                            $(event.currentTarget).html(targetText);
-                            // build our list of options from the refstrings
-                            for (i = 0; i < refstrings.length; i++) {
+                        // first, make sure these refstrings are actually being used
+                        options.length = 0; // clear out any old cruft
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].n > 0) {
                                 options.push(refstrings[i].target);
                             }
+                        }
+                        if (options.length > 1) {
                             // create the autocomplete UI
                             console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
                             $(event.currentTarget).typeahead(
@@ -1611,11 +1608,15 @@ define(function (require) {
                 // check for changes in the edit field
                 if (isDirty === true) {
                     if (trimmedValue.length === 0) {
-                        // empty value entered. If there was a KB entry, clean it out.
-//                        removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-//                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-//                                     project.get('projectid'));
-//                        
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from KB and DB.");
+                            // There was a target text, but the user deleted it. Remove the old text from the KB.
+                            removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+                                     origText, project.get('projectid'));
+                            // update the model with the new target text (nothing)
+                            model.save({target: trimmedValue});
+                        }
                     } else {
                         console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                         // something has changed -- update the KB
