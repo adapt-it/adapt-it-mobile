@@ -1003,7 +1003,7 @@ define(function (require) {
                 }
                 
                 if (isSelecting === true) {
-                    console.log("selectingPilesEnd: ending selection / updating UI")
+                    console.log("selectingPilesEnd: ending selection / updating UI");
                     isSelecting = false;
                     // change the class of the mousedown area to let the user know
                     // we've finished tracking the selection
@@ -1275,7 +1275,14 @@ define(function (require) {
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
-                        if (refstrings.length === 1) {
+                        // first, make sure these refstrings are actually being used
+                        options.length = 0; // clear out any old cruft
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].n > 0) {
+                                options.push(refstrings[i].target);
+                            }
+                        }
+                        if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
                             targetText = this.autoAddCaps(model, refstrings[0].target);
                             $(event.currentTarget).html(targetText);
@@ -1310,14 +1317,6 @@ define(function (require) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
                             isDirty = false; // no change yet (user needs to select something first)
-                            options.length = 0; // clear out any old cruft
-//                            // select the first result (most frequently used)
-//                            targetText = this.autoAddCaps(model, refstrings[0].target);
-//                            $(event.currentTarget).html(targetText);
-                            // build our list of options from the refstrings
-                            for (i = 0; i < refstrings.length; i++) {
-                                options.push(refstrings[i].target);
-                            }
                             // create the autocomplete UI
                             console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
                             $(event.currentTarget).typeahead(
@@ -1407,16 +1406,14 @@ define(function (require) {
                         sourceText = model.get('source');
                         tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                         refstrings = tu.get('refstring');
-                        if (refstrings.length > 1) {
-                            // more than one KB entry -- add the typahead dropdown
-                            options.length = 0; // clear out any old cruft
-//                            // select the first result (most frequently used)
-//                            targetText = this.autoAddCaps(model, refstrings[0].target);
-//                            $(event.currentTarget).html(targetText);
-                            // build our list of options from the refstrings
-                            for (i = 0; i < refstrings.length; i++) {
+                        // first, make sure these refstrings are actually being used
+                        options.length = 0; // clear out any old cruft
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].n > 0) {
                                 options.push(refstrings[i].target);
                             }
+                        }
+                        if (options.length > 1) {
                             // create the autocomplete UI
                             console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
                             $(event.currentTarget).typeahead(
