@@ -849,6 +849,7 @@ define(function (require) {
                 event.preventDefault();
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
+                    console.log("old selection -- need to blur")
                     $("div").removeClass("ui-selecting ui-selected");
                     $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
                 }
@@ -1202,6 +1203,11 @@ define(function (require) {
             },
             // mouseDown / touchStart event handler for the target field
             selectingAdaptation: function (event) {
+                if (selectedStart !== null) {
+                    console.log("selectingAdaptation: old selection -- need to blur")
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
+                }
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
                 // do NOT propogate this up to the Pile - the user is clicking in the edit field
