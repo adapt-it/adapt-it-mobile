@@ -931,7 +931,9 @@ define(function (require) {
                                 if (childIdx > 0) {
                                     origTarget += "|";
                                 }
-                                origTarget += $(childVal).children(".target").html();
+                                if ($(childVal).attr('t')) {
+                                    origTarget += $(childVal).attr("t");
+                                }
                             });
                         }
                         
@@ -940,7 +942,7 @@ define(function (require) {
                             console.log("fi: " + $(this).attr('fi'));
 //                            markers = "";
                             $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
-                                console.log("- " + elt);
+//                                console.log("- " + elt);
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
 //                                    console.log("filter");
