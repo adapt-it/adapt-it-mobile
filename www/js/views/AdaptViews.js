@@ -1665,6 +1665,15 @@ define(function (require) {
 //                    $("#Phrase").prop('disabled', true);
                 }
                 // remove any old selection ranges
+//                if (window.getSelection) {
+//                    if (window.getSelection().empty) {  // Chrome
+//                        window.getSelection().empty();
+//                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+//                        window.getSelection().removeAllRanges();
+//                    }
+//                } else if (document.selection) {  // IE?
+//                    document.selection.empty();
+//                }
                 window.getSelection().removeAllRanges();
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
@@ -1862,12 +1871,17 @@ define(function (require) {
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
+                        // add to KB
+                        if (phraseTarget.length > 0) {
+                            saveInKB(value, phraseTarget, "", project.get('projectid'));
+                        }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
                         newView = new SourcePhraseView({ model: phObj});
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
+                    removeFromKB(selectedObj.get("source"), selectedObj.get("target"), project.get('projectid')); // remove from KB
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
