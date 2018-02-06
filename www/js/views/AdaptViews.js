@@ -1410,32 +1410,36 @@ define(function (require) {
                         strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                         model = this.collection.findWhere({spid: strID});
                         sourceText = model.get('source');
-                        tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
-                        refstrings = tu.get('refstring');
-                        // first, make sure these refstrings are actually being used
-                        options.length = 0; // clear out any old cruft
-                        for (i = 0; i < refstrings.length; i++) {
-                            if (refstrings[i].n > 0) {
-                                options.push(refstrings[i].target);
-                            }
-                        }
-                        if (options.length > 1) {
-                            // create the autocomplete UI
-                            console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
-                            $(event.currentTarget).typeahead(
-                                {
-                                    hint: true,
-                                    highlight: true,
-                                    minLength: 0
-                                },
-                                {
-                                    name: 'kboptions',
-                                    source: function (request, response) {
-                                        response(options);
-                                    }
+                        // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
+                        if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
+                            // not a retranslation or placeholder
+                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                            refstrings = tu.get('refstring');
+                            // first, make sure these refstrings are actually being used
+                            options.length = 0; // clear out any old cruft
+                            for (i = 0; i < refstrings.length; i++) {
+                                if (refstrings[i].n > 0) {
+                                    options.push(refstrings[i].target);
                                 }
-                            );
-                            isSelectingKB = true;
+                            }
+                            if (options.length > 1) {
+                                // create the autocomplete UI
+                                console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
+                                $(event.currentTarget).typeahead(
+                                    {
+                                        hint: true,
+                                        highlight: true,
+                                        minLength: 0
+                                    },
+                                    {
+                                        name: 'kboptions',
+                                        source: function (request, response) {
+                                            response(options);
+                                        }
+                                    }
+                                );
+                                isSelectingKB = true;
+                            }
                         }
                         
                         // select any text in the edit field
@@ -1624,12 +1628,18 @@ define(function (require) {
                             model.save({target: trimmedValue});
                         }
                     } else {
-                        console.log("Dirty bit set. Saving KB value: " + trimmedValue);
-                        // something has changed -- update the KB
-                        saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                 this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                 this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
-                                 project.get('projectid'));
+                        if ((strID.indexOf("ret") > -1) || (strID.indexOf("plc") > -1)) {
+                            // retranslation or placeholder -- don't save in the KB
+                            console.log("Dirty bit set on retranslation / placeholder. Value:" + trimmedValue);
+                        } else {
+                            // not a retranslation
+                            console.log("Dirty bit set. Saving KB value: " + trimmedValue);
+                            // something has changed -- update the KB
+                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
+                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
+                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                     project.get('projectid'));
+                        }
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
@@ -1725,7 +1735,7 @@ define(function (require) {
                     $("#mnuPhrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
                     selectedStart = next_edit;
-                    $(next_edit).find('.source').mouseup();
+                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a placeholder -- delete it from the model and the DOM (html)
                     strID = $(selectedStart).attr('id');
@@ -1814,6 +1824,8 @@ define(function (require) {
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // phrase just takes same order # as first selected object
                     phObj.save();
                     this.collection.add(phObj);
+                    // also save in KB
+                    saveInKB(phraseSource, phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -1986,11 +1998,10 @@ define(function (require) {
                     $("#mnuPlaceholder").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
-                    // start adapting the new Phrase
-                    next_edit = $("#pile-ret-" + newID);
-                    if (next_edit !== null) {
-                        next_edit.find('.target').mouseup();
-                    }
+                    // start adapting the new Retranslation
+                    next_edit = $('#pile-ret-' + newID);
+                    selectedStart = next_edit;
+                    $(next_edit).find('.target').mouseup();
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
