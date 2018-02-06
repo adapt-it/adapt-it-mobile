@@ -603,9 +603,11 @@ define(function (require) {
                 var temp_cursor = null;
                 var keep_going = true;
                 var top = 0;
+                var selection = null;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
+                // unselect the current edit field before moving
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
@@ -746,7 +748,7 @@ define(function (require) {
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
-                    $(next_edit.childNodes[4]).mouseup();
+                    $(next_edit).find(".target").mouseup();
                 } else {
                     // the user is either at the first or last pile. Select it,
                     // but don't set focus on the target edit field.
@@ -849,7 +851,7 @@ define(function (require) {
                 event.preventDefault();
                 // if there was an old selection, remove it
                 if (selectedStart !== null) {
-                    console.log("old selection -- need to blur")
+                    console.log("old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
                     $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
                 }
@@ -1204,7 +1206,7 @@ define(function (require) {
             // mouseDown / touchStart event handler for the target field
             selectingAdaptation: function (event) {
                 if (selectedStart !== null) {
-                    console.log("selectingAdaptation: old selection -- need to blur")
+                    console.log("selectingAdaptation: old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
                     $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
                 }
@@ -1292,13 +1294,12 @@ define(function (require) {
                             // exactly one entry in KB -- populate the field
                             targetText = this.autoAddCaps(model, refstrings[0].target);
                             $(event.currentTarget).html(targetText);
+                            isDirty = true;
                             // Are we moving?
                             if (MovingDir === 0) {
                                 // not moving (user clicked on this node) - leave the
                                 // cursor here for the user to make adjustments as necessary
                                 clearKBInput = true;
-                                // no change yet -- this is just a suggestion
-                                isDirty = true;
                                 // select any text in the edit field
                                 if (document.body.createTextRange) {
                                     range = document.body.createTextRange();
@@ -1306,9 +1307,9 @@ define(function (require) {
                                     range.select();
                                 } else if (window.getSelection) {
                                     selection = window.getSelection();
+                                    selection.removeAllRanges();
                                     range = document.createRange();
                                     range.selectNodeContents($(event.currentTarget)[0]);
-                                    selection.removeAllRanges();
                                     selection.addRange(range);
                                 }
                             } else {
@@ -1340,15 +1341,16 @@ define(function (require) {
                             );
                             isSelectingKB = true;
                             // select any text in the edit field
+                            console.log("selecting text");
                             if (document.body.createTextRange) {
                                 range = document.body.createTextRange();
                                 range.moveToElementText($(event.currentTarget));
                                 range.select();
                             } else if (window.getSelection) {
                                 selection = window.getSelection();
+                                selection.removeAllRanges();
                                 range = document.createRange();
                                 range.selectNodeContents($(event.currentTarget)[0]);
-                                selection.removeAllRanges();
                                 selection.addRange(range);
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
@@ -1369,15 +1371,16 @@ define(function (require) {
                         // no change yet -- this is just a suggestion
                         isDirty = true;
                         // select any text in the edit field
+                        console.log("selecting text");
                         if (document.body.createTextRange) {
                             range = document.body.createTextRange();
                             range.moveToElementText($(event.currentTarget));
                             range.select();
                         } else if (window.getSelection) {
                             selection = window.getSelection();
+                            selection.removeAllRanges();
                             range = document.createRange();
                             range.selectNodeContents($(event.currentTarget)[0]);
-                            selection.removeAllRanges();
                             selection.addRange(range);
                         }
                         // it's possible that we went offscreen while looking for the next available slot to adapt.
