@@ -748,6 +748,7 @@ define(function (require) {
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
+                    $(next_edit).find(".target").focus();
                     $(next_edit).find(".target").mouseup();
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -1353,6 +1354,10 @@ define(function (require) {
                                 range.selectNodeContents($(event.currentTarget)[0]);
                                 selection.addRange(range);
                             }
+                            // ios
+                            if (navigator.notification && device.platform === "iOS") {
+                                $(event.currentTarget).setSelectionRange(0,99999);
+                            }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
                             // scroll the edit field into view
@@ -1452,9 +1457,9 @@ define(function (require) {
                             range.select();
                         } else if (window.getSelection) {
                             selection = window.getSelection();
+                            selection.removeAllRanges();
                             range = document.createRange();
                             range.selectNodeContents($(event.currentTarget)[0]);
-                            selection.removeAllRanges();
                             selection.addRange(range);
                         }
                         // Make sure the edit field is in view by scrolling the UI
@@ -1684,16 +1689,15 @@ define(function (require) {
 //                    $("#Phrase").prop('disabled', true);
                 }
                 // remove any old selection ranges
-//                if (window.getSelection) {
-//                    if (window.getSelection().empty) {  // Chrome
-//                        window.getSelection().empty();
-//                    } else if (window.getSelection().removeAllRanges) {  // Firefox
-//                        window.getSelection().removeAllRanges();
-//                    }
-//                } else if (document.selection) {  // IE?
-//                    document.selection.empty();
-//                }
-                window.getSelection().removeAllRanges();
+                if (window.getSelection) {
+                    if (window.getSelection().empty) {  // Chrome
+                        window.getSelection().empty();
+                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+                        window.getSelection().removeAllRanges();
+                    }
+                } else if (document.selection) {  // IE?
+                    document.selection.empty();
+                }
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
             },
