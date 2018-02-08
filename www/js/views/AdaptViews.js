@@ -1321,7 +1321,7 @@ define(function (require) {
                                 this.moveCursor(event, true);
                             }
                             foundInKB = true;
-                        } else {
+                        } else if (options.length > 1) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
                             isDirty = false; // no change yet (user needs to select something first)
@@ -1357,6 +1357,36 @@ define(function (require) {
                             // ios
                             if (navigator.notification && device.platform === "iOS") {
                                 $(event.currentTarget).setSelectionRange(0,99999);
+                            }
+                            // it's possible that we went offscreen while looking for the next available slot to adapt.
+                            // Make sure the edit field is in view by scrolling the UI
+                            // scroll the edit field into view
+                            console.log("Scrolling to view...");
+                            scrollToView(selectedStart);
+                        } else {
+                            console.log("selectedAdaptation: TU not null (" + options.length + " options.) ");
+                            // options.length should = 0
+                            // if this isn't a phrase, populate the target with the source text as the next best guess
+                            // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
+                            if (strID.indexOf("phr") === -1) {
+                                $(event.currentTarget).html(sourceText);
+                            }
+                            MovingDir = 0; // stop here
+                            clearKBInput = true;
+                            // no change yet -- this is just a suggestion
+                            isDirty = true;
+                            // select any text in the edit field
+                            console.log("selecting text");
+                            if (document.body.createTextRange) {
+                                range = document.body.createTextRange();
+                                range.moveToElementText($(event.currentTarget));
+                                range.select();
+                            } else if (window.getSelection) {
+                                selection = window.getSelection();
+                                selection.removeAllRanges();
+                                range = document.createRange();
+                                range.selectNodeContents($(event.currentTarget)[0]);
+                                selection.addRange(range);
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
