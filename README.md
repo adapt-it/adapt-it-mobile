@@ -9,7 +9,7 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 ## System Requirements
 
 - Android tablet or smart phone running Android 4.0.x or later
-- Apple iPad, iPod or iPhone running iOS 8.x or later
+- Apple iPad, iPod or iPhone running iOS 9.x or later
 
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
