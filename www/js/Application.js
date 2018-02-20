@@ -87,22 +87,6 @@ define(function (require) {
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-                    if (device.platform === "Android") {
-                        // request read access to the external storage if we don't have it
-                        cordova.plugins.diagnostic.getExternalStorageAuthorizationStatus(function (status) {
-                            if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED) {
-                                console.log("External storage use is authorized");
-                            } else {
-                                cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (result) {
-                                    console.log("Authorization request for external storage use was " + (result === cordova.plugins.diagnostic.permissionStatus.GRANTED ? "granted" : "denied"));
-                                }, function (error) {
-                                    console.error(error);
-                                });
-                            }
-                        }, function (error) {
-                            console.error("The following error occurred: " + error);
-                        });
-                    }
                 }
                 // create / open the database
                 if (window.sqlitePlugin) {
