@@ -1835,7 +1835,7 @@ define(function (require) {
                                 phraseTarget += " ";
                                 origTarget += "|";
                             }
-                            phraseMarkers += $(value).children(".marker").html();
+                            phraseMarkers += $(value).children(".marker").text();
                             phraseSource += $(value).children(".source").html();
                             phraseTarget += $(value).children(".target").html();
                             // check for phrases
@@ -1853,7 +1853,7 @@ define(function (require) {
                     });
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -1923,6 +1923,10 @@ define(function (require) {
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
+                        if (index === 0) {
+                            // transfer any marker back (would be the first in the list)
+                            phObj.set('markers', selectedObj.get('markers'), {silent: true});
+                        }
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
@@ -1961,6 +1965,7 @@ define(function (require) {
                     RetHtml = null,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
+                    retMarkers = "",
                     RetSource = "",
                     RetTarget = "",
                     nOrder = 0.0,
@@ -1971,9 +1976,10 @@ define(function (require) {
                     newView = null,
                     selectedObj = null,
                     RetHtmlLine0 = "<div id=\"pile-",
-                    RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
-                    RetHtmlLine2 = "</div> <div class=\"target\" contenteditable=\"true\">",
-                    RetHtmlLine3 = "</div></div>";
+                    RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">",
+                    RetHtmlLine2 = "</div> <div class=\"source retranslation\">",
+                    RetHtmlLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    RetHtmlLine4 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
                 // combine the selection into a new retranslation
                 if (isRetranslation === false) {
@@ -1989,6 +1995,7 @@ define(function (require) {
                                 RetTarget += " ";
                                 origTarget += "|";
                             }
+                            retMarkers += $(value).children(".marker").text();
                             RetSource += $(value).children(".source").html();
                             RetTarget += $(value).children(".target").html();
                             origTarget += $(value).children(".target").html();
@@ -1996,7 +2003,7 @@ define(function (require) {
                     });
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: RetSource, target: RetSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2006,10 +2013,10 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // UI representation
-                    RetHtml = RetHtmlLine0 + "ret-" + newID + RetHtmlline1 + RetSource + RetHtmlLine2;
+                    RetHtml = RetHtmlLine0 + "ret-" + newID + RetHtmlline1 + retMarkers + RetHtmlLine2 + RetSource + RetHtmlLine3;
                     // if there's something already in the target, use it instead
                     RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
-                    RetHtml += RetHtmlLine3;
+                    RetHtml += RetHtmlLine4;
                     console.log("Ret: " + RetHtml);
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
@@ -2053,6 +2060,10 @@ define(function (require) {
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
+                        if (index === 0) {
+                            // transfer any marker back (would be the first in the list)
+                            phObj.set('markers', selectedObj.get('markers'), {silent: true});
+                        }
                         phObj.save();
                         nOrder = nOrder + 1;
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
