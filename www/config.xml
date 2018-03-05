@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-    <widget xmlns   = "http://www.w3.org/ns/widgets"
-        xmlns:gap   = "http://phonegap.com/ns/1.0"
-        xmlns:android = "http://schemas.android.com/apk/res/android"
-        id          = "org.adaptit.adaptitmobile"
-        versionCode = "1" 
-        version     = "0.9.9"
-        defaultlocale = "en">
+<?xml version='1.0' encoding='utf-8'?>
+<widget defaultlocale="en" id="org.adaptit.adaptitmobile" version="0.9.9" versionCode="1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -14,10 +8,8 @@
         Adapt It Team
     </author>
     <content src="index.html" />
-    <!-- allow local access -->
     <access origin="*" />
-    <!-- preferences -->
-    <preference name="android-build-tool" value="gradle" />        
+    <preference name="android-build-tool" value="gradle" />
     <preference name="phonegap-version" value="cli-7.0.1" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
@@ -28,93 +20,63 @@
     <preference name="SplashMaintainAspectRatio" value="false" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
-    <!-- PhoneGap Build - core plugins -->
-    <plugin name="cordova-plugin-device" source="npm" spec="1.1.6" />
-    <plugin name="cordova-plugin-file" source="npm" spec="4.3.3" />
-    <plugin name="cordova-plugin-file-transfer" source="npm" spec="1.6.3" />
-    <plugin name="cordova-plugin-dialogs" source="npm" spec="1.3.3" />
-    <plugin name="cordova-plugin-fonts" source="npm" spec="0.6.5" />
-    <plugin name="cordova-plugin-keyboard" source="npm" spec="1.1.5" />
-    <plugin name="cordova-plugin-splashscreen" source="npm" spec="4.0.3" />
-    <plugin name="cordova-plugin-statusbar" source="npm" spec="2.2.3" />
-    <!-- sqlite plugin version compatible w/PG build -->
-    <plugin name="cordova-sqlite-evcore-extbuild-free" source="npm" spec="0.8.6" />
-    <plugin name="cordova-plugin-whitelist" source="npm" spec="1.3.2" />
-    <plugin name="cordova.plugins.diagnostic" spec="^3.7.1" />
-
-    <!-- PhoneGap Build - config-file tweaks - orientation (iOS) and allowing sdcard reading (Android)
-    (see http://phonegap.com/blog/2014/01/30/customizing-your-android-manifest-and-ios-property-list-on-phonegap-build/)
-    -->
-    <config-file platform="ios" parent="UISupportedInterfaceOrientations" mode="replace">
+    <config-file mode="replace" parent="UISupportedInterfaceOrientations" platform="ios">
         <array>
-          <string>UIInterfaceOrientationPortrait</string>
-          <string>UIInterfaceOrientationLandscapeLeft</string>
-          <string>UIInterfaceOrientationLandscapeRight</string>
+            <string>UIInterfaceOrientationPortrait</string>
+            <string>UIInterfaceOrientationLandscapeLeft</string>
+            <string>UIInterfaceOrientationLandscapeRight</string>
         </array>
     </config-file>
-    <config-file platform="android" parent="/manifest" mode="replace">
+    <config-file mode="replace" parent="/manifest" platform="android">
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     </config-file>
-    <!-- icons and splash screens for each platform -->
-    <icon src="icon.png"/>
+    <icon src="icon.png" />
     <platform name="android">
-        <!-- preferences -->
-        <preference name="android-minSdkVersion" value="19" /> <!-- Android 4.4 min version (5.0 fixes some more rendering issues, but 4.4 still has 15% marketshare as of Sept 2017. See https://developer.android.com/about/dashboards/index.html for latest stats -->
-        <!-- icons -->
-        <icon src="res/icon/android/ldpi.png" density="ldpi" />
-        <icon src="res/icon/android/mdpi.png" density="mdpi" />
-        <icon src="res/icon/android/hdpi.png" density="hdpi" />
-        <icon src="res/icon/android/xhdpi.png" density="xhdpi" />
-        <icon src="res/icon/android/xxhdpi.png" density="xxhdpi" />
-        <icon src="res/icon/android/xxxhdpi.png" density="xxxhdpi" />
-        <!-- splash screens -->
-        <splash src="res/screen/android/screen-ldpi-portrait.png" density="port-ldpi" />
-        <splash src="res/screen/android/screen-mdpi-portrait.png" density="port-mdpi" />
-        <splash src="res/screen/android/screen-hdpi-portrait.png" density="port-hdpi" />
-        <splash src="res/screen/android/screen-xhdpi-portrait.png" density="port-xhdpi" />
-        <splash src="res/screen/android/screen-xxhdpi-portrait.png" density="port-xxhdpi" />
-        <splash src="res/screen/android/screen-xxxhdpi-portrait.png" density="port-xxxhdpi" />
+        <preference name="android-minSdkVersion" value="19" />
+        <icon density="ldpi" src="res/icon/android/ldpi.png" />
+        <icon density="mdpi" src="res/icon/android/mdpi.png" />
+        <icon density="hdpi" src="res/icon/android/hdpi.png" />
+        <icon density="xhdpi" src="res/icon/android/xhdpi.png" />
+        <icon density="xxhdpi" src="res/icon/android/xxhdpi.png" />
+        <icon density="xxxhdpi" src="res/icon/android/xxxhdpi.png" />
+        <splash density="port-ldpi" src="res/screen/android/screen-ldpi-portrait.png" />
+        <splash density="port-mdpi" src="res/screen/android/screen-mdpi-portrait.png" />
+        <splash density="port-hdpi" src="res/screen/android/screen-hdpi-portrait.png" />
+        <splash density="port-xhdpi" src="res/screen/android/screen-xhdpi-portrait.png" />
+        <splash density="port-xxhdpi" src="res/screen/android/screen-xxhdpi-portrait.png" />
+        <splash density="port-xxxhdpi" src="res/screen/android/screen-xxxhdpi-portrait.png" />
     </platform>
     <platform name="blackberry10">
-        <!-- icons -->
         <icon src="res/icon/blackberry/icon-86.png" />
         <icon src="res/icon/blackberry/icon-150.png" />
     </platform>
     <platform name="ios">
-        <!-- preferences -->
         <preference name="Orientation" value="all" />
-        <preference name="BackupWebStorage" value="cloud" /> <!-- iCloud backup -->
+        <preference name="BackupWebStorage" value="cloud" />
         <preference name="StatusBarOverlaysWebView" value="true" />
-        <!-- icons -->
-        <!-- iPhone / iPod / iPad -->
-        <icon src="res/icon/ios/icon.png" width="57" height="57" />
-        <icon src="res/icon/ios/icon@2x.png" width="114" height="114" />
-        <icon src="res/icon/ios/icon-60.png" width="60" height="60" />
-        <icon src="res/icon/ios/icon-60@2x.png" width="120" height="120" />
-        <icon src="res/icon/ios/icon-60@3x.png" width="180" height="180" />
-        <!-- ipad -->
-        <icon src="res/icon/ios/icon-72.png" width="72" height="72" />
-        <icon src="res/icon/ios/icon-72@2x.png" width="144" height="144" />
-        <icon src="res/icon/ios/icon-76.png" width="76" height="76" />
-        <icon src="res/icon/ios/icon-76@2x.png" width="152" height="152" />
-        <icon src="res/icon/ios/icon-83@2x.png" width="167" height="167" />
-        <!-- Spotlight icons -->
-        <icon src="res/icon/ios/icon-small.png" width="29" height="29" />
-        <icon src="res/icon/ios/icon-small@2x.png" width="58" height="58" />
-        <icon src="res/icon/ios/icon-small@3x.png" width="87" height="87" />
-        <icon src="res/icon/ios/icon-40.png" width="40" height="40" />
-        <icon src="res/icon/ios/icon-40@2x.png" width="80" height="80" />
-        <icon src="res/icon/ios/icon-50.png" width="50" height="50" />
-        <icon src="res/icon/ios/icon-50@2x.png" width="100" height="100" />
-        <!-- splash screen -->
+        <icon height="57" src="res/icon/ios/icon.png" width="57" />
+        <icon height="114" src="res/icon/ios/icon@2x.png" width="114" />
+        <icon height="60" src="res/icon/ios/icon-60.png" width="60" />
+        <icon height="120" src="res/icon/ios/icon-60@2x.png" width="120" />
+        <icon height="180" src="res/icon/ios/icon-60@3x.png" width="180" />
+        <icon height="72" src="res/icon/ios/icon-72.png" width="72" />
+        <icon height="144" src="res/icon/ios/icon-72@2x.png" width="144" />
+        <icon height="76" src="res/icon/ios/icon-76.png" width="76" />
+        <icon height="152" src="res/icon/ios/icon-76@2x.png" width="152" />
+        <icon height="167" src="res/icon/ios/icon-83@2x.png" width="167" />
+        <icon height="29" src="res/icon/ios/icon-small.png" width="29" />
+        <icon height="58" src="res/icon/ios/icon-small@2x.png" width="58" />
+        <icon height="87" src="res/icon/ios/icon-small@3x.png" width="87" />
+        <icon height="40" src="res/icon/ios/icon-40.png" width="40" />
+        <icon height="80" src="res/icon/ios/icon-40@2x.png" width="80" />
+        <icon height="50" src="res/icon/ios/icon-50.png" width="50" />
+        <icon height="100" src="res/icon/ios/icon-50@2x.png" width="100" />
         <splash src="res/screen/ios/Default@2x~universal~anyany.png" />
     </platform>
     <platform name="windows">
-        <!-- preferences -->
         <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
         <preference name="StatusBarOverlaysWebView" value="true" />
-        <!-- icons -->
         <icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
         <icon src="res/icon/windows/Square30x30Logo.png" target="Square30x30Logo" />
         <icon src="res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
@@ -123,8 +85,16 @@
         <icon src="res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
         <icon src="res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
         <icon src="res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
-        <!-- splash screens -->
         <splash src="res/screen/windows/splashscreen.png" target="SplashScreen" />
-    </platform>        
-    <engine name="ios" spec="latest" />
+    </platform>
+    <plugin name="cordova-plugin-device" spec="1.1.6" />
+    <plugin name="cordova-plugin-dialogs" spec="1.3.3" />
+    <plugin name="cordova-plugin-file" spec="4.3.3" />
+    <plugin name="cordova-plugin-fonts" spec="0.6.5" />
+    <plugin name="cordova-plugin-keyboard" spec="1.1.5" />
+    <plugin name="cordova-plugin-splashscreen" spec="4.0.3" />
+    <plugin name="cordova-plugin-statusbar" spec="2.2.3" />
+    <plugin name="cordova-plugin-whitelist" spec="1.3.2" />
+    <plugin name="cordova-sqlite-evcore-extbuild-free" spec="0.8.6" />
+    <plugin name="cordova.plugins.diagnostic" spec="^3.7.1" />
 </widget>

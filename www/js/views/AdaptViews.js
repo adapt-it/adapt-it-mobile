@@ -458,8 +458,9 @@ define(function (require) {
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
             // Helper method to strip any starting / ending punctuation from the target field.
-            // This method is called from unselectedAdaptation before the target text is stored in the KB,
-            // so we don't store items w
+            // This method is called from:
+            // - selectedAdaptation before the target text available for editing
+            // - unselectedAdaptation before the target text is stored in the KB
             stripPunctuation: function (target) {
                 var result = target,
                     startIdx = 0,
@@ -1240,12 +1241,6 @@ define(function (require) {
 //                    $(".pile").css({})
                 }
                 
-                if (isSelecting === false) {
-                    // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
-                    // event to the parent (pile) element when we're done
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
@@ -1293,7 +1288,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
-                            targetText = this.autoAddCaps(model, refstrings[0].target);
+                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target));
                             $(event.currentTarget).html(targetText);
                             isDirty = true;
                             // Are we moving?
@@ -1399,7 +1394,7 @@ define(function (require) {
                         // if this isn't a phrase, populate the target with the source text as the next best guess
                         // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
                         if (strID.indexOf("phr") === -1) {
-                            $(event.currentTarget).html(sourceText);
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText));
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1437,7 +1432,7 @@ define(function (require) {
                         // We really selected this field -- stay here.
                         // reset the dirty bit because
                         // we haven't made any changes yet
-                        origText = $(event.currentTarget).text().trim();
+                        origText = this.stripPunctuation($(event.currentTarget).text().trim());
                         lastPile = selectedStart;
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1477,6 +1472,9 @@ define(function (require) {
                                     }
                                 );
                                 isSelectingKB = true;
+                            } else {
+                                // only one entry -- just clean up the target we'll be editing
+                                $(event.currentTarget).html(origText); // stripped of punctuation
                             }
                         }
                         
@@ -1579,7 +1577,7 @@ define(function (require) {
                 var model = this.collection.findWhere({spid: strID});
                 // remove the KB entry
                 removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false)),
+                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim()),
                              project.get('projectid'));
                 // set the edit field back to its previous value
                 $(lastPile).find(".target").html(origText);
@@ -1674,8 +1672,8 @@ define(function (require) {
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
                             saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(),
+                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(),
                                      project.get('projectid'));
                         }
                         // add any punctuation back to the target field

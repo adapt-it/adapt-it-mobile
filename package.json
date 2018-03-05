@@ -1,83 +1,78 @@
 {
-    "name": "adapt-it-mobile",
-    "version": "0.9.7",
-    "description": "Adapt It Mobile",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/adapt-it/adapt-it-mobile.git"
+  "name": "adapt-it-mobile",
+  "version": "0.9.9",
+  "description": "Adapt It Mobile",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adapt-it/adapt-it-mobile.git"
+  },
+  "author": "Erik Brommers",
+  "license": "Apache-2.0",
+  "keywords": [
+    "cordova",
+    "translation editor",
+    "android",
+    "amazon-fireos",
+    "ios",
+    "adaptation"
+  ],
+  "devDependencies": {
+    "cordova-lib": "5.4.0",
+    "gulp": "latest",
+    "gulp-cordova-build-android": "^1.3.0",
+    "gulp-cordova-build-ios": "^1.0.0",
+    "gulp-cordova-create": "^1.2.0",
+    "gulp-cordova-plugin": "^1.4.0",
+    "gulp-typescript": "latest",
+    "plist": "^1.2.0"
+  },
+  "dependencies": {
+    "cordova-android": "^6.2.3",
+    "cordova-ios": "^4.5.4",
+    "cordova-lib": "^6.0.0",
+    "cordova-plugin-compat": "^1.2.0",
+    "cordova-plugin-device": "1.1.6",
+    "cordova-plugin-dialogs": "1.3.3",
+    "cordova-plugin-file": "4.3.3",
+    "cordova-plugin-fonts": "0.6.5",
+    "cordova-plugin-keyboard": "1.1.5",
+    "cordova-plugin-splashscreen": "4.0.3",
+    "cordova-plugin-statusbar": "2.2.3",
+    "cordova-plugin-whitelist": "1.3.2",
+    "cordova-sqlite-evcore-extbuild-free": "0.8.6",
+    "cordova-sqlite-storage": "1.4.7",
+    "cordova.plugins.diagnostic": "^3.7.1",
+    "fs": "0.0.2",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^2.11.0",
+    "path": "^0.12.7",
+    "plist": "^1.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
+  },
+  "homepage": "https://github.com/adapt-it/adapt-it-mobile",
+  "eslintConfig": {
+    "env": {
+      "browser": true
     },
-    "author": "Erik Brommers",
-    "license": "Apache-2.0",
-    "keywords": [
-        "cordova",
-        "translation editor",
-        "android",
-        "amazon-fireos",
-        "ios",
-        "adaptation"
-    ],
-    "devDependencies": {
-        "cordova-lib": "5.4.0",
-        "gulp": "latest",
-        "gulp-cordova-build-android": "^1.3.0",
-        "gulp-cordova-build-ios": "^1.0.0",
-        "gulp-cordova-create": "^1.2.0",
-        "gulp-cordova-plugin": "^1.4.0",
-        "gulp-typescript": "latest",
-        "plist": "^1.2.0"
-    },
-    "dependencies": {
-        "cordova-android": "^6.2.3",
-        "cordova-ios": "^4.4.0",
-        "cordova-lib": "^6.0.0",
-        "cordova-plugin-compat": "^1.2.0",
-        "cordova-plugin-device": "1.1.6",
-        "cordova-plugin-dialogs": "1.3.3",
-        "cordova-plugin-file": "4.3.3",
-        "cordova-plugin-file-transfer": "1.6.3",
-        "cordova-plugin-fonts": "0.6.5",
-        "cordova-plugin-keyboard": "1.1.5",
-        "cordova-plugin-splashscreen": "4.0.3",
-        "cordova-plugin-statusbar": "2.2.3",
-        "cordova-plugin-whitelist": "1.3.2",
-        "cordova-sqlite-evcore-extbuild-free": "0.8.6",
-        "cordova-sqlite-storage": "1.4.7",
-        "cordova.plugins.diagnostic": "^3.7.1",
-        "fs": "0.0.2",
-        "gulp": "^3.9.1",
-        "gulp-typescript": "^2.11.0",
-        "path": "^0.12.7",
-        "plist": "^1.2.0"
-    },
-    "bugs": {
-        "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
-    },
-    "homepage": "https://github.com/adapt-it/adapt-it-mobile",
-    "eslintConfig": {
-        "env": {
-            "browser": true
-        },
-        "rules": {
-            "no-console": "off"
-        }
-    },
-    "cordova": {
-        "plugins": {
-            "cordova-plugin-device": {},
-            "cordova-plugin-dialogs": {},
-            "cordova-plugin-file": {},
-            "cordova-plugin-file-transfer": {},
-            "cordova-plugin-fonts": {},
-            "cordova-plugin-keyboard": {},
-            "cordova-plugin-splashscreen": {},
-            "cordova-plugin-statusbar": {},
-            "cordova-plugin-whitelist": {},
-            "cordova-sqlite-evcore-extbuild-free": {},
-            "cordova.plugins.diagnostic": {}
-        },
-        "platforms": [
-            "android",
-            "ios"
-        ]
+    "rules": {
+      "no-console": "off"
     }
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-device": {},
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-file": {},
+      "cordova-plugin-fonts": {},
+      "cordova-plugin-keyboard": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-whitelist": {},
+      "cordova-sqlite-evcore-extbuild-free": {},
+      "cordova.plugins.diagnostic": {}
+    },
+    "platforms": []
+  }
 }

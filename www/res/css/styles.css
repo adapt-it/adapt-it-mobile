@@ -722,6 +722,7 @@ select.docNav {
     color: black;
     float: left;
     padding: 0 0.3em;
+    min-width: 1rem;
 }
 .source, .marker {
     word-wrap: break-word;
@@ -739,6 +740,7 @@ select.docNav {
     font-size: 16px;
     line-height: 2rem;
     margin: 0;
+    min-width: -webkit-fill-available;
     vertical-align: top;
     word-wrap: break-word;
 }
@@ -1132,47 +1134,20 @@ span.sprite{
 /*
 typeahead styles
 */
-/*
 .tt-query,
-.tt-hint {
-background-color: #fff;
-    border: 1px solid #0036ff;
-    border-radius: 6px;
-    box-shadow: 0 0 0 2px #6fb5f1;
-    color: #454545;    
-  height: 2rem;
-  padding: 6px 6px;
-  font-size: 16px;
-  line-height: 2rem;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
-  outline: none;
-}
-*/
-
-/*
+.tt-hint, 
 .tt-input {
     background-color: #fff;
-    border: 1px solid #0036ff;
-    border-radius: 6px;
-    box-shadow: 0 0 0 2px #6fb5f1;
-    color: #454545;    
-  height: 2rem;
-  padding: 6px 6px;
-  font-size: 16px;
-  line-height: 2rem;
-  border: 1px solid transparent;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
-  outline: none;
 }
-*/
+
+.tt-hint, .tt-query {
+    min-width: 1rem;
+}
 
 /* EDB 7/5/17 hacky hack: move dropdown up into target text as well as possible */
 .twitter-typeahead {
     top: -1.8rem;
+    min-width: 1rem;
 }
 
 .tt-menu {
