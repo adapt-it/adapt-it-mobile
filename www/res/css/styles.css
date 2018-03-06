@@ -1165,12 +1165,17 @@ typeahead styles
 }
 
 .tt-suggestion {
-/*    padding 3px;*/
-    padding: 3px 20px;
+    border-top: 1px solid #ccc;
     font-size: 16px;
-    line-height: 2rem;
+    line-height: 1.3rem;
+/*    min-width: 4rem;*/
     overflow: hidden;
-/*    width: auto;*/
+    padding: 6px 20px;
+}
+
+/* first item doesn't have a top border */
+.tt-suggestion:nth-child(1) {
+    border-top: none;
 }
 
 .tt-suggestion:hover {
