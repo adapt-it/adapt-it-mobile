@@ -458,8 +458,9 @@ define(function (require) {
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
             // Helper method to strip any starting / ending punctuation from the target field.
-            // This method is called from unselectedAdaptation before the target text is stored in the KB,
-            // so we don't store items w
+            // This method is called from:
+            // - selectedAdaptation before the target text available for editing
+            // - unselectedAdaptation before the target text is stored in the KB
             stripPunctuation: function (target) {
                 var result = target,
                     startIdx = 0,
@@ -1240,12 +1241,6 @@ define(function (require) {
 //                    $(".pile").css({})
                 }
                 
-                if (isSelecting === false) {
-                    // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
-                    // event to the parent (pile) element when we're done
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
                 // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
                 // event to the parent (pile) element when we're done
                 event.stopPropagation();
@@ -1293,7 +1288,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
-                            targetText = this.autoAddCaps(model, refstrings[0].target);
+                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target));
                             $(event.currentTarget).html(targetText);
                             isDirty = true;
                             // Are we moving?
@@ -1399,7 +1394,7 @@ define(function (require) {
                         // if this isn't a phrase, populate the target with the source text as the next best guess
                         // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
                         if (strID.indexOf("phr") === -1) {
-                            $(event.currentTarget).html(sourceText);
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText));
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1437,7 +1432,7 @@ define(function (require) {
                         // We really selected this field -- stay here.
                         // reset the dirty bit because
                         // we haven't made any changes yet
-                        origText = $(event.currentTarget).text().trim();
+                        origText = this.stripPunctuation($(event.currentTarget).text().trim());
                         lastPile = selectedStart;
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1477,6 +1472,9 @@ define(function (require) {
                                     }
                                 );
                                 isSelectingKB = true;
+                            } else {
+                                // only one entry -- just clean up the target we'll be editing
+                                $(event.currentTarget).html(origText); // stripped of punctuation
                             }
                         }
                         
@@ -1579,7 +1577,7 @@ define(function (require) {
                 var model = this.collection.findWhere({spid: strID});
                 // remove the KB entry
                 removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false)),
+                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim()),
                              project.get('projectid'));
                 // set the edit field back to its previous value
                 $(lastPile).find(".target").html(origText);
@@ -1674,8 +1672,8 @@ define(function (require) {
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
                             saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)),
-                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)),
+                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(),
+                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(),
                                      project.get('projectid'));
                         }
                         // add any punctuation back to the target field
@@ -1835,7 +1833,7 @@ define(function (require) {
                                 phraseTarget += " ";
                                 origTarget += "|";
                             }
-                            phraseMarkers += $(value).children(".marker").html();
+                            phraseMarkers += $(value).children(".marker").text();
                             phraseSource += $(value).children(".source").html();
                             phraseTarget += $(value).children(".target").html();
                             // check for phrases
@@ -1853,7 +1851,7 @@ define(function (require) {
                     });
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -1923,6 +1921,10 @@ define(function (require) {
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
+                        if (index === 0) {
+                            // transfer any marker back (would be the first in the list)
+                            phObj.set('markers', selectedObj.get('markers'), {silent: true});
+                        }
                         phObj.save();
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
                         nOrder = nOrder + 1;
@@ -1961,6 +1963,7 @@ define(function (require) {
                     RetHtml = null,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
+                    retMarkers = "",
                     RetSource = "",
                     RetTarget = "",
                     nOrder = 0.0,
@@ -1971,9 +1974,10 @@ define(function (require) {
                     newView = null,
                     selectedObj = null,
                     RetHtmlLine0 = "<div id=\"pile-",
-                    RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">&nbsp;</div> <div class=\"source retranslation\">",
-                    RetHtmlLine2 = "</div> <div class=\"target\" contenteditable=\"true\">",
-                    RetHtmlLine3 = "</div></div>";
+                    RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">",
+                    RetHtmlLine2 = "</div> <div class=\"source retranslation\">",
+                    RetHtmlLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    RetHtmlLine4 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
                 // combine the selection into a new retranslation
                 if (isRetranslation === false) {
@@ -1989,6 +1993,7 @@ define(function (require) {
                                 RetTarget += " ";
                                 origTarget += "|";
                             }
+                            retMarkers += $(value).children(".marker").text();
                             RetSource += $(value).children(".source").html();
                             RetTarget += $(value).children(".target").html();
                             origTarget += $(value).children(".target").html();
@@ -1996,7 +2001,7 @@ define(function (require) {
                     });
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: RetSource, target: RetSource, orig: origTarget});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2006,10 +2011,10 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // UI representation
-                    RetHtml = RetHtmlLine0 + "ret-" + newID + RetHtmlline1 + RetSource + RetHtmlLine2;
+                    RetHtml = RetHtmlLine0 + "ret-" + newID + RetHtmlline1 + retMarkers + RetHtmlLine2 + RetSource + RetHtmlLine3;
                     // if there's something already in the target, use it instead
                     RetHtml += (RetTarget.trim().length > 0) ? RetTarget : RetSource;
-                    RetHtml += RetHtmlLine3;
+                    RetHtml += RetHtmlLine4;
                     console.log("Ret: " + RetHtml);
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
@@ -2053,6 +2058,10 @@ define(function (require) {
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
+                        if (index === 0) {
+                            // transfer any marker back (would be the first in the list)
+                            phObj.set('markers', selectedObj.get('markers'), {silent: true});
+                        }
                         phObj.save();
                         nOrder = nOrder + 1;
                         coll.add(phObj, {at: coll.indexOf(selectedObj)});
