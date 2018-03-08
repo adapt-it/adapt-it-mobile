@@ -943,8 +943,8 @@ define(function (require) {
                 console.log("onDblTapPile");
                 selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
                 selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
-                idxStart = $(selectedStart).index() - 1;
-                idxEnd = $(selectedEnd).index() - 1;
+                idxStart = $(selectedStart).index();
+                idxEnd = $(selectedEnd).index();
                 isSelecting = true; // change the UI color 
                 // trigger an end on the last pile elt
                 if (navigator.notification) {
@@ -999,8 +999,8 @@ define(function (require) {
                             console.log("double-tap detected -- selecting strip");
                             selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
                             selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
-                            idxStart = $(selectedStart).index() - 1;
-                            idxEnd = $(selectedEnd).index() - 1;
+                            idxStart = $(selectedStart).index();
+                            idxEnd = $(selectedEnd).index();
                             isSelecting = true; // change the UI color
                         }
                         lastTapTime = now; // update the last tap time
