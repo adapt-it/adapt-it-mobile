@@ -26,6 +26,8 @@ define(function (require) {
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplLanguages        = require('text!tpl/LanguagesList.html'),
+//        tplUILanguages      = require('text!tpl/UILanguages.html'),
+//        tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
@@ -135,8 +137,9 @@ define(function (require) {
                     project.set("name", value, {silent: true});
                 } else {
                     // project name not found -- build it from the source & target languages
-                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: project.get("SourceLanguageName"), target: project.get("TargetLanguageName")}), {silent: true});
-
+                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
+                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
                 }
                 // filters (USFM only -- other settings are ignored)
                 value = getSettingValue(124, "UseSFMarkerSet");
@@ -809,6 +812,8 @@ define(function (require) {
                 'change': 'render'
             },
             events: {
+                "click #UILanguage": "OnUILanguage",
+                "click #EditorPrefs": "OnEditorPrefs",
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
@@ -830,7 +835,13 @@ define(function (require) {
                 "click #Cancel": "OnCancel",
                 "click #OK": "OnOK"
             },
-                                                       
+            
+            OnUILanguage: function (event) {
+                
+            },
+            OnEditorPrefs: function (event) {
+                
+            },                                         
             searchLanguageName: function (event) {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val().trim();
@@ -861,13 +872,14 @@ define(function (require) {
                             newValue = value.substr(0, value.indexOf("-x-"));
                         }
                     } else {
-                        // variant is defined --- code is in the form [is0639]-x-[variant]
+                        // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
+                        // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -981,7 +993,9 @@ define(function (require) {
                     this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
                     this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}), {silent: true});
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
+                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
                     break;
                 case 3: // source font
                     tempfont = $('#font').val();
@@ -1182,7 +1196,7 @@ define(function (require) {
                 "click #Prev": "OnPrevStep",
                 "click #Next": "OnNextStep"
             },
-
+            
             onFocusLanguageName: function (event) {
                 HideTinyUI();
                 $("#LanguageName")[0].scrollIntoView(true);
@@ -1248,10 +1262,10 @@ define(function (require) {
                         // variant is defined --- code is in the form [is0639]-x-[variant]
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -1446,7 +1460,7 @@ define(function (require) {
                                                 currentView.langName = value.get("Ref_Name");
                                                 currentView.langCode = value.get("Id");
                                                 if ($('#LanguageVariant').val().trim().length > 0) {
-                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                                                 }
                                             } else {
                                                 // user rejected this suggestion -- tell them to enter
@@ -1464,7 +1478,7 @@ define(function (require) {
                                         currentView.langName = value.get("Ref_Name");
                                         currentView.langCode = value.get("Id");
                                         if ($('#LanguageVariant').val().trim().length > 0) {
-                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                                         }
                                     } else {
                                         // user rejected this suggestion -- tell them to enter
@@ -1530,7 +1544,9 @@ define(function (require) {
                         value = Underscore.uniqueId();
                         this.model.set("projectid", value, {silent: true});
                     }
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}), {silent: true});
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
+                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
                     console.log("id: " + value);
                     break;
                 case 3: // fonts
