@@ -150,7 +150,7 @@
         "lblDescription": "Descripción",
         "lblSource": "Lenguaje original",
         "lblTarget": "Lenguaje objecto",
-        "lblProjectSettings": "Configuración del Proyecto",
+        "lblProjectSettings": "Configuración",
         "ttlPunctuation": "Puntuación",
         "lblNoPunctuationCopy": "No copiar puntuación",
         "ttlCases": "Mayúsculas y minúsculas",
@@ -240,6 +240,7 @@
         "lblSpanish": "Español",
         "lblFrench": "Français",
         "lblTokPisin": "Tok Pisin",
+        "lblEditor": "Editor",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

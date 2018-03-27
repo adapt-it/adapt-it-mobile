@@ -138,8 +138,8 @@ define(function (require) {
                 } else {
                     // project name not found -- build it from the source & target languages
                     project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
-                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
-                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
+                        source: (project.get("SourceVariant").length > 0) ? project.get("SourceVariant") : project.get("SourceLanguageName"),
+                        target: (project.get("TargetVariant").length > 0) ? project.get("TargetVariant") : project.get("TargetLanguageName")}), {silent: true});
                 }
                 // filters (USFM only -- other settings are ignored)
                 value = getSettingValue(124, "UseSFMarkerSet");

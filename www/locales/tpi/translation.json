@@ -150,7 +150,7 @@
         "lblDescription": "Toksave",
         "lblSource": "Sos",
         "lblTarget": "Taget",
-        "lblProjectSettings": "Projek Seting",
+        "lblProjectSettings": "Seting",
         "ttlPunctuation": "Pangsuesen",
         "lblNoPunctuationCopy": "No ken kopiim pangsuesen",
         "ttlCases": "Kes",
@@ -240,6 +240,7 @@
         "lblSpanish": "Español",
         "lblFrench": "Français",
         "lblTokPisin": "Tok Pisin",
+        "lblEditor": "Editor",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget defaultlocale="en" id="org.adaptit.adaptitmobile" version="1.0.0" android-versionCode="1" ios-CFBundleVersion="1.0.0b11" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:gap="http://phonegap.com/ns/1.0" xmlnls:cdv="http://cordova.apache.org/ns/1.0">
-    <name short="adapt-it-mobile" xml:lang="en">Adapt It Mobile</name>
+<widget defaultlocale="en" id="org.adaptit.adaptitmobile" version="1.0.0" android-versionCode="1" ios-CFBundleVersion="1.0.0b11" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name short="aim" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
     </description>

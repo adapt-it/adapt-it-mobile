@@ -150,7 +150,7 @@
         "lblDescription": "Description",
         "lblSource": "Source",
         "lblTarget": "Target",
-        "lblProjectSettings": "Project Settings",
+        "lblProjectSettings": "Settings",
         "ttlPunctuation": "Punctuation",
         "lblNoPunctuationCopy": "Do not copy punctuation",
         "ttlCases": "Cases",
@@ -240,6 +240,7 @@
         "lblSpanish": "Español",
         "lblFrench": "Français",
         "lblTokPisin": "Tok Pisin",
+        "lblEditor": "Editor",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
