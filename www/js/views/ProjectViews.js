@@ -26,8 +26,7 @@ define(function (require) {
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplLanguages        = require('text!tpl/LanguagesList.html'),
-//        tplUILanguages      = require('text!tpl/UILanguages.html'),
-//        tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
+        tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
@@ -797,6 +796,24 @@ define(function (require) {
             }
         }),
         
+        EditorAndUIView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplEditorPrefs),
+            events: {
+                "click #UseCustomFilters": "onClickCustomFilters"
+            },
+            onShow: function (event) {
+                // enable / disable the autocapitalize checkbox based on the value
+                if ($("#UseCustomFilters").is(':checked') === true) {
+                    if ($("#tb").html().length === 0) {
+                        this.BuildFilterTable();
+                    }
+                    $("#USFMFilters").prop('hidden', false);
+                } else {
+                    $("#USFMFilters").prop('hidden', true);
+                }
+            }
+        }),
+        
         EditProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplEditProject),
             regions: {
@@ -812,8 +829,7 @@ define(function (require) {
                 'change': 'render'
             },
             events: {
-                "click #UILanguage": "OnUILanguage",
-                "click #EditorPrefs": "OnEditorPrefs",
+                "click #EditorUIPrefs": "OnEditorUIPrefs",
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
@@ -836,11 +852,9 @@ define(function (require) {
                 "click #OK": "OnOK"
             },
             
-            OnUILanguage: function (event) {
-                
-            },
-            OnEditorPrefs: function (event) {
-                
+            OnEditorUIPrefs: function (event) {
+                step = 9;
+                this.ShowView(step);
             },                                         
             searchLanguageName: function (event) {
                 // pull out the value from the input field
@@ -1048,6 +1062,9 @@ define(function (require) {
                         this.model.set("FilterMarkers", currentView.getFilterString(), {silent: true});
                     }
                     break;
+                case 9: // editor and UI language
+                    
+                    break;
                 }
 //                this.model.trigger('change');
                 this.model.save();
@@ -1151,6 +1168,8 @@ define(function (require) {
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
+                case 9: // editor and UI language
+                    currentView = new EditorAndUIView({model: this.model});
                 }
                 this.container.show(currentView);
             }
