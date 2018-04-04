@@ -799,17 +799,26 @@ define(function (require) {
         EditorAndUIView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplEditorPrefs),
             events: {
-                "click #UseCustomFilters": "onClickCustomFilters"
+                "change #language":   "onSelectCustomLanguage",
+            },
+            onSelectCustomLanguage: function (event) {
+                // change the radio button selection
+                $("#customLanguage").prop("checked", true);
             },
             onShow: function (event) {
-                // enable / disable the autocapitalize checkbox based on the value
-                if ($("#UseCustomFilters").is(':checked') === true) {
-                    if ($("#tb").html().length === 0) {
-                        this.BuildFilterTable();
-                    }
-                    $("#USFMFilters").prop('hidden', false);
+                if (localStorage.getItem("CopySource")) {
+                    
+                };
+                if (localStorage.getItem("WrapUSFM")) {
+                    
+                };
+                if (localStorage.getItem("UILang")) {
+                    // use custom language -- select the language used
+                    $('#language').val(localStorage.getItem("UILang"));
+                    $("#customLanguage").prop("checked", true); // onSelectCustomLanguage() should already do this, but just in case...
                 } else {
-                    $("#USFMFilters").prop('hidden', true);
+                    // use device language
+                    $("#deviceLanguage").prop("checked", true);
                 }
             }
         }),
