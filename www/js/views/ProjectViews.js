@@ -807,10 +807,14 @@ define(function (require) {
             },
             onShow: function (event) {
                 if (localStorage.getItem("CopySource")) {
-                    
+                    $("#CopySource").prop("checked", localStorage.getItem("CopySource") === "true");
+                } else {
+                    $("#CopySource").prop("checked", true); // default is selected
                 };
                 if (localStorage.getItem("WrapUSFM")) {
-                    
+                    $("#WrapAtMarker").prop("checked", localStorage.getItem("WrapUSFM") === "true");
+                } else {
+                    $("#WrapAtMarker").prop("checked", true); // default is selected
                 };
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
@@ -1003,7 +1007,10 @@ define(function (require) {
                     tempfont = "",
                     tempSize = "",
                     tempColor = "",
-                    trimmedValue = null;
+                    trimmedValue = null,
+                    loc = "",
+                    locale = "";
+                
                 switch (step) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
@@ -1072,6 +1079,38 @@ define(function (require) {
                     }
                     break;
                 case 9: // editor and UI language
+                    localStorage.setItem(("CopySource"), $("#CopySource").is(":checked") ? true : false);
+                    localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
+                    if ($("#customLanguage").is(":checked")) {
+                        // Use a custom language
+                        loc = $('#language').val();
+                        // set the language in local storage
+                        localStorage.setItem(("UILang"), loc);
+                        // set the locale, then return
+                        i18n.setLng(loc, function (err, t) {
+                            // do nothing?
+                        });
+                    } else {
+                        // use the mobile device's setting
+                        // remove the language in local storage (so we get it dynamically the next time the app is launched)
+                        localStorage.removeItem("UILang");
+                        // get the user's locale - mobile or web
+                        if (window.Intl && typeof window.Intl === 'object') {
+                            // device supports ECMA Internationalization API
+                            locale = navigator.language.split("-")[0];
+                            i18n.setLng(locale, function (err, t) {
+                                // do nothing?
+                            });
+                        } else {
+                            // fallback - use web browser's language metadata
+                            var lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+                            locale = lang.split("-")[0];
+                            // set the locale, then return
+                            i18n.setLng(locale, function (err, t) {
+                                // do nothing?
+                            });
+                        }
+                    }
                     
                     break;
                 }
@@ -1179,6 +1218,7 @@ define(function (require) {
                     break;
                 case 9: // editor and UI language
                     currentView = new EditorAndUIView({model: this.model});
+                    break;
                 }
                 this.container.show(currentView);
             }

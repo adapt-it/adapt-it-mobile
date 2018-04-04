@@ -355,6 +355,14 @@ define(function (require) {
                 theRule = ".scroller-notb { top: " + scrollTop + "px; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
+            // User option to *not* clear USFM markers
+            if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
+                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            } else {
+                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: left; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
         },
 
         // SourcePhraseView
@@ -1394,7 +1402,14 @@ define(function (require) {
                         // if this isn't a phrase, populate the target with the source text as the next best guess
                         // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
                         if (strID.indexOf("phr") === -1) {
-                            $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                            // not a phrase. Do we want to copy the source over?
+                            if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
+                                console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
+                                $(event.currentTarget).html("");
+                            } else {
+                                // copy the source text
+                                $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                            }
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;

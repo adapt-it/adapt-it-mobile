@@ -851,7 +851,7 @@ div.strip.specialtext div.source {
     color: #aa0000;
 }
 
-/* Paragraph markers -- start on a new line */
+/* Paragraph markers -- start on a new line (overridden in AdaptViews.js) */
 .usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c {
     clear: left;
 }
