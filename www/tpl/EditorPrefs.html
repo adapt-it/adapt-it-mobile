@@ -1,0 +1,22 @@
+<div class="control-group">
+<div class="control-row">{{ t 'view.lblEditor'}}</div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="CopySource" value="false"> <div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblCopySource'}}</label></div>
+<div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="WrapAtMarker" value="false"> <div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblWrapAtUSFM'}}</label></div>
+</div>
+<div class="control-group">
+<div class="control-row">{{ t 'view.ttlLanguage'}}</div>
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="deviceLanguage" name="topcoat">
+  <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseDeviceLanguage'}}
+</label></div>
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="customLanguage" name="topcoat">
+    <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseCustomLanguage'}} 
+    </label>
+    <select id="language" class="docNav" style="margin-left:2em; margin=top: 6px;">
+        <option value="en">{{ t 'view.lblEnglish'}}</option>
+        <option value="es">{{ t 'view.lblSpanish'}}</option>
+        <option value="fr">{{ t 'view.lblFrench'}}</option>
+        <option value="pt">{{ t 'view.lblPortuguese'}}</option>
+        <option value="tpi">{{ t 'view.lblTokPisin'}}</option>
+    </select>
+</div>
+</div>

@@ -851,7 +851,7 @@ div.strip.specialtext div.source {
     color: #aa0000;
 }
 
-/* Paragraph markers -- start on a new line */
+/* Paragraph markers -- start on a new line (overridden in AdaptViews.js) */
 .usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c {
     clear: left;
 }
@@ -1151,8 +1151,8 @@ typeahead styles
 }
 
 .tt-menu {
-  margin: 12px 0;
-  padding: 8px 0;
+  margin: 6px 0;
+/*  padding: 8px 0;*/
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -1170,7 +1170,7 @@ typeahead styles
     line-height: 1.3rem;
 /*    min-width: 4rem;*/
     overflow: hidden;
-    padding: 6px 20px;
+    padding: 10px 20px;
 }
 
 /* first item doesn't have a top border */

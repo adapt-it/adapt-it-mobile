@@ -5,7 +5,7 @@
         </a>
     </div>
     <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle">{{t 'view.ttlEditProject'}}</h1>
+        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle">{{t 'view.lblProjectSettings'}}</h1>
     </div>
     <div class="topcoat-navigation-bar__item right">{{!
         <a href="#help" class="topcoat-icon-button--quiet">
@@ -16,8 +16,14 @@
 <!-- <div class="container" style="height: calc(100% - 70px);"> -->
 <div class="topcoat-list__container scroller-notb">
     <div class="Instructions" id="StepInstructions" hidden="true"></div>
-    <div id="StepContainer" hidden="true"></div> <!-- style="height: calc(100% - 100px);" -->
+    <div id="StepContainer" hidden="true"></div>
 <ul class="chapter-list topcoat-list__container" id="ProjectItems">
+<li class="topcoat-list__item">
+    <a id="EditorUIPrefs">
+    <header><h3>Editor and User Interface</h3></header>
+    <div class="control-row"></div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>
 <li class="topcoat-list__item">
     <a id="SourceLanguage">
     <header><h3>{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</h3></header>

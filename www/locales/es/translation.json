@@ -150,7 +150,7 @@
         "lblDescription": "Descripción",
         "lblSource": "Lenguaje original",
         "lblTarget": "Lenguaje objecto",
-        "lblProjectSettings": "Configuración del Proyecto",
+        "lblProjectSettings": "Configuración",
         "ttlPunctuation": "Puntuación",
         "lblNoPunctuationCopy": "No copiar puntuación",
         "ttlCases": "Mayúsculas y minúsculas",
@@ -239,7 +239,11 @@
         "lblEnglish": "English",
         "lblSpanish": "Español",
         "lblFrench": "Français",
+        "lblPortuguese": "Português",
         "lblTokPisin": "Tok Pisin",
+        "lblEditor": "Editor",
+        "lblCopySource": "Copy Source",
+        "lblWrapAtUSFM": "Wrap at Standard Format Markers",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

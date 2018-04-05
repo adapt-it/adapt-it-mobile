@@ -7,11 +7,8 @@ define(function (require) {
 
     "use strict";
 
-    var $           = require('jquery'),
-        Backbone    = require('backbone'),
-        Underscore  = require('underscore'),
+    var Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
-        usfm        = require('utils/usfm'),
         filterID    = "",
         i18n        = require('i18n');
     
@@ -80,7 +77,7 @@ define(function (require) {
         }
         return new Handlebars.SafeString(result);
     });
-
+    
     // Return a chapter number.
     Handlebars.registerHelper('chapter', function () {
         // extract and return the chapter number from the markers

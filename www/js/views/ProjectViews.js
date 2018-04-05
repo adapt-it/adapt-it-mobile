@@ -26,6 +26,7 @@ define(function (require) {
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplLanguages        = require('text!tpl/LanguagesList.html'),
+        tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
@@ -135,8 +136,9 @@ define(function (require) {
                     project.set("name", value, {silent: true});
                 } else {
                     // project name not found -- build it from the source & target languages
-                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: project.get("SourceLanguageName"), target: project.get("TargetLanguageName")}), {silent: true});
-
+                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (project.get("SourceVariant").length > 0) ? project.get("SourceVariant") : project.get("SourceLanguageName"),
+                        target: (project.get("TargetVariant").length > 0) ? project.get("TargetVariant") : project.get("TargetLanguageName")}), {silent: true});
                 }
                 // filters (USFM only -- other settings are ignored)
                 value = getSettingValue(124, "UseSFMarkerSet");
@@ -794,6 +796,37 @@ define(function (require) {
             }
         }),
         
+        EditorAndUIView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplEditorPrefs),
+            events: {
+                "change #language":   "onSelectCustomLanguage",
+            },
+            onSelectCustomLanguage: function (event) {
+                // change the radio button selection
+                $("#customLanguage").prop("checked", true);
+            },
+            onShow: function (event) {
+                if (localStorage.getItem("CopySource")) {
+                    $("#CopySource").prop("checked", localStorage.getItem("CopySource") === "true");
+                } else {
+                    $("#CopySource").prop("checked", true); // default is selected
+                };
+                if (localStorage.getItem("WrapUSFM")) {
+                    $("#WrapAtMarker").prop("checked", localStorage.getItem("WrapUSFM") === "true");
+                } else {
+                    $("#WrapAtMarker").prop("checked", true); // default is selected
+                };
+                if (localStorage.getItem("UILang")) {
+                    // use custom language -- select the language used
+                    $('#language').val(localStorage.getItem("UILang"));
+                    $("#customLanguage").prop("checked", true); // onSelectCustomLanguage() should already do this, but just in case...
+                } else {
+                    // use device language
+                    $("#deviceLanguage").prop("checked", true);
+                }
+            }
+        }),
+        
         EditProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplEditProject),
             regions: {
@@ -809,6 +842,7 @@ define(function (require) {
                 'change': 'render'
             },
             events: {
+                "click #EditorUIPrefs": "OnEditorUIPrefs",
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
@@ -830,7 +864,11 @@ define(function (require) {
                 "click #Cancel": "OnCancel",
                 "click #OK": "OnOK"
             },
-                                                       
+            
+            OnEditorUIPrefs: function (event) {
+                step = 9;
+                this.ShowView(step);
+            },                                         
             searchLanguageName: function (event) {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val().trim();
@@ -861,13 +899,14 @@ define(function (require) {
                             newValue = value.substr(0, value.indexOf("-x-"));
                         }
                     } else {
-                        // variant is defined --- code is in the form [is0639]-x-[variant]
+                        // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
+                        // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -968,7 +1007,10 @@ define(function (require) {
                     tempfont = "",
                     tempSize = "",
                     tempColor = "",
-                    trimmedValue = null;
+                    trimmedValue = null,
+                    loc = "",
+                    locale = "";
+                
                 switch (step) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
@@ -981,7 +1023,9 @@ define(function (require) {
                     this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
                     this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: currentView.langName}), {silent: true});
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
+                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
                     break;
                 case 3: // source font
                     tempfont = $('#font').val();
@@ -1033,6 +1077,41 @@ define(function (require) {
                     if (($('#UseCustomFilters').is(':checked') === true)) {
                         this.model.set("FilterMarkers", currentView.getFilterString(), {silent: true});
                     }
+                    break;
+                case 9: // editor and UI language
+                    localStorage.setItem(("CopySource"), $("#CopySource").is(":checked") ? true : false);
+                    localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
+                    if ($("#customLanguage").is(":checked")) {
+                        // Use a custom language
+                        loc = $('#language').val();
+                        // set the language in local storage
+                        localStorage.setItem(("UILang"), loc);
+                        // set the locale, then return
+                        i18n.setLng(loc, function (err, t) {
+                            // do nothing?
+                        });
+                    } else {
+                        // use the mobile device's setting
+                        // remove the language in local storage (so we get it dynamically the next time the app is launched)
+                        localStorage.removeItem("UILang");
+                        // get the user's locale - mobile or web
+                        if (window.Intl && typeof window.Intl === 'object') {
+                            // device supports ECMA Internationalization API
+                            locale = navigator.language.split("-")[0];
+                            i18n.setLng(locale, function (err, t) {
+                                // do nothing?
+                            });
+                        } else {
+                            // fallback - use web browser's language metadata
+                            var lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+                            locale = lang.split("-")[0];
+                            // set the locale, then return
+                            i18n.setLng(locale, function (err, t) {
+                                // do nothing?
+                            });
+                        }
+                    }
+                    
                     break;
                 }
 //                this.model.trigger('change');
@@ -1137,6 +1216,9 @@ define(function (require) {
                     // instructions
                     this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
+                case 9: // editor and UI language
+                    currentView = new EditorAndUIView({model: this.model});
+                    break;
                 }
                 this.container.show(currentView);
             }
@@ -1182,7 +1264,7 @@ define(function (require) {
                 "click #Prev": "OnPrevStep",
                 "click #Next": "OnNextStep"
             },
-
+            
             onFocusLanguageName: function (event) {
                 HideTinyUI();
                 $("#LanguageName")[0].scrollIntoView(true);
@@ -1248,10 +1330,10 @@ define(function (require) {
                         // variant is defined --- code is in the form [is0639]-x-[variant]
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim();
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim();
+                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -1446,7 +1528,7 @@ define(function (require) {
                                                 currentView.langName = value.get("Ref_Name");
                                                 currentView.langCode = value.get("Id");
                                                 if ($('#LanguageVariant').val().trim().length > 0) {
-                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                                                 }
                                             } else {
                                                 // user rejected this suggestion -- tell them to enter
@@ -1464,7 +1546,7 @@ define(function (require) {
                                         currentView.langName = value.get("Ref_Name");
                                         currentView.langCode = value.get("Id");
                                         if ($('#LanguageVariant').val().trim().length > 0) {
-                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim();
+                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
                                         }
                                     } else {
                                         // user rejected this suggestion -- tell them to enter
@@ -1530,7 +1612,9 @@ define(function (require) {
                         value = Underscore.uniqueId();
                         this.model.set("projectid", value, {silent: true});
                     }
-                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {source: this.model.get("SourceLanguageName"), target: this.model.get("TargetLanguageName")}), {silent: true});
+                    this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.model.get("SourceVariant").length > 0) ? this.model.get("SourceVariant") : this.model.get("SourceLanguageName"),
+                        target: (this.model.get("TargetVariant").length > 0) ? this.model.get("TargetVariant") : this.model.get("TargetLanguageName")}), {silent: true});
                     console.log("id: " + value);
                     break;
                 case 3: // fonts

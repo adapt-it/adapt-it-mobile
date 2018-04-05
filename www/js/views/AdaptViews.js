@@ -355,6 +355,14 @@ define(function (require) {
                 theRule = ".scroller-notb { top: " + scrollTop + "px; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
+            // User option to *not* clear USFM markers
+            if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
+                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            } else {
+                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: left; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            }
         },
 
         // SourcePhraseView
@@ -1283,7 +1291,7 @@ define(function (require) {
                         options.length = 0; // clear out any old cruft
                         for (i = 0; i < refstrings.length; i++) {
                             if (refstrings[i].n > 0) {
-                                options.push(refstrings[i].target);
+                                options.push(Underscore.unescape(refstrings[i].target));
                             }
                         }
                         if (options.length === 1) {
@@ -1394,7 +1402,14 @@ define(function (require) {
                         // if this isn't a phrase, populate the target with the source text as the next best guess
                         // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
                         if (strID.indexOf("phr") === -1) {
-                            $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                            // not a phrase. Do we want to copy the source over?
+                            if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
+                                console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
+                                $(event.currentTarget).html("");
+                            } else {
+                                // copy the source text
+                                $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                            }
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1452,7 +1467,7 @@ define(function (require) {
                             options.length = 0; // clear out any old cruft
                             for (i = 0; i < refstrings.length; i++) {
                                 if (refstrings[i].n > 0) {
-                                    options.push(refstrings[i].target);
+                                    options.push(Underscore.unescape(refstrings[i].target));
                                 }
                             }
                             if (options.length > 1) {
@@ -1632,7 +1647,7 @@ define(function (require) {
                 }
                 // get the adaptation text
                 //value = $(event.currentTarget).text();
-                value = Underscore.escape($(event.currentTarget).text());
+                value = $(event.currentTarget).text();
                 // if needed use regex to replace chars we don't want stored in escaped format
                 //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
                 trimmedValue = value.trim();
@@ -1672,14 +1687,14 @@ define(function (require) {
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
                             saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                     this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(),
-                                     this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim()),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim()),
                                      project.get('projectid'));
                         }
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
-                        model.save({target: trimmedValue});
+                        model.save({target: Underscore.escape(trimmedValue)});
                         // if the target differs from the source, make it display in green
                         if (model.get('source') === model.get('target')) {
                             // source === target --> remove "differences" from the class so the text is black
