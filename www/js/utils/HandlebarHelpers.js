@@ -101,6 +101,11 @@ define(function (require) {
         return new Handlebars.SafeString(result);
     });
     
+    Handlebars.registerHelper('AppVersion', function () {
+        var result = window.Application.version;
+        return new Handlebars.SafeString(result);
+    });
+    
     // If/then processing helper:
     // Handlebars doesn't directly perform conditional expression evaluation, so we
     // need to roll our own.

@@ -26,11 +26,11 @@
     "gulp-typescript": "latest",
     "plist": "^1.2.0"
   },
-
   "dependencies": {
     "cordova-android": "^6.3.0",
     "cordova-ios": "^4.5.4",
     "cordova-lib": "^7.1.0",
+    "cordova-plugin-appversion": "1.0.0",
     "cordova-plugin-device": "1.1.7",
     "cordova-plugin-dialogs": "1.3.4",
     "cordova-plugin-file": "5.0.0",
@@ -61,6 +61,7 @@
   },
   "cordova": {
     "plugins": {
+      "cordova-plugin-appversion": {},
       "cordova-plugin-device": {},
       "cordova-plugin-dialogs": {},
       "cordova-plugin-file": {},

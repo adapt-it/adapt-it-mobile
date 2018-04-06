@@ -241,9 +241,11 @@
         "lblFrench": "Français",
         "lblPortuguese": "Português",
         "lblTokPisin": "Tok Pisin",
+        "lblGeneralSettings": "Configurações Gerais",
         "lblEditor": "Editor",
         "lblCopySource": "Copiar texto de origem",
         "lblWrapAtUSFM": "Embrulhe o texto nos marcadores USFM",
+        "AppVersion": "Versão do aplicativo",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

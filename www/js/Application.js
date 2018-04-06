@@ -44,6 +44,7 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
+            version: "1.0.0", // replaced with the actual version on device ready
             
             // App initialization code. App initialization comes in a few callbacks:
             // 1. Cordova initialization (startTheApp() in main.js)
@@ -77,6 +78,11 @@ define(function (require) {
                     // a couple iOS-specific settings
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
+                }
+                // version info (mobile app only)
+                if (window.sqlitePlugin) {
+                    // return both version and build info
+                    this.version = AppVersion.version + "(" + AppVersion.build + ")";
                 }
                 // local dirs (mobile app only)
                 if (window.sqlitePlugin) {
