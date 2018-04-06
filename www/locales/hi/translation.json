@@ -241,9 +241,11 @@
         "lblFrench": "Français",
         "lblPortuguese": "Português",
         "lblTokPisin": "Tok Pisin",
+        "lblGeneralSettings": "General Settings",
         "lblEditor": "Editor",
         "lblCopySource": "Copy Source",
         "lblWrapAtUSFM": "Wrap at Standard Format Markers",
+        "AppVersion": "App Version",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
