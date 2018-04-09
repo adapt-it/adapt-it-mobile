@@ -82,7 +82,7 @@ define(function (require) {
                 // version info (mobile app only)
                 if (window.sqlitePlugin) {
                     // return both version and build info
-                    this.version = AppVersion.version + "(" + AppVersion.build + ")";
+                    this.version = AppVersion.version + " (" + AppVersion.buildString + ")";
                 }
                 // local dirs (mobile app only)
                 if (window.sqlitePlugin) {
