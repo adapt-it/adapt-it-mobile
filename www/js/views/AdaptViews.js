@@ -69,6 +69,9 @@ define(function (require) {
         lastTapTime = null,
         origText = "",
         lastPile = null,
+        isLongPressSelection = false,
+        LongPressSectionStart = null,
+        longPressTimeout = null,
         lastOffset = 0,
         
         /////
@@ -841,6 +844,25 @@ define(function (require) {
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart: " + $(event.target).attr('id'));
+                // long press function for selection start
+                longPressTimeout = window.setTimeout(function() {
+                    // alert the user that the long-press has been activated
+                    if (navigator.notification) {
+                        navigator.notification.beep(1);
+                    }
+                    $(event.currentTarget).addClass("ui-longSelecting");
+                    isLongPressSelection = true;
+                    if (LongPressSectionStart === null) {
+                        // start event
+                        LongPressSectionStart = event.currentTarget;
+                    } else if (LongPressSectionStart === event.currentTarget) {
+                        // user long-pressed in the same location -- consider this a toggle
+                        // (i.e., clear out the long press value)
+                        LongPressSectionStart = null;
+                        isLongPressSelection = false;
+                        $("div").removeClass("ui-longSelecting");
+                    }
+                }, 1000);
                 if (isSelectingKB === true) {
                     var theSelection = "";
                     // pull out the tt-suggestion (the menu item the user selected)
@@ -966,10 +988,13 @@ define(function (require) {
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
                 console.log("selectingPilesEnd");
+                clearTimeout(longPressTimeout); // don't need to wait for the long press here
                 // re-add the contenteditable fields
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
                     tmpIdx = 0,
+                    strStartID = "",
+                    strEndID = "",
                     spid = "";
                 // prevent weird edit menu appearances (long click)
                 event.preventDefault();
@@ -1013,6 +1038,56 @@ define(function (require) {
                         }
                         lastTapTime = now; // update the last tap time
                     }
+                } else if (navigator.notification) {
+                    // mobile phone
+                    if (lastTapTime === null) {
+                        lastTapTime = new Date().getTime();
+                        console.log("setting lastTapTime");
+                    } else {
+                        var now = new Date().getTime();
+                        var delay = now - lastTapTime;
+                        console.log("delay: " + delay);
+                        if ((delay < 500) && (delay > 0)) {
+                        }
+                    }
+                }
+                // check for long press selection
+                if (isLongPressSelection === true && LongPressSectionStart !== selectedStart) {
+                    // This is the click _after_ the long press event, which indicates the selection end
+                    // Sanity check that this click is in the same strip
+                    if (selectedStart.parentElement !== LongPressSectionStart.parentElement) {
+                        // not the same parent (i.e., not in the same strip) -- select as much as we can
+                        // NOTE: selectedStart actually holds the ENDING click value, hence our logic here
+                        strStartID = $(LongPressSectionStart).attr('id');
+                        strStartID = strStartID.substr(strStartID.indexOf("-") + 1); // remove "pile-"
+                        strEndID = $(selectedStart).attr('id');
+                        strEndID = strEndID.substr(strEndID.indexOf("-") + 1); // remove "pile-"
+                        if (parseInt(strStartID, 10) < parseInt(strEndID, 10)) {
+                            // last click was AFTER the first long press -- select to the end of the strip
+                            selectedStart = $(LongPressSectionStart.parentElement).children(".pile").last()[0]; // last pile
+                        } else {
+                            // last click was BEFORE the first long press -- select to the beginning of the strip
+                            selectedStart = $(LongPressSectionStart.parentElement).children(".pile")[0]; // first pile
+                        }
+                    }
+                    // set the selection
+                    selectedEnd = selectedStart; // ending click
+                    selectedStart = LongPressSectionStart; // starting long press
+                    idxStart = $(selectedStart).index();
+                    idxEnd = $(selectedEnd).index();
+                    isSelecting = true; // change the UI color
+                    // done with long press selection -- clear out values and styling
+                    LongPressSectionStart = null; // clear out the long press value
+                    isLongPressSelection = false;
+                    $("div").removeClass("ui-longSelecting");
+                }
+                
+                // case where user started with a long press, then dragged the rest of the way
+                if (selectedEnd != selectedStart && isLongPressSelection === true) {
+                    // done with long press selection -- clear out values and styling
+                    LongPressSectionStart = null; // clear out the long press value
+                    isLongPressSelection = false;
+                    $("div").removeClass("ui-longSelecting");
                 }
                 
                 if (isSelecting === true) {
@@ -2313,7 +2388,7 @@ define(function (require) {
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
                     if (selectedStart !== null) {
-                        $("div").removeClass("ui-selecting ui-selected");
+                        $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
                         $("#Placeholder").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
@@ -2321,6 +2396,9 @@ define(function (require) {
                         $("#mnuRetranslation").prop('disabled', true);
                         $("#mnuPhrase").prop('disabled', true);
                     }
+                    selectedStart = null; // clear selection itself
+                    LongPressSectionStart = null;
+                    isLongPressSelection = false;
                 }
             },
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user

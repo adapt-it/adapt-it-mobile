@@ -39,6 +39,9 @@ background: radial-gradient(ellipse at center, #2595cb 0%,#18607f 100%); /* W3C 
     background-color: #279ED8;
     color: white;
 }
+.bg-turquise {
+    background-color: #1dd8af;
+}
 a {
     color: inherit;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -717,6 +720,9 @@ select.docNav {
 .ui-selected {
     background-color: rgb(185, 219, 248);
     background-color: hsl(208, 82%, 85%);
+}
+.ui-longSelecting {
+    background-color: #1dd8af;
 }
 .pile {
     color: black;
