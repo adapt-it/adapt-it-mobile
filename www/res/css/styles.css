@@ -863,7 +863,7 @@ div.strip.specialtext div.source {
 }
 
 /* Paragraph markers -- start on a new line (overridden in AdaptViews.js) */
-.usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c {
+.usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3 {
     clear: left;
 }
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */

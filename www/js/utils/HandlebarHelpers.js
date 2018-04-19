@@ -45,6 +45,7 @@ define(function (require) {
         var ary = this.markers.split("\\"),
             result = "",
             filtered = false,
+            tmpString = "",
             filterString = window.Application.filterList,
             newID = Underscore.uniqueId(),
             i = 0;
@@ -60,6 +61,12 @@ define(function (require) {
                 result += "usfm-" + ary[i].substring(0, (ary[i].indexOf(" ") === -1) ? ary[i].length : ary[i].indexOf(" "));
                 if (filterString.indexOf("\\" + ary[i].trim() + " ") >= 0) {
                     filtered = true;
+                }
+                // Chapter and verse numbers come in a strip just before the actual marker (here) --
+                // we need to remove any paragraph breaks here so that the chapter / verse # appear on the same line
+                if ((this.markers.indexOf("\\c") > -1) || (this.markers.indexOf("\\v") > -1)) {
+                    tmpString = result.replace("usfm-p", " "); // remove para mark (css class only)
+                    result = tmpString;
                 }
             }
         }

@@ -363,7 +363,11 @@ define(function (require) {
                 theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: none; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             } else {
-                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: left; }";
+                if (project.get('SourceDir') === 'rtl') {
+                    theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: right; }";
+                } else {
+                    theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: left; }";
+                }
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
