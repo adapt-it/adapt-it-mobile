@@ -330,7 +330,7 @@ define(function (require) {
             if (project.get('SourceDir') === 'rtl' && project.get('TargetDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".pile, .strip-header {";
+                theRule = ".pile, .strip-header, .filter {";
                 theRule += "float: right;";
                 theRule += "}";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
