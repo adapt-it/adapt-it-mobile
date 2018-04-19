@@ -833,6 +833,7 @@ div.strip.specialtext div.source {
 }
 .marker {
     color: #00cc00; /* light green */
+    white-space: nowrap;
 }
 .fromkb {
     background-color: #ffaaff;
