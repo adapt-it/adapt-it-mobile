@@ -523,6 +523,7 @@ define(function (require) {
                         // add the fonts we've embedded with AIM
                         $("#font").append($('<option>', {value : 'Andika'}).text('Andika'));
                         $("#font").append($('<option>', {value : 'Gentium'}).text('Gentium'));
+                        $("#font").append($('<option>', {value : 'Scheherazade'}).text('Scheherazade'));
                         $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
                         // select the current font
                         $("#font").val(this.model.get('typeface'));

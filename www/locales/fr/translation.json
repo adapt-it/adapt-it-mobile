@@ -225,7 +225,7 @@
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
-        "lblExportText": "Plain Text (.txt)",
+        "lblExportText": "Texte (.txt)",
         "lblExportFilename": "Nom de fichier:",
         "errNoFilename": "Entrez un nom de fichier.",
         "lblExportingPleaseWait": "Enregistrer le document ... attendez s'il vous plaît",

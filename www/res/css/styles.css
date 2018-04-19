@@ -14,6 +14,10 @@
     font-family: "Gentium";
     src: url("../font/GentiumPlus-R.woff") format('woff');
 }
+@font-face {
+    font-family: "Scheherazade";
+    src: url("../font/Scheherazade-Regular.woff") format('woff');
+}
 .bg-darkblue {
     background-color: #1F7BA5;
     color: white;

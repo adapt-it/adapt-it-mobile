@@ -1351,13 +1351,13 @@ define(function (require) {
                 ///
                 
                 // read doc as appropriate
-                if ((file.name.indexOf(".usfm") > 0) || (file.name.indexOf(".sfm") > 0)) {
+                if ((file.name.toLowerCase().indexOf(".usfm") > 0) || (file.name.toLowerCase().indexOf(".sfm") > 0)) {
                     result = readUSFMDoc(this.result);
-                } else if (file.name.indexOf(".usx") > 0) {
+                } else if (file.name.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(this.result);
-                } else if (file.name.indexOf(".xml") > 0) {
+                } else if (file.name.toLowerCase().indexOf(".xml") > 0) {
                     result = readXMLDoc(this.result);
-                } else if (file.name.indexOf(".txt") > 0) {
+                } else if (file.name.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
                     // find the ID of this book
                     index = this.result.indexOf("\\id");
