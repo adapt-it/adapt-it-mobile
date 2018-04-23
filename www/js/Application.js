@@ -343,10 +343,18 @@ define(function (require) {
                             var theView = new AdaptViews.ChapterView({model: chapter});
                             var proj = window.Application.ProjectList.where({projectid: chapter.get('projectid').toString()})[0];
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid').toString()})[0];
+                            var bookName = book.get('name');
                             theView.project = proj;
                             // update the last adapted book and chapter
                             if (proj) {
                                 window.Application.filterList = proj.get('FilterMarkers'); // static (always ON) filters + whatever is specified for the project
+                                
+                                if (bookName.length === 0) {
+                                    // sanity check -- if this is the case, set it to the book's filename (and update the book name)
+                                    bookName = book.get('filename');
+                                    book.set('name', bookName);
+                                    book.save();
+                                }
                                 proj.set('lastDocument', book.get('name'));
                                 proj.set('lastAdaptedBookID', chapter.get('bookid'));
                                 proj.set('lastAdaptedChapterID', chapter.get('chapterid'));

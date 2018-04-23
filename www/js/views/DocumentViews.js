@@ -1131,6 +1131,10 @@ define(function (require) {
                     if (index > -1) {
                         // get the name from the usfm itself
                         bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3))).trim();
+                        if (bookName.length === 0) {
+                            // fall back on the file name
+                            bookName = file.name;
+                        }
                     } else {
                         bookName = file.name;
                     }
