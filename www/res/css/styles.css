@@ -689,6 +689,7 @@ select.docNav {
 .marker {
 	color: #009900; /*green*/
 	display: block;
+    direction: ltr; /* always display marker data ltr */
 }
 .strip {
     display: block; 
@@ -1253,7 +1254,7 @@ typeahead styles
 * hide: document title, toggle buttons, all button labels, help button
 * example devices: Android ldpi phones
 */
-@media screen and (min-width: 240px) and (max-width: 319px) {
+@media screen and (max-width: 319px) {
     .source, .target {
         max-width: 240px;
     }
@@ -1273,6 +1274,9 @@ typeahead styles
     }
     #HelpBtn {
         display: none;
+    }
+    .topcoat-icon-button--quiet {
+        padding: 0 .5rem;
     }
 }
 
