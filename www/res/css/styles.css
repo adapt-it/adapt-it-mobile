@@ -423,6 +423,13 @@ ul {
     text-align: left;
 }
 
+/* clearfix for chapter */
+.chapter::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
 .sectionStatus {
     padding-left: .5em;
     padding-right: 1.5em;

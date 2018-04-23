@@ -274,6 +274,7 @@ define(function (require) {
             var theRule = "";
             var totalHeight = 0;
             var scrollTop = 0;
+            console.log("addStyleRules");
             // Source font
             theRule = ".source {";
             theRule += "font: " + parseInt(project.get('SourceFontSize'), 10) + "px \"" + project.get('SourceFont') + "\", \"Source Sans\", helvetica, arial, sans-serif; ";
@@ -350,25 +351,15 @@ define(function (require) {
                 theRule = ".marker { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
-            // Address possible toolbar clipping (#192) on Android
-            if (typeof device !== 'undefined' && device.platform === "Android") {
-                // This _should_ be 117px, but we've come across an instance where the scroller is pushed down
-                // by the status bar
-                scrollTop = $(".toolbar").height() + $(".toolbar").offset().top + 3;
-                theRule = ".scroller-notb { top: " + scrollTop + "px; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            }
             // User option to *not* clear USFM markers
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
-                theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-c { clear: none; }";
+                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: none; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                console.log("WrapUSFM -> FALSE");
             } else {
-                if (project.get('SourceDir') === 'rtl') {
-                    theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: right; }";
-                } else {
-                    theRule = ".usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: left; }";
-                }
+                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: both; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                console.log("WrapUSFM -> TRUE");
             }
         },
 
