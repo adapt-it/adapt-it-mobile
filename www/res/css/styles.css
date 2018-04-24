@@ -72,12 +72,12 @@ input[type="file"] {
     margin-right: 24px;
 }
 .featherlight-inner h2 {
-    font-weight: 800;
     border-bottom: 1px solid #333;
+    font-weight: 800;
 }
 .featherlight-previous span {
-    left: 0;
     color: #333;
+    left: 0;
 }
 .featherlight-next span {
     color: #333;
@@ -125,8 +125,8 @@ input[type="file"] {
 .welcome-title h2 {
     font-size: 1.1rem;
     font-weight: 200;
-    padding-top: .5rem;
     padding-bottom: 2rem;
+    padding-top: .5rem;
 }
 .x-small-input {
     width: 4rem;
@@ -153,6 +153,7 @@ input[type="file"] {
     width: 43px;
 }
 .vertcenter {
+    direction: ltr; /* override any RTL setting on the chapter */
     left: 50%;
     position: absolute;
     top: 50%;
@@ -181,9 +182,9 @@ input[type="file"] {
 }
 .main_title {
     overflow: hidden;
+    position: absolute;
     text-overflow: ellipsis;
     width:100%;
-    position: absolute;
 }
 .small-pic {
     float: left;
@@ -284,9 +285,9 @@ header h3 {
 .scroller {
     bottom: 0;
     left: 0;
-    right: 0;
     overflow: auto;
     position: fixed;
+    right: 0;
     top: 70px;
 }
 /* most pages - top title bar, no toolbar */
@@ -294,8 +295,8 @@ header h3 {
     bottom: 0;
     left: 0;
     overflow: auto;
-    right: 0;
     position: fixed;
+    right: 0;
     top: 57px;
 }
 /* wizard page scrolling content - leave room for ok / cancel / progress bar */
@@ -303,15 +304,15 @@ header h3 {
     bottom: 61px;
     left: 0;
     overflow: auto;
-    right: 0;
     position: fixed;
+    right: 0;
     top: 57px;
 }
 .bottom-tb {
-    position: fixed;
-    padding-bottom: 6px;
     bottom: 0;
     left: 0;
+    padding-bottom: 6px;
+    position: fixed;
     right: 0;
 }
 #Spacer {
@@ -425,9 +426,9 @@ ul {
 
 /* clearfix for chapter */
 .chapter::after {
+    clear: both;
     content: "";
     display: block;
-    clear: both;
 }
 
 .sectionStatus {
@@ -586,9 +587,9 @@ ul {
     background-size: cover;
 }
 #lang {
-    position: absolute;
     bottom: 6px;
     left: 6px;
+    position: absolute;
 }
 #help {
     background: url("images/question-white.svg") no-repeat;
@@ -695,8 +696,8 @@ select.docNav {
 /*** end temporary topcoat stylings ***/
 .marker {
 	color: #009900; /*green*/
-	display: block;
     direction: ltr; /* always display marker data ltr */
+	display: block;
 }
 .strip {
     display: block; 
@@ -739,8 +740,8 @@ select.docNav {
 .pile {
     color: black;
     float: left;
-    padding: 0 0.3em;
     min-width: 1rem;
+    padding: 0 0.3em;
 }
 .source, .marker {
     word-wrap: break-word;
@@ -782,14 +783,6 @@ select.docNav {
     max-height: 150px;
     overflow-y: auto;
     padding: 6px;
-    /*
-    position: absolute;
-    top: 190px;
-    left: 15px;
-    margin: 0;
-    height: 70%;
-    overflow-y: scroll;
-    */
     z-index: 9999;
 }
 .autocomplete-suggestion {
@@ -798,13 +791,6 @@ select.docNav {
 .autocomplete-suggestion:hover {
     background: #ccc;
 }
-/*
-@media (min-device-height: 640px) {
-    .cases {
-        height: 18rem;
-    }
-}
-*/
 .topcoat-checkbox__checkmark {
     margin-right: 6px;
 }
@@ -1165,13 +1151,11 @@ typeahead styles
 
 /* EDB 7/5/17 hacky hack: move dropdown up into target text as well as possible */
 .twitter-typeahead {
-    top: -1.8rem;
     min-width: 1rem;
+    top: -1.8rem;
 }
 
 .tt-menu {
-  margin: 6px 0;
-/*  padding: 8px 0;*/
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -1181,6 +1165,7 @@ typeahead styles
   -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
      -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
           box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  margin: 6px 0;
 }
 
 .tt-suggestion {
@@ -1198,15 +1183,14 @@ typeahead styles
 }
 
 .tt-suggestion:hover {
-  cursor: pointer;
-  color: #fff;
   background-color: #0097cf;
+  color: #fff;
+  cursor: pointer;
 }
 
 .tt-suggestion.tt-cursor {
-  color: #fff;
   background-color: #0097cf;
-
+  color: #fff;
 }
 
 .tt-suggestion p {
