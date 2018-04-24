@@ -79,6 +79,10 @@ define(function (require) {
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
                 }
+                // Window font size / zoom (Android only)
+                if (window.MobileAccessibility) {
+                    window.MobileAccessibility.usePreferredTextZoom(false);
+                }                
                 // version info (mobile app only)
                 if (window.sqlitePlugin) {
                     // return both version and build info

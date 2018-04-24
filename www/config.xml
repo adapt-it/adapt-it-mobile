@@ -98,4 +98,5 @@
     <plugin name="cordova-sqlite-evcore-extbuild-free" spec="0.8.6" />
     <plugin name="cordova.plugins.diagnostic" spec="^3.7.1" />
     <plugin name="cordova-plugin-appversion" spec="https://github.com/adapt-it/cordova-plugin-app-version.git" />
+    <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
 </widget>
