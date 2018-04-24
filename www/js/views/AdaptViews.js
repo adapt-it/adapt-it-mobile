@@ -327,17 +327,14 @@ define(function (require) {
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // Text direction
             // Default layout is LTR in our CSS file;
-            // if both languages are RTL, switch the layout of the chapter element and flow of text
-            if (project.get('SourceDir') === 'rtl' && project.get('TargetDir') === 'rtl') {
+            // if the source language is RTL, switch the layout of the chapter element and flow of text
+            if (project.get('SourceDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 theRule = ".pile, .strip-header, .filter {";
                 theRule += "float: right;";
                 theRule += "}";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            }
-            // override individual text directions
-            if (project.get('SourceDir') === 'rtl') {
                 theRule = ".source { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
@@ -353,11 +350,11 @@ define(function (require) {
             }
             // User option to *not* clear USFM markers
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
-                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: none; }";
+                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 console.log("WrapUSFM -> FALSE");
             } else {
-                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .sh { clear: both; }";
+                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 console.log("WrapUSFM -> TRUE");
             }
