@@ -297,11 +297,15 @@ define(function (require) {
             theRule = ".block-height {";
             theRule += "height: ";
             // total height = source + target + marker + (20px extra space)
-            totalHeight = ((parseInt(project.get('NavigationFontSize'), 10) + parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += Math.floor(totalHeight) + "px; ";
-            theRule += "line-height: " + Math.floor(totalHeight) + "px; ";
+            // this formula also accounts for the larger line height of the Scheherazade font
+            // (see https://software.sil.org/scheherazade/support/faq/)
+            totalHeight = 
+                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
+            theRule += totalHeight + "px; ";
+            theRule += "line-height: " + totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            console.log("Calculated pile height: " + totalHeight);
             // condensed-pile (w/o the marker line)
             theRule = ".condensed-pile {";
             theRule += "height: ";
