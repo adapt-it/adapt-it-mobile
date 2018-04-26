@@ -858,10 +858,6 @@ div.strip.specialtext div.source {
     color: #aa0000;
 }
 
-/* Paragraph markers -- start on a new line (overridden in AdaptViews.js) */
-.usfm-p,.usfm-mt1, .usfm-mt2, .usfm-mt3 {
-    clear: left;
-}
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
 .filter {
     background: url('../svg/filter.svg') no-repeat;

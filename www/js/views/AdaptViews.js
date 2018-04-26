@@ -299,7 +299,7 @@ define(function (require) {
             // total height = source + target + marker + (20px extra space)
             // this formula also accounts for the larger line height of the Scheherazade font
             // (see https://software.sil.org/scheherazade/support/faq/)
-            totalHeight = 
+            totalHeight =
                 Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
             theRule += totalHeight + "px; ";
             theRule += "line-height: " + totalHeight + "px; ";
@@ -352,15 +352,35 @@ define(function (require) {
                 theRule = ".marker { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
-            // User option to *not* clear USFM markers
+            // User option to *not* clear USFM markers - should be 121 of them + ".sh" (our chapter and verse # class)
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
-                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 console.log("WrapUSFM -> FALSE");
-            } else {
-                theRule = ".usfm-p, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
+                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: none; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            } else {
                 console.log("WrapUSFM -> TRUE");
+                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: both; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
 
@@ -841,7 +861,7 @@ define(function (require) {
             selectingPilesStart: function (event) {
                 console.log("selectingPilesStart: " + $(event.target).attr('id'));
                 // long press function for selection start
-                longPressTimeout = window.setTimeout(function() {
+                longPressTimeout = window.setTimeout(function () {
                     // alert the user that the long-press has been activated
                     if (navigator.notification) {
                         navigator.notification.beep(1);
@@ -989,6 +1009,8 @@ define(function (require) {
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
                     tmpIdx = 0,
+                    now = 0,
+                    delay = 0,
                     strStartID = "",
                     strEndID = "",
                     spid = "";
@@ -1020,8 +1042,8 @@ define(function (require) {
                         lastTapTime = new Date().getTime();
                         console.log("setting lastTapTime");
                     } else {
-                        var now = new Date().getTime();
-                        var delay = now - lastTapTime;
+                        now = new Date().getTime();
+                        delay = now - lastTapTime;
                         console.log("delay: " + delay);
                         if ((delay < 500) && (delay > 0)) {
                             // double-tap -- select the strip
@@ -1039,13 +1061,7 @@ define(function (require) {
                     if (lastTapTime === null) {
                         lastTapTime = new Date().getTime();
                         console.log("setting lastTapTime");
-                    } else {
-                        var now = new Date().getTime();
-                        var delay = now - lastTapTime;
-                        console.log("delay: " + delay);
-                        if ((delay < 500) && (delay > 0)) {
-                        }
-                    }
+                    } 
                 }
                 // check for long press selection
                 if (isLongPressSelection === true && LongPressSectionStart !== selectedStart) {
@@ -1079,7 +1095,7 @@ define(function (require) {
                 }
                 
                 // case where user started with a long press, then dragged the rest of the way
-                if (selectedEnd != selectedStart && isLongPressSelection === true) {
+                if (selectedEnd !== selectedStart && isLongPressSelection === true) {
                     // done with long press selection -- clear out values and styling
                     LongPressSectionStart = null; // clear out the long press value
                     isLongPressSelection = false;
@@ -1430,7 +1446,7 @@ define(function (require) {
                             }
                             // ios
                             if (navigator.notification && device.platform === "iOS") {
-                                $(event.currentTarget).setSelectionRange(0,99999);
+                                $(event.currentTarget).setSelectionRange(0, 99999);
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
