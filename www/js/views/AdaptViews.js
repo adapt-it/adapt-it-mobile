@@ -853,7 +853,6 @@ define(function (require) {
                 "mouseup .target": "selectedAdaptation",
                 "touchend .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
-//                "input .target": "checkForAutoMerge",
                 "blur .target": "unselectedAdaptation"
             },
             
@@ -1328,6 +1327,14 @@ define(function (require) {
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+                
+                // case where user lifted finger on the target instead of the pile
+                if (isSelecting === true) {
+                    console.log("oops... user mouseup on target, not pile... correcting.");
+                    // trigger a click on the parent (pile) instead
+                    $(event.parentElement).mouseup();
+                    return;
+                }
 
                 if ($(window).height() < 200) {
                     // smaller window height -- hide the marker line
@@ -1657,19 +1664,6 @@ define(function (require) {
                     $("#Undo").prop('disabled', false);
                 }
             },
-            // Input text has changed in the target field -
-            // Check to see if this is an automatic merge phrase situation
-            // (https://github.com/adapt-it/adapt-it-mobile/issues/109)
-//            checkForAutoMerge: function (event) {
-//                // is the selection a range of piles?
-//                if ((selectedEnd !== null && selectedStart !== null) && (selectedEnd !== selectedStart)) {
-//                    // User typed after selecting a group of piles -- automatic phrase merge
-//                    console.log("detect autophrase");
-//                    isAutoPhrase = true;
-//                    // Trigger the phrase creation
-//                    $("#Phrase").click();
-//                }
-//            },
             // User clicked on the Undo button.
             onUndo: function (event) {
                 console.log("onUndo: entry");
