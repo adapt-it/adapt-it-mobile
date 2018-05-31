@@ -31,6 +31,7 @@ define(function (require) {
         kblist          = null, // populated in onShow
         bookName        = "",
         scrID           = "",
+        fileName        = "",
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
@@ -151,7 +152,7 @@ define(function (require) {
             var importSuccess = function () {
                 console.log("importSuccess()");
                 // update status
-                $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: file.name}));
+                $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                 if ($("#loading").length) {
                     // mobile "please wait" UI
                     $("#loading").hide();
@@ -165,7 +166,7 @@ define(function (require) {
             var importFail = function (e) {
                 console.log("importFail(): " + e.message);
                 // update status
-                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: file.name, reason: e.message}));
+                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: e.message}));
                 if ($("#loading").length) {
                     // mobile "please wait" UI
                     $("#loading").hide();
@@ -188,7 +189,6 @@ define(function (require) {
                     index = 0,
                     norder = 1,
                     markers = "",
-                    orig = null,
                     prepuncts = "",
                     midpuncts = "",
                     follpuncts = "",
@@ -220,16 +220,16 @@ define(function (require) {
                     var needsNewLine = false;
                     var chaps = [];
                     var sp = null;
-                    console.log("Reading text file:" + file.name);
+                    console.log("Reading text file:" + fileName);
                     index = 1;
-                    bookName = file.name;
+                    bookName = fileName;
                     bookID = Underscore.uniqueId();
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
                         projectid: project.get('projectid'),
                         name: bookName,
-                        filename: file.name,
+                        filename: fileName,
                         chapters: []
                     });
                     books.add(book);
@@ -598,8 +598,8 @@ define(function (require) {
                             });
                         }
                     };
-                    console.log("Reading USX file:" + file.name);
-                    bookName = file.name.substr(0, file.name.indexOf("."));
+                    console.log("Reading USX file:" + fileName);
+                    bookName = fileName.substr(0, fileName.indexOf("."));
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
                     scrID = scrIDList.where({id: $($xml).find("book").attr("code")})[0];
@@ -622,7 +622,7 @@ define(function (require) {
                         projectid: project.get('projectid'),
                         scrid: scrID.get('id'),
                         name: bookName,
-                        filename: file.name,
+                        filename: fileName,
                         chapters: []
                     });
                     books.add(book);
@@ -729,7 +729,7 @@ define(function (require) {
                         return theString;
                     };
                     
-                    console.log("Reading XML file:" + file.name);
+                    console.log("Reading XML file:" + fileName);
                     bookName = ""; // reset
                     // Book name
                     // Try to get the adapted book name from the \h marker, if it exists
@@ -747,7 +747,7 @@ define(function (require) {
                     }
                     // If that didn't work, use the filename
                     if (bookName === "") {
-                        bookName = file.name.substr(0, file.name.indexOf("."));
+                        bookName = fileName.substr(0, fileName.indexOf("."));
                         if (bookName.indexOf("_Collab") > -1) {
                             // Collab document -- strip out the _Collab_ and _CH<#> for the name
                             bookName = bookName.substr(8, bookName.lastIndexOf("_CH") - 8);
@@ -836,7 +836,7 @@ define(function (require) {
                             projectid: project.get('projectid'),
                             scrid: scrID.get('id'),
                             name: bookName,
-                            filename: file.name,
+                            filename: fileName,
                             chapters: []
                         });
                         books.add(book);
@@ -1126,17 +1126,17 @@ define(function (require) {
                     var stridx = 0;
                     var chaps = [];
 
-                    console.log("Reading USFM file:" + file.name);
+                    console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
                     if (index > -1) {
                         // get the name from the usfm itself
                         bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3))).trim();
                         if (bookName.length === 0) {
                             // fall back on the file name
-                            bookName = file.name;
+                            bookName = fileName;
                         }
                     } else {
-                        bookName = file.name;
+                        bookName = fileName;
                     }
                     // find the ID of this book
                     index = contents.indexOf("\\id");
@@ -1161,7 +1161,7 @@ define(function (require) {
                         projectid: project.get('projectid'),
                         scrid: scrID.get('id'),
                         name: bookName,
-                        filename: file.name,
+                        filename: fileName,
                         chapters: [] // arr
                     });
                     books.add(book);
@@ -1355,13 +1355,13 @@ define(function (require) {
                 ///
                 
                 // read doc as appropriate
-                if ((file.name.toLowerCase().indexOf(".usfm") > 0) || (file.name.toLowerCase().indexOf(".sfm") > 0)) {
+                if ((fileName.toLowerCase().indexOf(".usfm") > 0) || (fileName.toLowerCase().indexOf(".sfm") > 0)) {
                     result = readUSFMDoc(this.result);
-                } else if (file.name.toLowerCase().indexOf(".usx") > 0) {
+                } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(this.result);
-                } else if (file.name.toLowerCase().indexOf(".xml") > 0) {
+                } else if (fileName.toLowerCase().indexOf(".xml") > 0) {
                     result = readXMLDoc(this.result);
-                } else if (file.name.toLowerCase().indexOf(".txt") > 0) {
+                } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
                     // find the ID of this book
                     index = this.result.indexOf("\\id");
@@ -1373,7 +1373,7 @@ define(function (require) {
                         result = readTextDoc(this.result);
                     }
                 } else {
-                    // some other extension -- try reading it as a text document
+                    // some other extension (or no extension) -- try reading it as a text document
                     result = readTextDoc(this.result);
                 }
                 if (result === false) {
@@ -2486,6 +2486,7 @@ define(function (require) {
                 // each of the files items is a file object already; there's no need to use
                 // the file plugin like we need to below. Just call importFile() directly.
                 while (fileindex < fileCount) {
+                    fileName = files[fileindex].name;
                     importFile(files[fileindex], this.model);
                     fileindex++;
                 }
@@ -2500,24 +2501,41 @@ define(function (require) {
                 // find all the selected file
                 var index = $(event.currentTarget).attr('id').trim();
                 var model = this.model;
-                console.log("index: " + index + ", FileList[index]: " + fileList[index]);
-                // request the persistent file system
-                window.resolveLocalFileSystemURL(fileList[index],
-                    function (entry) {
-                        entry.file(
-                            function (file) {
-                                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
-                                importFile(file, model);
-                            },
-                            function (error) {
-                                console.log("FileEntry.file error: " + error.code);
-                            }
-                        );
-                    },
-                    function (error) {
+                if (index === "clipboard") {
+                    // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
+                    // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
+                    // it places the contents in the name attribute. The FileReader does
+                    // accept a Blob (the File object derives from Blob), which is why importFile works.
+                    cordova.plugins.clipboard.paste(function (text) { 
+                        console.log("Clipboard selected. Creating ad hoc file from text.");
+                        var clipboardFile = new Blob([text], {type: "text/plain"});
+                        $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
+                        fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
+                        importFile(clipboardFile, model);
+                    }, function (error) {
                         console.log("resolveLocalFileSystemURL error: " + error.code);
                     });
-                
+                } else {
+                    // regular file
+                    console.log("index: " + index + ", FileList[index]: " + fileList[index]);
+                    // request the persistent file system
+                    window.resolveLocalFileSystemURL(fileList[index],
+                        function (entry) {
+                            entry.file(
+                                function (file) {
+                                    $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                                    fileName = file.name;
+                                    importFile(file, model);
+                                },
+                                function (error) {
+                                    console.log("FileEntry.file error: " + error.code);
+                                }
+                            );
+                        },
+                        function (error) {
+                            console.log("resolveLocalFileSystemURL error: " + error.code);
+                        });
+                }
             },
             // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
@@ -2531,6 +2549,8 @@ define(function (require) {
             // - if we're running in a mobile device, we'll use the cordova-plugin-file
             //   API to search through the device directories and add any valid files
             //   to a table grid
+            // - If we're running in a mobile device, also test the clipboard for any text.
+            //   If there is any, add an option to create a new "book" from the clipboard text.
             // - If we're in a browser, just show the html <input type=file> to allow
             //   for file selection
             onShow: function () {
@@ -2574,14 +2594,26 @@ define(function (require) {
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-//                    if (device.platform === "Android") {
-//                        // Android -- add some known directories
-//                        localURLs.push("file:///storage/sdcard/"); // weird.
-//                    }
                     var DirsRemaining = localURLs.length;
                     var index = 0;
                     var i;
                     var statusStr = "";
+                    // running on device -- check the clipboard for text
+                    DirsRemaining++; // add a placeholder "directory" for the clipboard test
+                    cordova.plugins.clipboard.paste(function (text) { 
+                        console.log("Clipboard returned: " + text);
+                        if (text !== null && text.length > 0) {
+                            // something on the clipboard -- add an option to paste the text as a new Book
+                            statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText')+ "<span class='chevron'></span></li>";
+                            index++;
+                        }
+                        DirsRemaining--; // done checking -- remove the placeholder "directory"
+                    }, function (error) {
+                        // error in clipboard retrieval -- skip entry
+                        // (seen this when there's data on the clipboard that isn't text/plain)
+                        console.log("Error retrieving clipboard data:" + error);
+                        DirsRemaining--; 
+                    });
                     var addFileEntry = function (entry) {
                         var dirReader = entry.createReader();
                         dirReader.readEntries(

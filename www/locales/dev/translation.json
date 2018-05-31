@@ -246,6 +246,12 @@
         "lblCopySource": "Copy Source",
         "lblWrapAtUSFM": "Wrap at Standard Format Markers",
         "AppVersion": "App Version",
+        "lblScripturePortion": "Is this file a Scripture portion?",
+        "lblVerifyFields": "Please verify the following information:",
+        "lblBookID": "Book ID:",
+        "lblBookName": "Book Name:",
+        "lblCopyClipboardText": "Copy clipboard text...",
+        "lblText": "Text",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -227,3 +227,4 @@ pip-log.txt
 .mr.developer.cfg
 
 config.xml
+package-lock.json
