@@ -32,6 +32,7 @@ define(function (require) {
         bookName        = "",
         scrID           = "",
         fileName        = "",
+        isClipboard     = false,
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
@@ -47,6 +48,12 @@ define(function (require) {
             USFM: 2,
             USX: 3,
             XML: 4
+        },
+        DestinationEnum = {
+            FILE: 1,
+            CLIPBOARD: 2,
+            GDRIVE: 3,      // Google Drive (post 1.0)
+            ACLOUD: 4       // Apple iCloud (post 1.0)
         },
 
         // Helper method to build an html list of documents in the AIM database.
@@ -373,10 +380,7 @@ define(function (require) {
                     var verseCount = 0;
                     var punctIdx = 0;
                     var lastAdapted = 0;
-                    var firstChapterID = "";
-                    var innerText = "";
                     var i = 0;
-                    var tmpVal = null;
                     var closingMarker = "";
                     var parseNode = function (element) {
                         closingMarker = "";
@@ -689,7 +693,6 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
                     var lastAdapted = 0;
-                    var firstChapterID = "";
                     var markers = "";
                     var firstChapterNumber = "1";
                     var origTarget = "";
@@ -1444,7 +1447,7 @@ define(function (require) {
                 var filtered = false;
                 var needsEndMarker = "";
                 var mkr = "";
-                writer.onwriteend = function (e) {
+                writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
                         exportSuccess();
@@ -1517,9 +1520,18 @@ define(function (require) {
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
                                 // done with the chapters
-                                // ** we are now done with all the chapters -- write out the file
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // done copying -- reset the clipboard flag
+                                    isClipboard = false;
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                } else {
+                                    // ** we are now done with all the chapters -- write out the file
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
                             }
                         });
                     } else {
@@ -1528,8 +1540,17 @@ define(function (require) {
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
                             // done with the chapters
-                            var blob = new Blob([content], {type: 'text/plain'});
-                            writer.write(blob);
+                            if (isClipboard === true) {
+                                // write (copy) text to clipboard
+                                cordova.plugins.clipboard.copy(content);
+                                // done copying -- reset the clipboard flag
+                                isClipboard = false;
+                                // directly call success (it's a callback for the file writer)
+                                exportSuccess();
+                            } else {
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
                             content = ""; // clear out the content string
                         }
                     }
@@ -1552,7 +1573,7 @@ define(function (require) {
                 var mkr = "";
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
-                writer.onwriteend = function (e) {
+                writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
                         exportSuccess();
@@ -1644,9 +1665,18 @@ define(function (require) {
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
                                 // done with the chapters
-                                // ** we are now done with all the chapters -- write out the file
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // done copying -- reset the clipboard flag
+                                    isClipboard = false;
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                } else {
+                                    // ** we are now done with all the chapters -- write out the file
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
                             }
                         });
                     } else {
@@ -1654,9 +1684,18 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
-                            // done with the chapters
-                            var blob = new Blob([content], {type: 'text/plain'});
-                            writer.write(blob);
+                            if (isClipboard === true) {
+                                // write (copy) text to clipboard
+                                cordova.plugins.clipboard.copy(content);
+                                // done copying -- reset the clipboard flag
+                                isClipboard = false;
+                                // directly call success (it's a callback for the file writer)
+                                exportSuccess();
+                            } else {
+                                // done with the chapters
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
                             content = ""; // clear out the content string
                         }
                     }
@@ -1685,7 +1724,7 @@ define(function (require) {
                 var value = null;
                 var mkr = "";
                 var chaptersLeft = chapters.length;
-                writer.onwriteend = function (e) {
+                writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
                         exportSuccess();
@@ -1950,9 +1989,18 @@ define(function (require) {
                                 }
                                 // add the ending node
                                 content += "\n</usx>\n";
-                                // ** we are now done with all the chapters -- write out the file
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // done copying -- reset the clipboard flag
+                                    isClipboard = false;
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                } else {
+                                    // ** we are now done with all the chapters -- write out the file
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
                             }
                         });
                     } else {
@@ -1968,8 +2016,17 @@ define(function (require) {
                             }
                             // add the ending node
                             content += "\n</usx>\n";
-                            var blob = new Blob([content], {type: 'text/plain'});
-                            writer.write(blob);
+                            if (isClipboard === true) {
+                                // write (copy) text to clipboard
+                                cordova.plugins.clipboard.copy(content);
+                                // done copying -- reset the clipboard flag
+                                isClipboard = false;
+                                // directly call success (it's a callback for the file writer)
+                                exportSuccess();
+                            } else {
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
                             content = ""; // clear out the content string for the next chapter
                         }
                     }
@@ -2087,7 +2144,7 @@ define(function (require) {
                     }
                     return val;
                 };
-                writer.onwriteend = function (e) {
+                writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
                         exportSuccess();
@@ -2362,8 +2419,17 @@ define(function (require) {
                         if (chaptersLeft === 0) {
                             // done with the chapters -- add the ending node
                             content += "</AdaptItDoc>\n";
-                            var blob = new Blob([content], {type: 'text/plain'});
-                            writer.write(blob);
+                            if (isClipboard === true) {
+                                // write (copy) text to clipboard
+                                cordova.plugins.clipboard.copy(content);
+                                // done copying -- reset the clipboard flag
+                                isClipboard = false;
+                                // directly call success (it's a callback for the file writer)
+                                exportSuccess();
+                            } else {
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
                             content = ""; // clear out the content string for the next chapter
                         }
                     });
@@ -2506,7 +2572,7 @@ define(function (require) {
                     // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
                     // it places the contents in the name attribute. The FileReader does
                     // accept a Blob (the File object derives from Blob), which is why importFile works.
-                    cordova.plugins.clipboard.paste(function (text) { 
+                    cordova.plugins.clipboard.paste(function (text) {
                         console.log("Clipboard selected. Creating ad hoc file from text.");
                         var clipboardFile = new Blob([text], {type: "text/plain"});
                         $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
@@ -2600,11 +2666,11 @@ define(function (require) {
                     var statusStr = "";
                     // running on device -- check the clipboard for text
                     DirsRemaining++; // add a placeholder "directory" for the clipboard test
-                    cordova.plugins.clipboard.paste(function (text) { 
+                    cordova.plugins.clipboard.paste(function (text) {
                         console.log("Clipboard returned: " + text);
                         if (text !== null && text.length > 0) {
                             // something on the clipboard -- add an option to paste the text as a new Book
-                            statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText')+ "<span class='chevron'></span></li>";
+                            statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText') + "<span class='chevron'></span></li>";
                             index++;
                         }
                         DirsRemaining--; // done checking -- remove the placeholder "directory"
@@ -2612,7 +2678,7 @@ define(function (require) {
                         // error in clipboard retrieval -- skip entry
                         // (seen this when there's data on the clipboard that isn't text/plain)
                         console.log("Error retrieving clipboard data:" + error);
-                        DirsRemaining--; 
+                        DirsRemaining--;
                     });
                     var addFileEntry = function (entry) {
                         var dirReader = entry.createReader();
@@ -2683,6 +2749,7 @@ define(function (require) {
         }),
         
         ExportDocumentView = Marionette.ItemView.extend({
+            destination: DestinationEnum.FILE,
             template: Handlebars.compile(tplExportDoc),
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
@@ -2696,6 +2763,8 @@ define(function (require) {
                 "mouseup #Filename": "editFilename",
                 "blur #Filename": "blurFilename",
                 "change .topcoat-radio-button": "changeType",
+                "click #btnToClipboard": "onToClipboard",
+                "click #btnToFile": "onToFile",
                 "click #OK": "onOK",
                 "click #Cancel": "onCancel"
             },
@@ -2739,6 +2808,20 @@ define(function (require) {
                 // replace the filename text
                 $("#Filename").val(filename);
             },
+            onToFile: function (event) {
+                console.log("File selected");
+                $("#toFile").prop("checked", true);
+                this.destination = DestinationEnum.FILE;
+                // show the filename UI -- need to specify a filename
+                $("#grpFilename").show();
+            },
+            onToClipboard: function (event) {
+                console.log("Clipboard selected");
+                $("#toClipboard").prop("checked", true);
+                this.destination = DestinationEnum.CLIPBOARD;
+                // hide the filename UI -- not needed
+                $("#grpFilename").hide();
+            },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function (event) {
                 if ($("#exportXML").length === 0) {
@@ -2749,7 +2832,7 @@ define(function (require) {
                     var format = FileTypeEnum.TXT;
                     var filename = $("#Filename").val().trim();
                     // validate input
-                    if (filename.length === 0) {
+                    if ((filename.length === 0) && (this.destination !== DestinationEnum.CLIPBOARD)) {
                         // user didn't type anything in
                         // just tell them to enter something
                         if (navigator.notification) {
@@ -2778,6 +2861,9 @@ define(function (require) {
                         $("#status").html(i18n.t("view.dscExporting", {file: filename}));
                         $("#OK").hide();
                         // perform the export
+                        if (this.destination === DestinationEnum.CLIPBOARD) {
+                            isClipboard = true;
+                        }
                         exportDocument(bookid, format, filename);
                     }
                 }
@@ -2806,6 +2892,8 @@ define(function (require) {
             onShow: function () {
                 var list = "";
                 var pid = this.model.get('projectid');
+                // initial selection - file export
+                $("#toFile").prop("checked", true);
                 $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
                     list = buildDocumentList(pid);
                     $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");

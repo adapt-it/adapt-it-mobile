@@ -222,6 +222,8 @@
         "lblExport": "Enregistrer le document",
         "lblExportSelectDocument": "Sélectionnez le document que vous souhaitez enregistrer.",
         "lblExportSelectFormat": "Type de fichier:",
+        "lblExportTo": "Envoyer à:",
+        "lblExportToClipboard": "Presse-papiers",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
