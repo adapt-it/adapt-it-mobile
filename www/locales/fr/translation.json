@@ -222,6 +222,8 @@
         "lblExport": "Enregistrer le document",
         "lblExportSelectDocument": "Sélectionnez le document que vous souhaitez enregistrer.",
         "lblExportSelectFormat": "Type de fichier:",
+        "lblExportTo": "Envoyer à:",
+        "lblExportToClipboard": "Presse-papiers",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
@@ -246,6 +248,12 @@
         "lblCopySource": "Copier le texte source",
         "lblWrapAtUSFM": "Enveloppez le texte aux marqueurs USFM",
         "AppVersion": "Version de l'application",
+        "lblScripturePortion": "Ce fichier est-il une partie de l'Écriture?",
+        "lblVerifyFields": "Veuillez vérifier les informations suivantes:",
+        "lblBookID": "Abréviation de livre:",
+        "lblBookName": "Nom du livre:",
+        "lblCopyClipboardText": "Texte du presse-papiers...",
+        "lblText": "Texte",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

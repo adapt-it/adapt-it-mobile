@@ -470,6 +470,10 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--clipboard {
+    background: url("images/clipboard.svg") no-repeat;
+    padding: 0;
+}
 .topcoat-icon--undo {
     background: url("images/undo.svg") no-repeat;
     -webkit-background-size: cover;

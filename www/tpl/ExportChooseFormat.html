@@ -1,4 +1,18 @@
 <div class="control-group">
+<div class="control-row">{{t 'view.lblExportTo'}}</div>
+<div class="control-row">
+<div class="topcoat-tab-bar full">
+  <label class="topcoat-tab-bar__item">
+    <input type="radio" name="tab-bar" id="toClipboard">
+    <button class="topcoat-tab-bar__button full" id="btnToClipboard"><span class='topcoat-icon topcoat-icon--clipboard'></span> {{ t 'view.lblExportToClipboard'}}</button>
+  </label>
+  <label class="topcoat-tab-bar__item">
+    <input type="radio" name="tab-bar" id="toFile" checked>
+    <button class="topcoat-tab-bar__button full" id="btnToFile">File</button>
+  </label>
+</div>    
+</div>
+<div class="control-group">
 <div class="control-row">{{t 'view.lblExportSelectFormat'}}</div>
 <div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="exportXML" name="topcoat">
   <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblExportAdaptIt'}}
@@ -12,8 +26,9 @@
 <div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="exportTXT" name="topcoat">
   <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblExportText'}}
 </label></div>
-<div class="control-row" style="margin-top: 1em;"><label for="Filename">* {{ t 'view.lblExportFilename'}}</label><br/><input type="text" id="Filename" class="topcoat-text-input full" value="{{SourceLanguageName}}" autofocus required></div>
-    
+<div class="control-row" style="margin-top:1em;" id="grpFilename"><label for="Filename"> {{ t 'view.lblExportFilename'}}
+</label><br/><input type="text" id="Filename" class="topcoat-text-input full" autofocus required></div>
+</div>
 <div id="OKCancelButtons" style="margin-top: 1em;">
         <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
         <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>

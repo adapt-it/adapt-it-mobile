@@ -221,7 +221,9 @@
         "hlpdscBack": "When you are done, click on the Back button to return to the home screen.",
         "lblExport": "Export Document",
         "lblExportSelectDocument": "Select the document you want to export to the local device.",
-        "lblExportSelectFormat": "Export to:",
+        "lblExportSelectFormat": "Format:",
+        "lblExportTo": "Export to:",
+        "lblExportToClipboard": "Clipboard",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
@@ -246,6 +248,12 @@
         "lblCopySource": "Copy Source",
         "lblWrapAtUSFM": "Wrap at Standard Format Markers",
         "AppVersion": "App Version",
+        "lblScripturePortion": "Is this file a Scripture portion?",
+        "lblVerifyFields": "Please verify the following information:",
+        "lblBookID": "Book ID:",
+        "lblBookName": "Book Name:",
+        "lblCopyClipboardText": "Clipboard text...",
+        "lblText": "Text",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

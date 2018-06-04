@@ -222,6 +222,8 @@
         "lblExport": "Exportar Documento",
         "lblExportSelectDocument": "Seleccione el documento que desea exportar.",
         "lblExportSelectFormat": "Tipo del archivo:",
+        "lblExportTo": "Enviar a:",
+        "lblExportToClipboard": "Portapapeles",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
@@ -246,6 +248,12 @@
         "lblCopySource": "Copiar el texto original",
         "lblWrapAtUSFM": "Ajustar el texto a los marcadores USFM",
         "AppVersion": "Versión de la aplicación",
+        "lblScripturePortion": "¿Este archivo es una porción de las Escrituras?",
+        "lblVerifyFields": "Por favor verifique la siguiente información:",
+        "lblBookID": "Abreviatura de libro:",
+        "lblBookName": "Nombre del libro:",
+        "lblCopyClipboardText": "Texto del portapapeles...",
+        "lblText": "Texto",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
