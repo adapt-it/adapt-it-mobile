@@ -224,6 +224,7 @@
         "lblExportSelectFormat": "Type de fichier:",
         "lblExportTo": "Envoyer à:",
         "lblExportToClipboard": "Presse-papiers",
+        "lblFile": "Fichier",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",

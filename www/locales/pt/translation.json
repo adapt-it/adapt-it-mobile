@@ -224,6 +224,7 @@
         "lblExportSelectFormat": "Formato de arquivo:",
         "lblExportTo": "Export to:",
         "lblExportToClipboard": "Área de transferência",
+        "lblFile": "Arquivo",
         "lblExportAdaptIt": "Adapt It desktop (.xml)",
         "lblExportUSFM": "Paratext / Bibledit (.sfm)",
         "lblExportUSX": "Paratext (.usx)",
