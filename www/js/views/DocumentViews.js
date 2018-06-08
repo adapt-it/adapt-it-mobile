@@ -1504,7 +1504,10 @@ define(function (require) {
                                     filtered = false;
                                 }
                                 if (filtered === false) {
-                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    // only emit soursephrase pre/foll puncts if we have something translated in the target
+                                    if (value.get("source").length > 0 && value.get("target").length > 0) {
+                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    }
                                 }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
@@ -1649,7 +1652,10 @@ define(function (require) {
                                         // now add the markers and a space
                                         chapterString += markers + " ";
                                     }
-                                    chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    // only emit soursephrase pre/foll puncts if we have something translated in the target
+                                    if (value.get("source").length > 0 && value.get("target").length > 0) {
+                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                    }
                                 }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
@@ -1964,8 +1970,11 @@ define(function (require) {
                                         exportMarkers = false;
                                     }
                                     if (filtered === false) {
-                                        // only export the text if not filtered
-                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        // only export the text if not filtered AND
+                                        // only emit soursephrase pre/foll puncts if we have something translated in the target
+                                        if (value.get("source").length > 0 && value.get("target").length > 0) {
+                                            chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        }
                                     }
                                 }
                                 // done dealing with the source phrase -- is it the last one?
