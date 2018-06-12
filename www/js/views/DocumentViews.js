@@ -1127,7 +1127,9 @@ define(function (require) {
                     var hasPunct = false;
                     var punctIdx = 0;
                     var stridx = 0;
+                    var isPortion = false;      // issue #246: Scripture portion support
                     var chaps = [];
+                    var regex1 = RegExp(/\\c\s1\s/);
 
                     console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
@@ -1151,14 +1153,31 @@ define(function (require) {
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
-//                    books.fetch({reset: true, data: {name: ""}});
-                    if (books.where({scrid: (scrID.get('id'))}).length > 0) {
-                        // this book is already in the list -- return
-                        errMsg = i18n.t("view.dscErrDuplicateFile");
-                        return false;
+                    // Issue #246: scripture portion support -- 2 checks for portions:
+                    // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
+                    // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
+                    // These are not perfect checks -- versification sometimes doesn't match
+                    if (regex1.test(contents) === false) {
+                        // there is an \id, but no chapter 1 --> assume scripture portion
+                        isPortion = true;
+                    }
+                    // check for duplicate book imports
+                    if (isPortion === false) {
+                        var entries = books.where({scrid: (scrID.get('id'))});
+                        for (i = 0; i < entries.length; i++) {
+                            if (entries[i].attributes.bookid.indexOf("p_") === -1) {
+                                // attempting to import a duplicate full book -- error out
+                                errMsg = i18n.t("view.dscErrDuplicateFile");
+                                return false;
+                            }
+                        }
                     }
                     // add a book and chapter
-                    bookID = Underscore.uniqueId();
+                    if (isPortion === true) {
+                        bookID = Underscore.uniqueId('p_');
+                    } else {
+                        bookID = Underscore.uniqueId();
+                    }
                     book = new bookModel.Book({
                         bookid: bookID,
                         projectid: project.get('projectid'),
@@ -1174,7 +1193,12 @@ define(function (require) {
                     // just add the front matter to chapter 1.
                     chapterID = Underscore.uniqueId();
                     chaps.push(chapterID);
-                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    if (isPortion === true) {
+                        var portion = i18n.t("view.lblPortion");
+                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: portion});
+                    } else {
+                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
+                    }
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
                         bookid: bookID,
@@ -1238,7 +1262,8 @@ define(function (require) {
                             // "normal" sourcephrase token
                             // Before creating the sourcephrase, look to see if we need to create a chapter element
                             // (note that we've already created chapter 1, so skip it if we come across it)
-                            if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1) {
+                            // Also note that we don't do the new chapter if this is a Scripture portion
+                            if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1 && isPortion === false) {
                                 // update the last adapted for the previous chapter before closing it out
                                 chapter.set('versecount', verseCount, {silent: true});
                                 chapter.set('lastadapted', lastAdapted, {silent: true});

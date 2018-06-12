@@ -250,6 +250,7 @@
         "lblWrapAtUSFM": "Embrulhe o texto nos marcadores USFM",
         "AppVersion": "Versão do aplicativo",
         "lblScripturePortion": "Este arquivo é uma porção da Escritura?",
+        "lblPortion": "(porção)",
         "lblVerifyFields": "Por favor, verifique as seguintes informações:",
         "lblBookID": "Abreviatura de livro:",
         "lblBookName": "Nome do livro:",
