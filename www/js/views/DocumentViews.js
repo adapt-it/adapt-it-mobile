@@ -2916,6 +2916,11 @@ define(function (require) {
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // select a default of TXT for the export format (for now)
                 $("#exportTXT").prop("checked", true);
+                $("#toFile").prop("checked", true);
+                if (window.sqlitePlugin) {
+                    // mobile device -- show clipboard option
+                    $("#clipboardTab").removeClass('hide');
+                }
                 if (bookName.length > 0) {
                     if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
                         bookName = bookName.substr(0, bookName.length - 4);

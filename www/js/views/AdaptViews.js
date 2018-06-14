@@ -1451,6 +1451,9 @@ define(function (require) {
                                 range.selectNodeContents($(event.currentTarget)[0]);
                                 selection.addRange(range);
                             }
+                            if (Keyboard) {
+                                Keyboard.show();
+                            }
                             // ios
                             if (navigator.notification && device.platform === "iOS") {
                                 $(event.currentTarget).setSelectionRange(0, 99999);

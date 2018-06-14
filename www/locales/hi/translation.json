@@ -249,7 +249,7 @@
         "lblCopySource": "Copy Source",
         "lblWrapAtUSFM": "Wrap at Standard Format Markers",
         "AppVersion": "App Version",
-        "lblScripturePortion": "Is this file a Scripture portion?",
+        "lblScripturePortion": "Scripture portion",
         "lblPortion": "(portion)",
         "lblVerifyFields": "Please verify the following information:",
         "lblBookID": "Book ID:",
