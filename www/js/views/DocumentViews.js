@@ -19,6 +19,7 @@ define(function (require) {
         i18n            = require('i18n'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
+        tplImportVerify = require('text!tpl/ImportVerify.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
         tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
         projModel       = require('app/models/project'),
@@ -29,6 +30,7 @@ define(function (require) {
         scrIDs          = require('utils/scrIDs'),
         USFM            = require('utils/usfm'),
         kblist          = null, // populated in onShow
+        isPortion       = false,    // Scripture portion support
         bookName        = "",
         scrID           = "",
         fileName        = "",
@@ -158,14 +160,17 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
-                // update status
-                $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                // We did our best to guess a book name -- allow the user to change it
+                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                $("#status").html(Handlebars.compile(tplImportVerify));
+                $("#BookName").val(bookName);
                 if ($("#loading").length) {
                     // mobile "please wait" UI
                     $("#loading").hide();
                     $("#waiting").hide();
                     $("#OK").show();
                 }
+                $("#browserSelect").hide(); // hide the "choose file" button (browser)
                 // display the OK button
                 $("#OK").removeAttr("disabled");
             };
@@ -188,7 +193,6 @@ define(function (require) {
             reader.onloadend = function (e) {
                 var value = "",
                     scrID = null,
-                    bookName = "",
                     chap = 0,
                     verse = 0,
                     s = "",
@@ -1127,9 +1131,8 @@ define(function (require) {
                     var hasPunct = false;
                     var punctIdx = 0;
                     var stridx = 0;
-                    var isPortion = false;      // issue #246: Scripture portion support
                     var chaps = [];
-                    var regex1 = RegExp(/\\c\s1\s/);
+                    var regex1 = new RegExp(/\\c\s1\s/);
 
                     console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
@@ -2639,9 +2642,37 @@ define(function (require) {
             },
             // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
+                // update the book name if necessary
+                if ($("#BookName").val() !== bookName) {
+                    // name change -- update all the things
+                    var newName = $("#BookName").val().trim();
+                    var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
+                    var i = 0;
+                    var chapterName = "";
+                    var newChapterName = "";
+                    // book name
+                    if (book) {
+                        book.set('name', newName, {silent: true});
+                        book.update();
+                    }
+                    // chapter names in the chapter list
+                    var chapterList = window.Application.ChapterList.where({bookid: book.get('bookid')});
+                    for (i = 0; i < chapterList.length; i++) {
+                        chapterName = chapterList[i].get('name');
+                        newChapterName = chapterName.replace(bookName, newName);
+                        chapterList[i].set('name', newChapterName);
+                    }
+                    // last document and chapter (if the first import)
+                    if (this.model.get('lastDocument') === bookName) {
+                        this.model.set('lastDocument', newName);
+                        this.model.set('lastAdaptedName', i18n.t("view.lblChapterName", {bookName: newName, chapterNumber: "1"}));
+                    }
+                    
+                }
                 // save the model
                 this.model.save();
                 window.Application.currentProject = this.model;
+                bookName = ""; // clear out book name data
                 // head back to the home page
                 window.history.back();
             },
