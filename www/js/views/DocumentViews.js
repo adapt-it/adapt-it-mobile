@@ -1141,10 +1141,20 @@ define(function (require) {
                         bookName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3))).trim();
                         if (bookName.length === 0) {
                             // fall back on the file name
-                            bookName = fileName;
+                            if (fileName.indexOf(".") > -1) {
+                                // most likely has an extension -- remove it for our book name guess
+                                bookName = fileName.substring(0, fileName.lastIndexOf('.'));
+                            } else {
+                                bookName = fileName;
+                            }
                         }
                     } else {
-                        bookName = fileName;
+                        if (fileName.indexOf(".") > -1) {
+                            // most likely has an extension -- remove it for our book name guess
+                            bookName = fileName.substring(0, fileName.lastIndexOf('.'));
+                        } else {
+                            bookName = fileName;
+                        }
                     }
                     // find the ID of this book
                     index = contents.indexOf("\\id");
@@ -1163,6 +1173,10 @@ define(function (require) {
                     if (regex1.test(contents) === false) {
                         // there is an \id, but no chapter 1 --> assume scripture portion
                         isPortion = true;
+                        var newBookName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: i18n.t("view.lblPortion")});
+                        bookName = newBookName;
+                    } else {
+                        isPortion = false;
                     }
                     // check for duplicate book imports
                     if (isPortion === false) {
@@ -1197,8 +1211,7 @@ define(function (require) {
                     chapterID = Underscore.uniqueId();
                     chaps.push(chapterID);
                     if (isPortion === true) {
-                        var portion = i18n.t("view.lblPortion");
-                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: portion});
+                        chapterName = bookName;
                     } else {
                         chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     }
@@ -2665,7 +2678,7 @@ define(function (require) {
                     // last document and chapter (if the first import)
                     if (this.model.get('lastDocument') === bookName) {
                         this.model.set('lastDocument', newName);
-                        this.model.set('lastAdaptedName', i18n.t("view.lblChapterName", {bookName: newName, chapterNumber: "1"}));
+                        this.model.set('lastAdaptedName', chapterList[0].get('name'));
                     }
                     
                 }
