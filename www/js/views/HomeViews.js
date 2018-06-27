@@ -121,7 +121,7 @@ define(function (require) {
                 }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
-            OnCancel: function (event) {
+            onCancel: function (event) {
                 // go back to the previous page
                 window.history.go(-1);
             }
