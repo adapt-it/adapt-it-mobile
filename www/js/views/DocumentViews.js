@@ -233,7 +233,12 @@ define(function (require) {
                     var sp = null;
                     console.log("Reading text file:" + fileName);
                     index = 1;
-                    bookName = fileName;
+                    if (fileName.indexOf(".") > -1) {
+                        // most likely has an extension -- remove it for our book name guess
+                        bookName = fileName.substring(0, fileName.lastIndexOf('.'));
+                    } else {
+                        bookName = fileName;
+                    }
                     bookID = Underscore.uniqueId();
                     // Create the book and chapter 
                     book = new bookModel.Book({
