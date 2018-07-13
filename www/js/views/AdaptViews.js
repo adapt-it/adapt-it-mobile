@@ -147,6 +147,7 @@ define(function (require) {
                 return (element.attributes.projectid === projectid &&
                    element.attributes.source === sourceValue);
             });
+            console.log("saveinKB: sourceValue=" + sourceValue + ", targetValue=" + targetValue + ", oldTargetValue=" + oldTargetValue);
             var tu = null,
                 curDate = new Date(),
                 timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
@@ -1959,7 +1960,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    saveInKB(phraseSource, phraseSource, "", project.get('projectid'));
+                    saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -2029,7 +2030,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         // add to KB
                         if (phraseTarget.length > 0) {
-                            saveInKB(value, phraseTarget, "", project.get('projectid'));
+                            saveInKB(this.autoRemoveCaps(value), phraseTarget, "", project.get('projectid'));
                         }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
@@ -2037,7 +2038,7 @@ define(function (require) {
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
-                    removeFromKB(selectedObj.get("source"), selectedObj.get("target"), project.get('projectid')); // remove from KB
+                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid')); // remove from KB
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
