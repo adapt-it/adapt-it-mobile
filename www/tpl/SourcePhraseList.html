@@ -2,6 +2,12 @@
     Template for rendering a source phrase in a chapter -- used by SourcePhraseView.js.
 }}
 {{#.}}
+{{#if @first}}
+{{#unless this.markers}}
+{{! text doc (or something that doesn't have an opening marker) -- create a starting strip }}
+<div class="strip" id="strip-{{this.id}}">
+{{/unless}}
+{{/if}}
 {{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
 {{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
 {{#if this.markers}}

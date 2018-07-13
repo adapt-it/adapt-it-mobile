@@ -161,15 +161,14 @@ define(function (require) {
             var importSuccess = function () {
                 console.log("importSuccess()");
                 // We did our best to guess a book name -- allow the user to change it
+                $("#browserGroup").show();
+                $("#mobileSelect").html(""); // remove mobile UI (some duplicate IDs)
                 $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                 $("#status").html(Handlebars.compile(tplImportVerify));
                 $("#BookName").val(bookName);
-                if ($("#loading").length) {
-                    // mobile "please wait" UI
-                    $("#loading").hide();
-                    $("#waiting").hide();
-                    $("#OK").show();
-                }
+                $("#loading").hide();
+                $("#waiting").hide();
+                $("#OK").show();
                 $("#browserSelect").hide(); // hide the "choose file" button (browser)
                 // display the OK button
                 $("#OK").removeAttr("disabled");
@@ -2661,7 +2660,7 @@ define(function (require) {
             // Handler for the OK button -- just returns to the home screen.
             onOK: function (event) {
                 // update the book name if necessary
-                if ($("#BookName").val() !== bookName) {
+                if ($("#BookName") && $("#BookName").val() !== bookName) {
                     // name change -- update all the things
                     var newName = $("#BookName").val().trim();
                     var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
