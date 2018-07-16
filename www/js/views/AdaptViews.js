@@ -274,7 +274,6 @@ define(function (require) {
             var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
             var theRule = "";
             var totalHeight = 0;
-            var scrollTop = 0;
             console.log("addStyleRules");
             // Source font
             theRule = ".source {";
@@ -607,8 +606,7 @@ define(function (require) {
             // This method currently strips out all punctuation to match the words; a null is returned
             // if there is no entry in the KB
             findInKB: function (key) {
-                var result = null,
-                    strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                var result = null; //, strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
                 try {
                     result = kblist.findWhere({'source': key}); // strNoPunctuation});
                     if (typeof result === 'undefined') {
@@ -1061,7 +1059,7 @@ define(function (require) {
                     if (lastTapTime === null) {
                         lastTapTime = new Date().getTime();
                         console.log("setting lastTapTime");
-                    } 
+                    }
                 }
                 // check for long press selection
                 if (isLongPressSelection === true && LongPressSectionStart !== selectedStart) {
@@ -1560,35 +1558,40 @@ define(function (require) {
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
                             // not a retranslation or placeholder
                             tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
-                            refstrings = tu.get('refstring');
-                            // first, make sure these refstrings are actually being used
-                            options.length = 0; // clear out any old cruft
-                            for (i = 0; i < refstrings.length; i++) {
-                                if (refstrings[i].n > 0) {
-                                    options.push(Underscore.unescape(refstrings[i].target));
-                                }
-                            }
-                            if (options.length > 1) {
-                                // create the autocomplete UI
-                                console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
-                                $(event.currentTarget).typeahead(
-                                    {
-                                        hint: true,
-                                        highlight: true,
-                                        minLength: 0
-                                    },
-                                    {
-                                        name: 'kboptions',
-                                        source: function (request, response) {
-                                            response(options);
-                                        }
+                            if (tu !== null) {
+                                refstrings = tu.get('refstring');
+                                // first, make sure these refstrings are actually being used
+                                options.length = 0; // clear out any old cruft
+                                for (i = 0; i < refstrings.length; i++) {
+                                    if (refstrings[i].n > 0) {
+                                        options.push(Underscore.unescape(refstrings[i].target));
                                     }
-                                );
-                                isSelectingKB = true;
+                                }
+                                if (options.length > 1) {
+                                    // create the autocomplete UI
+                                    console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
+                                    $(event.currentTarget).typeahead(
+                                        {
+                                            hint: true,
+                                            highlight: true,
+                                            minLength: 0
+                                        },
+                                        {
+                                            name: 'kboptions',
+                                            source: function (request, response) {
+                                                response(options);
+                                            }
+                                        }
+                                    );
+                                    isSelectingKB = true;
+                                } else {
+                                    // only one entry -- just clean up the target we'll be editing
+                                    $(event.currentTarget).html(origText); // stripped of punctuation
+                                }
                             } else {
-                                // only one entry -- just clean up the target we'll be editing
-                                $(event.currentTarget).html(origText); // stripped of punctuation
+                                console.log("KB data consistency error: should have a KB entry for source text:" + sourceText);
                             }
+                                
                         }
                         
                         // select any text in the edit field
