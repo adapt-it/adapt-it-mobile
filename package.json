@@ -31,7 +31,7 @@
     "cordova-clipboard": "https://github.com/adapt-it/cordova-clipboard.git",
     "cordova-ios": "^4.5.4",
     "cordova-lib": "^7.1.0",
-    "cordova-plugin-appversion": "1.0.1",
+    "cordova-plugin-appversion": "https://github.com/adapt-it/cordova-plugin-app-version.git",
     "cordova-plugin-device": "1.1.7",
     "cordova-plugin-dialogs": "1.3.4",
     "cordova-plugin-file": "5.0.0",
