@@ -999,6 +999,7 @@ define(function (require) {
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
                 $(".container").attr("style", "height: calc(100% - 70px);");
+                window.history.go(-1);
             },
 
             UpdateProject: function (step) {
@@ -1115,7 +1116,6 @@ define(function (require) {
                     
                     break;
                 }
-//                this.model.trigger('change');
                 this.model.save();
             },
 
