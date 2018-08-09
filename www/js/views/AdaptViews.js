@@ -1920,6 +1920,7 @@ define(function (require) {
                     PhraseLine1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     PhraseLine2 = "</div> <div class=\"source\">",
                     PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    thisObj = this,
                     PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
                     // not a phrase -- create one from the selection
@@ -2033,7 +2034,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         // add to KB
                         if (phraseTarget.length > 0) {
-                            saveInKB(this.autoRemoveCaps(value), phraseTarget, "", project.get('projectid'));
+                            saveInKB(thisObj.autoRemoveCaps(value), phraseTarget, "", project.get('projectid'));
                         }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
