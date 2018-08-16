@@ -1811,6 +1811,10 @@ define(function (require) {
                     console.log("Adapting verse: " + verseNum);
                     chapter.set('lastadapted', verseNum);
                 }
+                // if this is a text document (i.e., no verses), set the last adapted count to non-zero
+                if (chapter.get('versecount') < 0) {
+                    chapter.set('lastadapted', -1);
+                }
                 // check for an old selection and remove it if needed
                 if (selectedStart !== null) {
                     // there was an old selection -- remove the ui-selected class
