@@ -44,3 +44,4 @@ Gemfile.lock
 
 # Composer
 composer.lock
+*.ts
