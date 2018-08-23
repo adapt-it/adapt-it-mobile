@@ -37,8 +37,8 @@
   width: 96px; }
 
 .hero {
-  background-color: #0d75bb;
-  background: linear-gradient(#0d75bb, #279ED8);
+  background-color: #333;
+  background: linear-gradient(#222, #777);
   color: white;
   height: 450px;
   overflow-y: hidden;
