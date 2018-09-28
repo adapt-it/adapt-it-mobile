@@ -2784,7 +2784,6 @@ define(function (require) {
                                                     (entries[i].name.toLowerCase().indexOf(".xml") > 0)) {
                                                 fileList[index] = entries[i].toURL();
                                                 fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
-//                                                fileStr += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='" + index + "'><div class='topcoat-checkbox__checkmark'></div></label><td><span class='n'>" + entries[i].fullPath + "</span></td></tr>";
                                                 index++;
                                             }
                                         }
@@ -2794,14 +2793,13 @@ define(function (require) {
                                 DirsRemaining--;
                                 if (DirsRemaining <= 0) {
                                     if (statusStr.length > 0) {
+                                        // display the list of files we found
                                         $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-//                                        $("#mobileSelect").html("<table class=\"topcoat-table\"><colgroup><col style=\"width:2.5rem;\"><col></colgroup><thead><tr><th></th><th>" + i18n.t('view.lblName') + "</th></tr></thead><tbody id=\"tb\"></tbody></table><div><button class=\"topcoat-button\" id=\"Import\" disabled>" + i18n.t('view.lblImport') + "</button></div>");
                                         $("#tb").html(statusStr);
                                         $("#OK").attr("disabled", true);
                                     } else {
                                         // nothing to select -- inform the user
-                                        $("#mobileSelect").html("<span class=\"topcoat-notification\">!</span> <em>" + i18n.t('view.dscNoDocumentsFound') + "</em>");
-                                        $("#OK").removeAttr("disabled");
+                                        $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
                                     }
                                 }
                             },

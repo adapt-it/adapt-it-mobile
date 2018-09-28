@@ -11,6 +11,10 @@ plugins/
 ## ignore node_modules installed locally
 node_modules/
 
+## ignore VSCode files
+.vscode/
+typings/
+
 #################
 ## Eclipse
 #################
