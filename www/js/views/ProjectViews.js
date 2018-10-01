@@ -495,6 +495,7 @@ define(function (require) {
                     // font drop-down
                     if ($("#font").length) { // only if UI is shown
                         var typefaces = null,
+                            curFont = this.model.get('typeface'),
                             i = 0;
                         // start with fonts installed on device
                         if (navigator.Fonts) {
@@ -510,6 +511,8 @@ define(function (require) {
                                                               .text(typefaces[i]));
                                         }
                                     }
+                                    // (async case) select the current font
+                                    $("#font option[value=\'" + curFont + "\']").attr('selected', 'selected');
                                 },
                                 function (error) {
                                     console.log("FontList error: " + error);
@@ -526,7 +529,7 @@ define(function (require) {
                         $("#font").append($('<option>', {value : 'Scheherazade'}).text('Scheherazade'));
                         $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
                         // select the current font
-                        $("#font").val(this.model.get('typeface'));
+                        $("#font option[value=\'" + curFont + "\']").attr('selected', 'selected');
                         
                         // color variations
                         if (innerHtml.length > 0) {
