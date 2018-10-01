@@ -8,6 +8,7 @@ date:   2017-01-03 12:21
 
 * [Installation issues](#install-issues)
 * [Adapting issues](#adapting-issues)
+  * [Tips and tricks for adapting](#adapting-tips)
   * [Each field is capitalized](#auto-caps)
   * [My translations get auto-corrected](#auto-correct)
   * [I have a CUT/COPY/PASTE menu over my text](#edit-popup-menu)
@@ -34,6 +35,21 @@ date:   2017-01-03 12:21
 <a id="adapting-issues"></a>
 
 # Adapting Issues
+
+<a id="adapting-tips"></a>
+
+## Adapting tips and tricks
+
+Following are some tips that might help in adapting the text more efficiently.
+
+### Keyboards and suggestions
+
+* The **default keyboard** is often set to the locale where your mobile device was purchased. There are several keyboard replacement apps available on the Apple Store and Google Play Store, some of which are free. One option is the excellent [Keyman app](https://keyman.com) for iOS and Android.
+
+* **Turn off auto suggestions** on your keyboard. The words that are given in the suggestions are most likely in a different language than you'll be using. To disable suggestions on your phone, follow these instructions:
+  * [Android (video)](https://www.youtube.com/watch?v=fLKd8g4zRPQ)
+  * [Windows Phone 8](http://www.digitalcitizen.life/how-turn-off-text-autocorrect-text-suggestions-windows-phone)
+  * [iOS](http://appleinsider.com/articles/14/09/26/how-to-customize-hide-or-remove-quicktype-suggestions-with-the-ios-8-keyboard)
 
 <a id="auto-caps"></a>
 
@@ -79,7 +95,10 @@ If you get stuck with this menu over your text, you can perform the following st
 
 ## Report a bug or request a feature
 
-If you have come across a problem in the Adapt It Mobile software -- or if you would like to request a new feature -- you can write up a new issue in our [issue tracker](https://github.com/adapt-it/adapt-it-mobile/issues).
+If you have come across a problem in the Adapt It Mobile software -- or if you would like to request a new feature -- you can write up a new issue in our [issue tracker](https://github.com/adapt-it/adapt-it-mobile/issues):
+
+* [Create a new bug report](https://github.com/adapt-it/adapt-it-mobile/issues/new?template=bug_report.md)
+* [Request a new feature](https://github.com/adapt-it/adapt-it-mobile/issues/new?template=feature_request.md)
 
 We will try to respond to new issues in a timely manner. To help us find and address the problem quickly, please fill out as much of the form as possible. Thanks!
 
