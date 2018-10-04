@@ -234,6 +234,7 @@
         "lblExportingPleaseWait": "Enregistrer le document ... attendez s'il vous plaît",
         "dscExporting": "Enregistrement du document dans le fichier: __file__.",
         "lblDocSelected": "Document: ",
+        "dscFile": "Nom de fichier: __file__",
         "dscStatusExportSuccess": "Exportation terminée avec succès.",
         "dscPassword": "Mot de passe:",
         "ttlLanguage": "Langue de l'interface",

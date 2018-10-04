@@ -234,6 +234,7 @@
         "errNoFilename": "Por favor insira um nome de arquivo.",
         "lblExportingPleaseWait": "Exportando ... por favor aguarde.",
         "dscExporting": "Exportando documento para arquivo: __file__.",
+        "dscFile": "Nome do arquivo: __file__",
         "dscStatusExportSuccess": "Exportação concluída com sucesso.",
         "dscPassword": "Senha:",
         "ttlLanguage": "Idioma da interface do usuário",
