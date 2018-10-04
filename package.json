@@ -72,8 +72,6 @@
       "phonegap-plugin-mobile-accessibility": {},
       "cordova-clipboard": {}
     },
-    "platforms": [
-      "ios"
-    ]
+    "platforms": []
   }
 }
