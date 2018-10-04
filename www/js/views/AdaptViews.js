@@ -554,6 +554,7 @@ define(function (require) {
             // the source is also uppercase. This method relies on the case mappings defined for the project.
             autoAddCaps: function (model, target) {
                 var i = 0,
+                    j = 0,
                     result = "",
                     source = model.get('source');
                 // If we aren't capitalizing for this project, just return the target (unaltered)
@@ -564,8 +565,13 @@ define(function (require) {
                 for (i = 0; i < caseSource.length; i++) {
                     if (caseSource[i].charAt(1) === source.charAt(0)) {
                         // uppercase -- convert the first target character to uppercase and return the result
-                        result = caseTarget[i].charAt(1) + target.substr(1);
-                        return result;
+                        for (j = 0; j < caseTarget.length; j++) {
+                            if (caseTarget[j].charAt(0) === target.charAt(0)) {
+                                // found the target char -- build and return the auto-capped string
+                                result = caseTarget[j].charAt(1) + target.substr(1);
+                                return result;
+                            }
+                        }
                     }
                 }
                 // If we got here, the source didn't have any uppercase -- just return the target unaltered
