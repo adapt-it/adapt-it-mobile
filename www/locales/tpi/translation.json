@@ -234,6 +234,7 @@
         "errNoFilename": "Plis taipim gutpela fail nem.",
         "lblExportingPleaseWait": "Ekspotim... plis wet",
         "dscExporting": "Ekspotim fail: __file__.",
+        "dscFile": "Fail nem: __file__",
         "dscStatusExportSuccess": "Ekspot i pinis.",
         "dscPassword": "Tok hait:",
         "ttlLanguage": "Tokples",

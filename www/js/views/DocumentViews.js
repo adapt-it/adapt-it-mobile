@@ -1446,7 +1446,16 @@ define(function (require) {
             var exportSuccess = function () {
                 console.log("exportSuccess()");
                 // update status
-                $("#status").html(i18n.t("view.dscStatusExportSuccess", {document: filename}));
+                if (isClipboard === true) {
+                    // just tell the user it succeeded
+                    status = "<p>" + i18n.t("view.dscStatusExportSuccess") + "</p>";
+                } else {
+                    // tell the user it succeeded, and also the file path / name
+                    status = "<p>" + i18n.t("view.dscFile", {file: (subdir + "/" + filename)}) + "</p><p>" +
+                        i18n.t("view.dscStatusExportSuccess") + "</p>";
+                }
+                isClipboard = false; // reset the clipboard flag
+                $("#status").html(status);
                 // display the OK button
                 $("#loading").hide();
                 $("#waiting").hide();
@@ -1456,6 +1465,7 @@ define(function (require) {
             // Callback for when the file failed to import
             var exportFail = function (e) {
                 console.log("exportFail(): " + e.message);
+                isClipboard = false; // reset the clipboard flag
                 // update status
                 $("#status").html(i18n.t("view.dscExportFailed", {document: filename, reason: e.message}));
                 $("#loading").hide();
@@ -1571,8 +1581,6 @@ define(function (require) {
                                 if (isClipboard === true) {
                                     // write (copy) text to clipboard
                                     cordova.plugins.clipboard.copy(content);
-                                    // done copying -- reset the clipboard flag
-                                    isClipboard = false;
                                     // directly call success (it's a callback for the file writer)
                                     exportSuccess();
                                 } else {
@@ -1591,8 +1599,6 @@ define(function (require) {
                             if (isClipboard === true) {
                                 // write (copy) text to clipboard
                                 cordova.plugins.clipboard.copy(content);
-                                // done copying -- reset the clipboard flag
-                                isClipboard = false;
                                 // directly call success (it's a callback for the file writer)
                                 exportSuccess();
                             } else {
@@ -1719,8 +1725,6 @@ define(function (require) {
                                 if (isClipboard === true) {
                                     // write (copy) text to clipboard
                                     cordova.plugins.clipboard.copy(content);
-                                    // done copying -- reset the clipboard flag
-                                    isClipboard = false;
                                     // directly call success (it's a callback for the file writer)
                                     exportSuccess();
                                 } else {
@@ -1738,8 +1742,6 @@ define(function (require) {
                             if (isClipboard === true) {
                                 // write (copy) text to clipboard
                                 cordova.plugins.clipboard.copy(content);
-                                // done copying -- reset the clipboard flag
-                                isClipboard = false;
                                 // directly call success (it's a callback for the file writer)
                                 exportSuccess();
                             } else {
@@ -2046,8 +2048,6 @@ define(function (require) {
                                 if (isClipboard === true) {
                                     // write (copy) text to clipboard
                                     cordova.plugins.clipboard.copy(content);
-                                    // done copying -- reset the clipboard flag
-                                    isClipboard = false;
                                     // directly call success (it's a callback for the file writer)
                                     exportSuccess();
                                 } else {
@@ -2073,8 +2073,6 @@ define(function (require) {
                             if (isClipboard === true) {
                                 // write (copy) text to clipboard
                                 cordova.plugins.clipboard.copy(content);
-                                // done copying -- reset the clipboard flag
-                                isClipboard = false;
                                 // directly call success (it's a callback for the file writer)
                                 exportSuccess();
                             } else {
@@ -2476,8 +2474,6 @@ define(function (require) {
                             if (isClipboard === true) {
                                 // write (copy) text to clipboard
                                 cordova.plugins.clipboard.copy(content);
-                                // done copying -- reset the clipboard flag
-                                isClipboard = false;
                                 // directly call success (it's a callback for the file writer)
                                 exportSuccess();
                             } else {

@@ -234,6 +234,7 @@
         "lblExportingPleaseWait": "Exportando... espere un momento, por favor.",
         "dscExporting": "Exportando archivo: __file__.",
         "lblDocSelected": "Documento: ",
+        "dscFile": "Archivo: __file__",
         "dscStatusExportSuccess": "El documento se exportó correctamente.",
         "dscPassword": "Contraseña:",
         "ttlLanguage": "Idioma del interfaz",
