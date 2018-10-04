@@ -1033,6 +1033,10 @@ define(function (require) {
                     } else {
                         $(event.currentTarget.parentElement).trigger("click");
                     }
+                    // we're not selecting anything -- just clicking on the filter
+                    $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
+                    isSelecting = false; 
+                    return;
                 }
                 // check for retranslation
                 if (isRetranslation === true) {
