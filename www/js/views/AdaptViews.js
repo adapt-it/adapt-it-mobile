@@ -1338,8 +1338,8 @@ define(function (require) {
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
                 
                 // case where user lifted finger on the target instead of the pile
-                if (isSelecting === true) {
-                    console.log("oops... user mouseup on target, not pile... correcting.");
+                if (isSelecting === true || isLongPressSelection === true) {
+                    console.log("oops... pile selection / user mouseup on target, not pile... correcting.");
                     // trigger a click on the parent (pile) instead
                     $(event.parentElement).mouseup();
                     return;
@@ -2330,6 +2330,11 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 if (selectedStart !== null) {
+                    // clear out any pile selection / long selection
+                    $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
+                    LongPressSectionStart = null;
+                    isLongPressSelection = false;
+                    // move
                     isDirty = true;
                     MovingDir = -1; // backwards
                     this.listView.moveCursor(event, false);
@@ -2365,6 +2370,11 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 if (selectedStart !== null) {
+                    // clear out any pile selection / long selection
+                    $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
+                    LongPressSectionStart = null;
+                    isLongPressSelection = false;
+                    // move
                     isDirty = true;
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
