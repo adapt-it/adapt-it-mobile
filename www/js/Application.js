@@ -84,8 +84,7 @@ define(function (require) {
                     window.MobileAccessibility.usePreferredTextZoom(false);
                 }                
                 // version info (mobile app only)
-                if (window.sqlitePlugin) {
-                    // return both version and build info
+                if (window.sqlitePlugin && AppVersion) {
                     this.version = AppVersion.version + " (" + AppVersion.buildString + ")";
                 }
                 // local dirs (mobile app only)
