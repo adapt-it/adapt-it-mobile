@@ -883,22 +883,14 @@ define(function (require) {
                         $("div").removeClass("ui-longSelecting");
                     }
                 }, 1000);
+                // typeahead menu selection -- we'll address it in the mouse / touch end event;
+                // make sure the long press timeout gets cleared, and then get out
                 if (isSelectingKB === true) {
-                    var theSelection = "";
-                    // pull out the tt-suggestion (the menu item the user selected)
-                    if ($(event.target.parentElement).hasClass("tt-suggestion")) {
-                        theSelection = $(event.target.parentElement).text();
-                    } else {
-                        theSelection = $(event.target).text();
-                    }
-                    console.log("User selected KB value:" + theSelection);
-                    isSelectingKB = false; // we've now chosen something - OK to blur
-                    isDirty = true;
-                    $('.tt-menu').css('display', 'none');
-                    $(event.currentTarget).find(".target").typeahead('destroy');
-                    $(event.currentTarget).find(".target").html(theSelection);
-                    $("#Undo").prop('disabled', false);
+                    // clear the long press timeout -- we're selecting a menu item
+                    clearTimeout(longPressTimeout); 
+                    return; // get out
                 }
+                // don't bubble this event
                 event.stopPropagation();
                 event.preventDefault();
                 // if there was an old selection, remove it
@@ -1021,6 +1013,26 @@ define(function (require) {
                 // prevent weird edit menu appearances (long click)
                 event.preventDefault();
                 event.stopPropagation();
+                // typeahead menu selection -- handle it here, and then get out
+                if (isSelectingKB === true) {
+                    var theSelection = "";
+                    // pull out the tt-suggestion (the menu item the user selected)
+                    if ($(event.target.parentElement).hasClass("tt-suggestion")) {
+                        theSelection = $(event.target.parentElement).text();
+                    } else {
+                        theSelection = $(event.target).text();
+                    }
+                    console.log("User selected KB value:" + theSelection);
+                    isSelectingKB = false; // we've now chosen something - OK to blur
+                    isDirty = true;
+                    $('.tt-menu').css('display', 'none');
+                    $(event.currentTarget).find(".target").typeahead('destroy');
+                    $(event.currentTarget).find(".target").html(theSelection);
+                    $("#Undo").prop('disabled', false);
+                    // clear the long press timeout -- we're selecting a menu item
+                    return; // get out
+                }
+                
                 // sanity check -- make sure there's a selectedStart
                 if (selectedStart === null) {
                     selectedStart = event.currentTarget;
