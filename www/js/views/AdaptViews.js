@@ -554,8 +554,9 @@ define(function (require) {
             // the source is also uppercase. This method relies on the case mappings defined for the project.
             autoAddCaps: function (model, target) {
                 var i = 0,
-                    j = 0,
-                    result = "",
+                    targetIdx = 0,
+                    optionsIdx = 0,
+                    result = null,
                     source = model.get('source');
                 // If we aren't capitalizing for this project, just return the target (unaltered)
                 if (project.get('AutoCapitalization') === 'false' || project.get('SourceHasUpperCase') === 'false') {
@@ -564,13 +565,29 @@ define(function (require) {
                 // is the first letter capitalized?
                 for (i = 0; i < caseSource.length; i++) {
                     if (caseSource[i].charAt(1) === source.charAt(0)) {
-                        // uppercase -- convert the first target character to uppercase and return the result
-                        for (j = 0; j < caseTarget.length; j++) {
-                            if (caseTarget[j].charAt(0) === target.charAt(0)) {
-                                // found the target char -- build and return the auto-capped string
-                                result = caseTarget[j].charAt(1) + target.substr(1);
-                                return result;
+                        // uppercase -- convert to uppercase and return the result
+                        if (typeof target === 'string') {
+                            // single string value -- convert to uppercase
+                            for (targetIdx = 0; targetIdx < caseTarget.length; targetIdx++) {
+                                if (caseTarget[targetIdx].charAt(0) === target.charAt(0)) {
+                                    // found the target char -- build and return the auto-capped string
+                                    result = caseTarget[targetIdx].charAt(1) + target.substr(1);
+                                    return result;
+                                }
                             }
+                        } else {
+                            // array -- convert each string to uppercase
+                            result = new Array(0);
+                            for (optionsIdx = 0; optionsIdx < target.length; optionsIdx++) {
+                                for (targetIdx = 0; targetIdx < caseTarget.length; targetIdx++) {
+                                    if (caseTarget[targetIdx].charAt(0) === target[optionsIdx].charAt(0)) {
+                                        // found the target char -- build the auto-capped string and place in the
+                                        // result array
+                                        result.push(caseTarget[targetIdx].charAt(1) + target[optionsIdx].substr(1));
+                                    }
+                                }
+                            }
+                            return result;
                         }
                     }
                 }
@@ -1344,6 +1361,7 @@ define(function (require) {
                     refstrings = null,
                     range = null,
                     selection = null,
+                    KBtarget = [],
                     options = [],
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
@@ -1443,8 +1461,10 @@ define(function (require) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
                             isDirty = false; // no change yet (user needs to select something first)
+                            // auto-caps the options
+                            KBtarget = this.autoAddCaps(model, options);
                             // create the autocomplete UI
-                            console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
+                            console.log("selectedAdaptation: creating typeahead dropdown with " + KBtarget.length + " options: " + KBtarget.toString());
                             $(event.currentTarget).typeahead(
                                 {
                                     hint: true,
@@ -1454,7 +1474,7 @@ define(function (require) {
                                 {
                                     name: 'kboptions',
                                     source: function (request, response) {
-                                        response(options);
+                                        response(KBtarget);
                                     }
                                 }
                             );
@@ -1472,7 +1492,7 @@ define(function (require) {
                                 range.selectNodeContents($(event.currentTarget)[0]);
                                 selection.addRange(range);
                             }
-                            if (Keyboard) {
+                            if (navigator.notification && Keyboard) {
                                 Keyboard.show();
                             }
                             // ios
@@ -1590,8 +1610,9 @@ define(function (require) {
                                     }
                                 }
                                 if (options.length > 1) {
+                                    KBtarget = this.autoAddCaps(model, options);
                                     // create the autocomplete UI
-                                    console.log("selectedAdaptation: creating typeahead dropdown with " + options.length + " options: " + options.toString());
+                                    console.log("selectedAdaptation: creating typeahead dropdown with " + KBtarget.length + " options: " + KBtarget.toString());
                                     $(event.currentTarget).typeahead(
                                         {
                                             hint: true,
@@ -1601,7 +1622,7 @@ define(function (require) {
                                         {
                                             name: 'kboptions',
                                             source: function (request, response) {
-                                                response(options);
+                                                response(KBtarget);
                                             }
                                         }
                                     );
@@ -1776,6 +1797,10 @@ define(function (require) {
                 }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 model = this.collection.findWhere({spid: strID});
+                // re-add autocaps if necessary
+                if (trimmedValue.length > 0) {
+                    trimmedValue = this.autoAddCaps(model, trimmedValue);
+                }
                 // check for changes in the edit field
                 if (isDirty === true) {
                     if (trimmedValue.length === 0) {
