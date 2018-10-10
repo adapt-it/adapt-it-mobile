@@ -71,16 +71,11 @@ Use the same method described above to copy the files to your computer. Also not
 
 ## Installing Adapt It Mobile 
 
-### Android
-_Note: For the pre-release version of Adapt It Mobile, we are using the PhoneGap Build service to host our builds. We are planning on placing the release version in the Google Play app store._
+Adapt It Mobile can be installed from the Apple Store and the Google Play Store:
 
-1. On your Android device, open up the System Settings > Security section, and verify that "Unknown Sources / allow installation of apps from sources other than Google Play store" is selected. 
-2. Using your mobile device's web browser, navigate to [https://build.phonegap.com/apps/713362/share](https://build.phonegap.com/apps/713362/share).
-3. Under the Android section, click on the Download button to download the Adapt It Mobile app to your device.
-4. Once the app has downloaded, click on the file in the list. You will be asked if you want to install Adapt It Mobile. Click the Install button. 
-
-### iOS
-For the pre-release version of Adapt It Mobile on iOS, we are using Apple's [Test Flight App](https://itunes.apple.com/us/app/testflight/id899247664?mt=8) to facilitate testing. Send us an email at `developers at adapt-it dot org` to be added to the pre-release test group.
+| iOS        | Android           |
+|:-------------:|:-------------:| 
+| <a href='https://itunes.apple.com/us/app/adapt-it-mobile/id1031605993?ls=1&mt=8'><img alt='Download on the App Store' src='https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png' /></a>     | <a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a> |
 
 ----
 
