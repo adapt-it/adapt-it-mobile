@@ -10,6 +10,9 @@
   color: white;
   padding: 6px; }
 
+.announce a {
+  color: #1dd8af;}
+
 .small-icon {
   background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
   background-size: cover;
