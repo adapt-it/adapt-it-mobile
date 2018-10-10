@@ -14,7 +14,8 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
 
-Adapt It Mobile is currently in pre-release development. If you'd like to try it out and let us know how we're doing so far, take a look at our [installation guide](https://github.com/adapt-it/adapt-it-mobile/wiki/Using-Adapt-It-Mobile).
+- [Installation guide](https://adapt-it.github.io/adapt-it-mobile/getstarted/)
+- [Training Videos](https://vimeo.com/album/5368477)
 
 ## ![Contribute](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/build.png) Contributing to the Project
 
