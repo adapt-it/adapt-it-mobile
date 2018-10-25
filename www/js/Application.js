@@ -44,7 +44,9 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
-            version: "1.0.0", // replaced with the actual version on device ready
+            version: "1.1.0", // appended with milestone / iOS build info
+            MilestoneBuild: "27", // milestone release #
+            iOSBuild: "1.0.5",
             
             // App initialization code. App initialization comes in a few callbacks:
             // 1. Cordova initialization (startTheApp() in main.js)
@@ -83,9 +85,13 @@ define(function (require) {
                 if (window.MobileAccessibility) {
                     window.MobileAccessibility.usePreferredTextZoom(false);
                 }                
-                // version info (mobile app only)
-                if (window.sqlitePlugin && AppVersion) {
-                    this.version = AppVersion.version + " (" + AppVersion.buildString + ")";
+                // version info
+                if (window.sqlitePlugin && device.platform === "iOS") {
+                    // iOS - internal build #
+                    this.version += " (" + this.iOSBuild + ")";
+                } else {
+                    // Android (+ Windows + browser) -- milestone release #
+                    this.version += " (" + this.MilestoneBuild + ")";
                 }
                 // local dirs (mobile app only)
                 if (window.sqlitePlugin) {

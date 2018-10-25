@@ -56,6 +56,7 @@ define(function (require) {
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
+        isMergingFromKB = false,
         isAutoPhrase = false,
         isSelectingKB = false,  // is the user working with a select target text dropdown?
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
@@ -640,6 +641,45 @@ define(function (require) {
                 }
                 return result;
             },
+            // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
+            // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
+            // Returns: last source phrase (corresponds to selectedEnd when merging)
+            findLargestPhrase: function (pile) {
+                var sourceText = "",
+                    tu = null,
+                    thisObj = null,
+                    tmpStr = "",
+                    nextObj = null;
+                // find the source
+                console.log("findLargestPhrase: entry");
+                sourceText = $(pile).children('.source').html();
+                // initial values
+                thisObj = pile;
+                nextObj = pile;
+                tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                // found something -- keep moving ahead / adding source text words until there's no match 
+                // OR we hit the end of the strip
+                while (tu !== null && nextObj !== null) {
+                    // move to the next pile and append the source
+                    nextObj = thisObj.nextElementSibling;
+                    if (nextObj !== null) {
+                        tmpStr = sourceText + " " + $(nextObj).children(".source").html();
+                        sourceText = this.autoRemoveCaps(tmpStr, true);
+                        // is there a match for this phrase?
+                        tu = kblist.filter(function(element) {
+                            return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
+                        });
+                        if (tu.length > 0) {
+                            // there's a KB entry with this appended string -- update the lastID and thisObj
+                            thisObj = nextObj;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                // return our last known "good" ID
+                return thisObj;
+            },
             // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
             // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
             // - next source phrase has exactly 1 possible translation in the KB -> auto-insert and continue moving
@@ -798,6 +838,7 @@ define(function (require) {
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
+                    selectedEnd = selectedStart = next_edit;
                     $(next_edit).find(".target").focus();
                     $(next_edit).find(".target").mouseup();
                 } else {
@@ -1418,6 +1459,16 @@ define(function (require) {
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
+                        if (selectedEnd === selectedStart) {
+                            // special case -- lookahead / auto-merge processing
+                            selectedEnd = this.findLargestPhrase(selectedStart);
+                            if (selectedEnd !== selectedStart) {
+                                isMergingFromKB = true;
+                                // found a merge candidate -- merge it
+                                $("#Phrase").trigger("click");
+                                return; // get out -- we'll come back in once the phrase merge happens
+                            }
+                        }
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
                         // first, make sure these refstrings are actually being used
@@ -2019,18 +2070,23 @@ define(function (require) {
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
-                    // target div (only if the user didn't auto-create the phrase by typing after a selection)
-                    console.log("isAutoPhrase: " + isAutoPhrase);
-                    if (isAutoPhrase === false) {
-                        // if there's something already in the target, use it instead
-                        phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                        isDirty = false; // don't save (original sourcephrase is now gone)
-                    } else {
-                        // autophrase -- add the target for the selected start ONLY
-                        phraseHtml += $(selectedStart).find(".target").html();
-                        isDirty = true; // save
-                    }
-                    isAutoPhrase = false; // clear the autophrase flag
+                    // if we're merging because of our lookahead KB parse, skip adding the target -- we want to 
+                    // populate the target from the KB instead
+                    if (isMergingFromKB === false) {
+                        // NOT merging from the KB -- now test to see if the user selected a phrase and
+                        // started typing (isAutoPhrase). If so, only add the target from the selected start
+                        console.log("isAutoPhrase: " + isAutoPhrase);
+                        if (isAutoPhrase === false) {
+                            // if there's something already in the target, use it instead
+                            phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                            isDirty = false; // don't save (original sourcephrase is now gone)
+                        } else {
+                            // autophrase -- add the target for the selected start ONLY
+                            phraseHtml += $(selectedStart).find(".target").html();
+                            isDirty = true; // save
+                        }
+                        isAutoPhrase = false; // clear the autophrase flag
+                    } 
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
