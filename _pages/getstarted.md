@@ -77,6 +77,8 @@ Adapt It Mobile can be installed from the Apple Store and the Google Play Store:
 |:-------------:|:-------------:| 
 | <a href='https://itunes.apple.com/us/app/adapt-it-mobile/id1031605993?ls=1&mt=8'><img alt='Download on the App Store' src='https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png' /></a>     | <a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a> |
 
+For offline Android installations, the .apk file can be downloaded from the release announcements on our development page: [https://github.com/adapt-it/adapt-it-mobile/releases](https://github.com/adapt-it/adapt-it-mobile/releases). You will need to enable the installation of apps from unknown sources (i.e., "sideload" the app). For more information and step-by-step instructions, click here: [https://9to5google.com/2017/01/23/how-to-sideload-an-apk/](https://9to5google.com/2017/01/23/how-to-sideload-an-apk/)
+
 ----
 
 <a id="next-steps"></a>
