@@ -729,6 +729,14 @@ select.docNav {
 .strip {
     display: block; 
 }
+/* preview mode (target display only) */
+div.preview div.marker, div.preview div.source, div.preview div.filter {
+    display: none;
+}
+div.preview div.block-height {
+    height: 30px;
+    line-height: 30px;
+}
 /* standard height for a pile / strip-header / chapter-number / filter:
 *  gets overridden by a "real" computed height in addStyleRules (AdaptViews) */
 /*

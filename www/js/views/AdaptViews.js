@@ -74,6 +74,7 @@ define(function (require) {
         LongPressSectionStart = null,
         longPressTimeout = null,
         lastOffset = 0,
+        ONE_SPACE = " ",
         
         /////
         // Static methods
@@ -315,6 +316,15 @@ define(function (require) {
             theRule += totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // preview (w/o marker and source lines)
+            theRule = "div.preview div.block-height {";
+            theRule += "height: ";
+            // total height = source + target + (20px extra space)
+            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += totalHeight + "px; ";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+
             // Special Text color
             theRule = "div.strip.specialtext div.source {";
             theRule += "color: " + project.get('SpecialTextColor') + ";";
@@ -627,14 +637,39 @@ define(function (require) {
                 return theString;
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
-            // This method currently strips out all punctuation to match the words; a null is returned
-            // if there is no entry in the KB
-            findInKB: function (key) {
-                var result = null; //, strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            // Params: key -- lookup key for the KB
+            //         maybePartial -- possibly part of a multi-word phrase (boolean)
+            findInKB: function (key, maybePartial) {
+                var result = null;
                 try {
-                    result = kblist.findWhere({'source': key}); // strNoPunctuation});
-                    if (typeof result === 'undefined') {
-                        return null;
+                    if (maybePartial === false) {
+                        // we're looking for an exact match ONLY
+                        result = kblist.findWhere({'source': key}); // strNoPunctuation});
+                        if (typeof result === 'undefined') {
+                            return null;
+                        }
+                    } else {
+                        // possibly part of a multi-word phrase, so 2 possibilities:
+                        // 1. Exact match of key
+                        // 2. KB contains an entry with key + one space (i.e., a phrase)
+                        
+                        // first check -- exact match
+                        result = kblist.findWhere({'source': key}); // strNoPunctuation});
+                        if (typeof result === 'undefined') {
+                            // second check -- part of a phrase
+                            result = kblist.filter(function(element) {
+                                return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
+                            });
+                            if (result.length === 0) {
+                                return null;
+                            } else {
+                                return result[0]; // only want one object
+                            }
+                        }
+                        if (typeof result === 'undefined') {
+                            return null;
+                        }
+                        return result;
                     }
                 } catch (err) {
                     console.log(err);
@@ -646,7 +681,7 @@ define(function (require) {
             // Returns: last source phrase (corresponds to selectedEnd when merging)
             findLargestPhrase: function (pile) {
                 var sourceText = "",
-                    tu = null,
+                    tu = "",
                     thisObj = null,
                     tmpStr = "",
                     nextObj = null;
@@ -656,14 +691,14 @@ define(function (require) {
                 // initial values
                 thisObj = pile;
                 nextObj = pile;
-                tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
-                // found something -- keep moving ahead / adding source text words until there's no match 
+                idxStart = $(pile).index();
+                idxEnd = idxStart;
                 // OR we hit the end of the strip
                 while (tu !== null && nextObj !== null) {
                     // move to the next pile and append the source
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
-                        tmpStr = sourceText + " " + $(nextObj).children(".source").html();
+                        tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
                         sourceText = this.autoRemoveCaps(tmpStr, true);
                         // is there a match for this phrase?
                         tu = kblist.filter(function(element) {
@@ -672,6 +707,7 @@ define(function (require) {
                         if (tu.length > 0) {
                             // there's a KB entry with this appended string -- update the lastID and thisObj
                             thisObj = nextObj;
+                            idxEnd = $(thisObj).index();                            
                         } else {
                             break;
                         }
@@ -693,7 +729,6 @@ define(function (require) {
                 var temp_cursor = null;
                 var keep_going = true;
                 var top = 0;
-                var selection = null;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -1364,7 +1399,7 @@ define(function (require) {
                     });
                     // get the source text being filtered out
                     $(this).find(".source").each(function (idx, elt) {
-                        filteredText += elt.innerHTML.trim() + " ";
+                        filteredText += elt.innerHTML.trim() + ONE_SPACE;
                     });
                     // push new object onto Filters array
                     aryFilters.push({
@@ -1456,17 +1491,25 @@ define(function (require) {
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
-                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), true); // possibly a partial
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
-                        if (selectedEnd === selectedStart) {
-                            // special case -- lookahead / auto-merge processing
-                            selectedEnd = this.findLargestPhrase(selectedStart);
-                            if (selectedEnd !== selectedStart) {
-                                isMergingFromKB = true;
-                                // found a merge candidate -- merge it
-                                $("#Phrase").trigger("click");
-                                return; // get out -- we'll come back in once the phrase merge happens
+                        if (isMergingFromKB === true) {
+                            // just finished merging -- reset the flag and continue
+                            isMergingFromKB = false;
+                        }
+                        else {
+                            // check to see if we need to merge
+                            if (selectedEnd === selectedStart) {
+                                // special case -- lookahead / auto-merge processing
+                                selectedEnd = this.findLargestPhrase(selectedStart);
+                                if (selectedEnd !== selectedStart) {
+                                    isMergingFromKB = true;
+                                    // found a merge candidate -- merge it
+                                    this.togglePhrase(event);
+                                    //$("#Phrase").trigger("click");
+                                    return; // get out -- we'll come back in once the phrase merge happens
+                                }
                             }
                         }
                         // found at least one match -- populate the target with the first match
@@ -1650,7 +1693,7 @@ define(function (require) {
                         // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
                             // not a retranslation or placeholder
-                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), false); // exact match
                             if (tu !== null) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
@@ -1899,12 +1942,12 @@ define(function (require) {
                     // get the verse #
                     var stridx = model.get('markers').indexOf("\\v ") + 3;
                     var verseNum = "";
-                    if (model.get('markers').lastIndexOf(" ") < stridx) {
+                    if (model.get('markers').lastIndexOf(ONE_SPACE) < stridx) {
                         // no space after the verse # (it's the ending of the string)
                         verseNum = model.get('markers').substr(stridx);
                     } else {
                         // space after the verse #
-                        verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(" ", stridx) - stridx);
+                        verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(ONE_SPACE, stridx) - stridx);
                     }
                     console.log("Adapting verse: " + verseNum);
                     chapter.set('lastadapted', verseNum);
@@ -2035,8 +2078,8 @@ define(function (require) {
                             // concatenate the source and target into single phrases
                             // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
                             if (index > idxStart) {
-                                phraseSource += " ";
-                                phraseTarget += " ";
+                                phraseSource += ONE_SPACE;
+                                phraseTarget += ONE_SPACE;
                                 origTarget += "|";
                             }
                             phraseMarkers += $(value).children(".marker").text();
@@ -2066,7 +2109,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
+                    //saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -2127,10 +2170,10 @@ define(function (require) {
                     selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
-                    selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
-                        phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
+                        phraseTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
@@ -2200,8 +2243,8 @@ define(function (require) {
                             // concatenate the source and target into single Retranslations
                             // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
                             if (index > idxStart) {
-                                RetSource += " ";
-                                RetTarget += " ";
+                                RetSource += ONE_SPACE;
+                                RetTarget += ONE_SPACE;
                                 origTarget += "|";
                             }
                             retMarkers += $(value).children(".marker").text();
@@ -2264,10 +2307,10 @@ define(function (require) {
                     selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
-                    selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
-                        RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
+                        RetTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
