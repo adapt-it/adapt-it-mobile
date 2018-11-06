@@ -255,6 +255,7 @@
         "lblBookName": "Nombre del libro:",
         "lblCopyClipboardText": "Texto del portapapeles...",
         "lblText": "Texto",
+        "lblShowPreviewBtn": "Botón de vista previa",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

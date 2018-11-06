@@ -255,6 +255,7 @@
         "lblBookName": "Nome do livro:",
         "lblCopyClipboardText": "Texto da área de transferência...",
         "lblText": "Texto",
+        "lblShowPreviewBtn": "Botão de pré-visualização",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

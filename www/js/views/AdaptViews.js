@@ -71,6 +71,7 @@ define(function (require) {
         origText = "",
         lastPile = null,
         isLongPressSelection = false,
+        inPreview = false,
         LongPressSectionStart = null,
         longPressTimeout = null,
         lastOffset = 0,
@@ -324,6 +325,24 @@ define(function (require) {
             theRule += totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // is the preview button enabled?
+            if (localStorage.getItem("ShowPreviewBtn") && localStorage.getItem("ShowPreviewBtn") === "true") {
+                theRule = "#PreviewBtn {display: inline-block;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".dropdown {right:153px;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                // on the smallest screens, there's not enough width -- show the preview button instead of the help button
+                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: none;}";
+                theRule += ".dropdown {right:102px;}}"; // dropdown is in the normal place
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+            } else {
+                theRule = "#PreviewBtn {display: none;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".dropdown {right:102px;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: inline-block;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+            }
 
             // Special Text color
             theRule = "div.strip.specialtext div.source {";
@@ -922,8 +941,10 @@ define(function (require) {
                 isPlaceholder = false;
                 isPhrase = false;
                 isRetranslation = false;
+                LongPressSectionStart = null;
+                isLongPressSelection = false;
 
-                $("div").removeClass("ui-selecting ui-selected");
+                $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
@@ -956,6 +977,10 @@ define(function (require) {
             
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("selectingPilesStart: " + $(event.target).attr('id'));
                 // long press function for selection start
                 longPressTimeout = window.setTimeout(function () {
@@ -1014,6 +1039,10 @@ define(function (require) {
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 if (isRetranslation === true) {
                     return; // cannot select other items
                 }
@@ -1075,6 +1104,10 @@ define(function (require) {
             },
             // user double-tapped on the Pile element -- select the entire strip
             onDblTapPile: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("onDblTapPile");
                 selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
                 selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
@@ -1092,6 +1125,10 @@ define(function (require) {
             },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("selectingPilesEnd");
                 clearTimeout(longPressTimeout); // don't need to wait for the long press here
                 // re-add the contenteditable fields
@@ -1415,6 +1452,10 @@ define(function (require) {
             },
             // mouseDown / touchStart event handler for the target field
             selectingAdaptation: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 if (selectedStart !== null) {
                     console.log("selectingAdaptation: old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
@@ -1442,6 +1483,10 @@ define(function (require) {
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 
                 // case where user lifted finger on the target instead of the pile
                 if (isSelecting === true || isLongPressSelection === true) {
@@ -1757,6 +1802,10 @@ define(function (require) {
             editAdaptation: function (event) {
                 var strID = null,
                     model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
@@ -1810,6 +1859,10 @@ define(function (require) {
             },
             // User clicked on the Undo button.
             onUndo: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("onUndo: entry");
                 // find the model object associated with this edit field
                 var strID = $(lastPile).attr('id');
@@ -1852,6 +1905,10 @@ define(function (require) {
                     trimmedValue = null,
                     strID = null,
                     model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
                 if (isSelectingKB === true) {
                     isSelectingKB = false;
@@ -1976,6 +2033,23 @@ define(function (require) {
                 }
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
+            },
+            // user clicked on the Preview (toggle) button -- enable or disable
+            // preview / target only mode
+            togglePreview: function (event) {
+                if (inPreview === true) {
+                    // turn off preview mode
+                    $("#chapter").removeClass("preview");
+                    $(".target").prop('contenteditable', true); // set target to read-write
+                    inPreview = false;
+                } else {
+                    // clear out any selections
+                    this.clearSelection();
+                    // turn on preview mode
+                    $("#chapter").addClass("preview");
+                    $(".target").prop('contenteditable', false); // set target to read-only
+                    inPreview = true;
+                }
             },
             // User clicked on the Placeholder button
             togglePlaceholder: function (event) {
@@ -2424,6 +2498,7 @@ define(function (require) {
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
+                "click #preview": "togglePreview",
                 "click #help": "onHelp"
             },
             UndoClick: function (event) {
@@ -2521,6 +2596,15 @@ define(function (require) {
             // More (...) menu toggle
             toggleMoreMenu: function (event) {
                 $("#MoreActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+            togglePreview: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.togglePreview(event);
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
