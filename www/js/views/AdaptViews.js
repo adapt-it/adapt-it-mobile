@@ -657,43 +657,27 @@ define(function (require) {
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
             // Params: key -- lookup key for the KB
-            //         maybePartial -- possibly part of a multi-word phrase (boolean)
-            findInKB: function (key, maybePartial) {
+            findInKB: function (key) {
                 var result = null;
                 try {
-                    if (maybePartial === false) {
-                        // we're looking for an exact match ONLY
-                        result = kblist.findWhere({'source': key}); // strNoPunctuation});
-                        if (typeof result === 'undefined') {
-                            return null;
-                        }
-                    } else {
-                        // possibly part of a multi-word phrase, so 2 possibilities:
-                        // 1. Exact match of key
-                        // 2. KB contains an entry with key + one space (i.e., a phrase)
-                        
-                        // first check -- exact match
-                        result = kblist.findWhere({'source': key}); // strNoPunctuation});
-                        if (typeof result === 'undefined') {
-                            // second check -- part of a phrase
-                            result = kblist.filter(function(element) {
-                                return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
-                            });
-                            if (result.length === 0) {
-                                return null;
-                            } else {
-                                return result[0]; // only want one object
-                            }
-                        }
-                        if (typeof result === 'undefined') {
-                            return null;
-                        }
-                        return result;
+                    // we're looking for an exact match ONLY
+                    result = kblist.findWhere({'source': key}); // strNoPunctuation});
+                    if (typeof result === 'undefined') {
+                        return null;
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 return result;
+            },
+            // helper method to check for a possible partial phrase match in the KB
+            // Params: key -- single pile to check for a possible partial match (e.g., the first word in a phrase that's in the KB)
+            possibleKBPhrase: function (key) {
+                var aryFilter = null;
+                aryFilter = kblist.filter(function(element) {
+                    return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
+                });
+                return (aryFilter.length !== 0); 
             },
             // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
             // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
@@ -701,39 +685,44 @@ define(function (require) {
             findLargestPhrase: function (pile) {
                 var sourceText = "",
                     tu = "",
-                    thisObj = null,
+                    exactMatch = pile,
+                    thisObj = pile,
                     tmpStr = "",
-                    nextObj = null;
+                    nextObj = pile;
                 // find the source
                 console.log("findLargestPhrase: entry");
                 sourceText = $(pile).children('.source').html();
                 // initial values
-                thisObj = pile;
-                nextObj = pile;
                 idxStart = $(pile).index();
                 idxEnd = idxStart;
-                // OR we hit the end of the strip
+                // run until we hit the end of the strip OR we don't match anything
                 while (tu !== null && nextObj !== null) {
                     // move to the next pile and append the source
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
-                        sourceText = this.autoRemoveCaps(tmpStr, true);
+                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
                         // is there a match for this phrase?
                         tu = kblist.filter(function(element) {
                             return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
                         });
                         if (tu.length > 0) {
-                            // there's a KB entry with this appended string -- update the lastID and thisObj
+                            // we did a "fuzzy" match (i.e., indexOf) and got some results. Is this an exact match of a KB entry?
+                            if (kblist.findWhere({'source': sourceText}) !== 'undefined') {
+                                // this is an exact match -- move the indices and see if we can get a bigger phrase
+                                exactMatch = nextObj;
+                                idxEnd = $(nextObj).index();                            
+                            }
+                            // even if our exace match test failed, we got a partial match earlier -- so it's possible that
+                            // there'a bigger phrase that matches. Keep appending piles...
                             thisObj = nextObj;
-                            idxEnd = $(thisObj).index();                            
                         } else {
                             break;
                         }
                     }
                 }
-                // return our last known "good" ID
-                return thisObj;
+                // return our last known "good" ID (possibly our first ID if we didn't find anything)
+                return exactMatch;
             },
             // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
             // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
@@ -1536,27 +1525,27 @@ define(function (require) {
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
-                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), true); // possibly a partial
-                    console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
-                    if (tu !== null) {
-                        if (isMergingFromKB === true) {
-                            // just finished merging -- reset the flag and continue
-                            isMergingFromKB = false;
-                        }
-                        else {
-                            // check to see if we need to merge
-                            if (selectedEnd === selectedStart) {
-                                // special case -- lookahead / auto-merge processing
-                                selectedEnd = this.findLargestPhrase(selectedStart);
-                                if (selectedEnd !== selectedStart) {
-                                    isMergingFromKB = true;
-                                    // found a merge candidate -- merge it
-                                    this.togglePhrase(event);
-                                    //$("#Phrase").trigger("click");
-                                    return; // get out -- we'll come back in once the phrase merge happens
-                                }
+                    // Auto-merge handling
+                    if (isMergingFromKB === true) {
+                        // just finished merging -- reset the flag and continue
+                        isMergingFromKB = false;
+                    } else {
+                        // check for a possible KB phrase that needs merging
+                        if ((this.possibleKBPhrase(this.autoRemoveCaps(sourceText, true)) === true) && (selectedEnd === selectedStart)) {
+                            // we have a possible phrase -- see if it's a real one
+                            selectedEnd = this.findLargestPhrase(selectedStart);
+                            if (selectedEnd !== selectedStart) {
+                                isMergingFromKB = true;
+                                // found a merge candidate -- merge it
+                                this.togglePhrase(event);
+                                //$("#Phrase").trigger("click");
+                                return; // get out -- we'll come back in once the phrase merge happens
                             }
                         }
+                    }
+                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                    console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
+                    if (tu !== null) {
                         // found at least one match -- populate the target with the first match
                         refstrings = tu.get('refstring');
                         // first, make sure these refstrings are actually being used
@@ -1738,7 +1727,7 @@ define(function (require) {
                         // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
                             // not a retranslation or placeholder
-                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), false); // exact match
+                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                             if (tu !== null) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
@@ -1898,8 +1887,7 @@ define(function (require) {
             // User has moved out of the current adaptation input field (blur on target field)
             // this can be called either programatically (tab / shift+tab keydown response) or
             // by a selection of something else on the page.
-            // This method updates the KB and model (AI Document) if they have any changes, and
-            // removes the content editable field in the UI.
+            // This method updates the KB and model (AI Document) if they have any changes.
             unselectedAdaptation: function (event) {
                 var value = null,
                     trimmedValue = null,
@@ -2128,6 +2116,8 @@ define(function (require) {
                     phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
+                    prepuncts = "",
+                    follpuncts = "",
                     origTarget = "",
                     nOrder = 0.0,
                     phObj = null,
@@ -2172,9 +2162,20 @@ define(function (require) {
                             }
                         }
                     });
+                    // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
+                    // get prepuncts from the selected start
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    prepuncts = selectedObj.get('prepuncts');
+                    // get follpuncts from the selected end
+                    strID = $(selectedEnd).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2296,6 +2297,8 @@ define(function (require) {
                     RetTarget = "",
                     nOrder = 0.0,
                     origTarget = "",
+                    prepuncts = "",
+                    follpuncts = "",
                     phObj = null,
                     strID = null,
                     bookID = null,
@@ -2327,9 +2330,20 @@ define(function (require) {
                             origTarget += $(value).children(".target").html();
                         }
                     });
+                    // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
+                    // get prepuncts from the selected start
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    prepuncts = selectedObj.get('prepuncts');
+                    // get follpuncts from the selected end
+                    strID = $(selectedEnd).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2636,7 +2650,7 @@ define(function (require) {
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
-            // User clicked away from
+            // User clicked on a blank area of the screen
             unselectPiles: function (event) {
                 // dismiss the More (...) menu if visible
                 if ($("#MoreActionsMenu").hasClass("show")) {
