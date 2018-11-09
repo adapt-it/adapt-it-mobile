@@ -2191,19 +2191,24 @@ define(function (require) {
                     // if we're merging because of our lookahead KB parse, skip adding the target -- we want to 
                     // populate the target from the KB instead
                     if (isMergingFromKB === false) {
-                        // NOT merging from the KB -- now test to see if the user selected a phrase and
-                        // started typing (isAutoPhrase). If so, only add the target from the selected start
-                        console.log("isAutoPhrase: " + isAutoPhrase);
-                        if (isAutoPhrase === false) {
-                            // if there's something already in the target, use it instead
-                            phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                            isDirty = false; // don't save (original sourcephrase is now gone)
-                        } else {
-                            // autophrase -- add the target for the selected start ONLY
-                            phraseHtml += $(selectedStart).find(".target").html();
-                            isDirty = true; // save
+                        // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
+                        // is there something in the KB that matches this phrase?
+                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true))) === null) {
+                            // nothing in the KB -- 
+                            // next check is to see if the user selected a phrase and
+                            // started typing (isAutoPhrase). If so, only add the target from the selected start
+                            console.log("isAutoPhrase: " + isAutoPhrase);
+                            if (isAutoPhrase === false) {
+                                // if there's something already in the target, use it instead
+                                phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                                isDirty = false; // don't save (original sourcephrase is now gone)
+                            } else {
+                                // autophrase -- add the target for the selected start ONLY
+                                phraseHtml += $(selectedStart).find(".target").html();
+                                isDirty = true; // save
+                            }
+                            isAutoPhrase = false; // clear the autophrase flag
                         }
-                        isAutoPhrase = false; // clear the autophrase flag
                     } 
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
@@ -2239,6 +2244,10 @@ define(function (require) {
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
+                    var startIdx = 0,
+                        endIdx = 0,
+                        theSource = "";
+                    
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -2249,7 +2258,25 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         phraseTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
+                        // pull out any prepuncts / follpuncts from the value
+                        // reset counters and temp vars
+                        startIdx = 0;
+                        endIdx = value.length;
+                        prepuncts = "";
+                        follpuncts = "";
+                        // prepuncts
+                        while (startIdx < (value.length - 1) && punctsSource.indexOf(value.charAt(startIdx)) > -1) {
+                            prepuncts += value.charAt(startIdx);
+                            startIdx++;
+                        }
+                        // follpuncts
+                        while (endIdx > 0 && punctsSource.indexOf(value.charAt(endIdx - 1)) > -1) {
+                            follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
+                            endIdx--;
+                        }
+                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        // recreate the sourcephrase
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
                             phObj.set('markers', selectedObj.get('markers'), {silent: true});
@@ -2389,6 +2416,9 @@ define(function (require) {
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
+                    var startIdx = 0,
+                        endIdx = 0,
+                        theSource = "";
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -2399,7 +2429,25 @@ define(function (require) {
                         // add to model
                         newID = Underscore.uniqueId();
                         RetTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
+                        // pull out any prepuncts / follpuncts from the value
+                        // reset counters and temp vars
+                        startIdx = 0;
+                        endIdx = value.length;
+                        prepuncts = "";
+                        follpuncts = "";
+                        // prepuncts
+                        while (startIdx < (value.length - 1) && punctsSource.indexOf(value.charAt(startIdx)) > -1) {
+                            prepuncts += value.charAt(startIdx);
+                            startIdx++;
+                        }
+                        // follpuncts
+                        while (endIdx > 0 && punctsSource.indexOf(value.charAt(endIdx - 1)) > -1) {
+                            follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
+                            endIdx--;
+                        }
+                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        // recreate the sourcephrase
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: RetTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
                             phObj.set('markers', selectedObj.get('markers'), {silent: true});
