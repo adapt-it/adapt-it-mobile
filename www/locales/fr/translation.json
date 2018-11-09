@@ -255,6 +255,7 @@
         "lblBookName": "Nom du livre:",
         "lblCopyClipboardText": "Texte du presse-papiers...",
         "lblText": "Texte",
+        "lblShowPreviewBtn": "Bouton de prévisualisation",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

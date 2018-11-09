@@ -559,6 +559,14 @@ ul {
     padding: 0;
 }
 
+.topcoat-icon--preview {
+    background: url("images/preview.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
 .topcoat-icon--item-add {
     background: url("images/plus_pill.svg") no-repeat;
     -webkit-background-size: cover;
@@ -729,6 +737,14 @@ select.docNav {
 .strip {
     display: block; 
 }
+/* preview mode (target display only) */
+div.preview div.marker, div.preview div.source, div.preview div.filter {
+    display: none;
+}
+div.preview div.block-height {
+    height: 30px;
+    line-height: 30px;
+}
 /* standard height for a pile / strip-header / chapter-number / filter:
 *  gets overridden by a "real" computed height in addStyleRules (AdaptViews) */
 /*
@@ -754,6 +770,9 @@ select.docNav {
     /* vertical placement needs to be lined up with the source line */
     line-height: normal;
     padding-top: 22px;
+}
+.preview .verse-number {
+    padding-top:inherit;
 }
 .ui-selecting {
     background-color: rgb(116, 183, 241);
@@ -798,6 +817,16 @@ select.docNav {
     border-radius: 6px;
     box-shadow: 0 0 0 2px #6fb5f1;
     color: #454545;
+}
+.preview .target {
+    color: inherit;
+}
+.preview .target:focus {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    color: inherit;
 }
 .cases {
     font-size: 1.1rem;
@@ -1228,7 +1257,7 @@ typeahead styles
     box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
     display: none;
     position: fixed;
-    right: 103px;
+    right: 102px; /* overwritten in AdaptViews */
     z-index: 2147483647; /* on top */
 }
 .dropdown:after, .dropdown:before {

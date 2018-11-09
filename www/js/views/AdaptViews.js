@@ -56,6 +56,7 @@ define(function (require) {
         isPhrase = false,
         isDrafting = true,
         isSelectingFirstPhrase = false,
+        isMergingFromKB = false,
         isAutoPhrase = false,
         isSelectingKB = false,  // is the user working with a select target text dropdown?
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
@@ -70,9 +71,11 @@ define(function (require) {
         origText = "",
         lastPile = null,
         isLongPressSelection = false,
+        inPreview = false,
         LongPressSectionStart = null,
         longPressTimeout = null,
         lastOffset = 0,
+        ONE_SPACE = " ",
         
         /////
         // Static methods
@@ -314,6 +317,33 @@ define(function (require) {
             theRule += totalHeight + "px; ";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // preview (w/o marker and source lines)
+            theRule = "div.preview div.block-height {";
+            theRule += "height: ";
+            // total height = source + target + (20px extra space)
+            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+            theRule += totalHeight + "px; ";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // is the preview button enabled?
+            if (localStorage.getItem("ShowPreviewBtn") && localStorage.getItem("ShowPreviewBtn") === "true") {
+                theRule = "#PreviewBtn {display: inline-block;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".dropdown {right:153px;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                // on the smallest screens, there's not enough width -- show the preview button instead of the help button
+                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: none;}";
+                theRule += ".dropdown {right:102px;}}"; // dropdown is in the normal place
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+            } else {
+                theRule = "#PreviewBtn {display: none;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = ".dropdown {right:102px;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: inline-block;}";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+            }
+
             // Special Text color
             theRule = "div.strip.specialtext div.source {";
             theRule += "color: " + project.get('SpecialTextColor') + ";";
@@ -626,11 +656,11 @@ define(function (require) {
                 return theString;
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
-            // This method currently strips out all punctuation to match the words; a null is returned
-            // if there is no entry in the KB
+            // Params: key -- lookup key for the KB
             findInKB: function (key) {
-                var result = null; //, strNoPunctuation = key.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                var result = null;
                 try {
+                    // we're looking for an exact match ONLY
                     result = kblist.findWhere({'source': key}); // strNoPunctuation});
                     if (typeof result === 'undefined') {
                         return null;
@@ -639,6 +669,60 @@ define(function (require) {
                     console.log(err);
                 }
                 return result;
+            },
+            // helper method to check for a possible partial phrase match in the KB
+            // Params: key -- single pile to check for a possible partial match (e.g., the first word in a phrase that's in the KB)
+            possibleKBPhrase: function (key) {
+                var aryFilter = null;
+                aryFilter = kblist.filter(function(element) {
+                    return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
+                });
+                return (aryFilter.length !== 0); 
+            },
+            // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
+            // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
+            // Returns: last source phrase (corresponds to selectedEnd when merging)
+            findLargestPhrase: function (pile) {
+                var sourceText = "",
+                    tu = "",
+                    exactMatch = pile,
+                    thisObj = pile,
+                    tmpStr = "",
+                    nextObj = pile;
+                // find the source
+                console.log("findLargestPhrase: entry");
+                sourceText = $(pile).children('.source').html();
+                // initial values
+                idxStart = $(pile).index();
+                idxEnd = idxStart;
+                // run until we hit the end of the strip OR we don't match anything
+                while (tu !== null && nextObj !== null) {
+                    // move to the next pile and append the source
+                    nextObj = thisObj.nextElementSibling;
+                    if (nextObj !== null) {
+                        tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
+                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
+                        // is there a match for this phrase?
+                        tu = kblist.filter(function(element) {
+                            return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
+                        });
+                        if (tu.length > 0) {
+                            // we did a "fuzzy" match (i.e., indexOf) and got some results. Is this an exact match of a KB entry?
+                            if (kblist.findWhere({'source': sourceText}) !== 'undefined') {
+                                // this is an exact match -- move the indices and see if we can get a bigger phrase
+                                exactMatch = nextObj;
+                                idxEnd = $(nextObj).index();                            
+                            }
+                            // even if our exace match test failed, we got a partial match earlier -- so it's possible that
+                            // there'a bigger phrase that matches. Keep appending piles...
+                            thisObj = nextObj;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                // return our last known "good" ID (possibly our first ID if we didn't find anything)
+                return exactMatch;
             },
             // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
             // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
@@ -653,7 +737,6 @@ define(function (require) {
                 var temp_cursor = null;
                 var keep_going = true;
                 var top = 0;
-                var selection = null;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -798,6 +881,7 @@ define(function (require) {
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
+                    selectedEnd = selectedStart = next_edit;
                     $(next_edit).find(".target").focus();
                     $(next_edit).find(".target").mouseup();
                 } else {
@@ -846,8 +930,10 @@ define(function (require) {
                 isPlaceholder = false;
                 isPhrase = false;
                 isRetranslation = false;
+                LongPressSectionStart = null;
+                isLongPressSelection = false;
 
-                $("div").removeClass("ui-selecting ui-selected");
+                $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
                 $("#Placeholder").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
@@ -880,6 +966,10 @@ define(function (require) {
             
             // user is starting to select one or more piles
             selectingPilesStart: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("selectingPilesStart: " + $(event.target).attr('id'));
                 // long press function for selection start
                 longPressTimeout = window.setTimeout(function () {
@@ -938,6 +1028,10 @@ define(function (require) {
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 if (isRetranslation === true) {
                     return; // cannot select other items
                 }
@@ -999,6 +1093,10 @@ define(function (require) {
             },
             // user double-tapped on the Pile element -- select the entire strip
             onDblTapPile: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("onDblTapPile");
                 selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
                 selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
@@ -1016,6 +1114,10 @@ define(function (require) {
             },
             // user released the mouse here (or the focus was set here -- see iOS comment below)
             selectingPilesEnd: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("selectingPilesEnd");
                 clearTimeout(longPressTimeout); // don't need to wait for the long press here
                 // re-add the contenteditable fields
@@ -1323,7 +1425,7 @@ define(function (require) {
                     });
                     // get the source text being filtered out
                     $(this).find(".source").each(function (idx, elt) {
-                        filteredText += elt.innerHTML.trim() + " ";
+                        filteredText += elt.innerHTML.trim() + ONE_SPACE;
                     });
                     // push new object onto Filters array
                     aryFilters.push({
@@ -1339,6 +1441,10 @@ define(function (require) {
             },
             // mouseDown / touchStart event handler for the target field
             selectingAdaptation: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 if (selectedStart !== null) {
                     console.log("selectingAdaptation: old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
@@ -1366,6 +1472,10 @@ define(function (require) {
                     foundInKB = false;
 //                console.log("selectedAdaptation entry / event type:" + event.type);
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 
                 // case where user lifted finger on the target instead of the pile
                 if (isSelecting === true || isLongPressSelection === true) {
@@ -1415,6 +1525,24 @@ define(function (require) {
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
+                    // Auto-merge handling
+                    if (isMergingFromKB === true) {
+                        // just finished merging -- reset the flag and continue
+                        isMergingFromKB = false;
+                    } else {
+                        // check for a possible KB phrase that needs merging
+                        if ((this.possibleKBPhrase(this.autoRemoveCaps(sourceText, true)) === true) && (selectedEnd === selectedStart)) {
+                            // we have a possible phrase -- see if it's a real one
+                            selectedEnd = this.findLargestPhrase(selectedStart);
+                            if (selectedEnd !== selectedStart) {
+                                isMergingFromKB = true;
+                                // found a merge candidate -- merge it
+                                this.togglePhrase(event);
+                                //$("#Phrase").trigger("click");
+                                return; // get out -- we'll come back in once the phrase merge happens
+                            }
+                        }
+                    }
                     tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
@@ -1663,6 +1791,10 @@ define(function (require) {
             editAdaptation: function (event) {
                 var strID = null,
                     model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("editAdaptation");
                 if (event.keyCode === 27) {
                     // Escape key pressed -- cancel the edit (reset the content) and blur
@@ -1716,6 +1848,10 @@ define(function (require) {
             },
             // User clicked on the Undo button.
             onUndo: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("onUndo: entry");
                 // find the model object associated with this edit field
                 var strID = $(lastPile).attr('id');
@@ -1751,13 +1887,16 @@ define(function (require) {
             // User has moved out of the current adaptation input field (blur on target field)
             // this can be called either programatically (tab / shift+tab keydown response) or
             // by a selection of something else on the page.
-            // This method updates the KB and model (AI Document) if they have any changes, and
-            // removes the content editable field in the UI.
+            // This method updates the KB and model (AI Document) if they have any changes.
             unselectedAdaptation: function (event) {
                 var value = null,
                     trimmedValue = null,
                     strID = null,
                     model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
                 console.log("unselectedAdaptation: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
                 if (isSelectingKB === true) {
                     isSelectingKB = false;
@@ -1848,12 +1987,12 @@ define(function (require) {
                     // get the verse #
                     var stridx = model.get('markers').indexOf("\\v ") + 3;
                     var verseNum = "";
-                    if (model.get('markers').lastIndexOf(" ") < stridx) {
+                    if (model.get('markers').lastIndexOf(ONE_SPACE) < stridx) {
                         // no space after the verse # (it's the ending of the string)
                         verseNum = model.get('markers').substr(stridx);
                     } else {
                         // space after the verse #
-                        verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(" ", stridx) - stridx);
+                        verseNum = model.get('markers').substr(stridx, model.get('markers').indexOf(ONE_SPACE, stridx) - stridx);
                     }
                     console.log("Adapting verse: " + verseNum);
                     chapter.set('lastadapted', verseNum);
@@ -1882,6 +2021,23 @@ define(function (require) {
                 }
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
+            },
+            // user clicked on the Preview (toggle) button -- enable or disable
+            // preview / target only mode
+            togglePreview: function (event) {
+                if (inPreview === true) {
+                    // turn off preview mode
+                    $("#chapter").removeClass("preview");
+                    $(".target").prop('contenteditable', true); // set target to read-write
+                    inPreview = false;
+                } else {
+                    // clear out any selections
+                    this.clearSelection();
+                    // turn on preview mode
+                    $("#chapter").addClass("preview");
+                    $(".target").prop('contenteditable', false); // set target to read-only
+                    inPreview = true;
+                }
             },
             // User clicked on the Placeholder button
             togglePlaceholder: function (event) {
@@ -1960,6 +2116,8 @@ define(function (require) {
                     phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
+                    prepuncts = "",
+                    follpuncts = "",
                     origTarget = "",
                     nOrder = 0.0,
                     phObj = null,
@@ -1984,8 +2142,8 @@ define(function (require) {
                             // concatenate the source and target into single phrases
                             // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
                             if (index > idxStart) {
-                                phraseSource += " ";
-                                phraseTarget += " ";
+                                phraseSource += ONE_SPACE;
+                                phraseTarget += ONE_SPACE;
                                 origTarget += "|";
                             }
                             phraseMarkers += $(value).children(".marker").text();
@@ -2004,9 +2162,20 @@ define(function (require) {
                             }
                         }
                     });
+                    // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
+                    // get prepuncts from the selected start
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    prepuncts = selectedObj.get('prepuncts');
+                    // get follpuncts from the selected end
+                    strID = $(selectedEnd).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2015,22 +2184,32 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
+                    //saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
-                    // target div (only if the user didn't auto-create the phrase by typing after a selection)
-                    console.log("isAutoPhrase: " + isAutoPhrase);
-                    if (isAutoPhrase === false) {
-                        // if there's something already in the target, use it instead
-                        phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                        isDirty = false; // don't save (original sourcephrase is now gone)
-                    } else {
-                        // autophrase -- add the target for the selected start ONLY
-                        phraseHtml += $(selectedStart).find(".target").html();
-                        isDirty = true; // save
-                    }
-                    isAutoPhrase = false; // clear the autophrase flag
+                    // if we're merging because of our lookahead KB parse, skip adding the target -- we want to 
+                    // populate the target from the KB instead
+                    if (isMergingFromKB === false) {
+                        // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
+                        // is there something in the KB that matches this phrase?
+                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true))) === null) {
+                            // nothing in the KB -- 
+                            // next check is to see if the user selected a phrase and
+                            // started typing (isAutoPhrase). If so, only add the target from the selected start
+                            console.log("isAutoPhrase: " + isAutoPhrase);
+                            if (isAutoPhrase === false) {
+                                // if there's something already in the target, use it instead
+                                phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                                isDirty = false; // don't save (original sourcephrase is now gone)
+                            } else {
+                                // autophrase -- add the target for the selected start ONLY
+                                phraseHtml += $(selectedStart).find(".target").html();
+                                isDirty = true; // save
+                            }
+                            isAutoPhrase = false; // clear the autophrase flag
+                        }
+                    } 
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
@@ -2065,17 +2244,39 @@ define(function (require) {
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
+                    var startIdx = 0,
+                        endIdx = 0,
+                        theSource = "";
+                    
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
-                    selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
-                        phraseTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: phraseTarget, chapterid: selectedObj.get('chapterid')});
+                        phraseTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
+                        // pull out any prepuncts / follpuncts from the value
+                        // reset counters and temp vars
+                        startIdx = 0;
+                        endIdx = value.length;
+                        prepuncts = "";
+                        follpuncts = "";
+                        // prepuncts
+                        while (startIdx < (value.length - 1) && punctsSource.indexOf(value.charAt(startIdx)) > -1) {
+                            prepuncts += value.charAt(startIdx);
+                            startIdx++;
+                        }
+                        // follpuncts
+                        while (endIdx > 0 && punctsSource.indexOf(value.charAt(endIdx - 1)) > -1) {
+                            follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
+                            endIdx--;
+                        }
+                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        // recreate the sourcephrase
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
                             phObj.set('markers', selectedObj.get('markers'), {silent: true});
@@ -2123,6 +2324,8 @@ define(function (require) {
                     RetTarget = "",
                     nOrder = 0.0,
                     origTarget = "",
+                    prepuncts = "",
+                    follpuncts = "",
                     phObj = null,
                     strID = null,
                     bookID = null,
@@ -2144,8 +2347,8 @@ define(function (require) {
                             // concatenate the source and target into single Retranslations
                             // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
                             if (index > idxStart) {
-                                RetSource += " ";
-                                RetTarget += " ";
+                                RetSource += ONE_SPACE;
+                                RetTarget += ONE_SPACE;
                                 origTarget += "|";
                             }
                             retMarkers += $(value).children(".marker").text();
@@ -2154,9 +2357,20 @@ define(function (require) {
                             origTarget += $(value).children(".target").html();
                         }
                     });
+                    // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
+                    // get prepuncts from the selected start
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    prepuncts = selectedObj.get('prepuncts');
+                    // get follpuncts from the selected end
+                    strID = $(selectedEnd).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: RetSource, target: RetSource, orig: origTarget});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2202,17 +2416,38 @@ define(function (require) {
                 } else {
                     // selection is a retranslation -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
+                    var startIdx = 0,
+                        endIdx = 0,
+                        theSource = "";
                     bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
                     nOrder = selectedObj.get('norder');
                     origTarget = selectedObj.get("orig").split("|");
-                    selectedObj.get("source").split(" ").forEach(function (value, index) {
+                    selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
                         newID = Underscore.uniqueId();
-                        RetTarget = (index >= origTarget.length) ? " " : origTarget[index];
-                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: value, target: RetTarget, chapterid: selectedObj.get('chapterid')});
+                        RetTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
+                        // pull out any prepuncts / follpuncts from the value
+                        // reset counters and temp vars
+                        startIdx = 0;
+                        endIdx = value.length;
+                        prepuncts = "";
+                        follpuncts = "";
+                        // prepuncts
+                        while (startIdx < (value.length - 1) && punctsSource.indexOf(value.charAt(startIdx)) > -1) {
+                            prepuncts += value.charAt(startIdx);
+                            startIdx++;
+                        }
+                        // follpuncts
+                        while (endIdx > 0 && punctsSource.indexOf(value.charAt(endIdx - 1)) > -1) {
+                            follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
+                            endIdx--;
+                        }
+                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        // recreate the sourcephrase
+                        phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: RetTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
                             phObj.set('markers', selectedObj.get('markers'), {silent: true});
@@ -2325,6 +2560,7 @@ define(function (require) {
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
+                "click #preview": "togglePreview",
                 "click #help": "onHelp"
             },
             UndoClick: function (event) {
@@ -2425,6 +2661,15 @@ define(function (require) {
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
+            togglePreview: function (event) {
+                // dismiss the More (...) menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.togglePreview(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
                 // dismiss the More (...) menu if visible
@@ -2453,7 +2698,7 @@ define(function (require) {
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
-            // User clicked away from
+            // User clicked on a blank area of the screen
             unselectPiles: function (event) {
                 // dismiss the More (...) menu if visible
                 if ($("#MoreActionsMenu").hasClass("show")) {

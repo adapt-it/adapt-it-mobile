@@ -255,6 +255,7 @@
         "lblBookName": "Book Name:",
         "lblCopyClipboardText": "Clipboard text...",
         "lblText": "Text",
+        "lblShowPreviewBtn": "Show Preview Button",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

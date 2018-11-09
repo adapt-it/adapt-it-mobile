@@ -820,6 +820,11 @@ define(function (require) {
                 } else {
                     $("#WrapAtMarker").prop("checked", true); // default is selected
                 };
+                if (localStorage.getItem("ShowPreviewBtn")) {
+                    $("#ShowPreviewBtn").prop("checked", localStorage.getItem("ShowPreviewBtn") === "true");
+                } else {
+                    $("#ShowPreviewBtn").prop("checked", false); // default is false (hidden)
+                };
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
                     $('#language').val(localStorage.getItem("UILang"));
@@ -1086,6 +1091,7 @@ define(function (require) {
                 case 9: // editor and UI language
                     localStorage.setItem(("CopySource"), $("#CopySource").is(":checked") ? true : false);
                     localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
+                    localStorage.setItem(("ShowPreviewBtn"), $("#ShowPreviewBtn").is(":checked") ? true : false);
                     if ($("#customLanguage").is(":checked")) {
                         // Use a custom language
                         loc = $('#language').val();

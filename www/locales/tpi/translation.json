@@ -255,6 +255,7 @@
         "lblBookName": "Buk nem:",
         "lblCopyClipboardText": "Kopim klipbot teks...",
         "lblText": "Teks",
+        "lblShowPreviewBtn": "Soim luksave baten",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
