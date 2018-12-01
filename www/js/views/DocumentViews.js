@@ -22,6 +22,7 @@ define(function (require) {
         tplImportVerify = require('text!tpl/ImportVerify.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
         tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
+        tplExportDestination = require('text!tpl/ExportDestination.html'),
         projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
@@ -45,6 +46,16 @@ define(function (require) {
         deferreds       = [],
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
                                     // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
+        // this is the complete list of currently supported params you can pass to the plugin (all optional)
+        shareOptions = {
+            message: '', // not supported on some apps (Facebook, Instagram)
+            subject: '', // fi. for email
+            files: [], // an array of filenames either locally or remotely
+            url: '',
+            chooserTitle: '', // Android only, you can override the default share sheet title,
+            appPackageName: '' // Android only, you can provide id of the App you want to share with
+        },
+        
         FileTypeEnum    = {
             TXT: 1,
             USFM: 2,
@@ -1441,10 +1452,22 @@ define(function (require) {
             var exportDirectory = "";
             var subdir = "AIM_Exports_";
             var tabLevel = 0;
-            
+            var onShareSuccess = function (result) {
+              console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+              console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+            };
+            var onShareError = function (msg) {
+              console.log("Sharing failed with message: " + msg);
+            };
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
+                // fill sharing info
+                shareOptions.files.subject = i18n.t("view.lblExport");
+                shareOptions.files.message = i18n.t("view.dscFile", {file: filename});
+                shareOptions.files.push(subdir + "/" + filename);
+                window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);         
+
                 // update status
                 if (isClipboard === true) {
                     // just tell the user it succeeded
@@ -2654,7 +2677,7 @@ define(function (require) {
                 }
             },
             // Handler for the OK button -- just returns to the home screen.
-            onOK: function (event) {
+            onOK: function () {
                 // update the book name if necessary
                 if ($("#BookName") && $("#BookName").val() !== bookName) {
                     // name change -- update all the things
@@ -2686,6 +2709,7 @@ define(function (require) {
                 this.model.save();
                 window.Application.currentProject = this.model;
                 bookName = ""; // clear out book name data
+
                 // head back to the home page
                 window.history.back();
             },
@@ -2830,7 +2854,7 @@ define(function (require) {
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
             },
-            
+
             ////
             // Event Handlers
             ////
@@ -2858,11 +2882,11 @@ define(function (require) {
                     $("#mobileSelect").scrollTop(top);
                 }
             },
-            blurFilename: function (event) {
+            blurFilename: function () {
                 $("#mobileSelect").scrollTop(0);
             },
             // User changed the export format type. Add the appropriate extension
-            changeType: function (event) {
+            changeType: function () {
                 // strip any existing trailing extension from the filename
                 var filename = $("#Filename").val().trim();
                 if (filename.length > 0) {
@@ -2884,14 +2908,14 @@ define(function (require) {
                 // replace the filename text
                 $("#Filename").val(filename);
             },
-            onToFile: function (event) {
+            onToFile: function () {
                 console.log("File selected");
                 $("#toFile").prop("checked", true);
                 this.destination = DestinationEnum.FILE;
                 // show the filename UI -- need to specify a filename
                 $("#grpFilename").show();
             },
-            onToClipboard: function (event) {
+            onToClipboard: function () {
                 console.log("Clipboard selected");
                 $("#toClipboard").prop("checked", true);
                 this.destination = DestinationEnum.CLIPBOARD;
@@ -2899,7 +2923,7 @@ define(function (require) {
                 $("#grpFilename").hide();
             },
             // User clicked the OK button. Export the selected document to the specified format.
-            onOK: function (event) {
+            onOK: function () {
                 if ($("#exportXML").length === 0) {
                     // if this is the export complete page,
                     // go back to the previous page
@@ -2945,7 +2969,7 @@ define(function (require) {
                 }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
-            onCancel: function (event) {
+            onCancel: function () {
                 // go back to the previous page
                 window.history.go(-1);
             },
@@ -2971,15 +2995,17 @@ define(function (require) {
                 $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
-                var list = "";
-                var pid = this.model.get('projectid');
+//                var list = "";
+//                var pid = this.model.get('projectid');
                 // initial selection - file export
                 $("#toFile").prop("checked", true);
-                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
-                    list = buildDocumentList(pid);
-                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
-                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
-                }));
+                $("#Container").html(Handlebars.compile(tplExportDestination));
+//                
+//                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+//                    list = buildDocumentList(pid);
+//                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
+//                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+//                }));
             }
         });
     
