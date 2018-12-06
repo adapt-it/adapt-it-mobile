@@ -2863,8 +2863,8 @@ define(function (require) {
                 "mouseup #Filename": "editFilename",
                 "blur #Filename": "blurFilename",
                 "change .topcoat-radio-button": "changeType",
-                "click #btnToClipboard": "onToClipboard",
-                "click #btnToFile": "onToFile",
+                "click #toClipboard": "onToClipboard",
+                "click #toFile": "onToFile",
                 "click #OK": "onOK",
                 "click #Cancel": "onCancel"
             },
@@ -2909,18 +2909,29 @@ define(function (require) {
                 $("#Filename").val(filename);
             },
             onToFile: function () {
+                var list = "";
+                var pid = this.model.get('projectid');
                 console.log("File selected");
-                $("#toFile").prop("checked", true);
+                // set the destination to File
                 this.destination = DestinationEnum.FILE;
-                // show the filename UI -- need to specify a filename
-                $("#grpFilename").show();
+                // build and display the book selection list
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+                    list = buildDocumentList(pid);
+                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
+                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                }));
             },
             onToClipboard: function () {
+                var list = "";
+                var pid = this.model.get('projectid');
                 console.log("Clipboard selected");
-                $("#toClipboard").prop("checked", true);
                 this.destination = DestinationEnum.CLIPBOARD;
-                // hide the filename UI -- not needed
-                $("#grpFilename").hide();
+                // build and display the book selection list
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+                    list = buildDocumentList(pid);
+                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
+                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                }));
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function () {

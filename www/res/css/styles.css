@@ -1023,11 +1023,11 @@ span.sprite{
 	background-repeat: no-repeat;
     background-size: contain;
     display: inline-block;
-    height: 28px;
+    height: 25px;
     margin-left: 6px;
     margin-right: 6px;
     vertical-align: sub;
-    width: 28px;
+    width: 25px;
 }
 .btn-file{
 	background-image: url("../svg/file.svg");
@@ -1035,11 +1035,11 @@ span.sprite{
 	background-repeat: no-repeat;
     background-size: contain;
     display: inline-block;
-    height: 28px;
+    height: 25px;
     margin-left: 6px;
     margin-right: 6px;
     vertical-align: sub;
-    width: 28px;
+    width: 25px;
 }
 .btn-newproject{
 	background-image: url("../svg/project-new.svg");
@@ -1093,10 +1093,6 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
-.btn-project span.sprite{
-	background-image: url("../svg/share.svg");
-    background-size: 48px 48px;
-}
 .btn-settings{
 	background-image: url("../svg/settings.svg");
     background-position: center;
@@ -1108,10 +1104,6 @@ span.sprite{
     margin-right: 6px;
     vertical-align: sub;
     width: 25px;
-}
-.btn-status span.sprite{
-	background-image: url("images/status.png");
-    background-size: 48px 48px;
 }
 .btn-adapt{
 	background-image: url("../svg/pencil.svg");
