@@ -983,8 +983,6 @@ ul.btns {
     border: none;
 }
 span.txt {
-    display: inline-block;
-    float: left;
 /*    padding-left: 32px;*/
 /*    word-wrap: normal;*/
 }
@@ -1019,21 +1017,53 @@ span.sprite{
     height: 32px;
     width: 32px;
 }
-.btn-newproject span.sprite{
+.btn-clipboard{
+	background-image: url("../svg/clipboard.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
+}
+.btn-file{
+	background-image: url("../svg/file.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
+}
+.btn-newproject{
 	background-image: url("../svg/project-new.svg");
-    background-size: 25px 25px;
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
 }
-.btn-copyproject span.sprite{
+.btn-copyproject{
 	background-image: url("../svg/project-copy.svg");
-    background-size: 25px 25px;
-}
-.btn-clipboard span.sprite{
-	background-image: url("images/clipboard.svg");
-    background-size: 25px 25px;
-}
-.btn-file span.sprite{
-	background-image: url("images/file.svg");
-    background-size: 25px 25px;
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
 }
 .btn-search{
 	background-image: url("../svg/search.svg");

@@ -6,13 +6,9 @@
     <div class="welcome-title">
         <h1>{{ t 'view.ttlGetStarted'}}</h1>
         <h2>{{ t 'view.dscGetStarted' }}</h2>
-        <ul class="btns">
-            <li id="newproject" class="light-bg">
-                <a class="btn-newproject no-bg" href="#project" title="{{ t 'view.dscCreateProject'}}"><span class="sprite">&nbsp;</span><span class="txt">{{ t 'view.dscCreateProject'}}</span></a>
-        </li>
-            <li id="copyproject" class="light-bg">
-                <a class="btn-copyproject no-bg" href="#copy" title="{{ t 'view.dscCopyProject'}}"><span class="sprite">&nbsp;</span><span class="txt">{{ t 'view.dscCopyProject'}}</span></a>
-        </li>
-        </ul>
+        <ul class="chapter-list topcoat-list__container" id="ProjectItems">
+        <li class="topcoat-list__item" style="border:none;"><a class="big-link bg-blue" id="settings" title="{{ t 'view.dscCreateProject'}}" href="#project"><span class="btn-newproject"></span>{{ t 'view.lblCreateProject'}}</a></li>
+        <li class="topcoat-list__item" style="border:none;"><a class="big-link bg-blue" id="import" title="{{ t 'view.dscCopyProject'}}" href="#copy"><span class="btn-copyproject"></span>{{ t 'view.lblCopyProject'}}</a></li>
+        </ul>        
     </div>
 </div>
