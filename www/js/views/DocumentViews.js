@@ -1462,12 +1462,14 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
-                // fill sharing info
-                shareOptions.files.subject = i18n.t("view.lblExport");
-                shareOptions.files.message = i18n.t("view.dscFile", {file: filename});
-                shareOptions.files.push(subdir + "/" + filename);
-                window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);         
-
+                if (isClipboard === false && window.sqlitePlugin) {
+                    // mobile device, going to a file. Show the sharing dialog...
+                    // fill sharing info
+                    shareOptions.files.subject = i18n.t("view.lblExport");
+                    shareOptions.files.message = i18n.t("view.dscFile", {file: filename});
+                    shareOptions.files.push(subdir + "/" + filename);
+                    window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);         
+                }
                 // update status
                 if (isClipboard === true) {
                     // just tell the user it succeeded
@@ -2908,6 +2910,7 @@ define(function (require) {
                 // replace the filename text
                 $("#Filename").val(filename);
             },
+            // User selected export to a file
             onToFile: function () {
                 var list = "";
                 var pid = this.model.get('projectid');
@@ -2921,6 +2924,7 @@ define(function (require) {
                     $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
                 }));
             },
+            // User selected the clipboard 
             onToClipboard: function () {
                 var list = "";
                 var pid = this.model.get('projectid');
@@ -2993,11 +2997,10 @@ define(function (require) {
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // select a default of TXT for the export format (for now)
                 $("#exportTXT").prop("checked", true);
-                $("#toFile").prop("checked", true);
-                if (window.sqlitePlugin) {
-                    // mobile device -- show clipboard option
-                    $("#clipboardTab").removeClass('hide');
-                }
+                // if this is going to the clipboard, we don't need a filename
+                if (this.destination === DestinationEnum.CLIPBOARD) {
+                    $("#grpFilename").hide(); 
+                }  
                 if (bookName.length > 0) {
                     if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
                         bookName = bookName.substr(0, bookName.length - 4);
@@ -3006,17 +3009,21 @@ define(function (require) {
                 $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
-//                var list = "";
-//                var pid = this.model.get('projectid');
-                // initial selection - file export
-                $("#toFile").prop("checked", true);
-                $("#Container").html(Handlebars.compile(tplExportDestination));
-//                
-//                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
-//                    list = buildDocumentList(pid);
-//                    $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
-//                    $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
-//                }));
+                if (window.sqlitePlugin) {
+                    // on mobile device -- need to ask the user whether they want to export
+                    // to the clipboard or to a file (which also allows for social sharing)
+                    $("#Container").html(Handlebars.compile(tplExportDestination));
+                } else {
+                    // in browser -- can only export to a file
+                    var list = "";
+                    var pid = this.model.get('projectid');
+                    this.destination = DestinationEnum.FILE;
+                    $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
+                        list = buildDocumentList(pid);
+                        $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
+                        $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                    }));
+                }
             }
         });
     

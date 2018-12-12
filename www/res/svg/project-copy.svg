@@ -15,7 +15,7 @@
    id="svg249"
    sodipodi:version="0.32"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="project-copy2.svg"
+   sodipodi:docname="project-copy.svg"
    inkscape:export-filename="C:\dev\adaptit\res\16x16\text-ai.png"
    inkscape:export-xdpi="30"
    inkscape:export-ydpi="30"
@@ -25,18 +25,6 @@
      id="title3024">Copy Adapt It Mobile project</title>
   <defs
      id="defs3">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient870">
-      <stop
-         style="stop-color:#279ed8;stop-opacity:1"
-         offset="0"
-         id="stop866" />
-      <stop
-         style="stop-color:#279ed8;stop-opacity:1"
-         offset="1"
-         id="stop868" />
-    </linearGradient>
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 24 : 1"
@@ -164,15 +152,6 @@
          offset="1.0000000"
          id="stop12514" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient870"
-       id="linearGradient876"
-       x1="27.5"
-       y1="10.75"
-       x2="27.25"
-       y2="45.25"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -182,14 +161,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="-19.893885"
+     inkscape:cx="-58.625"
      inkscape:cy="8.0416437"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1167"
-     inkscape:window-height="712"
+     inkscape:window-width="1333"
+     inkscape:window-height="756"
      inkscape:window-x="78"
      inkscape:window-y="0"
      inkscape:showpageshadow="false"
@@ -235,7 +214,7 @@
      inkscape:groupmode="layer"
      style="display:inline">
     <path
-       style="color:#000000;display:block;overflow:visible;visibility:visible;fill:#1f7ba5;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:3.5154109;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none"
+       style="color:#000000;display:block;overflow:visible;visibility:visible;fill:#b26200;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:3.5154109;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none"
        d="M 5.78125 1.7578125 C 5.2136835 1.7578125 4.7578125 2.2136835 4.7578125 2.78125 L 4.7578125 37.21875 C 4.7578125 37.786317 5.2136835 38.242188 5.78125 38.242188 L 12.757812 38.242188 L 12.757812 10.78125 C 12.757812 10.213683 13.213683 9.7578125 13.78125 9.7578125 L 35.242188 9.7578125 L 35.242188 2.78125 C 35.242188 2.2136835 34.786317 1.7578125 34.21875 1.7578125 L 5.78125 1.7578125 z "
        id="rect15391" />
     <rect
@@ -245,7 +224,7 @@
        height="36.484589"
        width="30.484589"
        id="rect15391-7-9-7"
-       style="color:#000000;display:block;overflow:visible;visibility:visible;fill:url(#linearGradient876);fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:3.5154109;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none" />
+       style="color:#000000;display:block;overflow:visible;visibility:visible;fill:#ff8c00;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:3.5154109;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none" />
   </g>
   <g
      inkscape:groupmode="layer"
