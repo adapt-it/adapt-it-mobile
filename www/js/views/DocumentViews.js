@@ -76,7 +76,7 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             for (i = 0; i < entries.length; i++) {
-                str += "<li class='topcoat-list__item' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
+                str += "<li class='topcoat-list__item docListItem' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
             }
             return str;
         },
@@ -1465,9 +1465,9 @@ define(function (require) {
                 if (isClipboard === false && window.sqlitePlugin) {
                     // mobile device, going to a file. Show the sharing dialog...
                     // fill sharing info
-                    shareOptions.files.subject = i18n.t("view.lblExport");
-                    shareOptions.files.message = i18n.t("view.dscFile", {file: filename});
-                    shareOptions.files.push(subdir + "/" + filename);
+                    shareOptions.subject = i18n.t("view.lblExport");
+                    shareOptions.message = i18n.t("view.dscFile", {file: filename});
+                    shareOptions.files.push(exportDirectory + subdir + "/" + filename);
                     window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);         
                 }
                 // update status
@@ -2861,7 +2861,7 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
-                "click .topcoat-list__item": "selectDoc",
+                "click .docListItem": "selectDoc",
                 "mouseup #Filename": "editFilename",
                 "blur #Filename": "blurFilename",
                 "change .topcoat-radio-button": "changeType",
