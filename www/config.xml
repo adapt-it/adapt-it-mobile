@@ -9,6 +9,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <preference name="cordova.plugins.diagnostic.modules" value="BLUETOOTH WIFI EXTERNAL_STORAGE" />
     <preference name="android-build-tool" value="gradle" />
     <preference name="phonegap-version" value="cli-7.1.0" />
     <preference name="Orientation" value="default" />

@@ -27,6 +27,7 @@
     "plist": "^1.2.0"
   },
   "dependencies": {
+    "cordova-android": "^7.1.4",
     "cordova-clipboard": "https://github.com/ihadeed/cordova-clipboard.git",
     "cordova-ios": "^4.5.5",
     "cordova-lib": "^7.1.0",
@@ -67,9 +68,9 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-whitelist": {},
       "cordova-sqlite-evcore-extbuild-free": {},
-      "cordova.plugins.diagnostic": {},
       "phonegap-plugin-mobile-accessibility": {},
-      "cordova-clipboard": {}
+      "cordova-clipboard": {},
+      "cordova.plugins.diagnostic": {}
     },
     "platforms": [
       "ios"
