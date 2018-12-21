@@ -4,6 +4,10 @@
   Dark blue: #1F7BA5; 
   lighter blue: #279ED8:
   Turquoise: #1dd8af;
+  - secondary colors
+  Cyan: #1ed6e2;
+  Orange: #ff8c00;
+  Burnt orange / brown: b26200;
 */
 /* embedded fonts */
 @font-face {
@@ -942,29 +946,37 @@ div.strip.specialtext div.source {
 /* from adapt-it-copy */
 ul.btns {
 	display: block;
-	list-style: disc;
-	margin: 0;
+	list-style: none;
+	margin: 6px;
 	overflow: hidden;
-    -webkit-padding-start: 8px;
-    -moz-padding-start: 8px;
+    padding-inline-start: 0px;
 } 
 .btns li {
-	float: left;
+    clear: none;
+    display: block;
 	list-style: none;
-    margin: 8px 0;
-    padding-right: 6px;
+    margin: 6px 8px;
+    padding: 6px;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #454545;
+    text-shadow: 0 1px #fff;
+    vertical-align: top;
+    background-color: #e5e9e8;
+    box-shadow: inset 0 1px #fff;
+    border: 1px solid #9daca9;
+    border-radius: 6px;
 }
 .btns li a {
     -webkit-appearance: none;
     -moz-appearance: none;
-	display: block;
-	padding: 64px 0 6px 0;
+	display: inline-block;
+	padding: 12px 6px 12px 6px;
 	position: relative;
-	/*height: 32px;*/
-	text-align: center;
 	text-decoration: none;
-/*    background: #DDE1E1;*/
-	width: 72px;
+    text-align: left;
+    width: 100%;
+    color: #454545;
 }
 .btns li :hover {
     color: black;
@@ -974,15 +986,13 @@ ul.btns {
 .btns li a :hover {
     border: none;
 }
-
-.btns li a .txt {
-    font-size: .8rem;
-    font-weight: 400;
-    height: 2em;
+span.txt {
+/*    padding-left: 32px;*/
+/*    word-wrap: normal;*/
 }
 .light-bg {
-    background-color: #eee;
-    border: 1px solid #999;
+    background-color: ghostwhite;
+    border: 1px solid #aaa;
 }
 .no-bg {
     background: transparent;
@@ -992,26 +1002,72 @@ ul.btns {
 .no-bg :hover {
     background-color: transparent;
 }
+/*
 .sprite {
-    background-position: center;
+    background-position: left;
 	background-repeat: no-repeat;
-	display: block;
-	margin: 8px 0 0 0;
+	display: inline-block;
+	margin: 0;
 	overflow: hidden;
 	position: absolute;
 }
+*/
 span.sprite{
-    height: 48px;
-    top: 0;
-    width: 72px;
+    background-position: left;
+	background-repeat: no-repeat;
+	display: block;
+    float: left;
+	margin: 0;
+    height: 32px;
+    width: 32px;
 }
-.btn-newproject span.sprite{
+.btn-clipboard{
+	background-image: url("../svg/clipboard.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-file{
+	background-image: url("../svg/file.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-newproject{
 	background-image: url("../svg/project-new.svg");
-    background-size: 48px 48px;
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
 }
-.btn-copyproject span.sprite{
+.btn-copyproject{
 	background-image: url("../svg/project-copy.svg");
-    background-size: 48px 48px;
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
 }
 .btn-search{
 	background-image: url("../svg/search.svg");
@@ -1041,10 +1097,6 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
-.btn-project span.sprite{
-	background-image: url("../svg/share.svg");
-    background-size: 48px 48px;
-}
 .btn-settings{
 	background-image: url("../svg/settings.svg");
     background-position: center;
@@ -1056,10 +1108,6 @@ span.sprite{
     margin-right: 6px;
     vertical-align: sub;
     width: 25px;
-}
-.btn-status span.sprite{
-	background-image: url("images/status.png");
-    background-size: 48px 48px;
 }
 .btn-adapt{
 	background-image: url("../svg/pencil.svg");

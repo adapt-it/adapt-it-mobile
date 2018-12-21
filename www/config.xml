@@ -9,6 +9,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <preference name="cordova.plugins.diagnostic.modules" value="BLUETOOTH WIFI EXTERNAL_STORAGE" />
     <preference name="android-build-tool" value="gradle" />
     <preference name="phonegap-version" value="cli-7.1.0" />
     <preference name="Orientation" value="default" />
@@ -20,19 +21,22 @@
     <preference name="SplashMaintainAspectRatio" value="false" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
-    <config-file mode="replace" parent="UISupportedInterfaceOrientations" platform="ios">
-        <array>
-            <string>UIInterfaceOrientationPortrait</string>
-            <string>UIInterfaceOrientationLandscapeLeft</string>
-            <string>UIInterfaceOrientationLandscapeRight</string>
-        </array>
-    </config-file>
-    <config-file mode="replace" parent="/manifest" platform="android">
-        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    </config-file>
     <icon src="icon.png" />
     <platform name="android">
+        <config-file mode="replace" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        </config-file>
+        <config-file mode="replace" parent="/manifest">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.txt" />
+            </intent-filter>
+        </config-file>
         <preference name="android-minSdkVersion" value="19" />
         <icon density="ldpi" src="res/icon/android/ldpi.png" />
         <icon density="mdpi" src="res/icon/android/mdpi.png" />
@@ -52,6 +56,147 @@
         <icon src="res/icon/blackberry/icon-150.png" />
     </platform>
     <platform name="ios">
+        <!-- doc type icon resources -->
+        <resource-file src="res/icon/ios/usfm_22.png" />
+        <resource-file src="res/icon/ios/usfm_44.png" />
+        <resource-file src="res/icon/ios/usfm_64.png" />
+        <resource-file src="res/icon/ios/usfm_320.png" />
+        <resource-file src="res/icon/ios/usx_22.png" />
+        <resource-file src="res/icon/ios/usx_44.png" />
+        <resource-file src="res/icon/ios/usx_64.png" />
+        <resource-file src="res/icon/ios/usx_320.png" />
+        <!-- doc types (4 of them; 2 standard, 2 custom (USX/USFM)) -->
+        <config-file mode="replace" parent="CFBundleDocumentTypes" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Text File</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>public.plain-text</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Adapt It XML File</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array>
+                        <string>usfm_22.png</string>
+                        <string>usfm_44.png</string>
+                        <string>usfm_64.png</string>
+                        <string>usfm_320.png</string>
+                    </array>
+                    <key>CFBundleTypeName</key>
+                    <string>USFM Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.adaptit.document.usfm</string>
+                        <string>org.adaptit.document.sfm</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array>
+                        <string>usx_22.png</string>
+                        <string>usx_44.png</string>
+                        <string>usx_64.png</string>
+                        <string>usx_320.png</string>
+                    </array>
+                    <key>CFBundleTypeName</key>
+                    <string>USX Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.adaptit.document.usx</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+        <config-file mode="replace" parent="UTExportedTypeDeclarations" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.text</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USFM Document</string>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adaptit.document.usfm</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usfm</string>
+                            <string>sfm</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/*</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USX Document</string>
+                    <key>UTTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adaptit.document.usx</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usx</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/xml</string>
+                    </dict>
+                </dict>
+            </array>
+        </config-file>
+        <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">
+            <array>
+                <string>UIInterfaceOrientationPortrait</string>
+                <string>UIInterfaceOrientationLandscapeLeft</string>
+                <string>UIInterfaceOrientationLandscapeRight</string>
+            </array>
+        </config-file>
+        <config-file mode="replace" parent="UIFileSharingEnabled" target="*-Info.plist">
+            <true />
+        </config-file>
+        <config-file mode="replace" parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
+            <false />
+        </config-file>
         <preference name="Orientation" value="all" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="StatusBarOverlaysWebView" value="true" />
@@ -92,6 +237,7 @@
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
     <plugin name="cordova-plugin-keyboard" spec="^1.2.0" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.0" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />

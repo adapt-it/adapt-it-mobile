@@ -119,6 +119,13 @@ define(function (require) {
                         });
                     }
                 }
+                // social sharing plugin / iPad popover coords
+                if (window.sqlitePlugin) {
+                    window.plugins.socialsharing.iPadPopupCoordinates = function() {
+                        var rect = document.getElementById('share_button').getBoundingClientRect();
+                        return rect.left + "," + rect.top + "," + rect.width + "," + rect.height;
+                    };
+                }
                 // create / open the database
                 if (window.sqlitePlugin) {
                     // on mobile device
