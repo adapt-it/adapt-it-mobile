@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="27" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1.1.0" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="27" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1.1.1" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -66,6 +66,8 @@
         <resource-file src="res/icon/ios/usx_64.png" />
         <resource-file src="res/icon/ios/usx_320.png" />
         <!-- doc types (4 of them; 2 standard, 2 custom (USX/USFM)) -->
+        <!-- EDB 26 Dec 2018: this is for in-place opening (#328); some more config items need to be set, see:
+            https://stackoverflow.com/questions/52262366/warning-itms-90737-invalid-document-configuration
         <config-file mode="replace" parent="CFBundleDocumentTypes" target="*-Info.plist">
             <array>
                 <dict>
@@ -184,6 +186,7 @@
                 </dict>
             </array>
         </config-file>
+-->
         <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
