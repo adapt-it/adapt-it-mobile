@@ -27,6 +27,8 @@ date:   2017-01-03 12:21
 
 ### Adapt It Mobile system requirements: 
 
+Before installing, make sure your mobile device meets the following minimum system requirements:
+
 - Apple iPad, iPod or iPhone running iOS 8.x or later
 - Android device running Android 4.4.x or later
 
@@ -44,7 +46,7 @@ Following are some tips that might help in adapting the text more efficiently.
 
 ### Keyboards and suggestions
 
-* The **default keyboard** is often set to the locale where your mobile device was purchased. There are several keyboard replacement apps available on the Apple Store and Google Play Store, some of which are free. One option is the excellent [Keyman app](https://keyman.com) for iOS and Android.
+* The **default keyboard** is often set to the locale where your mobile device was purchased. There are several keyboard replacement apps available on the Apple Store and Google Play Store, some of which are free. One option is the excellent [Keyman app](https://keyman.com) for iOS and Android. These keyboard replacements will enable you to set up a keyboard with the characters in your target language.
 
 * **Turn off auto suggestions** on your keyboard. The words that are given in the suggestions are most likely in a different language than you'll be using. To disable suggestions on your phone, follow these instructions:
   * [Android (video)](https://www.youtube.com/watch?v=fLKd8g4zRPQ)
