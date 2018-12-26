@@ -8,12 +8,28 @@ date:   2017-01-03 12:21
 
 Here you will find step-by-step instructions for setting up Adapt It Mobile on your device.
 
+* [Training Videos](#training-videos)
 * [Before you install](#before-you-install)
   * [System requirements](#system-requirements)
   * [Copy documents to your device](#copy-documents-to-device)
   * [(Optional) Copy project to your device](#copy-project-to-device)
 * [Installing](#installing-adapt-it-mobile)
 * [Next Steps](#next-steps)
+
+----
+
+<a id="training-videos"></a>
+
+## Training Videos
+
+Note that the following training videos are available for getting started with Adapt It Mobile:
+
+- [Creating a new translation project](https://vimeo.com/286247732)
+- [Copying documents to your device and importing them into Adapt It Mobile](https://vimeo.com/286247997)
+- [Adapting text](https://vimeo.com/286248259)
+- [Exporting your translated documents from Adapt It Mobile and copying them to a computer](https://vimeo.com/287095922)
+
+These training videos contain the instructions needed to install, configure, and use Adapt It Mobile 1.0.0; the instructions will be similar to those found below.
 
 ----
 
