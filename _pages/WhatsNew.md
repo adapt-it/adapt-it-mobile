@@ -16,6 +16,8 @@ Allows you to quickly view your translations as you work. Click on the Preview M
 
 ![Learn More]()
 
+![Preview Mode icon]({{ site.baseurl }}/assets/img/share.png)
+
 #### Expanded Export Options
 
 Adapt It Mobile now allows you to export your completed translations to several applications, including:
