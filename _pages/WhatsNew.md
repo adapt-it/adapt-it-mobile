@@ -12,9 +12,20 @@ date:   2018-11-08 12:21
 
 #### Preview Mode
 
-Allows you to quickly view your translations as you work. If you spot a translation that needs improving, you can switch back into the normal adaptation mode and make the needed edits.
+Allows you to quickly view your translations as you work. Click on the Preview Mode button to show a read-only display of your current translation. If you spot an area that needs improving, you can click on the Preview Mode button again to return to the normal adaptation mode and make the needed edits.
 
 ![Learn More]()
+
+#### Expanded Export Options
+
+Adapt It Mobile now allows you to export your completed translations to several applications, including:
+
+- Email
+- SMS (texting)
+- WhatsApp
+- Apple's AirDrop
+
+Transferring files using Android File Transfer and iTunes File Sharing is still supported. ![Learn More]()
 
 #### And More
 
