@@ -10,7 +10,7 @@ Here are some important links from the [Adapt It Mobile wiki](https://github.com
 
 - I'm lost. How do I [get started with Adapt It Mobile](https://adapt-it.github.io/adapt-it-mobile/getstarted/)?
 - I got stuck. Can you help [troubleshooting Adapt It Mobile](https://adapt-it.github.io/adapt-it-mobile/support/)?
-- I need to [report a bug or request a feature](https://github.com/adapt-it/adapt-it-mobile/wiki/Contributing-to-Adapt-It-Mobile#testers)
+- I need to [report a bug](https://github.com/adapt-it/adapt-it-mobile/issues/new?template=bug_report.md) or [request a feature](https://github.com/adapt-it/adapt-it-mobile/issues/new?template=feature_request.md)
 - I want to help [localize Adapt It Mobile into my language](https://github.com/adapt-it/adapt-it-mobile/wiki/Localizing-the-Adapt-It-Mobile-User-Interface)
 - I can offer [Graphic Design expertise](https://github.com/adapt-it/adapt-it-mobile/wiki/Creating-Graphics-for-Adapt-It-Mobile)
 - I want to help [develop Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/wiki/Contributing-to-Adapt-It-Mobile#developers-developers-developers-developers)
