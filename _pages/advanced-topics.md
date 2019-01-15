@@ -8,6 +8,7 @@ date:   2017-01-03 12:21
 
 * [Changing the user interface language](#changing-ui-language)
 * [Working with Filtered Text](#filtered-text)
+* [Changing editor settings](#editor-settings)
 
 ----
 
@@ -22,13 +23,17 @@ Adapt It Mobile supports the following languages for its user interface:
 - Spanish
 - Tok Pisin
 
-By default, Adapt It Mobile will attempt to use the same user interface language as your device. If Adapt It Mobile doesn't support your device's language, it will fall back on English for its user interface.
+By default, Adapt It Mobile will attempt to use the same user interface language as your device. If Adapt It Mobile doesn't support your device's language, it will fall back on English for its user interface. 
 
 **To override this default behavior, complete the following steps:**
 
-1. In Adapt It Mobile's main screen, click on the globe icon in the lower left corner: 
+1. Open the User Interface language Settings in either of the following places:
+
+  - In Adapt It Mobile's main screen, click on the globe icon in the lower left corner: 
 
   ![Adapt]({{ site.baseurl }}/assets/img/globe.png)
+  
+  - In the Project Settings, click on the General Settings (the first link). The User Interface Language controls are just below the Editor settings.
 
 2. In the User Interface Language screen, click on the desired option.
 
@@ -74,4 +79,18 @@ To move to the previous / next filtered marker, click on the forward / back arro
 To close the filtered text window, click on either the X icon in the upper right corner of the window or in the darker area outside the window.
 
 ![Single Filters](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/f-single.gif)
+
+----
+
+<a id="editor-settings"></a>
+
+## Changing Editor Settings
+
+Currently Adapt It Mobile has the following editor settings that can be modified:
+
+- Copy Source (default = checked)
+  When checked, Adapt It Mobile will automatically copy the source into the target field if an entry cannot be found in the Knowledge Base for the current source. Uncheck this box if you would like the target edit field to remain empty if no KB entry can be found for the source.
+
+- Wrap at Standard Format Markers (default = checked)
+  When checked, Adapt It Mobile will cause the UI to display the word or phrase *following* text with USFM markers on a new line. Uncheck this box if you would like the the next phrase to appear just after text with USFM, for a more compact display.
 
