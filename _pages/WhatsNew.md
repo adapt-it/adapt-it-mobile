@@ -23,14 +23,15 @@ Allows you to quickly view your translations as you work. Click on the Preview M
 Adapt It Mobile now allows you to export your completed translations to several applications, including:
 
 - Email
-- SMS (texting)
+- SMS (text)
 - WhatsApp
-- Apple's AirDrop
+- Bluetooth (Android)
+- AirDrop (iOS)
 
 Transferring files using Android File Transfer and iTunes File Sharing is still supported. ![Learn More]()
 
 #### And More
 
-- Support for automatically merging phrases as you translate. ![Learn More]()
+- Support for automatically merging phrases as you translate.
 - Improved support for punctuation in phrases and retranslations.
 
