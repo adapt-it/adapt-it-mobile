@@ -72,7 +72,6 @@
       "cordova-clipboard": {},
       "cordova.plugins.diagnostic": {}
     },
-    "platforms": [
     "platforms": []
   }
 }
