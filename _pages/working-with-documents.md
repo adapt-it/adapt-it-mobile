@@ -44,11 +44,16 @@ Complete the following steps to import documents into Adapt It Mobile.
 
   If you do not see an Export Document link, you might not have imported any documents. Follow the steps to [import a document](#importing-a-document) and [adapt a document]({{ site.baseurl }}/adapting).
 
-2. Select the document you would like to export.
+2. Select where you would like to send the file:
+
+   - If you want to copy the content of the document to another app on the mobile device, select Copy to Clipboard.
+   - If you want to export the document to a file and optionally send it to another device (via email or Bluetooth, for example), select Export to File.
+
+3. Select the document you would like to export.
 
   ![Adapt]({{ site.baseurl }}/assets/img/export-sel-doc.png)
 
-3. Select the format you would like to export the document to, and the filename to export to. 
+4. Select the format you would like to export the document to, and the filename to export to (if you selected Export to File). 
 
   ![Adapt]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
 
@@ -59,9 +64,27 @@ Complete the following steps to import documents into Adapt It Mobile.
   - [USX](https://app.thedigitalbiblelibrary.org/static/docs/usx/index.html) (.usx)
   - Plain text (.txt) with no formatting
 
-4. Click OK to start the export process. Adapt It Mobile will start to export the document to the local device.
+5. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
 
-  - For iOS, documents are saved in the Documents folder for Adapt It Mobile. Use the [iTunes Sharing](https://support.apple.com/en-us/HT201301) feature to transfer these files to your computer for forther processing.
-  - For Android, documents are stored on the SD card (if available) or the Internal Storage -- in a directory labeled `AIM_Exports_<language code>`, where `<language code>` is the RFC 5646 language code of the *target language*. These files can be copied over to your computer using the [Android File Transfer utility](https://www.android.com/filetransfer/).
+  - If you selected Copy to Clipboard, Adapt It Mobile will copy the document to the Clipboard.
+  - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device (see [Exported File Location](#exported-file-location) for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
+    
+    - SMS (text messaging)
+    - email
+    - WhatsApp
+    - Bluetooth (Android)
+    - AirDrop (iOS)
+    
+   Note that these export options require you to configure them before exporting (for example, you need to turn Bluetooth on and pair with a computer before attempting to export)
 
-5. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
+6. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
+
+---
+
+<a id="exported-file-location"></a>
+
+#### Exported File location
+When you Export a document to a file, Adapt It Mobile saves a copy on the local mobile device:
+
+- For iOS, documents are saved in the Documents folder for Adapt It Mobile. You can use the [iTunes Sharing](https://support.apple.com/en-us/HT201301) feature to transfer these files to your computer for forther processing.
+- For Android, documents are stored on the SD card (if available) or the Internal Storage -- in a directory labeled `AIM_Exports_<language code>`, where `<language code>` is the RFC 5646 language code of the *target language*. These files can be copied over to your computer using the [Android File Transfer utility](https://www.android.com/filetransfer/).
