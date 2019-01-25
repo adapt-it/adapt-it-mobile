@@ -94,3 +94,14 @@ Currently Adapt It Mobile has the following editor settings that can be modified
 - Wrap at Standard Format Markers (default = checked)
   When checked, Adapt It Mobile will cause the UI to display the word or phrase *following* text with USFM markers on a new line. Uncheck this box if you would like the the next phrase to appear just after text with USFM, for a more compact display.
 
+- Show Preview Button (default = unchecked)
+  When checked, Adapt It Mobile displays the Preview Mode button in the toolbar of the Adaptation page:
+  
+  ![Preview button](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/preview.png)
+  
+  Preview Mode allows you to quickly view your translations as you work. Click on the Preview Mode button to show a read-only display of your current translation -- i.e., just the target text. If you spot an area that needs improving, you can click on the Preview Mode button again to return to the normal adaptation mode and make the needed edits. Here is an animation of the Preview Mode in action:
+  
+  ![Preview Mode](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/preview.gif)
+
+
+
