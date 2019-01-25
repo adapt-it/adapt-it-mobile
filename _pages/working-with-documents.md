@@ -6,8 +6,8 @@ desc:   How to import and export documents.
 date:   2017-01-03 12:21
 ---
 
-* [Importing a document](#importing-a-project)
-* [Exporting a project](#exporting-a-project)
+* [Importing a document](#importing-a-document)
+* [Exporting a document](#exporting-a-document)
 
 ----
 
