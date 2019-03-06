@@ -23,7 +23,7 @@ For those wanting to contribute to this project, check out the [wiki pages](http
 
 ## Philosophy
 
-Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of plain text and [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](https://sites.google.com/site/bibledit/).
+Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of plain text and [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](http://bibledit.org/).
 
 ## License
 
