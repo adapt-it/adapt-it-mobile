@@ -73,6 +73,7 @@
       "cordova.plugins.diagnostic": {}
     },
     "platforms": [
-    "platforms": []
+      "ios"
+    ]
   }
 }

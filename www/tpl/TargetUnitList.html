@@ -1,0 +1,10 @@
+{{! TargetUnitList.html
+    Template for rendering the source phrases that match the search or book dropdown lists on the lookup page.
+    Each chapter is rendered with a status (number of verses translated), along with a link to adapt that chapter.
+    This template is compiled by ChapterListView.js and called from LookupView.js.
+    Note: negative versecounts indicate plain text documents; for this case, the versecount is the # of 
+    sourcephrases in the document.
+}}
+<li class="topcoat-list__item">
+    <a class="big-link" href="#">Source: {{this.source}}<span class="chevron"></span></a>
+</li>

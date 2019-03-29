@@ -9,26 +9,33 @@ define(function (require) {
     "use strict";
 
     var $           = require('jquery'),
-        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Backbone    = require('backbone'),
         Marionette  = require('marionette'),
+        i18n        = require('i18n'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
+        tuModels        = require('app/models/targetunit'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
+        tplTUList = require('text!tpl/TargetUnitList.html'),
         tplLookup     = require('text!tpl/Lookup.html'),
         template = null,
         
         NoChildrenView = Marionette.ItemView.extend({
-            template: Handlebars.compile("<div id=\"nochildren\"></div>")
+            template: Handlebars.compile("<div></div>")
         }),
         
-        ChildrenView = Marionette.ItemView.extend({
+        ChapterItemView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplChapterList)
+        }),
+        
+        TUItemView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplTUList)
         }),
 
         ChapterListView = Marionette.CollectionView.extend({
-            childView: ChildrenView,
+            
+            childView: ChapterItemView,
             emptyView: NoChildrenView,
 
             initialize: function () {
@@ -37,36 +44,68 @@ define(function (require) {
 
         }),
 
-        LookupView = Marionette.ItemView.extend({
+        TUListView = Marionette.CollectionView.extend({
+            
+            childView: TUItemView,
+            emptyView: NoChildrenView,
+
+            initialize: function () {
+                this.collection.on("reset", this.render, this);
+            }
+
+        }),
+        
+        LookupView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplLookup),
+            
+            regions: {
+                lstChapters: "#Chapters",
+                lstSourceWords: "#SourceWords"
+            },
 
             initialize: function () {
                 this.chapterList = new chapterModels.ChapterCollection();
-                this.bookList = new bookModels.BookCollection();
+                this.TUList = new tuModels.TargetUnitCollection();
+                this.CLV = new ChapterListView({collection: this.chapterList});
+                this.TULV = new TUListView({collection: this.TUList});
                 this.render();
+            },
+            
+            onBeforeShow: function() {
+                this.showChildView('lstChapters', new ChapterListView({collection: this.chapterList}));
+                this.showChildView('lstSourceWords', new TUListView({collection: this.TUList}));
+                
             },
 
             render: function () {
                 template = Handlebars.compile(tplLookup);
                 this.$el.html(template());
-                this.listView = new ChapterListView({collection: this.chapterList, el: $(".chapter-list", this.el)});
                 return this;
             },
 
             events: {
                 "input #search":    "search",
-                "focus #book":          "onFocusBook",
-                "change #book":         "onSelectBook"
+                "click #btnChapters": "onShowChapters",
+                "click #btnSourceWords": "onShowSourceWords",
+            },
+            
+            onShowChapters: function () {
+                // show the chapters list
+                $("#rdoChapters").prop("checked", true); // initially select chapters
+                $("#Chapters").removeAttr("style");
+                $("#SourceWords").attr("style", "display:none");
+            },
+            
+            onShowSourceWords: function () {
+                // show the source words list
+                $("#rdoSourceWords").prop("checked", true); // initially select chapters
+                $("#Chapters").attr("style", "display:none");
+                $("#SourceWords").removeAttr("style");
             },
             
             onShow: function () {
                 var options = "";
-                this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
-                this.bookList.each(function (model, index) {
-                    options += "<option value=\"" + model.get("name") +  "\">" + model.get("name") + "</option>";
-                });
-                $("#book").html(options);
-                $("#book").val("");
+                this.onShowChapters(); // set the focus on the chapter tab
                 $("#search").focus();
             },
             
@@ -75,32 +114,26 @@ define(function (require) {
                     event.preventDefault();
                 }
                 var key = $('#search').val();
-                this.chapterList.fetch({reset: true, data: {name: key}});
-                if (this.chapterList.length > 0) {
-                    $("#lblChooseChapter").removeAttr("style");
+                if (key.length > 0) {
+                    // create new query
+                    this.chapterList.fetch({reset: true, data: {name: key}});
+                    this.TUList.fetch({reset: true, data: {source: key}});
+                    $("#btnChapters").html(i18n.t("view.lblDocuments", {number: this.chapterList.length}));
+                    $("#btnSourceWords").html(i18n.t("view.lblSourceWords", {number: this.TUList.length}));
+                    $("#results").removeAttr("style");
                 } else {
-                    $("#lblChooseChapter").attr("style", "display:none");
-                }
-            },
-
-            onFocusBook: function (event) {
-                $("#book").val("");
-            },
-
-            onSelectBook: function (event) {
-                var key = $('#book').val().trim();
-                // find each chapter of this book in the chapterlist collection
-                this.chapterList.fetch({reset: true, data: {name: key}});
-                if (this.chapterList.length > 0) {
-                    $("#lblChooseChapter").removeAttr("style");
-                } else {
-                    $("#lblChooseChapter").attr("style", "display:none");
+                    // clear out query
+                    $("#btnChapters").html(i18n.t("view.lblDocuments", {number: 0}));
+                    $("#btnSourceWords").html(i18n.t("view.lblSourceWords", {number: 0}));                    
+                    $("#results").attr("style", "display:none");
                 }
             }
+
         });
             
     return {
         LookupView: LookupView,
-        ChapterListView: ChapterListView
+        ChapterListView: ChapterListView,
+        TUListView: TUListView
     };
 });
