@@ -13,6 +13,8 @@
         "lblSourceWordsInitial": "Texte:",
         "lblDocuments": "Documents: __number__",
         "lblSourceWords": "Texte: __number__",
+        "lblTranslations": "Traductions: __number__",
+        "lblInstances": "Occurrences dans ls texte: __number__",
         "lblStatusFullyTranslated": "Entièrement traduit",
         "lblStatusNotTranslated": "Pas de versets ont été traduits (__versecount__ versets au total).",
         "lblStatusPartlyTranslated": "Partiellement traduit (__lastadapted__ de __versecount__ versets ont traduit les textes).",

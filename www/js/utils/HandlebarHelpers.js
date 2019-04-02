@@ -34,6 +34,9 @@ define(function (require) {
         if (options.fn) {
             opts.defaultValue = options.fn(context);
         }
+        for (var key in opts) {
+            opts[key] = Handlebars.Utils.escapeExpression(opts[key]);
+        }        
         var result = i18n.t(opts.key, opts);
 
         return new Handlebars.SafeString(result);

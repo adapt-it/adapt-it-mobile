@@ -13,6 +13,8 @@
         "lblSourceWordsInitial": "Teks:",
         "lblDocuments": "Dokumen: __number__",
         "lblSourceWords": "Teks: __number__",
+        "lblTranslations": "Trenslesen: __number__",
+        "lblInstances": "Trenslesen teks: __number__",
         "lblStatusFullyTranslated": "Olgeta ves i gat trenslesen teks.",
         "lblStatusNotTranslated": "Nogat trenslesen (__versecount__ ves i stap).",
         "lblStatusPartlyTranslated": "Sampela wok i no yet (__lastadapted__ bilong __versecount__ ves olgeta i gat trenslesen teks).",

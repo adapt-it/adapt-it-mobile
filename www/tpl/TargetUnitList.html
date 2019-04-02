@@ -6,5 +6,7 @@
     sourcephrases in the document.
 }}
 <li class="topcoat-list__item">
-    <a class="big-link" href="#">Source: {{this.source}}<span class="chevron"></span></a>
+{{#ifCond this.refstring.length 'gt' 0}}
+    <a class="big-link" href="#">{{this.source}}<span class="chevron"></span></a>
+{{/ifCond}}
 </li>
