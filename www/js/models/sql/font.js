@@ -23,15 +23,6 @@ define(function (require) {
             return deferred.promise();
         },
 
-        findByName = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = fonts.filter(function (element) {
-                return element.id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
-
         Font = Backbone.Model.extend({
             defaults: {
                 name: "",

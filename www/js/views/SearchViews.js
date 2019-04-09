@@ -10,14 +10,13 @@ define(function (require) {
 
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
-        Backbone    = require('backbone'),
         Marionette  = require('marionette'),
         i18n        = require('i18n'),
         chapterModels   = require('app/models/chapter'),
-        bookModels      = require('app/models/book'),
         tuModels        = require('app/models/targetunit'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
-        tplTUList = require('text!tpl/TargetUnitList.html'),
+        tplTUList = require('text!tpl/SearchSourceList.html'),
+        tplSTList = require('text!tpl/SearchTargetList.html'),
         tplLookup     = require('text!tpl/Lookup.html'),
         template = null,
         
@@ -71,7 +70,7 @@ define(function (require) {
                 this.render();
             },
             
-            onBeforeShow: function() {
+            onBeforeShow: function () {
                 this.showChildView('lstChapters', new ChapterListView({collection: this.chapterList}));
                 this.showChildView('lstSourceWords', new TUListView({collection: this.TUList}));
                 
@@ -86,7 +85,7 @@ define(function (require) {
             events: {
                 "input #search":    "search",
                 "click #btnChapters": "onShowChapters",
-                "click #btnSourceWords": "onShowSourceWords",
+                "click #btnSourceWords": "onShowSourceWords"
             },
             
             onShowChapters: function () {
@@ -124,7 +123,7 @@ define(function (require) {
                 } else {
                     // clear out query
                     $("#btnChapters").html(i18n.t("view.lblDocuments", {number: 0}));
-                    $("#btnSourceWords").html(i18n.t("view.lblSourceWords", {number: 0}));                    
+                    $("#btnSourceWords").html(i18n.t("view.lblSourceWords", {number: 0}));
                     $("#results").attr("style", "display:none");
                 }
             }

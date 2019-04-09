@@ -13,6 +13,8 @@
         "lblSourceWordsInitial": "Source:",
         "lblDocuments": "Documents: __number__",
         "lblSourceWords": "Source: __number__",
+        "lblTargetWordsInitial": "Target:",
+        "lblTargetWords": "Target: __number__",
         "lblTranslations": "Translations: __number__",
         "lblInstances": "Instances: __number__",
         "lblStatusFullyTranslated": "Fully translated",
