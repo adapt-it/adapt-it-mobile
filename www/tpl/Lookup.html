@@ -24,19 +24,20 @@
 <div class="topcoat-tab-bar full">
    <label class="topcoat-tab-bar__item">
      <input type="radio" name="topcoat" id="rdoChapters" checked>
-     <button class="topcoat-tab-bar__button full" id="btnChapters">{{t 'view.lblDocumentsInitial'}}</button>
+       <button class="topcoat-tab-bar__button full" id="btnChapters"><span id="document" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblDocumentsInitial'}}</span></button>
    </label>
    <label class="topcoat-tab-bar__item">
      <input type="radio" name="topcoat" id="rdoSourceWords">
-     <button class="topcoat-tab-bar__button full" id="btnSourceWords">{{t 'view.lblSourceWordsInitial'}}</button>
+       <button class="topcoat-tab-bar__button full" id="btnSourceWords"><span id="sourceWords" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblSourceWordsInitial'}}</span></button>
    </label>
    <label class="topcoat-tab-bar__item">
      <input type="radio" name="topcoat" id="rdoTargetWords">
-     <button class="topcoat-tab-bar__button full" id="btnTargetWords">{{t 'view.lblTargetWordsInitial'}}</button>
+       <button class="topcoat-tab-bar__button full" id="btnTargetWords"><span id="targetWords" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblTargetWordsInitial'}}</span></button>
    </label>
 </div>    
 <div class="topcoat-list__container" id="results">
 <ul class="topcoat-list__container chapter-list" id="Chapters" style="display:none;"></ul>
 <ul class="topcoat-list__container chapter-list" id="SourceWords" style="display:none;"></ul>
+<ul class="topcoat-list__container chapter-list" id="TargetWords" style="display:none;"></ul>
 </div>
 </div>

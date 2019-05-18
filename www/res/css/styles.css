@@ -642,6 +642,30 @@ ul {
     -moz-background-size: cover;
     background-size: cover;
 }
+#book {
+    background: url("images/book_open.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#document {
+    background: url("images/document.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#sourceWords {
+    background: url("images/source.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#targetWords {
+    background: url("images/target.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
 #sandwich {
     background: url("../svg/listview.svg") no-repeat;
     -webkit-background-size: cover;

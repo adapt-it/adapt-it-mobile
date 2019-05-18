@@ -209,6 +209,8 @@
         <preference name="Orientation" value="all" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="StatusBarOverlaysWebView" value="true" />
+        <preference name="HideKeyboardFormAccessoryBar" value="true" />
+        <preference name="KeyboardShrinksView" value="true" />
         <icon height="57" src="res/icon/ios/icon.png" width="57" />
         <icon height="114" src="res/icon/ios/icon@2x.png" width="114" />
         <icon height="60" src="res/icon/ios/icon-60.png" width="60" />
@@ -245,7 +247,7 @@
     <plugin name="cordova-plugin-dialogs" spec="^2.0.1" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
-    <plugin name="cordova-plugin-keyboard" spec="^1.2.0" />
+    <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
     <plugin name="cordova-plugin-x-socialsharing" spec="5.4.0" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
