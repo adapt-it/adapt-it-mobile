@@ -42,7 +42,8 @@ define(function (require) {
         // Utility function from https://gist.github.com/nikdo/1b62c355dae50df6410109406689cd6e
         // https://stackoverflow.com/a/35940276/5763764
         getScrollableParent = function (element) {
-            if (element === null) {
+            if (!element) {
+                // falsey -- undefined / null / 0 all fit this
                 return null;
             }
             return (element.scrollHeight > element.clientHeight)

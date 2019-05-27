@@ -1,6 +1,6 @@
 {
   "name": "adapt-it-mobile",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Adapt It Mobile",
   "repository": {
     "type": "git",
@@ -71,7 +71,10 @@
       "phonegap-plugin-mobile-accessibility": {},
       "cordova-clipboard": {},
       "cordova-plugin-keyboard": {},
-      "cordova.plugins.diagnostic": {}
+      "cordova.plugins.diagnostic": {},
+      "cordova-plugin-customurlscheme": {
+        "URL_SCHEME": "aimdoc"
+      }
     },
     "platforms": [
       "ios",
