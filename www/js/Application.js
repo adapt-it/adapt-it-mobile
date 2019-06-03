@@ -75,9 +75,9 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
-            version: "1.1.0", // appended with milestone / iOS build info
-            MilestoneBuild: "27", // milestone release #
-            iOSBuild: "1.0.5",
+            version: "1.2.0", // appended with milestone / iOS build info
+            MilestoneBuild: "28", // milestone release #
+            iOSBuild: "1.2.0",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.

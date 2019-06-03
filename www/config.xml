@@ -146,6 +146,53 @@
                 </dict>
             </array>
         </config-file>
+        <config-file mode="replace" parent="UTImportedTypeDeclarations" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.text</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USFM Document</string>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adaptit.document.usfm</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usfm</string>
+                            <string>sfm</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/*</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USX Document</string>
+                    <key>UTTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adaptit.document.usx</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usx</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/xml</string>
+                    </dict>
+                </dict>
+            </array>
+        </config-file>
         <config-file mode="replace" parent="UTExportedTypeDeclarations" target="*-Info.plist">
             <array>
                 <dict>
