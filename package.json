@@ -76,10 +76,6 @@
         "URL_SCHEME": "aimdoc"
       }
     },
-    "platforms": [
-      "android",
-      "browser",
-      "ios"
-    ]
+    "platforms": []
   }
 }

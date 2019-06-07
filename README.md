@@ -8,13 +8,14 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 
 ## System Requirements
 
-- Android tablet or smart phone running Android 4.0.x or later
-- Apple iPad, iPod or iPhone running iOS 8.x or later
+- Android tablet or smart phone running Android 4.4.x or later (5.0 or later preferred - Android's got some bugs in the 4.x version)
+- Apple iPad, iPod or iPhone running iOS 9.x or later
 
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
 
-Adapt It Mobile is currently in pre-release development. If you'd like to try it out and let us know how we're doing so far, take a look at our [installation guide](https://github.com/adapt-it/adapt-it-mobile/wiki/Using-Adapt-It-Mobile).
+- [Installation guide](https://adapt-it.github.io/adapt-it-mobile/getstarted/)
+- [Training Videos](https://vimeo.com/album/5368477)
 
 ## ![Contribute](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/build.png) Contributing to the Project
 
@@ -22,7 +23,7 @@ For those wanting to contribute to this project, check out the [wiki pages](http
 
 ## Philosophy
 
-Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](https://sites.google.com/site/bibledit/).
+Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of plain text and [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](http://bibledit.org/).
 
 ## License
 
