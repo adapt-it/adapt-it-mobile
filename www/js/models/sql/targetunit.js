@@ -5,33 +5,13 @@ define(function (require) {
     "use strict";
 
     var $           = require('jquery'),
-        Underscore  = require('underscore'),
         Backbone    = require('backbone'),
-        i           = 0,
         targetunits = [],
         
         findById = function (searchKey) {
             var deferred = $.Deferred();
             var results = targetunits.filter(function (element) {
                 return element.attributes.tuid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
-
-        findByProjectId = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = targetunits.filter(function (element) {
-                return element.attributes.projectid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
-
-        findBySource = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = targetunits.filter(function (element) {
-                return element.source.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();
@@ -243,7 +223,7 @@ define(function (require) {
                             targetunits.length = 0;
                         }
                         results = targetunits.filter(function (element) {
-                            return element.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
+                            return element.attributes.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
                         });
                         if (results.length === 0) {
                             // not in collection -- retrieve them from the db

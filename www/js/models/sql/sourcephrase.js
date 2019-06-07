@@ -12,7 +12,6 @@ define(function (require) {
         Backbone    = require('backbone'),
         Underscore  = require('underscore'),
         sourcephrases = [],
-        sps         = [],
         
         // ***
         // STATIC METHODS
@@ -22,14 +21,6 @@ define(function (require) {
             var deferred = $.Deferred();
             var results = sourcephrases.filter(function (element) {
                 return element.attributes.spid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
-        findByChapterId = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = sourcephrases.filter(function (element) {
-                return element.attributes.chapterid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
             deferred.resolve(results);
             return deferred.promise();

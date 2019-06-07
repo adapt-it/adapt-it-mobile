@@ -10400,7 +10400,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Basa (Nigeria)"
-          },
+            },
             {
                 "Id": "bzx",
                 "Part2B": "",
@@ -10409,7 +10409,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Kɛlɛngaxo Bozo"
-          },
+            },
             {
                 "Id": "bzy",
                 "Part2B": "",
@@ -10418,7 +10418,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Obanliku"
-          },
+            },
             {
                 "Id": "bzz",
                 "Part2B": "",
@@ -10427,7 +10427,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Evant"
-          },
+            },
             {
                 "Id": "caa",
                 "Part2B": "",
@@ -10436,7 +10436,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Chortí"
-          },
+            },
             {
                 "Id": "cab",
                 "Part2B": "",
@@ -10445,7 +10445,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Garifuna"
-          },
+            },
             {
                 "Id": "cac",
                 "Part2B": "",
@@ -10454,7 +10454,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Chuj"
-          },
+            },
             {
                 "Id": "cad",
                 "Part2B": "cad",
@@ -10463,7 +10463,7 @@ define(function (require) {
                 "Scope": "I",
                 "Language_Type": "L",
                 "Ref_Name": "Caddo"
-          },
+            },
             {
                 "Id": "cae",
                 "Part2B": "",

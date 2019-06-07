@@ -1,0 +1,10 @@
+{{! SearchSourceList.html
+    Template for rendering the list of words in the Source language that match the search criteria. Each item
+    is equivalent to a TargetUnit; one source word/phrase with 1 or more possible translations (refstrings).
+    This template is called from SearchViews.js.
+}}
+<li class="topcoat-list__item">
+{{#ifCond this.refstring.length 'gt' 0}}
+    <a class="big-link" href="#">{{this.source}}<span class="chevron"></span></a>
+{{/ifCond}}
+</li>

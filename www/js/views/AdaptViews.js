@@ -93,8 +93,8 @@ define(function (require) {
             var eltBottom = eltTop + $(element).height();
             var offset = 0;
             
-//            console.log("scrollToView() looking at element: " + $(element).attr("id"));
-//            console.log("-- Currently chapter position = " + $(".chapter").css("position"));
+            console.log("scrollToView() looking at element: " + $(element).attr("id"));
+            console.log("-- Currently chapter position = " + $(".chapter").css("position"));
             // if we're scrolling to show the possible KB entries, add some space for the drop-down
             if (isSelectingKB === true) {
                 eltBottom += 36; // guess 2 entries
@@ -107,7 +107,7 @@ define(function (require) {
                 // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
                 // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
                 // work cross-platform
-//                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
                 if (window.orientation === 90 || window.orientation === -90) {
                     // landscape
                     docViewHeight -= 162; // observed / hard-coded "best effort" value
@@ -118,29 +118,29 @@ define(function (require) {
             }
             // now calculate docViewBottom
             docViewBottom = docViewTop + docViewHeight;
-//            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
-//            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
+            console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
+            console.log("- eltTop: " + eltTop + ", docViewTop: " + docViewTop);
             // now check to see if the content needs scrolling
             if ((eltBottom > docViewBottom) || (eltTop < docViewTop)) {
                  // Not in view -- scroll to the element
                 if (($(element).height() * 2) < docViewHeight) {
                     // more than 2 rows available in viewport -- center it
-//                    console.log("More than two rows visible -- centering focused area");
+                    console.log("More than two rows visible -- centering focused area");
                     offset = eltTop - (docViewHeight / 2);
                 } else {
                     // viewport height is too small -- scroll to element itself
-//                    console.log("Small viewport -- scrolling to the element itself");
+                    console.log("Small viewport -- scrolling to the element itself");
                     offset = eltTop;
                 }
                 offset = Math.round(offset); // round it to the nearest integer
-//                console.log("Scrolling to: " + offset);
+                console.log("Scrolling to: " + offset);
                 $("#content").scrollTop(offset);
                 lastOffset = offset;
-//                docViewTop = $("#content").scrollTop();
-//                console.log("Content scroll top is now: " + docViewTop);
+                docViewTop = $("#content").scrollTop();
+                console.log("Content scroll top is now: " + docViewTop);
                 return false;
             }
-//            console.log("No scrolling needed.");
+            console.log("No scrolling needed.");
             return true;
         },
     

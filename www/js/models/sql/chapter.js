@@ -16,14 +16,6 @@ define(function (require) {
             deferred.resolve(results);
             return deferred.promise();
         },
-        findByName = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = chapters.filter(function (element) {
-                return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-            });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
 
         Chapter = Backbone.Model.extend({
             defaults: {

@@ -231,6 +231,15 @@ input[type="file"] {
     padding: 14px 10px;
 }
 
+body {
+ padding-top: constant(safe-area-inset-top); /* iOS 11.0 */
+ padding-top: env(safe-area-inset-top); /* iOS 11.2 */
+}
+.Footer {
+ margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
+ margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */
+}
+
 .topcoat-button-bar, .topcoat-icon-button--quiet {
     margin-top: 1px;
 }
@@ -638,6 +647,30 @@ ul {
 }
 #globe {
     background: url("images/globe.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#book {
+    background: url("images/book_open.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#document {
+    background: url("images/document.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#sourceWords {
+    background: url("images/source.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+#targetWords {
+    background: url("images/target.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;

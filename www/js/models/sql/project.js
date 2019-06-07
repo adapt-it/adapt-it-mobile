@@ -6,7 +6,6 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-        i           = 0,
         projects    = [],
         CURRSCHEMA  = 1,
         
@@ -129,17 +128,6 @@ define(function (require) {
             return deferred.promise();
         },
 
-        findByName = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = null;
-            if (projects !== null) {
-                results = projects.filter(function (element) {
-                    return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-                });
-            }
-            deferred.resolve(results);
-            return deferred.promise();
-        },
         Project = Backbone.Model.extend({
             defaults: {
                 projectid: "",

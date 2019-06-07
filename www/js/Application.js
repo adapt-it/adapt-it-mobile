@@ -39,15 +39,56 @@ define(function (require) {
         db_dir          = "",
         locale          = "en-AU",  // default
 
+        // Utility function from https://gist.github.com/nikdo/1b62c355dae50df6410109406689cd6e
+        // https://stackoverflow.com/a/35940276/5763764
+        getScrollableParent = function (element) {
+            if (!element) {
+                // falsey -- undefined / null / 0 all fit this
+                return null;
+            }
+            return (element.scrollHeight > element.clientHeight)
+                ? element : getScrollableParent(element.parentNode);
+        },
+        getContainerOffset = function (element, container) {
+            return element.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+        },
+        getCenterOffset = function (element, container) {
+            return (container.getBoundingClientRect().height - element.getBoundingClientRect().height) / 2;
+        },
+        // https://stackoverflow.com/a/8918062/5763764
+        scrollTo = function (element, to, duration) {
+            if (duration <= 0) {
+                return;
+            }
+            var difference = to - element.scrollTop;
+            var perTick = difference / duration * 10;
+            setTimeout(function () {
+                element.scrollTop = element.scrollTop + perTick;
+                if (element.scrollTop === to) {
+                    return;
+                }
+                scrollTo(element, to, duration - 10);
+            }, 10);
+        },
 
         Application = Marionette.Application.extend({
             filterlist: "",
             currentProject: null,
             localURLs: [],
-            version: "1.1.0", // appended with milestone / iOS build info
-            MilestoneBuild: "27", // milestone release #
-            iOSBuild: "1.0.5",
-            
+            version: "1.2.0", // appended with milestone / iOS build info
+            MilestoneBuild: "28", // milestone release #
+            iOSBuild: "1.2.0",
+
+            // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
+            // browsers that do not support this scrollIntoViewOptions yet.
+            scrollIntoViewCenter : function (element) {
+                var scrollable = getScrollableParent(element);
+                if (scrollable) {
+                    var centerOffset = getCenterOffset(element, scrollable);
+                    scrollTo(scrollable, getContainerOffset(element, scrollable) - Math.max(0, centerOffset), 150);
+                }
+            },
+
             // App initialization code. App initialization comes in a few callbacks:
             // 1. Cordova initialization (startTheApp() in main.js)
             // 2. Database initialization (this code)
@@ -302,6 +343,22 @@ define(function (require) {
                 newProjectView.delegateEvents();
                 this.ProjectList.add(proj);
                 this.main.show(newProjectView);
+            },
+            
+            editKB: function (id) {
+                console.log("editKB");
+                // update the book and chapter lists, then show the import docs view
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        var proj = window.Application.ProjectList.where({projectid: id});
+                        if (proj === null) {
+                            console.log("no project defined");
+                        }
+                        importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
+                        importDocView.delegateEvents();
+                        window.Application.main.show(importDocView);
+                    });
+                });
             },
             
             importBooks: function (id) {

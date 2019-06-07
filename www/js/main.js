@@ -4,24 +4,24 @@
 require.config({
     
     // 3rd party lib versions:
-    // backbone         1.3.3
-    // backbone.babysitter 0.1.8
-    // backbone.wreqr   1.3.3
+    // backbone         1.4.0
+    // backbone.babysitter 0.1.12
+    // backbone.wreqr   1.4.0
     // fastclick        1.0.6
     // featherlight     1.7.6
     // featherlight.gallery 1.7.6
     // hammer           2.0.8
-    // handlebars       4.0.10
-    // hopscotch        0.2.6+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
+    // handlebars       4.1.1
+    // hopscotch        0.3.1+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
     //                          ** This is for hopscotch on smaller screens, issue #30 on hopscotch, or #189 on AIM 
     // i18next          1.9.0
-    // jquery           3.2.1
+    // jquery           3.3.1
     // marionette       2.4.2
-    // require          2.3.3
+    // require          2.3.6
     // spectrum         1.8.0
     // text             2.0.15
     // typeahead        0.11.1
-    // underscore       1.8.3
+    // underscore       1.9.1
 
     baseUrl: 'lib',
 
@@ -33,14 +33,15 @@ require.config({
         // libraries
         'backbone': 'backbone-min',
         'hammerjs': 'hammer',
-        'handlebars': 'handlebars-v4.0.10',
+        'handlebars': 'handlebars-v4.1.1',
         'jquery-hammerjs': 'jquery.hammer',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min', //'jquery-i18next.min',//
-        'jquery': 'jquery-3.2.1.min',
+        'jquery': 'jquery-3.3.1.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
         'featherlight': 'featherlight.min',
+        'underscore': 'underscore-min',
         'featherlightGallery': 'featherlight.gallery.min',
         colorpicker: 'spectrum'
     },
@@ -75,7 +76,7 @@ require.config({
         },
         'backbone': {
 //            deps: ['underscore', 'jquery'],
-            deps: ['jquery-hammerjs', 'underscore'],
+            deps: ['jquery-hammerjs', 'underscore-min'],
             exports: 'Backbone'
         },
         'underscore': {

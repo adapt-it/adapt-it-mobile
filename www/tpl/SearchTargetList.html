@@ -1,0 +1,10 @@
+{{! SearchTargetList.html
+    Template for rendering the list of words/phrases in the target language matching the search criteria.
+    Each item links to a specific refatring in the knowledge base.
+    This template is called from SearchViews.js.
+}}
+<li class="topcoat-list__item">
+{{#ifCond this.refstring.length 'gt' 0}}
+    <a class="big-link" href="#">{{this.source}}<span class="chevron"></span></a>
+{{/ifCond}}
+</li>

@@ -6,7 +6,6 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
-        i           = 0,
         books = [],
         
         findById = function (searchKey) {
@@ -14,17 +13,6 @@ define(function (require) {
             var results = books.filter(function (element) {
                 return element.attributes.bookid.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
             });
-            deferred.resolve(results);
-            return deferred.promise();
-        },
-        findByName = function (searchKey) {
-            var deferred = $.Deferred();
-            var results = null;
-            if (books !== null) {
-                results = books.filter(function (element) {
-                    return element.attributes.name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1;
-                });
-            }
             deferred.resolve(results);
             return deferred.promise();
         },

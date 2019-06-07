@@ -69,6 +69,17 @@ define(function (require) {
             $("#Spacer").hide();
         },
         
+        // Helper to import the KB file associated with the specified project
+        // (overriding any existing KB). This gets called from both mobileImportAIC
+        // and browserImportAIC
+        importKBFile = function (file, project) {
+            var reader = new FileReader();
+            reader.onloadend = function (evt) {
+                
+            };
+            reader.readAsText(file, "UTF-8");
+        },
+        
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
         // from both mobileImportAIC and browserImportAIC.
@@ -403,7 +414,8 @@ define(function (require) {
             },
             onFocusInput: function (event) {
                 HideTinyUI();
-                event.currentTarget.scrollIntoView(true);
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+//                event.currentTarget.scrollIntoView(true);
             },
             onBlurInput: function (event) {
                 ShowTinyUI();
@@ -620,7 +632,8 @@ define(function (require) {
             },
             onFocusInput: function (event) {
                 HideTinyUI();
-                event.currentTarget.scrollIntoView(true);
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+//                event.currentTarget.scrollIntoView(true);
             },
             onBlurInput: function (event) {
                 ShowTinyUI();
@@ -892,7 +905,8 @@ define(function (require) {
                     this.$("#name-suggestions").show();
                 }
                 // scroll the language search field to the top of the screen if necessary
-                $("#LanguageName")[0].scrollIntoView(true);
+                window.Application.scrollIntoViewCenter($("#LanguageName"));
+//                $("#LanguageName")[0].scrollIntoView(true);
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
@@ -1277,7 +1291,8 @@ define(function (require) {
             
             onFocusLanguageName: function (event) {
                 HideTinyUI();
-                $("#LanguageName")[0].scrollIntoView(true);
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+//                $("#LanguageName")[0].scrollIntoView(true);
             },
 
             onBlurLanguageName: function (event) {
@@ -1286,7 +1301,8 @@ define(function (require) {
             
             onFocusLanguageVariant: function (event) {
                 HideTinyUI();
-                $("#LanguageVariant")[0].scrollIntoView(true);
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+//                $("#LanguageVariant")[0].scrollIntoView(true);
             },
 
             onBlurLanguageVariant: function (event) {
@@ -1307,7 +1323,8 @@ define(function (require) {
                     this.$("#name-suggestions").show();
                 }
                 // scroll the language search field to the top of the screen if necessary
-                $("#LanguageName")[0].scrollIntoView(true);
+                window.Application.scrollIntoViewCenter($("#LanguageName"));
+//                $("#LanguageName")[0].scrollIntoView(true);
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
             },
 
