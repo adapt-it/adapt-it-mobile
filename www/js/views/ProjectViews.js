@@ -912,11 +912,12 @@ define(function (require) {
             },
             buildFullLanguageCode: function (event) {
                 var value = currentView.langCode,
+                    variant = $('#LanguageVariant').val().trim().replace(/\s+/g, ''),
                     newValue = value;
                 // only build if there's a language code defined
                 if (value.length > 0) {
                     // is there anything in the language variant?
-                    if ($('#LanguageVariant').val().trim().length === 0) {
+                    if (variant.length === 0) {
                         // nothing in the variant -- use just the iso639 code with no -x-
                         if (value.indexOf("-x-") > 0) {
                             newValue = value.substr(0, value.indexOf("-x-"));
@@ -926,10 +927,10 @@ define(function (require) {
                         // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
+                            newValue = value + "-x-" + variant.toLowerCase().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -1344,23 +1345,25 @@ define(function (require) {
             },
             buildFullLanguageCode: function (event) {
                 var value = currentView.langCode,
+                    variant = $('#LanguageVariant').val().trim().replace(/\s+/g, ''),
                     newValue = value;
                 // only build if there's a language code defined
                 if (value.length > 0) {
                     // is there anything in the language variant?
-                    if ($('#LanguageVariant').val().trim().length === 0) {
+                    if (variant.length === 0) {
                         // nothing in the variant -- use just the iso639 code with no -x-
                         if (value.indexOf("-x-") > 0) {
                             newValue = value.substr(0, value.indexOf("-x-"));
                         }
                     } else {
-                        // variant is defined --- code is in the form [is0639]-x-[variant]
+                        // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
+                        // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + $('#LanguageVariant').val().trim().substr(0,8);
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0,8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
+                            newValue = value + "-x-" + variant.toLowerCase().substr(0,8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
