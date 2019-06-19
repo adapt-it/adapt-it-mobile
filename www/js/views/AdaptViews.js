@@ -297,34 +297,34 @@ define(function (require) {
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // block-height (standard height for all strip elements - pile, chapter/verse, etc.)
-            theRule = ".block-height {";
-            theRule += "height: ";
-            // total height = source + target + marker + (20px extra space)
-            // this formula also accounts for the larger line height of the Scheherazade font
-            // (see https://software.sil.org/scheherazade/support/faq/)
-            totalHeight =
-                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
-            theRule += totalHeight + "px; ";
-            theRule += "line-height: " + totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            console.log("Calculated pile height: " + totalHeight);
-            // condensed-pile (w/o the marker line)
-            theRule = ".condensed-pile {";
-            theRule += "height: ";
-            // total height = source + target + (20px extra space)
-            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            theRule = ".block-height {";
+//            theRule += "height: ";
+//            // total height = source + target + marker + (20px extra space)
+//            // this formula also accounts for the larger line height of the Scheherazade font
+//            // (see https://software.sil.org/scheherazade/support/faq/)
+//            totalHeight =
+//                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
+//            theRule += totalHeight + "px; ";
+//            theRule += "line-height: " + totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            console.log("Calculated pile height: " + totalHeight);
+//            // condensed-pile (w/o the marker line)
+//            theRule = ".condensed-pile {";
+//            theRule += "height: ";
+//            // total height = source + target + (20px extra space)
+//            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+//            theRule += totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // preview (w/o marker and source lines)
-            theRule = "div.preview div.block-height {";
-            theRule += "height: ";
-            // total height = source + target + (20px extra space)
-            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            theRule = "div.preview div.block-height {";
+//            theRule += "height: ";
+//            // total height = source + target + (20px extra space)
+//            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+//            theRule += totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // is the preview button enabled?
             if (localStorage.getItem("ShowPreviewBtn") && localStorage.getItem("ShowPreviewBtn") === "true") {
                 theRule = "#PreviewBtn {display: inline-block;}";
@@ -365,10 +365,10 @@ define(function (require) {
             if (project.get('SourceDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".pile, .strip-header, .filter {";
-                theRule += "float: right;";
-                theRule += "}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".pile, .strip-header, .filter {";
+//                theRule += "float: right;";
+//                theRule += "}";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 theRule = ".source { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
@@ -385,32 +385,32 @@ define(function (require) {
             // User option to *not* clear USFM markers - should be 121 of them + ".sh" (our chapter and verse # class)
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
                 console.log("WrapUSFM -> FALSE");
-                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: none; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             } else {
                 console.log("WrapUSFM -> TRUE");
-                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: both; }";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
 

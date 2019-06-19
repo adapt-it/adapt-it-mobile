@@ -772,7 +772,8 @@ select.docNav {
 	display: block;
 }
 .strip {
-    display: block; 
+    display: inline-block; 
+    vertical-align: top;
 }
 /* preview mode (target display only) */
 div.preview div.marker, div.preview div.source, div.preview div.filter {
@@ -792,9 +793,11 @@ div.preview div.block-height {
 */
 .strip-header {
     color: black;
-    float: left;
+/*    float: left;*/
+    display: inline-block;
     padding: 0 0.3em;
     text-align: center;
+    vertical-align: top;
 }
 .topcoat-list__item {
     padding: 1rem;
@@ -804,7 +807,6 @@ div.preview div.block-height {
     /* vertical placement is centered by default -- no change needed */
 }
 .verse-number {
-    /* vertical placement needs to be lined up with the source line */
     line-height: normal;
     padding-top: 22px;
 }
@@ -824,9 +826,11 @@ div.preview div.block-height {
 }
 .pile {
     color: black;
-    float: left;
+/*    float: left;*/
+    display: inline-block;
     min-width: 1rem;
     padding: 0 0.3em;
+    vertical-align: top;
 }
 .source, .marker {
     word-wrap: break-word;
@@ -960,7 +964,8 @@ div.strip.specialtext div.source {
     margin-bottom: 3em;
     width: 14px;
     text-indent: 100%;
-    float: left;
+/*    float: left;*/
+    display: inline-block;
     padding: 2px;
     line-height: 3rem;
     color: #454545;
@@ -1379,9 +1384,11 @@ typeahead styles
 * example devices: Android ldpi phones
 */
 @media screen and (max-width: 319px) {
+/*
     .source, .target {
         max-width: 240px;
     }
+*/
     #chapter {
         background-color: rgb(223,226,226);
         margin-right: 16px;
@@ -1410,9 +1417,11 @@ typeahead styles
 * example devices: iPhone 4, Android mdpi phones
 */
 @media screen and (min-width: 320px) and (max-width : 479px) {
+/*
     .source, .target {
         max-width: 320px;
     }
+*/
     /* hidden items */
     #DocTitle {
         display: none;
@@ -1439,9 +1448,11 @@ typeahead styles
 * example devices: iPhone 5, Android mdpi phones
 */
 @media screen and (min-width: 480px) and (max-width : 639px) {
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* hidden items */
     #More {
         display: none;
@@ -1472,9 +1483,11 @@ typeahead styles
 */
 @media screen and (min-width: 640px) and (max-width : 999px) {
   /* iPhone, Android mdpi rules here */
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* hidden items */
     #More {
         display: none;
@@ -1505,9 +1518,11 @@ typeahead styles
 */
 @media screen and (min-width: 1000px) {
   /* larger screen (browser?) */
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* shown items */
     .tb-action-toggles {
         display: inline-block;
