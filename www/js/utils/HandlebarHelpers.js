@@ -30,13 +30,14 @@ define(function (require) {
     // with the passed in options. Use this method if you need to pass in
     // a key with an embedded variable ("You need %s more"), for example.
     Handlebars.registerHelper('tr', function (context, options) {
-        var opts = i18n.functions.extend(options.hash, context);
+        var opts = i18n.functions.extend(options.hash, context),
+            key = null;
         if (options.fn) {
             opts.defaultValue = options.fn(context);
         }
-        for (var key in opts) {
+        for (key in opts) {
             opts[key] = Handlebars.Utils.escapeExpression(opts[key]);
-        }        
+        }
         var result = i18n.t(opts.key, opts);
 
         return new Handlebars.SafeString(result);
@@ -49,8 +50,11 @@ define(function (require) {
             result = "",
             filtered = false,
             tmpString = "",
+            marker = "",
             filterString = window.Application.filterList,
             newID = Underscore.uniqueId(),
+            hasSpecialText = false,
+            SpecialTextMarkers = " _heading_base _intro_base _list_base _notes_base _peripherals_base at add bn br bt cap efm ef d di div dvrf f fe fr fk fq fqa fl fp ft fdc fv fm free gm gs gd gp h h1 h2 h3 hr id imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ip ipi ipq ipr iq iq1 iq2 iq3 im imi ili ili1 ili2 imq ib iot io io1 io2 io3 io4 ior iex iqt ie k1 k2 lit mr ms ms1 ms2 ms3 mt mt1 mt2 mt3 mt4 mte mte1 mte2 nc nt note p1 p2 pm pmc pmr pt ps pp pq r rem rr rq s s1 s2 s3 s4 sp sr sx sts x xk xo xq xnt xr xot xdc xt ",
             i = 0;
         if (this.markers.length === 0) {
             return new Handlebars.SafeString(this.markers);
@@ -60,10 +64,15 @@ define(function (require) {
                 result += " ";
             }
             ary[i].replace("@", "at"); // this marker breaks our css rules... replace it
-            if (ary[i].trim().length > 0) {
+            marker = ary[i].trim();
+            if (marker.length > 0) {
                 result += "usfm-" + ary[i].substring(0, (ary[i].indexOf(" ") === -1) ? ary[i].length : ary[i].indexOf(" "));
-                if (filterString.indexOf("\\" + ary[i].trim() + " ") >= 0) {
+                if (filterString.indexOf("\\" + marker + " ") >= 0) {
                     filtered = true;
+                }
+                // check for special text
+                if (SpecialTextMarkers.indexOf(" " + marker + " ") > -1) {
+                    hasSpecialText = true;
                 }
                 // Chapter and verse numbers come in a strip just before the actual marker (here) --
                 // we need to remove any paragraph breaks here so that the chapter / verse # appear on the same line
@@ -72,6 +81,9 @@ define(function (require) {
                     result = tmpString;
                 }
             }
+        }
+        if (hasSpecialText === true) {
+            result += " specialtext";
         }
         if (filtered === true) {
             result += " filter ";

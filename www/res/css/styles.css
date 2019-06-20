@@ -915,7 +915,7 @@ div.preview div.block-height {
 .source {
 	color: #0000aa; /* blue */
 }
-div.strip.specialtext div.source {
+div.specialtext div.source {
 	color: #aa0000; /* red */
 }
 .retranslation {
@@ -930,29 +930,6 @@ div.strip.specialtext div.source {
 }
 .fromkb {
     background-color: #ffaaff;
-}
-
-/* USFM styles */
-/* special text (special="1" in ai_USFM.XML). There are a lot of them. */
-.usfm-_heading_base div.source, .usfm-_intro_base div.source, .usfm-_list_base div.source, .usfm-_notes_base div.source, .usfm-_peripherals_base div.source,
-.usfm-at div.source, .usfm-add div.source,
-.usfm-bn div.source, .usfm-br div.source, .usfm-bt div.source,
-.usfm-cap div.source,
-.usfm-efm div.source, .usfm-ef div.source,
-.usfm-d div.source, .usfm-di div.source, .usfm-div div.source, .usfm-dvrf div.source, 
-.usfm-f div.source, .usfm-fe div.source, .usfm-fr div.source, .usfm-fk div.source, .usfm-fq div.source, .usfm-fqa div.source, .usfm-fl div.source, .usfm-fp div.source, .usfm-ft div.source, .usfm-fdc div.source, .usfm-fv div.source, .usfm-fm div.source, .usfm-free div.source,
-.usfm-gm div.source, .usfm-gs div.source, .usfm-gd div.source, .usfm-gp div.source,
-.usfm-h div.source, .usfm-h1 div.source, .usfm-h2 div.source, .usfm-h3 div.source, .usfm-hr div.source,
-.usfm-id div.source, .usfm-imt div.source, .usfm-imt1 div.source, .usfm-imt2 div.source, .usfm-imt3 div.source, .usfm-imt4 div.source, .usfm-imte div.source, .usfm-imte1 div.source, .usfm-imte2 div.source, .usfm-is div.source, .usfm-is1 div.source, .usfm-is2 div.source, .usfm-ip div.source, .usfm-ipi div.source, .usfm-ipq div.source, .usfm-ipr div.source, .usfm-iq div.source, .usfm-iq1 div.source, .usfm-iq2 div.source, .usfm-iq3 div.source, .usfm-im div.source, .usfm-imi div.source, .usfm-ili div.source, .usfm-ili1 div.source, .usfm-ili2 div.source, .usfm-imq div.source, .usfm-ib div.source, .usfm-iot div.source, .usfm-io div.source, .usfm-io1 div.source, .usfm-io2 div.source, .usfm-io3 div.source, .usfm-io4 div.source, .usfm-ior div.source, .usfm-iex div.source, .usfm-iqt div.source, .usfm-ie div.source,
-.usfm-k1 div.source, .usfm-k2 div.source,
-.usfm-lit div.source, 
-.usfm-mr div.source, .usfm-ms div.source, .usfm-ms1 div.source, .usfm-ms2 div.source, .usfm-ms3 div.source, .usfm-mt div.source, .usfm-mt1 div.source, .usfm-mt2 div.source, .usfm-mt3 div.source, .usfm-mt4 div.source, .usfm-mte div.source, .usfm-mte1 div.source, .usfm-mte2 div.source, 
-.usfm-nc div.source, .usfm-nt div.source, .usfm-note div.source,
-.usfm-p1 div.source, .usfm-p2 div.source, .usfm-pm div.source, .usfm-pmc div.source, .usfm-pmr div.source, .usfm-pt div.source, .usfm-ps div.source, .usfm-pp div.source, .usfm-pq div.source, 
-.usfm-r div.source, .usfm-rem div.source, .usfm-rr div.source, .usfm-rq div.source, 
-.usfm-s div.source, .usfm-s1 div.source, .usfm-s2 div.source, .usfm-s3 div.source, .usfm-s4 div.source, .usfm-sp div.source, .usfm-sr div.source, .usfm-sx div.source, .usfm-sts div.source, 
-.usfm-x div.source, .usfm-xk div.source, .usfm-xo div.source, .usfm-xq div.source, .usfm-xnt div.source, .usfm-xr div.source, .usfm-xot div.source, .usfm-xdc div.source, .usfm-xt div.source {
-    color: #aa0000;
 }
 
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
@@ -1040,16 +1017,6 @@ span.txt {
 .no-bg :hover {
     background-color: transparent;
 }
-/*
-.sprite {
-    background-position: left;
-	background-repeat: no-repeat;
-	display: inline-block;
-	margin: 0;
-	overflow: hidden;
-	position: absolute;
-}
-*/
 span.sprite{
     background-position: left;
 	background-repeat: no-repeat;

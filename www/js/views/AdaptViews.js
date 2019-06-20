@@ -345,7 +345,7 @@ define(function (require) {
             }
 
             // Special Text color
-            theRule = "div.strip.specialtext div.source {";
+            theRule = "div.specialtext div.source {";
             theRule += "color: " + project.get('SpecialTextColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
