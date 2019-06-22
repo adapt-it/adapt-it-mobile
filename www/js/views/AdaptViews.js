@@ -674,10 +674,10 @@ define(function (require) {
             // Params: key -- single pile to check for a possible partial match (e.g., the first word in a phrase that's in the KB)
             possibleKBPhrase: function (key) {
                 var aryFilter = null;
-                aryFilter = kblist.filter(function(element) {
+                aryFilter = kblist.filter(function (element) {
                     return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
                 });
-                return (aryFilter.length !== 0); 
+                return (aryFilter.length !== 0);
             },
             // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
             // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
@@ -703,7 +703,7 @@ define(function (require) {
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
                         sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
                         // is there a match for this phrase?
-                        tu = kblist.filter(function(element) {
+                        tu = kblist.filter(function (element) {
                             return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
                         });
                         if (tu.length > 0) {
@@ -711,7 +711,7 @@ define(function (require) {
                             if (kblist.findWhere({'source': sourceText}) !== 'undefined') {
                                 // this is an exact match -- move the indices and see if we can get a bigger phrase
                                 exactMatch = nextObj;
-                                idxEnd = $(nextObj).index();                            
+                                idxEnd = $(nextObj).index();
                             }
                             // even if our exace match test failed, we got a partial match earlier -- so it's possible that
                             // there'a bigger phrase that matches. Keep appending piles...
@@ -744,7 +744,8 @@ define(function (require) {
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
-                    if (selectedStart.previousElementSibling !== null) {
+                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).attr('id').indexOf("-sh") === -1)) {
+                        // there is a previous sibling, and it isn't a strip header
                         next_edit = selectedStart.previousElementSibling;
                     } else {
                         // No previous sibling -- see if you can go to the previous strip
@@ -756,7 +757,7 @@ define(function (require) {
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
                                     console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).children(".pile").length > 0)) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -777,18 +778,19 @@ define(function (require) {
                 } else {
                     // move forwards
                     if (selectedStart.nextElementSibling !== null) {
+                        // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
                     } else {
                         // no next sibling in this strip -- see if you can go to the next strip
                         if (selectedStart.parentElement.nextElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.nextElementSibling;
                             // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
-                                // continue on to the next strip that ISN'T a strip header or filtered out of the UI
+                            if ($(temp_cursor).hasClass("filter")) {
+                                // continue on to the next strip that ISN'T filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
                                     console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false)) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -796,6 +798,8 @@ define(function (require) {
                                 }
                             }
                             if (temp_cursor) {
+                                // found a strip that doesn't have a filter -- select the first pile
+                                // (note that this will also skip the strip header div, which is what we want)
                                 next_edit = $(temp_cursor).children(".pile").first()[0];
                             } else {
                                 next_edit = null;
