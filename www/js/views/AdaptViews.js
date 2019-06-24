@@ -1267,7 +1267,7 @@ define(function (require) {
                         $("#Retranslation").prop('disabled', false);
                         $("#mnuRetranslation").prop('disabled', false);
                         $("#mnuPhrase").prop('disabled', false);
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
                                 $(value).addClass("ui-selected");
                             }
@@ -1278,7 +1278,7 @@ define(function (require) {
                         $("#Retranslation").prop('disabled', false);
                         $("#mnuRetranslation").prop('disabled', false);
                         $("#mnuPhrase").prop('disabled', false);
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxEnd && index <= idxStart) {
                                 $(value).addClass("ui-selected");
                             }
