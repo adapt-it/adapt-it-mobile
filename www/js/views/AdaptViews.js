@@ -1084,11 +1084,12 @@ define(function (require) {
                 }
                 console.log("onDblTapPile");
                 // start out at the current location
-                selectedStart = selectedEnd = $(event.currentTarget);
+                tmpNode = selectedStart = selectedEnd = event.currentTarget;
                 // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
                 while (!done) {
-                    tmpNode = event.currentTarget.previousElementSibling;
-                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).classes.indexOf("ilter")=== -1)) {
+                    tmpNode = selectedStart.previousElementSibling;
+                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                       ($(tmpNode).hasClass("moreFilter") === false)) {
                         selectedStart = tmpNode;    
                     } else {
                         done = true; // exit    
@@ -1096,6 +1097,15 @@ define(function (require) {
                 }
                 // now go forward
                 done = false;
+                while (!done) {
+                    tmpNode = selectedEnd.nextElementSibling;
+                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                       ($(tmpNode).hasClass("moreFilter") === false)) {
+                        selectedEnd = tmpNode;    
+                    } else {
+                        done = true; // exit    
+                    }
+                }
                 idxStart = $(selectedStart).index();
                 idxEnd = $(selectedEnd).index();
                 isSelecting = true; // change the UI color 
