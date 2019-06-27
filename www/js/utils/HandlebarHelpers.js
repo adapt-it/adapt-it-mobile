@@ -10,6 +10,7 @@ define(function (require) {
     var Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         filterID    = "",
+        isSpecialText = false,
         i18n        = require('i18n');
     
     // Return the localized string corresponding to the specified key.
@@ -43,10 +44,11 @@ define(function (require) {
         return new Handlebars.SafeString(result);
     });
     
-    // Return the concatenated string of marker classes for the CSS class list, with an optional "filter" class for
-    // filtered text
+    // Return the concatenated string of marker classes for the CSS class list. Also emits the following:
+    // - "filter" and "moreFilter" classes if filtering is enabled and we encounter filtered markers
+    // - "specialtext" class if we come across a marker that should be displayed in the "special text" color.
     Handlebars.registerHelper('classes', function () {
-        var ary = this.markers.split("\\"),
+        var ary = this.markers.replace("@", "at").split("\\"),
             result = "",
             filtered = false,
             tmpString = "",
@@ -56,14 +58,22 @@ define(function (require) {
             hasSpecialText = false,
             SpecialTextMarkers = " _heading_base _intro_base _list_base _notes_base _peripherals_base at add bn br bt cap efm ef d di div dvrf f fe fr fk fq fqa fl fp ft fdc fv fm free gm gs gd gp h h1 h2 h3 hr id imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ip ipi ipq ipr iq iq1 iq2 iq3 im imi ili ili1 ili2 imq ib iot io io1 io2 io3 io4 ior iex iqt ie k1 k2 lit mr ms ms1 ms2 ms3 mt mt1 mt2 mt3 mt4 mte mte1 mte2 nc nt note p1 p2 pm pmc pmr pt ps pp pq r rem rr rq s s1 s2 s3 s4 sp sr sx sts x xk xo xq xnt xr xot xdc xt ",
             i = 0;
+        // if no markers are present, add any filter / special text info and exit
         if (this.markers.length === 0) {
-            return new Handlebars.SafeString(this.markers);
+            if (isSpecialText === true) {
+                // continuing through some special text
+                result += " specialtext";
+            }
+            if (filterID.length > 0) {
+                result += " moreFilter " + filterID;
+            }
+            return new Handlebars.SafeString(result);
         }
+        // loop through the marker array
         for (i = 0; i < ary.length; i++) {
             if (i > 0) {
                 result += " ";
             }
-            ary[i].replace("@", "at"); // this marker breaks our css rules... replace it
             marker = ary[i].trim();
             if (marker.length > 0) {
                 result += "usfm-" + ary[i].substring(0, (ary[i].indexOf(" ") === -1) ? ary[i].length : ary[i].indexOf(" "));
@@ -83,7 +93,10 @@ define(function (require) {
             }
         }
         if (hasSpecialText === true) {
-            result += " specialtext";
+            result += " specialtext ";
+            isSpecialText = true; // toggle the flag for subsequent piles
+        } else {
+            isSpecialText = false; // didn't see special text -- turn the flag off
         }
         if (filtered === true) {
             result += " filter ";

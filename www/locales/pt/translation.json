@@ -259,6 +259,7 @@
         "lblEditor": "Editor",
         "lblCopySource": "Copiar texto de origem",
         "lblWrapAtUSFM": "Embrulhe o texto nos marcadores USFM",
+        "lblStopSelectionAtBoundaries": "Parar seleção em limites de sentença",
         "AppVersion": "Versão do aplicativo",
         "lblPortion": "(porção)",
         "dscBookName": "Aqui está um nome de livro sugerido para este documento. Você pode manter esse nome ou alterá-lo para algo mais significativo.",

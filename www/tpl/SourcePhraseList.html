@@ -5,13 +5,11 @@
 {{#if @first}}
 {{#unless this.markers}}
 {{! text doc (or something that doesn't have an opening marker) -- create a starting strip }}
-<div class="strip" id="strip-{{this.id}}">
+<div class="strip" id="strip-{{this.id}}"></div>
 {{/unless}}
 {{/if}}
-{{! if we have a marker _after_ the first sourcephrase, we need to close out the previous div. }}
-{{#if this.markers}}{{#unless @first}}</div>{{/unless}}{{/if}}
 {{#if this.markers}}
-<div class="strip{{classes}}" id="strip-{{this.id}}">
+<div class="strip" id="strip-{{this.id}}"></div>
 {{#ifCond this.markers 'contains' 'c '}}
 <div id="header-{{this.id}}-c" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div>
 {{else}}
@@ -20,7 +18,5 @@
 {{/ifCond}}
 {{/ifCond}}
 {{/if}}
-<div id="pile-{{this.spid}}" class="pile block-height"></div>
-{{! if this is the last sourcephrase, close out the strip div }}
-{{#if @last}}</div>{{/if}}
+<div id="pile-{{this.spid}}" class="pile block-height{{classes}}"></div>
 {{/.}}

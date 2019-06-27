@@ -24,6 +24,7 @@ define(function (require) {
         tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
+        tplLanguageCode     = require('text!tpl/ProjectLanguageCode.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplLanguages        = require('text!tpl/LanguagesList.html'),
         tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
@@ -711,6 +712,7 @@ define(function (require) {
             },
             events: {
                 "keyup #SourceLanguageName":    "search",
+                "click #btnLanguageAdvanced":   "onClickLanguageAdvanced",
                 "keypress #SourceLanguageName": "onkeypress"
             },
             onSelectLanguage: function (event) {
@@ -720,7 +722,11 @@ define(function (require) {
                 this.langCode = $(event.currentTarget).attr('id').trim();
                 $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
                 $("#LanguageName").val(this.langName);
-            }
+            },
+            onClickLanguageAdvanced: function (event) {
+                  
+            },
+
         }),
 
         // TargetLanguageView - view / edit the target language name and code, as well as
@@ -747,6 +753,19 @@ define(function (require) {
                 this.langCode = $(event.currentTarget).attr('id').trim();
                 $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
                 $("#LanguageName").val(this.langName);
+            }
+        }),
+        
+        // LanguageCodeView - view / edit the RFC5646 language code for the source or target language.
+        // Ths user can either specify to have AIM auto-generate the code (default), or type in their own.
+        // Minimal parsing is done for custom codes; the user should know what they're doing...
+        LanguageCodeView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplLanguageCode),
+            events: {
+                
+            },
+            onShow: function() {
+                
             }
         }),
 
@@ -816,7 +835,7 @@ define(function (require) {
         EditorAndUIView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplEditorPrefs),
             events: {
-                "change #language":   "onSelectCustomLanguage",
+                "change #language":   "onSelectCustomLanguage"
             },
             onSelectCustomLanguage: function (event) {
                 // change the radio button selection
@@ -827,17 +846,22 @@ define(function (require) {
                     $("#CopySource").prop("checked", localStorage.getItem("CopySource") === "true");
                 } else {
                     $("#CopySource").prop("checked", true); // default is selected
-                };
+                }
                 if (localStorage.getItem("WrapUSFM")) {
                     $("#WrapAtMarker").prop("checked", localStorage.getItem("WrapUSFM") === "true");
                 } else {
                     $("#WrapAtMarker").prop("checked", true); // default is selected
-                };
+                }
+                if (localStorage.getItem("StopAtBoundaries")) {
+                    $("#StopAtBoundaries").prop("checked", localStorage.getItem("StopAtBoundaries") === "true");
+                } else {
+                    $("#StopAtBoundaries").prop("checked", true); // default is selected
+                }
                 if (localStorage.getItem("ShowPreviewBtn")) {
                     $("#ShowPreviewBtn").prop("checked", localStorage.getItem("ShowPreviewBtn") === "true");
                 } else {
                     $("#ShowPreviewBtn").prop("checked", false); // default is false (hidden)
-                };
+                }
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
                     $('#language').val(localStorage.getItem("UILang"));
@@ -890,7 +914,7 @@ define(function (require) {
             OnEditorUIPrefs: function (event) {
                 step = 9;
                 this.ShowView(step);
-            },                                         
+            },
             searchLanguageName: function (event) {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val().trim();
@@ -927,10 +951,10 @@ define(function (require) {
                         // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0,8);
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0, 8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + variant.toLowerCase().substr(0,8);
+                            newValue = value + "-x-" + variant.toLowerCase().substr(0, 8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -1106,6 +1130,7 @@ define(function (require) {
                 case 9: // editor and UI language
                     localStorage.setItem(("CopySource"), $("#CopySource").is(":checked") ? true : false);
                     localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
+                    localStorage.setItem(("StopAtBoundaries"), $("#StopAtBoundaries").is(":checked") ? true : false);
                     localStorage.setItem(("ShowPreviewBtn"), $("#ShowPreviewBtn").is(":checked") ? true : false);
                     if ($("#customLanguage").is(":checked")) {
                         // Use a custom language
@@ -1278,6 +1303,7 @@ define(function (require) {
                 "click #LanguageVariant": "onClickLanguageVariant",
                 "keyup #LanguageVariant": "buildFullLanguageCode",
                 "blur #LanguageVariant": "onBlurLanguageVariant",
+                "click #btnLangAdvanced": "onClickLanguageAdvanced",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -1343,6 +1369,9 @@ define(function (require) {
                     $("#LanguageVariant").scrollTop(top);
                 }
             },
+            onClickLanguageAdvanced: function (event) {
+                  
+            },
             buildFullLanguageCode: function (event) {
                 var value = currentView.langCode,
                     variant = $('#LanguageVariant').val().trim().replace(/\s+/g, ''),
@@ -1360,10 +1389,10 @@ define(function (require) {
                         // a max length of 8 chars
                         if (value.indexOf("-x-") > 0) {
                             // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0,8);
+                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0, 8);
                         } else {
                             // add a new variant
-                            newValue = value + "-x-" + variant.toLowerCase().substr(0,8);
+                            newValue = value + "-x-" + variant.toLowerCase().substr(0, 8);
                         }
                     }
                     $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
@@ -1558,7 +1587,7 @@ define(function (require) {
                                                 currentView.langName = value.get("Ref_Name");
                                                 currentView.langCode = value.get("Id");
                                                 if ($('#LanguageVariant').val().trim().length > 0) {
-                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
+                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0, 8);
                                                 }
                                             } else {
                                                 // user rejected this suggestion -- tell them to enter
@@ -1576,7 +1605,7 @@ define(function (require) {
                                         currentView.langName = value.get("Ref_Name");
                                         currentView.langCode = value.get("Id");
                                         if ($('#LanguageVariant').val().trim().length > 0) {
-                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0,8);
+                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0, 8);
                                         }
                                     } else {
                                         // user rejected this suggestion -- tell them to enter

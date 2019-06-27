@@ -259,6 +259,7 @@
         "lblEditor": "Editor",
         "lblCopySource": "Copy Source",
         "lblWrapAtUSFM": "Wrap at Standard Format Markers",
+        "lblStopSelectionAtBoundaries": "Stop Selection at Boundaries",
         "AppVersion": "App Version",
         "lblPortion": "(portion)",
         "dscBookName": "Here's a suggestion for the book name. You can keep this name, or change it to something more meaningful.",
