@@ -771,9 +771,21 @@ select.docNav {
     direction: ltr; /* always display marker data ltr */
 	display: block;
 }
+/* These get overwritten in AdaptViews.js */
 .strip {
-    display: inline-block; 
-    vertical-align: top;
+    display: inline;
+    white-space: pre-wrap;
+}
+.strip:not(:first-child):before {
+    content: "\A";
+}
+.strip:after {
+    content: " ";
+    display: inline-block;
+}
+/* case where we haven't emitted anything yet */
+.strip-nb {
+    display: inline-block;
 }
 /* preview mode (target display only) */
 div.preview div.marker, div.preview div.source, div.preview div.filter {
@@ -793,7 +805,6 @@ div.preview div.block-height {
 */
 .strip-header {
     color: black;
-/*    float: left;*/
     display: inline-block;
     padding: 0 0.3em;
     text-align: center;
@@ -826,7 +837,6 @@ div.preview div.block-height {
 }
 .pile {
     color: black;
-/*    float: left;*/
     display: inline-block;
     min-width: 1rem;
     padding: 0 0.3em;
@@ -941,13 +951,15 @@ div.specialtext div.source {
     margin-bottom: 3em;
     width: 14px;
     text-indent: 100%;
-/*    float: left;*/
     display: inline-block;
     padding: 2px;
     line-height: 3rem;
     color: #454545;
     text-shadow: 0 1px #fff;
     vertical-align: top;
+}
+div.filter > div {
+    display: none;
 }
 /* secondary filters (not displayed in UI) */
 .moreFilter {

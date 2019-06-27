@@ -385,32 +385,11 @@ define(function (require) {
             // User option to *not* clear USFM markers - should be 121 of them + ".sh" (our chapter and verse # class)
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
                 console.log("WrapUSFM -> FALSE");
-//                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: none; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+                // just need to nuke the newline char
+                theRule = ".strip:not(:first-child):before { content: \" \"; }";
+                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             } else {
                 console.log("WrapUSFM -> TRUE");
-//                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: both; }";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
 
@@ -1098,12 +1077,25 @@ define(function (require) {
             // user double-tapped on the Pile element -- select the entire strip
             onDblTapPile: function (event) {
                 // ignore event if we're in preview mode
+                var done = false,
+                    tmpNode = null;
                 if (inPreview === true) {
                     return;
                 }
                 console.log("onDblTapPile");
-                selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
-                selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                // start out at the current location
+                selectedStart = selectedEnd = $(event.currentTarget);
+                // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
+                while (!done) {
+                    tmpNode = event.currentTarget.previousElementSibling;
+                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).classes.indexOf("ilter")=== -1)) {
+                        selectedStart = tmpNode;    
+                    } else {
+                        done = true; // exit    
+                    }
+                }
+                // now go forward
+                done = false;
                 idxStart = $(selectedStart).index();
                 idxEnd = $(selectedEnd).index();
                 isSelecting = true; // change the UI color 
