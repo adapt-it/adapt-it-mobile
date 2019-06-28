@@ -1,5 +1,5 @@
 <div class="marker">{{this.markers}}&nbsp;</div>
-<div class="source{{#ifCond this.spid 'instring' 'ret-'}} retranslation{{/ifCond}}">{{this.prepuncts}}{{this.source}}{{this.follpuncts}}</div>
+<div class="source{{#ifCond this.spid 'instring' 'ret-'}} retranslation{{/ifCond}}{{#if this.prepuncts}} pp{{/if}}{{#if this.follpuncts}} fp{{/if}}">{{this.prepuncts}}{{this.source}}{{this.follpuncts}}</div>
 {{#ifCond this.source '!=' this.target}}
 <div class="target differences" contenteditable="true">{{this.target}}</div>
 {{else}}

@@ -1078,11 +1078,15 @@ define(function (require) {
             onDblTapPile: function (event) {
                 // ignore event if we're in preview mode
                 var done = false,
+                    stopAtBoundaries = false,
                     tmpNode = null;
                 if (inPreview === true) {
                     return;
                 }
                 console.log("onDblTapPile");
+                if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
+                    stopAtBoundaries = true;
+                }
                 // start out at the current location
                 tmpNode = selectedStart = selectedEnd = event.currentTarget;
                 // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
@@ -1090,18 +1094,55 @@ define(function (require) {
                     tmpNode = selectedStart.previousElementSibling;
                     if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                        ($(tmpNode).hasClass("moreFilter") === false)) {
-                        selectedStart = tmpNode;    
+                        // if we're stopping at boundaries, we have one more check... punctuation
+                        if (stopAtBoundaries === true) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes after -- include
+                                selectedStart = tmpNode;
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedStart = tmpNode;
+                            }
+                        } else {
+                            // don't care about boundaries -- update selectedStart
+                            selectedStart = tmpNode;
+                        }
                     } else {
                         done = true; // exit    
                     }
                 }
                 // now go forward
                 done = false;
+                if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                    done = true; // edge case -- current node is a boundary
+                }
                 while (!done) {
                     tmpNode = selectedEnd.nextElementSibling;
                     if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                        ($(tmpNode).hasClass("moreFilter") === false)) {
-                        selectedEnd = tmpNode;    
+                        // if we're stopping at boundaries, we have one more check... punctuation
+                        if (stopAtBoundaries === true) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes before -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- include
+                                selectedEnd = tmpNode;
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedEnd = tmpNode;
+                            }
+                        } else {
+                            // don't care about boundaries -- update selectedEnd
+                            selectedEnd = tmpNode;
+                        }
                     } else {
                         done = true; // exit    
                     }
