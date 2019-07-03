@@ -1012,6 +1012,7 @@ define(function (require) {
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
                 var stopAtBoundaries = false,
+                    tmpNode = null,
                     done = false;
                 // ignore event if we're in preview mode
                 if (inPreview === true) {
@@ -1026,137 +1027,116 @@ define(function (require) {
                 if (event.type === "touchmove") {
                     var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
                     tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY); // pile (parent)
+                    if (!$(tmpEnd).hasClass("pile")) {
+                        // select the parent node
+                        tmpNode = tmpEnd.parentElement;
+                        tmpEnd = tmpNode;
+                    }
                     event.preventDefault();
                 } else {
                     // mouse (web app)
                     tmpEnd = event.currentTarget; // pile
                 }
-                // Look to see if we're in the same strip -- adjust if we aren't 
-                // Note: in v>=1.2, everything's in the same container (no containing strip div), so we look for
-                // strip "header" divs and punctuation (if respect boundaries is on).
+                // Adjust selectedStart and selectedEnd as appropriate (accounting for boundaries, etc.)
                 if (isSelecting === true) {
+                    if (tmpEnd === selectedEnd) {
+                        // haven't moved selection since the last time -- exit out
+                        return;
+                    }
+                    console.log("selectingPilesMove -- finding new selectedEnd");
                     idxEnd = $(tmpEnd).index();
                     if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
                         stopAtBoundaries = true;
                     }
                     // remove the old selection
                     $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
-                    if (idxStart === idxEnd) {
+                    if (idxStart === $(tmpEnd).index()) {
                         // one item selected -- easy peasy
                         selectedEnd = tmpEnd;
-                        idxEnd = $(tmpEnd).index();
-                        $(event.currentTarget).addClass("ui-selecting");
-                    } else if (idxStart < idxEnd) {
-                        // go forward up to idxEnd if we can;
-                        // stop if we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
-                        if ((stopAtBoundaries === true) && ($(selectedStart).children(".source").first().hasClass("fp"))) {
-                            $(event.currentTarget).addClass("ui-selecting");
-                            done = true; // edge case -- selectedStart node is a boundary
+                        $(tmpEnd).addClass("ui-selecting");
+                    } else if (idxStart < $(tmpEnd).index()) {
+                        // go forward 
+                        console.log("selectingPilesMove: go forward");
+                        tmpNode = selectedEnd = selectedStart; // start at selectedStart
+                        $(selectedEnd).addClass("ui-selecting");
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
                         }
-                        $(selectedStart).addClass("ui-selecting");
-                        selectedEnd = selectedStart; // loop through and update this
                         while (!done) {
-                            tmpEnd = selectedEnd.nextElementSibling;
-                            if ($(tmpEnd).index === idxEnd) {
-                                // made it to idxEnd
-                                done = true;
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if ($(tmpNode).index() === $(tmpEnd).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
                             }
-                            if (tmpEnd && ($(tmpEnd).hasClass("pile")) && ($(tmpEnd).hasClass("filter") === false) &&
-                                    ($(tmpEnd).hasClass("moreFilter") === false)) {
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
-                                    if ($(tmpEnd).children(".source").first().hasClass("pp")) {
+                                    if ($(tmpNode).children(".source").first().hasClass("pp")) {
                                         // comes before -- don't include
                                         done = true;
-                                    } else if ($(tmpEnd).children(".source").first().hasClass("fp")) {
+                                    } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
                                         // comes after -- include
-                                        $(event.currentTarget).addClass("ui-selecting");
-                                        selectedEnd = tmpEnd;
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
                                         done = true;
                                     } else {
                                         // no punctuation
-                                        $(event.currentTarget).addClass("ui-selecting");
-                                        selectedEnd = tmpEnd;
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
                                     }
                                 } else {
                                     // don't care about boundaries -- update selectedEnd
-                                    $(event.currentTarget).addClass("ui-selecting");
-                                    selectedEnd = tmpEnd;
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selecting");
                                 }
                             } else {
                                 done = true; // exit    
                             }
                         }
-                        // update selectedEnd
-                        selectedEnd = tmpEnd;
-                        idxEnd = $(tmpEnd).index();
+                        // update idxEnd
+                        idxEnd = $(selectedEnd).index();
                     } else {
-                        // go backwards up to idxEnd if we can;
-                        // stop if we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
-                        if ((stopAtBoundaries === true) && ($(selectedStart).children(".source").first().hasClass("pp"))) {
-                            $(event.currentTarget).addClass("ui-selecting");
-                            done = true; // edge case -- selectedStart node is a boundary
-                        }
-                        $(selectedStart).addClass("ui-selecting");
-                        selectedEnd = selectedStart; // loop through and update this
+                        // go backwards 
+                        console.log("selectingPilesMove: go backward");
+                        tmpNode = selectedEnd = selectedStart; // start at selectedStart
+                        $(selectedEnd).addClass("ui-selecting");
                         while (!done) {
-                            tmpEnd = selectedEnd.previousElementSibling;
-                            if ($(tmpEnd).index === idxEnd) {
-                                // made it to idxEnd
-                                done = true;
+                            tmpNode = selectedEnd.previousElementSibling;
+                            if ($(tmpNode).index() === $(tmpEnd).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
                             }
-                            if (tmpEnd && ($(tmpEnd).hasClass("pile")) && ($(tmpEnd).hasClass("filter") === false) &&
-                                    ($(tmpEnd).hasClass("moreFilter") === false)) {
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
-                                    if ($(tmpEnd).children(".source").first().hasClass("pp")) {
-                                        // comes before -- include
-                                        $(event.currentTarget).addClass("ui-selecting");
-                                        selectedEnd = tmpEnd;
-                                        done = true;
-                                    } else if ($(tmpEnd).children(".source").first().hasClass("fp")) {
+                                    if ($(tmpNode).children(".source").first().hasClass("fp")) {
                                         // comes after -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
                                         done = true;
                                     } else {
                                         // no punctuation
-                                        $(event.currentTarget).addClass("ui-selecting");
-                                        selectedEnd = tmpEnd;
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
                                     }
                                 } else {
-                                    // don't care about boundaries -- update selectedEnd
-                                    $(event.currentTarget).addClass("ui-selecting");
-                                    selectedEnd = tmpEnd;
+                                    // don't care about boundaries -- update selectedStart
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selecting");
                                 }
                             } else {
                                 done = true; // exit    
                             }
                         }
-                        // update selectedEnd
-                        selectedEnd = tmpEnd;
-                        idxEnd = $(tmpEnd).index();
+                        // update idxEnd
+                        idxEnd = $(selectedEnd).index();
                     }
                     //console.log("selectedEnd: " + selectedEnd.id);
-                    // remove ui-selecting from all piles in the strip
-                    $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
-                    // add ui-selecting to the currently selected range
-                    if (idxStart === idxEnd) {
-                        // one item selected
-                        $(event.currentTarget).addClass("ui-selecting");
-                    } else if (idxStart < idxEnd) {
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index >= idxStart && index <= idxEnd) {
-                                $(value).addClass("ui-selecting");
-                            }
-                        });
-                    } else {
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index >= idxEnd && index <= idxStart) {
-                                $(value).addClass("ui-selecting");
-                            }
-                        });
-                    }
                 }
             },
             // user double-tapped on the Pile element -- select the entire strip
