@@ -1,22 +1,6 @@
-{{! SourcePhrase.html
-    Template for rendering a source phrase in a chapter -- used by SourcePhraseView.js.
+{{! SourcePhraseList.html
+    Template for rendering the list of source phrases in a chapter -- used by SourcePhraseView.js.
+    Note: starting with v.1.2, space between elements is rendered on the page (we switched to inline-block layout), so this is all
+    rendered on one line, as is the content from SourcePhrase.html.
 }}
-{{#.}}
-{{#if @first}}
-{{#unless this.markers}}
-{{! text doc (or something that doesn't have an opening marker) -- create a starting strip }}
-<div class="strip" id="strip-{{this.id}}"></div>
-{{/unless}}
-{{/if}}
-{{#if this.markers}}
-<div class="strip" id="strip-{{this.id}}"></div>
-{{#ifCond this.markers 'contains' 'c '}}
-<div id="header-{{this.id}}-c" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div>
-{{else}}
-{{#ifCond this.markers 'contains' 'v'}}
-<div id="header-{{this.id}}-v" class="strip-header block-height"><div class="verse-number">{{verse}}</div></div>
-{{/ifCond}}
-{{/ifCond}}
-{{/if}}
-<div id="pile-{{this.spid}}" class="pile block-height{{classes}}"></div>
-{{/.}}
+{{#.}}{{#if @first}}{{#unless this.markers}}{{! text doc (or something that doesn't have an opening marker) -- create a starting strip }}<div class="strip" id="strip-{{this.id}}"></div>{{/unless}}{{/if}}{{#if this.markers}}<div class="strip" id="strip-{{this.id}}"></div>{{#ifCond this.markers 'contains' 'c '}}<div id="header-{{this.id}}-c" class="strip-header block-height"><div class="chapter-number">{{chapter}}</div></div>{{else}}{{#ifCond this.markers 'contains' 'v'}}<div id="header-{{this.id}}-v" class="strip-header block-height"><div class="verse-number">{{verse}}</div></div>{{/ifCond}}{{/ifCond}}{{/if}}<div id="pile-{{this.spid}}" class="pile block-height{{classes}}"></div>{{/.}}
