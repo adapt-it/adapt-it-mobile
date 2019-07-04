@@ -2288,6 +2288,9 @@ define(function (require) {
                 // combine the selection into a new phrase
                 var next_edit = null,
                     phraseHtml = null,
+                    done = false,
+                    tmpNode = null,
+                    tmpNextNode = null,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
                     phraseMarkers = "",
@@ -2310,35 +2313,49 @@ define(function (require) {
                     PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
                     // not a phrase -- create one from the selection
-                    // first, iterate through the piles in the strip and pull out the source phrases that
-                    // are selected
-                    // Note: we are bundling up multiple sourcephrases, some of which could contain a
-                    // phrase. Check for these while bundling.
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            // concatenate the source and target into single phrases
-                            // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
-                            if (index > idxStart) {
-                                phraseSource += ONE_SPACE;
-                                phraseTarget += ONE_SPACE;
-                                origTarget += "|";
-                            }
-                            phraseMarkers += $(value).children(".marker").text();
-                            phraseSource += $(value).children(".source").html();
-                            phraseTarget += $(value).children(".target").html();
-                            // check for phrases
-                            if ($(value).attr('id').indexOf("phr") !== -1) {
-                                // phrase -- pull out the original target
-                                strID = $(value).attr('id');
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = this.collection.findWhere({spid: strID});
-                                origTarget += selectedObj.get("orig");
-                            } else {
-                                // not a phrase -- just add the target text
-                                origTarget += $(value).children(".target").html();
-                            }
+                    // initial values
+                    tmpNode = selectedStart;
+                    phraseMarkers = $(selectedStart).children(".marker").text();
+                    phraseSource = $(selectedStart).children(".source").html();
+                    phraseTarget = $(selectedStart).children(".target").html();
+                    // check for embedded phrases
+                    if ($(selectedStart).attr('id').indexOf("phr") !== -1) {
+                        // phrase -- pull out the original target
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        selectedObj = this.collection.findWhere({spid: strID});
+                        origTarget += selectedObj.get("orig");
+                    } else {
+                        // not a phrase -- just add the target text
+                        origTarget += $(selectedStart).children(".target").html();
+                    }
+                    // now iterate through subsequent piles until we reach selectedEnd
+                    while (!done) {
+                        // next item
+                        tmpNode = tmpNode.nextElementSibling;
+                        if (tmpNode === selectedEnd) {
+                            done = true;
                         }
-                    });
+                        // concatenate the source and target into single phrases
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
+                        phraseSource += ONE_SPACE;
+                        phraseTarget += ONE_SPACE;
+                        origTarget += "|";
+                        phraseMarkers += $(tmpNode).children(".marker").text();
+                        phraseSource += $(tmpNode).children(".source").html();
+                        phraseTarget += $(tmpNode).children(".target").html();
+                        // check for phrases
+                        if ($(tmpNode).attr('id').indexOf("phr") !== -1) {
+                            // phrase -- pull out the original target
+                            strID = $(tmpNode).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = this.collection.findWhere({spid: strID});
+                            origTarget += selectedObj.get("orig");
+                        } else {
+                            // not a phrase -- just add the target text
+                            origTarget += $(tmpNode).children(".target").html();
+                        }
+                    }
                     // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
                     // get prepuncts from the selected start
                     strID = $(selectedStart).attr('id');
@@ -2392,20 +2409,27 @@ define(function (require) {
                     isDirty = false;
                     $(selectedStart).before(phraseHtml);
                     // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourcephrase
-                            strID = $(value).attr('id');
-                            // skip our phrase
-                            if (strID.indexOf("phr") === -1) {
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.findWhere({spid: strID});
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
+                    done = false;
+                    tmpNode = selectedStart;
+                    while (!done) {
+                        tmpNextNode = tmpNode.nextElementSibling;
+                        // delete the current item
+                        strID = $(tmpNode).attr('id');
+                        // skip our phrase
+                        if (strID.indexOf("phr") === -1) {
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(tmpNode).remove(); // remove from the UI
                         }
-                    });
+                        // are we done yet?
+                        if (tmpNode === selectedEnd) {
+                            done = true;
+                        }
+                        // move to the next item
+                        tmpNode = tmpNextNode;
+                    }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#Placeholder").prop('disabled', true);
@@ -2494,6 +2518,9 @@ define(function (require) {
             toggleRetranslation: function (event) {
                 var next_edit = null,
                     RetHtml = null,
+                    tmpNode = null,
+                    tmpNextNode = null,
+                    done = false,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
                     retMarkers = "",
@@ -2517,23 +2544,49 @@ define(function (require) {
                 // combine the selection into a new retranslation
                 if (isRetranslation === false) {
                     // not a retranslation -- create one from the selection
-                    // first, iterate through the piles in the strip and pull out the source Rets that
-                    // are selected
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            // concatenate the source and target into single Retranslations
-                            // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
-                            if (index > idxStart) {
-                                RetSource += ONE_SPACE;
-                                RetTarget += ONE_SPACE;
-                                origTarget += "|";
-                            }
-                            retMarkers += $(value).children(".marker").text();
-                            RetSource += $(value).children(".source").html();
-                            RetTarget += $(value).children(".target").html();
-                            origTarget += $(value).children(".target").html();
+                    // initial values
+                    tmpNode = selectedStart;
+                    retMarkers = $(selectedStart).children(".marker").text();
+                    RetSource = $(selectedStart).children(".source").html();
+                    RetTarget = $(selectedStart).children(".target").html();
+                    // check for embedded phrases
+                    if ($(selectedStart).attr('id').indexOf("ret") !== -1) {
+                        // phrase -- pull out the original target
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        selectedObj = this.collection.findWhere({spid: strID});
+                        origTarget += selectedObj.get("orig");
+                    } else {
+                        // not a phrase -- just add the target text
+                        origTarget += $(selectedStart).children(".target").html();
+                    }
+                    // now iterate through subsequent piles until we reach selectedEnd
+                    while (!done) {
+                        // next item
+                        tmpNode = tmpNode.nextElementSibling;
+                        if (tmpNode === selectedEnd) {
+                            done = true;
                         }
-                    });
+                        // concatenate the source and target into single retranslations
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
+                        RetSource += ONE_SPACE;
+                        RetTarget += ONE_SPACE;
+                        origTarget += "|";
+                        retMarkers += $(tmpNode).children(".marker").text();
+                        RetSource += $(tmpNode).children(".source").html();
+                        RetTarget += $(tmpNode).children(".target").html();
+                        // check for phrases
+                        if ($(tmpNode).attr('id').indexOf("ret") !== -1) {
+                            // phrase -- pull out the original target
+                            strID = $(tmpNode).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = this.collection.findWhere({spid: strID});
+                            origTarget += selectedObj.get("orig");
+                        } else {
+                            // not a phrase -- just add the target text
+                            origTarget += $(tmpNode).children(".target").html();
+                        }
+                    }
                     // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
                     // get prepuncts from the selected start
                     strID = $(selectedStart).attr('id');
@@ -2564,20 +2617,27 @@ define(function (require) {
                     console.log("Ret: " + RetHtml);
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourceRet
-                            strID = $(value).attr('id');
-                            // skip our retranslation
-                            if (strID.indexOf("ret") === -1) {
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.findWhere({spid: strID});
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
+                    done = false;
+                    tmpNode = selectedStart;
+                    while (!done) {
+                        tmpNextNode = tmpNode.nextElementSibling;
+                        // delete the current item
+                        strID = $(tmpNode).attr('id');
+                        // skip our retranslation
+                        if (strID.indexOf("ret") === -1) {
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(tmpNode).remove(); // remove from the UI
                         }
-                    });
+                        // are we done yet?
+                        if (tmpNode === selectedEnd) {
+                            done = true;
+                        }
+                        // move to the next item
+                        tmpNode = tmpNextNode;
+                    }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#Placeholder").prop('disabled', true);
