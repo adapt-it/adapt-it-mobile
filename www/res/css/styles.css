@@ -771,8 +771,21 @@ select.docNav {
     direction: ltr; /* always display marker data ltr */
 	display: block;
 }
+/* These get overwritten in AdaptViews.js */
 .strip {
-    display: block; 
+    display: inline;
+    white-space: pre-wrap;
+}
+.strip:not(:first-child):before {
+    content: "\A";
+}
+.strip:after {
+    content: " ";
+    display: inline-block;
+}
+/* case where we haven't emitted anything yet */
+.strip-nb {
+    display: inline-block;
 }
 /* preview mode (target display only) */
 div.preview div.marker, div.preview div.source, div.preview div.filter {
@@ -792,9 +805,10 @@ div.preview div.block-height {
 */
 .strip-header {
     color: black;
-    float: left;
+    display: inline-block;
     padding: 0 0.3em;
     text-align: center;
+    vertical-align: top;
 }
 .topcoat-list__item {
     padding: 1rem;
@@ -804,7 +818,6 @@ div.preview div.block-height {
     /* vertical placement is centered by default -- no change needed */
 }
 .verse-number {
-    /* vertical placement needs to be lined up with the source line */
     line-height: normal;
     padding-top: 22px;
 }
@@ -824,9 +837,10 @@ div.preview div.block-height {
 }
 .pile {
     color: black;
-    float: left;
+    display: inline-block;
     min-width: 1rem;
     padding: 0 0.3em;
+    vertical-align: top;
 }
 .source, .marker {
     word-wrap: break-word;
@@ -911,7 +925,7 @@ div.preview div.block-height {
 .source {
 	color: #0000aa; /* blue */
 }
-div.strip.specialtext div.source {
+div.specialtext div.source {
 	color: #aa0000; /* red */
 }
 .retranslation {
@@ -928,29 +942,6 @@ div.strip.specialtext div.source {
     background-color: #ffaaff;
 }
 
-/* USFM styles */
-/* special text (special="1" in ai_USFM.XML). There are a lot of them. */
-.usfm-_heading_base div.source, .usfm-_intro_base div.source, .usfm-_list_base div.source, .usfm-_notes_base div.source, .usfm-_peripherals_base div.source,
-.usfm-at div.source, .usfm-add div.source,
-.usfm-bn div.source, .usfm-br div.source, .usfm-bt div.source,
-.usfm-cap div.source,
-.usfm-efm div.source, .usfm-ef div.source,
-.usfm-d div.source, .usfm-di div.source, .usfm-div div.source, .usfm-dvrf div.source, 
-.usfm-f div.source, .usfm-fe div.source, .usfm-fr div.source, .usfm-fk div.source, .usfm-fq div.source, .usfm-fqa div.source, .usfm-fl div.source, .usfm-fp div.source, .usfm-ft div.source, .usfm-fdc div.source, .usfm-fv div.source, .usfm-fm div.source, .usfm-free div.source,
-.usfm-gm div.source, .usfm-gs div.source, .usfm-gd div.source, .usfm-gp div.source,
-.usfm-h div.source, .usfm-h1 div.source, .usfm-h2 div.source, .usfm-h3 div.source, .usfm-hr div.source,
-.usfm-id div.source, .usfm-imt div.source, .usfm-imt1 div.source, .usfm-imt2 div.source, .usfm-imt3 div.source, .usfm-imt4 div.source, .usfm-imte div.source, .usfm-imte1 div.source, .usfm-imte2 div.source, .usfm-is div.source, .usfm-is1 div.source, .usfm-is2 div.source, .usfm-ip div.source, .usfm-ipi div.source, .usfm-ipq div.source, .usfm-ipr div.source, .usfm-iq div.source, .usfm-iq1 div.source, .usfm-iq2 div.source, .usfm-iq3 div.source, .usfm-im div.source, .usfm-imi div.source, .usfm-ili div.source, .usfm-ili1 div.source, .usfm-ili2 div.source, .usfm-imq div.source, .usfm-ib div.source, .usfm-iot div.source, .usfm-io div.source, .usfm-io1 div.source, .usfm-io2 div.source, .usfm-io3 div.source, .usfm-io4 div.source, .usfm-ior div.source, .usfm-iex div.source, .usfm-iqt div.source, .usfm-ie div.source,
-.usfm-k1 div.source, .usfm-k2 div.source,
-.usfm-lit div.source, 
-.usfm-mr div.source, .usfm-ms div.source, .usfm-ms1 div.source, .usfm-ms2 div.source, .usfm-ms3 div.source, .usfm-mt div.source, .usfm-mt1 div.source, .usfm-mt2 div.source, .usfm-mt3 div.source, .usfm-mt4 div.source, .usfm-mte div.source, .usfm-mte1 div.source, .usfm-mte2 div.source, 
-.usfm-nc div.source, .usfm-nt div.source, .usfm-note div.source,
-.usfm-p1 div.source, .usfm-p2 div.source, .usfm-pm div.source, .usfm-pmc div.source, .usfm-pmr div.source, .usfm-pt div.source, .usfm-ps div.source, .usfm-pp div.source, .usfm-pq div.source, 
-.usfm-r div.source, .usfm-rem div.source, .usfm-rr div.source, .usfm-rq div.source, 
-.usfm-s div.source, .usfm-s1 div.source, .usfm-s2 div.source, .usfm-s3 div.source, .usfm-s4 div.source, .usfm-sp div.source, .usfm-sr div.source, .usfm-sx div.source, .usfm-sts div.source, 
-.usfm-x div.source, .usfm-xk div.source, .usfm-xo div.source, .usfm-xq div.source, .usfm-xnt div.source, .usfm-xr div.source, .usfm-xot div.source, .usfm-xdc div.source, .usfm-xt div.source {
-    color: #aa0000;
-}
-
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
 .filter {
     background: url('../svg/filter.svg') no-repeat;
@@ -960,12 +951,15 @@ div.strip.specialtext div.source {
     margin-bottom: 3em;
     width: 14px;
     text-indent: 100%;
-    float: left;
+    display: inline-block;
     padding: 2px;
     line-height: 3rem;
     color: #454545;
     text-shadow: 0 1px #fff;
     vertical-align: top;
+}
+div.filter > div {
+    display: none;
 }
 /* secondary filters (not displayed in UI) */
 .moreFilter {
@@ -1035,16 +1029,6 @@ span.txt {
 .no-bg :hover {
     background-color: transparent;
 }
-/*
-.sprite {
-    background-position: left;
-	background-repeat: no-repeat;
-	display: inline-block;
-	margin: 0;
-	overflow: hidden;
-	position: absolute;
-}
-*/
 span.sprite{
     background-position: left;
 	background-repeat: no-repeat;
@@ -1379,9 +1363,11 @@ typeahead styles
 * example devices: Android ldpi phones
 */
 @media screen and (max-width: 319px) {
+/*
     .source, .target {
         max-width: 240px;
     }
+*/
     #chapter {
         background-color: rgb(223,226,226);
         margin-right: 16px;
@@ -1410,9 +1396,11 @@ typeahead styles
 * example devices: iPhone 4, Android mdpi phones
 */
 @media screen and (min-width: 320px) and (max-width : 479px) {
+/*
     .source, .target {
         max-width: 320px;
     }
+*/
     /* hidden items */
     #DocTitle {
         display: none;
@@ -1439,9 +1427,11 @@ typeahead styles
 * example devices: iPhone 5, Android mdpi phones
 */
 @media screen and (min-width: 480px) and (max-width : 639px) {
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* hidden items */
     #More {
         display: none;
@@ -1472,9 +1462,11 @@ typeahead styles
 */
 @media screen and (min-width: 640px) and (max-width : 999px) {
   /* iPhone, Android mdpi rules here */
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* hidden items */
     #More {
         display: none;
@@ -1505,9 +1497,11 @@ typeahead styles
 */
 @media screen and (min-width: 1000px) {
   /* larger screen (browser?) */
+/*
     .source, .target {
         max-width: 480px;
     }
+*/
     /* shown items */
     .tb-action-toggles {
         display: inline-block;

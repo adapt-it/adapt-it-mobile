@@ -297,34 +297,34 @@ define(function (require) {
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // block-height (standard height for all strip elements - pile, chapter/verse, etc.)
-            theRule = ".block-height {";
-            theRule += "height: ";
-            // total height = source + target + marker + (20px extra space)
-            // this formula also accounts for the larger line height of the Scheherazade font
-            // (see https://software.sil.org/scheherazade/support/faq/)
-            totalHeight =
-                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
-            theRule += totalHeight + "px; ";
-            theRule += "line-height: " + totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            console.log("Calculated pile height: " + totalHeight);
-            // condensed-pile (w/o the marker line)
-            theRule = ".condensed-pile {";
-            theRule += "height: ";
-            // total height = source + target + (20px extra space)
-            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            theRule = ".block-height {";
+//            theRule += "height: ";
+//            // total height = source + target + marker + (20px extra space)
+//            // this formula also accounts for the larger line height of the Scheherazade font
+//            // (see https://software.sil.org/scheherazade/support/faq/)
+//            totalHeight =
+//                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
+//            theRule += totalHeight + "px; ";
+//            theRule += "line-height: " + totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            console.log("Calculated pile height: " + totalHeight);
+//            // condensed-pile (w/o the marker line)
+//            theRule = ".condensed-pile {";
+//            theRule += "height: ";
+//            // total height = source + target + (20px extra space)
+//            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+//            theRule += totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // preview (w/o marker and source lines)
-            theRule = "div.preview div.block-height {";
-            theRule += "height: ";
-            // total height = source + target + (20px extra space)
-            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-            theRule += totalHeight + "px; ";
-            theRule += "}";
-            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//            theRule = "div.preview div.block-height {";
+//            theRule += "height: ";
+//            // total height = source + target + (20px extra space)
+//            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
+//            theRule += totalHeight + "px; ";
+//            theRule += "}";
+//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // is the preview button enabled?
             if (localStorage.getItem("ShowPreviewBtn") && localStorage.getItem("ShowPreviewBtn") === "true") {
                 theRule = "#PreviewBtn {display: inline-block;}";
@@ -345,7 +345,7 @@ define(function (require) {
             }
 
             // Special Text color
-            theRule = "div.strip.specialtext div.source {";
+            theRule = "div.specialtext div.source {";
             theRule += "color: " + project.get('SpecialTextColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
@@ -365,10 +365,10 @@ define(function (require) {
             if (project.get('SourceDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".pile, .strip-header, .filter {";
-                theRule += "float: right;";
-                theRule += "}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+//                theRule = ".pile, .strip-header, .filter {";
+//                theRule += "float: right;";
+//                theRule += "}";
+//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 theRule = ".source { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
@@ -385,32 +385,11 @@ define(function (require) {
             // User option to *not* clear USFM markers - should be 121 of them + ".sh" (our chapter and verse # class)
             if (localStorage.getItem("WrapUSFM") && localStorage.getItem("WrapUSFM") === "false") {
                 console.log("WrapUSFM -> FALSE");
-                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: none; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: none; }";
+                // just need to nuke the newline char
+                theRule = ".strip:not(:first-child):before { content: \" \"; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             } else {
                 console.log("WrapUSFM -> TRUE");
-                theRule = ".usfm-div, .usfm-bn, .usfm-ms, .usfm-ma1, .usfm-ms2, .usfm-ms3, .usfm-p, .usfm-mt, .usfm-mt1, .usfm-mt2, .usfm-mt3, .usfm-mte, .usfm-mte1, .usfm-mte2, .usfm-st, .usfm-s, .usfm-s1, .usfm-s2, .usfm-s3, .usfm-s4, .sh { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-sr, .usfm-sx, .usfm-sz, .usfm-sp, .usfm-d, .usfm-di, .usfm-pi, .usfm-pi1, .usfm-pi2, .usfm-pi3, .usfm-pgi, .usfm-ph, .usfm-ph1, .usfm-ph2, .usfm-ph3, .usfm-phi, .usfm-pmo, .usfm-m, .usfm-mi, .usfm-pc { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-pr, .usfm-pt, .usfm-ps, .usfm-psi, .usfm-pp, .usfm-pq, .usfm-pm, .usfm-pmc, .usfm-pmr, .usfm-nb, .usfm-q, .usfm-q1, .usfm-q2, .usfm-q3, .usfm-q4, .usfm-qc, .usfm-qr, .usfm-qa, .usfm-qm, .usfm-qm1 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qm2, .usfm-qm3, .usfm-imt, .usfm-imt1, .usfm-imt2, .usfm-imt3, .usfm-imt4, .usfm-imte, .usfm-imte1, .usfm-imte2, .usfm-is, .usfm-is1, .usfm-is2, .usfm-ip, .usfm-ipi, .usfm-ipq, .usfm-ipr, .usfm-iq, .usfm-iq1, .usfm-iq2 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-iq3, .usfm-im, .usfm-imi, .usfm-ili, .usfm-ili1, .usfm-ili2, .usfm-imq, .usfm-ib, .usfm-iot, .usfm-io, .usfm-io1, .usfm-io2, .usfm-io3, .usfm-io4, .usfm-iex, .usfm-li, .usfm-li1, .usfm-li2, .usfm-li3, .usfm-li4 { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".usfm-qh, .usfm-tr, .usfm-tr1, .usfm-tr2, .usfm-gm, .usfm-gs, .usfm-gd, .usfm-gp, .usfm-tis, .usfm-tpi, .usfm-tir, .usfm-tps, .usfm-p1, .usfm-p2, .usfm-k1, .usfm-k2, .usfm-pb, .usfm-px, .usfm-pz, .usfm-qx, .usfm-qz { clear: both; }";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
         },
 
@@ -674,10 +653,10 @@ define(function (require) {
             // Params: key -- single pile to check for a possible partial match (e.g., the first word in a phrase that's in the KB)
             possibleKBPhrase: function (key) {
                 var aryFilter = null;
-                aryFilter = kblist.filter(function(element) {
+                aryFilter = kblist.filter(function (element) {
                     return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
                 });
-                return (aryFilter.length !== 0); 
+                return (aryFilter.length !== 0);
             },
             // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
             // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
@@ -703,7 +682,7 @@ define(function (require) {
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
                         sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
                         // is there a match for this phrase?
-                        tu = kblist.filter(function(element) {
+                        tu = kblist.filter(function (element) {
                             return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
                         });
                         if (tu.length > 0) {
@@ -711,7 +690,7 @@ define(function (require) {
                             if (kblist.findWhere({'source': sourceText}) !== 'undefined') {
                                 // this is an exact match -- move the indices and see if we can get a bigger phrase
                                 exactMatch = nextObj;
-                                idxEnd = $(nextObj).index();                            
+                                idxEnd = $(nextObj).index();
                             }
                             // even if our exace match test failed, we got a partial match earlier -- so it's possible that
                             // there'a bigger phrase that matches. Keep appending piles...
@@ -744,7 +723,8 @@ define(function (require) {
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
-                    if (selectedStart.previousElementSibling !== null) {
+                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).attr('id').indexOf("-sh") === -1)) {
+                        // there is a previous sibling, and it isn't a strip header
                         next_edit = selectedStart.previousElementSibling;
                     } else {
                         // No previous sibling -- see if you can go to the previous strip
@@ -756,7 +736,7 @@ define(function (require) {
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
                                     console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).children(".pile").length > 0)) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -777,18 +757,19 @@ define(function (require) {
                 } else {
                     // move forwards
                     if (selectedStart.nextElementSibling !== null) {
+                        // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
                     } else {
                         // no next sibling in this strip -- see if you can go to the next strip
                         if (selectedStart.parentElement.nextElementSibling !== null) {
                             temp_cursor = selectedStart.parentElement.nextElementSibling;
                             // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
-                                // continue on to the next strip that ISN'T a strip header or filtered out of the UI
+                            if ($(temp_cursor).hasClass("filter")) {
+                                // continue on to the next strip that ISN'T filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
                                     console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).attr('id').indexOf("-sh") === -1)) {
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false)) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -796,6 +777,8 @@ define(function (require) {
                                 }
                             }
                             if (temp_cursor) {
+                                // found a strip that doesn't have a filter -- select the first pile
+                                // (note that this will also skip the strip header div, which is what we want)
                                 next_edit = $(temp_cursor).children(".pile").first()[0];
                             } else {
                                 next_edit = null;
@@ -1028,6 +1011,9 @@ define(function (require) {
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
+                var stopAtBoundaries = false,
+                    tmpNode = null,
+                    done = false;
                 // ignore event if we're in preview mode
                 if (inPreview === true) {
                     return;
@@ -1039,67 +1025,193 @@ define(function (require) {
                 event.preventDefault();
                 var tmpEnd = null;
                 if (event.type === "touchmove") {
-                    // touch
-//                    console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
-                    // is this multi-touch or a single touch?
-//                    if (event.targetTouches && event.targetTouches.length === 2) {
-//                        // multi-touch
-//
-//                        // figure out what's going to be the start and end (selectedStart / selectedEnd)
-//                        for (var i = 0; i < 2; i++) {
-//                            // sanity check -- only respond to items inside the current pile
-//                            if (event.touches[i].parentElement === selectedStart.parentElement) {
-//                                // inside the pile -- add
-//                            }
-//                        }
-//                        // don't process the rest -- just return
-//                        return;
-//                    }
-                    // assume single touch if we got here
                     var touch = event.originalEvent.changedTouches[0]; // interested in current position, not original touch target
                     tmpEnd = document.elementFromPoint(touch.pageX, touch.pageY); // pile (parent)
+                    if (!$(tmpEnd).hasClass("pile")) {
+                        // select the parent node
+                        tmpNode = tmpEnd.parentElement;
+                        tmpEnd = tmpNode;
+                    }
                     event.preventDefault();
                 } else {
                     // mouse (web app)
                     tmpEnd = event.currentTarget; // pile
                 }
-                // only interested if we're selecting in the same strip
-                if ((isSelecting === true) &&
-                        (tmpEnd.parentElement === selectedStart.parentElement)) {
-                    // recalculate the new selectedEnd
-                    selectedEnd = tmpEnd;
-                    idxEnd = $(tmpEnd).index();
-                    //console.log("selectedEnd: " + selectedEnd.id);
-                    // remove ui-selecting from all piles in the strip
-                    $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
-                    // add ui-selecting to the currently selected range
-                    if (idxStart === idxEnd) {
-                        // one item selected
-                        $(event.currentTarget).addClass("ui-selecting");
-                    } else if (idxStart < idxEnd) {
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index >= idxStart && index <= idxEnd) {
-                                $(value).addClass("ui-selecting");
-                            }
-                        });
-                    } else {
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                            if (index >= idxEnd && index <= idxStart) {
-                                $(value).addClass("ui-selecting");
-                            }
-                        });
+                // Adjust selectedStart and selectedEnd as appropriate (accounting for boundaries, etc.)
+                if (isSelecting === true) {
+                    if (tmpEnd === selectedEnd) {
+                        // haven't moved selection since the last time -- exit out
+                        return;
                     }
+                    console.log("selectingPilesMove -- finding new selectedEnd");
+                    idxEnd = $(tmpEnd).index();
+                    if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
+                        stopAtBoundaries = true;
+                    }
+                    // remove the old selection
+                    $(event.currentTarget.parentElement.childNodes).removeClass("ui-selecting");
+                    if (idxStart === $(tmpEnd).index()) {
+                        // one item selected -- easy peasy
+                        selectedEnd = tmpEnd;
+                        $(tmpEnd).addClass("ui-selecting");
+                    } else if (idxStart < $(tmpEnd).index()) {
+                        // go forward 
+                        console.log("selectingPilesMove: go forward");
+                        tmpNode = selectedEnd = selectedStart; // start at selectedStart
+                        $(selectedEnd).addClass("ui-selecting");
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
+                        }
+                        while (!done) {
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if ($(tmpNode).index() === $(tmpEnd).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
+                            }
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes before -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedEnd
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selecting");
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // update idxEnd
+                        idxEnd = $(selectedEnd).index();
+                    } else {
+                        // go backwards 
+                        console.log("selectingPilesMove: go backward");
+                        tmpNode = selectedEnd = selectedStart; // start at selectedStart
+                        $(selectedEnd).addClass("ui-selecting");
+                        while (!done) {
+                            tmpNode = selectedEnd.previousElementSibling;
+                            if ($(tmpNode).index() === $(tmpEnd).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
+                            }
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedStart
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selecting");
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // update idxEnd
+                        idxEnd = $(selectedEnd).index();
+                    }
+                    //console.log("selectedEnd: " + selectedEnd.id);
                 }
             },
             // user double-tapped on the Pile element -- select the entire strip
             onDblTapPile: function (event) {
                 // ignore event if we're in preview mode
+                var done = false,
+                    stopAtBoundaries = false,
+                    tmpNode = null;
                 if (inPreview === true) {
                     return;
                 }
                 console.log("onDblTapPile");
-                selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
-                selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
+                    stopAtBoundaries = true;
+                }
+                // start out at the current location
+                tmpNode = selectedStart = selectedEnd = event.currentTarget;
+                // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
+                while (!done) {
+                    tmpNode = selectedStart.previousElementSibling;
+                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                            ($(tmpNode).hasClass("moreFilter") === false)) {
+                        // if we're stopping at boundaries, we have one more check... punctuation
+                        if (stopAtBoundaries === true) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes after -- include
+                                selectedStart = tmpNode;
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedStart = tmpNode;
+                            }
+                        } else {
+                            // don't care about boundaries -- update selectedStart
+                            selectedStart = tmpNode;
+                        }
+                    } else {
+                        done = true; // exit    
+                    }
+                }
+                // now go forward
+                done = false;
+                if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                    done = true; // edge case -- current node is a boundary
+                }
+                while (!done) {
+                    tmpNode = selectedEnd.nextElementSibling;
+                    if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                            ($(tmpNode).hasClass("moreFilter") === false)) {
+                        // if we're stopping at boundaries, we have one more check... punctuation
+                        if (stopAtBoundaries === true) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes before -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- include
+                                selectedEnd = tmpNode;
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedEnd = tmpNode;
+                            }
+                        } else {
+                            // don't care about boundaries -- update selectedEnd
+                            selectedEnd = tmpNode;
+                        }
+                    } else {
+                        done = true; // exit    
+                    }
+                }
                 idxStart = $(selectedStart).index();
                 idxEnd = $(selectedEnd).index();
                 isSelecting = true; // change the UI color 
@@ -1123,6 +1235,9 @@ define(function (require) {
                 // re-add the contenteditable fields
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
+                    tmpNode = null,
+                    done = false,
+                    stopAtBoundaries = false,
                     tmpIdx = 0,
                     now = 0,
                     delay = 0,
@@ -1150,6 +1265,11 @@ define(function (require) {
                     $("#Undo").prop('disabled', false);
                     // clear the long press timeout -- we're selecting a menu item
                     return; // get out
+                }
+                
+                // are we stopping at boundaries?
+                if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
+                    stopAtBoundaries = true;
                 }
                 
                 // sanity check -- make sure there's a selectedStart
@@ -1205,25 +1325,82 @@ define(function (require) {
                 // check for long press selection
                 if (isLongPressSelection === true && LongPressSectionStart !== selectedStart) {
                     // This is the click _after_ the long press event, which indicates the selection end
-                    // Sanity check that this click is in the same strip
-                    if (selectedStart.parentElement !== LongPressSectionStart.parentElement) {
-                        // not the same parent (i.e., not in the same strip) -- select as much as we can
-                        // NOTE: selectedStart actually holds the ENDING click value, hence our logic here
-                        strStartID = $(LongPressSectionStart).attr('id');
-                        strStartID = strStartID.substr(strStartID.indexOf("-") + 1); // remove "pile-"
-                        strEndID = $(selectedStart).attr('id');
-                        strEndID = strEndID.substr(strEndID.indexOf("-") + 1); // remove "pile-"
-                        if (parseInt(strStartID, 10) < parseInt(strEndID, 10)) {
-                            // last click was AFTER the first long press -- select to the end of the strip
-                            selectedStart = $(LongPressSectionStart.parentElement).children(".pile").last()[0]; // last pile
-                        } else {
-                            // last click was BEFORE the first long press -- select to the beginning of the strip
-                            selectedStart = $(LongPressSectionStart.parentElement).children(".pile")[0]; // first pile
+                    // modify the ending tap as appropriate
+                    if ($(LongPressSectionStart).index() < $(selectedStart).index()) {
+                        // go forward
+                        tmpNode = selectedEnd = LongPressSectionStart; // start at LongPressSectionStart
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
                         }
+                        while (!done) {
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if ($(tmpNode).index() === $(selectedStart).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
+                            }
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes before -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedEnd = tmpNode;
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedEnd
+                                    selectedEnd = tmpNode;
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // set selectedStart (selectedEnd is already set)
+                        selectedStart = LongPressSectionStart;
+                    } else {
+                        // go backwards
+                        tmpNode = selectedEnd = LongPressSectionStart; // start at LongPressSectionStart
+                        while (!done) {
+                            tmpNode = selectedEnd.previousElementSibling;
+                            if ($(tmpNode).index() === $(selectedStart).index()) {
+                                done = true; // reached the end -- fall through and possibly update selectedEnd, then exit the loop
+                            }
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedEnd = tmpNode;
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedStart
+                                    selectedEnd = tmpNode;
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // now set selectedStart / selectedEnd
+                        selectedStart = selectedEnd; // swap vars
+                        selectedEnd = LongPressSectionStart;
                     }
-                    // set the selection
-                    selectedEnd = selectedStart; // ending click
-                    selectedStart = LongPressSectionStart; // starting long press
+                    // done adjusting selectedStart / selectedEnd --
+                    // set the index values, etc.
                     idxStart = $(selectedStart).index();
                     idxEnd = $(selectedEnd).index();
                     isSelecting = true; // change the UI color
@@ -1263,7 +1440,7 @@ define(function (require) {
                         $("#Retranslation").prop('disabled', false);
                         $("#mnuRetranslation").prop('disabled', false);
                         $("#mnuPhrase").prop('disabled', false);
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
                                 $(value).addClass("ui-selected");
                             }
@@ -1274,7 +1451,7 @@ define(function (require) {
                         $("#Retranslation").prop('disabled', false);
                         $("#mnuRetranslation").prop('disabled', false);
                         $("#mnuPhrase").prop('disabled', false);
-                        $(selectedStart.parentElement).children(".pile").each(function (index, value) {
+                        $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxEnd && index <= idxStart) {
                                 $(value).addClass("ui-selected");
                             }
@@ -2111,6 +2288,9 @@ define(function (require) {
                 // combine the selection into a new phrase
                 var next_edit = null,
                     phraseHtml = null,
+                    done = false,
+                    tmpNode = null,
+                    tmpNextNode = null,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
                     phraseMarkers = "",
@@ -2133,35 +2313,49 @@ define(function (require) {
                     PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
                     // not a phrase -- create one from the selection
-                    // first, iterate through the piles in the strip and pull out the source phrases that
-                    // are selected
-                    // Note: we are bundling up multiple sourcephrases, some of which could contain a
-                    // phrase. Check for these while bundling.
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            // concatenate the source and target into single phrases
-                            // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
-                            if (index > idxStart) {
-                                phraseSource += ONE_SPACE;
-                                phraseTarget += ONE_SPACE;
-                                origTarget += "|";
-                            }
-                            phraseMarkers += $(value).children(".marker").text();
-                            phraseSource += $(value).children(".source").html();
-                            phraseTarget += $(value).children(".target").html();
-                            // check for phrases
-                            if ($(value).attr('id').indexOf("phr") !== -1) {
-                                // phrase -- pull out the original target
-                                strID = $(value).attr('id');
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = this.collection.findWhere({spid: strID});
-                                origTarget += selectedObj.get("orig");
-                            } else {
-                                // not a phrase -- just add the target text
-                                origTarget += $(value).children(".target").html();
-                            }
+                    // initial values
+                    tmpNode = selectedStart;
+                    phraseMarkers = $(selectedStart).children(".marker").text();
+                    phraseSource = $(selectedStart).children(".source").html();
+                    phraseTarget = $(selectedStart).children(".target").html();
+                    // check for embedded phrases
+                    if ($(selectedStart).attr('id').indexOf("phr") !== -1) {
+                        // phrase -- pull out the original target
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        selectedObj = this.collection.findWhere({spid: strID});
+                        origTarget += selectedObj.get("orig");
+                    } else {
+                        // not a phrase -- just add the target text
+                        origTarget += $(selectedStart).children(".target").html();
+                    }
+                    // now iterate through subsequent piles until we reach selectedEnd
+                    while (!done) {
+                        // next item
+                        tmpNode = tmpNode.nextElementSibling;
+                        if (tmpNode === selectedEnd) {
+                            done = true;
                         }
-                    });
+                        // concatenate the source and target into single phrases
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
+                        phraseSource += ONE_SPACE;
+                        phraseTarget += ONE_SPACE;
+                        origTarget += "|";
+                        phraseMarkers += $(tmpNode).children(".marker").text();
+                        phraseSource += $(tmpNode).children(".source").html();
+                        phraseTarget += $(tmpNode).children(".target").html();
+                        // check for phrases
+                        if ($(tmpNode).attr('id').indexOf("phr") !== -1) {
+                            // phrase -- pull out the original target
+                            strID = $(tmpNode).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = this.collection.findWhere({spid: strID});
+                            origTarget += selectedObj.get("orig");
+                        } else {
+                            // not a phrase -- just add the target text
+                            origTarget += $(tmpNode).children(".target").html();
+                        }
+                    }
                     // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
                     // get prepuncts from the selected start
                     strID = $(selectedStart).attr('id');
@@ -2215,20 +2409,27 @@ define(function (require) {
                     isDirty = false;
                     $(selectedStart).before(phraseHtml);
                     // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourcephrase
-                            strID = $(value).attr('id');
-                            // skip our phrase
-                            if (strID.indexOf("phr") === -1) {
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.findWhere({spid: strID});
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
+                    done = false;
+                    tmpNode = selectedStart;
+                    while (!done) {
+                        tmpNextNode = tmpNode.nextElementSibling;
+                        // delete the current item
+                        strID = $(tmpNode).attr('id');
+                        // skip our phrase
+                        if (strID.indexOf("phr") === -1) {
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(tmpNode).remove(); // remove from the UI
                         }
-                    });
+                        // are we done yet?
+                        if (tmpNode === selectedEnd) {
+                            done = true;
+                        }
+                        // move to the next item
+                        tmpNode = tmpNextNode;
+                    }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#Placeholder").prop('disabled', true);
@@ -2317,6 +2518,9 @@ define(function (require) {
             toggleRetranslation: function (event) {
                 var next_edit = null,
                     RetHtml = null,
+                    tmpNode = null,
+                    tmpNextNode = null,
+                    done = false,
                     coll = this.collection, // needed to find collection within "each" block below
                     newID = Underscore.uniqueId(),
                     retMarkers = "",
@@ -2340,23 +2544,49 @@ define(function (require) {
                 // combine the selection into a new retranslation
                 if (isRetranslation === false) {
                     // not a retranslation -- create one from the selection
-                    // first, iterate through the piles in the strip and pull out the source Rets that
-                    // are selected
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= idxEnd) {
-                            // concatenate the source and target into single Retranslations
-                            // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
-                            if (index > idxStart) {
-                                RetSource += ONE_SPACE;
-                                RetTarget += ONE_SPACE;
-                                origTarget += "|";
-                            }
-                            retMarkers += $(value).children(".marker").text();
-                            RetSource += $(value).children(".source").html();
-                            RetTarget += $(value).children(".target").html();
-                            origTarget += $(value).children(".target").html();
+                    // initial values
+                    tmpNode = selectedStart;
+                    retMarkers = $(selectedStart).children(".marker").text();
+                    RetSource = $(selectedStart).children(".source").html();
+                    RetTarget = $(selectedStart).children(".target").html();
+                    // check for embedded phrases
+                    if ($(selectedStart).attr('id').indexOf("ret") !== -1) {
+                        // phrase -- pull out the original target
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        selectedObj = this.collection.findWhere({spid: strID});
+                        origTarget += selectedObj.get("orig");
+                    } else {
+                        // not a phrase -- just add the target text
+                        origTarget += $(selectedStart).children(".target").html();
+                    }
+                    // now iterate through subsequent piles until we reach selectedEnd
+                    while (!done) {
+                        // next item
+                        tmpNode = tmpNode.nextElementSibling;
+                        if (tmpNode === selectedEnd) {
+                            done = true;
                         }
-                    });
+                        // concatenate the source and target into single retranslations
+                        // TODO: spaces? Probably replace with a space marker of some sort (e.g. Thai with no word breaks)
+                        RetSource += ONE_SPACE;
+                        RetTarget += ONE_SPACE;
+                        origTarget += "|";
+                        retMarkers += $(tmpNode).children(".marker").text();
+                        RetSource += $(tmpNode).children(".source").html();
+                        RetTarget += $(tmpNode).children(".target").html();
+                        // check for phrases
+                        if ($(tmpNode).attr('id').indexOf("ret") !== -1) {
+                            // phrase -- pull out the original target
+                            strID = $(tmpNode).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = this.collection.findWhere({spid: strID});
+                            origTarget += selectedObj.get("orig");
+                        } else {
+                            // not a phrase -- just add the target text
+                            origTarget += $(tmpNode).children(".target").html();
+                        }
+                    }
                     // transfer any leading / trailing punctuation from the source to the prepuncts/follpuncts
                     // get prepuncts from the selected start
                     strID = $(selectedStart).attr('id');
@@ -2387,20 +2617,27 @@ define(function (require) {
                     console.log("Ret: " + RetHtml);
                     $(selectedStart).before(RetHtml);
                     // finally, remove the selected piles (they were merged into this one)
-                    $(selectedStart.parentElement).children(".pile").each(function (index, value) {
-                        if (index >= idxStart && index <= (idxEnd + 1)) {
-                            // remove the original sourceRet
-                            strID = $(value).attr('id');
-                            // skip our retranslation
-                            if (strID.indexOf("ret") === -1) {
-                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                                selectedObj = coll.findWhere({spid: strID});
-                                coll.remove(selectedObj); // remove from collection
-                                selectedObj.destroy(); // remove from database
-                                $(value).remove();
-                            }
+                    done = false;
+                    tmpNode = selectedStart;
+                    while (!done) {
+                        tmpNextNode = tmpNode.nextElementSibling;
+                        // delete the current item
+                        strID = $(tmpNode).attr('id');
+                        // skip our retranslation
+                        if (strID.indexOf("ret") === -1) {
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            selectedObj = coll.findWhere({spid: strID});
+                            coll.remove(selectedObj); // remove from collection
+                            selectedObj.destroy(); // remove from database
+                            $(tmpNode).remove(); // remove from the UI
                         }
-                    });
+                        // are we done yet?
+                        if (tmpNode === selectedEnd) {
+                            done = true;
+                        }
+                        // move to the next item
+                        tmpNode = tmpNextNode;
+                    }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#Placeholder").prop('disabled', true);
