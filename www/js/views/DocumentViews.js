@@ -313,9 +313,9 @@ define(function (require) {
                                     punctIdx++;
                                 }
                                 // remove the punctuation from the "source" of the substring
-                                s = s.substr(punctIdx);
+//                                s = s.substr(punctIdx);
                             }
-                            if (s.length === 0) {
+                            if (punctIdx === s.length) {
                                 // it'a ALL punctuation -- jump to the next token
                                 i++;
                             } else {
@@ -328,7 +328,7 @@ define(function (require) {
                                         punctIdx--;
                                     }
                                     // remove the punctuation from the "source" of the substring
-                                    s = s.substr(0, punctIdx + 1);
+//                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
                                 spID = Underscore.uniqueId();
@@ -566,9 +566,9 @@ define(function (require) {
                                             punctIdx++;
                                         }
                                         // remove the punctuation from the "source" of the substring
-                                        s = s.substr(punctIdx);
+//                                        s = s.substr(punctIdx);
                                     }
-                                    if (s.length === 0) {
+                                    if (punctIdx === s.length) {
                                         // it'a ALL punctuation -- jump to the next token
                                         i++;
                                     } else {
@@ -581,7 +581,7 @@ define(function (require) {
                                                 punctIdx--;
                                             }
                                             // remove the punctuation from the "source" of the substring
-                                            s = s.substr(0, punctIdx + 1);
+//                                            s = s.substr(0, punctIdx + 1);
                                         }
                                         // Now create a new sourcephrase
                                         spID = Underscore.uniqueId();
@@ -1071,7 +1071,7 @@ define(function (require) {
                             note: $(this).attr('no'),
                             srcwordbreak: $(this).attr('swbk'),
                             tgtwordbreak: $(this).attr('twbk'),
-                            source: $(this).attr('k'), // source w/o punctuation
+                            source: $(this).attr('s'), // source (w/punctuation)
                             target: $(this).attr('t')
                         });
                         index++;
@@ -1343,9 +1343,9 @@ define(function (require) {
                                     punctIdx++;
                                 }
                                 // remove the punctuation from the "source" of the substring
-                                s = s.substr(punctIdx);
+//                                s = s.substr(punctIdx);
                             }
-                            if (s.length === 0) {
+                            if (punctIdx === s.length) {
                                 // it'a ALL punctuation -- jump to the next token
                                 i++;
                             } else {
@@ -1358,7 +1358,7 @@ define(function (require) {
                                         punctIdx--;
                                     }
                                     // remove the punctuation from the "source" of the substring
-                                    s = s.substr(0, punctIdx + 1);
+//                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
                                 spID = Underscore.uniqueId();
@@ -1586,7 +1586,7 @@ define(function (require) {
                                 if (filtered === false) {
                                     // only emit soursephrase pre/foll puncts if we have something translated in the target
                                     if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        chapterString += value.get("target") + " ";
                                     }
                                 }
                                 if (value.get('spid') === lastSPID) {
@@ -1730,7 +1730,7 @@ define(function (require) {
                                     }
                                     // only emit soursephrase pre/foll puncts if we have something translated in the target
                                     if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        chapterString += value.get("target") + " ";
                                     }
                                 }
                                 if (value.get('spid') === lastSPID) {
@@ -2045,7 +2045,7 @@ define(function (require) {
                                         // only export the text if not filtered AND
                                         // only emit soursephrase pre/foll puncts if we have something translated in the target
                                         if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                            chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                            chapterString += value.get("target") + " ";
                                         }
                                     }
                                 }
