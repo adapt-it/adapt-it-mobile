@@ -1266,10 +1266,9 @@ typeahead styles
     min-width: 1rem;
 }
 
-/* EDB 7/5/17 hacky hack: move dropdown up into target text as well as possible */
+/* EDB 7/5/17 make sure there's enough width on the dropdown */
 .twitter-typeahead {
     min-width: 1rem;
-    top: -1.8rem;
 }
 
 .tt-menu {

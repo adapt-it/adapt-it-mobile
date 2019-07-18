@@ -877,50 +877,50 @@ define(function (require) {
                they're either always visible or always filtered out, depending on the inform property */
             {
                 name: "id",
-	            description: "File identification (BOOKID, FILENAME, EDITOR, MODIFICATION DATE)",
-	            png: "1",
-	            special: "1",
-	            inform: "1",
+                description: "File identification (BOOKID, FILENAME, EDITOR, MODIFICATION DATE)",
+                png: "1",
+                special: "1",
+                inform: "1",
                 navigationText: "id",
                 userCanSetFilter: "0"
             },
             {
                 name: "ide",
-	            description: "File encoding information",
-	            usfm: "1",
-	            filter: "1",
+                description: "File encoding information",
+                usfm: "1",
+                filter: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "restore",
-	            description: "Project restore information",
-	            usfm: "1",
-	            filter: "1",
+                description: "Project restore information",
+                usfm: "1",
+                filter: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "c",
-	            description: "Chapter number (basic)",
-	            usfm: "1",
-	            inform: "1",
+                description: "Chapter number (basic)",
+                usfm: "1",
+                inform: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "v",
-	            description: "A verse number (basic)",
-	            usfm: "1",
+                description: "A verse number (basic)",
+                usfm: "1",
                 inform: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "vt",
-	            description: "Verse text",
-	            inform: "1",
+                description: "Verse text",
+                inform: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "vn",
-	            description: "Verse number",
+                description: "Verse number",
                 inform: "1",
                 userCanSetFilter: "0"
             },
@@ -1057,7 +1057,7 @@ define(function (require) {
             },
             {
                 name: "phi",
-	            description: "Paragraph text, indented with hanging indent",
+                description: "Paragraph text, indented with hanging indent",
                 inform: "1",
                 navigationText: "para indent hang indent",
                 userCanSetFilter: "0"

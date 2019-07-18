@@ -52,6 +52,7 @@ define(function (require) {
         clearKBInput = false,
         isDirty = false,        // does the target text need to be saved?
         isSelecting = false,    // is the user selecting a pile / range of piles?
+        isEditing = false,
         isPlaceholder = false,
         isPhrase = false,
         isDrafting = true,
@@ -493,31 +494,43 @@ define(function (require) {
                 var curDate = new Date();
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
-            // Helper method to strip any starting / ending punctuation from the target field.
+            // Helper method to strip any starting / ending punctuation from the source or target field.
             // This method is called from:
             // - selectedAdaptation before the target text available for editing
             // - unselectedAdaptation before the target text is stored in the KB
-            stripPunctuation: function (target) {
-                var result = target,
+            // - togglePhrase before the new phrase is stored in the KB
+            stripPunctuation: function (content, isSource) {
+                var result = content,
                     startIdx = 0,
-                    endIdx = target.length;
+                    endIdx = content.length;
                 // check for empty string
                 if (endIdx === 0) {
                     return result;
                 }
-                // starting index
-                while (startIdx < (target.length - 1) && punctsTarget.indexOf(target.charAt(startIdx)) > -1) {
-                    startIdx++;
-                }
-                // ending index
-                while (endIdx > 0 && punctsTarget.indexOf(target.charAt(endIdx - 1)) > -1) {
-                    endIdx--;
+                if (isSource === false) {
+                    // starting index
+                    while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                        startIdx++;
+                    }
+                    // ending index
+                    while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                        endIdx--;
+                    }
+                } else {
+                    // starting index
+                    while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
+                        startIdx++;
+                    }
+                    // ending index
+                    while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
+                        endIdx--;
+                    }
                 }
                 // sanity check for all punctuation
                 if (endIdx <= startIdx) {
                     return "";
                 }
-                result = target.substr(startIdx, (endIdx) - startIdx);
+                result = content.substr(startIdx, (endIdx) - startIdx);
                 return result;
             },
             // Helper method to copy any punctuation from the source to the target field. This method is
@@ -680,7 +693,7 @@ define(function (require) {
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
-                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
+                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true), true);
                         // is there a match for this phrase?
                         tu = kblist.filter(function (element) {
                             return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
@@ -984,7 +997,7 @@ define(function (require) {
                 event.stopPropagation();
                 event.preventDefault();
                 // if there was an old selection, remove it
-                if (selectedStart !== null) {
+                if ((selectedStart !== null) && (isEditing === true)) {
                     console.log("old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
                     $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
@@ -1745,6 +1758,7 @@ define(function (require) {
                 // enable prev / next buttons
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
                 $("#NextSP").prop('disabled', false); // enable toolbar button
+                isEditing = true;
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -1792,7 +1806,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
-                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target));
+                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
                             $(event.currentTarget).html(targetText);
                             isDirty = true;
                             // Are we moving?
@@ -1909,7 +1923,7 @@ define(function (require) {
                                 $(event.currentTarget).html("");
                             } else {
                                 // copy the source text
-                                $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                                $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
                             }
                         }
                         MovingDir = 0; // stop here
@@ -1948,7 +1962,7 @@ define(function (require) {
                         // We really selected this field -- stay here.
                         // reset the dirty bit because
                         // we haven't made any changes yet
-                        origText = this.stripPunctuation($(event.currentTarget).text().trim());
+                        origText = this.stripPunctuation($(event.currentTarget).text().trim(), false);
                         lastPile = selectedStart;
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1996,6 +2010,7 @@ define(function (require) {
                                 }
                             } else {
                                 console.log("KB data consistency error: should have a KB entry for source text:" + sourceText);
+                                $(event.currentTarget).html(origText); // stripped of punctuation
                             }
                                 
                         }
@@ -2093,8 +2108,8 @@ define(function (require) {
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 var model = this.collection.findWhere({spid: strID});
                 // remove the KB entry
-                removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim()),
+                removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim(), false),
                              project.get('projectid'));
                 // set the edit field back to its previous value
                 $(lastPile).find(".target").html(origText);
@@ -2176,6 +2191,7 @@ define(function (require) {
                     trimmedValue = this.autoAddCaps(model, trimmedValue);
                 }
                 // check for changes in the edit field
+                isEditing = false;
                 if (isDirty === true) {
                     if (trimmedValue.length === 0) {
                         // empty value entered. Was there text before?
@@ -2195,9 +2211,9 @@ define(function (require) {
                             // not a retranslation
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
-                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim()),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim()),
+                            saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(), false),
                                      project.get('projectid'));
                         }
                         // add any punctuation back to the target field
@@ -2430,7 +2446,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource, true), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2439,7 +2455,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    //saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
+                    saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -2448,7 +2464,7 @@ define(function (require) {
                     if (isMergingFromKB === false) {
                         // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
                         // is there something in the KB that matches this phrase?
-                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true))) === null) {
+                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), true) === null) {
                             // nothing in the KB -- 
                             // next check is to see if the user selected a phrase and
                             // started typing (isAutoPhrase). If so, only add the target from the selected start
@@ -2661,7 +2677,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource, true), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
