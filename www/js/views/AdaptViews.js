@@ -2366,7 +2366,6 @@ define(function (require) {
                     nOrder = 0.0,
                     phObj = null,
                     strID = null,
-                    bookID = null,
                     newView = null,
                     selectedObj = null,
                     PhraseLine0 = "<div id=\"pile-",
@@ -2528,8 +2527,6 @@ define(function (require) {
                     var startIdx = 0,
                         endIdx = 0,
                         theSource = "";
-                    
-                    bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2613,7 +2610,6 @@ define(function (require) {
                     follpuncts = "",
                     phObj = null,
                     strID = null,
-                    bookID = null,
                     newView = null,
                     selectedObj = null,
                     RetHtmlLine0 = "<div id=\"pile-",
@@ -2737,7 +2733,6 @@ define(function (require) {
                     var startIdx = 0,
                         endIdx = 0,
                         theSource = "";
-                    bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
