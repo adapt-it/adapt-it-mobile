@@ -705,7 +705,7 @@ define(function (require) {
                                 exactMatch = nextObj;
                                 idxEnd = $(nextObj).index();
                             }
-                            // even if our exace match test failed, we got a partial match earlier -- so it's possible that
+                            // even if our exact match test failed, we got a partial match earlier -- so it's possible that
                             // there'a bigger phrase that matches. Keep appending piles...
                             thisObj = nextObj;
                         } else {
@@ -990,7 +990,7 @@ define(function (require) {
                 // make sure the long press timeout gets cleared, and then get out
                 if (isSelectingKB === true) {
                     // clear the long press timeout -- we're selecting a menu item
-                    clearTimeout(longPressTimeout); 
+                    clearTimeout(longPressTimeout);
                     return; // get out
                 }
                 // don't bubble this event
@@ -1299,7 +1299,7 @@ define(function (require) {
                     }
                     // we're not selecting anything -- just clicking on the filter
                     $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
-                    isSelecting = false; 
+                    isSelecting = false;
                     return;
                 }
                 // check for retranslation
@@ -1381,7 +1381,7 @@ define(function (require) {
                                 }
                             }
                             idxStart = $(selectedStart).index();
-                            idxEnd = $(selectedEnd).index();                            
+                            idxEnd = $(selectedEnd).index();
                             isSelecting = true; // change the UI color
                         }
                         lastTapTime = now; // update the last tap time
@@ -2056,23 +2056,6 @@ define(function (require) {
                     event.stopPropagation();
                     event.preventDefault();
                     $(event.currentTarget).blur();
-// #129 - Enter key processing - should it mean "accept and move" or "accept and close the keyboard?"
-// Here's the code for "accept and close the keyboard" should we decide to re-implement.
-//                } else if (event.keyCode === 13) {
-//                    // Return / Enter pressed - accept the edit and do NOT move the cursor
-//                    event.preventDefault();
-//                    event.stopPropagation();
-//                    isDirty = true;
-//                    if (window.getSelection) {
-//                        if (window.getSelection().empty) {  // Chrome
-//                            window.getSelection().empty();
-//                        } else if (window.getSelection().removeAllRanges) {  // Firefox
-//                            window.getSelection().removeAllRanges();
-//                        }
-//                    } else if (document.selection) {  // IE?
-//                        document.selection.empty();
-//                    }
-//                    $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // tab or enter key -- accept the edit and move the cursor
                     event.preventDefault();
@@ -2364,6 +2347,10 @@ define(function (require) {
                 // if the current selection is a phrase, remove it; if not,
                 // combine the selection into a new phrase
                 var next_edit = null,
+                    tu = null,
+                    refstrings = null,
+                    options = [],
+                    i = 0,
                     phraseHtml = null,
                     done = false,
                     tmpNode = null,
@@ -2446,7 +2433,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource, true), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2464,7 +2451,23 @@ define(function (require) {
                     if (isMergingFromKB === false) {
                         // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
                         // is there something in the KB that matches this phrase?
-                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), true) === null) {
+                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), true);
+                        if (tu !== null) {
+                            // found at least one match -- populate the target with the first match
+                            refstrings = tu.get('refstring');
+                            // first, make sure these refstrings are actually being used
+                            options.length = 0; // clear out any old cruft
+                            for (i = 0; i < refstrings.length; i++) {
+                                if (refstrings[i].n > 0) {
+                                    options.push(Underscore.unescape(refstrings[i].target));
+                                }
+                            }
+                            if (options.length === 1) {
+                                // exactly one entry in KB -- populate the field
+                                phraseHtml += this.stripPunctuation(this.autoAddCaps(phObj, refstrings[0].target), false);
+                                isDirty = true;
+                            }
+                        } else {
                             // nothing in the KB -- 
                             // next check is to see if the user selected a phrase and
                             // started typing (isAutoPhrase). If so, only add the target from the selected start
@@ -2480,7 +2483,7 @@ define(function (require) {
                             }
                             isAutoPhrase = false; // clear the autophrase flag
                         }
-                    } 
+                    }
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
@@ -2552,7 +2555,8 @@ define(function (require) {
                             follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
                             endIdx--;
                         }
-                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        theSource = value; // don't strip punctuation
+                        // theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
@@ -2564,7 +2568,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         // add to KB
                         if (phraseTarget.length > 0) {
-                            saveInKB(thisObj.autoRemoveCaps(value), phraseTarget, "", project.get('projectid'));
+                            saveInKB(thisObj.stripPunctuation(thisObj.autoRemoveCaps(value), true), phraseTarget, "", project.get('projectid'));
                         }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
