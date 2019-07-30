@@ -1009,6 +1009,49 @@ define(function (require) {
                             });
                         }
                         
+                        // create the next sourcephrase
+//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
+                        if (origTarget.length > 0) {
+                            // phrase -- spID has a prefix of "phr-"
+                            spID = "phr-" + Underscore.uniqueId();
+                        } else {
+                            spID = Underscore.uniqueId();
+                        }
+                        sp = new spModel.SourcePhrase({
+                            spid: spID,
+                            norder: norder,
+                            chapterid: chapterID,
+                            markers: markers, //$(this).attr('m'),
+                            orig: (origTarget.length > 0) ? origTarget : null,
+                            prepuncts: $(this).attr('pp'),
+                            midpuncts: "",
+                            follpuncts: $(this).attr('fp'),
+                            flags: $(this).attr('f'),
+                            texttype: $(this).attr('ty'),
+                            gloss: $(this).attr('g'),
+                            freetrans: $(this).attr('ft'),
+                            note: $(this).attr('no'),
+                            srcwordbreak: $(this).attr('swbk'),
+                            tgtwordbreak: $(this).attr('twbk'),
+                            source: $(this).attr('s'), // source (w/punctuation)
+                            target: $(this).attr('t')
+                        });
+                        index++;
+                        norder++;
+                        sps.push(sp);
+                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                        if ((sps.length % MAX_BATCH) === 0) {
+                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                        }
+                        // add this item to the KB
+                        // TODO: build up punctpairs
+                        if (sp.get('target').length > 0) {
+                            saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('a'), false), false),
+                                            "", project.get('projectid'));
+                        }
+                        markers = ""; // clear out the markers for the next wourcephrase
+                        
+                        // Last of all, add the filter data
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
                             moreFilter = true;
@@ -1020,7 +1063,6 @@ define(function (require) {
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
                                     filterIdx++;
-                                    console.log("filter");
                                 } else if (elt.indexOf("\\") === 0) {
                                     // starting marker -- check to see if this marker requires an ending marker
                                     mkr = markerList.where({name: elt.substr(elt.indexOf("\\") + 1)});
@@ -1028,13 +1070,15 @@ define(function (require) {
                                         // this needs an end marker -- take the entire filter up to the end marker
                                         // and create a single sourcephrase out of it
                                         if ($(this).attr('fi').indexOf(mkr[0].get("endMarker")) > -1) {
-                                            tmpIdx = $(this).attr('fi').indexOf(elt) + elt.length;
+                                            markers = elt; // flag this sourcephrase as being filtered by this element
+                                            tmpIdx = $(this).attr('fi').indexOf(elt);// + elt.length; -- include marker
                                             src = $(this).attr('fi').substring(tmpIdx, $(this).attr('fi').indexOf(mkr[0].get("endMarker")) - 1); // filter string from elt to the end marker
                                             // update the loop index to the end marker's location in the array
                                             while (filterIdx < filterElts.length && filterElts[filterIdx].indexOf(mkr[0].get("endMarker") === -1)) {
                                                 filterIdx++;
                                             }
                                             filterIdx++;
+                                            console.log("Filter with end marker: " + src);
                                         } else {
                                             // ERROR: no ending marker! 
                                             console.log("Error: no ending marker for elt: " + elt);
@@ -1078,11 +1122,10 @@ define(function (require) {
                                         if ((sps.length % MAX_BATCH) === 0) {
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         }
-                                        // (2) now set the markers to the ending marker, for the next sourcephrase
-                                        markers = elt.substr(elt.indexOf("\\"));
-                                        //markers = ""; // reset
+                                        markers = ""; // reset
                                     } else {
                                         // no end marker -- just add the element
+                                        console.log("Filter witn NO end marker: " + elt);
                                         markers += elt;
                                         filterIdx++;
                                     }
@@ -1121,9 +1164,7 @@ define(function (require) {
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
-                                    // (2) now set the markers to the ending marker, for the next sourcephrase
-                                    markers = elt.substr(elt.indexOf("\\"));
-                                    //markers = ""; // reset
+                                    markers = ""; // reset
                                     filterIdx++;
                                 } else {
                                     // regular token - add as a new sourcephrase
@@ -1167,47 +1208,7 @@ define(function (require) {
                                 }
                             }
                         }
-                        // create the next sourcephrase
-//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
-                        if (origTarget.length > 0) {
-                            // phrase -- spID has a prefix of "phr-"
-                            spID = "phr-" + Underscore.uniqueId();
-                        } else {
-                            spID = Underscore.uniqueId();
-                        }
-                        sp = new spModel.SourcePhrase({
-                            spid: spID,
-                            norder: norder,
-                            chapterid: chapterID,
-                            markers: markers, //$(this).attr('m'),
-                            orig: (origTarget.length > 0) ? origTarget : null,
-                            prepuncts: $(this).attr('pp'),
-                            midpuncts: "",
-                            follpuncts: $(this).attr('fp'),
-                            flags: $(this).attr('f'),
-                            texttype: $(this).attr('ty'),
-                            gloss: $(this).attr('g'),
-                            freetrans: $(this).attr('ft'),
-                            note: $(this).attr('no'),
-                            srcwordbreak: $(this).attr('swbk'),
-                            tgtwordbreak: $(this).attr('twbk'),
-                            source: $(this).attr('s'), // source (w/punctuation)
-                            target: $(this).attr('t')
-                        });
-                        index++;
-                        norder++;
-                        sps.push(sp);
-                        // if necessary, send the next batch of SourcePhrase INSERT transactions
-                        if ((sps.length % MAX_BATCH) === 0) {
-                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
-                        }
-                        // add this item to the KB
-                        // TODO: build up punctpairs
-                        if (sp.get('target').length > 0) {
-                            saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('a'), false), false),
-                                            "", project.get('projectid'));
-                        }
-                        markers = ""; // clear out the markers for the next wourcephrase
+                        
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
