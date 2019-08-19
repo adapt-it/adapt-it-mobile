@@ -736,20 +736,24 @@ define(function (require) {
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
-                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).attr('id').indexOf("-sh") === -1)) {
-                        // there is a previous sibling, and it isn't a strip header
+                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).hasClass('pile')) && (!$(selectedStart.previousElementSibling).hasClass('filter'))) {
+                        // there is a previous sibling, and it is a non-filtered pile
                         next_edit = selectedStart.previousElementSibling;
                     } else {
-                        // No previous sibling -- see if you can go to the previous strip
-                        if (selectedStart.parentElement.previousElementSibling !== null) {
-                            temp_cursor = selectedStart.parentElement.previousElementSibling;
+                        // No previous sibling OR we've reached something we need to skip:
+                        // - a filter
+                        // - a header (chapter or verse)
+                        // - a strip marker
+                        // try skipping this item to see if we can find a "real" pile to move to
+                        if (selectedStart.previousElementSibling !== null) {
+                            temp_cursor = selectedStart.previousElementSibling;
                             // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
-                                // continue on to the previous strip that ISN'T a strip header or filtered out of the UI
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
+                                // continue on to the previous item that ISN'T a strip header or filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
-                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).children(".pile").length > 0)) {
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -757,7 +761,7 @@ define(function (require) {
                                 }
                             }
                             if (temp_cursor) {
-                                next_edit = $(temp_cursor).children(".pile").last()[0];
+                                next_edit = temp_cursor;
                             } else {
                                 next_edit = null;
                                 console.log("reached first pile.");
@@ -769,20 +773,20 @@ define(function (require) {
                     }
                 } else {
                     // move forwards
-                    if (selectedStart.nextElementSibling !== null) {
+                    if ((selectedStart.nextElementSibling !== null) && ($(selectedStart.nextElementSibling).hasClass('pile')) && (!$(selectedStart.nextElementSibling).hasClass('filter'))) {
                         // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
                     } else {
                         // no next sibling in this strip -- see if you can go to the next strip
-                        if (selectedStart.parentElement.nextElementSibling !== null) {
-                            temp_cursor = selectedStart.parentElement.nextElementSibling;
+                        if (selectedStart.nextElementSibling !== null) {
+                            temp_cursor = selectedStart.nextElementSibling;
                             // handle filtered strips and strip header elements
-                            if ($(temp_cursor).hasClass("filter")) {
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
                                 // continue on to the next strip that ISN'T filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
-                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false)) {
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -792,7 +796,7 @@ define(function (require) {
                             if (temp_cursor) {
                                 // found a strip that doesn't have a filter -- select the first pile
                                 // (note that this will also skip the strip header div, which is what we want)
-                                next_edit = $(temp_cursor).children(".pile").first()[0];
+                                next_edit = temp_cursor;
                             } else {
                                 next_edit = null;
                                 console.log("reached last pile.");
@@ -3032,6 +3036,7 @@ define(function (require) {
                     selectedStart = null; // clear selection itself
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
+                    MovingDir = 0;
                 }
             },
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
