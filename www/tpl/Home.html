@@ -4,11 +4,11 @@
 
 {{#if this.name.length}}
 <div class="topcoat-navigation-bar main_title bg-lightblue">
-    <div class="topcoat-navigation-bar__item center" id="projTitle" style="line-height:59px;">
+    <div class="topcoat-navigation-bar__item center" id="projTitle" style="line-height:57px;">
         <h2>{{this.name}}</h2>
     </div>
 </div>
-<div class="chapter-list topcoat-list__container scroller" id="Container">
+<div class="chapter-list topcoat-list__container scroller-notb" id="Container">
 <ul class="chapter-list topcoat-list__container" id="ProjectItems">
     <li class="topcoat-list__item"><a class="big-link" id="settings" title="{{ t 'view.lblProjectSettings'}}" href="#project/{{this.projectid}}"><span class="btn-settings"></span>{{ t 'view.lblProjectSettings'}}<span class="chevron"></span></a></li>
 <li class="topcoat-list__item"><a class="big-link" id="import" title="{{ t 'view.lblImportDocuments'}}" href="#import/{{this.projectid}}"><span class="btn-import"></span>{{ t 'view.lblImportDocuments'}}<span class="chevron"></span></a></li>
