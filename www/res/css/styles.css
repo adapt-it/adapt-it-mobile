@@ -301,7 +301,7 @@ header h3 {
     overflow: auto;
     position: fixed;
     right: 0;
-    top: 70px;
+    top: 57px;
 }
 /* most pages - top title bar, no toolbar */
 .scroller-notb {
@@ -617,6 +617,7 @@ ul {
 }
 #projTitle {
     display: inline-block;
+    line-height: 56px;
     width: 100%;
 }
 #projTitle h2 {
