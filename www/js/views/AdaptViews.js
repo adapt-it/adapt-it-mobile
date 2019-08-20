@@ -2220,8 +2220,9 @@ define(function (require) {
                         }
                     }
                 } else {
-                    // dirty bit not set -- but the html for the target field could have punctuation stripped
-                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                    // dirty bit not set -- go back to what was saved earlier
+//                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                    $(event.currentTarget).html(model.get('target'));
                 }
                 // if we just finished work on a new verse, update the last adapted count
                 if (model && model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
