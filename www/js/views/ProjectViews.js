@@ -11,9 +11,7 @@ define(function (require) {
         Underscore      = require('underscore'),
         Backbone        = require('backbone'),
         Handlebars      = require('handlebars'),
-        Helpers         = require('app/utils/HandlebarHelpers'),
         Marionette      = require('marionette'),
-        cp              = require('colorpicker'),
         tplEditProject  = require('text!tpl/EditProject.html'),
         tplNewProject   = require('text!tpl/NewProject.html'),
         tplCopyOrImport = require('text!tpl/CopyOrImport.html'),
@@ -31,10 +29,7 @@ define(function (require) {
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
-        projModel   = require('app/models/project'),
         fontModel   = require('app/models/font'),
-        langName    = "",
-        langCode    = "",
         innerHtml   = "",
         step        = 1,
         currentView = null,
@@ -42,10 +37,7 @@ define(function (require) {
         USFMMarkers = null,
         theFont     = null,
         template    = null,
-        projectURL  = "",
-        localURL    = "",//cordova.file.documentsDirectory
         lines       = [],
-        ft          = null,
         fileList    = [],
  
         ////
@@ -91,7 +83,6 @@ define(function (require) {
                     value2 = "",
                     value3 = "",
                     value4 = "",
-                    intVal = 0,
                     i = 0,
                     s = null,
                     t = null,
@@ -423,7 +414,6 @@ define(function (require) {
             },
             onClickDeleteRow: function (event) {
                 // find the current row
-                var array = this.model.get('CasePairs');
                 var index = event.currentTarget.id.substr(2);
                 // remove the item from the UI
                 var element = "#r-" + index;
@@ -641,7 +631,6 @@ define(function (require) {
             },
             onClickDeleteRow: function (event) {
                 // find the current row
-                var array = this.model.get('PunctPairs');
                 var index = event.currentTarget.id.substr(2);
                 // remove the item from the UI
                 var element = "#r-" + index;
@@ -1050,13 +1039,9 @@ define(function (require) {
             },
 
             UpdateProject: function (step) {
-                var value = null,
-                    index = 0,
-                    punctPairs = null,
-                    tempfont = "",
+                var tempfont = "",
                     tempSize = "",
                     tempColor = "",
-                    trimmedValue = null,
                     loc = "",
                     locale = "";
                 
@@ -1537,7 +1522,6 @@ define(function (require) {
             },
 
             OnNextStep: function (event) {
-                var coll = null;
                 // pull the info from the current step (must pass validation)
                 if (this.GetProjectInfo(step) === true) {
                     if (step < this.numSteps) {
@@ -1560,15 +1544,9 @@ define(function (require) {
             // (currently just checks for non-null language names in source/target language)
             GetProjectInfo: function (step) {
                 var value = null,
-                    index = 0,
-                    langstr = "",
-                    punctPairs = null,
-                    trimmedValue = null;
+                    langstr = "";
                 var getLanguageString = function () {
-                    var fail = false,
-                        btnIndex = 0,
-                        language = "",
-                        value = null;
+                    var value = null;
                     if (currentView.langName.trim().length === 0) {
                         // fail - no language set
                         // Is there something in the language edit field?

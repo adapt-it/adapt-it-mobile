@@ -44,7 +44,7 @@ define(function (require) {
                 note: "",
                 srcwordbreak: "",
                 tgtwordbreak: "",
-                source: "",
+                source: "", // source includes punctuation as of 1.2 (was inconsistent before)
                 target: ""
             },
 

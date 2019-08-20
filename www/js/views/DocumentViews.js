@@ -41,6 +41,8 @@ define(function (require) {
         punctExp        = "",
         bookid          = "",
         puncts          = [],
+        punctsSource     = [],
+        punctsTarget     = [],
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
@@ -313,9 +315,9 @@ define(function (require) {
                                     punctIdx++;
                                 }
                                 // remove the punctuation from the "source" of the substring
-                                s = s.substr(punctIdx);
+//                                s = s.substr(punctIdx);
                             }
-                            if (s.length === 0) {
+                            if (punctIdx === s.length) {
                                 // it'a ALL punctuation -- jump to the next token
                                 i++;
                             } else {
@@ -328,7 +330,7 @@ define(function (require) {
                                         punctIdx--;
                                     }
                                     // remove the punctuation from the "source" of the substring
-                                    s = s.substr(0, punctIdx + 1);
+//                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
                                 spID = Underscore.uniqueId();
@@ -566,9 +568,9 @@ define(function (require) {
                                             punctIdx++;
                                         }
                                         // remove the punctuation from the "source" of the substring
-                                        s = s.substr(punctIdx);
+//                                        s = s.substr(punctIdx);
                                     }
-                                    if (s.length === 0) {
+                                    if (punctIdx === s.length) {
                                         // it'a ALL punctuation -- jump to the next token
                                         i++;
                                     } else {
@@ -581,7 +583,7 @@ define(function (require) {
                                                 punctIdx--;
                                             }
                                             // remove the punctuation from the "source" of the substring
-                                            s = s.substr(0, punctIdx + 1);
+//                                            s = s.substr(0, punctIdx + 1);
                                         }
                                         // Now create a new sourcephrase
                                         spID = Underscore.uniqueId();
@@ -704,6 +706,8 @@ define(function (require) {
                     var spaceRE = /\s+/;        // select 1+ space chars
                     var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var follpunct = "";
+                    var src = "";
+                    var mkr = "";
                     var sp = null;
                     var chaps = [];
                     var xmlDoc = $.parseXML(contents);
@@ -715,10 +719,55 @@ define(function (require) {
                     var markers = "";
                     var firstChapterNumber = "1";
                     var origTarget = "";
+                    var markerList = new USFM.MarkerCollection();
                     var i = 0;
+                    var moreFilter = false;
+                    var filterIdx = 0;
+                    var filterElts = null;
+                    var elt = "";
+                    var tmpIdx = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
                     
+                    // Helper method to strip any starting / ending punctuation from the source or target field.
+                    // This method is called from:
+                    // - selectedAdaptation before the target text available for editing
+                    // - unselectedAdaptation before the target text is stored in the KB
+                    // - togglePhrase before the new phrase is stored in the KB
+                    var stripPunctuation = function (content, isSource) {
+                        var result = content,
+                            startIdx = 0,
+                            endIdx = content.length;
+                        // check for empty string
+                        if (endIdx === 0) {
+                            return result;
+                        }
+                        if (isSource === false) {
+                            // starting index
+                            while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                                startIdx++;
+                            }
+                            // ending index
+                            while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                                endIdx--;
+                            }
+                        } else {
+                            // starting index
+                            while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
+                                startIdx++;
+                            }
+                            // ending index
+                            while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
+                                endIdx--;
+                            }
+                        }
+                        // sanity check for all punctuation
+                        if (endIdx <= startIdx) {
+                            return "";
+                        }
+                        result = content.substr(startIdx, (endIdx) - startIdx);
+                        return result;
+                    };
                     // Helper method to convert theString to lower case using either the source or target case equivalencies.
                     var autoRemoveCaps = function (theString, isSource) {
                         var i = 0,
@@ -777,6 +826,7 @@ define(function (require) {
                     }
                     // Sanity check -- this needs to be an AI XML document (we don't support other xml files right now)
                     scrIDList.fetch({reset: true, data: {id: ""}});
+                    markerList.fetch({reset: true, data: {name: ""}});
                     // Starting at the SourcePhrases ( <S ...> ), look for the \id element
                     // in the markers. We'll test this against the canonical usfm markers to learn more about this document.
                     i = contents.indexOf("<S ");
@@ -959,18 +1009,126 @@ define(function (require) {
                             });
                         }
                         
+                        // create the next sourcephrase
+//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
+                        if (origTarget.length > 0) {
+                            // phrase -- spID has a prefix of "phr-"
+                            spID = "phr-" + Underscore.uniqueId();
+                        } else {
+                            spID = Underscore.uniqueId();
+                        }
+                        sp = new spModel.SourcePhrase({
+                            spid: spID,
+                            norder: norder,
+                            chapterid: chapterID,
+                            markers: markers, //$(this).attr('m'),
+                            orig: (origTarget.length > 0) ? origTarget : null,
+                            prepuncts: $(this).attr('pp'),
+                            midpuncts: "",
+                            follpuncts: $(this).attr('fp'),
+                            flags: $(this).attr('f'),
+                            texttype: $(this).attr('ty'),
+                            gloss: $(this).attr('g'),
+                            freetrans: $(this).attr('ft'),
+                            note: $(this).attr('no'),
+                            srcwordbreak: $(this).attr('swbk'),
+                            tgtwordbreak: $(this).attr('twbk'),
+                            source: $(this).attr('s'), // source (w/punctuation)
+                            target: $(this).attr('t')
+                        });
+                        index++;
+                        norder++;
+                        sps.push(sp);
+                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                        if ((sps.length % MAX_BATCH) === 0) {
+                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                        }
+                        // add this item to the KB
+                        // TODO: build up punctpairs
+                        if (sp.get('target').length > 0) {
+                            saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('a'), false), false),
+                                            "", project.get('projectid'));
+                        }
+                        markers = ""; // clear out the markers for the next wourcephrase
+                        
+                        // Last of all, add the filter data
                         // if there are filtered text items, insert them now
                         if ($(this).attr('fi')) {
+                            moreFilter = true;
                             console.log("fi: " + $(this).attr('fi'));
-//                            markers = "";
-                            $(this).attr('fi').split(spaceRE).forEach(function (elt, index, array) {
-//                                console.log("- " + elt);
+                            filterElts = $(this).attr('fi').split(spaceRE);
+                            filterIdx = 0;
+                            while (moreFilter === true) {
+                                elt = filterElts[filterIdx];
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
-//                                    console.log("filter");
+                                    filterIdx++;
                                 } else if (elt.indexOf("\\") === 0) {
-                                    // starting marker
-                                    markers += elt;
+                                    // starting marker -- check to see if this marker requires an ending marker
+                                    mkr = markerList.where({name: elt.substr(elt.indexOf("\\") + 1)});
+                                    if (mkr.length > 0 && mkr[0].get("endMarker")) {
+                                        // this needs an end marker -- take the entire filter up to the end marker
+                                        // and create a single sourcephrase out of it
+                                        if ($(this).attr('fi').indexOf(mkr[0].get("endMarker")) > -1) {
+                                            markers = elt; // flag this sourcephrase as being filtered by this element
+                                            tmpIdx = $(this).attr('fi').indexOf(elt);// + elt.length; -- include marker
+                                            src = $(this).attr('fi').substring(tmpIdx, $(this).attr('fi').indexOf(mkr[0].get("endMarker")) - 1); // filter string from elt to the end marker
+                                            // update the loop index to the end marker's location in the array
+                                            while (filterIdx < filterElts.length && filterElts[filterIdx].indexOf(mkr[0].get("endMarker") === -1)) {
+                                                filterIdx++;
+                                            }
+                                            filterIdx++;
+                                            console.log("Filter with end marker: " + src);
+                                        } else {
+                                            // ERROR: no ending marker! 
+                                            console.log("Error: no ending marker for elt: " + elt);
+                                            // Try to recover... just pull to the end of the filter string
+                                            src = $(this).attr('fi').substr($(this).attr('fi').indexOf(elt));
+                                            moreFilter = false; // end the loop -- no more filter string
+                                            filterIdx = filterElts.length;
+                                        }
+                                        // create the sourcephrase
+                                        // ending marker - it's concatenated with the preceding token, no space
+                                        // (1) create a sourcephrase with the first part of the token (without the ending marker)
+                                        if (origTarget.length > 0) {
+                                            // phrase -- spID has a prefix of "phr-"
+                                            spID = "phr-" + Underscore.uniqueId();
+                                        } else {
+                                            spID = Underscore.uniqueId();
+                                        }
+                                        sp = new spModel.SourcePhrase({
+                                            spid: spID,
+                                            norder: norder,
+                                            chapterid: chapterID,
+                                            markers: markers,
+                                            orig: (origTarget.length > 0) ? origTarget : null,
+                                            prepuncts: "",
+                                            midpuncts: "",
+                                            follpuncts: "",
+                                            flags: "",
+                                            texttype: 0,
+                                            gloss: "",
+                                            freetrans: "",
+                                            note: "",
+                                            srcwordbreak: $(this).attr('swbk'),
+                                            tgtwordbreak: $(this).attr('twbk'),
+                                            source: src,
+                                            target: ""
+                                        });
+                                        index++;
+                                        norder++;
+                                        sps.push(sp);
+                                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                        if ((sps.length % MAX_BATCH) === 0) {
+                                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        }
+                                        markers = ""; // reset
+                                    } else {
+                                        // no end marker -- just add the element
+                                        console.log("Filter witn NO end marker: " + elt);
+                                        markers += elt;
+                                        filterIdx++;
+                                    }
                                 } else if (elt.indexOf("\\") > 0) {
                                     // ending marker - it's concatenated with the preceding token, no space
                                     // (1) create a sourcephrase with the first part of the token (without the ending marker)
@@ -1006,9 +1164,8 @@ define(function (require) {
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
-                                    // (2) now set the markers to the ending marker, for the next sourcephrase
-                                    markers = elt.substr(elt.indexOf("\\"));
-                                    //markers = ""; // reset
+                                    markers = ""; // reset
+                                    filterIdx++;
                                 } else {
                                     // regular token - add as a new sourcephrase
                                     if (origTarget.length > 0) {
@@ -1044,50 +1201,14 @@ define(function (require) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
                                     markers = ""; // reset
+                                    filterIdx++;
                                 }
-                            });
+                                if (filterIdx >= filterElts.length) {
+                                    moreFilter = false; // done
+                                }
+                            }
                         }
-                        // create the next sourcephrase
-//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
-                        if (origTarget.length > 0) {
-                            // phrase -- spID has a prefix of "phr-"
-                            spID = "phr-" + Underscore.uniqueId();
-                        } else {
-                            spID = Underscore.uniqueId();
-                        }
-                        sp = new spModel.SourcePhrase({
-                            spid: spID,
-                            norder: norder,
-                            chapterid: chapterID,
-                            markers: markers, //$(this).attr('m'),
-                            orig: (origTarget.length > 0) ? origTarget : null,
-                            prepuncts: $(this).attr('pp'),
-                            midpuncts: "",
-                            follpuncts: $(this).attr('fp'),
-                            flags: $(this).attr('f'),
-                            texttype: $(this).attr('ty'),
-                            gloss: $(this).attr('g'),
-                            freetrans: $(this).attr('ft'),
-                            note: $(this).attr('no'),
-                            srcwordbreak: $(this).attr('swbk'),
-                            tgtwordbreak: $(this).attr('twbk'),
-                            source: $(this).attr('k'), // source w/o punctuation
-                            target: $(this).attr('t')
-                        });
-                        index++;
-                        norder++;
-                        sps.push(sp);
-                        // if necessary, send the next batch of SourcePhrase INSERT transactions
-                        if ((sps.length % MAX_BATCH) === 0) {
-                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
-                        }
-                        // add this item to the KB
-                        // TODO: build up punctpairs
-                        if (sp.get('target').length > 0) {
-                            saveInKB(autoRemoveCaps(sp.get('source'), true), autoRemoveCaps($(this).attr('a'), false),
-                                            "", project.get('projectid'));
-                        }
-                        markers = ""; // clear out the markers for the next wourcephrase
+                        
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
@@ -1343,9 +1464,9 @@ define(function (require) {
                                     punctIdx++;
                                 }
                                 // remove the punctuation from the "source" of the substring
-                                s = s.substr(punctIdx);
+//                                s = s.substr(punctIdx);
                             }
-                            if (s.length === 0) {
+                            if (punctIdx === s.length) {
                                 // it'a ALL punctuation -- jump to the next token
                                 i++;
                             } else {
@@ -1358,7 +1479,7 @@ define(function (require) {
                                         punctIdx--;
                                     }
                                     // remove the punctuation from the "source" of the substring
-                                    s = s.substr(0, punctIdx + 1);
+//                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
                                 spID = Underscore.uniqueId();
@@ -1453,11 +1574,11 @@ define(function (require) {
             var subdir = "AIM_Exports_";
             var tabLevel = 0;
             var onShareSuccess = function (result) {
-              console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-              console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+                console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+                console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
             };
             var onShareError = function (msg) {
-              console.log("Sharing failed with message: " + msg);
+                console.log("Sharing failed with message: " + msg);
             };
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
@@ -1468,7 +1589,7 @@ define(function (require) {
                     shareOptions.subject = i18n.t("view.lblExport");
                     shareOptions.message = i18n.t("view.dscFile", {file: filename});
                     shareOptions.files.push(exportDirectory + subdir + "/" + filename);
-                    window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);         
+                    window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);
                 }
                 // update status
                 if (isClipboard === true) {
@@ -1586,7 +1707,7 @@ define(function (require) {
                                 if (filtered === false) {
                                     // only emit soursephrase pre/foll puncts if we have something translated in the target
                                     if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        chapterString += value.get("target") + " ";
                                     }
                                 }
                                 if (value.get('spid') === lastSPID) {
@@ -1730,7 +1851,7 @@ define(function (require) {
                                     }
                                     // only emit soursephrase pre/foll puncts if we have something translated in the target
                                     if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                        chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                        chapterString += value.get("target") + " ";
                                     }
                                 }
                                 if (value.get('spid') === lastSPID) {
@@ -2045,7 +2166,7 @@ define(function (require) {
                                         // only export the text if not filtered AND
                                         // only emit soursephrase pre/foll puncts if we have something translated in the target
                                         if (value.get("source").length > 0 && value.get("target").length > 0) {
-                                            chapterString += value.get("prepuncts") + value.get("target") + value.get("follpuncts") + " ";
+                                            chapterString += value.get("target") + " ";
                                         }
                                     }
                                 }
@@ -2743,6 +2864,11 @@ define(function (require) {
                 });
                 punctExp += "]+"; // one or more of ANY of the above will trigger a new token
 
+                // load the source / target punctuation pairs
+                this.model.get('PunctPairs').forEach(function (elt, idx, array) {
+                    punctsSource.push(elt.s);
+                    punctsTarget.push(elt.t);
+                });
                 // load the source / target case pairs
                 this.model.get('CasePairs').forEach(function (elt, idx, array) {
                     caseSource.push(elt.s);
@@ -2999,8 +3125,8 @@ define(function (require) {
                 $("#exportTXT").prop("checked", true);
                 // if this is going to the clipboard, we don't need a filename
                 if (this.destination === DestinationEnum.CLIPBOARD) {
-                    $("#grpFilename").hide(); 
-                }  
+                    $("#grpFilename").hide();
+                }
                 if (bookName.length > 0) {
                     if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
                         bookName = bookName.substr(0, bookName.length - 4);

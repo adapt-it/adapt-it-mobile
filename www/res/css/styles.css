@@ -231,15 +231,6 @@ input[type="file"] {
     padding: 14px 10px;
 }
 
-body {
- padding-top: constant(safe-area-inset-top); /* iOS 11.0 */
- padding-top: env(safe-area-inset-top); /* iOS 11.2 */
-}
-.Footer {
- margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
- margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */
-}
-
 .topcoat-button-bar, .topcoat-icon-button--quiet {
     margin-top: 1px;
 }
@@ -337,6 +328,11 @@ header h3 {
     position: fixed;
     right: 0;
 }
+/* indented controls (e.g., below radio buttons) */
+.indent {
+    height: 16px;
+    padding-left: 34px;
+}
 #Spacer {
     height: 280px;
     width: 100%;
@@ -361,6 +357,10 @@ header h3 {
     padding-bottom: 3px;
     padding-top: 3px;
 }
+.control-row-indent {
+    padding-bottom: 3px;
+    padding-left: 34px;
+}
 .control-group {
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -377,7 +377,7 @@ header h3 {
     margin: 6px;
     overflow: hidden;
     padding: 6px;
-    width: 95%;
+/*    width: 95%;*/
 }
 
 .topcoat-icon--back {
@@ -1266,10 +1266,9 @@ typeahead styles
     min-width: 1rem;
 }
 
-/* EDB 7/5/17 hacky hack: move dropdown up into target text as well as possible */
+/* EDB 7/5/17 make sure there's enough width on the dropdown */
 .twitter-typeahead {
     min-width: 1rem;
-    top: -1.8rem;
 }
 
 .tt-menu {

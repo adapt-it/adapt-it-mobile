@@ -52,6 +52,7 @@ define(function (require) {
         clearKBInput = false,
         isDirty = false,        // does the target text need to be saved?
         isSelecting = false,    // is the user selecting a pile / range of piles?
+        isEditing = false,
         isPlaceholder = false,
         isPhrase = false,
         isDrafting = true,
@@ -493,31 +494,43 @@ define(function (require) {
                 var curDate = new Date();
                 return curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z";
             },
-            // Helper method to strip any starting / ending punctuation from the target field.
+            // Helper method to strip any starting / ending punctuation from the source or target field.
             // This method is called from:
             // - selectedAdaptation before the target text available for editing
             // - unselectedAdaptation before the target text is stored in the KB
-            stripPunctuation: function (target) {
-                var result = target,
+            // - togglePhrase before the new phrase is stored in the KB
+            stripPunctuation: function (content, isSource) {
+                var result = content,
                     startIdx = 0,
-                    endIdx = target.length;
+                    endIdx = content.length;
                 // check for empty string
                 if (endIdx === 0) {
                     return result;
                 }
-                // starting index
-                while (startIdx < (target.length - 1) && punctsTarget.indexOf(target.charAt(startIdx)) > -1) {
-                    startIdx++;
-                }
-                // ending index
-                while (endIdx > 0 && punctsTarget.indexOf(target.charAt(endIdx - 1)) > -1) {
-                    endIdx--;
+                if (isSource === false) {
+                    // starting index
+                    while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                        startIdx++;
+                    }
+                    // ending index
+                    while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                        endIdx--;
+                    }
+                } else {
+                    // starting index
+                    while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
+                        startIdx++;
+                    }
+                    // ending index
+                    while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
+                        endIdx--;
+                    }
                 }
                 // sanity check for all punctuation
                 if (endIdx <= startIdx) {
                     return "";
                 }
-                result = target.substr(startIdx, (endIdx) - startIdx);
+                result = content.substr(startIdx, (endIdx) - startIdx);
                 return result;
             },
             // Helper method to copy any punctuation from the source to the target field. This method is
@@ -680,7 +693,7 @@ define(function (require) {
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
-                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true));
+                        sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true), true);
                         // is there a match for this phrase?
                         tu = kblist.filter(function (element) {
                             return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
@@ -692,7 +705,7 @@ define(function (require) {
                                 exactMatch = nextObj;
                                 idxEnd = $(nextObj).index();
                             }
-                            // even if our exace match test failed, we got a partial match earlier -- so it's possible that
+                            // even if our exact match test failed, we got a partial match earlier -- so it's possible that
                             // there'a bigger phrase that matches. Keep appending piles...
                             thisObj = nextObj;
                         } else {
@@ -723,20 +736,24 @@ define(function (require) {
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
                     // move backwards
-                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).attr('id').indexOf("-sh") === -1)) {
-                        // there is a previous sibling, and it isn't a strip header
+                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).hasClass('pile')) && (!$(selectedStart.previousElementSibling).hasClass('filter'))) {
+                        // there is a previous sibling, and it is a non-filtered pile
                         next_edit = selectedStart.previousElementSibling;
                     } else {
-                        // No previous sibling -- see if you can go to the previous strip
-                        if (selectedStart.parentElement.previousElementSibling !== null) {
-                            temp_cursor = selectedStart.parentElement.previousElementSibling;
+                        // No previous sibling OR we've reached something we need to skip:
+                        // - a filter
+                        // - a header (chapter or verse)
+                        // - a strip marker
+                        // try skipping this item to see if we can find a "real" pile to move to
+                        if (selectedStart.previousElementSibling !== null) {
+                            temp_cursor = selectedStart.previousElementSibling;
                             // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).attr('id').indexOf("-sh") > -1)) {
-                                // continue on to the previous strip that ISN'T a strip header or filtered out of the UI
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
+                                // continue on to the previous item that ISN'T a strip header or filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
-                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).children(".pile").length > 0)) {
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -744,7 +761,7 @@ define(function (require) {
                                 }
                             }
                             if (temp_cursor) {
-                                next_edit = $(temp_cursor).children(".pile").last()[0];
+                                next_edit = temp_cursor;
                             } else {
                                 next_edit = null;
                                 console.log("reached first pile.");
@@ -756,20 +773,20 @@ define(function (require) {
                     }
                 } else {
                     // move forwards
-                    if (selectedStart.nextElementSibling !== null) {
+                    if ((selectedStart.nextElementSibling !== null) && ($(selectedStart.nextElementSibling).hasClass('pile')) && (!$(selectedStart.nextElementSibling).hasClass('filter'))) {
                         // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
                     } else {
                         // no next sibling in this strip -- see if you can go to the next strip
-                        if (selectedStart.parentElement.nextElementSibling !== null) {
-                            temp_cursor = selectedStart.parentElement.nextElementSibling;
+                        if (selectedStart.nextElementSibling !== null) {
+                            temp_cursor = selectedStart.nextElementSibling;
                             // handle filtered strips and strip header elements
-                            if ($(temp_cursor).hasClass("filter")) {
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
                                 // continue on to the next strip that ISN'T filtered out of the UI
                                 while (temp_cursor && keep_going === true) {
                                     temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
-                                    console.log("movecursor: looking at strip: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false)) {
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
                                         // found a stopping point
                                         console.log("found stopping point: " + $(temp_cursor).attr('id'));
                                         keep_going = false;
@@ -779,7 +796,7 @@ define(function (require) {
                             if (temp_cursor) {
                                 // found a strip that doesn't have a filter -- select the first pile
                                 // (note that this will also skip the strip header div, which is what we want)
-                                next_edit = $(temp_cursor).children(".pile").first()[0];
+                                next_edit = temp_cursor;
                             } else {
                                 next_edit = null;
                                 console.log("reached last pile.");
@@ -977,14 +994,14 @@ define(function (require) {
                 // make sure the long press timeout gets cleared, and then get out
                 if (isSelectingKB === true) {
                     // clear the long press timeout -- we're selecting a menu item
-                    clearTimeout(longPressTimeout); 
+                    clearTimeout(longPressTimeout);
                     return; // get out
                 }
                 // don't bubble this event
                 event.stopPropagation();
                 event.preventDefault();
                 // if there was an old selection, remove it
-                if (selectedStart !== null) {
+                if ((selectedStart !== null) && (isEditing === true)) {
                     console.log("old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
                     $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
@@ -1286,7 +1303,7 @@ define(function (require) {
                     }
                     // we're not selecting anything -- just clicking on the filter
                     $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
-                    isSelecting = false; 
+                    isSelecting = false;
                     return;
                 }
                 // check for retranslation
@@ -1307,8 +1324,66 @@ define(function (require) {
                         if ((delay < 500) && (delay > 0)) {
                             // double-tap -- select the strip
                             console.log("double-tap detected -- selecting strip");
-                            selectedStart = $(event.currentTarget.parentElement).children(".pile")[0]; // first pile
-                            selectedEnd = $(event.currentTarget.parentElement).children(".pile").last()[0]; // last pile
+                            // start out at the current location
+                            tmpNode = selectedStart = selectedEnd = event.currentTarget;
+                            // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
+                            while (!done) {
+                                tmpNode = selectedStart.previousElementSibling;
+                                if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                        ($(tmpNode).hasClass("moreFilter") === false)) {
+                                    // if we're stopping at boundaries, we have one more check... punctuation
+                                    if (stopAtBoundaries === true) {
+                                        // check punctuation (go from the inside out)
+                                        if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                            // comes after -- don't include
+                                            done = true;
+                                        } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                            // comes after -- include
+                                            selectedStart = tmpNode;
+                                            done = true;
+                                        } else {
+                                            // no punctuation
+                                            selectedStart = tmpNode;
+                                        }
+                                    } else {
+                                        // don't care about boundaries -- update selectedStart
+                                        selectedStart = tmpNode;
+                                    }
+                                } else {
+                                    done = true; // exit    
+                                }
+                            }
+                            // now go forward
+                            done = false;
+                            if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                                done = true; // edge case -- current node is a boundary
+                            }
+                            while (!done) {
+                                tmpNode = selectedEnd.nextElementSibling;
+                                if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                        ($(tmpNode).hasClass("moreFilter") === false)) {
+                                    // if we're stopping at boundaries, we have one more check... punctuation
+                                    if (stopAtBoundaries === true) {
+                                        // check punctuation (go from the inside out)
+                                        if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                            // comes before -- don't include
+                                            done = true;
+                                        } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                            // comes after -- include
+                                            selectedEnd = tmpNode;
+                                            done = true;
+                                        } else {
+                                            // no punctuation
+                                            selectedEnd = tmpNode;
+                                        }
+                                    } else {
+                                        // don't care about boundaries -- update selectedEnd
+                                        selectedEnd = tmpNode;
+                                    }
+                                } else {
+                                    done = true; // exit    
+                                }
+                            }
                             idxStart = $(selectedStart).index();
                             idxEnd = $(selectedEnd).index();
                             isSelecting = true; // change the UI color
@@ -1687,6 +1762,7 @@ define(function (require) {
                 // enable prev / next buttons
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
                 $("#NextSP").prop('disabled', false); // enable toolbar button
+                isEditing = true;
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -1734,7 +1810,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
-                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target));
+                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
                             $(event.currentTarget).html(targetText);
                             isDirty = true;
                             // Are we moving?
@@ -1851,7 +1927,7 @@ define(function (require) {
                                 $(event.currentTarget).html("");
                             } else {
                                 // copy the source text
-                                $(event.currentTarget).html(this.stripPunctuation(sourceText));
+                                $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
                             }
                         }
                         MovingDir = 0; // stop here
@@ -1890,7 +1966,7 @@ define(function (require) {
                         // We really selected this field -- stay here.
                         // reset the dirty bit because
                         // we haven't made any changes yet
-                        origText = this.stripPunctuation($(event.currentTarget).text().trim());
+                        origText = this.stripPunctuation($(event.currentTarget).text().trim(), false);
                         lastPile = selectedStart;
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -1938,6 +2014,7 @@ define(function (require) {
                                 }
                             } else {
                                 console.log("KB data consistency error: should have a KB entry for source text:" + sourceText);
+                                $(event.currentTarget).html(origText); // stripped of punctuation
                             }
                                 
                         }
@@ -1983,23 +2060,6 @@ define(function (require) {
                     event.stopPropagation();
                     event.preventDefault();
                     $(event.currentTarget).blur();
-// #129 - Enter key processing - should it mean "accept and move" or "accept and close the keyboard?"
-// Here's the code for "accept and close the keyboard" should we decide to re-implement.
-//                } else if (event.keyCode === 13) {
-//                    // Return / Enter pressed - accept the edit and do NOT move the cursor
-//                    event.preventDefault();
-//                    event.stopPropagation();
-//                    isDirty = true;
-//                    if (window.getSelection) {
-//                        if (window.getSelection().empty) {  // Chrome
-//                            window.getSelection().empty();
-//                        } else if (window.getSelection().removeAllRanges) {  // Firefox
-//                            window.getSelection().removeAllRanges();
-//                        }
-//                    } else if (document.selection) {  // IE?
-//                        document.selection.empty();
-//                    }
-//                    $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // tab or enter key -- accept the edit and move the cursor
                     event.preventDefault();
@@ -2035,8 +2095,8 @@ define(function (require) {
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 var model = this.collection.findWhere({spid: strID});
                 // remove the KB entry
-                removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim()),
+                removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim(), false),
                              project.get('projectid'));
                 // set the edit field back to its previous value
                 $(lastPile).find(".target").html(origText);
@@ -2118,6 +2178,7 @@ define(function (require) {
                     trimmedValue = this.autoAddCaps(model, trimmedValue);
                 }
                 // check for changes in the edit field
+                isEditing = false;
                 if (isDirty === true) {
                     if (trimmedValue.length === 0) {
                         // empty value entered. Was there text before?
@@ -2137,15 +2198,15 @@ define(function (require) {
                             // not a retranslation
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
-                            saveInKB(this.autoRemoveCaps(model.get('source'), true),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim()),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim()),
+                            saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(), false),
                                      project.get('projectid'));
                         }
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
-                        model.save({target: Underscore.escape(trimmedValue)});
+                        model.save({target: Underscore.escape(this.copyPunctuation(model, trimmedValue))});
                         // if the target differs from the source, make it display in green
                         if (model.get('source') === model.get('target')) {
                             // source === target --> remove "differences" from the class so the text is black
@@ -2158,6 +2219,10 @@ define(function (require) {
                             $(event.currentTarget).addClass('differences');
                         }
                     }
+                } else {
+                    // dirty bit not set -- go back to what was saved earlier
+//                    $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                    $(event.currentTarget).html(model.get('target'));
                 }
                 // if we just finished work on a new verse, update the last adapted count
                 if (model && model.get('markers').length > 0 && model.get('markers').indexOf("\\v ") > -1) {
@@ -2287,6 +2352,10 @@ define(function (require) {
                 // if the current selection is a phrase, remove it; if not,
                 // combine the selection into a new phrase
                 var next_edit = null,
+                    tu = null,
+                    refstrings = null,
+                    options = [],
+                    i = 0,
                     phraseHtml = null,
                     done = false,
                     tmpNode = null,
@@ -2302,7 +2371,6 @@ define(function (require) {
                     nOrder = 0.0,
                     phObj = null,
                     strID = null,
-                    bookID = null,
                     newView = null,
                     selectedObj = null,
                     PhraseLine0 = "<div id=\"pile-",
@@ -2369,7 +2437,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: this.stripPunctuation(phraseSource), target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2378,7 +2446,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    //saveInKB(this.autoRemoveCaps(phraseSource), phraseSource, "", project.get('projectid'));
+                    saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'));
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -2387,7 +2455,23 @@ define(function (require) {
                     if (isMergingFromKB === false) {
                         // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
                         // is there something in the KB that matches this phrase?
-                        if (this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true))) === null) {
+                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), true);
+                        if (tu !== null) {
+                            // found at least one match -- populate the target with the first match
+                            refstrings = tu.get('refstring');
+                            // first, make sure these refstrings are actually being used
+                            options.length = 0; // clear out any old cruft
+                            for (i = 0; i < refstrings.length; i++) {
+                                if (refstrings[i].n > 0) {
+                                    options.push(Underscore.unescape(refstrings[i].target));
+                                }
+                            }
+                            if (options.length === 1) {
+                                // exactly one entry in KB -- populate the field
+                                phraseHtml += this.stripPunctuation(this.autoAddCaps(phObj, refstrings[0].target), false);
+                                isDirty = true;
+                            }
+                        } else {
                             // nothing in the KB -- 
                             // next check is to see if the user selected a phrase and
                             // started typing (isAutoPhrase). If so, only add the target from the selected start
@@ -2403,7 +2487,7 @@ define(function (require) {
                             }
                             isAutoPhrase = false; // clear the autophrase flag
                         }
-                    } 
+                    }
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
                     isDirty = false;
@@ -2448,8 +2532,6 @@ define(function (require) {
                     var startIdx = 0,
                         endIdx = 0,
                         theSource = "";
-                    
-                    bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2475,7 +2557,8 @@ define(function (require) {
                             follpuncts += value.charAt(endIdx - 1); // TODO: is this reversed?
                             endIdx--;
                         }
-                        theSource = value.substr(startIdx, (endIdx) - startIdx);
+                        theSource = value; // don't strip punctuation
+                        // theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
@@ -2487,7 +2570,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         // add to KB
                         if (phraseTarget.length > 0) {
-                            saveInKB(thisObj.autoRemoveCaps(value), phraseTarget, "", project.get('projectid'));
+                            saveInKB(thisObj.stripPunctuation(thisObj.autoRemoveCaps(value), true), phraseTarget, "", project.get('projectid'));
                         }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
@@ -2532,7 +2615,6 @@ define(function (require) {
                     follpuncts = "",
                     phObj = null,
                     strID = null,
-                    bookID = null,
                     newView = null,
                     selectedObj = null,
                     RetHtmlLine0 = "<div id=\"pile-",
@@ -2600,7 +2682,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
-                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource, true), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2656,7 +2738,6 @@ define(function (require) {
                     var startIdx = 0,
                         endIdx = 0,
                         theSource = "";
-                    bookID = $('.topcoat-navigation-bar__title').attr('id');
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2956,6 +3037,7 @@ define(function (require) {
                     selectedStart = null; // clear selection itself
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
+                    MovingDir = 0;
                 }
             },
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
