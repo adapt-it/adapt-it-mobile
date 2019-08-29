@@ -64,6 +64,8 @@ define(function (require) {
                 // continuing through some special text
                 result += " specialtext";
             }
+            filtered = false; 
+            filterID = ""; // no longer filtering
             return new Handlebars.SafeString(result);
         }
         // loop through the marker array
