@@ -726,6 +726,7 @@ define(function (require) {
                     var filterElts = null;
                     var elt = "";
                     var tmpIdx = 0;
+                    var searchIdx = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
                     
@@ -1058,26 +1059,29 @@ define(function (require) {
                             console.log("fi: " + $(this).attr('fi'));
                             filterElts = $(this).attr('fi').split(spaceRE);
                             filterIdx = 0;
+                            searchIdx = 0;
                             while (moreFilter === true) {
                                 elt = filterElts[filterIdx];
                                 if (elt.indexOf("~FILTER") > -1) {
                                     // do nothing -- skip first and last elements
                                     filterIdx++;
+                                    searchIdx += elt.length;
                                 } else if (elt.indexOf("\\") === 0) {
                                     // starting marker -- check to see if this marker requires an ending marker
                                     mkr = markerList.where({name: elt.substr(elt.indexOf("\\") + 1)});
                                     if (mkr.length > 0 && mkr[0].get("endMarker")) {
                                         // this needs an end marker -- take the entire filter up to the end marker
                                         // and create a single sourcephrase out of it
-                                        if ($(this).attr('fi').indexOf(mkr[0].get("endMarker")) > -1) {
+                                        if ($(this).attr('fi').indexOf(mkr[0].get("endMarker"), searchIdx) > -1) {
                                             markers = elt; // flag this sourcephrase as being filtered by this element
-                                            tmpIdx = $(this).attr('fi').indexOf(elt);// + elt.length; -- include marker
-                                            src = $(this).attr('fi').substring(tmpIdx, $(this).attr('fi').indexOf(mkr[0].get("endMarker")) - 1); // filter string from elt to the end marker
+                                            tmpIdx = $(this).attr('fi').indexOf(elt, searchIdx) + elt.length;
+                                            src = $(this).attr('fi').substring(tmpIdx, $(this).attr('fi').indexOf(mkr[0].get("endMarker"), searchIdx) - 1); // filter string from elt to the end marker
                                             // update the loop index to the end marker's location in the array
-                                            while (filterIdx < filterElts.length && filterElts[filterIdx].indexOf(mkr[0].get("endMarker") === -1)) {
+                                            while (filterIdx < filterElts.length && filterElts[filterIdx].indexOf(mkr[0].get("endMarker")) === -1) {
                                                 filterIdx++;
                                             }
                                             filterIdx++;
+                                            searchIdx += src.length;
                                             console.log("Filter with end marker: " + src);
                                         } else {
                                             // ERROR: no ending marker! 
@@ -1124,10 +1128,52 @@ define(function (require) {
                                         }
                                         markers = ""; // reset
                                     } else {
-                                        // no end marker -- just add the element
+                                        // no end marker -- needs to be everything up to the ending FILTER
                                         console.log("Filter witn NO end marker: " + elt);
                                         markers += elt;
                                         filterIdx++;
+                                        tmpIdx = $(this).attr('fi').indexOf(elt, searchIdx) + elt.length;
+                                        src = $(this).attr('fi').substring(tmpIdx, $(this).attr('fi').indexOf("~FILTER", searchIdx) - 1);
+                                        // update the loop index to the end marker's location in the array
+                                        while (filterIdx < filterElts.length && filterElts[filterIdx].indexOf(mkr[0].get("endMarker")) === -1) {
+                                            filterIdx++;
+                                        }
+                                        filterIdx++;
+                                        searchIdx += src.length;
+                                        console.log("Filter with end marker: " + src);
+                                        if (origTarget.length > 0) {
+                                            // phrase -- spID has a prefix of "phr-"
+                                            spID = "phr-" + Underscore.uniqueId();
+                                        } else {
+                                            spID = Underscore.uniqueId();
+                                        }
+                                        sp = new spModel.SourcePhrase({
+                                            spid: spID,
+                                            norder: norder,
+                                            chapterid: chapterID,
+                                            markers: markers,
+                                            orig: (origTarget.length > 0) ? origTarget : null,
+                                            prepuncts: "",
+                                            midpuncts: "",
+                                            follpuncts: "",
+                                            flags: "",
+                                            texttype: 0,
+                                            gloss: "",
+                                            freetrans: "",
+                                            note: "",
+                                            srcwordbreak: $(this).attr('swbk'),
+                                            tgtwordbreak: $(this).attr('twbk'),
+                                            source: src,
+                                            target: ""
+                                        });
+                                        index++;
+                                        norder++;
+                                        sps.push(sp);
+                                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                        if ((sps.length % MAX_BATCH) === 0) {
+                                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        }
+                                        markers = ""; // reset                                        
                                     }
                                 } else if (elt.indexOf("\\") > 0) {
                                     // ending marker - it's concatenated with the preceding token, no space
@@ -1268,6 +1314,7 @@ define(function (require) {
                     var punctIdx = 0;
                     var stridx = 0;
                     var chaps = [];
+                    var mkr = null;
                     var regex1 = new RegExp(/\\c\s1\s/);
 
                     console.log("Reading USFM file:" + fileName);
@@ -1390,14 +1437,51 @@ define(function (require) {
                                 sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
                                 prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
                             }
-                            // Check for markers with more than one token (and merge the two marker tokens)
-                            if ((arr[i] === "\\x") || (arr[i] === "\\f") ||
-                                    (arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
+                            mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
+                            if (mkr.length > 0 && mkr[0].get("endMarker")) {
+                                // this needs an end marker -- take the entire filter up to the end marker
+                                // and create a single sourcephrase out of it
+                                s = "";
+                                i++;  // don't copy the marker into the source
+                                while (i < arr.length && arr[i].indexOf(mkr[0].get("endMarker")) === -1) {
+                                    // copy the text associated with the marker into the source
+                                    s += " " + arr[i];
+                                    i++;
+                                }
+                                // source contains the entire string; markers contains the marker that caused it
+                                spID = Underscore.uniqueId();
+                                sp = new spModel.SourcePhrase({
+                                    spid: spID,
+                                    norder: norder,
+                                    chapterid: chapterID,
+                                    markers: markers,
+                                    orig: null,
+                                    prepuncts: prepuncts,
+                                    midpuncts: midpuncts,
+                                    follpuncts: follpuncts,
+                                    source: s,
+                                    target: ""
+                                });
+                                markers = "";
+                                prepuncts = "";
+                                follpuncts = "";
+                                punctIdx = 0;
+                                index++;
+                                norder++;
+                                sps.push(sp);
+                                // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                if ((sps.length % MAX_BATCH) === 0) {
+                                    deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                }
+                                
+                            } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
                                     (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
-                                // join with the next
+                                // Markers with more than one token -- 
+                                // join with the next token
                                 i++;
                                 markers += " " + arr[i];
                             }
+                            console.log("Marker found: " + markers);
                             i++;
                         } else if (arr[i].length === 0) {
                             // nothing in this token -- skip
