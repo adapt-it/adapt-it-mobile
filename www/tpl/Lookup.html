@@ -18,26 +18,26 @@
     </div>
 </div>
 <div class="scroller-notb">
-<div class="search-bar">
-    <input id="search" type="search" placeholder="{{ t 'view.dscSearch'}}" class="topcoat-search-input search-key">
-</div>
 <div class="topcoat-tab-bar full">
    <label class="topcoat-tab-bar__item">
-     <input type="radio" name="topcoat" id="rdoChapters" checked>
-       <button class="topcoat-tab-bar__button full" id="btnChapters"><span id="document" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblDocumentsInitial'}}</span></button>
+     <input type="radio" name="topcoat" id="rdoSearch" checked>
+       <button class="topcoat-tab-bar__button full" id="btnSearch"><span>{{t 'view.lblSearch'}}</span></button>
    </label>
    <label class="topcoat-tab-bar__item">
-     <input type="radio" name="topcoat" id="rdoSourceWords">
-       <button class="topcoat-tab-bar__button full" id="btnSourceWords"><span id="sourceWords" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblSourceWordsInitial'}}</span></button>
+     <input type="radio" name="topcoat" id="rdoSelectDocument">
+       <button class="topcoat-tab-bar__button full" id="btnSelectDocument"><span>{{t 'view.ttlSelectDocument'}}</span></button>
    </label>
-   <label class="topcoat-tab-bar__item">
-     <input type="radio" name="topcoat" id="rdoTargetWords">
-       <button class="topcoat-tab-bar__button full" id="btnTargetWords"><span id="targetWords" class="topcoat-icon topcoat-icon--help"></span> <span class="side-nav__list__item__label">{{t 'view.lblTargetWordsInitial'}}</span></button>
-   </label>
-</div>    
-<div class="topcoat-list__container" id="results">
-<ul class="topcoat-list__container chapter-list" id="Chapters" style="display:none;"></ul>
-<ul class="topcoat-list__container chapter-list" id="SourceWords" style="display:none;"></ul>
-<ul class="topcoat-list__container chapter-list" id="TargetWords" style="display:none;"></ul>
+</div>
+<div class="control-row"></div>    
+<div id="grpSearch">
+<div class="search-bar"><input id="search" type="search" placeholder="{{ t 'view.dscSearch'}}" class="topcoat-search-input search-key"></div>
+<div class="topcoat-list"style="overflow:hidden">
+<h3 class="topcoat-list__header" id="lblSearchResults" style="display:none">{{t 'view.lblSearchResults'}}</h3>
+<ul class="topcoat-list__container chapter-list" id="lstSearchResults"></ul>
+</div>
+</div>
+<div id="grpSelectDocument" style="display:none">
+<div class="wizard-instructions">{{t 'view.lblBook'}}</div>
+<div class="topcoat-list" id="lstBooks" style="overflow:hidden"></div>
 </div>
 </div>
