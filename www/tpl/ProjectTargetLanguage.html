@@ -1,8 +1,9 @@
 <div id="source" class="control-group" style="height:100%;">
-    <div class="control-row" id="langName">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
-    <div class="control-row" id="langCode">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
     <div class="control-row"><label for="LanguageName">* {{ t 'view.lblTargetLanguageName'}}</label><input type="text" id="LanguageName" class="topcoat-text-input full" value="{{TargetLanguageName}}" required></div>
     <div class="control-row" id="name-suggestions" style="display:none"></div>
     <div class="control-row"><label for="LanguageVariant">{{ t 'view.lblLanguageVariant'}}</label><input type="text" id="LanguageVariant" class="topcoat-text-input full" value="{{TargetVariant}}"></div>
+    <div class="control-row"><label for="LangCode">{{ t 'view.lblCode'}}</label><input type="text" id="LanguageCode" class="topcoat-text-input full" value="{{SourceLanguageCode}}"></div>
+    <div class="control-row"></div>
     <div class="control-row"><label class="topcoat-checkbox"><input type="checkbox" id="RTL" {{#ifCond TargetDir '==' 'rtl'}}checked{{else}}{{/ifCond}}><div class="topcoat-checkbox__checkmark"></div>{{ t 'view.lblRTL'}}</label></div>
+    <div class="control-row" id="langName" hidden>{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
 </div>

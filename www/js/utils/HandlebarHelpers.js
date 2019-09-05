@@ -64,7 +64,7 @@ define(function (require) {
                 // continuing through some special text
                 result += " specialtext";
             }
-            filtered = false; 
+            filtered = false;
             filterID = ""; // no longer filtering
             return new Handlebars.SafeString(result);
         }
@@ -146,12 +146,15 @@ define(function (require) {
     // This block was modified from the following post:
     // http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
-        var ary = v1.replace("@", "at").split("\\"),
+        var ary = null,
             filterString = window.Application.filterList,
             i = 0,
             marker = "",
-            bFiltered = false,
             elts = [];
+        if (this.markers) {
+            ary = this.markers.replace("@", "at").split("\\");
+        }
+        
         switch (operator) {
         case 'notFiltered':
             // loop through the marker array -- return true if we encounter a marker that is currently being
