@@ -22,7 +22,6 @@ define(function (require) {
         tplPunctuation      = require('text!tpl/ProjectPunctuation.html'),
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
-        tplLanguageCode     = require('text!tpl/ProjectLanguageCode.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplLanguages        = require('text!tpl/LanguagesList.html'),
         tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
@@ -43,13 +42,47 @@ define(function (require) {
         ////
         // Helper methods
         ////
+        
+        // Helper method that returns the RFC5646 code based on the ISO639 code and variant
+        buildFullLanguageCode = function (langCode, langVariant) {
+            var fullCode = "";
+            // only build if there's a language code defined
+            console.log("buildFullLanguageCode: " + langCode + "," + langVariant);
+            if (langCode.length > 0) {
+                // is there anything in the language variant?
+                if (langVariant.length === 0) {
+                    // nothing in the variant -- use just the iso639 code with no -x-
+                    if (langCode.indexOf("-x-") > 0) {
+                        fullCode = langCode.substr(0, langCode.indexOf("-x-"));
+                    } else {
+                        fullCode = langCode; // just the iso 639 code
+                    }
+                } else {
+                    // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
+                    // a max length of 8 chars
+                    if (langCode.indexOf("-x-") > 0) {
+                        // replace the existing variant
+                        fullCode = langCode.substr(0, langCode.indexOf("-x-") + 3) + langVariant.toLowerCase().substr(0, 8);
+                    } else {
+                        // add a new variant
+                        fullCode = langCode + "-x-" + langVariant.toLowerCase().substr(0, 8);
+                    }
+                }
+            }
+            return fullCode;
+        },
+        
 
         // Helper method to hide the prev/next buttons and increase the scroller size
         // if the screen is too small
         // (Issue #232)
         HideTinyUI = function () {
             if ((window.innerHeight / 2) < ($("#StepInstructions").height() + $("#StepContainer").height() + $("#WizardSteps").height())) {
-                $(".scroller-bottom-tb").css({bottom: "0"});
+                if (navigator.notification && device.platform === "iOS") {
+                    $(".scroller-bottom-tb").css({bottom: "calc(env(safe-area-inset-bottom))"});
+                } else {
+                    $(".scroller-bottom-tb").css({bottom: "0"});
+                }
                 $(".bottom-tb").hide();
                 $("#Spacer").show();
             }
@@ -57,7 +90,11 @@ define(function (require) {
 
         // Helper method to show the prev/next buttons and decrease the scroller size
         ShowTinyUI = function () {
-            $(".scroller-bottom-tb").css({bottom: "61px"});
+            if (navigator.notification && device.platform === "iOS") {
+                $(".scroller-bottom-tb").css({bottom: "calc(env(safe-area-inset-bottom) + 61px)"});
+            } else {
+                $(".scroller-bottom-tb").css({bottom: "61px"});
+            }
             $(".bottom-tb").show();
             $("#Spacer").hide();
         },
@@ -266,7 +303,7 @@ define(function (require) {
             },
             // Handler for the OK button click -- 
             // saves any changes and goes back to the home page
-            onOK: function (event) {
+            onOK: function () {
                 // save the model
                 this.model.save();
                 window.Application.currentProject = this.model;
@@ -409,7 +446,7 @@ define(function (require) {
                 window.Application.scrollIntoViewCenter(event.currentTarget);
 //                event.currentTarget.scrollIntoView(true);
             },
-            onBlurInput: function (event) {
+            onBlurInput: function () {
                 ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
@@ -450,7 +487,7 @@ define(function (require) {
                 });
                 return arr;
             },
-            onClickSourceHasCases: function (event) {
+            onClickSourceHasCases: function () {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#SourceHasCases").is(':checked') === true) {
                     $("#AutoCapitalize").prop('disabled', false);
@@ -464,7 +501,7 @@ define(function (require) {
                     $("#CaseEquivs").prop('hidden', true);
                 }
             },
-            onClickAutoCapitalize: function (event) {
+            onClickAutoCapitalize: function () {
                 // show / hide the cases list based on the value
                 if ($("#AutoCapitalize").is(':checked') === true) {
                     $("#CaseEquivs").prop('hidden', false);
@@ -488,7 +525,7 @@ define(function (require) {
                 "change #FontSize": "updateSample",
                 "change #color": "updateSample"
             },
-            updateSample: function (event) {
+            updateSample: function () {
                 $('#sample').attr('style', 'font-size:' + $('#FontSize').val() + 'px; font-family:\'' + $('#font').val() + '\'; color:' + $('#color').val() + ';');
             },
             onShow: function () {
@@ -626,7 +663,7 @@ define(function (require) {
                 window.Application.scrollIntoViewCenter(event.currentTarget);
 //                event.currentTarget.scrollIntoView(true);
             },
-            onBlurInput: function (event) {
+            onBlurInput: function () {
                 ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
@@ -636,7 +673,7 @@ define(function (require) {
                 var element = "#r-" + index;
                 $(element).remove();
             },
-            onClickCopyPunctuation: function (event) {
+            onClickCopyPunctuation: function () {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#CopyPunctuation").is(':checked') === true) {
                     $("#PunctMappings").prop('hidden', false);
@@ -701,21 +738,16 @@ define(function (require) {
             },
             events: {
                 "keyup #SourceLanguageName":    "search",
-                "click #btnLanguageAdvanced":   "onClickLanguageAdvanced",
                 "keypress #SourceLanguageName": "onkeypress"
             },
             onSelectLanguage: function (event) {
                 // pull out the language
-                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
+            this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
                 $("#langName").html(i18n.t('view.lblSourceLanguageName') + ": " + this.langName);
                 this.langCode = $(event.currentTarget).attr('id').trim();
                 $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
                 $("#LanguageName").val(this.langName);
-            },
-            onClickLanguageAdvanced: function (event) {
-                  
-            },
-
+            }
         }),
 
         // TargetLanguageView - view / edit the target language name and code, as well as
@@ -745,19 +777,6 @@ define(function (require) {
             }
         }),
         
-        // LanguageCodeView - view / edit the RFC5646 language code for the source or target language.
-        // Ths user can either specify to have AIM auto-generate the code (default), or type in their own.
-        // Minimal parsing is done for custom codes; the user should know what they're doing...
-        LanguageCodeView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplLanguageCode),
-            events: {
-                
-            },
-            onShow: function() {
-                
-            }
-        }),
-
         // USFMFilteringView
         // View / edit the USFM markers that are filtered from the UI when
         // adapting.
@@ -797,7 +816,7 @@ define(function (require) {
                 filterString += "\\lit \\_table_grid \\_header \\_intro_base \\r \\cp \\_horiz_rule \\ie \\rem \\_unknown_para_style \\_normal_table \\note \\_heading_base \\_hidden_note \\_footnote_caller \\_dft_para_font \\va \\_small_para_break \\_footer \\_vernacular_base \\pro \\_notes_base \\__normal \\ide \\mr \\_annotation_ref \\_annotation_text \\_peripherals_base \\_gls_lang_interlinear \\free \\rq \\_nav_lang_interlinear \\_body_text \\cl \\efm \\bt \\_unknown_char_style \\_double_boxed_para \\_hdr_ftr_interlinear \\_list_base \\ib \\fig \\restore \\_src_lang_interlinear \\vp \\_tgt_lang_interlinear \\ef \\ca \\_single_boxed_para \\sts \\hr \\loc \\cat \\des";
                 return filterString;
             },
-            onClickCustomFilters: function (event) {
+            onClickCustomFilters: function () {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
                     if ($("#tb").html().length === 0) {
@@ -808,7 +827,7 @@ define(function (require) {
                     $("#USFMFilters").prop('hidden', true);
                 }
             },
-            onShow: function (event) {
+            onShow: function () {
                 // enable / disable the autocapitalize checkbox based on the value
                 if ($("#UseCustomFilters").is(':checked') === true) {
                     if ($("#tb").html().length === 0) {
@@ -826,11 +845,11 @@ define(function (require) {
             events: {
                 "change #language":   "onSelectCustomLanguage"
             },
-            onSelectCustomLanguage: function (event) {
+            onSelectCustomLanguage: function () {
                 // change the radio button selection
                 $("#customLanguage").prop("checked", true);
             },
-            onShow: function (event) {
+            onShow: function () {
                 if (localStorage.getItem("CopySource")) {
                     $("#CopySource").prop("checked", localStorage.getItem("CopySource") === "true");
                 } else {
@@ -888,7 +907,7 @@ define(function (require) {
                 "click #Filtering": "OnEditFiltering",
                 "keyup #LanguageName":    "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
-                "keyup #LanguageVariant": "buildFullLanguageCode",
+                "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "click .autocomplete-suggestion": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
@@ -900,11 +919,11 @@ define(function (require) {
                 "click #OK": "OnOK"
             },
             
-            OnEditorUIPrefs: function (event) {
+            OnEditorUIPrefs: function () {
                 step = 9;
                 this.ShowView(step);
             },
-            searchLanguageName: function (event) {
+            searchLanguageName: function () {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val().trim();
                 if (key.trim() === "") {
@@ -923,32 +942,11 @@ define(function (require) {
 //                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
 //                console.log(key + ": " + languages.length + " results.");
             },
-            buildFullLanguageCode: function (event) {
-                var value = currentView.langCode,
-                    variant = $('#LanguageVariant').val().trim().replace(/\s+/g, ''),
-                    newValue = value;
-                // only build if there's a language code defined
-                if (value.length > 0) {
-                    // is there anything in the language variant?
-                    if (variant.length === 0) {
-                        // nothing in the variant -- use just the iso639 code with no -x-
-                        if (value.indexOf("-x-") > 0) {
-                            newValue = value.substr(0, value.indexOf("-x-"));
-                        }
-                    } else {
-                        // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
-                        // a max length of 8 chars
-                        if (value.indexOf("-x-") > 0) {
-                            // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0, 8);
-                        } else {
-                            // add a new variant
-                            newValue = value + "-x-" + variant.toLowerCase().substr(0, 8);
-                        }
-                    }
-                    $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
-                    currentView.langCode = newValue;
-                }
+            onkeyupLanguageVariant: function () {
+                var newLangCode = "";
+                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                currentView.langCode = newLangCode;
+                $('#LanguageCode').val(newLangCode);
             },
             addNewRow: function (event) {
                 currentView.addNewRow(event);
@@ -967,11 +965,11 @@ define(function (require) {
                 currentView.onkeypress(event);
             },
             selectLanguage: function (event) {
+                var newLangCode = "";
                 currentView.onSelectLanguage(event);
-                // if there's a language variant defined, rework the language code to include it
-                if ($('#LanguageVariant').val().length > 0) {
-                    this.buildFullLanguageCode(event);
-                }
+                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                currentView.langCode = newLangCode;
+                $('#LanguageCode').val(newLangCode);
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
@@ -988,46 +986,46 @@ define(function (require) {
             OnClickCustomFilters: function (event) {
                 currentView.onClickCustomFilters(event);
             },
-            OnEditSourceLanguage: function (event) {
+            OnEditSourceLanguage: function () {
                 step = 1;
                 this.ShowView(step);
             },
-            OnEditTargetLanguage: function (event) {
+            OnEditTargetLanguage: function () {
                 step = 2;
                 this.ShowView(step);
             },
-            OnEditSourceFont: function (event) {
+            OnEditSourceFont: function () {
                 step = 3;
                 this.ShowView(step);
             },
-            OnEditTargetFont: function (event) {
+            OnEditTargetFont: function () {
                 step = 4;
                 this.ShowView(step);
             },
-            OnEditNavFont: function (event) {
+            OnEditNavFont: function () {
                 step = 5;
                 this.ShowView(step);
             },
-            OnEditPunctuation: function (event) {
+            OnEditPunctuation: function () {
                 step = 6;
                 this.ShowView(step);
             },
-            OnEditCases: function (event) {
+            OnEditCases: function () {
                 step = 7;
                 this.ShowView(step);
             },
-            OnEditFiltering: function (event) {
+            OnEditFiltering: function () {
                 step = 8;
                 this.ShowView(step);
             },
-            OnCancel: function (event) {
+            OnCancel: function () {
                 // just display the project settings list (don't save)
                 $("#StepContainer").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
                 $(".container").attr("style", "height: calc(100% - 70px);");
             },
-            OnOK: function (event) {
+            OnOK: function () {
                 // save the info from the current step
                 this.UpdateProject(step);
                 // display the project settings list
@@ -1048,13 +1046,13 @@ define(function (require) {
                 switch (step) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
-                    this.model.set("SourceLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("SourceLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
                     this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName, {silent: true});
-                    this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("TargetLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
                     this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
@@ -1286,7 +1284,7 @@ define(function (require) {
                 "click .autocomplete-suggestion": "selectLanguage",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "click #LanguageVariant": "onClickLanguageVariant",
-                "keyup #LanguageVariant": "buildFullLanguageCode",
+                "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "blur #LanguageVariant": "onBlurLanguageVariant",
                 "click #btnLangAdvanced": "onClickLanguageAdvanced",
                 "click .delete-row": "onClickDeleteRow",
@@ -1307,7 +1305,7 @@ define(function (require) {
 //                $("#LanguageName")[0].scrollIntoView(true);
             },
 
-            onBlurLanguageName: function (event) {
+            onBlurLanguageName: function () {
                 ShowTinyUI();
             },
             
@@ -1317,11 +1315,11 @@ define(function (require) {
 //                $("#LanguageVariant")[0].scrollIntoView(true);
             },
 
-            onBlurLanguageVariant: function (event) {
+            onBlurLanguageVariant: function () {
                 ShowTinyUI();
             },
             
-            searchLanguageName: function (event) {
+            searchLanguageName: function () {
                 // pull out the value from the input field
                 var key = $('#LanguageName').val();
                 if (key.trim() === "") {
@@ -1354,35 +1352,14 @@ define(function (require) {
                     $("#LanguageVariant").scrollTop(top);
                 }
             },
-            onClickLanguageAdvanced: function (event) {
+            onClickLanguageAdvanced: function () {
                   
             },
-            buildFullLanguageCode: function (event) {
-                var value = currentView.langCode,
-                    variant = $('#LanguageVariant').val().trim().replace(/\s+/g, ''),
-                    newValue = value;
-                // only build if there's a language code defined
-                if (value.length > 0) {
-                    // is there anything in the language variant?
-                    if (variant.length === 0) {
-                        // nothing in the variant -- use just the iso639 code with no -x-
-                        if (value.indexOf("-x-") > 0) {
-                            newValue = value.substr(0, value.indexOf("-x-"));
-                        }
-                    } else {
-                        // variant is defined --- code is in the form [is0639]-x-[variant], where [variant] has
-                        // a max length of 8 chars
-                        if (value.indexOf("-x-") > 0) {
-                            // replace the existing variant
-                            newValue = value.substr(0, value.indexOf("-x-") + 3) + variant.toLowerCase().substr(0, 8);
-                        } else {
-                            // add a new variant
-                            newValue = value + "-x-" + variant.toLowerCase().substr(0, 8);
-                        }
-                    }
-                    $('#langCode').html(i18n.t('view.lblCode') + ": " + newValue);
-                    currentView.langCode = newValue;
-                }
+            onkeyupLanguageVariant: function () {
+                var newLangCode = "";
+                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                currentView.langCode = newLangCode;
+                $('#LanguageCode').val(newLangCode);
             },
             searchTarget: function (event) {
                 currentView.search(event);
@@ -1391,12 +1368,12 @@ define(function (require) {
                 currentView.onkeypress(event);
             },
             selectLanguage: function (event) {
+                var newLangCode = "";
                 currentView.onSelectLanguage(event);
                 this.$("#name-suggestions").hide();
-                // if there's a language variant defined, rework the language code to include it
-                if ($('#LanguageVariant').val().length > 0) {
-                    this.buildFullLanguageCode(event);
-                }
+                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                currentView.langCode = newLangCode;
+                $('#LanguageCode').val(newLangCode);
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
@@ -1419,7 +1396,7 @@ define(function (require) {
             OnClickCustomFilters: function (event) {
                 currentView.onClickCustomFilters(event);
             },
-            OnEditSourceFont: function (event) {
+            OnEditSourceFont: function () {
                 var theFont = new fontModel.Font();
                 theFont.set("name", i18n.t('view.lblSourceFont'));
                 theFont.set("typeface", this.model.get('SourceFont'));
@@ -1438,7 +1415,7 @@ define(function (require) {
                 $('#OKCancelButtons').show();
             },
 
-            OnEditTargetFont: function (event) {
+            OnEditTargetFont: function () {
                 var theFont = new fontModel.Font();
                 theFont.set("name", i18n.t('view.lblTargetFont'));
                 theFont.set("typeface", this.model.get('TargetFont'));
@@ -1457,7 +1434,7 @@ define(function (require) {
                 $('#OKCancelButtons').show();
             },
 
-            OnEditNavFont: function (event) {
+            OnEditNavFont: function () {
                 var theFont = new fontModel.Font();
                 theFont.set("name", i18n.t('view.lblNavFont'));
                 theFont.set("typeface", this.model.get('NavigationFont'));
@@ -1471,14 +1448,14 @@ define(function (require) {
                 $('#WizardSteps').hide();
                 $('#OKCancelButtons').show();
             },
-            OnCancel: function (event) {
+            OnCancel: function () {
                 // just display the project settings list (don't save)
                 $('#StepInstructions').show();
                 $("#OKCancelButtons").hide();
                 $('#WizardSteps').show();
                 this.ShowStep(step);
             },
-            OnOK: function (event) {
+            OnOK: function () {
                 // save the info from the current step
                 switch ($('#ttlFont').html()) {
                 // font steps (okay, not technically steps in the work
@@ -1510,7 +1487,7 @@ define(function (require) {
                 this.ShowStep(step);
             },
 
-            OnPrevStep: function (event) {
+            OnPrevStep: function () {
                 // pull the info from the current step (must pass validation)
                 if (this.GetProjectInfo(step) === true) {
                     if (step > 1) {
@@ -1521,7 +1498,7 @@ define(function (require) {
                 }
             },
 
-            OnNextStep: function (event) {
+            OnNextStep: function () {
                 // pull the info from the current step (must pass validation)
                 if (this.GetProjectInfo(step) === true) {
                     if (step < this.numSteps) {
@@ -1563,10 +1540,7 @@ define(function (require) {
                                             if (btnIndex === 1) {
                                                 // set the language and ID
                                                 currentView.langName = value.get("Ref_Name");
-                                                currentView.langCode = value.get("Id");
-                                                if ($('#LanguageVariant').val().trim().length > 0) {
-                                                    currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0, 8);
-                                                }
+                                                currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
                                             } else {
                                                 // user rejected this suggestion -- tell them to enter
                                                 // a language name and finish up
@@ -1581,10 +1555,7 @@ define(function (require) {
                                     if (window.confirm(i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}))) {
                                         // use the suggested language
                                         currentView.langName = value.get("Ref_Name");
-                                        currentView.langCode = value.get("Id");
-                                        if ($('#LanguageVariant').val().trim().length > 0) {
-                                            currentView.langCode += "-x-" + $('#LanguageVariant').val().trim().substr(0, 8);
-                                        }
+                                        currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
                                     } else {
                                         // user rejected this suggestion -- tell them to enter
                                         // a language name and finish up
@@ -1627,7 +1598,7 @@ define(function (require) {
                         return false;
                     }
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
-                    this.model.set("SourceLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("SourceLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     this.model.set("SourceVariant", $('#LanguageVariant').val().trim(), {silent: true});
                     break;
@@ -1640,7 +1611,7 @@ define(function (require) {
                         return false;
                     }
                     this.model.set("TargetLanguageName", currentView.langName, {silent: true});
-                    this.model.set("TargetLanguageCode", currentView.langCode, {silent: true});
+                    this.model.set("TargetLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim(), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     // also set the ID and name of the project, now that we (should) have both source and target defined
@@ -1690,6 +1661,7 @@ define(function (require) {
 
             ShowStep: function (number) {
                 var totalSteps = 6;
+                var tmpCode = "";
                 var progressPct = ((number * 1.0 / totalSteps) * 100).toFixed(1);
                 // clear out the old view (if any)
                 currentView = null;
