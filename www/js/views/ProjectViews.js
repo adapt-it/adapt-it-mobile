@@ -9,6 +9,7 @@ define(function (require) {
 
     var $               = require('jquery'),
         Underscore      = require('underscore'),
+        ta              = require('typeahead'),
         Backbone        = require('backbone'),
         Handlebars      = require('handlebars'),
         Marionette      = require('marionette'),
@@ -42,6 +43,13 @@ define(function (require) {
         ////
         // Helper methods
         ////
+        
+//        languageMatches = function(langs) {
+//            return function findMatches(query, callback) {
+//                var matches = langs.where({name: query});
+//                callback(matches);
+//            }; 
+//        },
         
         // Helper method that returns the RFC5646 code based on the ISO639 code and variant
         buildFullLanguageCode = function (langCode, langVariant) {
@@ -726,6 +734,16 @@ define(function (require) {
         // SourceLanguageView - view / edit the source language name and code, as well as
         // any variants. Also specify whether the language is LTR.
         SourceLanguageView = Marionette.CompositeView.extend({
+            theLangs: null,
+            languageMatches: function(coll) {
+                return function findMatches(query, callback) {
+                    coll.fetch({reset: true, data: {name: query}});
+                    var matches = coll.filter(function (item) {
+                        return (item.attributes.Ref_Name.indexOf(query) !== -1);
+                    });
+                    callback(matches);
+                };
+            },
             template: Handlebars.compile(tplSourceLanguage),
             childView: LanguagesListView,
             itemViewContainer: null,
@@ -735,6 +753,33 @@ define(function (require) {
             },
             onRender: function () {
                 this.itemViewContainer = this.$('#name-suggestions');
+            },
+            onShow: function () {
+                this.theLangs = new langs.LanguageCollection();
+                this.theLangs.fetch({reset: true, data: {name: ""}});
+
+                $("#LanguageName").typeahead(
+                    {
+                        hint: true,
+                        highlight: true,
+                        minLength: 1,
+                        limit: 10
+                    },
+                    {
+                        name: 'languages',
+                        source: this.languageMatches(this.theLangs),
+                        templates: {
+                            empty: ['<div>No languages found</div>'].join('\n'),
+                            pending: ['<div>Searching...</div>'].join('\n'),
+                            suggestion: function (data) {
+                                if (data.attributes.Part1.length > 0) {
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">(' + data.attributes.Part1 + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                } else {
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">(' + data.attributes.Id + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                }
+                            }
+                        }
+                    });
             },
             events: {
                 "keyup #SourceLanguageName":    "search",
@@ -1046,13 +1091,13 @@ define(function (require) {
                 switch (step) {
                 case 1: // source language
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
-                    this.model.set("SourceLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
+                    this.model.set("SourceLanguageCode", $("#LanguageCode").val().trim(), {silent: true});
                     this.model.set("SourceVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     break;
                 case 2: // target language
                     this.model.set("TargetLanguageName", currentView.langName, {silent: true});
-                    this.model.set("TargetLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
+                    this.model.set("TargetLanguageCode", $("#LanguageCode").val().trim(), {silent: true});
                     this.model.set("TargetVariant", Handlebars.Utils.escapeExpression($('#LanguageVariant').val().trim()), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
@@ -1598,7 +1643,7 @@ define(function (require) {
                         return false;
                     }
                     this.model.set("SourceLanguageName", currentView.langName, {silent: true});
-                    this.model.set("SourceLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
+                    this.model.set("SourceLanguageCode", $("#LanguageCode").val().trim(), {silent: true});
                     this.model.set("SourceDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     this.model.set("SourceVariant", $('#LanguageVariant').val().trim(), {silent: true});
                     break;
@@ -1611,7 +1656,7 @@ define(function (require) {
                         return false;
                     }
                     this.model.set("TargetLanguageName", currentView.langName, {silent: true});
-                    this.model.set("TargetLanguageCode", $("#LanguageCode").val.trim(), {silent: true});
+                    this.model.set("TargetLanguageCode", $("#LanguageCode").val().trim(), {silent: true});
                     this.model.set("TargetVariant", $('#LanguageVariant').val().trim(), {silent: true});
                     this.model.set("TargetDir", ($('#RTL').is(':checked') === true) ? "rtl" : "ltr", {silent: true});
                     // also set the ID and name of the project, now that we (should) have both source and target defined
@@ -1661,7 +1706,6 @@ define(function (require) {
 
             ShowStep: function (number) {
                 var totalSteps = 6;
-                var tmpCode = "";
                 var progressPct = ((number * 1.0 / totalSteps) * 100).toFixed(1);
                 // clear out the old view (if any)
                 currentView = null;
