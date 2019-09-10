@@ -750,6 +750,9 @@ define(function (require) {
                     },
                     {
                         name: 'languages',
+                        display: function (data) {
+                            return data.attributes.Ref_Name;
+                        },
                         source: this.languageMatches(this.theLangs),
                         limit: 20,
                         templates: {
@@ -794,6 +797,9 @@ define(function (require) {
                     },
                     {
                         name: 'languages',
+                        display: function (data) {
+                            return data.attributes.Ref_Name;
+                        },
                         source: this.languageMatches(this.theLangs),
                         limit: 20,
                         templates: {
@@ -942,7 +948,6 @@ define(function (require) {
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
-                "typeahead:close .typeahead": "changeLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -978,13 +983,8 @@ define(function (require) {
                     currentView.langName = suggestion.attributes.Ref_Name;
                     newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
-                    $('#LanguageName').val(currentView.langName);
                     $('#LanguageCode').val(currentView.langCode);
                 }
-            },
-            changeLanguage: function (event) {
-                console.log("changeLanguage");
-                $('#LanguageName').val(currentView.langName);
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
