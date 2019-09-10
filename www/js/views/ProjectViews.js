@@ -999,6 +999,11 @@ define(function (require) {
                     newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                     $('#LanguageCode').val(currentView.langCode);
+                } else {
+                    // no suggestion passed -- clear out the language name and code
+                    currentView.langName = "";
+                    currentView.langCode = "";
+                    $('#LanguageCode').val(currentView.langCode);
                 }
             },
             onClickDeleteRow: function (event) {
@@ -1360,6 +1365,11 @@ define(function (require) {
                     currentView.langName = suggestion.attributes.Ref_Name;
                     newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                    $('#LanguageCode').val(currentView.langCode);
+                } else {
+                    // no suggestion passed -- clear out the language name and code
+                    currentView.langName = "";
+                    currentView.langCode = "";
                     $('#LanguageCode').val(currentView.langCode);
                 }
             },
