@@ -109,13 +109,13 @@ define(function (require) {
         // Helper to import the KB file associated with the specified project
         // (overriding any existing KB). This gets called from both mobileImportAIC
         // and browserImportAIC
-        importKBFile = function (file, project) {
-            var reader = new FileReader();
-            reader.onloadend = function (evt) {
-                
-            };
-            reader.readAsText(file, "UTF-8");
-        },
+//        importKBFile = function (file, project) {
+//            var reader = new FileReader();
+//            reader.onloadend = function (evt) {
+//                
+//            };
+//            reader.readAsText(file, "UTF-8");
+//        },
         
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
@@ -945,7 +945,10 @@ define(function (require) {
                 "click #Punctuation": "OnEditPunctuation",
                 "click #Cases": "OnEditCases",
                 "click #Filtering": "OnEditFiltering",
+                "focus #LanguageName": "onFocusLanguageName",
+                "focus #LanguageVariant": "onFocusLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
+                "focus #LanguageCode": "onFocusLanguageCode",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
@@ -962,6 +965,18 @@ define(function (require) {
                 step = 9;
                 this.ShowView(step);
             },
+            onFocusLanguageName: function (event) {
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+            },
+
+            onFocusLanguageVariant: function (event) {
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+            },
+
+            onFocusLanguageCode: function (event) {
+                window.Application.scrollIntoViewCenter(event.currentTarget);
+            },
+
             onkeyupLanguageVariant: function () {
                 var newLangCode = "";
                 newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
@@ -1282,8 +1297,10 @@ define(function (require) {
             render: function () {
                 template = Handlebars.compile(tplNewProject);
                 this.$el.html(template());
-                this.ShowStep(step);
                 return this;
+            },
+            onShow: function () {
+                this.ShowStep(step);
             },
             ////
             // Event Handlers
@@ -1293,12 +1310,12 @@ define(function (require) {
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
                 "focus #LanguageName": "onFocusLanguageName",
-                "keypress #LanguageName": "onkeypressLanguageName",
                 "blur #LanguageName": "onBlurLanguageName",
                 "typeahead:select .typeahead": "selectLanguage",
+                "typeahead:cursorchange .typeahead": "selectLanguage",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
-                "click #LanguageVariant": "onClickLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
+                "focus #LanguageCode": "onFocusLanguageCode",
                 "blur #LanguageVariant": "onBlurLanguageVariant",
                 "click #btnLangAdvanced": "onClickLanguageAdvanced",
                 "click .delete-row": "onClickDeleteRow",
@@ -1314,35 +1331,17 @@ define(function (require) {
             },
             
             onFocusLanguageName: function (event) {
-                HideTinyUI();
                 window.Application.scrollIntoViewCenter(event.currentTarget);
-//                $("#LanguageName")[0].scrollIntoView(true);
             },
 
-            onBlurLanguageName: function () {
-                ShowTinyUI();
-            },
-            
             onFocusLanguageVariant: function (event) {
-                HideTinyUI();
                 window.Application.scrollIntoViewCenter(event.currentTarget);
-//                $("#LanguageVariant")[0].scrollIntoView(true);
             },
 
-            onBlurLanguageVariant: function () {
-                ShowTinyUI();
+            onFocusLanguageCode: function (event) {
+                window.Application.scrollIntoViewCenter(event.currentTarget);
             },
             
-            onClickLanguageVariant: function (event) {
-                // scroll up if there's not enough room for the keyboard
-                if (($(window).height() - $(".StepContainer").height()) < 300) {
-                    var top = event.currentTarget.offsetTop - $("#LanguageVariant").outerHeight();
-                    $("#LanguageVariant").scrollTop(top);
-                }
-            },
-            onClickLanguageAdvanced: function () {
-                  
-            },
             onkeyupLanguageVariant: function () {
                 var newLangCode = "";
                 newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
@@ -1356,11 +1355,13 @@ define(function (require) {
                 currentView.onkeypress(event);
             },
             selectLanguage: function (event, suggestion) {
-                var newLangCode = "";
-                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
-                currentView.langCode = newLangCode;
-                currentView.langName = "something";
-                $('#LanguageCode').val(newLangCode);
+                if (suggestion) {
+                    var newLangCode = "";
+                    currentView.langName = suggestion.attributes.Ref_Name;
+                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                    $('#LanguageCode').val(currentView.langCode);
+                }
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
@@ -1480,7 +1481,6 @@ define(function (require) {
                     if (step > 1) {
                         step--;
                     }
-                    ShowTinyUI();
                     this.ShowStep(step);
                 }
             },
@@ -1490,7 +1490,6 @@ define(function (require) {
                 if (this.GetProjectInfo(step) === true) {
                     if (step < this.numSteps) {
                         step++;
-                        ShowTinyUI();
                         this.ShowStep(step);
                     } else {
                         // last step -- finish up
