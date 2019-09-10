@@ -24,7 +24,6 @@ define(function (require) {
         tplSourceLanguage   = require('text!tpl/ProjectSourceLanguage.html'),
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
-        tplLanguages        = require('text!tpl/LanguagesList.html'),
         tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
@@ -723,37 +722,22 @@ define(function (require) {
                 return arr;
             }
         }),
-
-        // LanguagesListView - displays a list of language codes / names matching
-        // a search criteria. Used as a child view of the SourceLanguageView and TargetLanguageView
-        // classes, defined below.
-        LanguagesListView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplLanguages)
-        }),
             
         // SourceLanguageView - view / edit the source language name and code, as well as
         // any variants. Also specify whether the language is LTR.
-        SourceLanguageView = Marionette.CompositeView.extend({
+        SourceLanguageView = Marionette.ItemView.extend({
             theLangs: null,
             languageMatches: function(coll) {
                 return function findMatches(query, callback) {
-                    coll.fetch({reset: true, data: {name: query}});
+                    var theQuery = query.toLowerCase();
+                    coll.fetch({reset: true, data: {name: theQuery}});
                     var matches = coll.filter(function (item) {
-                        return (item.attributes.Ref_Name.indexOf(query) !== -1);
+                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
                     });
                     callback(matches);
                 };
             },
             template: Handlebars.compile(tplSourceLanguage),
-            childView: LanguagesListView,
-            itemViewContainer: null,
-            attachBuffer: function (compositeView, buffer) {
-                var container = this.itemViewContainer;
-                container.append(buffer);
-            },
-            onRender: function () {
-                this.itemViewContainer = this.$('#name-suggestions');
-            },
             onShow: function () {
                 this.theLangs = new langs.LanguageCollection();
                 this.theLangs.fetch({reset: true, data: {name: ""}});
@@ -762,12 +746,12 @@ define(function (require) {
                     {
                         hint: true,
                         highlight: true,
-                        minLength: 1,
-                        limit: 10
+                        minLength: 1
                     },
                     {
                         name: 'languages',
                         source: this.languageMatches(this.theLangs),
+                        limit: 20,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
@@ -780,45 +764,50 @@ define(function (require) {
                             }
                         }
                     });
-            },
-            events: {
-                "keyup #SourceLanguageName":    "search",
-                "keypress #SourceLanguageName": "onkeypress"
-            },
-            onSelectLanguage: function (event) {
-                // pull out the language
-            this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
-                $("#langName").html(i18n.t('view.lblSourceLanguageName') + ": " + this.langName);
-                this.langCode = $(event.currentTarget).attr('id').trim();
-                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
-                $("#LanguageName").val(this.langName);
             }
         }),
 
         // TargetLanguageView - view / edit the target language name and code, as well as
         // any variants. Also specify whether the language is LTR.
-        TargetLanguageView = Marionette.CompositeView.extend({
+        TargetLanguageView = Marionette.ItemView.extend({
+            theLangs: null,
+            languageMatches: function(coll) {
+                return function findMatches(query, callback) {
+                    var theQuery = query.toLowerCase();
+                    coll.fetch({reset: true, data: {name: theQuery}});
+                    var matches = coll.filter(function (item) {
+                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
+                    });
+                    callback(matches);
+                };
+            },
             template: Handlebars.compile(tplTargetLanguage),
-            childView: LanguagesListView,
-            itemViewContainer: null,
-            attachBuffer: function (compositeView, buffer) {
-                var container = this.itemViewContainer;
-                container.append(buffer);
-            },
-            onRender: function () {
-                this.itemViewContainer = this.$('div#name-suggestions');
-            },
-            events: {
-                "keyup #TargetLanguageName":    "search",
-                "keypress #TargetLanguageName": "onkeypress"
-            },
-            onSelectLanguage: function (event) {
-                // pull out the language
-                this.langName = $(event.currentTarget).html().substring($(event.currentTarget).html().indexOf('&nbsp;') + 6).trim();
-                $("#langName").html(i18n.t('view.lblTargetLanguageName') + ": " + this.langName);
-                this.langCode = $(event.currentTarget).attr('id').trim();
-                $("#langCode").html(i18n.t('view.lblCode') + ": " + this.langCode);
-                $("#LanguageName").val(this.langName);
+            onShow: function () {
+                this.theLangs = new langs.LanguageCollection();
+                this.theLangs.fetch({reset: true, data: {name: ""}});
+
+                $("#LanguageName").typeahead(
+                    {
+                        hint: true,
+                        highlight: true,
+                        minLength: 1
+                    },
+                    {
+                        name: 'languages',
+                        source: this.languageMatches(this.theLangs),
+                        limit: 20,
+                        templates: {
+                            empty: ['<div>No languages found</div>'].join('\n'),
+                            pending: ['<div>Searching...</div>'].join('\n'),
+                            suggestion: function (data) {
+                                if (data.attributes.Part1.length > 0) {
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">(' + data.attributes.Part1 + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                } else {
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">(' + data.attributes.Id + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                }
+                            }
+                        }
+                    });
             }
         }),
         
@@ -950,10 +939,10 @@ define(function (require) {
                 "click #Punctuation": "OnEditPunctuation",
                 "click #Cases": "OnEditCases",
                 "click #Filtering": "OnEditFiltering",
-                "keyup #LanguageName":    "searchLanguageName",
-                "keypress #LanguageName": "onkeypressLanguageName",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
-                "click .autocomplete-suggestion": "selectLanguage",
+                "typeahead:select .typeahead": "selectLanguage",
+                "typeahead:cursorchange .typeahead": "selectLanguage",
+                "typeahead:close .typeahead": "changeLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -968,25 +957,6 @@ define(function (require) {
                 step = 9;
                 this.ShowView(step);
             },
-            searchLanguageName: function () {
-                // pull out the value from the input field
-                var key = $('#LanguageName').val().trim();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    languages.fetch({reset: true, data: {name: "    "}});
-                    this.$("#name-suggestions").hide();
-                } else {
-                    // find all matches in the language collection
-                    languages.fetch({reset: true, data: {name: key}});
-                    this.$("#name-suggestions").show();
-                }
-                // scroll the language search field to the top of the screen if necessary
-                window.Application.scrollIntoViewCenter($("#LanguageName"));
-//                $("#LanguageName")[0].scrollIntoView(true);
-//                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
-//                console.log(key + ": " + languages.length + " results.");
-            },
             onkeyupLanguageVariant: function () {
                 var newLangCode = "";
                 newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
@@ -996,25 +966,25 @@ define(function (require) {
             addNewRow: function (event) {
                 currentView.addNewRow(event);
             },
-            onkeypressLanguageName: function (event) {
-                this.$("#name-suggestions").show();
-//                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
-            },
             searchTarget: function (event) {
                 currentView.search(event);
             },
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
             },
-            selectLanguage: function (event) {
-                var newLangCode = "";
-                currentView.onSelectLanguage(event);
-                newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
-                currentView.langCode = newLangCode;
-                $('#LanguageCode').val(newLangCode);
+            selectLanguage: function (event, suggestion) {
+                if (suggestion) {
+                    var newLangCode = "";
+                    currentView.langName = suggestion.attributes.Ref_Name;
+                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                    $('#LanguageName').val(currentView.langName);
+                    $('#LanguageCode').val(currentView.langCode);
+                }
+            },
+            changeLanguage: function (event) {
+                console.log("changeLanguage");
+                $('#LanguageName').val(currentView.langName);
             },
             onClickDeleteRow: function (event) {
                 currentView.onClickDeleteRow(event);
@@ -1323,10 +1293,9 @@ define(function (require) {
                 "click #targetFont": "OnEditTargetFont",
                 "click #navFont": "OnEditNavFont",
                 "focus #LanguageName": "onFocusLanguageName",
-                "keyup #LanguageName": "searchLanguageName",
                 "keypress #LanguageName": "onkeypressLanguageName",
                 "blur #LanguageName": "onBlurLanguageName",
-                "click .autocomplete-suggestion": "selectLanguage",
+                "typeahead:select .typeahead": "selectLanguage",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "click #LanguageVariant": "onClickLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
@@ -1364,32 +1333,6 @@ define(function (require) {
                 ShowTinyUI();
             },
             
-            searchLanguageName: function () {
-                // pull out the value from the input field
-                var key = $('#LanguageName').val();
-                if (key.trim() === "") {
-                    // Fix problem where an empty value returns all results.
-                    // Here if there's no _real_ value, fetch nothing.
-                    languages.fetch({reset: true, data: {name: "    "}});
-                    this.$("#name-suggestions").hide();
-                } else {
-                    // find all matches in the language collection
-                    Underscore.first(languages.fetch({reset: true, data: {name: key}}), 100);
-                    this.$("#name-suggestions").show();
-                }
-                // scroll the language search field to the top of the screen if necessary
-                window.Application.scrollIntoViewCenter($("#LanguageName"));
-//                $("#LanguageName")[0].scrollIntoView(true);
-//                $(".topcoat-list__header").html(i18n.t("view.lblPossibleLanguages"));
-            },
-
-            onkeypressLanguageName: function (event) {
-                this.$("#name-suggestions").show();
-//                $(".topcoat-list__header").html(i18n.t("view.lblSearching"));
-                if (event.keycode === 13) { // enter key pressed
-                    event.preventDefault();
-                }
-            },
             onClickLanguageVariant: function (event) {
                 // scroll up if there's not enough room for the keyboard
                 if (($(window).height() - $(".StepContainer").height()) < 300) {
@@ -1412,12 +1355,11 @@ define(function (require) {
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
             },
-            selectLanguage: function (event) {
+            selectLanguage: function (event, suggestion) {
                 var newLangCode = "";
-                currentView.onSelectLanguage(event);
-                this.$("#name-suggestions").hide();
                 newLangCode = buildFullLanguageCode(currentView.langCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                 currentView.langCode = newLangCode;
+                currentView.langName = "something";
                 $('#LanguageCode').val(newLangCode);
             },
             onClickDeleteRow: function (event) {
@@ -1723,8 +1665,6 @@ define(function (require) {
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
-                    // controls
-                    this.$("#name-suggestions").hide();
                     // first step -- disable the prev button
                     this.$("#Prev").attr('disabled', 'true');
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
@@ -1749,7 +1689,6 @@ define(function (require) {
                         this.$("#RTL").checked = true;
                     }
                     this.$("#LanguageVariant").html(this.model.get("TargetVariant"));
-                    this.$("#name-suggestions").hide();
                     this.$("#Prev").removeAttr('disabled');
                     break;
                 case 3: // fonts
@@ -1804,7 +1743,6 @@ define(function (require) {
         PunctuationView: PunctuationView,
         SourceLanguageView: SourceLanguageView,
         TargetLanguageView: TargetLanguageView,
-        LanguagesListView: LanguagesListView,
         USFMFilteringView: USFMFilteringView
     };
 });

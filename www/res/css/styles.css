@@ -1272,6 +1272,15 @@ typeahead styles
     min-width: 1rem;
 }
 
+.full .twitter-typeahead {
+    width:100%;
+}
+
+#scrollable-dropdown-menu .tt-menu {
+  max-height: 175px;
+  overflow-y: auto;
+}
+
 .tt-menu {
   background-color: #fff;
   border: 1px solid #ccc;

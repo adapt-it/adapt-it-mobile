@@ -1,6 +1,6 @@
 <div id="source" class="control-group" style="height:100%;">
-    <div class="control-row"><label for="LanguageName">* {{ t 'view.lblTargetLanguageName'}}</label><input type="text" id="LanguageName" class="topcoat-text-input full" value="{{TargetLanguageName}}" required></div>
-    <div class="control-row" id="name-suggestions" style="display:none"></div>
+    <div class="control-row" style="padding-bottom: 0"><label for="LanguageName">* {{ t 'view.lblTargetLanguageName'}}</label></div>
+    <div class="control-row full"><input type="text" id="LanguageName" class="topcoat-text-input full typeahead" value="{{TargetLanguageName}}" placeholder="Start typing..." required></div>
     <div class="control-row"><label for="LanguageVariant">{{ t 'view.lblLanguageVariant'}}</label><input type="text" id="LanguageVariant" class="topcoat-text-input full" value="{{TargetVariant}}"></div>
     <div class="control-row"><label for="LangCode">{{ t 'view.lblCode'}}</label><input type="text" id="LanguageCode" class="topcoat-text-input full" value="{{SourceLanguageCode}}"></div>
     <div class="control-row"></div>
