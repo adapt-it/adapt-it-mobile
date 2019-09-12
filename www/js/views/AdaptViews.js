@@ -2206,7 +2206,7 @@ define(function (require) {
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
-                        model.save({target: Underscore.escape(this.copyPunctuation(model, trimmedValue))});
+                        model.save({target: this.copyPunctuation(model, trimmedValue)});
                         // if the target differs from the source, make it display in green
                         if (model.get('source') === model.get('target')) {
                             // source === target --> remove "differences" from the class so the text is black
