@@ -76,7 +76,7 @@ define(function (require) {
             currentProject: null,
             localURLs: [],
             version: "1.2.0", // appended with milestone / iOS build info
-            MilestoneBuild: "28", // milestone release #
+            AndroidBuild: "30", // (was milestone release #)
             iOSBuild: "1.2.1",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
@@ -131,8 +131,8 @@ define(function (require) {
                     // iOS - internal build #
                     this.version += " (" + this.iOSBuild + ")";
                 } else {
-                    // Android (+ Windows + browser) -- milestone release #
-                    this.version += " (" + this.MilestoneBuild + ")";
+                    // Android (+ Windows + browser) -- Android build #
+                    this.version += " (" + this.AndroidBuild + ")";
                 }
                 // local dirs (mobile app only)
                 if (window.sqlitePlugin) {
