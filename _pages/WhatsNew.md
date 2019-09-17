@@ -3,37 +3,26 @@ permalink: /ReleaseNotes/
 layout: page
 title:  What's new in Adapt It Mobile
 desc:   Learn about the latest updates for Adapt It Mobile
-date:   2018-11-08 12:21
+date:   2019-09-17 12:21
 ---
 
-### What's new in Adapt It Mobile 1.1.0
+### What's new in Adapt It Mobile 1.2.0
 
-![Preview Mode icon]({{ site.baseurl }}/assets/img/preview.png)
+#### Split Window Support
 
-#### Preview Mode
+Adapt It Mobile now supports side-by-side windowing on devices with larger screens. This type of view is useful for displaying translation help alongside Adapt It Mobile as you translate on a tablet.
 
-Allows you to quickly view your translations as you work. Click on the Preview Mode button to show a read-only display of your current translation. If you spot an area that needs improving, you can click on the Preview Mode button again to return to the normal adaptation mode and make the needed edits.
 
-[Learn More]({{ site.baseurl }}/advanced-topics#changing-editor-settings)
+#### Project Language Enhancements
 
-![Preview Mode icon]({{ site.baseurl }}/assets/img/share.png)
+Adapt It Mobile has a new autocomplete mechanism for specifying the source and target language of a translation project. Type in a few letters of the language, and a dropdown appears with languages that match. Select a language from the list, and Adapt It Mobile will automatically build the language code for you.
 
-#### Expanded Export Options
-
-Adapt It Mobile now allows you to export your completed translations to several applications, including:
-
-- Email
-- SMS (text)
-- WhatsApp
-- Bluetooth (Android)
-- AirDrop (iOS)
-
-Transferring files using Android File Transfer and iTunes File Sharing is still supported. 
-
-[Learn More]({{ site.baseurl }}/working-with-documents#exporting-a-document)
+If you have an exotic script or revision that doesn’t fit the normal language code, you can now override the automatically generated language code and specify a custom RFC 5646 code for the translation project’s source and target languages.
 
 #### And More
 
-- Support for automatically merging phrases as you translate.
-- Improved support for punctuation in phrases and retranslations.
+- Support for custom special text colors.
+- Fixed punctuation import consistency between file types.
+- Improved phrase selection, including the ability to stop selection at boundaries.
+- Improved support for larger source phrases.
 
