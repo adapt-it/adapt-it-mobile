@@ -12,6 +12,7 @@ date:   2019-09-17 12:21
 
 Adapt It Mobile now supports side-by-side windowing on devices with larger screens. This type of view is useful for displaying translation help alongside Adapt It Mobile as you translate on a tablet.
 
+![Split Window Display]({{ site.baseurl }}/assets/img/AIM-sxs.png)
 
 #### Project Language Enhancements
 
