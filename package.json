@@ -75,9 +75,6 @@
       },
       "cordova-plugin-keyboard": {}
     },
-    "platforms": [
-      "android",
-      "ios"
-    ]
+    "platforms": []
   }
 }
