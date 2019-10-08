@@ -13,6 +13,7 @@ define(function (require) {
         Backbone        = require('backbone'),
         Handlebars      = require('handlebars'),
         Marionette      = require('marionette'),
+        cp              = require('colorpicker'),
         tplEditProject  = require('text!tpl/EditProject.html'),
         tplNewProject   = require('text!tpl/NewProject.html'),
         tplCopyOrImport = require('text!tpl/CopyOrImport.html'),
