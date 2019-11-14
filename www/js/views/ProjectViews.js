@@ -455,7 +455,7 @@ define(function (require) {
 //                event.currentTarget.scrollIntoView(true);
             },
             onBlurInput: function () {
-                ShowTinyUI();
+//                ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
                 // find the current row
@@ -667,12 +667,12 @@ define(function (require) {
                 "click #CopyPunctuation": "onClickCopyPunctuation"
             },
             onFocusInput: function (event) {
-                HideTinyUI();
+//                HideTinyUI();
                 window.Application.scrollIntoViewCenter(event.currentTarget);
 //                event.currentTarget.scrollIntoView(true);
             },
             onBlurInput: function () {
-                ShowTinyUI();
+//                ShowTinyUI();
             },
             onClickDeleteRow: function (event) {
                 // find the current row

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="31" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1.2.5" version="1.2.5" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="32" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1.3.0" version="1.3.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -20,6 +20,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
     <platform name="android">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
         <preference name="AndroidLaunchMode" value="singleTask"/>
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
@@ -57,11 +58,8 @@
         <splash density="port-xxhdpi" src="res/screen/android/screen-xxhdpi-portrait.png" />
         <splash density="port-xxxhdpi" src="res/screen/android/screen-xxxhdpi-portrait.png" />
     </platform>
-    <platform name="blackberry10">
-        <icon src="res/icon/blackberry/icon-86.png" />
-        <icon src="res/icon/blackberry/icon-150.png" />
-    </platform>
     <platform name="ios">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
         <!-- doc type icon resources -->
         <resource-file src="res/icon/ios/usfm_22.png" />
         <resource-file src="res/icon/ios/usfm_44.png" />
@@ -234,11 +232,24 @@
         <icon height="100" src="res/icon/ios/icon-50@2x.png" width="100" />
         <splash src="res/screen/ios/Default@2x~universal~anyany.png" />
     </platform>
+    <!-- Platforms not currently supported -->
+    <platform name="browser">
+        <preference name="res/icon/electron/icon.png" />
+        <preference name="SplashScreen" value="res/screen/ios/Default@2x~universal~anyany.png" /> <!-- defaults to "/img/logo.png" -->
+        <preference name="AutoHideSplashScreen" value="true" /> <!-- defaults to "true" -->
+        <preference name="SplashScreenDelay" value="3000" /> <!-- defaults to "3000" -->
+        <preference name="SplashScreenBackgroundColor" value="#2595cb" /> <!-- defaults to "#464646" -->
+        <preference name="ShowSplashScreen" value="false" /> <!-- defaults to "true" -->
+        <preference name="SplashScreenWidth" value="600" /> <!-- defaults to "170" -->
+        <preference name="SplashScreenHeight" value="300" /> <!-- defaults to "200" -->
+    </platform>
     <platform name="electron">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
         <preference name="res/icon/electron/icon.png" />
         <preference name="res/icon/electron/icon@2x.png" target="installer" />
     </platform>
     <platform name="windows">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
         <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
         <preference name="StatusBarOverlaysWebView" value="true" />
         <icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
@@ -260,7 +271,6 @@
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />

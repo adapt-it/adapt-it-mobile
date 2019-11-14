@@ -50,6 +50,9 @@ define(function (require) {
                 theSQL = "",
                 len = 0;
             console.log("checkSchema: entry");
+            if (device.platform === "browser") {
+                return;
+            }
             window.Application.db.transaction(function (tx) {
                 // Check 1: is there a sourcephrase table? 
                 // If not, this is a new DB

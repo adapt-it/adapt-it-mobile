@@ -75,9 +75,9 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
-            version: "1.2.5", // appended with milestone / iOS build info
-            AndroidBuild: "31", // (was milestone release #)
-            iOSBuild: "1.2.5",
+            version: "1.3.0", // appended with milestone / iOS build info
+            AndroidBuild: "32", // (was milestone release #)
+            iOSBuild: "1.3.0",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -117,7 +117,7 @@ define(function (require) {
                     slider.slidePage(view.$el);
                 });
                 // keyboard plugin (mobile app only)
-                if (window.sqlitePlugin) {
+                if (window.sqlitePlugin && device.platform === "iOS") {
                     // a couple iOS-specific settings
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
@@ -169,8 +169,11 @@ define(function (require) {
                 }
                 // create / open the database
                 if (window.sqlitePlugin) {
-                    // on mobile device
-                    if (device.platform === "iOS") {
+                    if (device.platform === "browser") {
+                        // running in browser -- use WebSQL (Chrome / Safari ONLY)
+                        this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
+                        this.onInitDB();
+                    } else if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
                         this.db = window.sqlitePlugin.openDatabase({name: DB_NAME, iosDatabaseLocation: 'Documents'});
                         this.onInitDB();
@@ -199,11 +202,10 @@ define(function (require) {
                         this.onInitDB();
                     }
                 } else {
-                    // running in browser -- use WebSQL (Chrome / Safari ONLY)
+                    // no sqlite plugin defined -- try just using webSQL
                     this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
                     this.onInitDB();
                 }
-                
             },
             
             // Callback to finish initialization once the AIM database has successfully been created / opened.
