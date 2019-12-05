@@ -13,11 +13,8 @@ define(function (require) {
         Marionette  = require('marionette'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
-        spModels        = require('app/models/sourcephrase'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
-        tplSourceList   = require('text!tpl/SearchSourceList.html'),
-//        tplTargetList   = require('text!tpl/SearchTargetList.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
         template        = null,
         
@@ -29,43 +26,13 @@ define(function (require) {
             template: Handlebars.compile(tplChapterList)
         }),
 
-        SourceItemView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplSourceList)
-        }),
-
-//        TargetItemView = Marionette.ItemView.extend({
-//            template: Handlebars.compile(tplTargetList)
-//        }),
-
         ChapterResultsView = Marionette.CollectionView.extend({
             childView: ChapterItemView,
             emptyView: NoChildrenView,
-
             initialize: function () {
                 this.collection.on("reset", this.render, this);
             }
-
         }),
-
-        SourceResultsView = Marionette.CollectionView.extend({
-            childView: SourceItemView,
-            emptyView: NoChildrenView,
-
-            initialize: function () {
-                this.collection.on("reset", this.render, this);
-            }
-
-        }),
-
-//        TargetResultsView = Marionette.CollectionView.extend({
-//            childView: TargetItemView,
-//            emptyView: NoChildrenView,
-//
-//            initialize: function () {
-//                this.collection.on("reset", this.render, this);
-//            }
-//
-//        }),
 
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
@@ -73,8 +40,6 @@ define(function (require) {
             initialize: function () {
                 this.chapterList = new chapterModels.ChapterCollection();
                 this.bookList = new bookModels.BookCollection();
-                this.SourceList = new spModels.SourcePhraseCollection();
-//                this.TargetList = new spModels.SourcePhraseCollection();
                 this.render();
             },
 
@@ -154,8 +119,6 @@ define(function (require) {
             
     return {
         LookupView: LookupView,
-        SourceResultsView: SourceResultsView,
-//        TargetResultsView: TargetResultsView,
         ChapterResultsView: ChapterResultsView
     };
 });
