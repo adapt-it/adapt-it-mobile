@@ -46,11 +46,9 @@ define(function (require) {
         // - check for missing version table AND existing sourcephrase table -- indicates pre-beta schema
         // - check for version table with schemaver < CURRSCHEMA
         checkSchema = function () {
-            var i = 0,
-                theSQL = "",
-                len = 0;
+            var theSQL = "";
             console.log("checkSchema: entry");
-            if (device.platform === "browser") {
+            if (typeof device === "undefined" || device.platform === "browser") {
                 return;
             }
             window.Application.db.transaction(function (tx) {
@@ -65,7 +63,6 @@ define(function (require) {
                     if (res.rows.length > 0) {
                         // sourcephrase table exists -- check the DB version
                         console.log("checkSchema: sourcephrase table exists");
-                        var ver = 0;
                         window.Application.db.transaction(function (tx) {
                             // Check 2: is there a version table? 
                             if (window.sqlitePlugin) {

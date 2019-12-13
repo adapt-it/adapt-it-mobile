@@ -14,7 +14,7 @@
 // S7 - select KB dropdown displayed (typeahead)
 // S8 - KB auto-inserting
 // S9 - finished adapting chapter dialog displayed
-// S10 - More (...) actions dropdown menu displayed
+// S10 - Plus actions dropdown menu displayed
 define(function (require) {
 
     "use strict";
@@ -2871,7 +2871,7 @@ define(function (require) {
                 "touchend #NextSP": "goNextPile",
                 "mouseup #NextSP": "goNextPile",
                 "click #Undo": "UndoClick",
-                "click #More": "toggleMoreMenu",
+                "click #Plus-menu": "togglePlusMenu",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
@@ -2883,10 +2883,9 @@ define(function (require) {
             },
             UndoClick: function (event) {
                 console.log("UndoClick: entry");
-                // dismiss the More (...) menu if visible
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 // just pass this along to the list view
                 this.listView.onUndo(event);
@@ -2916,9 +2915,9 @@ define(function (require) {
                     }
                 }
                 console.log("goPrevPile: selectedStart = " + selectedStart);
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 if (selectedStart !== null) {
                     // clear out any pile selection / long selection
@@ -2956,9 +2955,9 @@ define(function (require) {
                     }
                 }
                 console.log("goNextPile: selectedStart = " + selectedStart);
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 if (selectedStart !== null) {
                     // clear out any pile selection / long selection
@@ -2973,16 +2972,16 @@ define(function (require) {
                 // do not bubble this event up to the title bar
 //                event.stopPropagation();
             },
-            // More (...) menu toggle
-            toggleMoreMenu: function (event) {
-                $("#MoreActionsMenu").toggleClass("show");
+            // Plus menu toggle
+            togglePlusMenu: function (event) {
+                $("#PlusActionsMenu").toggleClass("show");
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             togglePreview: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePreview(event);
                 // do not bubble this event up to the title bar
@@ -2990,27 +2989,27 @@ define(function (require) {
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePlaceholder(event);
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             togglePhrase: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePhrase(event);
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             toggleRetranslation: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 this.listView.toggleRetranslation(event);
                 // do not bubble this event up to the title bar
@@ -3018,9 +3017,9 @@ define(function (require) {
             },
             // User clicked on a blank area of the screen
             unselectPiles: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 // only do this if we're in a blank area of the screen
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
@@ -3043,9 +3042,9 @@ define(function (require) {
             // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
-                // dismiss the More (...) menu if visible
-                if ($("#MoreActionsMenu").hasClass("show")) {
-                    $("#MoreActionsMenu").toggleClass("show");
+                // dismiss the Plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
                 }
                 // scroll to the top of the content, just in case
                 var firstPileID = $(".pile").first().attr("id");
@@ -3131,7 +3130,7 @@ define(function (require) {
                 ];
                 var theSteps = [];
                 if (width < 480) {
-                    // More (...) button instead of toggles
+                    // Plus button instead of toggles
                     theSteps = step1.concat(stepMoreBtn, stepLastBtns);
                 } else {
                     // Toggle buttons

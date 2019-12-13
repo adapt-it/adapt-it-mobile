@@ -484,6 +484,15 @@ ul {
     display: inline-block;
 }
 
+#More-menu {
+    display: inline-block;
+}
+
+#DocTitle {
+    line-height: 56px;
+    text-overflow: ellipsis;
+}
+
 /* AI mobile icons */
 .topcoat-icon--alert {
     background: url("images/alert.svg") no-repeat;
@@ -517,8 +526,15 @@ ul {
     background-size: cover;
     padding: 0;
 }
-.topcoat-icon--more {
-    background: url("images/more.svg") no-repeat;
+.topcoat-icon--plus-menu {
+    background: url("images/plus-menu.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--more-menu {
+    background: url("images/more-menu.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -1367,20 +1383,11 @@ typeahead styles
 ***********/
 
 /* Smallest screen sizes
-* display: more button
-* hide: document title, toggle buttons, all button labels, help button
+* display: Back, Undo, Plus menu, Move back, Move forward, More actions menu
+* hide: document title, toggle buttons, all button labels
 * example devices: Android ldpi phones
 */
 @media screen and (max-width: 319px) {
-/*
-    .source, .target {
-        max-width: 240px;
-    }
-*/
-    #chapter {
-        background-color: rgb(223,226,226);
-        margin-right: 16px;
-    }
     /* hidden items */
     .side-nav__list__item__label {
         display: none;
@@ -1391,25 +1398,25 @@ typeahead styles
     .tb-action-toggles {
         display: none;
     }
-    #HelpBtn {
-        display: none;
-    }
     .topcoat-icon-button--quiet {
         padding: 0 .5rem;
+    }
+    /* displayed items */
+    #Plus-menu {
+        display: inline-block;
+    }
+    #chapter {
+        background-color: rgb(223,226,226);
+        margin-right: 16px;
     }
 }
 
 /* Small screen sizes (like smallest, but wider areas for source/target fields)
-* display: more button
-* hide: doc title, toggle buttons, all button labels
+* display: Back, Undo, Plus menu, Move back, Move forward, More actions menu
+* hide: document title, toggle buttons, all button labels
 * example devices: iPhone 4, Android mdpi phones
 */
 @media screen and (min-width: 320px) and (max-width : 479px) {
-/*
-    .source, .target {
-        max-width: 320px;
-    }
-*/
     /* hidden items */
     #DocTitle {
         display: none;
@@ -1421,7 +1428,7 @@ typeahead styles
         display: none;
     }
     /* displayed items */
-    #HelpBtn {
+    #Plus-menu {
         display: inline-block;
     }
     #chapter {
@@ -1431,18 +1438,13 @@ typeahead styles
 }
 
 /* Medium screen sizes
-* display: more button, toggle buttons
-* hide: doc title, all button labels
-* example devices: iPhone 5, Android mdpi phones
+* display: Back, Undo, Placeholder, Phrase, Retranslation, Move back, Move forward, More actions menu
+* hide: Plus menu, doc title, all button labels
+* example devices: iPhone 5, Android mdpi phones; ipad, browser, Android tablets
 */
-@media screen and (min-width: 480px) and (max-width : 639px) {
-/*
-    .source, .target {
-        max-width: 480px;
-    }
-*/
+@media screen and (min-width: 480px) and (max-width : 699px) {
     /* hidden items */
-    #More {
+    #Plus-menu {
         display: none;
     }
     #DocTitle {
@@ -1453,44 +1455,6 @@ typeahead styles
     }
     /* displayed items */
     .tb-action-toggles {
-        display: inline-block;
-    }
-    #HelpBtn {
-        display: inline-block;
-    }
-    #chapter {
-        background-color: rgb(223,226,226);
-        margin-right: 1rem;
-    }
-}
-
-/* Larger screen sizes
-* display: doc title, toggle buttons
-* hide: more button, all button labels
-* example devices: ipad, browser, Android tablets
-*/
-@media screen and (min-width: 640px) and (max-width : 999px) {
-  /* iPhone, Android mdpi rules here */
-/*
-    .source, .target {
-        max-width: 480px;
-    }
-*/
-    /* hidden items */
-    #More {
-        display: none;
-    }
-    .side-nav__list__item__label {
-        display: none;
-    }
-    #DocTitle {
-        display: none;
-    }
-    /* displayed items */
-    .tb-action-toggles {
-        display: inline-block;
-    }
-    #HelpBtn {
         display: inline-block;
     }
     #chapter {
@@ -1500,35 +1464,25 @@ typeahead styles
 }
 
 /* Largest screen sizes
-* display: doc title, toggle buttons, all button labels
-* hide: more button
-* example devices: browser, ipad (landscape)
+* display: Back, Undo, Document title, Placeholder, Phrase, Retranslation, Move back, Move forward, More actions menu
+* hide: Plus menu buttons, all button labels
+* example devices: browser, ipad; some devices in landscape mode
 */
-@media screen and (min-width: 1000px) {
-  /* larger screen (browser?) */
-/*
-    .source, .target {
-        max-width: 480px;
-    }
-*/
+@media screen and (min-width: 700px) {
     /* shown items */
     .tb-action-toggles {
         display: inline-block;
-        padding-right: 8px;
     }
-    #HelpBtn {
-        display: inline-block;
+    #DocTitle {
+        display: inline;
+        width: calc(100% - 420px);
     }
     /* hidden items */
-    #DocTitle {
+    #Plus-menu {
         display: none;
     }
-    #More {
-        display: none;
-    }
-    /* display the button labels */
     .side-nav__list__item__label {
-        display: inline;
+        display: none;
     }
     #chapter {
         background-color: rgb(223,226,226);
