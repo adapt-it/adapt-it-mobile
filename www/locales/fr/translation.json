@@ -269,6 +269,9 @@
         "lblCopyClipboardText": "Texte du presse-papiers...",
         "lblText": "Texte",
         "lblShowPreviewBtn": "Bouton de prévisualisation",
+        "lblShowPreview": "Prévisualisation",
+        "lblHidePreview": "Traduire",
+        "lblShowTranslations": "Traductions...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

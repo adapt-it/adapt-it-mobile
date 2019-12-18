@@ -446,6 +446,34 @@ ul {
     text-align: left;
 }
 
+/* more actions menu */
+.dropdown-vertical {
+	background: #fff;
+	border: 1px solid #2595cb;
+    -webkit-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
+    color: #333;
+    display: none;
+    margin-top: 0;
+    opacity: 1;
+    position: fixed;
+    right: 0;
+    text-align: left;
+    vertical-align: center;
+    transition: all 0.5s ease;
+    z-index: 2147483647; /* on top */
+}
+.dropdown-vertical div {
+  padding: 1.1rem;
+}
+.dropdown-vertical div:hover {
+    background: #eee;
+}
+.dropdown-vertical .label {
+    margin-left: 1rem;
+}
+
 /* clearfix for chapter */
 .chapter::after {
     clear: both;
@@ -657,7 +685,7 @@ ul {
     position: absolute;
 }
 #help {
-    background: url("images/question-white.svg") no-repeat;
+    background: url("images/question.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -668,7 +696,7 @@ ul {
     -moz-background-size: cover;
     background-size: cover;
 }
-#book {
+#translations {
     background: url("images/book_open.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;

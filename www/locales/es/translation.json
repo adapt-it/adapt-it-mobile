@@ -269,6 +269,9 @@
         "lblCopyClipboardText": "Texto del portapapeles...",
         "lblText": "Texto",
         "lblShowPreviewBtn": "Botón de vista previa",
+        "lblShowPreview": "Vista Previa",
+        "lblHidePreview": "Adaptar",
+        "lblShowTranslations": "Traducciones...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

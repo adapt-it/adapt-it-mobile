@@ -270,6 +270,9 @@
         "lblCopyClipboardText": "Texto da área de transferência...",
         "lblText": "Texto",
         "lblShowPreviewBtn": "Botão de pré-visualização",
+        "lblShowPreview": "Pré-visualização",
+        "lblHidePreview": "Traduzir",
+        "lblShowTranslations": "Traduções...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

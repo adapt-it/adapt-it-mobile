@@ -267,6 +267,9 @@
         "lblCopyClipboardText": "Kopim klipbot teks...",
         "lblText": "Teks",
         "lblShowPreviewBtn": "Soim luksave baten",
+        "lblShowPreview": "Soim luksave",
+        "lblHidePreview": "Hide luksave",
+        "lblShowTranslations": "Ol Trenslesen...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
