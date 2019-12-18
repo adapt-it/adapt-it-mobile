@@ -764,7 +764,7 @@ ul {
 .topcoat-icon-button--quiet:focus,
 .topcoat-icon-button--quiet:hover:focus {
     background-color: #2595cb; 
-    border: 0;
+    border: 1px solid transparent;
 }
 
 .combo {
