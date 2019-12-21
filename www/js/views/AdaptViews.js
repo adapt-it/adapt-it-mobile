@@ -2220,6 +2220,7 @@ define(function (require) {
                     // turn off preview mode
                     $("#chapter").removeClass("preview");
                     $(".target").prop('contenteditable', true); // set target to read-write
+                    $("#lblPreview").html(i18next.t("view.lblShowPreview"));
                     inPreview = false;
                 } else {
                     // clear out any selections
@@ -2227,6 +2228,7 @@ define(function (require) {
                     // turn on preview mode
                     $("#chapter").addClass("preview");
                     $(".target").prop('contenteditable', false); // set target to read-only
+                    $("#lblPreview").html(i18next.t("view.lblHidePreview"));
                     inPreview = true;
                 }
             },
