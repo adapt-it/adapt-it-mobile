@@ -18,6 +18,7 @@ define(function (require) {
         chapterModel    = require('app/models/chapter'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
+        kbModels        = require('app/models/targetunit'),
         AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
@@ -30,6 +31,7 @@ define(function (require) {
         homeView        = null,
         importDocView   = null,
         exportDocView   = null,
+        showTransView   = null,
         db              = null,
         router          = null,
         i18n            = require('i18n'),
@@ -227,6 +229,8 @@ define(function (require) {
                         window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
                         window.Application.ChapterList = new chapterModel.ChapterCollection();
                         window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                        window.Application.kbList = new kbModels.TargetUnitCollection();
+                        window.Application.kbList.fetch({reset: true, data: {name: ""}});
                         // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them
                         // (DocumentViews for doc import/export and AdaptViews for adapting)
@@ -240,6 +244,7 @@ define(function (require) {
                 this.ProjectList = null;
                 this.ChapterList = null;
                 this.spList = null;
+                this.kbList = null;
                 
                 // did the user specify a custom language?
                 if (localStorage.getItem("UILang")) {
@@ -347,19 +352,17 @@ define(function (require) {
                 this.main.show(newProjectView);
             },
             
-            editKB: function (id) {
-                console.log("editKB");
+            lookupKB: function (id) {
+                console.log("lookupKB");
                 // update the book and chapter lists, then show the import docs view
-                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
-                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
-                        var proj = window.Application.ProjectList.where({projectid: id});
-                        if (proj === null) {
-                            console.log("no project defined");
-                        }
-                        importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
-                        importDocView.delegateEvents();
-                        window.Application.main.show(importDocView);
-                    });
+                $.when(window.Application.kbList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    var proj = window.Application.ProjectList.where({projectid: id});
+                    if (proj === null) {
+                        console.log("no project defined");
+                    }
+                    showTransView = new SearchViews.KBView({model: proj[0]});
+                    showTransView.delegateEvents();
+                    window.Application.main.show(showTransView);
                 });
             },
             

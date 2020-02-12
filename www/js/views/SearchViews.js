@@ -15,6 +15,8 @@ define(function (require) {
         bookModels      = require('app/models/book'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
+        tplTargetUnit   = require('text!tpl/TargetUnit.html'),
+        tplRSList       = require('text!tpl/RefStringList.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
         template        = null,
         
@@ -31,6 +33,26 @@ define(function (require) {
             emptyView: NoChildrenView,
             initialize: function () {
                 this.collection.on("reset", this.render, this);
+            }
+        }),
+        
+        RefStringsView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplRSList)
+        }),
+        
+        KBView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplTargetUnit),
+            events: {
+                "click .big-link": "onClickRefString"
+            },
+            onShow: function () {
+                var lstRefStrings = this.model.get('RefStrings');
+            },     
+            onClickRefString: function(event) {
+                var index = 0;
+                // get the RefString clicked
+                // Does this have a single
+                
             }
         }),
 
@@ -118,6 +140,7 @@ define(function (require) {
         });
             
     return {
+        KBView: KBView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView
     };

@@ -272,6 +272,8 @@
         "lblShowPreview": "Vista Previa",
         "lblHidePreview": "Adaptar",
         "lblShowTranslations": "Traducciones...",
+        "lblCurrentTranslation": "Current Translation",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

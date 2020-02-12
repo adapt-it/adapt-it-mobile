@@ -270,6 +270,8 @@
         "lblShowPreview": "Soim luksave",
         "lblHidePreview": "Hide luksave",
         "lblShowTranslations": "Ol Trenslesen...",
+        "lblCurrentTranslation": "Trenslesen",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

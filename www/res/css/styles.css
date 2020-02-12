@@ -1442,9 +1442,9 @@ typeahead styles
 /* Small screen sizes (like smallest, but wider areas for source/target fields)
 * display: Back, Undo, Plus menu, Move back, Move forward, More actions menu
 * hide: document title, toggle buttons, all button labels
-* example devices: iPhone 4, Android mdpi phones
+* example devices: most iPhones (portrait), Android mdpi phones
 */
-@media screen and (min-width: 320px) and (max-width : 479px) {
+@media screen and (min-width: 320px) and (max-width : 419px) {
     /* hidden items */
     #DocTitle {
         display: none;
@@ -1468,9 +1468,9 @@ typeahead styles
 /* Medium screen sizes
 * display: Back, Undo, Placeholder, Phrase, Retranslation, Move back, Move forward, More actions menu
 * hide: Plus menu, doc title, all button labels
-* example devices: iPhone 5, Android mdpi phones; ipad, browser, Android tablets
+* example devices: most iPhones (landscape), Android mdpi phones; iPad, browser, Android tablets
 */
-@media screen and (min-width: 480px) and (max-width : 699px) {
+@media screen and (min-width: 420px) and (max-width : 699px) {
     /* hidden items */
     #Plus-menu {
         display: none;
@@ -1494,7 +1494,7 @@ typeahead styles
 /* Largest screen sizes
 * display: Back, Undo, Document title, Placeholder, Phrase, Retranslation, Move back, Move forward, More actions menu
 * hide: Plus menu buttons, all button labels
-* example devices: browser, ipad; some devices in landscape mode
+* example devices: browser, iPad; some devices in landscape mode
 */
 @media screen and (min-width: 700px) {
     /* shown items */

@@ -1,8 +1,17 @@
 {{! TargetUnit.html
     Template for displaying an individual source phrase.
 }}
-<div class="control-row" id="lblSource"></div>
-<div class="control-row" id="lblTranslations"></div>
-<div class="scroller-notb"><div class="topcoat-list__container" id="results">
-<ul class="topcoat-list__container chapter-list" id="RefStrings" style="display:none;"></ul>
-</div></div>
+<div class="topcoat-navigation-bar main_title bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a>
+    </div>
+    <div class="topcoat-navigation-bar__item half"><h2>{{t 'view.lblShowTranslations'}}</h2></div>
+</div>
+<div id="mobileSelect" class="scroller-notb">
+    <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
+        <div class="control-row" id="lblSource">{{t 'view.lblSource'}}:</div>
+        <div class="control-row" id="lblCurrentTranslation">{{t 'view.lblCurrentTranslation'}}:</div>
+        <h3 class="topcoat-list__header" id="lblSearchResults" style="display:none">{{t 'view.lblSearchResults'}}</h3>
+        <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
+    </div>
+</div>    

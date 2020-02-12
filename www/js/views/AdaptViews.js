@@ -2213,7 +2213,28 @@ define(function (require) {
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
             },
-            // user clicked on the Preview (toggle) button -- enable or disable
+            // User clicked the Show Translations button -- find the selection in the KB and
+            // navigate to that page
+            showTranslations: function () {
+                // TODO: save work?
+                var tu = null;
+                var tuid = "";
+                var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
+                var projectid = project.get('projectid');
+                // find the selection and TUID
+                var elts = kblist.filter(function (element) {
+                    return (element.attributes.projectid === projectid && element.attributes.source === sourceValue);
+                });
+                if (elts.length > 0) {
+                    tu = elts[0];
+                }
+                if (tu) {
+                    // found something for this element -- navigate to the KB editor
+                    tuid = tu.get('tuid');
+                    window.Application.router.navigate("kb/" + tuid, {trigger: true});
+                }
+            },
+            // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
             togglePreview: function (event) {
                 if (inPreview === true) {
@@ -2830,7 +2851,7 @@ define(function (require) {
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
-                "click #mnuTranslation": "onKBTranslation",
+                "click #mnuTranslations": "onKBTranslations",
                 "click #mnuPreview": "togglePreview",
                 "click #mnuHelp": "onHelp"
             },
@@ -3036,7 +3057,10 @@ define(function (require) {
                 }
             },
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
-            onKBTranslation: function (event) {
+            onKBTranslations: function (event) {
+                if (selectedStart === null) {
+                    return; // no selection to look at
+                }
                 // dismiss the Plus and More menu if visible
                 if ($("#PlusActionsMenu").hasClass("show")) {
                     $("#PlusActionsMenu").toggleClass("show");
@@ -3044,7 +3068,7 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
-                
+                this.listView.showTranslations();
             },
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
