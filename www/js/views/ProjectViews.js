@@ -919,9 +919,6 @@ define(function (require) {
         
         EditProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplEditProject),
-            regions: {
-                container: "#StepContainer"
-            },
             initialize: function () {
                 this.OnEditProject();
             },
@@ -1051,20 +1048,21 @@ define(function (require) {
             },
             OnCancel: function () {
                 // just display the project settings list (don't save)
-                $("#StepContainer").hide();
+                $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
                 $(".container").attr("style", "height: calc(100% - 70px);");
+                this.removeRegion("container");
             },
             OnOK: function () {
                 // save the info from the current step
                 this.UpdateProject(step);
-                // display the project settings list
-                $("#StepContainer").hide();
+                // show / hide the appropriate UI elements
+                $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
                 $(".container").attr("style", "height: calc(100% - 70px);");
-                window.history.go(-1);
+                this.removeRegion("container");
             },
 
             UpdateProject: function (step) {
@@ -1179,6 +1177,7 @@ define(function (require) {
                     break;
                 }
                 this.model.save();
+                this.model.trigger('change');
             },
 
             OnEditProject: function () {
@@ -1194,15 +1193,13 @@ define(function (require) {
             ShowView: function (number) {
                 innerHtml = "";
                 // Display the frame UI
-                $("#OKCancelButtons").prop('hidden', false);
-                $("#Instructions").prop('hidden', false);
-                $("#StepContainer").prop('hidden', false);
-                $("#OKCancelButtons").prop('hidden', false);
+                this.addRegions({
+                    container: "#StepContainer"
+                });
                 // hide the project list items
-                $("#StepContainer").show();
+                $("#StepInstructions").show();
                 $("#OKCancelButtons").show();
                 $('#ProjectItems').hide();
-                $(".container").removeAttr("style");
                 // clear out the old view (if any)
                 currentView = null;
                 switch (number) {
@@ -1212,7 +1209,7 @@ define(function (require) {
                     currentView.langName = this.model.get("SourceLanguageName");
                     currentView.langCode = this.model.get("SourceLanguageCode");
                     // instructions
-                    this.$("#Instructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
@@ -1220,7 +1217,7 @@ define(function (require) {
                     currentView.langName = this.model.get("TargetLanguageName");
                     currentView.langCode = this.model.get("TargetLanguageCode");
                     // instructions
-                    this.$("#Instructions").html(i18n.t('view.dscProjectTargetLanguage'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
                 case 3: // source font
                     theFont = new fontModel.Font();
@@ -1231,7 +1228,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for source font -- special text and retranslations
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
                     innerHtml += "</h3></div><div id='varItems'>";
@@ -1247,7 +1244,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for target font -- text differences
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
                     innerHtml += "</h3></div><div id='varItems'>";
@@ -1262,22 +1259,22 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#Instructions").html(i18n.t('view.dscProjectFonts'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 6: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // instructions
-                    this.$("#Instructions").html(i18n.t('view.dscProjectPunctuation'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
                 case 7: // cases
                     currentView = new CasesView({ model: this.model});
                     // instructions
-                    this.$("#Instructions").html(i18n.t('view.dscProjectCases'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     break;
                 case 8: // USFM filtering
                     currentView = new USFMFilteringView({ model: this.model});
                     // instructions
-                    this.$("#Instructions").html(i18n.t('view.dscProjectUSFMFiltering'));
+                    $("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
                 case 9: // editor and UI language
                     currentView = new EditorAndUIView({model: this.model});
