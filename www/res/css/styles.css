@@ -333,6 +333,9 @@ header h3 {
     height: 16px;
     padding-left: 34px;
 }
+.l-indent {
+    padding-left: 6px;
+}
 #Spacer {
     height: 280px;
     width: 100%;

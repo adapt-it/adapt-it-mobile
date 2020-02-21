@@ -355,12 +355,12 @@ define(function (require) {
             lookupKB: function (id) {
                 console.log("lookupKB");
                 // update the book and chapter lists, then show the import docs view
-                $.when(window.Application.kbList.fetch({reset: true, data: {name: ""}})).done(function () {
-                    var proj = window.Application.ProjectList.where({projectid: id});
-                    if (proj === null) {
-                        console.log("no project defined");
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: this.currentProject.get('projectid')}})).done(function () {
+                    var tu = window.Application.kbList.where({tuid: id});
+                    if (tu === null) {
+                        console.log("KB Entry not found:" + id);
                     }
-                    showTransView = new SearchViews.KBView({model: proj[0]});
+                    showTransView = new SearchViews.KBView({model: tu[0]});
                     showTransView.delegateEvents();
                     window.Application.main.show(showTransView);
                 });

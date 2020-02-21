@@ -46,7 +46,8 @@ define(function (require) {
                 "click .big-link": "onClickRefString"
             },
             onShow: function () {
-                var lstRefStrings = this.model.get('RefStrings');
+                var lstBooks = "";
+//                var lstRefStrings = this.model.get('RefStrings');
             },     
             onClickRefString: function(event) {
                 var index = 0;
