@@ -16,7 +16,7 @@ define(function (require) {
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
-        tplRSList       = require('text!tpl/RefStringList.html'),
+        tplRSContext    = require('text!tpl/RefString.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
         template        = null,
         
@@ -37,7 +37,41 @@ define(function (require) {
         }),
         
         RefStringsView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplRSList)
+            index: 0,
+            TU: null,
+            refList: null,
+            template: Handlebars.compile(tplRSContext),
+            events: {
+                "click #Prev": "onPrevRef",
+                "click #Next": "onNextRef",
+                "click #Close": "onClose"
+            },
+            onPrevRef: function () {
+                if (this.index > 0) {
+                    this.index--;
+                    this.ShowRef();
+                }
+            },
+            onNextRef: function () {
+                if (this.index < this.model.n) {
+                    this.index++;
+                    this.ShowRef();
+                }
+            },
+            onClose: function () {
+                
+            },
+            ShowRef: function () {
+                // show the context[index] for this refstring, where [index] < n (total # of references in project)
+                if (this.TU === null) {
+                    return; // get out -- nothing to look up
+                }
+                // onShow? create filtered SourcePhraseList refList --> SELECT * from sourcephrase where source=this.TU.source and target=this.model.get("target")
+                // this.refList[index]
+                // -> Find the reference for this SourcePhrase
+                // this.refList[index].chapterid
+                // -> Go back until punctuation, then forward until punctuation
+            }
         }),
         
         KBView = Marionette.ItemView.extend({
@@ -45,12 +79,9 @@ define(function (require) {
             events: {
                 "click .big-link": "onClickRefString"
             },
-            onShow: function () {
-                var lstBooks = "";
-//                var lstRefStrings = this.model.get('RefStrings');
-            },     
-            onClickRefString: function(event) {
-                var index = 0;
+            onClickRefString: function (event) {
+                var index = event.currentTarget.id.substr(3);
+                var RefString = this.model.get("refstring")[index];
                 // get the RefString clicked
                 // Does this have a single
                 
@@ -142,6 +173,7 @@ define(function (require) {
             
     return {
         KBView: KBView,
+        RefStringsView: RefStringsView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView
     };

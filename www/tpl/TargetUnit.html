@@ -9,9 +9,14 @@
 </div>
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div class="control-row" id="lblSource">{{t 'view.lblSource'}}:{{source}}</div>
-        <div class="control-row" id="lblCurrentTranslation">{{t 'view.lblCurrentTranslation'}}:</div>
-        <h3 class="topcoat-list__header" id="lblSearchResults" style="display:none">{{t 'view.lblSearchResults'}}</h3>
-        <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
+        <div class="control-row l-indent" id="lblSource">{{t 'view.lblSource'}}:{{source}}</div>
+        <div class="control-row l-indent" id="lblCurrentTranslation">{{t 'view.lblCurrentTranslation'}}:</div>
+        <h3 class="topcoat-list__header" id="lblSearchResults">{{t 'view.lblTarget'}}</h3>
+        <ul class="topcoat-list__container chapter-list" id="RefStrings">
+            {{#each refstring}}
+<li class="topcoat-list__item"><a class="big-link" id='rs-{{@index}}'>{{this.target}}<span class="sectionStatus">{{t 'view.lblInstances'}}:{{this.n}}</span><span class="chevron"></span></a></li>            
+            {{/each}}
+        </ul>
+        <div id="theRef"></div>
     </div>
 </div>    
