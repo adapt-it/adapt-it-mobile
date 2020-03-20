@@ -11,8 +11,10 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
+        i18next     = require('i18n'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
+        spModels        = require('app/models/sourcephrase'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
@@ -73,9 +75,17 @@ define(function (require) {
                 // -> Go back until punctuation, then forward until punctuation
             }
         }),
-        
-        KBView = Marionette.ItemView.extend({
+        KBView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplTargetUnit),
+            regions: {
+                container: "#StepContainer"
+            },
+            initialize: function () {
+                var spid = window.Application.currentProject.get('lastAdaptedSPID');
+                this.spList = new spModels.SourcePhraseCollection();
+                $.when(this.spList.fetch({reset: true, data: {spid: spid}})).done(this.render);
+                this.render();
+            },
             events: {
                 "click .big-link": "onClickRefString"
             },
@@ -85,9 +95,24 @@ define(function (require) {
                 // get the RefString clicked
                 // Does this have a single
                 
+            },
+            onShow: function () {
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                var spid = window.Application.currentProject.get('lastAdaptedSPID');
+                if (this.spList.length > 0) {
+                    // found a sourcephrase -- fill out the UI
+                    var sp = this.spList.get(spid);
+                    $("#srcPhrase").html(sp.get("source"));
+                    $("#tgtPhrase").html(sp.get("target"));
+                }
+                // fill current translation info
+                $("#lblSourceLang").html(srcLang);
+                $("#lbltargetLang").html(tgtLang);
+                //i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
             }
         }),
-
+        
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
 

@@ -1,5 +1,5 @@
 {{! TargetUnit.html
-    Template for displaying an individual source phrase.
+    Template for displaying an individual KB target unit (one or more translations for a single source phrase).
 }}
 <div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item">
@@ -9,8 +9,7 @@
 </div>
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div class="control-row l-indent" id="lblSource">{{t 'view.lblSource'}}:{{source}}</div>
-        <div class="control-row l-indent" id="lblCurrentTranslation">{{t 'view.lblCurrentTranslation'}}:</div>
+        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div class="emphasized-small" id="lbltargetLang"></div><div class="center emphasized" id="tgtPhrase"></div></div>
         <h3 class="topcoat-list__header" id="lblSearchResults">{{t 'view.lblTarget'}}</h3>
         <ul class="topcoat-list__container chapter-list" id="RefStrings">
             {{#each refstring}}

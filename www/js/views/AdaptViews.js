@@ -3068,6 +3068,8 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
+                // update the lastAdaptedSPID -- this tells us our current translation
+                project.set('lastAdaptedSPID', selectedStart.id);
                 this.listView.showTranslations();
             },
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user

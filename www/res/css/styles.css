@@ -181,6 +181,15 @@ input[type="file"] {
     position: relative;
     width: 100%;
 }
+.emphasized-small {
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+.emphasized {
+    color: #000;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
 .topcoat-list li p:nth-of-type(2) {
     color:  #58C0FF ;
 }
@@ -275,7 +284,25 @@ header h3 {
     padding-right: 5px;
     padding-top: 0;
 }
-
+/* KB page elements */
+.srcbox {
+    background: #eee;
+    display: inline-block;
+    height: 4rem;
+    margin: 0;
+    padding: 6px;
+    vertical-align: top;
+    width: calc(50% - 12px); /* overridden on smaller screens */
+}
+.tgtbox {
+    background: #ccc;
+    display: inline-block;
+    height: 4rem;
+    margin: 0;
+    padding: 6px;
+    vertical-align: top;
+    width: calc(50% - 12px); /* overridden on smaller screens */
+}
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
     padding: 0;
@@ -1432,6 +1459,9 @@ typeahead styles
     .topcoat-icon-button--quiet {
         padding: 0 .5rem;
     }
+    .srcbox, .tgtbox {
+        width: 100%;
+    }
     /* displayed items */
     #Plus-menu {
         display: inline-block;
@@ -1457,6 +1487,9 @@ typeahead styles
     }
     .side-nav__list__item__label {
         display: none;
+    }
+    .srcbox, .tgtbox {
+        width: 100%;
     }
     /* displayed items */
     #Plus-menu {
