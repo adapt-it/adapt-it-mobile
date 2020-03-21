@@ -76,14 +76,12 @@ define(function (require) {
             }
         }),
         KBView = Marionette.LayoutView.extend({
+            spObj: null,
             template: Handlebars.compile(tplTargetUnit),
             regions: {
                 container: "#StepContainer"
             },
             initialize: function () {
-                var spid = window.Application.currentProject.get('lastAdaptedSPID');
-                this.spList = new spModels.SourcePhraseCollection();
-                $.when(this.spList.fetch({reset: true, data: {spid: spid}})).done(this.render);
                 this.render();
             },
             events: {
@@ -99,10 +97,9 @@ define(function (require) {
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
-                var spid = window.Application.currentProject.get('lastAdaptedSPID');
-                if (this.spList.length > 0) {
+                if (window.Application.spList.length > 0) {
                     // found a sourcephrase -- fill out the UI
-                    var sp = this.spList.get(spid);
+                    var sp = window.Application.spList.at(0);
                     $("#srcPhrase").html(sp.get("source"));
                     $("#tgtPhrase").html(sp.get("target"));
                 }

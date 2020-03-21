@@ -127,7 +127,7 @@ define(function (require) {
                 // Window font size / zoom (Android only)
                 if (window.MobileAccessibility) {
                     window.MobileAccessibility.usePreferredTextZoom(false);
-                }                
+                }
                 // version info
                 if (window.sqlitePlugin && device.platform === "iOS") {
                     // iOS - internal build #
@@ -164,7 +164,7 @@ define(function (require) {
                 }
                 // social sharing plugin / iPad popover coords
                 if (window.sqlitePlugin) {
-                    window.plugins.socialsharing.iPadPopupCoordinates = function() {
+                    window.plugins.socialsharing.iPadPopupCoordinates = function () {
                         var rect = document.getElementById('share_button').getBoundingClientRect();
                         return rect.left + "," + rect.top + "," + rect.width + "," + rect.height;
                     };
@@ -231,6 +231,7 @@ define(function (require) {
                         window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
                         window.Application.kbList = new kbModels.TargetUnitCollection();
                         window.Application.kbList.fetch({reset: true, data: {name: ""}});
+                        window.Application.spList = new spModel.SourcePhraseCollection();
                         // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them
                         // (DocumentViews for doc import/export and AdaptViews for adapting)
@@ -355,14 +356,17 @@ define(function (require) {
             lookupKB: function (id) {
                 console.log("lookupKB");
                 // update the book and chapter lists, then show the import docs view
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: this.currentProject.get('projectid')}})).done(function () {
-                    var tu = window.Application.kbList.where({tuid: id});
-                    if (tu === null) {
-                        console.log("KB Entry not found:" + id);
-                    }
-                    showTransView = new SearchViews.KBView({model: tu[0]});
-                    showTransView.delegateEvents();
-                    window.Application.main.show(showTransView);
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
+                    $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
+                        var tu = window.Application.kbList.where({tuid: id});
+                        if (tu === null) {
+                            console.log("KB Entry not found:" + id);
+                        }
+                        showTransView = new SearchViews.KBView({model: tu[0]});
+                        showTransView.spObj = window.Application.spList[0];
+                        showTransView.delegateEvents();
+                        window.Application.main.show(showTransView);
+                    });
                 });
             },
             

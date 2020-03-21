@@ -1706,7 +1706,7 @@ define(function (require) {
                 }
                 console.log("selectedAdaptation: " + selectedStart.id);
                 // Update lastAdaptedSPID
-                project.set('lastAdaptedSPID', selectedStart.id);
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
 
                 // enable prev / next buttons
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
@@ -3069,7 +3069,7 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 // update the lastAdaptedSPID -- this tells us our current translation
-                project.set('lastAdaptedSPID', selectedStart.id);
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
                 this.listView.showTranslations();
             },
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
