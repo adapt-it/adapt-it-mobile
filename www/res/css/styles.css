@@ -885,6 +885,9 @@ div.preview div.block-height {
     text-align: center;
     vertical-align: top;
 }
+.topcoat-list__header {
+    padding-left: 1rem;
+}
 .topcoat-list__item {
     padding: 1rem;
 }
