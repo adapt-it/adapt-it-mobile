@@ -1,8 +1,22 @@
 {{! TargetUnit.html
-    Template for displaying an individual source phrase.
+    Template for displaying an individual KB target unit (one or more translations for a single source phrase).
 }}
-<div class="control-row" id="lblSource"></div>
-<div class="control-row" id="lblTranslations"></div>
-<div class="scroller-notb"><div class="topcoat-list__container" id="results">
-<ul class="topcoat-list__container chapter-list" id="RefStrings" style="display:none;"></ul>
-</div></div>
+<div class="topcoat-navigation-bar main_title bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a>
+    </div>
+    <div class="topcoat-navigation-bar__item half"><h2>{{t 'view.lblShowTranslations'}}</h2></div>
+</div>
+<div id="mobileSelect" class="scroller-notb">
+    <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
+        <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
+        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div class="emphasized-small" id="lbltargetLang"></div><div class="center emphasized" id="tgtPhrase"></div></div>
+        <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}}</div>
+        <ul class="topcoat-list__container chapter-list" id="RefStrings">
+            {{#each refstring}}
+            <li class="topcoat-list__item"><a class="big-link" id='rs-{{@index}}'><span class="chap-list__item emphasized">{{this.target}}</span><span class="sectionStatus">{{t 'view.lblInstances'}}:{{this.n}}</span><span class="chevron"></span></a></li>            
+            {{/each}}
+        </ul>
+        <div id="theRef"></div>
+    </div>
+</div>    

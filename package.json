@@ -56,6 +56,12 @@
       "no-console": "off"
     }
   },
+  "build": {
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "target": "pkg"
+    }
+  },
   "cordova": {
     "plugins": {
       "cordova-plugin-device": {},

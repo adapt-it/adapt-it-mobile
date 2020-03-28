@@ -18,7 +18,8 @@
         "lblTargetWords": "Idioma alvo: __number__",
         "lblDocuments": "Documentos: __number__",
         "lblSourceWords": "Idioma original: __number__",
-        "lblTranslations": "Traduções: __number__",
+        "lblCurrentTranslation": "tradução atual:",
+        "lblAllTranslations": "Traduções:",
         "lblInstances": "Ocorrências no texto: __number__",
         "lblStatusFullyTranslated": "Totalmente traduzido",
         "lblStatusNotTranslated": "Tradução não iniciada (__versecount__ versos totais).",
@@ -270,6 +271,11 @@
         "lblCopyClipboardText": "Texto da área de transferência...",
         "lblText": "Texto",
         "lblShowPreviewBtn": "Botão de pré-visualização",
+        "lblShowPreview": "Pré-visualização",
+        "lblHidePreview": "Traduzir",
+        "lblShowTranslations": "Traduções...",
+        "lblCurrentTranslation": "Current Translation",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

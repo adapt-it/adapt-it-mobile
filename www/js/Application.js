@@ -18,6 +18,7 @@ define(function (require) {
         chapterModel    = require('app/models/chapter'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
+        kbModels        = require('app/models/targetunit'),
         AppRouter       = require('app/router'),
         FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
@@ -30,6 +31,7 @@ define(function (require) {
         homeView        = null,
         importDocView   = null,
         exportDocView   = null,
+        showTransView   = null,
         db              = null,
         router          = null,
         i18n            = require('i18n'),
@@ -75,9 +77,9 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
-            version: "1.2.5", // appended with milestone / iOS build info
-            AndroidBuild: "31", // (was milestone release #)
-            iOSBuild: "1.2.5",
+            version: "1.3.0", // appended with milestone / iOS build info
+            AndroidBuild: "32", // (was milestone release #)
+            iOSBuild: "1.3.0",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -117,7 +119,7 @@ define(function (require) {
                     slider.slidePage(view.$el);
                 });
                 // keyboard plugin (mobile app only)
-                if (window.sqlitePlugin) {
+                if (window.sqlitePlugin && device.platform === "iOS") {
                     // a couple iOS-specific settings
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
@@ -125,7 +127,7 @@ define(function (require) {
                 // Window font size / zoom (Android only)
                 if (window.MobileAccessibility) {
                     window.MobileAccessibility.usePreferredTextZoom(false);
-                }                
+                }
                 // version info
                 if (window.sqlitePlugin && device.platform === "iOS") {
                     // iOS - internal build #
@@ -162,15 +164,18 @@ define(function (require) {
                 }
                 // social sharing plugin / iPad popover coords
                 if (window.sqlitePlugin) {
-                    window.plugins.socialsharing.iPadPopupCoordinates = function() {
+                    window.plugins.socialsharing.iPadPopupCoordinates = function () {
                         var rect = document.getElementById('share_button').getBoundingClientRect();
                         return rect.left + "," + rect.top + "," + rect.width + "," + rect.height;
                     };
                 }
                 // create / open the database
                 if (window.sqlitePlugin) {
-                    // on mobile device
-                    if (device.platform === "iOS") {
+                    if (device.platform === "browser") {
+                        // running in browser -- use WebSQL (Chrome / Safari ONLY)
+                        this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
+                        this.onInitDB();
+                    } else if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
                         this.db = window.sqlitePlugin.openDatabase({name: DB_NAME, iosDatabaseLocation: 'Documents'});
                         this.onInitDB();
@@ -199,11 +204,10 @@ define(function (require) {
                         this.onInitDB();
                     }
                 } else {
-                    // running in browser -- use WebSQL (Chrome / Safari ONLY)
+                    // no sqlite plugin defined -- try just using webSQL
                     this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
                     this.onInitDB();
                 }
-                
             },
             
             // Callback to finish initialization once the AIM database has successfully been created / opened.
@@ -225,6 +229,9 @@ define(function (require) {
                         window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
                         window.Application.ChapterList = new chapterModel.ChapterCollection();
                         window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                        window.Application.kbList = new kbModels.TargetUnitCollection();
+                        window.Application.kbList.fetch({reset: true, data: {name: ""}});
+                        window.Application.spList = new spModel.SourcePhraseCollection();
                         // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them
                         // (DocumentViews for doc import/export and AdaptViews for adapting)
@@ -238,6 +245,7 @@ define(function (require) {
                 this.ProjectList = null;
                 this.ChapterList = null;
                 this.spList = null;
+                this.kbList = null;
                 
                 // did the user specify a custom language?
                 if (localStorage.getItem("UILang")) {
@@ -345,18 +353,19 @@ define(function (require) {
                 this.main.show(newProjectView);
             },
             
-            editKB: function (id) {
-                console.log("editKB");
+            lookupKB: function (id) {
+                console.log("lookupKB");
                 // update the book and chapter lists, then show the import docs view
-                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
-                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
-                        var proj = window.Application.ProjectList.where({projectid: id});
-                        if (proj === null) {
-                            console.log("no project defined");
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
+                    $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
+                        var tu = window.Application.kbList.where({tuid: id});
+                        if (tu === null) {
+                            console.log("KB Entry not found:" + id);
                         }
-                        importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
-                        importDocView.delegateEvents();
-                        window.Application.main.show(importDocView);
+                        showTransView = new SearchViews.KBView({model: tu[0]});
+                        showTransView.spObj = window.Application.spList[0];
+                        showTransView.delegateEvents();
+                        window.Application.main.show(showTransView);
                     });
                 });
             },

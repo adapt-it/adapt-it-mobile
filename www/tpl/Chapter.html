@@ -3,11 +3,7 @@
     container -- the toolbar and menus, etc -- but the individual strips are rendered by the template SourcePhrase.html.
 }}
 <div id="title" class="topcoat-navigation-bar main_title bg-lightblue">
-    <div class="topcoat-navigation-bar__item left">
-        <a id="back" class="topcoat-icon-button--quiet back-button" href="index.html">
-            <span class="topcoat-icon topcoat-icon--back"></span>
-        </a>
-    </div>
+    <div class="topcoat-navigation-bar__item left"><a id="back" class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a></div>
     <div class="topcoat-navigation-bar__item left">
         <button id="Undo" title="{{ t 'view.dscUndo'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--undo"></span><span class="side-nav__list__item__label">{{ t 'view.lblUndo'}}</span></button>
     </div>
@@ -15,15 +11,13 @@
         <h1 class="topcoat-navigation-bar__title bg-lightblue" id="{{this.id}}">{{this.name}}</h1>
     </div>
 
-    <div class="topcoat-navigation-bar__item right" id="HelpBtn">
-        <a class="topcoat-icon-button--quiet">
-            <span id="help" class="topcoat-icon topcoat-icon--help"></span>
-        </a>
+    <div class="topcoat-navigation-bar__item right">
+<button id="More-menu" title="{{ t 'view.dscMoreActions'}}" class="topcoat-icon-button--quiet toolbar-button"><span class="topcoat-icon topcoat-icon--more-menu"></span></button>
+    <div id="MoreActionsMenu" aria-haspopup="true" class="dropdown-vertical">
+    <div id="mnuTranslations"><span id="translations" class="topcoat-icon topcoat-icon--translations"></span><span class="label" id="lblTranslations">{{ t 'view.lblShowTranslations'}}</span></div>
+    <div id="mnuPreview"><span id="preview" class="topcoat-icon topcoat-icon--preview"></span><span class="label" id="lblPreview">{{ t 'view.lblShowPreview'}}</span></div>
+        <div id="mnuHelp"><span id="help" class="topcoat-icon topcoat-icon--help"></span><span class="label" id="lblHelp">{{ t 'view.lblHelp'}}</span></div>
     </div>
-    <div class="topcoat-navigation-bar__item right" id="PreviewBtn">
-        <a class="topcoat-icon-button--quiet">
-            <span id="preview" class="topcoat-icon topcoat-icon--preview"></span>
-        </a>
     </div>
     <div class="topcoat-navigation-bar__item right">
         <button id="NextSP" title="{{ t 'view.lblNext'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--next"></span><span class="side-nav__list__item__label">{{ t 'view.lblNext'}}</span></button>
@@ -32,8 +26,8 @@
         <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
     </div>
     <div class="topcoat-navigation-bar__item right">
-        <button id="More" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--more"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
-        <div id="MoreActionsMenu" class="dropdown">
+        <button id="Plus-menu" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--plus-menu"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+        <div id="PlusActionsMenu" aria-haspopup="true" class="dropdown">
             <div class="topcoat-navigation-bar__item left">
                 <button id="mnuPlaceholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
             </div>

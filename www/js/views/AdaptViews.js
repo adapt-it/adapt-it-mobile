@@ -14,7 +14,7 @@
 // S7 - select KB dropdown displayed (typeahead)
 // S8 - KB auto-inserting
 // S9 - finished adapting chapter dialog displayed
-// S10 - More (...) actions dropdown menu displayed
+// S10 - Plus actions dropdown menu displayed
 define(function (require) {
 
     "use strict";
@@ -297,53 +297,6 @@ define(function (require) {
             theRule += "color: " + project.get('NavigationColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            // block-height (standard height for all strip elements - pile, chapter/verse, etc.)
-//            theRule = ".block-height {";
-//            theRule += "height: ";
-//            // total height = source + target + marker + (20px extra space)
-//            // this formula also accounts for the larger line height of the Scheherazade font
-//            // (see https://software.sil.org/scheherazade/support/faq/)
-//            totalHeight =
-//                Math.floor(parseInt(project.get('NavigationFontSize'), 10) * ((project.get('NavigationFont') === "Scheherazade") ? 1.1 : 1.0)) + Math.floor(parseInt(project.get('SourceFontSize'), 10) * ((project.get('SourceFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + Math.floor(parseInt(project.get('TargetFontSize'), 10) * ((project.get('TargetFont') === "Scheherazade") ? 1.1 : 1.0) * 1.2) + 26;
-//            theRule += totalHeight + "px; ";
-//            theRule += "line-height: " + totalHeight + "px; ";
-//            theRule += "}";
-//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//            console.log("Calculated pile height: " + totalHeight);
-//            // condensed-pile (w/o the marker line)
-//            theRule = ".condensed-pile {";
-//            theRule += "height: ";
-//            // total height = source + target + (20px extra space)
-//            totalHeight = ((parseInt(project.get('SourceFontSize'), 10) + parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-//            theRule += totalHeight + "px; ";
-//            theRule += "}";
-//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            // preview (w/o marker and source lines)
-//            theRule = "div.preview div.block-height {";
-//            theRule += "height: ";
-//            // total height = source + target + (20px extra space)
-//            totalHeight = ((parseInt(project.get('TargetFontSize'), 10)) * 1.2) + 20;
-//            theRule += totalHeight + "px; ";
-//            theRule += "}";
-//            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-            // is the preview button enabled?
-            if (localStorage.getItem("ShowPreviewBtn") && localStorage.getItem("ShowPreviewBtn") === "true") {
-                theRule = "#PreviewBtn {display: inline-block;}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".dropdown {right:153px;}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                // on the smallest screens, there's not enough width -- show the preview button instead of the help button
-                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: none;}";
-                theRule += ".dropdown {right:102px;}}"; // dropdown is in the normal place
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
-            } else {
-                theRule = "#PreviewBtn {display: none;}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = ".dropdown {right:102px;}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-                theRule = "@media screen and (max-width : 360px) {#HelpBtn {display: inline-block;}";
-                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
-            }
 
             // Special Text color
             theRule = "div.specialtext div.source {";
@@ -366,10 +319,6 @@ define(function (require) {
             if (project.get('SourceDir') === 'rtl') {
                 theRule = "#chapter { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
-//                theRule = ".pile, .strip-header, .filter {";
-//                theRule += "float: right;";
-//                theRule += "}";
-//                sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
                 theRule = ".source { direction: rtl; }";
                 sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             }
@@ -1757,7 +1706,7 @@ define(function (require) {
                 }
                 console.log("selectedAdaptation: " + selectedStart.id);
                 // Update lastAdaptedSPID
-                project.set('lastAdaptedSPID', selectedStart.id);
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
 
                 // enable prev / next buttons
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
@@ -2264,13 +2213,35 @@ define(function (require) {
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
             },
-            // user clicked on the Preview (toggle) button -- enable or disable
+            // User clicked the Show Translations button -- find the selection in the KB and
+            // navigate to that page
+            showTranslations: function () {
+                // TODO: save work?
+                var tu = null;
+                var tuid = "";
+                var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
+                var projectid = project.get('projectid');
+                // find the selection and TUID
+                var elts = kblist.filter(function (element) {
+                    return (element.attributes.projectid === projectid && element.attributes.source === sourceValue);
+                });
+                if (elts.length > 0) {
+                    tu = elts[0];
+                }
+                if (tu) {
+                    // found something for this element -- navigate to the KB editor
+                    tuid = tu.get('tuid');
+                    window.Application.router.navigate("kb/" + tuid, {trigger: true});
+                }
+            },
+            // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
             togglePreview: function (event) {
                 if (inPreview === true) {
                     // turn off preview mode
                     $("#chapter").removeClass("preview");
                     $(".target").prop('contenteditable', true); // set target to read-write
+                    $("#lblPreview").html(i18next.t("view.lblShowPreview"));
                     inPreview = false;
                 } else {
                     // clear out any selections
@@ -2278,6 +2249,7 @@ define(function (require) {
                     // turn on preview mode
                     $("#chapter").addClass("preview");
                     $(".target").prop('contenteditable', false); // set target to read-only
+                    $("#lblPreview").html(i18next.t("view.lblHidePreview"));
                     inPreview = true;
                 }
             },
@@ -2871,20 +2843,24 @@ define(function (require) {
                 "touchend #NextSP": "goNextPile",
                 "mouseup #NextSP": "goNextPile",
                 "click #Undo": "UndoClick",
-                "click #More": "toggleMoreMenu",
+                "click #Plus-menu": "togglePlusMenu",
+                "click #More-menu": "toggleMoreMenu",
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
-                "click #preview": "togglePreview",
-                "click #help": "onHelp"
+                "click #mnuTranslations": "onKBTranslations",
+                "click #mnuPreview": "togglePreview",
+                "click #mnuHelp": "onHelp"
             },
             UndoClick: function (event) {
                 console.log("UndoClick: entry");
-                // dismiss the More (...) menu if visible
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -2916,7 +2892,10 @@ define(function (require) {
                     }
                 }
                 console.log("goPrevPile: selectedStart = " + selectedStart);
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -2956,7 +2935,10 @@ define(function (require) {
                     }
                 }
                 console.log("goNextPile: selectedStart = " + selectedStart);
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -2973,14 +2955,34 @@ define(function (require) {
                 // do not bubble this event up to the title bar
 //                event.stopPropagation();
             },
-            // More (...) menu toggle
+            // Plus menu toggle
+            togglePlusMenu: function (event) {
+                // hide the more actions menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // stop any help tour
+                hopscotch.endTour();
+                $("#PlusActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
             toggleMoreMenu: function (event) {
+                // hide the plus menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                // stop any help tour
+                hopscotch.endTour();
                 $("#MoreActionsMenu").toggleClass("show");
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             togglePreview: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -2990,7 +2992,10 @@ define(function (require) {
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePlaceholder: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -2999,7 +3004,10 @@ define(function (require) {
                 event.stopPropagation();
             },
             togglePhrase: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -3008,7 +3016,10 @@ define(function (require) {
                 event.stopPropagation();
             },
             toggleRetranslation: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -3018,10 +3029,15 @@ define(function (require) {
             },
             // User clicked on a blank area of the screen
             unselectPiles: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
+                // stop any help tour
+                hopscotch.endTour();
                 // only do this if we're in a blank area of the screen
                 if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
@@ -3040,10 +3056,29 @@ define(function (require) {
                     MovingDir = 0;
                 }
             },
-            // Help button handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
+            // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
+            onKBTranslations: function (event) {
+                if (selectedStart === null) {
+                    return; // no selection to look at
+                }
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // update the lastAdaptedSPID -- this tells us our current translation
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
+                this.listView.showTranslations();
+            },
+            // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
-                // dismiss the More (...) menu if visible
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
@@ -3131,7 +3166,7 @@ define(function (require) {
                 ];
                 var theSteps = [];
                 if (width < 480) {
-                    // More (...) button instead of toggles
+                    // Plus button instead of toggles
                     theSteps = step1.concat(stepMoreBtn, stepLastBtns);
                 } else {
                     // Toggle buttons

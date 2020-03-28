@@ -17,7 +17,8 @@
         "lblSourceWords": "Source: __number__",
         "lblTargetWordsInitial": "Target:",
         "lblTargetWords": "Target: __number__",
-        "lblTranslations": "Translations: __number__",
+        "lblCurrentTranslation": "Current Translation:",
+        "lblAllTranslations": "All Translations:",
         "lblInstances": "Instances: __number__",
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__versecount__ total verses).",
@@ -269,6 +270,11 @@
         "lblCopyClipboardText": "Copy clipboard text...",
         "lblText": "Text",
         "lblShowPreviewBtn": "Show Preview Button",
+        "lblShowPreview": "Show Preview",
+        "lblHidePreview": "Hide Preview",
+        "lblShowTranslations": "Show Translations...",
+        "lblCurrentTranslation": "Current Translation",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

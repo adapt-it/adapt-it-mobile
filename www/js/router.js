@@ -18,7 +18,7 @@ define(function (require) {
             "project":      "newProject",       // #project
             "project/:id":  "editProject",      // #project/projectID
             "search/:id":   "lookupChapter",    // #search/projectID
-            "kb/:id":       "editKB",           // #kb/projectID (edit the KB for projectID)
+            "kb/:tuid":     "lookupKB",         // #kb/target unit ID (view / edit the target unit)
             "import/:id":   "importBooks",      // #import/projectID (import books into projectID)
             "export/:id":   "exportBooks",      // #export/projectID (export books from projectID)
             "adapt/:chapterid":    "adaptChapter"      // #adapt/chapterID (adapt chapterID)

@@ -11,30 +11,105 @@ define(function (require) {
     var $           = require('jquery'),
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
+        i18next     = require('i18n'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
+        spModels        = require('app/models/sourcephrase'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
-        tplLookup     = require('text!tpl/Lookup.html'),
+        tplLookup       = require('text!tpl/Lookup.html'),
+        tplTargetUnit   = require('text!tpl/TargetUnit.html'),
+        tplRSContext    = require('text!tpl/RefString.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
+        template        = null,
         
         NoChildrenView = Marionette.ItemView.extend({
             template: Handlebars.compile("<div id=\"nochildren\"></div>")
         }),
         
-        ChildrenView = Marionette.ItemView.extend({
+        ChapterItemView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplChapterList)
         }),
 
-        ChapterListView = Marionette.CollectionView.extend({
-            childView: ChildrenView,
+        ChapterResultsView = Marionette.CollectionView.extend({
+            childView: ChapterItemView,
             emptyView: NoChildrenView,
-
             initialize: function () {
                 this.collection.on("reset", this.render, this);
             }
-
         }),
-
+        
+        RefStringsView = Marionette.ItemView.extend({
+            index: 0,
+            TU: null,
+            refList: null,
+            template: Handlebars.compile(tplRSContext),
+            events: {
+                "click #Prev": "onPrevRef",
+                "click #Next": "onNextRef",
+                "click #Close": "onClose"
+            },
+            onPrevRef: function () {
+                if (this.index > 0) {
+                    this.index--;
+                    this.ShowRef();
+                }
+            },
+            onNextRef: function () {
+                if (this.index < this.model.n) {
+                    this.index++;
+                    this.ShowRef();
+                }
+            },
+            onClose: function () {
+                
+            },
+            ShowRef: function () {
+                // show the context[index] for this refstring, where [index] < n (total # of references in project)
+                if (this.TU === null) {
+                    return; // get out -- nothing to look up
+                }
+                // onShow? create filtered SourcePhraseList refList --> SELECT * from sourcephrase where source=this.TU.source and target=this.model.get("target")
+                // this.refList[index]
+                // -> Find the reference for this SourcePhrase
+                // this.refList[index].chapterid
+                // -> Go back until punctuation, then forward until punctuation
+            }
+        }),
+        KBView = Marionette.LayoutView.extend({
+            spObj: null,
+            template: Handlebars.compile(tplTargetUnit),
+            regions: {
+                container: "#StepContainer"
+            },
+            initialize: function () {
+                this.render();
+            },
+            events: {
+                "click .big-link": "onClickRefString"
+            },
+            onClickRefString: function (event) {
+                var index = event.currentTarget.id.substr(3);
+                var RefString = this.model.get("refstring")[index];
+                // get the RefString clicked
+                // Does this have a single
+                
+            },
+            onShow: function () {
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                if (window.Application.spList.length > 0) {
+                    // found a sourcephrase -- fill out the UI
+                    var sp = window.Application.spList.at(0);
+                    $("#srcPhrase").html(sp.get("source"));
+                    $("#tgtPhrase").html(sp.get("target"));
+                }
+                // fill current translation info
+                $("#lblSourceLang").html(srcLang);
+                $("#lbltargetLang").html(tgtLang);
+                //i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+            }
+        }),
+        
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
 
@@ -119,7 +194,9 @@ define(function (require) {
         });
             
     return {
+        KBView: KBView,
+        RefStringsView: RefStringsView,
         LookupView: LookupView,
-        ChapterListView: ChapterListView
+        ChapterResultsView: ChapterResultsView
     };
 });

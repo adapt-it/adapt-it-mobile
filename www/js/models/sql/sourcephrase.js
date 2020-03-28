@@ -209,9 +209,9 @@ define(function (require) {
                     break;
                         
                 case 'read':
-                    if (options.data.hasOwnProperty('id')) {
+                    if (options.data.hasOwnProperty('spid')) {
                         // find specific source phrase
-                        findById(options.data.id).done(function (data) {
+                        findById(options.data.spid).done(function (data) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('chapterid')) {

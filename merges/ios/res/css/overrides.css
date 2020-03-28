@@ -43,3 +43,8 @@
     top: 96px;
     top: calc(env(safe-area-inset-top) + 52px);
 }
+@keyframes redraw{
+    0% {opacity: 1;}
+    100% {opacity: .99;}
+}
+animation: redraw 1s linear infinite;

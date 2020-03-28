@@ -15,7 +15,8 @@
         "lblTargetWords": "Target: __number__",
         "lblDocuments": "Dokumen: __number__",
         "lblSourceWords": "Teks: __number__",
-        "lblTranslations": "Trenslesen: __number__",
+        "lblCurrentTranslation": "Current Trenslesen:",
+        "lblAllTranslations": "Trenslesen:",
         "lblInstances": "Trenslesen teks: __number__",
         "lblStatusFullyTranslated": "Olgeta ves i gat trenslesen teks.",
         "lblStatusNotTranslated": "Nogat trenslesen (__versecount__ ves i stap).",
@@ -267,6 +268,11 @@
         "lblCopyClipboardText": "Kopim klipbot teks...",
         "lblText": "Teks",
         "lblShowPreviewBtn": "Soim luksave baten",
+        "lblShowPreview": "Soim luksave",
+        "lblHidePreview": "Hide luksave",
+        "lblShowTranslations": "Ol Trenslesen...",
+        "lblCurrentTranslation": "Trenslesen",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

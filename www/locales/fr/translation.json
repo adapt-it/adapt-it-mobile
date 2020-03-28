@@ -17,7 +17,8 @@
         "lblTargetWords": "Langue cible: __number__",
         "lblDocuments": "Documents: __number__",
         "lblSourceWords": "Langue d'origine: __number__",
-        "lblTranslations": "Traductions: __number__",
+        "lblCurrentTranslation": "Traduction actuelle:",
+        "lblAllTranslations": "Traductions:",
         "lblInstances": "Occurrences dans ls texte: __number__",
         "lblStatusFullyTranslated": "Entièrement traduit",
         "lblStatusNotTranslated": "Pas de versets ont été traduits (__versecount__ versets au total).",
@@ -269,6 +270,11 @@
         "lblCopyClipboardText": "Texte du presse-papiers...",
         "lblText": "Texte",
         "lblShowPreviewBtn": "Bouton de prévisualisation",
+        "lblShowPreview": "Prévisualisation",
+        "lblHidePreview": "Traduire",
+        "lblShowTranslations": "Traductions...",
+        "lblCurrentTranslation": "Current Translation",
+        "lblInstances": "Instances",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
