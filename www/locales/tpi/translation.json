@@ -17,7 +17,7 @@
         "lblSourceWords": "Teks: __number__",
         "lblCurrentTranslation": "Current Trenslesen:",
         "lblAllTranslations": "Trenslesen:",
-        "lblInstances": "Trenslesen teks: __number__",
+        "lblInstances": "Trenslesen teks:",
         "lblStatusFullyTranslated": "Olgeta ves i gat trenslesen teks.",
         "lblStatusNotTranslated": "Nogat trenslesen (__versecount__ ves i stap).",
         "lblStatusPartlyTranslated": "Sampela wok i no yet (__lastadapted__ bilong __versecount__ ves olgeta i gat trenslesen teks).",
@@ -271,8 +271,7 @@
         "lblShowPreview": "Soim luksave",
         "lblHidePreview": "Hide luksave",
         "lblShowTranslations": "Ol Trenslesen...",
-        "lblCurrentTranslation": "Trenslesen",
-        "lblInstances": "Instances",
+        "lblEdit": "Edit",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -286,7 +286,7 @@ header h3 {
 }
 /* KB page elements */
 .srcbox {
-    background: #eee;
+    background: #ccc;
     display: inline-block;
     height: 4rem;
     margin: 0;
@@ -295,13 +295,19 @@ header h3 {
     width: calc(50% - 12px); /* overridden on smaller screens */
 }
 .tgtbox {
-    background: #ccc;
+    background: #eee;
     display: inline-block;
     height: 4rem;
     margin: 0;
     padding: 6px;
     vertical-align: top;
     width: calc(50% - 12px); /* overridden on smaller screens */
+}
+.liActions {
+    border-top: 1px solid #333;
+    display: none;
+    height: 2.62rem;
+    width: 100%;
 }
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
@@ -571,6 +577,13 @@ ul {
 }
 .topcoat-icon--clipboard {
     background: url("images/clipboard.svg") no-repeat;
+    padding: 0;
+}
+.topcoat-icon--delete {
+    background: url("images/delete.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
     padding: 0;
 }
 .topcoat-icon--info {
@@ -1057,7 +1070,7 @@ ul.btns {
 	list-style: none;
 	margin: 6px;
 	overflow: hidden;
-    padding-inline-start: 0px;
+    padding-inline-start: 0;
 } 
 .btns li {
     clear: none;

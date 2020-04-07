@@ -12,6 +12,7 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         i18next     = require('i18n'),
+        hammer      = require('hammerjs'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
         spModels        = require('app/models/sourcephrase'),
@@ -77,6 +78,7 @@ define(function (require) {
         }),
         KBView = Marionette.LayoutView.extend({
             spObj: null,
+            isLocked: true, // default value
             template: Handlebars.compile(tplTargetUnit),
             regions: {
                 container: "#StepContainer"
@@ -85,14 +87,30 @@ define(function (require) {
                 this.render();
             },
             events: {
-                "click .big-link": "onClickRefString"
+                "click .big-link": "onClickRefString",
             },
             onClickRefString: function (event) {
                 var index = event.currentTarget.id.substr(3);
-                var RefString = this.model.get("refstring")[index];
-                // get the RefString clicked
-                // Does this have a single
-                
+                // Toggle the visibility of the action menu bar
+                if ($("#lia-" + index).hasClass("show")) {
+                    // hide it
+                    $("#lia-" + index).toggleClass("show");
+                } else {
+                    // get rid of any other visible action bars
+                    $(".liActions").removeClass("show");
+                    // now show this one
+                    $("#lia-" + index).toggleClass("show");
+                }
+            },
+            onToggleLock: function () {
+                // toggle the boolean value
+                this.isLocked = !this.isLocked;
+                // update the UI accordingly
+                if (this.isLocked === true) {
+                    $("#imgLockUnlock").attr('class', 'btn-lock');
+                } else {
+                    $("#imgLockUnlock").attr('class', 'btn-unlock');
+                }
             },
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
@@ -106,6 +124,8 @@ define(function (require) {
                 // fill current translation info
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
+                this.$el.hammer({domEvents: true, interval: 500});
+                
                 //i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
             }
         }),

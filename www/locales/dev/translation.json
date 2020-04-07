@@ -273,8 +273,7 @@
         "lblShowPreview": "Show Preview",
         "lblHidePreview": "Hide Preview",
         "lblShowTranslations": "Show Translations...",
-        "lblCurrentTranslation": "Current Translation",
-        "lblInstances": "Instances",
+        "lblEdit": "Edit",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

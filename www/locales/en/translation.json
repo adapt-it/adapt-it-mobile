@@ -19,7 +19,7 @@
         "lblSourceWords": "Source: __number__",
         "lblCurrentTranslation": "Current Translation:",
         "lblAllTranslations": "All Translations:",
-        "lblInstances": "Occurrences in text: __number__",
+        "lblInstances": "Instances:",
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__versecount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastadapted__ of a total of __versecount__ verses have translation text).",
@@ -273,8 +273,7 @@
         "lblShowPreview": "Show Preview",
         "lblHidePreview": "Hide Preview",
         "lblShowTranslations": "Show Translations...",
-        "lblCurrentTranslation": "Current Translation:",
-        "lblInstances": "Instances",
+        "lblEdit": "Edit",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
