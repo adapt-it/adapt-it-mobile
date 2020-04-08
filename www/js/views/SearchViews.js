@@ -87,18 +87,21 @@ define(function (require) {
                 this.render();
             },
             events: {
-                "click .big-link": "onClickRefString",
+                "click .topcoat-list__item": "onClickRefString",
             },
             onClickRefString: function (event) {
                 var index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
+                    $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
                 } else {
                     // get rid of any other visible action bars
+                    $(".topcoat-list__item").removeClass("li-selected");
                     $(".liActions").removeClass("show");
                     // now show this one
+                    $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
                 }
             },

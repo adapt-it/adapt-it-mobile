@@ -6,9 +6,6 @@
         <a class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a>
     </div>
     <div class="topcoat-navigation-bar__item half"><h2>{{t 'view.lblShowTranslations'}}</h2></div>
-    <div class="topcoat-navigation-bar__item right">
-        <button id="btnLockUnlock" title="{{ t 'view.lblLock'}}" class="topcoat-icon-button--quiet toolbar-button"><span id="lblEdit">{{t 'view.lblEdit'}}</span></button>
-    </div>
 </div>
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
@@ -17,7 +14,7 @@
         <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}}</div>
         <ul class="topcoat-list__container chapter-list" id="RefStrings">
             {{#each refstring}}
-            <li class="topcoat-list__item"><a class="big-link" id='rs-{{@index}}'><span class="chap-list__item emphasized">{{this.target}}</span><span class="sectionStatus right">{{t 'view.lblInstances'}}&nbsp;{{this.n}}</span></a><div class="liActions" id='lia-{{@index}}'><div class="topcoat-navigation-bar__item right"><button id="mnuPlaceholder-{{@index}}" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span></button><button id="mnuPhrase-{{@index}}" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span></button><button id="mnuRetranslation-{{@index}}" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button"><span class="topcoat-icon topcoat-icon--delete"></span></button></div></div></li>
+            <li class="topcoat-list__item" id="li-{{@index}}"><a class="big-link" id='rs-{{@index}}'><span class="chap-list__item emphasized">{{this.target}}</span><span class="sectionStatus right">{{t 'view.lblInstances'}}&nbsp;{{this.n}}</span></a><div class="liActions" id='lia-{{@index}}'><div class="topcoat-navigation-bar__item right"><button id="mnuPlaceholder-{{@index}}" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--check"></span></button><button id="mnuPhrase-{{@index}}" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button"><span class="topcoat-icon topcoat-icon--phrase-new"></span></button><button id="mnuRetranslation-{{@index}}" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button"><span class="topcoat-icon topcoat-icon--delete"></span></button></div></div></li>
             {{/each}}
         </ul>
         <div id="theRef"></div>
