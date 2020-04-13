@@ -610,6 +610,13 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--undo-black {
+    background: url("images/undo-black.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--plus-menu {
     background: url("images/plus-menu.svg") no-repeat;
     -webkit-background-size: cover;

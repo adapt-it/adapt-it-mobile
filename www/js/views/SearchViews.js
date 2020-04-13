@@ -87,23 +87,46 @@ define(function (require) {
                 this.render();
             },
             events: {
+                "focus #tgtPhrase": "onFocusTarget",
+                "blur #tgtPhrase": "onBlurTarget",
+                "click #btnUndo": "onUndoTarget",
                 "click .topcoat-list__item": "onClickRefString",
+                "focus .chap-list__item": "onFocusRefString",
+                "blur .chap-list__item": "onBlurRefString"
+            },
+            onFocusTarget: function () {
+                // show the undo button, in case the user wants to revert  
+            },
+            onBlurTarget: function () {
+                // hide the undo button
+            },
+            onUndoTarget: function () {
+                
             },
             onClickRefString: function (event) {
                 var index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
+//                    $(".chap-list__item").attr("contenteditable", false); // not editable if not selected
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
                 } else {
                     // get rid of any other visible action bars
+//                    $(".chap-list__item").attr("contenteditable", false); // not editable if not selected
                     $(".topcoat-list__item").removeClass("li-selected");
                     $(".liActions").removeClass("show");
                     // now show this one
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
+//                    $("#rs-" + index).attr("contenteditable", true); // we can select this item
                 }
+            },
+            onFocusRefString: function (event) {
+                
+            },
+            onBlurRefString: function (event) {
+                
             },
             onToggleLock: function () {
                 // toggle the boolean value
