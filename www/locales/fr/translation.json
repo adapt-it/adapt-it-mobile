@@ -274,6 +274,7 @@
         "lblHidePreview": "Traduire",
         "lblShowTranslations": "Traducciones...",
         "lblEdit": "Éditer",
+        "dscErrCannotFindKB": "Unable to locate Knowledge Base version. Is this an Adapt It Knowledge Base file?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

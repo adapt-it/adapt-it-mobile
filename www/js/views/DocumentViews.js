@@ -696,6 +696,87 @@ define(function (require) {
                     // END readUSXDoc()
                 };
                 
+                // Adapt It Knowledge Base (XML) document
+                // While XML is a general purpose document format, we're looking
+                // specifically for Adapt It KB files; other files
+                // will be skipped (for now). 
+                // This import ONLY populates the KB (targetunit tables).
+                var readKBXMLDoc = function (contents) {
+                    var i = 0,
+                        index = 0,
+                        elts = null,
+                        projectid = "",
+                        xmlDoc = $.parseXML(contents),
+                        curDate = new Date(),
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        cDT = "",
+                        wC = "",
+                        kbItem = "",
+                        srcName = "",
+                        tgtName = "";
+
+                    // ** Sanity check #1: Is this a KB? 
+                    i = contents.indexOf("<KB ");
+                    index = contents.indexOf("kbVersion", i);
+                    if (index === -1) {
+                        // No kbVersion element found -- this is most likely not a KB document.
+                        // Return; we can't parse random xml files.
+                        console.log("No kbVersion element found (is this an Adapt It Knowledge Base document?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        return false;
+                    }
+                    // ** Sanity check #2: is this KB from a project in our DB? 
+                    // (source and target need to match a project in the DB -- if they do, get the project ID)
+                    i = contents.indexOf("srcName") + 9;
+                    srcName = contents.substring(i, contents.indexOf("\"", i + 1)); 
+                    i = contents.indexOf("tgtName") + 9;
+                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1)); 
+                    elts = window.Application.ProjectList.filter(function (element) {
+                        return (element.attributes.TargetLanguageName === tgtName &&
+                               element.attributes.SourceLanguageName === srcName);
+                    });
+                    if (elts.length > 0) {
+                        // found a match -- pull out the
+                        projectid = elts[0].attributes.projectid;
+                    } else {
+                        // no match -- exit out (need to create a project with this src/tgt before importing a KB)
+                        return;
+                    }
+                    // ** Now start parsing the KB itself
+                    var $xml = $(xmlDoc);
+                    markers = "";
+                    $($xml).find("KB > TU").each(function (i) {
+                        /* 
+TU f="0" k="+">
+      <RS n="230" a="" df="0"
+      cDT="2012-08-28T09:24:41Z" wC="Ross:ROSS-THINK"/>
+    </TU>
+    */
+                        // time created (use our own if not available)
+                        if ($(this).attr('cDT')) {
+                            cDT = $(this).attr('cDT');
+                        } else {
+                            cDT = timestamp;
+                        }
+                        // Creator
+                        if ($(this).attr('wC')) {
+                            wC = $(this).attr('wC');
+                        } 
+
+                        // find this source value in the KB
+                        elts = kblist.filter(function (element) {
+                            return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === sourceValue);
+                        });
+                        if (elts.length > 0) {
+                            kbItem = elts[0];
+                        }
+                        if (kbItem) {
+                        }
+                
+                    });
+                };
+                
                 // Adapt It XML document
                 // While XML is a general purpose document format, we're looking
                 // specifically for Adapt It XML document files; other files
@@ -1624,7 +1705,12 @@ define(function (require) {
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(this.result);
                 } else if (fileName.toLowerCase().indexOf(".xml") > 0) {
-                    result = readXMLDoc(this.result);
+                    if (fileName.toLowerCase().indexOf("adaptations.xml") > 0) {
+                        // possibly a KB
+                        result = readKBXMLDoc(this.result);
+                    } else {
+                        result = readXMLDoc(this.result);
+                    }
                 } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
                     // find the ID of this book
