@@ -1388,7 +1388,8 @@ typeahead styles
 
 #scrollable-dropdown-menu .tt-menu {
   max-height: 175px;
-  overflow-y: auto;
+/*  overflow-y: auto;  was not displaying on some phones */
+    overflow-y: scroll;
 }
 
 .tt-menu {
