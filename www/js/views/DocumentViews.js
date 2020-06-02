@@ -33,6 +33,7 @@ define(function (require) {
         kblist          = null, // populated in onShow
         isPortion       = false,    // Scripture portion support
         bookName        = "",
+        cbData          = "", // clipboard text (so we call it once)
         scrID           = "",
         fileName        = "",
         isClipboard     = false,
@@ -624,7 +625,12 @@ define(function (require) {
                         }
                     };
                     console.log("Reading USX file:" + fileName);
-                    bookName = fileName.substr(0, fileName.indexOf("."));
+                    if (fileName.indexOf(".") > -1) {
+                        // most likely has an extension -- remove it for our book name guess
+                        bookName = fileName.substring(0, fileName.lastIndexOf('.'));
+                    } else {
+                        bookName = fileName;
+                    }
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     // the book ID (e.g., "MAT") is in a singleton <book> element of the USX file
                     scrID = scrIDList.where({id: $($xml).find("book").attr("code")})[0];
@@ -705,14 +711,18 @@ define(function (require) {
                     var i = 0,
                         index = 0,
                         elts = null,
+                        tus = [],
                         projectid = "",
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         cDT = "",
                         wC = "",
+                        src = "",
+                        tuid = "",
                         kbItem = "",
                         srcName = "",
+                        bNewKB = true,
                         tgtName = "";
 
                     // ** Sanity check #1: Is this a KB? 
@@ -742,6 +752,20 @@ define(function (require) {
                         // no match -- exit out (need to create a project with this src/tgt before importing a KB)
                         return;
                     }
+                    // Sanity check #3: have we already imported this KB file?
+                    // (We'll add a special TU to indicate we have)
+                    try {
+                        // we're looking for an exact match ONLY
+                        result = kblist.findWhere({'source': "**ImportedKBFile**"}); // strNoPunctuation});
+                        if (typeof result === 'undefined') {
+                            result = null;
+                        }
+                    } catch (err) {
+                        console.log(err);
+                    }
+                    if (result) {
+                        bNewKB = false;
+                    }
                     // ** Now start parsing the KB itself
                     var $xml = $(xmlDoc);
                     markers = "";
@@ -752,27 +776,49 @@ TU f="0" k="+">
       cDT="2012-08-28T09:24:41Z" wC="Ross:ROSS-THINK"/>
     </TU>
     */
-                        // time created (use our own if not available)
-                        if ($(this).attr('cDT')) {
-                            cDT = $(this).attr('cDT');
-                        } else {
-                            cDT = timestamp;
-                        }
-                        // Creator
-                        if ($(this).attr('wC')) {
-                            wC = $(this).attr('wC');
-                        } 
-
-                        // find this source value in the KB
-                        elts = kblist.filter(function (element) {
-                            return (element.attributes.projectid === projectid &&
-                                    element.attributes.source === sourceValue);
-                        });
-                        if (elts.length > 0) {
-                            kbItem = elts[0];
-                        }
-                        if (kbItem) {
-                        }
+                        // gather each refstring
+//                        $(this).children("RS").each(function(refstring) {
+//                    // no entry in KB with this source/target -- add one
+//                    var theRS = {
+//                            'target': $(refstring).attr('a'),
+//                            'n': $(refstring).attr('n')
+//                        };
+//                    refstrings.push(newRS);
+//                            
+//                        });
+//                if (found === false) {
+//                    // no entry in KB with this source/target -- add one
+//                    var newRS = {
+//                            'target': targetValue,
+//                            'n': '1'
+//                        };
+//                    refstrings.push(newRS);
+//                }
+//                        
+//                        if (bNewKB === true) {
+//                            // easier task -- collect and batch add to a new KB
+//                        }
+//                        // time created (use our own if not available)
+//                        if ($(this).attr('cDT')) {
+//                            cDT = $(this).attr('cDT');
+//                        } else {
+//                            cDT = timestamp;
+//                        }
+//                        // Creator
+//                        if ($(this).attr('wC')) {
+//                            wC = $(this).attr('wC');
+//                        } 
+//
+//                        // find this source value in the KB
+//                        elts = kblist.filter(function (element) {
+//                            return (element.attributes.projectid === projectid &&
+//                                    element.attributes.source === sourceValue);
+//                        });
+//                        if (elts.length > 0) {
+//                            kbItem = elts[0];
+//                        }
+//                        if (kbItem) {
+//                        }
                 
                     });
                 };
@@ -900,7 +946,12 @@ TU f="0" k="+">
                     }
                     // If that didn't work, use the filename
                     if (bookName === "") {
-                        bookName = fileName.substr(0, fileName.indexOf("."));
+                        if (fileName.indexOf(".") > -1) {
+                            // most likely has an extension -- remove it for our book name guess
+                            bookName = fileName.substring(0, fileName.lastIndexOf('.'));
+                        } else {
+                            bookName = fileName;
+                        }
                         if (bookName.indexOf("_Collab") > -1) {
                             // Collab document -- strip out the _Collab_ and _CH<#> for the name
                             bookName = bookName.substr(8, bookName.lastIndexOf("_CH") - 8);
@@ -1722,9 +1773,65 @@ TU f="0" k="+">
                         // not USFM -- try reading it as a text document
                         result = readTextDoc(this.result);
                     }
-                } else {
-                    // some other extension (or no extension) -- try reading it as a text document
-                    result = readTextDoc(this.result);
+                } else { 
+                    if (isClipboard === true) {
+                        // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
+                        // NOTE: this needs the whole file on the clipboard to be treated as formatted content -- copying
+                        // a verse or two will just case it to be treated as regular text, because we're relying on the intro
+                        // content to determine the format.
+                        var newFileName = "";
+                        if (this.result.indexOf("KB kbVersion") >= 0) {
+                            // _probably_ a Knowledge base document under the hood
+                            result = readKBXMLDoc(this.result);
+                        } else if (this.result.indexOf("AdaptItDoc") >= 0) {
+                            // _probably_ an Adapt It XML document under the hood
+                            index = this.result.indexOf("S s="); // move to content
+                            index = this.result.indexOf("\\h ", index); // first \\h in content
+                            if (index > -1) {
+                                // there is a \h marker -- look backwards for the nearest "a" attribute (this is the adapted name)
+                                var i = this.result.lastIndexOf("s=", index) + 3;
+                                // Sanity check -- this \\h element might not have an adaptation
+                                // (if it doesn't, there won't be a a="" after the s="" attribute)
+                                if (this.result.lastIndexOf("a=", index) > i) {
+                                    // Okay, this looks legit. Pull out the adapted book name from the file.
+                                    index = this.result.lastIndexOf("a=", index) + 3;
+                                    newFileName = this.result.substr(index, this.result.indexOf("\"", index) - index);
+                                    if (newFileName.length > 0) {
+                                        fileName = newFileName;
+                                    }
+                                }
+                            }
+                            result = readXMLDoc(this.result);
+                        } else if (this.result.indexOf("usx version") >= 0) {
+                            // _probably_ USX document under the hood
+                            index = this.result.indexOf("style=\"h\"");
+                            if (index > -1) {
+                                // try to get a readable name from the usx <para style="h"> node
+                                newFileName = this.result.substr(index + 10, (this.result.indexOf("\<", index) - (index + 10))).trim();
+                                if (newFileName.length > 0) {
+                                    fileName = newFileName;
+                                }
+                            }
+                            result = readUSXDoc(this.result);
+                        } else if (this.result.indexOf("\\id") >= 0) {
+                            // _probably_ USFM under the hood
+                            index = this.result.indexOf("\\h ");
+                            if (index > -1) {
+                                // try to get a readable name from the usfm \\h node
+                                newFileName = this.result.substr(index + 3, (this.result.indexOf("\n", index) - (index + 3))).trim();
+                                if (newFileName.length > 0) {
+                                    fileName = newFileName;
+                                }
+                            }
+                            result = readUSFMDoc(this.result);
+                        } else {
+                            // unknown -- try reading it as a text document
+                            result = readTextDoc(this.result);
+                        }
+                    } else {
+                        // some other extension (or no extension) -- try reading it as a text document
+                        result = readTextDoc(this.result);
+                    }
                 }
                 if (result === false) {
                     importFail(new Error(errMsg));
@@ -2928,26 +3035,24 @@ TU f="0" k="+">
             // from the path using the cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
                 // replace the selection UI with the import UI
-                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                 $("#OK").hide();
+                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                 // find all the selected file
                 var index = $(event.currentTarget).attr('id').trim();
                 var model = this.model;
                 if (index === "clipboard") {
+                    isClipboard = true;
                     // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
                     // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
                     // it places the contents in the name attribute. The FileReader does
                     // accept a Blob (the File object derives from Blob), which is why importFile works.
-                    cordova.plugins.clipboard.paste(function (text) {
-                        console.log("Clipboard selected. Creating ad hoc file from text.");
-                        var clipboardFile = new Blob([text], {type: "text/plain"});
-                        $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
-                        fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
-                        importFile(clipboardFile, model);
-                    }, function (error) {
-                        console.log("resolveLocalFileSystemURL error: " + error.code);
-                    });
+                    console.log("Clipboard selected. Creating ad hoc file from text.");
+                    var clipboardFile = new Blob([cbData], {type: "text/plain"});
+                    $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
+                    fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
+                    importFile(clipboardFile, model);
                 } else {
+                    isClipboard = false;
                     // regular file
                     console.log("index: " + index + ", FileList[index]: " + fileList[index]);
                     // request the persistent file system
@@ -3051,6 +3156,7 @@ TU f="0" k="+">
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
                     // running on device -- use cordova file plugin to select file
+                    $("#OK").hide();
                     $("#browserGroup").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                     var localURLs    = [
@@ -3060,20 +3166,37 @@ TU f="0" k="+">
                         cordova.file.sharedDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-                    var DirsRemaining = localURLs.length;
+                    var DirsRemaining = localURLs.length + 1; // + clipboard text
                     var index = 0;
                     var i;
                     var statusStr = "";
                     // running on device -- check the clipboard for text
-                    DirsRemaining++; // add a placeholder "directory" for the clipboard test
+                    // (note that we have to call paste to test for non-empty -- on iOS, testing for data
+                    // on the clipboard/pasteboard was only added in ios 10.)
                     cordova.plugins.clipboard.paste(function (text) {
-                        console.log("Clipboard returned: " + text);
+                        DirsRemaining--; // done checking -- remove the placeholder "directory"
+                        console.log("Clipboard paste returned. DirsRemaining = " + DirsRemaining);
                         if (text !== null && text.length > 0) {
+                            console.log("Clipboard contents: " + text);
                             // something on the clipboard -- add an option to paste the text as a new Book
                             statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText') + "<span class='chevron'></span></li>";
                             index++;
                         }
-                        DirsRemaining--; // done checking -- remove the placeholder "directory"
+                        cbData = text; // save, so we only call this once
+                        // This function can return first if there's a lot of data on the clipboard (think: xml file).
+                        // Check to see if we're done parsing the directory structure, and refresh the UI if so.
+                        if (DirsRemaining <= 0) {
+                            if (statusStr.length > 0) {
+                                // display the list of files we found
+                                $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
+                                $("#tb").html(statusStr);
+                                $("#OK").show();
+                                $("#OK").attr("disabled", true);
+                            } else {
+                                // nothing to select -- inform the user
+                                $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
+                            }
+                        }
                     }, function (error) {
                         // error in clipboard retrieval -- skip entry
                         // (seen this when there's data on the clipboard that isn't text/plain)
@@ -3114,6 +3237,7 @@ TU f="0" k="+">
                                         // display the list of files we found
                                         $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
                                         $("#tb").html(statusStr);
+                                        $("#OK").show();
                                         $("#OK").attr("disabled", true);
                                     } else {
                                         // nothing to select -- inform the user
