@@ -7,7 +7,7 @@
   - secondary colors
   Cyan: #1ed6e2;
   Orange: #ff8c00;
-  Burnt orange / brown: b26200;
+  Burnt orange / brown: #b26200;
 */
 /* embedded fonts */
 @font-face {
@@ -190,6 +190,9 @@ input[type="file"] {
     font-size: 1.1rem;
     font-weight: 800;
 }
+.li-selected {
+    background-color: #e9e9e9;
+}
 .topcoat-list li p:nth-of-type(2) {
     color:  #58C0FF ;
 }
@@ -286,7 +289,7 @@ header h3 {
 }
 /* KB page elements */
 .srcbox {
-    background: #eee;
+    background: #ccc;
     display: inline-block;
     height: 4rem;
     margin: 0;
@@ -295,13 +298,19 @@ header h3 {
     width: calc(50% - 12px); /* overridden on smaller screens */
 }
 .tgtbox {
-    background: #ccc;
+    background: #eee;
     display: inline-block;
     height: 4rem;
     margin: 0;
     padding: 6px;
     vertical-align: top;
     width: calc(50% - 12px); /* overridden on smaller screens */
+}
+.liActions {
+    border-top: 1px solid #1F7BA5;
+    display: none;
+    height: 2.62rem;
+    width: 100%;
 }
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
@@ -569,8 +578,22 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--check {
+    background: url("images/checkmark.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--clipboard {
     background: url("images/clipboard.svg") no-repeat;
+    padding: 0;
+}
+.topcoat-icon--delete {
+    background: url("images/delete.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
     padding: 0;
 }
 .topcoat-icon--info {
@@ -582,6 +605,13 @@ ul {
 }
 .topcoat-icon--undo {
     background: url("images/undo.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--undo-black {
+    background: url("images/undo-black.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -1057,7 +1087,7 @@ ul.btns {
 	list-style: none;
 	margin: 6px;
 	overflow: hidden;
-    padding-inline-start: 0px;
+    padding-inline-start: 0;
 } 
 .btns li {
     clear: none;
@@ -1358,7 +1388,8 @@ typeahead styles
 
 #scrollable-dropdown-menu .tt-menu {
   max-height: 175px;
-  overflow-y: auto;
+/*  overflow-y: auto;  was not displaying on some phones */
+    overflow-y: scroll;
 }
 
 .tt-menu {

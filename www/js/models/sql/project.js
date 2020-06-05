@@ -7,7 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         projects    = [],
-        CURRSCHEMA  = 1,
+        CURRSCHEMA  = 2,
         
         // ---
         // STATIC METHODS
@@ -35,6 +35,23 @@ define(function (require) {
                     tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN note TEXT;");
                     tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN srcwordbreak TEXT;");
                     tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN tgtwordbreak TEXT;");
+                }, function (e) {
+                    console.log("upgradeSchema error: " + e.message);
+                });
+            }
+            if (fromVersion < 2) {
+                // AIM version 1.3 (KB editing)
+                window.Application.db.transaction(function (tx) {
+                    // version table exists (see logic above), but is at version 1; update it here
+                    tx.executeSql('UPDATE version SET schemaver=?;', [2], function (tx, res) {
+                        console.log("version table updated -- schema version 2");
+                    }, function (err) {
+                        console.log("failed to set the version schema");
+                    });
+                    // update changes for 1.3 
+                    // - new column for KB XML round-tripping
+                    // - timestamps go down to refstring node
+                    tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT;");
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
                 });

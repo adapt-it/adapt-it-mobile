@@ -6,6 +6,7 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        Underscore  = require('underscore'),
         targetunits = [],
         
         findById = function (searchKey) {
@@ -164,6 +165,68 @@ define(function (require) {
                 });
             },
 
+            // CREATE an array of TargetUnit objects
+            addBatch: function (models) {
+                var deferred = $.Deferred();
+                var sql = "INSERT INTO targetunit (tuid,projectid,source,refstring,timestamp,user) VALUES (?,?,?,?,?,?);";
+                var start = new Date().getTime();
+                var user = "";
+                if (models[0].attributes.user.length > 0) {
+                    user = models[0].attributes.user;
+                } else {
+                    if (window.sqlitePlugin) {
+                        user = device.uuid;
+                    } else {
+                        user = "Browser";
+                    }
+                }
+                console.log("addBatch: " + models.length + " objects");
+                console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
+                window.Application.db.transaction(function (tx) {
+                    Underscore.each(models, function (tu) {
+                        tx.executeSql(sql, [tu.attributes.tuid, tu.attributes.projectid, tu.attributes.source, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user]);
+                    });
+                    var end = new Date().getTime();
+                    console.log("addBatch: " + models.length + " objects, " + (end - start));
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            },
+
+            // UPDATE an array of TargetUnit objects
+            updateBatch: function (models) {
+                var deferred = $.Deferred();
+                var sql = "UPDATE targetunit SET projectid=?, source=?, refstring=?, timestamp=?, user=? WHERE tuid=?;";
+                var start = new Date().getTime();
+                var user = "";
+                if (models[0].attributes.user.length > 0) {
+                    user = models[0].attributes.user;
+                } else {
+                    if (window.sqlitePlugin) {
+                        user = device.uuid;
+                    } else {
+                        user = "Browser";
+                    }
+                }
+                console.log("updateBatch: " + models.length + " objects");
+                console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
+                window.Application.db.transaction(function (tx) {
+                    Underscore.each(models, function (tu) {
+                        tx.executeSql(sql, [tu.attributes.projectid, tu.attributes.source, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user, tu.attributes.tuid]);
+                    });
+                    var end = new Date().getTime();
+                    console.log("addBatch: " + models.length + " objects, " + (end - start));
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            },
+            
             sync: function (method, model, options) {
                 var deferred = $.Deferred();
                 var len = 0;

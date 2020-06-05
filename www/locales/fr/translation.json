@@ -19,7 +19,7 @@
         "lblSourceWords": "Langue d'origine: __number__",
         "lblCurrentTranslation": "Traduction actuelle:",
         "lblAllTranslations": "Traductions:",
-        "lblInstances": "Occurrences dans ls texte: __number__",
+        "lblInstances": "Instances:",
         "lblStatusFullyTranslated": "Entièrement traduit",
         "lblStatusNotTranslated": "Pas de versets ont été traduits (__versecount__ versets au total).",
         "lblStatusPartlyTranslated": "Partiellement traduit (__lastadapted__ de __versecount__ versets ont traduit les textes).",
@@ -272,9 +272,10 @@
         "lblShowPreviewBtn": "Bouton de prévisualisation",
         "lblShowPreview": "Prévisualisation",
         "lblHidePreview": "Traduire",
-        "lblShowTranslations": "Traductions...",
-        "lblCurrentTranslation": "Current Translation",
-        "lblInstances": "Instances",
+        "lblShowTranslations": "Traducciones...",
+        "lblEdit": "Éditer",
+        "dscErrCannotFindKB": "Unable to locate Knowledge Base version. Is this an Adapt It Knowledge Base file?",
+        "lblStartTyping": "Start typing...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

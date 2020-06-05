@@ -761,9 +761,9 @@ define(function (require) {
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
                                 if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">(' + data.attributes.Part1 + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">(' + data.attributes.Id + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
                                 }
                             }
                         }
@@ -1283,6 +1283,7 @@ define(function (require) {
                 this.container.show(currentView);
             }
         }),
+
         NewProjectView = Marionette.LayoutView.extend({
             template: Handlebars.compile(tplNewProject),
             regions: {
@@ -1326,9 +1327,45 @@ define(function (require) {
                 "click #Prev": "OnPrevStep",
                 "click #Next": "OnNextStep"
             },
+
+            MaybeHideUIStuff: function (bHide) {
+                var Hgt = $(window).height();
+                // check to see if we're on a mobile device
+                if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
+                    // on mobile device AND the keyboard hasn't displayed yet:
+                    // the viewport height is going to shrink when the software keyboard displays
+                    // HACK: subtract the software keyboard from the visible area end -
+                    // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
+                    // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
+                    // work cross-platform
+                    if (window.orientation === 90 || window.orientation === -90) {
+                        // landscape
+                        Hgt -= 162; // observed / hard-coded "best effort" value
+                    } else {
+                        // portrait
+                        Hgt -= 248; // observed / hard-coded "best effort" value
+                    }
+                }
+                // test overall screen length
+                if (Hgt > 350) {
+                    // height is big enough -- exit out
+                    return;
+                }
+                // too small -- show/hide
+                if (bHide === true) {
+                    $("#StepInstructions").hide();
+                } else {
+                    $("#StepInstructions").show();
+                }
+            },
             
             onFocusLanguageName: function (event) {
+                this.MaybeHideUIStuff(true); // hide the instructions if we're on a small screen
                 window.Application.scrollIntoViewCenter(event.currentTarget);
+            },
+            
+            onBlurLanguageName: function () {
+                this.MaybeHideUIStuff(false); // show the instructions UI again
             },
 
             onFocusLanguageVariant: function (event) {
