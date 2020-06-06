@@ -123,6 +123,13 @@ input[type="file"] {
     width: 90%;
 }
 
+.welcome-screen {
+    bottom:0;
+    height: 100vh;
+    top:0;
+    width:100%;
+}
+
 .welcome-title {
     text-align: center;
 }
