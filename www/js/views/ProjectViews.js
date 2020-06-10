@@ -1331,7 +1331,7 @@ define(function (require) {
             MaybeHideUIStuff: function (bHide) {
                 var Hgt = $(window).height();
                 // check to see if we're on a mobile device
-                if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
+                if (navigator.notification && !Keyboard.isVisible) {
                     // on mobile device AND the keyboard hasn't displayed yet:
                     // the viewport height is going to shrink when the software keyboard displays
                     // HACK: subtract the software keyboard from the visible area end -
@@ -1347,14 +1347,16 @@ define(function (require) {
                     }
                 }
                 // test overall screen length
-                if (Hgt > 350) {
-                    // height is big enough -- exit out
-                    return;
-                }
-                // too small -- show/hide
                 if (bHide === true) {
-                    $("#StepInstructions").hide();
+                    if (Hgt > 375) {
+                        // height is big enough -- exit out
+                        return;
+                    } else {
+                        // not enough room -- hide the instructions
+                        $("#StepInstructions").hide();
+                    }
                 } else {
+                    // make sure the instructions are visible
                     $("#StepInstructions").show();
                 }
             },
