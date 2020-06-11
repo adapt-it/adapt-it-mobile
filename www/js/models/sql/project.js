@@ -51,10 +51,12 @@ define(function (require) {
                     // update changes for 1.3 
                     // - new column for KB XML round-tripping
                     // - timestamps go down to refstring node
+                    tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
                     tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT;");
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
                 });
+                // ** TODO: update EACH TU by counting words in the source (for mn) and setting f="0"
             }
         },
         // checkSchema

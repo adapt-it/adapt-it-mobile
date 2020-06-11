@@ -738,9 +738,9 @@ define(function (require) {
                     // ** Sanity check #2: is this KB from a project in our DB? 
                     // (source and target need to match a project in the DB -- if they do, get the project ID)
                     i = contents.indexOf("srcName") + 9;
-                    srcName = contents.substring(i, contents.indexOf("\"", i + 1)); 
+                    srcName = contents.substring(i, contents.indexOf("\"", i + 1));
                     i = contents.indexOf("tgtName") + 9;
-                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1)); 
+                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
                     elts = window.Application.ProjectList.filter(function (element) {
                         return (element.attributes.TargetLanguageName === tgtName &&
                                element.attributes.SourceLanguageName === srcName);
@@ -1773,7 +1773,7 @@ TU f="0" k="+">
                         // not USFM -- try reading it as a text document
                         result = readTextDoc(this.result);
                     }
-                } else { 
+                } else {
                     if (isClipboard === true) {
                         // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
                         // NOTE: this needs the whole file on the clipboard to be treated as formatted content -- copying
@@ -2908,6 +2908,64 @@ TU f="0" k="+">
                     });
                 });
             };
+            
+            // exportKB
+            // AI knowledge base XML file export
+            var exportKB = function () {
+                var content = "";
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
+                var i = 0;
+                var mn = 1;
+                var refstrings = null;
+                var project = window.Application.currentProject;
+                // instantiate the KB in case we import an AI XML document (we'll populate the KB if that happens)
+                var kblist = new kbModels.TargetUnitCollection();
+                kblist.fetch({reset: true, data: {source: ""}}).sortBy("mn");
+                writer.onwriteend = function () {
+                    console.log("write completed.");
+                    exportSuccess();
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                    exportFail(e);
+                };
+                // opening content
+                content = XML_PROLOG;
+                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                // KB line -- project info
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('TargetLanguageName') + "\" tgtName=\"" + project.get('SourceLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.last().get('mn') + "\" glossingKB=\"0\">\n";
+                // END settings xml node
+                // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
+                content += "<MAP mn=\"1\">" // starting MAP node
+                kblist.forEach(function (tu) {
+                    // did the map number change? If so, emit a new <MAP> element
+                    if (tu.get('mn') > mn) {
+                        // create a new MAP element
+                        content += "</MAP>\n<MAP mn=\"" + tu.get('mn') + "\">\n";
+                    }
+                    // create the <TU> element
+                    content += "<TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">\n";
+                    // create any refstring elements
+                    refstrings = tu.get('refstring');
+                    for (i = 0; i < refstrings.length; i++) {
+                        content += "<RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\" cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\">";
+                    }
+                    content += "</TU>";
+                });
+                // done CONTENT PART -- close out the file
+                content += "</MAP>\n </KB>\n";
+                if (isClipboard === true) {
+                    // write (copy) text to clipboard
+                    cordova.plugins.clipboard.copy(content);
+                    // directly call success (it's a callback for the file writer)
+                    exportSuccess();
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string for the next chapter
+            };
+            //// *** END export functions
             
             // add the project's target language code to the subdirectory
             subdir += window.Application.currentProject.get("TargetLanguageCode");
