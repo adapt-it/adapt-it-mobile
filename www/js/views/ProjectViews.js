@@ -735,6 +735,10 @@ define(function (require) {
                     var matches = coll.filter(function (item) {
                         return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
                     });
+                    coll.comparator = function (model) {
+                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
+                    }
+                    coll.sort();
                     callback(matches);
                 };
             },
@@ -782,6 +786,10 @@ define(function (require) {
                     var matches = coll.filter(function (item) {
                         return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
                     });
+                    coll.comparator = function (model) {
+                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
+                    }
+                    coll.sort();
                     callback(matches);
                 };
             },
@@ -808,9 +816,9 @@ define(function (require) {
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
                                 if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">(' + data.attributes.Part1 + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">(' + data.attributes.Id + ')&nbsp;' + data.attributes.Ref_Name + '</div>';
+                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
                                 }
                             }
                         }
