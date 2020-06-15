@@ -711,11 +711,13 @@ define(function (require) {
                     var i = 0,
                         index = 0,
                         elts = null,
-                        tus = [],
+                        refstrings = [],
                         projectid = "",
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        mn = "",
+                        f = "",
                         cDT = "",
                         wC = "",
                         src = "",
@@ -769,7 +771,23 @@ define(function (require) {
                     // ** Now start parsing the KB itself
                     var $xml = $(xmlDoc);
                     markers = "";
-                    $($xml).find("KB > TU").each(function (i) {
+                    $($xml).find("MAP > TU").each(function (i) {
+                        // pull out the MAP number - it'll be stored in the mn entry for each TU
+                        mn = $(this).getParent().get('mn');
+                        // pull out the attributes from the TU element
+                        f = i.get('f');
+                        src = i.get('k');
+                        // now collect the refstrings
+                        $(this).children("RS").each(function(refstring) {
+                            var newRS = {
+                                'target': $(this).attr('a'),  //klb
+                                'n': $(this).attr('n'),
+                                'cDT': $(this).attr('cDT'),
+                                'df': $(this).attr('df'),
+                                'wC': $(this).attr('wC')
+                            };
+                            refstrings.push(newRS);
+                        });
                         /* 
 TU f="0" k="+">
       <RS n="230" a="" df="0"
