@@ -63,7 +63,8 @@ define(function (require) {
             TXT: 1,
             USFM: 2,
             USX: 3,
-            XML: 4
+            XML: 4,
+            KBXML: 5        // TODO: other translation memory formats?
         },
         DestinationEnum = {
             FILE: 1,
@@ -78,6 +79,10 @@ define(function (require) {
             var str = "";
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
+            // If the KB is not empty, add an entry
+            if (kblist != null) {
+                str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-db'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
+            }
             for (i = 0; i < entries.length; i++) {
                 str += "<li class='topcoat-list__item docListItem' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
             }
@@ -3488,6 +3493,14 @@ TU f="0" k="+">
                 // get the info for this document
                 bookName = event.currentTarget.innerText;
                 bookid = $(event.currentTarget).attr('id').trim();
+                if (bookid === "kb") {
+                    // special case -- AI knowledge base export
+                    // Currently this only goes to the AI XML format in a specific file name
+                    // ("XX to YY adaptations.xml")
+                    bookName = i18n.t("view.lblSourceToTargetAdaptations", project.get('SourceLanguageName'), project.get('TargetLanguageName')) + ".xml";
+                    exportDocument(bookid,FileTypeEnum.KBXML,bookName);
+                    return;
+                }
                 // show the next screen
                 $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
                 $("#Container").html(Handlebars.compile(tplExportFormat));

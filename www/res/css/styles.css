@@ -1168,6 +1168,18 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
+.btn-db{
+	background-image: url("../svg/db.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
 .btn-file{
 	background-image: url("../svg/file.svg");
     background-position: center;

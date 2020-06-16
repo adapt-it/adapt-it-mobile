@@ -274,6 +274,8 @@
         "lblShowTranslations": "Show Translations...",
         "lblInstances": "Instances",
         "lblEdit": "Edit",
+        "lblKB": "Knowledge Base",
+        "lblKBfile": "Knowledge Base file: __file__",
         "dscErrCannotFindKB": "Unable to locate Knowledge Base version. Is this an Adapt It Knowledge Base file?",
         "lblStartTyping": "Start typing...",
         "_comment" : "****Add new strings BEFORE this line!****"
