@@ -37,6 +37,7 @@ define(function (require) {
         scrID           = "",
         fileName        = "",
         isClipboard     = false,
+        isKB            = false,
         fileList        = [],
         fileCount       = 0,
         punctExp        = "",
@@ -179,16 +180,22 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
-                // We did our best to guess a book name -- allow the user to change it
-                $("#browserGroup").show();
+                // hide unneeded UI elements
                 $("#mobileSelect").html(""); // remove mobile UI (some duplicate IDs)
-                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
-                $("#status").html(Handlebars.compile(tplImportVerify));
-                $("#BookName").val(bookName);
                 $("#loading").hide();
                 $("#waiting").hide();
-                $("#OK").show();
                 $("#browserSelect").hide(); // hide the "choose file" button (browser)
+                // show the import status
+                $("#browserGroup").show();
+                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                // allow the user to change the doc name (non-KB)
+                if (isKB === false) {
+                    // for regular document files, we did our best to guess a book name --
+                    // allow the user to change it if they want
+                    $("#BookName").val(bookName);
+                    $("#status").html(Handlebars.compile(tplImportVerify));
+                }
+                $("#OK").show();
                 // display the OK button
                 $("#OK").removeAttr("disabled");
             };
@@ -721,6 +728,7 @@ define(function (require) {
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        IMPORTED_KB_FILE = "**ImportedKBFile**",
                         mn = "",
                         f = "",
                         cDT = "",
@@ -757,13 +765,13 @@ define(function (require) {
                         projectid = elts[0].attributes.projectid;
                     } else {
                         // no match -- exit out (need to create a project with this src/tgt before importing a KB)
-                        return;
+                        return false;
                     }
                     // Sanity check #3: have we already imported this KB file?
                     // (We'll add a special TU to indicate we have)
                     try {
                         // we're looking for an exact match ONLY
-                        result = kblist.findWhere({'source': "**ImportedKBFile**"}); // strNoPunctuation});
+                        result = kblist.findWhere({'source': IMPORTED_KB_FILE});
                         if (typeof result === 'undefined') {
                             result = null;
                         }
@@ -772,8 +780,11 @@ define(function (require) {
                     }
                     if (result) {
                         bNewKB = false;
+                        errMsg = i18n.t("view.dscErrDuplicateKB");
+                        return false; // error out -- can't import KB multiple times
                     }
                     // ** Now start parsing the KB itself
+                    isKB = true; // we're importing a knowledge base
                     var $xml = $(xmlDoc);
                     markers = "";
                     $($xml).find("MAP > TU").each(function (i) {
@@ -799,6 +810,7 @@ define(function (require) {
                             return parseInt(b.n, 10) - parseInt(a.n, 10);
                         });
                         // create the TU
+                        // Note that the refstrings array is spliced / cleared out each time
                         var newID = Underscore.uniqueId(),
                             newTU = new kbModels.TargetUnit({
                                 tuid: newID,
@@ -813,6 +825,22 @@ define(function (require) {
                         kblist.add(newTU);
                         newTU.save();
                     });
+                    // import complete. Add a special TU to indicate that we've imported this KB
+                    var newID = Underscore.uniqueId(),
+                        newTU = new kbModels.TargetUnit({
+                            tuid: newID,
+                            projectid: projectid,
+                            source: IMPORTED_KB_FILE,
+                            mn: '0',
+                            f: '0',
+                            refstring: '',
+                            timestamp: ''
+                        });
+                    kblist.add(newTU);
+                    newTU.save();
+                    // Exit out with SUCCESS status                    
+                    importSuccess();
+                    return true; // success
                 };
                 
                 // Adapt It XML document
@@ -3126,38 +3154,40 @@ define(function (require) {
             },
             // Handler for the OK button -- just returns to the home screen.
             onOK: function () {
-                // update the book name if necessary
-                if ($("#BookName") && $("#BookName").val() !== bookName) {
-                    // name change -- update all the things
-                    var newName = $("#BookName").val().trim();
-                    var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
-                    var i = 0;
-                    var chapterName = "";
-                    var newChapterName = "";
-                    // book name
-                    if (book) {
-                        book.set('name', newName, {silent: true});
-                        book.update();
-                    }
-                    // chapter names in the chapter list
-                    var chapterList = window.Application.ChapterList.where({bookid: book.get('bookid')});
-                    for (i = 0; i < chapterList.length; i++) {
-                        chapterName = chapterList[i].get('name');
-                        newChapterName = chapterName.replace(bookName, newName);
-                        chapterList[i].set('name', newChapterName);
-                    }
-                    // last document and chapter (if the first import)
-                    if (this.model.get('lastDocument') === bookName) {
-                        this.model.set('lastDocument', newName);
-                        this.model.set('lastAdaptedName', chapterList[0].get('name'));
-                    }
-                    
-                }
-                // save the model
-                this.model.save();
-                window.Application.currentProject = this.model;
-                bookName = ""; // clear out book name data
+                if (isKB === false) {
+                    // update the book name if necessary
+                    if ($("#BookName") && $("#BookName").val() !== bookName) {
+                        // name change -- update all the things
+                        var newName = $("#BookName").val().trim();
+                        var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
+                        var i = 0;
+                        var chapterName = "";
+                        var newChapterName = "";
+                        // book name
+                        if (book) {
+                            book.set('name', newName, {silent: true});
+                            book.update();
+                        }
+                        // chapter names in the chapter list
+                        var chapterList = window.Application.ChapterList.where({bookid: book.get('bookid')});
+                        for (i = 0; i < chapterList.length; i++) {
+                            chapterName = chapterList[i].get('name');
+                            newChapterName = chapterName.replace(bookName, newName);
+                            chapterList[i].set('name', newChapterName);
+                        }
+                        // last document and chapter (if the first import)
+                        if (this.model.get('lastDocument') === bookName) {
+                            this.model.set('lastDocument', newName);
+                            this.model.set('lastAdaptedName', chapterList[0].get('name'));
+                        }
 
+                    }
+                    // save the model
+                    this.model.save();
+                    window.Application.currentProject = this.model;
+                    bookName = ""; // clear out book name data
+                }
+                
                 // head back to the home page
                 window.history.back();
             },
@@ -3202,6 +3232,8 @@ define(function (require) {
                 // fetch the KB in case we import an AI XML document (we'll populate the KB if that happens)
                 kblist = window.Application.kbList;
                 kblist.fetch({reset: true, data: {source: ""}});
+                // reset the isKB flag
+                isKB = false;
                 
                 // cheater way to tell if running on mobile device
                 if (window.sqlitePlugin) {
