@@ -778,71 +778,40 @@ define(function (require) {
                     markers = "";
                     $($xml).find("MAP > TU").each(function (i) {
                         // pull out the MAP number - it'll be stored in the mn entry for each TU
-                        mn = $(this).getParent().get('mn');
+                        mn = this.parentNode.getAttribute('mn');
                         // pull out the attributes from the TU element
-                        f = i.get('f');
-                        src = i.get('k');
+                        f = this.getAttribute('f');
+                        src = this.getAttribute('k');
                         // now collect the refstrings
                         $(this).children("RS").each(function(refstring) {
                             var newRS = {
-                                'target': $(this).attr('a'),  //klb
-                                'n': $(this).attr('n'),
-                                'cDT': $(this).attr('cDT'),
-                                'df': $(this).attr('df'),
-                                'wC': $(this).attr('wC')
+                                'target': this.getAttribute('a'),  //klb
+                                'n': this.getAttribute('n'),
+                                'cDT': this.getAttribute('cDT'),
+                                'df': this.getAttribute('df'),
+                                'wC': this.getAttribute('wC')
                             };
                             refstrings.push(newRS);
                         });
-                        /* 
-TU f="0" k="+">
-      <RS n="230" a="" df="0"
-      cDT="2012-08-28T09:24:41Z" wC="Ross:ROSS-THINK"/>
-    </TU>
-    */
-                        // gather each refstring
-//                        $(this).children("RS").each(function(refstring) {
-//                    // no entry in KB with this source/target -- add one
-//                    var theRS = {
-//                            'target': $(refstring).attr('a'),
-//                            'n': $(refstring).attr('n')
-//                        };
-//                    refstrings.push(newRS);
-//                            
-//                        });
-//                if (found === false) {
-//                    // no entry in KB with this source/target -- add one
-//                    var newRS = {
-//                            'target': targetValue,
-//                            'n': '1'
-//                        };
-//                    refstrings.push(newRS);
-//                }
-//                        
-//                        if (bNewKB === true) {
-//                            // easier task -- collect and batch add to a new KB
-//                        }
-//                        // time created (use our own if not available)
-//                        if ($(this).attr('cDT')) {
-//                            cDT = $(this).attr('cDT');
-//                        } else {
-//                            cDT = timestamp;
-//                        }
-//                        // Creator
-//                        if ($(this).attr('wC')) {
-//                            wC = $(this).attr('wC');
-//                        } 
-//
-//                        // find this source value in the KB
-//                        elts = kblist.filter(function (element) {
-//                            return (element.attributes.projectid === projectid &&
-//                                    element.attributes.source === sourceValue);
-//                        });
-//                        if (elts.length > 0) {
-//                            kbItem = elts[0];
-//                        }
-//                        if (kbItem) {
-//                        }
-                
+                        // sort the refstrings collection on "n" (refcount)
+                        refstrings.sort(function (a, b) {
+                            // high to low
+                            return parseInt(b.n, 10) - parseInt(a.n, 10);
+                        });
+                        // create the TU
+                        var newID = Underscore.uniqueId(),
+                            newTU = new kbModels.TargetUnit({
+                                tuid: newID,
+                                projectid: projectid,
+                                source: src,
+                                mn: mn,
+                                f: f,
+                                refstring: refstrings.splice(0, refstrings.length),
+                                timestamp: timestamp
+                            });
+                        // add to our internal list and save to the db
+                        kblist.add(newTU);
+                        newTU.save();
                     });
                 };
                 
@@ -3230,8 +3199,8 @@ TU f="0" k="+">
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
-                // instantiate the KB in case we import an AI XML document (we'll populate the KB if that happens)
-                kblist = new kbModels.TargetUnitCollection();
+                // fetch the KB in case we import an AI XML document (we'll populate the KB if that happens)
+                kblist = window.Application.kbList;
                 kblist.fetch({reset: true, data: {source: ""}});
                 
                 // cheater way to tell if running on mobile device
@@ -3497,6 +3466,7 @@ TU f="0" k="+">
                     // special case -- AI knowledge base export
                     // Currently this only goes to the AI XML format in a specific file name
                     // ("XX to YY adaptations.xml")
+                    var project = window.Application.currentProject;
                     bookName = i18n.t("view.lblSourceToTargetAdaptations", project.get('SourceLanguageName'), project.get('TargetLanguageName')) + ".xml";
                     exportDocument(bookid,FileTypeEnum.KBXML,bookName);
                     return;
@@ -3518,6 +3488,7 @@ TU f="0" k="+">
                 $("#Filename").val(bookName + ".txt");
             },
             onShow: function () {
+                kblist = window.Application.kbList;
                 if (window.sqlitePlugin) {
                     // on mobile device -- need to ask the user whether they want to export
                     // to the clipboard or to a file (which also allows for social sharing)
