@@ -187,13 +187,17 @@ define(function (require) {
                 $("#browserSelect").hide(); // hide the "choose file" button (browser)
                 // show the import status
                 $("#browserGroup").show();
-                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
-                // allow the user to change the doc name (non-KB)
-                if (isKB === false) {
+                // Did we just import the KB?
+                if (isKB === true) {
+                    // KB file -- only display success status
+                    $("#lblDirections").html(i18n.t("view.dscStatusKBImportSuccess", {document: fileName}));
+                } else {
+                    // not a KB file:
                     // for regular document files, we did our best to guess a book name --
                     // allow the user to change it if they want
-                    $("#BookName").val(bookName);
                     $("#status").html(Handlebars.compile(tplImportVerify));
+                    $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                    $("#BookName").val(bookName);
                 }
                 $("#OK").show();
                 // display the OK button
@@ -765,6 +769,7 @@ define(function (require) {
                         projectid = elts[0].attributes.projectid;
                     } else {
                         // no match -- exit out (need to create a project with this src/tgt before importing a KB)
+                        errMsg = i18n.t("view.dscErrWrongKB");
                         return false;
                     }
                     // Sanity check #3: have we already imported this KB file?

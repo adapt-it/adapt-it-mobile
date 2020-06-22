@@ -327,7 +327,9 @@ header h3 {
 #OKCancelButtons {
     padding-top: 6px;
 }
-
+#status {
+    white-space: pre-line;
+}
 .wizard-instructions {
     padding: 6px 6px 6px 6px;
 }
