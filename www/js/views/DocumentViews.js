@@ -81,7 +81,7 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             // If the KB is not empty, add an entry
-            if (kblist != null) {
+            if (kblist != null && kblist.length > 0) {
                 str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-db'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
             }
             for (i = 0; i < entries.length; i++) {
@@ -807,6 +807,13 @@ define(function (require) {
                                 'df': this.getAttribute('df'),
                                 'wC': this.getAttribute('wC')
                             };
+                            // optional attributes for modified / deleted time
+                            if (this.hasAttribute('mDT')) {
+                                newRS['mDT'] = this.getAttribute('mDT');
+                            }
+                            if (this.hasAttribute('dDT')) {
+                                newRS['dDT'] = this.getAttribute('dDT');
+                            }
                             refstrings.push(newRS);
                         });
                         // sort the refstrings collection on "n" (refcount)
@@ -2943,9 +2950,10 @@ define(function (require) {
                 var mn = 1;
                 var refstrings = null;
                 var project = window.Application.currentProject;
-                // instantiate the KB in case we import an AI XML document (we'll populate the KB if that happens)
-                var kblist = new kbModels.TargetUnitCollection();
-                kblist.fetch({reset: true, data: {source: ""}}).sortBy("mn");
+                kblist.comparator = function (model) {
+                    return model.get("mn");
+                }
+                kblist.sort();
                 writer.onwriteend = function () {
                     console.log("write completed.");
                     exportSuccess();
@@ -2956,29 +2964,45 @@ define(function (require) {
                 };
                 // opening content
                 content = XML_PROLOG;
-                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n";
                 // KB line -- project info
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('TargetLanguageName') + "\" tgtName=\"" + project.get('SourceLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.last().get('mn') + "\" glossingKB=\"0\">\n";
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length-1).get('mn') + "\" glossingKB=\"0\">\n";
                 // END settings xml node
                 // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
-                content += "<MAP mn=\"1\">" // starting MAP node
+                content += "     <MAP mn=\"1\">\n" // starting MAP node
                 kblist.forEach(function (tu) {
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
                     // did the map number change? If so, emit a new <MAP> element
                     if (tu.get('mn') > mn) {
                         // create a new MAP element
-                        content += "</MAP>\n<MAP mn=\"" + tu.get('mn') + "\">\n";
+                        content += "     </MAP>\n     <MAP mn=\"" + tu.get('mn') + "\">\n";
+                        mn = tu.get('mn'); // update the map #
                     }
                     // create the <TU> element
-                    content += "<TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">\n";
+                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">\n";
                     // create any refstring elements
                     refstrings = tu.get('refstring');
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "<RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\" cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\">";
+                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"\n       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
+                        if (refstrings[i].mDT || refstrings[i].dDT) {
+                            // optional datetime info
+                            content += "\n       ";
+                            if (refstrings[i].mDT) {
+                                content += " mDT=\"" + refstrings[i].mDT + "\"";
+                            }
+                            if (refstrings[i].dDT) {
+                                content += " dDT=\"" + refstrings[i].dDT + "\"";
+                            }
+                        }
+                        content += "/>\n";
                     }
-                    content += "</TU>";
+                    content += "     </TU>\n";
                 });
                 // done CONTENT PART -- close out the file
-                content += "</MAP>\n </KB>\n";
+                content += "     </MAP>\n</KB>\n";
                 if (isClipboard === true) {
                     // write (copy) text to clipboard
                     cordova.plugins.clipboard.copy(content);
@@ -3032,6 +3056,9 @@ define(function (require) {
                                 case FileTypeEnum.XML:
                                     exportXML();
                                     break;
+                                case FileTypeEnum.KBXML:
+                                    exportKB();
+                                    break;
                                 }
                             }, exportFail);
                         }, exportFail);
@@ -3060,6 +3087,9 @@ define(function (require) {
                                     break;
                                 case FileTypeEnum.XML:
                                     exportXML();
+                                    break;
+                                case FileTypeEnum.KBXML:
+                                    exportKB();
                                     break;
                                 }
                             }, exportFail);
@@ -3504,7 +3534,8 @@ define(function (require) {
                     // Currently this only goes to the AI XML format in a specific file name
                     // ("XX to YY adaptations.xml")
                     var project = window.Application.currentProject;
-                    bookName = i18n.t("view.lblSourceToTargetAdaptations", project.get('SourceLanguageName'), project.get('TargetLanguageName')) + ".xml";
+                    // Note: hard-coded (do not localize)
+                    bookName = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
                     exportDocument(bookid,FileTypeEnum.KBXML,bookName);
                     return;
                 }
@@ -3526,6 +3557,7 @@ define(function (require) {
             },
             onShow: function () {
                 kblist = window.Application.kbList;
+                kblist.fetch({reset: true, data: {source: ""}});
                 if (window.sqlitePlugin) {
                     // on mobile device -- need to ask the user whether they want to export
                     // to the clipboard or to a file (which also allows for social sharing)
