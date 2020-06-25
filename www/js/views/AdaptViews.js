@@ -197,7 +197,10 @@ define(function (require) {
                     // no entry in KB with this source/target -- add one
                     var newRS = {
                             'target': Underscore.unescape(targetValue),  //klb
-                            'n': '1'
+                            'n': '1',
+                            'cDT': timestamp,
+                            'df': '0',
+                            'wC': ""
                         };
                     refstrings.push(newRS);
                 }
@@ -220,7 +223,10 @@ define(function (require) {
                         refstring: [
                             {
                                 target: Underscore.unescape(targetValue),  //klb
-                                n: "1"
+                                'n': '1',
+                                'cDT': timestamp,
+                                'df': '0',
+                                'wC': ""
                             }
                         ],
                         timestamp: timestamp,

@@ -327,7 +327,9 @@ header h3 {
 #OKCancelButtons {
     padding-top: 6px;
 }
-
+#status {
+    white-space: pre-line;
+}
 .wizard-instructions {
     padding: 6px 6px 6px 6px;
 }
@@ -1158,6 +1160,18 @@ span.sprite{
 }
 .btn-clipboard{
 	background-image: url("../svg/clipboard.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-db{
+	background-image: url("../svg/db.svg");
     background-position: center;
 	background-repeat: no-repeat;
     background-size: contain;
