@@ -65,7 +65,7 @@ define(function (require) {
             USFM: 2,
             USX: 3,
             XML: 4,
-            KBXML: 5        // TODO: other translation memory formats?
+            KBXML: 5        // TODO: TMX import / export? (https://www.ttt.org/oscarStandards/tmx/)
         },
         DestinationEnum = {
             FILE: 1,
@@ -2949,6 +2949,7 @@ define(function (require) {
                 var i = 0;
                 var mn = 1;
                 var refstrings = null;
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
                 var project = window.Application.currentProject;
                 kblist.comparator = function (model) {
                     return model.get("mn");
@@ -2964,12 +2965,12 @@ define(function (require) {
                 };
                 // opening content
                 content = XML_PROLOG;
-                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n";
+                content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
                 // KB line -- project info
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length-1).get('mn') + "\" glossingKB=\"0\">\n";
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length-1).get('mn') + "\" glossingKB=\"0\">" + CRLF;
                 // END settings xml node
                 // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
-                content += "     <MAP mn=\"1\">\n" // starting MAP node
+                content += "     <MAP mn=\"1\">" + CRLF // starting MAP node
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -2978,18 +2979,24 @@ define(function (require) {
                     // did the map number change? If so, emit a new <MAP> element
                     if (tu.get('mn') > mn) {
                         // create a new MAP element
-                        content += "     </MAP>\n     <MAP mn=\"" + tu.get('mn') + "\">\n";
+                        content += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
                         mn = tu.get('mn'); // update the map #
                     }
                     // create the <TU> element
-                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">\n";
+                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
                     // create any refstring elements
                     refstrings = tu.get('refstring');
+                    // sort the refstrings on "n" (refcount)
+                    refstrings.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    // write them out
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"\n       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
+                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
                         if (refstrings[i].mDT || refstrings[i].dDT) {
                             // optional datetime info
-                            content += "\n       ";
+                            content += CRLF + "       ";
                             if (refstrings[i].mDT) {
                                 content += " mDT=\"" + refstrings[i].mDT + "\"";
                             }
@@ -2997,12 +3004,12 @@ define(function (require) {
                                 content += " dDT=\"" + refstrings[i].dDT + "\"";
                             }
                         }
-                        content += "/>\n";
+                        content += "/>" + CRLF;
                     }
-                    content += "     </TU>\n";
+                    content += "     </TU>" + CRLF;
                 });
                 // done CONTENT PART -- close out the file
-                content += "     </MAP>\n</KB>\n";
+                content += "     </MAP>" + CRLF + "</KB>" + CRLF;
                 if (isClipboard === true) {
                     // write (copy) text to clipboard
                     cordova.plugins.clipboard.copy(content);
