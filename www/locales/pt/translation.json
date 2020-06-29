@@ -281,6 +281,8 @@
         "dscErrWrongKB": "This is a Knowledge Base file, but the source and/or target language names do not match any active project. Please import only Knowledge Base files that are associated with an active project.",
         "dscStatusKBImportSuccess": "Knowledge Base file \"__document__\" read successfully.",
         "lblStartTyping": "Start typing...",
+        "lblExportKBXML": "Adapt It desktop (.xml)",
+        "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

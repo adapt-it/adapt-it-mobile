@@ -1194,6 +1194,18 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
+.btn-kb{
+	background-image: url("../svg/kb.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
 .btn-newproject{
 	background-image: url("../svg/project-new.svg");
     background-position: center;
