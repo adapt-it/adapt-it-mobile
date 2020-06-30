@@ -3165,7 +3165,6 @@ define(function (require) {
                 var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
                 var project = window.Application.currentProject;
                 var i = 0;
-                var mn = 1;
                 var refstrings = null;
                 kblist.comparator = function (model) {
                     return model.get("mn");
@@ -3190,37 +3189,29 @@ define(function (require) {
                         // skip this entry -- this is our internal "imported KB file" flag
                         return; // continue
                     }
-                    // did the map number change? If so, emit a new <MAP> element
-                    if (tu.get('mn') > mn) {
-                        // create a new MAP element
-                        content += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
-                        mn = tu.get('mn'); // update the map #
-                    }
-                    // create the <TU> element
-                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
-                    // create any refstring elements
-                    refstrings = tu.get('refstring');
                     // sort the refstrings on "n" (refcount)
+                    refstrings = tu.get('refstring');
                     refstrings.sort(function (a, b) {
                         // high to low
                         return parseInt(b.n, 10) - parseInt(a.n, 10);
                     });
-                    // write them out
+                    // emit each source/target refstring as a separate <tu> with a <tuv> for source, target
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
-                        if (refstrings[i].mDT || refstrings[i].dDT) {
+                        content += "  <tu tuid=\"" + Underscore.uniqueId() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
+                        // source tuv
+                        content += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
+                        content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>";
+                        // target tuv
+                        content += "    <tuv xml:lang=\"" + project.get('TargetLanguageCode') + "\" creationdate=\"" + refstrings[i].cDT + "\" creationid=\"" + refstrings[i].wC + "\"";
+                        if (refstrings[i].mDT) {
                             // optional datetime info
-                            content += CRLF + "       ";
                             if (refstrings[i].mDT) {
-                                content += " mDT=\"" + refstrings[i].mDT + "\"";
-                            }
-                            if (refstrings[i].dDT) {
-                                content += " dDT=\"" + refstrings[i].dDT + "\"";
+                                content += " changedate=\"" + refstrings[i].mDT + "\"";
                             }
                         }
-                        content += "/>" + CRLF;
+                        content += ">" + CRLF
+                        content += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>";
                     }
-                    content += "     </TU>" + CRLF;
                 });
                 // done CONTENT PART -- close out the file
                 content += "     </body>" + CRLF + "</tmx>" + CRLF;
@@ -3314,6 +3305,9 @@ define(function (require) {
                                     break;
                                 case FileTypeEnum.KBXML:
                                     exportKB();
+                                    break;
+                                case FileTypeEnum.KBTMX:
+                                    exportTMX();
                                     break;
                                 }
                             }, exportFail);
