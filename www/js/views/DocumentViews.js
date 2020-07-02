@@ -82,7 +82,7 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             // If the KB is not empty, add an entry
-            if (kblist != null && kblist.length > 0) {
+            if (kblist !== null && kblist.length > 0) {
                 str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-kb'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
             }
             for (i = 0; i < entries.length; i++) {
@@ -170,11 +170,7 @@ define(function (require) {
         // Helper method to import the selected file into the specified project.
         // This method has sub-methods for text, usfm, usx and xml (Adapt It document) file types.
         importFile = function (file, project) {
-            var status = "";
             var reader = new FileReader();
-            var i = 0;
-            var name = "";
-            var doc = null;
             var result = false;
             var errMsg = "";
             var sps = [];
@@ -256,9 +252,7 @@ define(function (require) {
                     var spaceRE = /\s+/;        // select 1+ space chars
                     var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var newline = new RegExp('[\n\r\f\u2028\u2029]+', 'g');
-                    var prepunct = "";
-                    var follpunct = "";
-                    var needsNewLine = false;
+                    var i = 0;
                     var chaps = [];
                     var sp = null;
                     console.log("Reading text file:" + fileName);
@@ -736,13 +730,8 @@ define(function (require) {
                         IMPORTED_KB_FILE = "**ImportedKBFile**",
                         mn = "",
                         f = "",
-                        cDT = "",
-                        wC = "",
                         src = "",
-                        tuid = "",
-                        kbItem = "",
                         srcName = "",
-                        bNewKB = true,
                         tgtName = "";
 
                     // ** Sanity check #1: Is this a KB? 
@@ -800,7 +789,7 @@ define(function (require) {
                         f = this.getAttribute('f');
                         src = this.getAttribute('k');
                         // now collect the refstrings
-                        $(this).children("RS").each(function(refstring) {
+                        $(this).children("RS").each(function (refstring) {
                             var newRS = {
                                 'target': this.getAttribute('a'),  //klb
                                 'n': this.getAttribute('n'),
@@ -857,56 +846,57 @@ define(function (require) {
                     return true; // success
                 };
 
-                var readKBTMXDoc = function (contents) {
+                // Translation Memory Exchange (TMX) document
+                // This is an industry standard, and as such only tangentially comforms to Adapt It's model.
+                // TMX files potentially have > 2 languages involved, and don't have a 1:many TU/RS mapping. Instead,
+                // each <tu> has 1 or more <tuv> elements under it, and we'll need to search for our source/target pair
+                // in order to build up the KB.
+                // Note: due to our selective import/export, our TMX support should be considered lossy and is not
+                // recommended for round-tripping data.
+                // This import ONLY populates the KB (targetunit tables).
+                var readTMXDoc = function (contents) {
                     var i = 0,
                         index = 0,
-                        elts = null,
                         refstrings = [],
+                        project = window.Application.currentProject,
                         projectid = "",
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         IMPORTED_KB_FILE = "**ImportedKBFile**",
+                        n = "",
                         mn = "",
                         f = "",
-                        cDT = "",
-                        wC = "",
-                        src = "",
-                        tuid = "",
-                        kbItem = "",
-                        srcName = "",
-                        bNewKB = true,
-                        tgtName = "";
+                        src = "";
 
-                    // ** Sanity check #1: Is this a KB? 
-                    i = contents.indexOf("<KB ");
-                    index = contents.indexOf("kbVersion", i);
+                    // ** Sanity check #1: Is this a TMX file? 
+                    i = contents.indexOf("<tmx ");
+                    index = contents.indexOf("version", i);
                     if (index === -1) {
-                        // No kbVersion element found -- this is most likely not a KB document.
-                        // Return; we can't parse random xml files.
-                        console.log("No kbVersion element found (is this an Adapt It Knowledge Base document?) -- exiting.");
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
                         errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
-                    // ** Sanity check #2: is this KB from a project in our DB? 
-                    // (source and target need to match a project in the DB -- if they do, get the project ID)
-                    i = contents.indexOf("srcName") + 9;
-                    srcName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    i = contents.indexOf("tgtName") + 9;
-                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    elts = window.Application.ProjectList.filter(function (element) {
-                        return (element.attributes.TargetLanguageName === tgtName &&
-                               element.attributes.SourceLanguageName === srcName);
-                    });
-                    if (elts.length > 0) {
-                        // found a match -- pull out the
-                        projectid = elts[0].attributes.projectid;
-                    } else {
-                        // no match -- exit out (need to create a project with this src/tgt before importing a KB)
-                        errMsg = i18n.t("view.dscErrWrongKB");
+                    // ** Sanity check #2: does this TMX file contain data related to the current project? 
+                    index = contents.indexOf(project.get("SourceLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
-                    // Sanity check #3: have we already imported this KB file?
+                    index = contents.indexOf(project.get("TargetLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        return false;
+                    }
+                    // Sanity check #3: have we already imported this file?
                     // (We'll add a special TU to indicate we have)
                     try {
                         // we're looking for an exact match ONLY
@@ -922,18 +912,20 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrDuplicateKB");
                         return false; // error out -- can't import KB multiple times
                     }
-                    // ** Now start parsing the KB itself
+                    // ** Now start parsing the file itself
                     isKB = true; // we're importing a knowledge base
                     var $xml = $(xmlDoc);
                     markers = "";
-                    $($xml).find("MAP > TU").each(function (i) {
-                        // pull out the MAP number - it'll be stored in the mn entry for each TU
-                        mn = this.parentNode.getAttribute('mn');
-                        // pull out the attributes from the TU element
-                        f = this.getAttribute('f');
+                    $($xml).find("body > tu").each(function (i) {
+                        // pull out the attributes from the tu element
+                        if ($(this).children("tuv").indexOf(project.get("TargetLanguageCode")) === -1) {
+                            
+                        }
+                        n = this.getAttribute('usagecount');
                         src = this.getAttribute('k');
                         // now collect the refstrings
-                        $(this).children("RS").each(function(refstring) {
+                        $(this).children("tuv").each(function (refstring) {
+                            
                             var newRS = {
                                 'target': this.getAttribute('a'),  //klb
                                 'n': this.getAttribute('n'),
@@ -1606,10 +1598,9 @@ define(function (require) {
                     var spaceRE = /\s+/;        // select 1+ space chars
                     var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
                     var markerList = new USFM.MarkerCollection();
-                    var marker = null;
                     var lastAdapted = 0;
                     var verseCount = 0;
-                    var hasPunct = false;
+                    var i = 0;
                     var punctIdx = 0;
                     var stridx = 0;
                     var chaps = [];
@@ -1922,6 +1913,8 @@ define(function (require) {
                     result = readUSFMDoc(this.result);
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(this.result);
+                } else if (fileName.toLowerCase().indexOf(".tmx") > 0) {
+                    result = readTMXDoc(this.result);
                 } else if (fileName.toLowerCase().indexOf(".xml") > 0) {
                     if (fileName.toLowerCase().indexOf("adaptations.xml") > 0) {
                         // possibly a KB
@@ -2683,7 +2676,6 @@ define(function (require) {
             // -- lower priority, but need for AI compatibility: other bits implemented
             var exportXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var book = window.Application.BookList.where({bookid: bookid});
                 var markerList = new USFM.MarkerCollection();
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var content = "";
@@ -2692,7 +2684,6 @@ define(function (require) {
                 var spList = new spModel.SourcePhraseCollection();
                 var markers = "";
                 var filtered = false;
-                var exportMarkers = false;
                 var needsEndMarker = "";
                 var cNum = "";
                 var vNum = "";
@@ -3088,7 +3079,7 @@ define(function (require) {
                 var project = window.Application.currentProject;
                 kblist.comparator = function (model) {
                     return model.get("mn");
-                }
+                };
                 kblist.sort();
                 writer.onwriteend = function () {
                     console.log("write completed.");
@@ -3102,10 +3093,10 @@ define(function (require) {
                 content = XML_PROLOG;
                 content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
                 // KB line -- project info
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length-1).get('mn') + "\" glossingKB=\"0\">" + CRLF;
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"0\">" + CRLF;
                 // END settings xml node
                 // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
-                content += "     <MAP mn=\"1\">" + CRLF // starting MAP node
+                content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -3168,7 +3159,7 @@ define(function (require) {
                 var refstrings = null;
                 kblist.comparator = function (model) {
                     return model.get("mn");
-                }
+                };
                 kblist.sort();
                 writer.onwriteend = function () {
                     console.log("write completed.");
@@ -3209,7 +3200,7 @@ define(function (require) {
                                 content += " changedate=\"" + refstrings[i].mDT + "\"";
                             }
                         }
-                        content += ">" + CRLF
+                        content += ">" + CRLF;
                         content += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>";
                     }
                 });
@@ -3225,7 +3216,7 @@ define(function (require) {
                     writer.write(blob);
                 }
                 content = ""; // clear out the content string for the next chapter
-            };            
+            };
             //// *** END export functions
             
             // add the project's target language code to the subdirectory
@@ -3779,7 +3770,7 @@ define(function (require) {
                     $("#KBFormats").hide();
                     // select a default of TXT for the export format (for now)
                     $("#exportTXT").prop("checked", true);
-                    bookName += ".txt"
+                    bookName += ".txt";
                     // if this is going to the clipboard, we don't need a filename
                     if (this.destination === DestinationEnum.CLIPBOARD) {
                         $("#grpFilename").hide();
