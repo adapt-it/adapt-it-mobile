@@ -867,6 +867,7 @@ define(function (require) {
                         n = "",
                         mn = "",
                         f = "",
+                        tgt = "";
                         src = "";
 
                     // ** Sanity check #1: Is this a TMX file? 
@@ -922,7 +923,22 @@ define(function (require) {
                             
                         }
                         n = this.getAttribute('usagecount');
-                        src = this.getAttribute('k');
+                        // does this <tu> have <tuv> strings for both source and target languages?
+                        if (this).children("tuv") {
+                        //    src = this.getAttribute('k');
+                            
+                        }
+                        // do we already have this source value in our kblist?
+                        var elts = kblist.filter(function (element) {
+                            return (element.attributes.projectid === projectid &&
+                               element.attributes.source === sourceValue);
+                        });
+                        if (elts.length > 0) {
+                            // in list -- add a refstring for this value
+                        } else {
+                            // not in list -- create a new TU
+                        }
+                        
                         // now collect the refstrings
                         $(this).children("tuv").each(function (refstring) {
                             
@@ -3723,9 +3739,9 @@ define(function (require) {
                         } else if ($("#exportUSFM").is(":checked")) {
                             format = FileTypeEnum.USFM;
                         } else if ($("#exportKBXML").is(":checked")) {
-                            format = FileTypeEnum.USFM;
+                            format = FileTypeEnum.KBXML;
                         } else if ($("#exportKBTMX").is(":checked")) {
-                            format = FileTypeEnum.USFM;
+                            format = FileTypeEnum.KBTMX;
                         } else {
                             // fallback to plain text
                             format = FileTypeEnum.TXT;
