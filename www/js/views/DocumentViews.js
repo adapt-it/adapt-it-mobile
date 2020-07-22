@@ -3793,9 +3793,6 @@ define(function (require) {
                     // exporting a book
                     $("#FileFormats").show();
                     $("#KBFormats").hide();
-                    // select a default of TXT for the export format (for now)
-                    $("#exportTXT").prop("checked", true);
-                    bookName += ".txt";
                     // if this is going to the clipboard, we don't need a filename
                     if (this.destination === DestinationEnum.CLIPBOARD) {
                         $("#grpFilename").hide();
@@ -3805,6 +3802,9 @@ define(function (require) {
                             bookName = bookName.substr(0, bookName.length - 4);
                         }
                     }
+                    // select a default of TXT for the export format (for now)
+                    $("#exportTXT").prop("checked", true);
+                    bookName += ".txt";
                 }
                 $("#Filename").val(bookName);
             },

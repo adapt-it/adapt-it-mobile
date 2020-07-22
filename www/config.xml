@@ -271,7 +271,7 @@
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
     <plugin name="cordova-plugin-x-socialsharing" spec="5.4.0" />
-    <plugin name="cordova-plugin-splashscreen" spec="^5.0.3" />
+    <plugin name="cordova-plugin-splashscreen" spec="^6.0.0" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
