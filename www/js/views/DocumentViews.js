@@ -40,7 +40,6 @@ define(function (require) {
         isKB            = false,
         fileList        = [],
         fileCount       = 0,
-        punctExp        = "",
         bookid          = "",
         puncts          = [],
         punctsSource     = [],
@@ -217,19 +216,13 @@ define(function (require) {
             
             // callback method for when the FileReader has finished loading in the file
             reader.onloadend = function (e) {
-                var value = "",
-                    scrID = null,
-                    chap = 0,
-                    verse = 0,
-                    s = "",
-                    t = "",
+                var s = "",
                     index = 0,
                     norder = 1,
                     markers = "",
                     prepuncts = "",
                     midpuncts = "",
                     follpuncts = "",
-                    newSP = null,
                     punctIdx = 0,
                     chapter = null,
                     book = null,
@@ -399,8 +392,6 @@ define(function (require) {
                 // Paratext USX document
                 // These are XML-flavored markup files exported from Paratext
                 var readUSXDoc = function (contents) {
-                    var prepunct = "";
-                    var follpunct = "";
                     var sp = null;
                     var spaceRE = /\s+/;        // select 1+ space chars
                     var nonSpaceRE = /[^\s+]/;  // select 1+ non-space chars
@@ -412,8 +403,8 @@ define(function (require) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
                     var punctIdx = 0;
-                    var lastAdapted = 0;
                     var i = 0;
+                    var lastAdapted = 0;
                     var closingMarker = "";
                     var parseNode = function (element) {
                         closingMarker = "";
@@ -699,7 +690,7 @@ define(function (require) {
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
+                    $.when.apply($, deferreds).done(function () {
                         importSuccess();
                     }).fail(function (e) {
                         importFail(e);
@@ -774,7 +765,6 @@ define(function (require) {
                         console.log(err);
                     }
                     if (result) {
-                        bNewKB = false;
                         errMsg = i18n.t("view.dscErrDuplicateKB");
                         return false; // error out -- can't import KB multiple times
                     }
@@ -782,7 +772,7 @@ define(function (require) {
                     isKB = true; // we're importing a knowledge base
                     var $xml = $(xmlDoc);
                     markers = "";
-                    $($xml).find("MAP > TU").each(function (i) {
+                    $($xml).find("MAP > TU").each(function () {
                         // pull out the MAP number - it'll be stored in the mn entry for each TU
                         mn = this.parentNode.getAttribute('mn');
                         // pull out the attributes from the TU element
@@ -858,16 +848,21 @@ define(function (require) {
                     var i = 0,
                         index = 0,
                         refstrings = [],
+                        found = false,
                         project = window.Application.currentProject,
                         projectid = "",
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
+                        result = null,
+                        srcElt = null,
+                        tgtElt = null,
+                        tu = null,
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         IMPORTED_KB_FILE = "**ImportedKBFile**",
                         n = "",
                         mn = "",
                         f = "",
-                        tgt = "";
+                        tgt = "",
                         src = "";
 
                     // ** Sanity check #1: Is this a TMX file? 
@@ -898,7 +893,7 @@ define(function (require) {
                         return false;
                     }
                     // Sanity check #3: have we already imported this file?
-                    // (We'll add a special TU to indicate we have)
+                    // (Search for a known special TU that indicates we have)
                     try {
                         // we're looking for an exact match ONLY
                         result = kblist.findWhere({'source': IMPORTED_KB_FILE});
@@ -909,7 +904,6 @@ define(function (require) {
                         console.log(err);
                     }
                     if (result) {
-                        bNewKB = false;
                         errMsg = i18n.t("view.dscErrDuplicateKB");
                         return false; // error out -- can't import KB multiple times
                     }
@@ -918,66 +912,82 @@ define(function (require) {
                     var $xml = $(xmlDoc);
                     markers = "";
                     $($xml).find("body > tu").each(function (i) {
-                        // pull out the attributes from the tu element
-                        if ($(this).children("tuv").indexOf(project.get("TargetLanguageCode")) === -1) {
-                            
-                        }
-                        n = this.getAttribute('usagecount');
-                        // does this <tu> have <tuv> strings for both source and target languages?
-                        if (this).children("tuv") {
-                        //    src = this.getAttribute('k');
-                            
-                        }
-                        // do we already have this source value in our kblist?
-                        var elts = kblist.filter(function (element) {
-                            return (element.attributes.projectid === projectid &&
-                               element.attributes.source === sourceValue);
-                        });
-                        if (elts.length > 0) {
-                            // in list -- add a refstring for this value
-                        } else {
-                            // not in list -- create a new TU
-                        }
-                        
-                        // now collect the refstrings
-                        $(this).children("tuv").each(function (refstring) {
-                            
-                            var newRS = {
-                                'target': this.getAttribute('a'),  //klb
-                                'n': this.getAttribute('n'),
-                                'cDT': this.getAttribute('cDT'),
-                                'df': this.getAttribute('df'),
-                                'wC': this.getAttribute('wC')
-                            };
-                            // optional attributes for modified / deleted time
-                            if (this.hasAttribute('mDT')) {
-                                newRS['mDT'] = this.getAttribute('mDT');
-                            }
-                            if (this.hasAttribute('dDT')) {
-                                newRS['dDT'] = this.getAttribute('dDT');
-                            }
-                            refstrings.push(newRS);
-                        });
-                        // sort the refstrings collection on "n" (refcount)
-                        refstrings.sort(function (a, b) {
-                            // high to low
-                            return parseInt(b.n, 10) - parseInt(a.n, 10);
-                        });
-                        // create the TU
-                        // Note that the refstrings array is spliced / cleared out each time
-                        var newID = Underscore.uniqueId(),
-                            newTU = new kbModels.TargetUnit({
-                                tuid: newID,
-                                projectid: projectid,
-                                source: src,
-                                mn: mn,
-                                f: f,
-                                refstring: refstrings.splice(0, refstrings.length),
-                                timestamp: timestamp
+                        // pull out the source and target elements from the tu element
+                        srcElt = $(this).children("xml:lang[name*=" + project.get("SourceLanguageCode") + "]");
+                        tgtElt = $(this).children("xml:lang[name*=" + project.get("TargetLanguageCode") + "]");
+                        // if we found both a matching source and target in this TU,
+                        // extract the data and add the new item
+                        if ((srcElt) && (tgtElt)) {
+                            n = this.getAttribute('usagecount');
+                            // do we already have this source value in our kblist?
+                            src = $(srcElt).find("seg").html().trim();
+                            tgt = $(tgtElt).find("seg").html().trim();
+                            var elts = kblist.filter(function (element) {
+                                return (element.attributes.projectid === projectid &&
+                                   element.attributes.source === src);
                             });
-                        // add to our internal list and save to the db
-                        kblist.add(newTU);
-                        newTU.save();
+                            if (elts.length > 0) {
+                                tu = elts[0];
+                                found = false;
+                                refstrings = tu.get('refstring');
+                                // in list -- do we have a refstring for the target?
+                                for (i = 0; i < refstrings.length; i++) {
+                                    if (refstrings[i].target === tgt) {
+                                        // there is a refstring for this target value -- increment it
+                                        if (refstrings[i].n < 0) {
+                                            // special case -- this value was removed, but now we've got it again:
+                                            // reset the count to 1 in this case
+                                            refstrings[i].n = '1';
+                                        } else {
+                                            refstrings[i].n++;
+                                        }
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (found === false) {
+                                    // no entry in KB with this source/target -- add one
+                                    var newRS = {
+                                            'target': Underscore.unescape(tgt),  //klb
+                                            'n': '1',
+                                            'cDT': timestamp,
+                                            'df': '0',
+                                            'wC': ""
+                                        };
+                                    refstrings.push(newRS);
+                                }
+                                // sort the refstrings collection on "n" (refcount)
+                                refstrings.sort(function (a, b) {
+                                    // high to low
+                                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                });
+                                // update the KB model
+                                tu.set('refstring', refstrings, {silent: true});
+                                tu.set('timestamp', timestamp, {silent: true});
+                                tu.update();
+                            } else {
+                                // not in list -- create a new TU
+                                var newID = Underscore.uniqueId(),
+                                    newTU = new kbModels.TargetUnit({
+                                        tuid: newID,
+                                        projectid: projectid,
+                                        source: src,
+                                        refstring: [
+                                            {
+                                                target: Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            }
+                                        ],
+                                        timestamp: timestamp,
+                                        user: ""
+                                    });
+                                kblist.add(newTU);
+                                newTU.save();
+                            }
+                        }
                     });
                     // import complete. Add a special TU to indicate that we've imported this KB
                     var newID = Underscore.uniqueId(),
@@ -2025,7 +2035,6 @@ define(function (require) {
             var sourcephrases = null;
             var exportDirectory = "";
             var subdir = "AIM_Exports_";
-            var tabLevel = 0;
             var onShareSuccess = function (result) {
                 console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
                 console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
@@ -2371,7 +2380,6 @@ define(function (require) {
                 var markers = "";
                 var i = 0;
                 var idxFilters = 0;
-                var versenum = 1;
                 var closeNode = ""; // holds ending string for <para> and <book> XML nodes
                 var value = null;
                 var mkr = "";
@@ -3460,6 +3468,7 @@ define(function (require) {
             // - If we're in a browser, just show the html <input type=file> to allow
             //   for file selection
             onShow: function () {
+                var punctExp = "";
 //                $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
                 $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
