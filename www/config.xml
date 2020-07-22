@@ -25,10 +25,8 @@
         <preference name="AndroidLaunchMode" value="singleTask"/>
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
-        <!-- 19 (4.4.3) is our minimum supported SDK... -->
-        <preference name="android-minSdkVersion" value="19" />
-        <!-- ...but 24 and later allow for split screen apps -->
-        <preference name="android-targetSdkVersion" value="28" />
+        <preference name="android-minSdkVersion" value="22" />
+        <preference name="android-targetSdkVersion" value="29" />
         <config-file mode="replace" parent="/manifest">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

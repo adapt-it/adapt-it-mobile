@@ -27,7 +27,7 @@
     "plist": "^1.2.0"
   },
   "dependencies": {
-    "cordova-android": "^8.0.0",
+    "cordova-android": "^9.0.0",
     "cordova-clipboard": "https://github.com/ihadeed/cordova-clipboard.git",
     "cordova-ios": "^6.1.0",
     "cordova-lib": "^8.0.0",
@@ -84,7 +84,8 @@
       "cordova-plugin-splashscreen": {}
     },
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
