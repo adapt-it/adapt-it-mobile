@@ -77,6 +77,7 @@ define(function (require) {
             filterlist: "",
             currentProject: null,
             localURLs: [],
+            usingImportedKB: false,
             version: "1.3.0", // appended with milestone / iOS build info
             AndroidBuild: "32", // (was milestone release #)
             iOSBuild: "1.3.0",
@@ -221,6 +222,7 @@ define(function (require) {
                         fallbackLng: 'en'
                     }, function () {
                         // Callback when i18next is finished initializing
+                        var IMPORTED_KB_FILE = "**ImportedKBFile**";
 
                         // Load any app-wide collections
                         window.Application.BookList = new bookModel.BookCollection();
@@ -230,7 +232,12 @@ define(function (require) {
                         window.Application.ChapterList = new chapterModel.ChapterCollection();
                         window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
                         window.Application.kbList = new kbModels.TargetUnitCollection();
-                        window.Application.kbList.fetch({reset: true, data: {name: ""}});
+                        $.when(window.Application.kbList.fetch({reset: true, data: {name: ""}})).done(function () {
+                            var result = window.Application.kbList.findWhere({'source': IMPORTED_KB_FILE});
+                            if (typeof result !== 'undefined') {
+                                window.Application.usingImportedKB = true;
+                            }
+                        });                        
                         window.Application.spList = new spModel.SourcePhraseCollection();
                         // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them
