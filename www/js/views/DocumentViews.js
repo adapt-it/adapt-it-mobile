@@ -911,13 +911,13 @@ define(function (require) {
                     isKB = true; // we're importing a knowledge base
                     var $xml = $(xmlDoc);
                     markers = "";
-                    $($xml).find("body > tu").each(function (i) {
+                    $($xml).find("tu").each(function () {
                         // pull out the source and target elements from the tu element
-                        srcElt = $(this).children("xml:lang[name*=" + project.get("SourceLanguageCode") + "]");
-                        tgtElt = $(this).children("xml:lang[name*=" + project.get("TargetLanguageCode") + "]");
+                        srcElt = $(this).children("[xml\\:lang=" + project.get("SourceLanguageCode") + "]");
+                        tgtElt = $(this).children("[xml\\:lang=" + project.get("TargetLanguageCode") + "]");
                         // if we found both a matching source and target in this TU,
                         // extract the data and add the new item
-                        if ((srcElt) && (tgtElt)) {
+                        if ((srcElt.length > 0) && (tgtElt.length > 0)) {
                             n = this.getAttribute('usagecount');
                             // do we already have this source value in our kblist?
                             src = $(srcElt).find("seg").html().trim();
