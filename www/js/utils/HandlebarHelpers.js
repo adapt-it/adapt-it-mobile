@@ -22,7 +22,7 @@ define(function (require) {
 
     // add one to the given number -- used to print out the index+offset for
     // the filtered text items
-    Handlebars.registerHelper("inc", function (value, options) {
+    Handlebars.registerHelper("inc", function (value) {
         var result = parseInt(value, 10) + 1;
         return new Handlebars.SafeString(result);
     });
@@ -135,6 +135,9 @@ define(function (require) {
         return new Handlebars.SafeString(result);
     });
     
+    // Return the application's version --
+    // Note that this is a static var in the Application object, and not something held
+    // in the app metadata.
     Handlebars.registerHelper('AppVersion', function () {
         var result = window.Application.version;
         return new Handlebars.SafeString(result);

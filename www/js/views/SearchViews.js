@@ -78,7 +78,6 @@ define(function (require) {
         }),
         KBView = Marionette.LayoutView.extend({
             spObj: null,
-            isLocked: true, // default value
             template: Handlebars.compile(tplTargetUnit),
             regions: {
                 container: "#StepContainer"
@@ -89,12 +88,16 @@ define(function (require) {
             events: {
                 "focus #tgtPhrase": "onFocusTarget",
                 "blur #tgtPhrase": "onBlurTarget",
+                "keydown #tgtphrase": "onEditTarget",
                 "click #btnUndo": "onUndoTarget",
                 "click .topcoat-list__item": "onClickRefString",
                 "focus .chap-list__item": "onFocusRefString",
                 "blur .chap-list__item": "onBlurRefString"
             },
             onFocusTarget: function () {
+                // show the undo button, in case the user wants to revert  
+            },
+            onEditTarget: function () {
                 // show the undo button, in case the user wants to revert  
             },
             onBlurTarget: function () {
@@ -128,19 +131,11 @@ define(function (require) {
             onBlurRefString: function (event) {
                 
             },
-            onToggleLock: function () {
-                // toggle the boolean value
-                this.isLocked = !this.isLocked;
-                // update the UI accordingly
-                if (this.isLocked === true) {
-                    $("#imgLockUnlock").attr('class', 'btn-lock');
-                } else {
-                    $("#imgLockUnlock").attr('class', 'btn-unlock');
-                }
-            },
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                var refstrings = this.model.get("refstring");
+                var i = 0;
                 if (window.Application.spList.length > 0) {
                     // found a sourcephrase -- fill out the UI
                     var sp = window.Application.spList.at(0);
@@ -151,8 +146,10 @@ define(function (require) {
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
                 this.$el.hammer({domEvents: true, interval: 500});
-                
-                //i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                // set the frequency meters for each refstring
+                for (i = 0; i < refstrings.length; i++) {
+                    $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                }
             }
         }),
         
