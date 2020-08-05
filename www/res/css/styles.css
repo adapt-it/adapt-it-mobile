@@ -316,7 +316,7 @@ header h3 {
 .liActions {
     border-top: 1px solid #1F7BA5;
     display: none;
-    height: 2.62rem;
+    height: 8.62rem;
     width: 100%;
 }
 #WizardSteps, #OKCancelButtons {
@@ -600,6 +600,20 @@ ul {
 }
 .topcoat-icon--delete {
     background: url("images/delete.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--edit {
+    background: url("../svg/pencil.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--search {
+    background: url("../svg/search.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;

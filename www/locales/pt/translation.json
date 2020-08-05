@@ -283,6 +283,9 @@
         "lblStartTyping": "Start typing...",
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
+        "lblUseTranslation": "Use this translation",
+        "lblEditTranslation": "Edit this translation",
+        "lblFindInDocuments": "Find in documents...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
