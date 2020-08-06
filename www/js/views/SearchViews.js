@@ -91,8 +91,9 @@ define(function (require) {
                 "keydown #tgtphrase": "onEditTarget",
                 "click #btnUndo": "onUndoTarget",
                 "click .topcoat-list__item": "onClickRefString",
-                "focus .chap-list__item": "onFocusRefString",
-                "blur .chap-list__item": "onBlurRefString"
+                "click .btnEdit": "onClickEdit",
+                "click .btnSelect": "onClickSelect",
+                "click .btnSearch": "onClickSearch"
             },
             onFocusTarget: function () {
                 // show the undo button, in case the user wants to revert  
@@ -125,10 +126,18 @@ define(function (require) {
 //                    $("#rs-" + index).attr("contenteditable", true); // we can select this item
                 }
             },
-            onFocusRefString: function (event) {
+            // use this refstring as the current adaptation
+            onClickSelect: function (event) {
+                var index = event.currentTarget.id.substr(3);
+            },
+            // edit this refstring
+            onClickEdit: function (event) {
+                var index = event.currentTarget.id.substr(3);
                 
             },
-            onBlurRefString: function (event) {
+            // search for instances of this refstring in the project
+            onClickSearch: function (event) {
+                var index = event.currentTarget.id.substr(3);
                 
             },
             onShow: function () {
