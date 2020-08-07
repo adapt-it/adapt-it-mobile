@@ -975,6 +975,31 @@ div.preview div.block-height {
 .source, .marker {
     word-wrap: break-word;
 }
+.refstring-list__item {
+    background: transparent;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: 16px;
+    line-height: 2rem;
+    margin: 0;
+    min-width: -webkit-fill-available;
+    max-width: 90%;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+.refstring-list__item:focus {
+    background-color: #fff;
+    border: 1px solid #0036ff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px #6fb5f1;
+    color: #454545;
+}
 .target {
     background: transparent;
     background-clip: padding-box;

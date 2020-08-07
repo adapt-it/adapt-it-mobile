@@ -132,8 +132,10 @@ define(function (require) {
             },
             // edit this refstring
             onClickEdit: function (event) {
-                var index = event.currentTarget.id.substr(3);
-                
+                event.stopPropagation();
+                var index = event.currentTarget.id.substr(8);
+                $("#rs-" + index).attr("contenteditable", true); // allow the refstring to be edited
+                $("#rs-" + index).focus();
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {
