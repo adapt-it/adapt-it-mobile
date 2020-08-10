@@ -78,6 +78,8 @@ define(function (require) {
         }),
         KBView = Marionette.LayoutView.extend({
             spObj: null,
+            strOldSP: "",
+            bDirty: false,
             template: Handlebars.compile(tplTargetUnit),
             regions: {
                 container: "#StepContainer"
@@ -91,6 +93,8 @@ define(function (require) {
                 "keydown #tgtphrase": "onEditTarget",
                 "click #btnUndo": "onUndoTarget",
                 "click .topcoat-list__item": "onClickRefString",
+                "keydown .refstring-list__item": "onEditRefString",
+                "blur .refstring-list__item": "onBlurRefString",
                 "click .btnEdit": "onClickEdit",
                 "click .btnSelect": "onClickSelect",
                 "click .btnSearch": "onClickSearch"
@@ -128,7 +132,11 @@ define(function (require) {
             },
             // use this refstring as the current adaptation
             onClickSelect: function (event) {
-                var index = event.currentTarget.id.substr(3);
+                event.stopPropagation();
+                var index = event.currentTarget.id.substr(10);
+                this.strOldSP = $("#tgtPhrase").html();
+                $("#tgtPhrase").html($("#rs-" + index).html());
+                this.bDirty = true;
             },
             // edit this refstring
             onClickEdit: function (event) {
@@ -136,10 +144,21 @@ define(function (require) {
                 var index = event.currentTarget.id.substr(8);
                 $("#rs-" + index).attr("contenteditable", true); // allow the refstring to be edited
                 $("#rs-" + index).focus();
+                this.strOldSP = $("#rs-" + index).html().trim();
+                this.bDirty = false;
+            },
+            // keyboard edit of refstring -- set dirty bit
+            onEditRefString: function () {
+                this.bDirty = true;
+            },
+            // focus leaves refstring edit field -- clear the contenteditable prop on the field
+            onBlurRefString: function (event) {
+                var index = event.currentTarget.id.substr(8);
+                $("#rs-" + index).removeAttr("contenteditable");
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {
-                var index = event.currentTarget.id.substr(3);
+                var index = event.currentTarget.id.substr(8);
                 
             },
             onShow: function () {
