@@ -116,18 +116,15 @@ define(function (require) {
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
-//                    $(".chap-list__item").attr("contenteditable", false); // not editable if not selected
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
                 } else {
                     // get rid of any other visible action bars
-//                    $(".chap-list__item").attr("contenteditable", false); // not editable if not selected
                     $(".topcoat-list__item").removeClass("li-selected");
                     $(".liActions").removeClass("show");
                     // now show this one
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
-//                    $("#rs-" + index).attr("contenteditable", true); // we can select this item
                 }
             },
             // use this refstring as the current adaptation
@@ -153,12 +150,17 @@ define(function (require) {
             },
             // focus leaves refstring edit field -- clear the contenteditable prop on the field
             onBlurRefString: function (event) {
-                var index = event.currentTarget.id.substr(8);
+                var index = event.currentTarget.id.substr(3);
                 $("#rs-" + index).removeAttr("contenteditable");
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {
-                var index = event.currentTarget.id.substr(8);
+                var index = event.currentTarget.id.substr(10);
+                var refstrings = this.model.get("refstring");
+                var src = this.model.get("source");
+                var tgt = refstrings[index].target;
+                // search the db for instances of our source/target pair
+                // (note that the # of hits might not match refstrings[index].n if the KB was imported)
                 
             },
             onShow: function () {

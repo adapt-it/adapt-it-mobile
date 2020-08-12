@@ -1218,6 +1218,18 @@ ul.btns {
     vertical-align: sub;
     width: 25px;
 }
+.btn-cancel {
+	background-image: url("images/cancel.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
 .btn-check {
 	background-image: url("images/checkmark.svg");
     background-position: center;
