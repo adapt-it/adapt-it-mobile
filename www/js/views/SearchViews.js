@@ -87,6 +87,13 @@ define(function (require) {
             initialize: function () {
                 this.render();
             },
+            selectTranslation: function (newSP) {
+                console.log("selectTranslation: enter");
+            },
+            // replace the spelling of a TargetUnit _across the board_. 
+            editTranslation: function (oldSP, newSP) {
+                console.log("editTranslation: enter");
+            },
             events: {
                 "focus #tgtPhrase": "onFocusTarget",
                 "blur #tgtPhrase": "onBlurTarget",
@@ -131,8 +138,46 @@ define(function (require) {
             onClickSelect: function (event) {
                 event.stopPropagation();
                 var index = event.currentTarget.id.substr(10);
+                var newSP = $("#rs-" + index).html().trim();
                 this.strOldSP = $("#tgtPhrase").html();
-                $("#tgtPhrase").html($("#rs-" + index).html());
+                // confirm the change
+                var strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.confirm(strConfirmText, function (buttonIndex) {
+                        if (buttonIndex === 1) {
+                            // update the UI
+                            $("#tgtPhrase").html(newSP);
+                            // update the KB
+                            this.selectTranslation(newSP);
+                            // reset the dirty bit
+                            this.bDirty = false;
+                            this.strOldSP = "";
+                        } else {
+                            // User cancelled -- reset the dirty bit
+                            this.bDirty = false;
+                            this.strOldSP = "";
+                        }
+                    }, i18next.t('view.ttlUseTranslation'));
+                } else {
+                    // in browser
+                    // need to prepend a title to the confirmation dialog 
+                    strConfirmText = i18next.t('view.ttlUseTranslation') + "\n\n" + strConfirmText;
+                    if (confirm(strConfirmText)) {
+                        // update the UI
+                        $("#tgtPhrase").html(newSP);
+                        // update the KB
+                        this.selectTranslation(newSP);
+                        // reset the dirty bit
+                        this.bDirty = false;
+                        this.strOldSP = "";
+                    } else {
+                        // User cancelled -- reset the dirty bit
+                        this.bDirty = false;
+                        this.strOldSP = "";
+                    }
+                }
+
                 this.bDirty = true;
             },
             // edit this refstring
@@ -151,7 +196,46 @@ define(function (require) {
             // focus leaves refstring edit field -- clear the contenteditable prop on the field
             onBlurRefString: function (event) {
                 var index = event.currentTarget.id.substr(3);
+                var newSP = $("#rs-" + index).html().trim();
                 $("#rs-" + index).removeAttr("contenteditable");
+                // did the user change anything?
+                if (this.bDirty === true) {
+                    // field changed -- ask if they want to accept the change
+                    var strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
+                    if (navigator.notification) {
+                        // on mobile device
+                        navigator.notification.confirm(strConfirmText, function (buttonIndex) {
+                            if (buttonIndex === 1) {
+                                // update the KB
+                                this.editTranslation(this.strOldSP, newSP);
+                                // reset the dirty bit
+                                this.bDirty = false;
+                                this.strOldSP = "";
+                            } else {
+                                // User cancelled -- reset the text and dirty bit
+                                $("#rs-" + index).html(this.strOldSP);
+                                this.bDirty = false;
+                                this.strOldSP = "";
+                            }
+                        }, i18next.t('view.lblEditTranslation'));
+                    } else {
+                        // in browser
+                        // need to prepend a title to the confirmation dialog 
+                        strConfirmText = i18next.t('view.lblEditTranslation') + "\n\n" + strConfirmText;
+                        if (confirm(strConfirmText)) {
+                            // update the KB
+                            this.editTranslation(this.strOldSP, newSP);
+                            // reset the dirty bit
+                            this.bDirty = false;
+                            this.strOldSP = "";
+                        } else {
+                            // User cancelled -- reset the text and dirty bit
+                            $("#rs-" + index).html(this.strOldSP);
+                            this.bDirty = false;
+                            this.strOldSP = "";
+                        }
+                    }
+                }
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {

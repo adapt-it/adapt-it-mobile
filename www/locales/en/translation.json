@@ -283,8 +283,11 @@
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
         "lblUseTranslation": "Use this translation",
-        "lblEditTranslation": "Edit this translation",
+        "lblEditTranslation": "Edit translation",
         "lblFindInDocuments": "Find in documents...",
+        "ttlUseTranslation": "Change Translation",
+        "lblOldTranslation": "Old translation:",
+        "lblNewTranslation": "New translation:",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

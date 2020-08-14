@@ -285,6 +285,9 @@
         "lblUseTranslation": "Use this translation",
         "lblEditTranslation": "Edit this translation",
         "lblFindInDocuments": "Find in documents...",
+        "ttlUseTranslation": "Change Translation",
+        "lblOldTranslation": "Old translation:",
+        "lblNewTranslation": "New translation:",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
