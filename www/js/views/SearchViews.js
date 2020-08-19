@@ -87,12 +87,34 @@ define(function (require) {
             initialize: function () {
                 this.render();
             },
-            selectTranslation: function (newSP) {
+            // set the current translation to the provided text
+            selectTranslation: function (newValue) {
                 console.log("selectTranslation: enter");
+                if (window.Application.spList.length > 0) {
+                    // update the KB
+                    // update the SourcePhrase
+                    var sp = window.Application.spList.at(0);
+//                    sp.set("target", newValue));
+                }
+                
             },
-            // replace the spelling of a TargetUnit _across the board_. 
-            editTranslation: function (oldSP, newSP) {
+            // Edit the spelling of a RefString instance. This does a couple things:
+            // - Creates a copy of the original RefString (with a N count of -(n) / not used)
+            // - Change the spelling of the RefString (with N = the old N), so it shows up with the same frequency
+            editTranslation: function (index, newRS) {
                 console.log("editTranslation: enter");
+                var refstrings = this.model.get("refstring");
+                // create a copy with the old value
+                var copyRS = {
+                        'target': refstrings[index].target,
+                        'n': -(refstrings[index].n)
+                    };
+                refstrings.push(copyRS);
+                // set the new value
+                refstrings[index].target = newRS;
+                // save the changes
+                this.model.set('refstring', refstrings, {silent: true});
+                this.model.update();
             },
             events: {
                 "focus #tgtPhrase": "onFocusTarget",
@@ -102,6 +124,8 @@ define(function (require) {
                 "click .topcoat-list__item": "onClickRefString",
                 "keydown .refstring-list__item": "onEditRefString",
                 "blur .refstring-list__item": "onBlurRefString",
+                "click .btnRestore": "onClickRestore",
+                "click .btnDelete": "onClickDelete",
                 "click .btnEdit": "onClickEdit",
                 "click .btnSelect": "onClickSelect",
                 "click .btnSearch": "onClickSearch"
@@ -119,11 +143,15 @@ define(function (require) {
                 
             },
             onClickRefString: function (event) {
-                var index = event.currentTarget.id.substr(3);
+                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
+                    RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>",
+                    refstrings = this.model.get("refstring"),
+                    index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
                     $("#li-" + index).toggleClass("li-selected");
+                    $("#lia-" + index).html(); // clear out any old html actions for this refstring
                     $("#lia-" + index).toggleClass("show");
                 } else {
                     // get rid of any other visible action bars
@@ -132,12 +160,61 @@ define(function (require) {
                     // now show this one
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
+                    if (refstrings[index].n > 0) {
+                        $("#lia-" + index).html(RS_ACTIONS); // normal refstring actions
+                    } else {
+                        $("#lia-" + index).html(RS_HIDDEN); // this refstring is hidden / deleted
+                    }
                 }
+            },
+            // Delete / hide this refstring (i.e., set the n to 0 so it does NOT show in the dropdown)
+            onClickDelete: function (event) {
+                event.stopPropagation();
+                var RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>";
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
+                var refstrings = this.model.get("refstring");
+                // set the N count to -(n) so it no longer displays, BUT we can undelete later if needed
+                refstrings[index].n = -(refstrings[index].n);
+                // re-sort the refstrings
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
+                this.model.set('refstring', refstrings, {silent: true});
+                this.model.update();
+                // set the UI
+                $("#rs-" + index).addClass("deleted");
+                $("#lia-" + index).html(RS_HIDDEN); // hidden refstring actions
+                
+            },
+            // Undelete / unhide this refstring (i.e., set the n to 1 so it show up in the dropdown)
+            onClickRestore: function (event) {
+                event.stopPropagation();
+                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>";
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
+                var refstrings = this.model.get("refstring");
+                // set the N count
+                if (refstrings[index].n < 0) {
+                    refstrings[index].n = -(refstrings[index].n); // invert the N value, so we retain the frequency
+                } else {
+                    // no idea what this was before -- set it to 1 now
+                    refstrings[index].n = 1;
+                }
+                // re-sort the refstrings according to frequency
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
+                this.model.set('refstring', refstrings, {silent: true});
+                this.model.update();
+                // set the UI
+                $("#rs-" + index).removeClass("deleted");
+                $("#lia-" + index).html(RS_ACTIONS); // normal refstring actions
             },
             // use this refstring as the current adaptation
             onClickSelect: function (event) {
                 event.stopPropagation();
-                var index = event.currentTarget.id.substr(10);
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var newSP = $("#rs-" + index).html().trim();
                 this.strOldSP = $("#tgtPhrase").html();
                 // confirm the change
@@ -183,7 +260,7 @@ define(function (require) {
             // edit this refstring
             onClickEdit: function (event) {
                 event.stopPropagation();
-                var index = event.currentTarget.id.substr(8);
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 $("#rs-" + index).attr("contenteditable", true); // allow the refstring to be edited
                 $("#rs-" + index).focus();
                 this.strOldSP = $("#rs-" + index).html().trim();
@@ -195,12 +272,21 @@ define(function (require) {
             },
             // focus leaves refstring edit field -- clear the contenteditable prop on the field
             onBlurRefString: function (event) {
+                var refstrings = this.model.get("refstring");
                 var index = event.currentTarget.id.substr(3);
                 var newSP = $("#rs-" + index).html().trim();
+                var i = 0;
                 $("#rs-" + index).removeAttr("contenteditable");
                 // did the user change anything?
                 if (this.bDirty === true) {
-                    // field changed -- ask if they want to accept the change
+                    // field changed -- is this a duplicate translation?
+//                    for (i = 0; i < refstrings.length; i++) {
+//                        if (refstrings[i].target === newSP) {
+//                            // Duplicate / error
+//                            
+//                        }
+//                    }
+                    // Now ask if they want to accept the change
                     var strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
                     if (navigator.notification) {
                         // on mobile device
@@ -239,7 +325,7 @@ define(function (require) {
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {
-                var index = event.currentTarget.id.substr(10);
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
                 var tgt = refstrings[index].target;
@@ -264,7 +350,14 @@ define(function (require) {
                 this.$el.hammer({domEvents: true, interval: 500});
                 // set the frequency meters for each refstring
                 for (i = 0; i < refstrings.length; i++) {
-                    $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                    if (refstrings[i].n > 0) {
+                        // normal refstring instance
+                        $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                    } else {
+                        // deleted refstring
+                        $("#pct-" + i).width("0%");
+                        $("#rs-" + i).addClass("deleted");
+                    }
                 }
             }
         }),

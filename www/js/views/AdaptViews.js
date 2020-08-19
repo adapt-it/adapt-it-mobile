@@ -169,7 +169,7 @@ define(function (require) {
                         if (refstrings[i].target === oldTargetValue) {
                             found = true;
                             // decrement the refcount until it is -1
-                            // (-1 means "this refstring has been removed")
+                            // (negative value means "this refstring has been removed")
                             if (parseInt(refstrings[i].n, 10) >= 0) {
                                 refstrings[i].n--;
                             }
@@ -258,7 +258,7 @@ define(function (require) {
                     if (refstrings[i].target === targetValue) {
                         found = true;
                         // decrement the refcount until it is -1
-                        // (-1 means "this refstring has been removed")
+                        // (negative value means "this refstring has been removed")
                         if (parseInt(refstrings[i].n, 10) >= 0) {
                             refstrings[i].n--;
                         }

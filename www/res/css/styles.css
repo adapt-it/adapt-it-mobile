@@ -197,6 +197,10 @@ input[type="file"] {
     font-size: 1.1rem;
     font-weight: 800;
 }
+.deleted {
+    color: red;
+    font-style: italic;
+}
 .li-selected {
     background-color: #e9e9e9;
 }
@@ -1265,6 +1269,18 @@ ul.btns {
     margin-right: 6px;
     vertical-align: sub;
     width: 28px;
+}
+.btn-delete{
+	background-image: url("images/delete.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
 }
 .btn-export{
 	background-image: url("../svg/share.svg");
