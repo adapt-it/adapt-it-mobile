@@ -292,6 +292,8 @@
         "lblNewTranslation": "Nova tradução:",
         "dscHiddenTranslation": "Esta tradução foi oculta ou excluída e não será exibida na lista de traduções disponíveis para esta frase.",
         "lblRestoreTranslation": "Restaurar tradução",
+        "ttlDuplicateTranslation": "Duplicate Translation",
+        "errDuplicateTranslation": "This translation already exists for the current source phrase. Click OK to create a different translation, or Cancel to revert the text to the previous translation.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

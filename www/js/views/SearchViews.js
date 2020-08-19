@@ -89,7 +89,7 @@ define(function (require) {
             },
             // set the current translation to the provided text
             selectTranslation: function (newValue) {
-                console.log("selectTranslation: enter");
+                console.log("selectTranslation - new value: " + newValue);
                 if (window.Application.spList.length > 0) {
                     // update the KB
                     // update the SourcePhrase
@@ -102,8 +102,8 @@ define(function (require) {
             // - Creates a copy of the original RefString (with a N count of -(n) / not used)
             // - Change the spelling of the RefString (with N = the old N), so it shows up with the same frequency
             editTranslation: function (index, newRS) {
-                console.log("editTranslation: enter");
                 var refstrings = this.model.get("refstring");
+                console.log("editTranslation - old target: " + refstrings[index].target + ", n: " + refstrings[index].n + ", new value: " + newRS);
                 // create a copy with the old value
                 var copyRS = {
                         'target': refstrings[index].target,
@@ -174,6 +174,7 @@ define(function (require) {
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 // set the N count to -(n) so it no longer displays, BUT we can undelete later if needed
+                console.log("onClickDelete - deleting target: " + refstrings[index].target + ", n: " + refstrings[index].n);
                 refstrings[index].n = -(refstrings[index].n);
                 // re-sort the refstrings
                 refstrings.sort(function (a, b) {
@@ -193,6 +194,7 @@ define(function (require) {
                 var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>";
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
+                console.log("onClickRestore - restoring target: " + refstrings[index].target + ", n: " + refstrings[index].n);
                 // set the N count
                 if (refstrings[index].n < 0) {
                     refstrings[index].n = -(refstrings[index].n); // invert the N value, so we retain the frequency
@@ -267,8 +269,22 @@ define(function (require) {
                 this.bDirty = false;
             },
             // keyboard edit of refstring -- set dirty bit
-            onEditRefString: function () {
-                this.bDirty = true;
+            onEditRefString: function (event) {
+                event.stopPropagation();
+                if (event.keyCode === 27) {
+                    // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards
+                    $(event.currentTarget).html(this.strOldSP);
+                    this.bDirty = false;
+                    this.strOldSP = "";
+                    $(event.currentTarget).blur();
+                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // Enter or Return key pressed -- blur the target
+                    $(event.currentTarget).blur();
+                } else {
+                    // everything else -- set the dirty bit
+                    this.bDirty = true;
+                }
             },
             // focus leaves refstring edit field -- clear the contenteditable prop on the field
             onBlurRefString: function (event) {
@@ -276,18 +292,54 @@ define(function (require) {
                 var index = event.currentTarget.id.substr(3);
                 var newSP = $("#rs-" + index).html().trim();
                 var i = 0;
+                var bDuplicate = false;
+                var strConfirmText = "";
                 $("#rs-" + index).removeAttr("contenteditable");
                 // did the user change anything?
                 if (this.bDirty === true) {
                     // field changed -- is this a duplicate translation?
-//                    for (i = 0; i < refstrings.length; i++) {
-//                        if (refstrings[i].target === newSP) {
-//                            // Duplicate / error
-//                            
-//                        }
-//                    }
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === newSP) {
+                            bDuplicate = true;
+                        }
+                    }
+                    if (bDuplicate === true) {
+                        // Duplicate / error
+                        strConfirmText = i18next.t("view.errDuplicateTranslation");
+                        if (navigator.notification) {
+                            // on mobile device
+                            navigator.notification.confirm(strConfirmText, function (buttonIndex) {
+                                if (buttonIndex === 1) {
+                                    // set focus to the edit field
+                                    $("#rs-" + index).attr("contenteditable", true); // allow the refstring to be edited
+                                    $("#rs-" + index).focus();
+                                } else {
+                                    // Cancel -- revert this RS to its old value
+                                    $("#rs-" + index).html(this.strOldSP);
+                                    this.bDirty = false;
+                                    this.strOldSP = "";
+                                }
+                            }, i18next.t('view.ttlDuplicateTranslation'));
+                        } else {
+                            // in browser
+                            // need to prepend a title to the confirmation dialog 
+                            strConfirmText = i18next.t('view.ttlDuplicateTranslation') + "\n\n" + strConfirmText;
+                            if (confirm(strConfirmText)) {
+                                // OK - set focus to the edit field
+                                $("#rs-" + index).attr("contenteditable", true); // allow the refstring to be edited
+                                $("#rs-" + index).focus();
+                            } else {
+                                // Cancel -- revert this RS to its old value
+                                $("#rs-" + index).html(this.strOldSP);
+                                this.bDirty = false;
+                                this.strOldSP = "";
+                            }
+                        }
+                        // exit out (duplicate translation)
+                        return;
+                    }
                     // Now ask if they want to accept the change
-                    var strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
+                    strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.confirm(strConfirmText, function (buttonIndex) {
