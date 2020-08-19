@@ -285,9 +285,12 @@
         "lblUseTranslation": "Use this translation",
         "lblEditTranslation": "Edit translation",
         "lblFindInDocuments": "Find in documents...",
+        "lblDeleteTranslation": "Delete translation",
         "ttlUseTranslation": "Change Translation",
         "lblOldTranslation": "Old translation:",
         "lblNewTranslation": "New translation:",
+        "dscHiddenTranslation": "This translation has been either hidden or deleted, and will not display in the list of available translations for this source phrase.",
+        "lblRestoreTranslation": "Restore translation",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

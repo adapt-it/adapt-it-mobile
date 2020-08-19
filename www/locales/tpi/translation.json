@@ -282,10 +282,13 @@
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
         "lblUseTranslation": "Use this translation",
         "lblEditTranslation": "Edit this translation",
+        "lblDeleteTranslation": "Delete translation",
         "lblFindInDocuments": "Find in documents...",
         "ttlUseTranslation": "Change Translation",
         "lblOldTranslation": "Old translation:",
         "lblNewTranslation": "New translation:",
+        "dscHiddenTranslation": "This translation has been either hidden or deleted, and will not display in the list of available translations for this source phrase.",
+        "lblRestoreTranslation": "Restore translation",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
