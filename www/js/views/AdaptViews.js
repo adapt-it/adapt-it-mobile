@@ -169,7 +169,7 @@ define(function (require) {
                         if (refstrings[i].target === oldTargetValue) {
                             found = true;
                             // decrement the refcount until it is -1
-                            // (-1 means "this refstring has been removed")
+                            // (negative value means "this refstring has been removed")
                             if (parseInt(refstrings[i].n, 10) >= 0) {
                                 refstrings[i].n--;
                             }
@@ -258,7 +258,7 @@ define(function (require) {
                     if (refstrings[i].target === targetValue) {
                         found = true;
                         // decrement the refcount until it is -1
-                        // (-1 means "this refstring has been removed")
+                        // (negative value means "this refstring has been removed")
                         if (parseInt(refstrings[i].n, 10) >= 0) {
                             refstrings[i].n--;
                         }
@@ -433,6 +433,10 @@ define(function (require) {
                         if (selectedStart !== null) {
                             $(selectedStart).mouseup();
                         }
+                    }
+                    // if there's something selected, enable the show translations menu
+                    if (selectedStart !== null) {
+                        $("#mnuTranslations").removeClass("menu-disabled");
                     }
                 }
                 return this;
@@ -875,6 +879,9 @@ define(function (require) {
                     }
                     // no next edit (reached the first or last pile) --
                 }
+                if (selectedStart !== null) {
+                    $("#mnuTranslations").removeClass("menu-disabled");
+                }
             },
             // Helper method to clear out the selection and disable the toolbar buttons 
             // (Move to S1 in our state machine)
@@ -980,6 +987,9 @@ define(function (require) {
                 // change the class of the mousedown area to let the user know
                 // we're tracking the selection
                 $(event.currentTarget).addClass("ui-selecting");
+                if ($("#mnuTranslations").hasClass("menu-disabled")) {
+                    $("#mnuTranslations").removeClass("menu-disabled");
+                }
             },
             // user is starting to select one or more piles
             selectingPilesMove: function (event) {
@@ -1557,6 +1567,9 @@ define(function (require) {
                     }
                     $("#Placeholder").prop('disabled', false);
                     $("#mnuPlaceholder").prop('disabled', false);
+                }
+                if ($("#mnuTranslations").hasClass("menu-disabled")) {
+                    $("#mnuTranslations").removeClass("menu-disabled");
                 }
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
@@ -3056,6 +3069,10 @@ define(function (require) {
                         $("#mnuRetranslation").prop('disabled', true);
                         $("#mnuPhrase").prop('disabled', true);
                     }
+                    // disable the "more translations" menu
+                    if (!$("#mnuTranslations").hasClass("menu-disabled")) {
+                        $("#mnuTranslations").addClass("menu-disabled");
+                    }
                     selectedStart = null; // clear selection itself
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
@@ -3064,6 +3081,9 @@ define(function (require) {
             },
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
             onKBTranslations: function (event) {
+                if ($("#mnuTranslations").hasClass("menu-disabled")) {
+                    return; // menu not enabled -- get out
+                }
                 if (selectedStart === null) {
                     return; // no selection to look at
                 }

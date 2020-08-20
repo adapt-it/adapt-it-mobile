@@ -197,6 +197,14 @@ input[type="file"] {
     font-size: 1.1rem;
     font-weight: 800;
 }
+.deleted {
+    color: red;
+    font-style: italic;
+}
+.menu-disabled {
+    color: #bbb;
+    background-color: #eee;
+}
 .li-selected {
     background-color: #e9e9e9;
 }
@@ -258,6 +266,10 @@ input[type="file"] {
     display:inline-block; 
     width:100%;
 }
+.tall-link {
+    margin-bottom: 6px;
+    margin-top: 6px;
+}
 
 h1 {
     background: transparent;
@@ -316,8 +328,20 @@ header h3 {
 .liActions {
     border-top: 1px solid #1F7BA5;
     display: none;
-    height: 2.62rem;
+    margin-top: 16px;
     width: 100%;
+}
+.liActions button {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1cm;
+    margin: 0;
+    overflow: visible;
+    text-transform: none;
+    -webkit-appearance: button;
 }
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
@@ -572,7 +596,9 @@ ul {
     text-overflow: ellipsis;
 }
 
-/* AI mobile icons */
+/* AIM topcoat icons --
+    These are usually combined with the topcoat-icon class to create a standalone icon, and do _not_ have a padding.
+*/
 .topcoat-icon--alert {
     background: url("images/alert.svg") no-repeat;
     -webkit-background-size: cover;
@@ -582,13 +608,6 @@ ul {
 }
 .topcoat-icon--cancel {
     background: url("images/cancel.svg") no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    padding: 0;
-}
-.topcoat-icon--check {
-    background: url("images/checkmark.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -965,6 +984,31 @@ div.preview div.block-height {
 .source, .marker {
     word-wrap: break-word;
 }
+.refstring-list__item {
+    background: transparent;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    font: inherit;
+    font-size: 16px;
+    line-height: 2rem;
+    margin: 0;
+    width: calc(100% - 48px);
+    vertical-align: top;
+    word-wrap: break-word;
+}
+.refstring-list__item:focus {
+    background-color: #fff;
+    border: 1px solid #0036ff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px #6fb5f1;
+    color: #454545;
+}
 .target {
     background: transparent;
     background-clip: padding-box;
@@ -1061,6 +1105,31 @@ div.specialtext div.source {
 .fromkb {
     background-color: #ffaaff;
 }
+.meter-dashed {
+    height: 10px;
+    width: 32px;
+    position: relative;
+    background: #aaa;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    padding: 1px;
+    margin-top: 8px;
+    box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+}
+.meter-dashed > span {
+    display: block;
+    height: 100%;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: #279ED8;
+    background-image: linear-gradient(center bottom, rgb(43,194,83) 37%, rgb(84,240,84) 69%);
+    box-shadow: inset 0 2px 9px rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
 
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
 .filter {
@@ -1090,7 +1159,6 @@ div.filter > div {
     display: none;
 }
 
-/* from adapt-it-copy */
 ul.btns {
 	display: block;
 	list-style: none;
@@ -1128,14 +1196,9 @@ ul.btns {
 .btns li :hover {
     color: black;
     font-weight: 400;
-/*    background-color: #eee;*/
 }
 .btns li a :hover {
     border: none;
-}
-span.txt {
-/*    padding-left: 32px;*/
-/*    word-wrap: normal;*/
 }
 .light-bg {
     background-color: ghostwhite;
@@ -1149,14 +1212,43 @@ span.txt {
 .no-bg :hover {
     background-color: transparent;
 }
-span.sprite{
-    background-position: left;
+
+/* AIM buttons -- these have a 6px margin before/after (unlike the topcoat-icon guys above) */
+.btn-adapt{
+	background-image: url("../svg/pencil.svg");
+    background-position: center;
 	background-repeat: no-repeat;
-	display: block;
-    float: left;
-	margin: 0;
-    height: 32px;
-    width: 32px;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-cancel {
+	background-image: url("images/cancel.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-check {
+	background-image: url("images/checkmark.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
 }
 .btn-clipboard{
 	background-image: url("../svg/clipboard.svg");
@@ -1170,8 +1262,32 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
-.btn-db{
-	background-image: url("../svg/db.svg");
+.btn-copyproject{
+	background-image: url("../svg/project-copy.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 28px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 28px;
+}
+.btn-delete{
+	background-image: url("images/delete.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-export{
+	background-image: url("../svg/share.svg");
     background-position: center;
 	background-repeat: no-repeat;
     background-size: contain;
@@ -1184,6 +1300,18 @@ span.sprite{
 }
 .btn-file{
 	background-image: url("../svg/file.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.btn-import{
+	background-image: url("../svg/download.svg");
     background-position: center;
 	background-repeat: no-repeat;
     background-size: contain;
@@ -1218,17 +1346,17 @@ span.sprite{
     vertical-align: sub;
     width: 28px;
 }
-.btn-copyproject{
-	background-image: url("../svg/project-copy.svg");
+.btn-pencil {
+	background-image: url("../svg/pencil.svg");
     background-position: center;
 	background-repeat: no-repeat;
     background-size: contain;
     display: inline-block;
-    height: 28px;
+    height: 25px;
     margin-left: 6px;
     margin-right: 6px;
     vertical-align: sub;
-    width: 28px;
+    width: 25px;
 }
 .btn-search{
 	background-image: url("../svg/search.svg");
@@ -1242,48 +1370,8 @@ span.sprite{
     vertical-align: sub;
     width: 25px;
 }
-.btn-project span.sprite{
-	background-image: url("../svg/project.svg");
-    background-size: 48px 48px;
-}
-.btn-export{
-	background-image: url("../svg/share.svg");
-    background-position: center;
-	background-repeat: no-repeat;
-    background-size: contain;
-    display: inline-block;
-    height: 25px;
-    margin-left: 6px;
-    margin-right: 6px;
-    vertical-align: sub;
-    width: 25px;
-}
 .btn-settings{
 	background-image: url("../svg/settings.svg");
-    background-position: center;
-	background-repeat: no-repeat;
-    background-size: contain;
-    display: inline-block;
-    height: 25px;
-    margin-left: 6px;
-    margin-right: 6px;
-    vertical-align: sub;
-    width: 25px;
-}
-.btn-adapt{
-	background-image: url("../svg/pencil.svg");
-    background-position: center;
-	background-repeat: no-repeat;
-    background-size: contain;
-    display: inline-block;
-    height: 25px;
-    margin-left: 6px;
-    margin-right: 6px;
-    vertical-align: sub;
-    width: 25px;
-}
-.btn-import{
-	background-image: url("../svg/download.svg");
     background-position: center;
 	background-repeat: no-repeat;
     background-size: contain;
