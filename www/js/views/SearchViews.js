@@ -19,6 +19,8 @@ define(function (require) {
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
+        tplRSList       = require('text!tpl/RefStringList.html'),
+        theRefStrings   = Handlebars.compile(tplRSList),
         tplRSContext    = require('text!tpl/RefString.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
         template        = null,
@@ -94,6 +96,8 @@ define(function (require) {
                     // update the KB
                     // update the SourcePhrase
                     var sp = window.Application.spList.at(0);
+                    // Need: prevpunct + target (with copy capitalization) + follpunct
+                    
 //                    sp.set("target", newValue));
                 }
                 
@@ -115,6 +119,34 @@ define(function (require) {
                 // save the changes
                 this.model.set('refstring', refstrings, {silent: true});
                 this.model.update();
+                this.showRefStrings(newRS);
+            },
+            showRefStrings: function (strTarget) {
+                var refstrings = this.model.get("refstring");
+                var i = 0;
+                var selectedIndex = 0;
+                $("#RefStrings").html(theRefStrings(refstrings));
+                // set the frequency meters for each refstring
+                for (i = 0; i < refstrings.length; i++) {
+                    if (strTarget.length > 0) {
+                        // looking to select a refstring after redrawing
+                        if (refstrings[i].target === strTarget) {
+                            selectedIndex = i; // found it
+                        }
+                    }
+                    if (refstrings[i].n > 0) {
+                        // normal refstring instance
+                        $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                    } else {
+                        // deleted refstring
+                        $("#pct-" + i).width("0%");
+                        $("#rs-" + i).addClass("deleted");
+                    }
+                }
+                if (strTarget.length > 0) {
+                    // now select the index we found
+                    $("#rs-" + selectedIndex).click();
+                }
             },
             events: {
                 "focus #tgtPhrase": "onFocusTarget",
@@ -170,9 +202,9 @@ define(function (require) {
             // Delete / hide this refstring (i.e., set the n to 0 so it does NOT show in the dropdown)
             onClickDelete: function (event) {
                 event.stopPropagation();
-                var RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>";
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
+                var strSelect = refstrings[index].target;
                 // set the N count to -(n) so it no longer displays, BUT we can undelete later if needed
                 console.log("onClickDelete - deleting target: " + refstrings[index].target + ", n: " + refstrings[index].n);
                 refstrings[index].n = -(refstrings[index].n);
@@ -183,17 +215,15 @@ define(function (require) {
                 });
                 this.model.set('refstring', refstrings, {silent: true});
                 this.model.update();
-                // set the UI
-                $("#rs-" + index).addClass("deleted");
-                $("#lia-" + index).html(RS_HIDDEN); // hidden refstring actions
-                
+                // redraw / select deleted refstring
+                this.showRefStrings(strSelect);
             },
             // Undelete / unhide this refstring (i.e., set the n to 1 so it show up in the dropdown)
             onClickRestore: function (event) {
                 event.stopPropagation();
-                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>";
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
+                var strSelect = refstrings[index].target;
                 console.log("onClickRestore - restoring target: " + refstrings[index].target + ", n: " + refstrings[index].n);
                 // set the N count
                 if (refstrings[index].n < 0) {
@@ -209,9 +239,8 @@ define(function (require) {
                 });
                 this.model.set('refstring', refstrings, {silent: true});
                 this.model.update();
-                // set the UI
-                $("#rs-" + index).removeClass("deleted");
-                $("#lia-" + index).html(RS_ACTIONS); // normal refstring actions
+                // redraw / select restored refstring
+                this.showRefStrings(strSelect);
             },
             // use this refstring as the current adaptation
             onClickSelect: function (event) {
@@ -280,7 +309,7 @@ define(function (require) {
                     $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // Enter or Return key pressed -- blur the target
-                    $(event.currentTarget).blur();
+                    this.onBlurRefString(event);
                 } else {
                     // everything else -- set the dirty bit
                     this.bDirty = true;
@@ -345,7 +374,7 @@ define(function (require) {
                         navigator.notification.confirm(strConfirmText, function (buttonIndex) {
                             if (buttonIndex === 1) {
                                 // update the KB
-                                this.editTranslation(this.strOldSP, newSP);
+                                this.editTranslation(index, newSP);
                                 // reset the dirty bit
                                 this.bDirty = false;
                                 this.strOldSP = "";
@@ -362,7 +391,7 @@ define(function (require) {
                         strConfirmText = i18next.t('view.lblEditTranslation') + "\n\n" + strConfirmText;
                         if (confirm(strConfirmText)) {
                             // update the KB
-                            this.editTranslation(this.strOldSP, newSP);
+                            this.editTranslation(index, newSP);
                             // reset the dirty bit
                             this.bDirty = false;
                             this.strOldSP = "";
@@ -388,8 +417,6 @@ define(function (require) {
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
-                var refstrings = this.model.get("refstring");
-                var i = 0;
                 if (window.Application.spList.length > 0) {
                     // found a sourcephrase -- fill out the UI
                     var sp = window.Application.spList.at(0);
@@ -400,17 +427,8 @@ define(function (require) {
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
                 this.$el.hammer({domEvents: true, interval: 500});
-                // set the frequency meters for each refstring
-                for (i = 0; i < refstrings.length; i++) {
-                    if (refstrings[i].n > 0) {
-                        // normal refstring instance
-                        $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
-                    } else {
-                        // deleted refstring
-                        $("#pct-" + i).width("0%");
-                        $("#rs-" + i).addClass("deleted");
-                    }
-                }
+                // display the refstrings (and their relative frequency)
+                this.showRefStrings(""); // empty param --> don't select anything
             }
         }),
         

@@ -201,6 +201,10 @@ input[type="file"] {
     color: red;
     font-style: italic;
 }
+.menu-disabled {
+    color: #bbb;
+    background-color: #eee;
+}
 .li-selected {
     background-color: #e9e9e9;
 }

@@ -12,11 +12,6 @@
         <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
         <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang"></div><div class="emphasized center"><span id="tgtPhrase" contenteditable="true"></span></div></div></div>
         <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}} <span class="right">Frequency</span></div>
-        <ul class="topcoat-list__container chapter-list" id="RefStrings">
-            {{#each refstring}}
-            <li class="topcoat-list__item" id="li-{{@index}}"><div class="big-link" id='list-rs-{{@index}}'><div id="rs-{{@index}}" class="chap-list__item emphasized refstring-list__item">{{this.target}}</div><span class="meter-dashed right"><span id="pct-{{@index}}" class="pct"></span></span></div><div class="liActions" id='lia-{{@index}}'></div></li>
-            {{/each}}
-        </ul>
-        <div id="theRef"></div>
+        <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
     </div>
 </div>    
