@@ -23,6 +23,10 @@ define(function (require) {
         theRefStrings   = Handlebars.compile(tplRSList),
         tplRSContext    = require('text!tpl/RefString.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
+        punctsSource    = [],
+        punctsTarget    = [],
+        caseSource      = [],
+        caseTarget      = [],
         template        = null,
         
         NoChildrenView = Marionette.ItemView.extend({
@@ -91,14 +95,72 @@ define(function (require) {
             },
             // set the current translation to the provided text
             selectTranslation: function (newValue) {
+                var refstrings = this.model.get("refstring");
+                var i = 0;
+                var target = newValue.trim();
+                var targetIdx = 0;
                 console.log("selectTranslation - new value: " + newValue);
                 if (window.Application.spList.length > 0) {
                     // update the KB
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === newValue) {
+                            refstrings[i].n++; // increment the new value
+                        } else if (refstrings[i].target === $("#srcPhrase").html()) {
+                            refstrings[i].n--; // decrement the old value
+                        }
+                    }
+                    this.model.set('refstring', refstrings, {silent: true});
+                    this.model.update();
                     // update the SourcePhrase
                     var sp = window.Application.spList.at(0);
+                    var source = sp.get("source");
+                    var project = window.Application.currentProject;
+                    var tmpString = "";
+                    var prepuncts = sp.get('prepuncts');
+                    var follpuncts = sp.get('follpuncts');
+
                     // Need: prevpunct + target (with copy capitalization) + follpunct
-                    
-//                    sp.set("target", newValue));
+                    if (project.get('AutoCapitalization') === 'true' && project.get('SourceHasUpperCase') === 'true') {
+                        // check for caps in the source, transfer the equivalent to the target string
+                        for (i = 0; i < caseSource.length; i++) {
+                            if (caseSource[i].charAt(1) === source.charAt(0)) {
+                                for (targetIdx = 0; targetIdx < caseTarget.length; targetIdx++) {
+                                    if (caseTarget[targetIdx].charAt(0) === target.charAt(0)) {
+                                        // found the target char -- build and return the auto-capped string
+                                        target = caseTarget[targetIdx].charAt(1) + target.substr(1);
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                    // target is now auto-capitalized; now add the punctuation
+                    if (project.get('CopyPunctuation') === 'true') {
+                        // copy punctuation -- start with prepuncts
+                        for (i = 0; i < prepuncts.length; i++) {
+                            // if this character is in the mapping, add the corresponding character
+                            if (punctsSource.indexOf(prepuncts.substr(i, 1)) > -1) {
+                                tmpString += punctsTarget[punctsSource.indexOf(prepuncts.substr(i, 1))];
+                            } else {
+                                // not there -- just add the character itself
+                                tmpString += prepuncts[i];
+                            }
+                        }
+                        // prepend the prepuncts? Preposterous.
+                        target = tmpString + target;
+                        // now figure out the following puncts
+                        for (i = 0; i < follpuncts.length; i++) {
+                            // if this character is in the mapping, add the corresponding character
+                            if (punctsSource.indexOf(follpuncts.substr(i, 1)) > -1) {
+                                target += punctsTarget[punctsSource.indexOf(follpuncts.substr(i, 1))];
+                            } else {
+                                // not there -- just add the character itself
+                                target += follpuncts[i];
+                            }
+                        }
+                    }
+                    // update the model with the new target text
+                    sp.save({target: target});
                 }
                 
             },
@@ -194,6 +256,10 @@ define(function (require) {
                     $("#lia-" + index).toggleClass("show");
                     if (refstrings[index].n > 0) {
                         $("#lia-" + index).html(RS_ACTIONS); // normal refstring actions
+                        if ($("#rs" + index).html() === $("#srcPhrase").html()) {
+                            // this is the current translation -- disable the "set translation" button
+                            $("#btnSelect").disable();
+                        }
                     } else {
                         $("#lia-" + index).html(RS_HIDDEN); // this refstring is hidden / deleted
                     }
@@ -426,6 +492,17 @@ define(function (require) {
                 // fill current translation info
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
+                // load the source / target punctuation pairs
+                window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
+                    punctsSource.push(elt.s);
+                    punctsTarget.push(elt.t);
+                });
+                // load the source / target case pairs
+                window.Application.currentProject.get('CasePairs').forEach(function (elt, idx, array) {
+                    caseSource.push(elt.s);
+                    caseTarget.push(elt.t);
+                });
+                
                 this.$el.hammer({domEvents: true, interval: 500});
                 // display the refstrings (and their relative frequency)
                 this.showRefStrings(""); // empty param --> don't select anything
