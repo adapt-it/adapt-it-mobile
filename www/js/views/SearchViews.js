@@ -91,6 +91,7 @@ define(function (require) {
                 container: "#StepContainer"
             },
             initialize: function () {
+                this.spList = new spModels.SourcePhraseCollection();
                 this.render();
             },
             // set the current translation to the provided text
@@ -162,7 +163,6 @@ define(function (require) {
                     // update the model with the new target text
                     sp.save({target: target});
                 }
-                
             },
             // Edit the spelling of a RefString instance. This does a couple things:
             // - Creates a copy of the original RefString (with a N count of -(n) / not used)
@@ -237,7 +237,7 @@ define(function (require) {
                 
             },
             onClickRefString: function (event) {
-                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
+                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
                     RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>",
                     refstrings = this.model.get("refstring"),
                     index = event.currentTarget.id.substr(3);
@@ -472,12 +472,56 @@ define(function (require) {
             },
             // search for instances of this refstring in the project
             onClickSearch: function (event) {
+                event.stopPropagation();
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
                 var tgt = refstrings[index].target;
-                // search the db for instances of our source/target pair
-                // (note that the # of hits might not match refstrings[index].n if the KB was imported)
+                var i = 0;
+                var count = 0;
+                var strRefStrings = "";
+                var spInstances = this.spList.filter(function (element) {
+                    return (element.attributes.target === tgt);
+                });
+                // Toggle the visibility of the search results
+                if ($("#rsResults").hasClass("show")) {
+                    // hide it
+                    $("#rsResults").html(); // clear out any old html actions for this refstring
+                    $("#rsResults").toggleClass("show");
+                } else {
+                    // get rid of any other visible action bars
+                    $(".rsResults").html(); // clear out any old html actions for this refstring
+                    $(".rsResults").removeClass("show");
+                    // now show this one
+                    $("#rsResults").toggleClass("show");
+                    // filter out instances of our source/target pair
+                    // (note that the # of hits might not match refstrings[index].n if the KB was imported, or if they've been
+                    // editing the KB instances here)
+                    strRefStrings = "<div class=\"topcoat-list__header\">" + i18next.t("view.lblTotal") + " " + spInstances.length + "</div>";
+                    console.log("Translation (" + src + ", " + tgt + ") found " + spInstances.length + " times in project.");
+                    if (spInstances.length > 0) {
+                        strRefStrings += "<ul class=\"topcoat-list__container\">";
+                        for (i = 0; i < spInstances.length; i++) {
+                            if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
+                                // add list item with count from the last grouping
+                                strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[i].get("chapterid"), subtotal: count}) + "</li>";
+                                // reset the count
+                                count = 1;
+                            } else {
+                                count++;
+                            }
+                        }
+                        // add the last item
+                        strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[spInstances.length - 1].get("chapterid"), subtotal: count}) + "</li>";
+                        strRefStrings += "</ul>";
+                    }
+                    // populate the list
+                    $("#rsResults").html(strRefStrings);
+//                if (occurances.length > 0) {
+//                    // found at least one instance of this refstring in the project
+                    // search href = #adapt/{{this.chapterid}}
+//                }
+                }
                 
             },
             onShow: function () {
@@ -488,6 +532,8 @@ define(function (require) {
                     var sp = window.Application.spList.at(0);
                     $("#srcPhrase").html(sp.get("source"));
                     $("#tgtPhrase").html(sp.get("target"));
+                    // populate the spList (all the times the source shows up in the project)
+                    this.spList.fetch({reset: true, data: {source: sp.get("source")}});
                 }
                 // fill current translation info
                 $("#lblSourceLang").html(srcLang);

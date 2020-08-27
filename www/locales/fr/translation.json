@@ -291,8 +291,10 @@
         "lblNewTranslation": "Nouvelle traduction:",
         "dscHiddenTranslation": "Cette traduction a été soit masquée, soit supprimée et ne s'affichera pas dans la liste des traductions disponibles pour cette phrase.",
         "lblRestoreTranslation": "Restaurer la traduction",
-        "ttlDuplicateTranslation": "Duplicate Translation",
-        "errDuplicateTranslation": "This translation already exists for the current source phrase. Click OK to create a different translation, or Cancel to revert the text to the previous translation.",
+        "lblTotal": "Somme totale:",
+        "lblChapterInstances": "__chapter__ (__subtotal__ instances)",
+        "ttlDuplicateTranslation": "Cette traduction existe déjà",
+        "errDuplicateTranslation": "Cette traduction existe déjà pour le texte actuel. Cliquez sur OK pour créer une traduction différente ou sur Annuler pour rétablir le texte à la traduction précédente.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

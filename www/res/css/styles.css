@@ -325,6 +325,9 @@ header h3 {
     vertical-align: top;
     width: calc(50% - 12px); /* overridden on smaller screens */
 }
+.rsResults {
+    display: none;
+}
 .liActions {
     border-top: 1px solid #1F7BA5;
     display: none;

@@ -362,6 +362,8 @@ define(function (require) {
         SourcePhraseListView = Marionette.CollectionView.extend({
             chapterid: 0,
             chapterName: "",
+            spSearchList: null,
+            spSearchIndex: 0,
 
             template: Handlebars.compile(tplSourcePhraseList),
 

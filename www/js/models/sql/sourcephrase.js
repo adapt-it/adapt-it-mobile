@@ -134,8 +134,6 @@ define(function (require) {
             comparator: "order",
 
             resetFromDB: function () {
-                var i = 0,
-                    len = 0;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
                 }, function (err) {
@@ -202,7 +200,11 @@ define(function (require) {
             },
 
             sync: function (method, model, options) {
-                var coll = null;
+                var len = 0;
+                var i = 0;
+                var retValue = null;
+                var deferred = null;
+                var results = null;
                 switch (method) {
                 case 'create':
                     options.success(model);
@@ -214,15 +216,11 @@ define(function (require) {
                         findById(options.data.spid).done(function (data) {
                             options.success(data);
                         });
-                    } else if (options.data.hasOwnProperty('translation')) {
+                    } else if (options.data.hasOwnProperty('source')) {
                         // find all instances of a specific translation
-                        var deferred = $.Deferred();
-                        var src = options.data.translation.src;
-                        var tgt = options.data.translation.tgt;
-                        var len = 0;
-                        var i = 0;
-                        var retValue = null;
-                        var results = []; // ALWAYS retrieve this dataset from the db
+                        deferred = $.Deferred();
+                        var src = options.data.source;
+                        results = []; // ALWAYS retrieve this dataset from the db
                         if (results.length === 0) {
                             window.Application.db.transaction(function (tx) {
                                 tx.executeSql("SELECT * FROM sourcephrase WHERE source=? ORDER BY norder;", [src], function (tx, res) {
@@ -235,9 +233,9 @@ define(function (require) {
                                         sp.on("change", sp.save, sp);
                                     }
                                     // return the filtered results (now that we have them)
-                                    console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
+                                    console.log("SELECT ok: " + res.rows.length + " sourcephrases for source: " + src);
                                     retValue = sourcephrases.filter(function (element) {
-                                        return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
+                                        return element.attributes.source.toLowerCase().indexOf(src) > -1;
                                     });
                                     options.success(retValue);
                                     deferred.resolve(retValue);
@@ -250,12 +248,9 @@ define(function (require) {
                     } else if (options.data.hasOwnProperty('chapterid')) {
                         // find all sourcephrase for the selected chapter
                         // (might need to get them from the db)
-                        var deferred = $.Deferred();
+                        deferred = $.Deferred();
                         var chapterid = options.data.chapterid;
-                        var len = 0;
-                        var i = 0;
-                        var retValue = null;
-                        var results = sourcephrases.filter(function (element) {
+                        results = sourcephrases.filter(function (element) {
                             return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
                         });
                         if (results.length === 0) {
