@@ -373,6 +373,16 @@ define(function (require) {
                 // - one right now to say "please wait..."
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
+                // clean up -- if we have a searchList on the application, but this chapter isn't in that searchList,
+                // clear out the list
+                if (window.Application.searchList !== null) {
+                    var cid = this.options.chapterid;
+                    var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
+                    if (obj.length === 0) {
+                        // search list doesn't contain this chapter -- nuke it
+                        window.Application.searchList === null;
+                    }
+                }
             },
             addOne: function (SourcePhrase) {
 //                console.log("SourcePhraseListView::addOne");
@@ -397,43 +407,46 @@ define(function (require) {
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
-                    if (project && project.get('lastAdaptedSPID').length > 0) {
-                        // yes -- select it
-                        isSelecting = true;
-                        if ($('#' + project.get('lastAdaptedSPID')).length !== 0) {
-                            // everything's okay -- select the last adapted SPID
-                            selectedStart = $('#' + project.get('lastAdaptedSPID')).get(0);
-                            selectedEnd = selectedStart;
-                            idxStart = $(selectedStart).index() - 1;
-                            idxEnd = idxStart;
-                            // scroll to it if necessary (which it probably is)
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-                            console.log("scrollTop: " + top);
-                            $("#content").scrollTop(top);
-                            lastOffset = top;
-                            // now select it
-                            $(selectedStart).mouseup();
+                    if (project) {
+                        if (window.Application.searchList !== null) {
+                            // we're searching for a translation -- set the selected SPID to the first hit in this chapter
+                            var cid = this.options.chapterid;
+                            var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
+                            project.set('lastAdaptedSPID', obj[0].attributes.spid);
+                        } 
+                        if (project.get('lastAdaptedSPID').length > 0) {
+                            // not searching, but there is a sourcephrase ID from our last session -- select it now
+                            isSelecting = true;
+                            if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                                console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                                // everything's okay -- select the last adapted SPID
+                                selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                                selectedEnd = selectedStart;
+                                idxStart = $(selectedStart).index() - 1;
+                                idxEnd = idxStart;
+                                // select it
+                                $(selectedStart).mouseup();
+                            } else {
+                                // for some reason the last adapted SPID has gotten out of sync --
+                                // select the first block instead
+                                selectedStart = $(".pile").first().get(0);
+                                selectedEnd = selectedStart;
+                                idxStart = $(selectedStart).index() - 1;
+                                idxEnd = idxStart;
+                                if (selectedStart !== null) {
+                                    $(selectedStart).mouseup();
+                                }
+                            }
                         } else {
-                            // for some reason the last adapted SPID has gotten out of sync --
-                            // select the first block instead
+                            // no last adapted SPID defined -- select the first block
+                            isSelecting = true;
                             selectedStart = $(".pile").first().get(0);
                             selectedEnd = selectedStart;
-                            idxStart = $(selectedStart).index() - 1;
+                            idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
                             idxEnd = idxStart;
                             if (selectedStart !== null) {
-//                                $(selectedStart).find('.source').mouseup();
                                 $(selectedStart).mouseup();
                             }
-                        }
-                    } else {
-                        // no last adapted SPID defined -- select the first block
-                        isSelecting = true;
-                        selectedStart = $(".pile").first().get(0);
-                        selectedEnd = selectedStart;
-                        idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
-                        idxEnd = idxStart;
-                        if (selectedStart !== null) {
-                            $(selectedStart).mouseup();
                         }
                     }
                     // if there's something selected, enable the show translations menu
