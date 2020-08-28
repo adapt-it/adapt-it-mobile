@@ -45,43 +45,6 @@ define(function (require) {
             }
         }),
         
-        RefStringsView = Marionette.ItemView.extend({
-            index: 0,
-            TU: null,
-            refList: null,
-            template: Handlebars.compile(tplRSContext),
-            events: {
-                "click #Prev": "onPrevRef",
-                "click #Next": "onNextRef",
-                "click #Close": "onClose"
-            },
-            onPrevRef: function () {
-                if (this.index > 0) {
-                    this.index--;
-                    this.ShowRef();
-                }
-            },
-            onNextRef: function () {
-                if (this.index < this.model.n) {
-                    this.index++;
-                    this.ShowRef();
-                }
-            },
-            onClose: function () {
-                
-            },
-            ShowRef: function () {
-                // show the context[index] for this refstring, where [index] < n (total # of references in project)
-                if (this.TU === null) {
-                    return; // get out -- nothing to look up
-                }
-                // onShow? create filtered SourcePhraseList refList --> SELECT * from sourcephrase where source=this.TU.source and target=this.model.get("target")
-                // this.refList[index]
-                // -> Find the reference for this SourcePhrase
-                // this.refList[index].chapterid
-                // -> Go back until punctuation, then forward until punctuation
-            }
-        }),
         KBView = Marionette.LayoutView.extend({
             spObj: null,
             strOldSP: "",
@@ -222,7 +185,8 @@ define(function (require) {
                 "click .btnDelete": "onClickDelete",
                 "click .btnEdit": "onClickEdit",
                 "click .btnSelect": "onClickSelect",
-                "click .btnSearch": "onClickSearch"
+                "click .btnSearch": "onClickSearch",
+                "click .btnSearchItem": "onClickSearchItem"
             },
             onFocusTarget: function () {
                 // show the undo button, in case the user wants to revert  
@@ -480,6 +444,7 @@ define(function (require) {
                 var i = 0;
                 var count = 0;
                 var strRefStrings = "";
+                var chapName = "";
                 var spInstances = this.spList.filter(function (element) {
                     return (element.attributes.target === tgt);
                 });
@@ -500,11 +465,14 @@ define(function (require) {
                     strRefStrings = "<div class=\"topcoat-list__header\">" + i18next.t("view.lblTotal") + " " + spInstances.length + "</div>";
                     console.log("Translation (" + src + ", " + tgt + ") found " + spInstances.length + " times in project.");
                     if (spInstances.length > 0) {
+                        // set the application's search list, in case the user decides to go looking at individual instances
+                        window.Application.searchList = spInstances;
                         strRefStrings += "<ul class=\"topcoat-list__container\">";
                         for (i = 0; i < spInstances.length; i++) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
+                                chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[i].get("chapterid")}).get("name");
                                 // add list item with count from the last grouping
-                                strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[i].get("chapterid"), count: count}) + "</li>";
+                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
                                 // reset the count
                                 count = 1;
                             } else {
@@ -512,16 +480,24 @@ define(function (require) {
                             }
                         }
                         // add the last item
-                        strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[spInstances.length - 1].get("chapterid"), count: count}) + "</li>";
+                        chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[spInstances.length - 1].get("chapterid")}).get("name");
+                        // add list item with count from the last grouping
+                        strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[spInstances.length - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
                         strRefStrings += "</ul>";
                     }
                     // populate the list
                     $("#rsResults").html(strRefStrings);
-//                if (occurances.length > 0) {
-//                    // found at least one instance of this refstring in the project
-                    // search href = #adapt/{{this.chapterid}}
-//                }
                 }
+            },
+            // User clicked on one of the search results for a RefString -- open the chapter
+            onClickSearchItem: function (event) {
+                event.stopPropagation();
+                // get the chapterid we want to search in
+                // (note: the searchList was already populated in onClickSearch() above)
+                var cid = event.currentTarget.id.substr(5);
+                console.log("onClickSearchItem - searching chapterid: " + cid);
+                // navigate to the adapt page
+                window.location.href = "#adapt/" + cid;
                 
             },
             onShow: function () {
@@ -640,7 +616,6 @@ define(function (require) {
             
     return {
         KBView: KBView,
-        RefStringsView: RefStringsView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView
     };

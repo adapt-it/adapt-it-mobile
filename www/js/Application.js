@@ -75,6 +75,7 @@ define(function (require) {
 
         Application = Marionette.Application.extend({
             filterlist: "",
+            searchList: null,
             currentProject: null,
             localURLs: [],
             usingImportedKB: false,
