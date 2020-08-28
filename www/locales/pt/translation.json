@@ -293,7 +293,8 @@
         "dscHiddenTranslation": "Esta tradução foi oculta ou excluída e não será exibida na lista de traduções disponíveis para esta frase.",
         "lblRestoreTranslation": "Restaurar tradução",
         "lblTotal": "Soma total:",
-        "lblChapterInstances": "__chapter__ (__subtotal__ instâncias)",
+        "lblChapterInstances": "__chapter__ (__count__ instância)",
+        "lblChapterInstances_plural": "__chapter__ (__count__ instâncias)",
         "ttlDuplicateTranslation": "Esta tradução já existe",
         "errDuplicateTranslation": "Esta tradução já existe para o texto atual. Clique em OK para criar uma tradução diferente ou em Cancelar para reverter o texto para a tradução anterior.",
         "_comment" : "****Add new strings BEFORE this line!****"

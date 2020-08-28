@@ -504,7 +504,7 @@ define(function (require) {
                         for (i = 0; i < spInstances.length; i++) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
                                 // add list item with count from the last grouping
-                                strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[i].get("chapterid"), subtotal: count}) + "</li>";
+                                strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[i].get("chapterid"), count: count}) + "</li>";
                                 // reset the count
                                 count = 1;
                             } else {
@@ -512,7 +512,7 @@ define(function (require) {
                             }
                         }
                         // add the last item
-                        strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[spInstances.length - 1].get("chapterid"), subtotal: count}) + "</li>";
+                        strRefStrings += "<li class=\"topcoat-list__item\">" + i18next.t("view.lblChapterInstances", {chapter: spInstances[spInstances.length - 1].get("chapterid"), count: count}) + "</li>";
                         strRefStrings += "</ul>";
                     }
                     // populate the list
