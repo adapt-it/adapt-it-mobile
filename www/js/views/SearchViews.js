@@ -209,11 +209,12 @@ define(function (require) {
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
                     $("#li-" + index).toggleClass("li-selected");
-                    $("#lia-" + index).html(); // clear out any old html actions for this refstring
+                    $(".liActions").html(""); // clear out any old html actions for this refstring
                     $("#lia-" + index).toggleClass("show");
                 } else {
                     // get rid of any other visible action bars
                     $(".topcoat-list__item").removeClass("li-selected");
+                    $(".liActions").html(""); // clear out any old html actions for this refstring
                     $(".liActions").removeClass("show");
                     // now show this one
                     $("#li-" + index).toggleClass("li-selected");
