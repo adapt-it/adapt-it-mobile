@@ -205,6 +205,7 @@ define(function (require) {
                 var retValue = null;
                 var deferred = null;
                 var results = null;
+                var sql = "";
                 switch (method) {
                 case 'create':
                     options.success(model);
@@ -220,31 +221,28 @@ define(function (require) {
                         // find all instances of a specific translation
                         deferred = $.Deferred();
                         var src = options.data.source;
-                        results = []; // ALWAYS retrieve this dataset from the db
-                        if (results.length === 0) {
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * FROM sourcephrase WHERE source=? ORDER BY norder;", [src], function (tx, res) {
-                                    // populate the sourcephrases collection with the query results
-                                    for (i = 0, len = res.rows.length; i < len; ++i) {
-                                        var sp = new SourcePhrase();
-                                        sp.off("change");
-                                        sp.set(res.rows.item(i));
-                                        sourcephrases.push(sp);
-                                        sp.on("change", sp.save, sp);
-                                    }
-                                    // return the filtered results (now that we have them)
-                                    console.log("SELECT ok: " + res.rows.length + " sourcephrases for source: " + src);
-                                    retValue = sourcephrases.filter(function (element) {
-                                        return element.attributes.source.toLowerCase().indexOf(src) > -1;
-                                    });
-                                    options.success(retValue);
-                                    deferred.resolve(retValue);
-                                });
-                            }, function (e) {
-                                options.error();
-                                deferred.reject(e);
+                        sql = "SELECT * FROM sourcephrase WHERE source LIKE '%" + options.data.source + "%' ORDER BY norder;";
+                        // ALWAYS retrieve this dataset from the db
+                        window.Application.db.transaction(function (tx) {
+                            tx.executeSql(sql, [], function (tx, res) {
+                                // populate the sourcephrases collection with the query results
+                                for (i = 0, len = res.rows.length; i < len; ++i) {
+                                    var sp = new SourcePhrase();
+                                    sp.off("change");
+                                    sp.set(res.rows.item(i));
+                                    sourcephrases.push(sp);
+                                    sp.on("change", sp.save, sp);
+                                }
+                                // return the filtered results (now that we have them)
+                                console.log("SELECT ok: " + res.rows.length + " sourcephrases for source: " + src);
+                                retValue = sourcephrases;
+                                options.success(retValue);
+                                deferred.resolve(retValue);
                             });
-                        }
+                        }, function (e) {
+                            options.error();
+                            deferred.reject(e);
+                        });
                     } else if (options.data.hasOwnProperty('chapterid')) {
                         // find all sourcephrase for the selected chapter
                         // (might need to get them from the db)

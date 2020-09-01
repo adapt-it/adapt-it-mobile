@@ -12,7 +12,6 @@ define(function (require) {
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         i18next     = require('i18n'),
-        hammer      = require('hammerjs'),
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
         spModels        = require('app/models/sourcephrase'),
@@ -21,13 +20,11 @@ define(function (require) {
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
         tplRSList       = require('text!tpl/RefStringList.html'),
         theRefStrings   = Handlebars.compile(tplRSList),
-        tplRSContext    = require('text!tpl/RefString.html'),
         chapTemplate    = Handlebars.compile(tplChapterList),
         punctsSource    = [],
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
-        template        = null,
         
         NoChildrenView = Marionette.ItemView.extend({
             template: Handlebars.compile("<div id=\"nochildren\"></div>")
@@ -55,6 +52,8 @@ define(function (require) {
             },
             initialize: function () {
                 this.spList = new spModels.SourcePhraseCollection();
+                this.spList.clearLocal();
+                this.spList.fetch({reset: true, data: {source: window.Application.spList.at(0).get("source")}});
                 this.render();
             },
             // set the current translation to the provided text
@@ -446,8 +445,21 @@ define(function (require) {
                 var count = 0;
                 var strRefStrings = "";
                 var chapName = "";
+                // filter out sourcephrases that have our target - note that the
+                // sourcephrase contains autocaps + punctuation, so we'll need to ignore them
                 var spInstances = this.spList.filter(function (element) {
-                    return (element.attributes.target === tgt);
+                    // are the strings the same? (ignore case)
+                    if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
+                        // strings are equivalent -- return true
+                        return true;
+                    }
+                    // do the strings differ in just punctuation?
+                    var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                    tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
+                    if (tmpVal === tgt.toUpperCase()) {
+                        return true; // string is the same, it just has punctuation tacked on
+                    }
+                    return false; // at least one condition failed -- these strings are not equivalent
                 });
                 // Toggle the visibility of the search results
                 if ($("#rsResults").hasClass("show")) {
@@ -498,8 +510,7 @@ define(function (require) {
                 var cid = event.currentTarget.id.substr(5);
                 console.log("onClickSearchItem - searching chapterid: " + cid);
                 // navigate to the adapt page
-                window.location.href = "#adapt/" + cid;
-                
+                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
@@ -509,8 +520,6 @@ define(function (require) {
                     var sp = window.Application.spList.at(0);
                     $("#srcPhrase").html(sp.get("source"));
                     $("#tgtPhrase").html(sp.get("target"));
-                    // populate the spList (all the times the source shows up in the project)
-                    this.spList.fetch({reset: true, data: {source: sp.get("source")}});
                 }
                 // fill current translation info
                 $("#lblSourceLang").html(srcLang);
@@ -526,7 +535,6 @@ define(function (require) {
                     caseTarget.push(elt.t);
                 });
                 
-                this.$el.hammer({domEvents: true, interval: 500});
                 // display the refstrings (and their relative frequency)
                 this.showRefStrings(""); // empty param --> don't select anything
             }
