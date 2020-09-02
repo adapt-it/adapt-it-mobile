@@ -76,6 +76,7 @@ define(function (require) {
         LongPressSectionStart = null,
         longPressTimeout = null,
         lastOffset = 0,
+        spSearchIndex = 0, // index within window.Application.searchList, if we're searching
         ONE_SPACE = " ",
         
         /////
@@ -363,7 +364,6 @@ define(function (require) {
             chapterid: 0,
             chapterName: "",
             spSearchList: null,
-            spSearchIndex: 0,
 
             template: Handlebars.compile(tplSourcePhraseList),
 
@@ -377,10 +377,16 @@ define(function (require) {
                 // clear out the list
                 if (window.Application.searchList !== null) {
                     var cid = this.options.chapterid;
-                    var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
+                    var obj = window.Application.searchList.filter(function(elt) {
+                        return elt.attributes.chapterid === cid;
+                    });
                     if (obj.length === 0) {
                         // search list doesn't contain this chapter -- nuke it
                         window.Application.searchList === null;
+                        // also hide the search bar if visible
+                        if ($("#SearchBar").hasClass("show")) {
+                            $("#SearchBar").removeClass("show");
+                        }
                     }
                 }
             },
@@ -392,6 +398,7 @@ define(function (require) {
             },
             render: function () {
                 var top = 0;
+                var i = 0;
                 if (this.collection.length === 0) {
                     // nothing to display yet -- show the "please wait" view
                     template = Handlebars.compile(tplLoadingPleaseWait);
@@ -411,9 +418,18 @@ define(function (require) {
                         if (window.Application.searchList !== null) {
                             // we're searching for a translation -- set the selected SPID to the first hit in this chapter
                             var cid = this.options.chapterid;
-                            var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
-                            project.set('lastAdaptedSPID', obj[0].attributes.spid);
-                        } 
+                            for (i = 0; i < window.Application.searchList.length; i++) {
+                                if (window.Application.searchList[i].attributes.spid === cid) {
+                                    spSearchIndex = i; // first item in the list
+                                    break; // we're done searching
+                                }
+                            }
+                            project.set('lastAdaptedSPID', window.Application.searchList[spSearchIndex].attributes.spid);
+                            // show the search bar
+                            if (!($("#SearchBar").hasClass("show"))) {
+                                $("#SearchBar").addClass("show");
+                            }
+                        }
                         if (project.get('lastAdaptedSPID').length > 0) {
                             // not searching, but there is a sourcephrase ID from our last session -- select it now
                             isSelecting = true;
@@ -2882,6 +2898,11 @@ define(function (require) {
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
+                "click #SearchPrevChapter": "onSearchPrevChapter",
+                "click #SearchPrev": "onSearchPrev",
+                "click #SearchNext": "onSearchNext",
+                "click #SearchNextChapter": "onSearchNextChapter",
+                "click #SearchClose": "onSearchClose",
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
@@ -3094,8 +3115,54 @@ define(function (require) {
                     MovingDir = 0;
                 }
             },
+            // User clicked the search previous chapter button -- load the previous chapter in the search results list;
+            // disable the button if we're at the first chapter
+            onSearchPrevChapter: function () {
+                
+            },
+            // User clicked the search previous button -- move to the previous item in the search results list;
+            // wrap around to the end if needed
+            onSearchPrev: function () {
+                var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
+                spSearchIndex--;
+                if (spSearchIndex < 0) {
+                    spSearchIndex = obj.length - 1; // wrap around to end
+                }
+                project.set('lastAdaptedSPID', obj[spSearchIndex].get("spid"));                
+                isSelecting = true;
+                if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                    console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                    // everything's okay -- select the last adapted SPID
+                    selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                    selectedEnd = selectedStart;
+                    idxStart = $(selectedStart).index() - 1;
+                    idxEnd = idxStart;
+                    // select it
+                    $(selectedStart).mouseup();
+                }
+                
+            },
+            // User clicked the search next button -- move to the next item in the search results list;
+            // disable the button if we're at the last hit in this chapter
+            onSearchNext: function () {
+                
+            },
+            // User clicked the search next chapter button -- load the next chapter in the search results list;
+            // disable the button if we're at the last chapter
+            onSearchNextChapter: function () {
+                
+            },
+            // User clicked the close button -- close the search bar and clear out the search results list, 
+            // indicating that we're no longer searching
+            onSearchClose: function () {
+                // hide the search bar
+                $("#SearchBar").removeClass("show");
+                // clear out the list
+                window.Application.searchList.length = 0;
+            },
+            
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
-            onKBTranslations: function (event) {
+            onKBTranslations: function () {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     return; // menu not enabled -- get out
                 }

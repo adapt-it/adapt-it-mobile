@@ -44,6 +44,7 @@ define(function (require) {
         
         KBView = Marionette.LayoutView.extend({
             spObj: null,
+            spInstances: null,
             strOldSP: "",
             bDirty: false,
             template: Handlebars.compile(tplTargetUnit),
@@ -478,8 +479,8 @@ define(function (require) {
                     strRefStrings = "<div class=\"topcoat-list__header\">" + i18next.t("view.lblTotal") + " " + spInstances.length + "</div>";
                     console.log("Translation (" + src + ", " + tgt + ") found " + spInstances.length + " times in project.");
                     if (spInstances.length > 0) {
-                        // set the application's search list, in case the user decides to go looking at individual instances
-                        window.Application.searchList = spInstances;
+                        // set the search list, in case the user decides to go looking at individual instances
+                        this.spInstances = spInstances;
                         strRefStrings += "<ul class=\"topcoat-list__container\">";
                         for (i = 0; i < spInstances.length; i++) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
@@ -510,6 +511,7 @@ define(function (require) {
                 var cid = event.currentTarget.id.substr(5);
                 console.log("onClickSearchItem - searching chapterid: " + cid);
                 // navigate to the adapt page
+                window.Application.searchList = this.spInstances; // going to search for these 
                 window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
