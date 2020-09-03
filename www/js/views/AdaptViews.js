@@ -379,7 +379,7 @@ define(function (require) {
                     });
                     if (obj.length === 0) {
                         // search list doesn't contain this chapter -- nuke it
-                        window.Application.searchList === null;
+                        window.Application.searchList = null;
                         // also hide the search bar if visible
                         if ($("#SearchBar").hasClass("show")) {
                             $("#SearchBar").removeClass("show");
@@ -394,7 +394,6 @@ define(function (require) {
                 this.$('#pile-' + SourcePhrase.get('spid')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
-                var top = 0;
                 var i = 0;
                 if (this.collection.length === 0) {
                     // nothing to display yet -- show the "please wait" view
@@ -412,9 +411,10 @@ define(function (require) {
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
                     if (project) {
-                        if (window.Application.searchList !== null) {
+                        if ((window.Application.searchList !== null) && (window.Application.searchList.length > 0)) {
                             // we're searching for a translation -- set the selected SPID to the first hit in this chapter
                             var cid = this.options.chapterid;
+                            var searchRS = "";
                             for (i = 0; i < window.Application.searchList.length; i++) {
                                 if (window.Application.searchList[i].get("chapterid") === cid) {
                                     spSearchIndex = i; // first item in the list
@@ -423,8 +423,8 @@ define(function (require) {
                             }
                             project.set('lastAdaptedSPID', window.Application.searchList[spSearchIndex].attributes.spid);
                             // show the search bar
-                            if (!($("#SearchBar").hasClass("show"))) {
-                                $("#SearchBar").addClass("show");
+                            if (!($("#SearchBar").hasClass("show-flex"))) {
+                                $("#SearchBar").addClass("show-flex");
                                 $("#content").addClass("with-search");
                             }
                             if (spSearchIndex === 0) {
@@ -435,6 +435,11 @@ define(function (require) {
                                 // can't go forward -- disable the next button
                                 $("#SearchNext").prop('disabled', true);
                             }
+                            searchRS = this.stripPunctuation(this.autoRemoveCaps(window.Application.searchList[spSearchIndex].get("source"), true), true);
+                            searchRS += " -> ";
+                            searchRS += this.stripPunctuation(this.autoRemoveCaps(window.Application.searchList[spSearchIndex].get("target"), false), false);
+                            $("#SearchRS").html(searchRS);
+                            $("#SearchIndex").html("(" + (spSearchIndex + 1) + "/" + window.Application.searchList.length + ")");
                         }
                         if (project.get('lastAdaptedSPID').length > 0) {
                             // not searching, but there is a sourcephrase ID from our last session -- select it now
@@ -3125,7 +3130,8 @@ define(function (require) {
             
             // User clicked the search previous button -- move to the previous item in the search results list;
             // wrap around to the end if needed
-            onSearchPrev: function () {
+            onSearchPrev: function (event) {
+                event.stopPropagation();
                 var spOld = window.Application.searchList[spSearchIndex];
                 // decrement the index and load the sourcephrase
                 spSearchIndex--;
@@ -3143,6 +3149,7 @@ define(function (require) {
                     window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
                 }
                 // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                $("#SearchIndex").html("(" + (spSearchIndex + 1) + "/" + window.Application.searchList.length + ")");
                 project.set('lastAdaptedSPID', spNew.get("spid"));
                 isSelecting = true;
                 if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
@@ -3160,7 +3167,8 @@ define(function (require) {
                                                    
             // User clicked the search next button -- move to the next item in the search results list;
             // disable the button if we're at the last hit in this chapter
-            onSearchNext: function () {
+            onSearchNext: function (event) {
+                event.stopPropagation();
                 var spOld = window.Application.searchList[spSearchIndex];
                 // decrement the index and load the sourcephrase
                 spSearchIndex++;
@@ -3178,6 +3186,7 @@ define(function (require) {
                     window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
                 }
                 // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                $("#SearchIndex").html("(" + (spSearchIndex + 1) + "/" + window.Application.searchList.length + ")");
                 project.set('lastAdaptedSPID', spNew.get("spid"));
                 isSelecting = true;
                 if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
@@ -3197,7 +3206,7 @@ define(function (require) {
             // indicating that we're no longer searching
             onSearchClose: function () {
                 // hide the search bar
-                $("#SearchBar").removeClass("show");
+                $("#SearchBar").removeClass("show-flex");
                 $("#content").removeClass("with-search");
                 // clear out the list
                 if (window.Application.searchList) {

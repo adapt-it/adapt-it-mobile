@@ -330,19 +330,26 @@ header h3 {
 }
 .search-bar {
     display: none;
-    background-color: #D5D9D8;
-    position: absolute;
+    background-color: rgb(215,220,220);
     border-top: 1px solid #1f7ba5;
+    flex-direction: row;
+    justify-content: flex-end;
+    position: absolute;
     top: 57px;
     height: 32px;
     left: 0;
     padding: 0px 1px;
     right: 0;
 }
-span.search {
-    display: inline-block;
-    height: 32px;
-    margin: 0 6px;
+.search-label {
+    padding: 6px;
+}
+#SearchRS {
+    flex-grow: 1;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;   
 }
 button.search {
     border: 1px solid #333;
@@ -1699,7 +1706,9 @@ typeahead styles
 .show {
     display: block;
 }
-
+.show-flex {
+    display: flex;
+}
 /***********
 * media queries - for specific device sizes / screen resolutions
 ***********/
