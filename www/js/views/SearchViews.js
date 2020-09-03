@@ -486,7 +486,7 @@ define(function (require) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
                                 chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[i - 1].get("chapterid")}).get("name");
                                 // add list item with count from the last grouping
-                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
+                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (i - count) + "'></span></div></li>";
                                 // reset the count
                                 count = 1;
                             } else {
@@ -496,7 +496,7 @@ define(function (require) {
                         // add the last item
                         chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[spInstances.length - 1].get("chapterid")}).get("name");
                         // add list item with count from the last grouping
-                        strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[spInstances.length - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
+                        strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[spInstances.length - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (spInstances.length - count) + "'></span></div></li>";
                         strRefStrings += "</ul>";
                     }
                     // populate the list
@@ -509,9 +509,11 @@ define(function (require) {
                 // get the chapterid we want to search in
                 // (note: the searchList was already populated in onClickSearch() above)
                 var cid = event.currentTarget.id.substr(5);
-                console.log("onClickSearchItem - searching chapterid: " + cid);
+                var idx = parseInt($(event.currentTarget).find('.chevron')[0].id.substr(4), 10);
+                console.log("onClickSearchItem - searching chapterid: " + cid + ", SearchIndex: " + idx);
                 // navigate to the adapt page
                 window.Application.searchList = this.spInstances; // going to search for these 
+                window.Application.searchIndex = idx;
                 window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
