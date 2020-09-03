@@ -32,9 +32,6 @@ define(function (require) {
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
-        projModel   = require('app/models/project'),
-        chapterModel = require('app/models/chapter'),
-        bookModel   = require('app/models/book'),
         tplChapter  = require('text!tpl/Chapter.html'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
@@ -377,7 +374,7 @@ define(function (require) {
                 // clear out the list
                 if (window.Application.searchList !== null) {
                     var cid = this.options.chapterid;
-                    var obj = window.Application.searchList.filter(function(elt) {
+                    var obj = window.Application.searchList.filter(function (elt) {
                         return elt.attributes.chapterid === cid;
                     });
                     if (obj.length === 0) {
@@ -419,7 +416,7 @@ define(function (require) {
                             // we're searching for a translation -- set the selected SPID to the first hit in this chapter
                             var cid = this.options.chapterid;
                             for (i = 0; i < window.Application.searchList.length; i++) {
-                                if (window.Application.searchList[i].attributes.spid === cid) {
+                                if (window.Application.searchList[i].get("chapterid") === cid) {
                                     spSearchIndex = i; // first item in the list
                                     break; // we're done searching
                                 }
@@ -428,6 +425,15 @@ define(function (require) {
                             // show the search bar
                             if (!($("#SearchBar").hasClass("show"))) {
                                 $("#SearchBar").addClass("show");
+                                $("#content").addClass("with-search");
+                            }
+                            if (spSearchIndex === 0) {
+                                // can't go back -- disable the back button
+                                $("#SearchPrev").prop('disabled', true);
+                            }
+                            if (spSearchIndex === (window.Application.searchList.length - 1)) {
+                                // can't go forward -- disable the next button
+                                $("#SearchNext").prop('disabled', true);
                             }
                         }
                         if (project.get('lastAdaptedSPID').length > 0) {
@@ -440,6 +446,7 @@ define(function (require) {
                                 selectedEnd = selectedStart;
                                 idxStart = $(selectedStart).index() - 1;
                                 idxEnd = idxStart;
+                                scrollToView(selectedStart);
                                 // select it
                                 $(selectedStart).mouseup();
                             } else {
@@ -450,6 +457,7 @@ define(function (require) {
                                 idxStart = $(selectedStart).index() - 1;
                                 idxEnd = idxStart;
                                 if (selectedStart !== null) {
+                                    scrollToView(selectedStart);
                                     $(selectedStart).mouseup();
                                 }
                             }
@@ -461,6 +469,7 @@ define(function (require) {
                             idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
                             idxEnd = idxStart;
                             if (selectedStart !== null) {
+                                scrollToView(selectedStart);
                                 $(selectedStart).mouseup();
                             }
                         }
@@ -2898,10 +2907,8 @@ define(function (require) {
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
-                "click #SearchPrevChapter": "onSearchPrevChapter",
                 "click #SearchPrev": "onSearchPrev",
                 "click #SearchNext": "onSearchNext",
-                "click #SearchNextChapter": "onSearchNextChapter",
                 "click #SearchClose": "onSearchClose",
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
@@ -3115,20 +3122,28 @@ define(function (require) {
                     MovingDir = 0;
                 }
             },
-            // User clicked the search previous chapter button -- load the previous chapter in the search results list;
-            // disable the button if we're at the first chapter
-            onSearchPrevChapter: function () {
-                
-            },
+            
             // User clicked the search previous button -- move to the previous item in the search results list;
             // wrap around to the end if needed
             onSearchPrev: function () {
-                var obj = window.Application.searchList.filter(function(elt) {return elt.attributes.chapterid === cid});
+                var spOld = window.Application.searchList[spSearchIndex];
+                // decrement the index and load the sourcephrase
                 spSearchIndex--;
-                if (spSearchIndex < 0) {
-                    spSearchIndex = obj.length - 1; // wrap around to end
+                if (spSearchIndex === 0) {
+                    // reached the beginning -- disable the back button
+                    $("#SearchPrev").prop('disabled', true);
+                } else if (spSearchIndex === (window.Application.searchList.length - 2)) {
+                    // now able to go forward -- enable the next button
+                    $("#SearchNext").prop('disabled', false);
                 }
-                project.set('lastAdaptedSPID', obj[spSearchIndex].get("spid"));                
+                var spNew = window.Application.searchList[spSearchIndex];
+                // do we need to load a chapter?
+                if (spNew.get("chapterid") !== spOld.get("chapterid")) {
+                    // yes -- load it now
+                    window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
+                }
+                // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                project.set('lastAdaptedSPID', spNew.get("spid"));
                 isSelecting = true;
                 if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
                     console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
@@ -3138,27 +3153,56 @@ define(function (require) {
                     idxStart = $(selectedStart).index() - 1;
                     idxEnd = idxStart;
                     // select it
+                    scrollToView(selectedStart);
                     $(selectedStart).mouseup();
                 }
-                
             },
+                                                   
             // User clicked the search next button -- move to the next item in the search results list;
             // disable the button if we're at the last hit in this chapter
             onSearchNext: function () {
-                
+                var spOld = window.Application.searchList[spSearchIndex];
+                // decrement the index and load the sourcephrase
+                spSearchIndex++;
+                if (spSearchIndex === (window.Application.searchList.length - 1)) {
+                    // reached the end -- disable the forward button
+                    $("#SearchNext").prop('disabled', true);
+                } else if (spSearchIndex === 1) {
+                    // now able to go back -- enable the back button
+                    $("#SearchPrev").prop('disabled', false);
+                }
+                var spNew = window.Application.searchList[spSearchIndex];
+                // do we need to load a chapter?
+                if (spNew.get("chapterid") !== spOld.get("chapterid")) {
+                    // yes -- load it now
+                    window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
+                }
+                // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                project.set('lastAdaptedSPID', spNew.get("spid"));
+                isSelecting = true;
+                if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                    console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                    // everything's okay -- select the last adapted SPID
+                    selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                    selectedEnd = selectedStart;
+                    idxStart = $(selectedStart).index() - 1;
+                    idxEnd = idxStart;
+                    // select it
+                    scrollToView(selectedStart);
+                    $(selectedStart).mouseup();
+                }
             },
-            // User clicked the search next chapter button -- load the next chapter in the search results list;
-            // disable the button if we're at the last chapter
-            onSearchNextChapter: function () {
                 
-            },
             // User clicked the close button -- close the search bar and clear out the search results list, 
             // indicating that we're no longer searching
             onSearchClose: function () {
                 // hide the search bar
                 $("#SearchBar").removeClass("show");
+                $("#content").removeClass("with-search");
                 // clear out the list
-                window.Application.searchList.length = 0;
+                if (window.Application.searchList) {
+                    window.Application.searchList.length = 0;
+                }
             },
             
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
