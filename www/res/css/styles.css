@@ -781,6 +781,14 @@ ul {
     padding: 0;
 }
 
+.topcoat-icon--search {
+    background: url("../svg/search.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
 .topcoat-icon--item-add {
     background: url("images/plus_pill.svg") no-repeat;
     -webkit-background-size: cover;

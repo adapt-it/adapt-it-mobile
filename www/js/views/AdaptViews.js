@@ -482,6 +482,7 @@ define(function (require) {
                     // if there's something selected, enable the show translations menu
                     if (selectedStart !== null) {
                         $("#mnuTranslations").removeClass("menu-disabled");
+                        $("#mnuFindRS").removeClass("menu-disabled");
                     }
                 }
                 return this;
@@ -926,6 +927,7 @@ define(function (require) {
                 }
                 if (selectedStart !== null) {
                     $("#mnuTranslations").removeClass("menu-disabled");
+                    $("#mnuFindRS").removeClass("menu-disabled");
                 }
             },
             // Helper method to clear out the selection and disable the toolbar buttons 
@@ -1034,6 +1036,9 @@ define(function (require) {
                 $(event.currentTarget).addClass("ui-selecting");
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
+                }
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    $("#mnuFindRS").removeClass("menu-disabled");
                 }
             },
             // user is starting to select one or more piles
@@ -1616,6 +1621,10 @@ define(function (require) {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
                 }
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    $("#mnuFindRS").removeClass("menu-disabled");
+                }
+                
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
                 // initial selection algorithm can be determined
@@ -2280,7 +2289,6 @@ define(function (require) {
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
-                // TODO: save work?
                 var tu = null;
                 var tuid = "";
                 var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
@@ -2298,9 +2306,36 @@ define(function (require) {
                     window.Application.router.navigate("kb/" + tuid, {trigger: true});
                 }
             },
+            // User clicked the Find in Documents menu -- populate the searchList with source phrases
+            // matching the source and target in selectedStart
+            searchForRefString: function () {
+                var dfd = $.Deferred();
+                var strID = $(selectedStart).attr('id');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                var model = this.collection.findWhere({spid: strID});
+                var spList = new spModels.SourcePhraseCollection();
+                $.when(spList.fetch({reset: true, data: {source: model.get("source")}})).done(function () {
+                    window.Application.searchList = spList.filter(function (element) {
+                        // are the strings the same? (ignore case)
+                        if (element.attributes.target.toUpperCase() === model.get("target").toUpperCase()) {
+                            // strings are equivalent -- return true
+                            return true;
+                        }
+                        // do the strings differ in just punctuation?
+                        var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                        tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
+                        if (tmpVal === model.get("target").toUpperCase()) {
+                            return true; // string is the same, it just has punctuation tacked on
+                        }
+                        return false; // at least one condition failed -- these strings are not equivalent
+                    });
+                    dfd.resolve();
+                });
+                return dfd.promise();
+            },
             // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
-            togglePreview: function (event) {
+            togglePreview: function () {
                 if (inPreview === true) {
                     // turn off preview mode
                     $("#chapter").removeClass("preview");
@@ -2919,6 +2954,7 @@ define(function (require) {
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
                 "click #mnuTranslations": "onKBTranslations",
+                "click #mnuFindRS": "onSearchRS",
                 "click #mnuPreview": "togglePreview",
                 "click #mnuHelp": "onHelp"
             },
@@ -3121,6 +3157,9 @@ define(function (require) {
                     if (!$("#mnuTranslations").hasClass("menu-disabled")) {
                         $("#mnuTranslations").addClass("menu-disabled");
                     }
+                    if (!$("#mnuFindRS").hasClass("menu-disabled")) {
+                        $("#mnuFindRS").addClass("menu-disabled");
+                    }
                     selectedStart = null; // clear selection itself
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
@@ -3209,6 +3248,7 @@ define(function (require) {
                 $("#SearchBar").removeClass("show-flex");
                 $("#content").removeClass("with-search");
                 // clear out the list
+                spSearchIndex = 0;
                 if (window.Application.searchList) {
                     window.Application.searchList.length = 0;
                 }
@@ -3233,6 +3273,81 @@ define(function (require) {
                 project.set('lastAdaptedSPID', selectedStart.id.substr(5));
                 this.listView.showTranslations();
             },
+            
+            // search for the selectedStart's RefString, IF there is something in the source and target
+            onSearchRS: function (event) {
+                var searchRS = "";
+                event.stopPropagation();
+                // sanity checks: is this menu disabled? Is there a selection to search for?
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    return;
+                }
+                if (selectedStart === null) {
+                    return; // no selection to look at
+                }
+                // close out any old results
+                this.onSearchClose();
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // Search for matching source phrases
+                var src = $(selectedStart).find('.source').html().trim();
+                var tgt = $(selectedStart).find('.target').html().trim();
+                var spList = new spModels.SourcePhraseCollection();
+//                var ary = null;
+                spList.fetch({
+                    reset: true,
+                    data: {source: src},
+                    success: function(ary) {
+                        console.log("onSearchRS:success");
+                        window.Application.searchList = ary.filter(function (element) {
+                            // are the strings the same? (ignore case)
+                            if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
+                                // strings are equivalent -- return true
+                                return true;
+                            }
+                            // do the strings differ in just punctuation?
+                            var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                            tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
+                            if (tmpVal === tgt.toUpperCase()) {
+                                return true; // string is the same, it just has punctuation tacked on
+                            }
+                            return false; // at least one condition failed -- these strings are not equivalent
+                        });
+                        if (window.Application.searchList.length > 0) {
+                            // if we made it this far, we have at least one search result --
+                            // show the search bar UI
+                            if (!($("#SearchBar").hasClass("show-flex"))) {
+                                $("#SearchBar").addClass("show-flex");
+                                $("#content").addClass("with-search");
+                            }
+                            if (spSearchIndex === 0) {
+                                // can't go back -- disable the back button
+                                $("#SearchPrev").prop('disabled', true);
+                            }
+                            if (spSearchIndex === (window.Application.searchList.length - 1)) {
+                                // can't go forward -- disable the next button
+                                $("#SearchNext").prop('disabled', true);
+                            }
+                            searchRS = src + " -> " + tgt;
+                            $("#SearchRS").html(searchRS);
+                            $("#SearchIndex").html("(" + (spSearchIndex + 1) + "/" + window.Application.searchList.length + ")");
+                        }
+                    },
+                    error: function () {
+                        console.log("onSearchRS");
+                    }
+                });
+                
+                
+                
+//                $.when(this.listView.searchForRefString()).done(function () {
+            },
+            
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
