@@ -484,9 +484,9 @@ define(function (require) {
                         strRefStrings += "<ul class=\"topcoat-list__container\">";
                         for (i = 0; i < spInstances.length; i++) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
-                                chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[i].get("chapterid")}).get("name");
+                                chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[i - 1].get("chapterid")}).get("name");
                                 // add list item with count from the last grouping
-                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
+                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\"></span></div></li>";
                                 // reset the count
                                 count = 1;
                             } else {
