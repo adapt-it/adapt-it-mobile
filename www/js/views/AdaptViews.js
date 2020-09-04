@@ -3182,6 +3182,7 @@ define(function (require) {
                 $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
                 project.set('lastAdaptedSPID', spNew.get("spid"));
                 isSelecting = true;
+                lastTapTime = null; // clear out the last tap -- we just want to select this item
                 if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
                     console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
                     // everything's okay -- select the last adapted SPID
@@ -3219,6 +3220,7 @@ define(function (require) {
                 $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
                 project.set('lastAdaptedSPID', spNew.get("spid"));
                 isSelecting = true;
+                lastTapTime = null; // clear out the last tap -- we just want to select this item
                 if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
                     console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
                     // everything's okay -- select the last adapted SPID
