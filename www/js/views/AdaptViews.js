@@ -3295,7 +3295,7 @@ define(function (require) {
                 spList.fetch({
                     reset: true,
                     data: {source: src},
-                    success: function(ary) {
+                    success: function (ary) {
                         console.log("onSearchRS:success");
                         window.Application.searchList = ary.filter(function (element) {
                             // are the strings the same? (ignore case)
@@ -3312,7 +3312,17 @@ define(function (require) {
                             return false; // at least one condition failed -- these strings are not equivalent
                         });
                         if (window.Application.searchList.length > 0) {
-                            // if we made it this far, we have at least one search result --
+                            // if we made it this far, we have at least one search result (yay!)
+                            // figure out where selectedStart is in the list
+                            var i = 0;
+                            window.Application.searchIndex = 0; // initial value
+                            for (i = 0; i < window.Application.searchList.length; i++) {
+                                if (window.Application.searchList[i].get("spid") === selectedStart.id.substr(5)) {
+                                    // found it -- set the searchIndex value
+                                    window.Application.searchIndex = i;
+                                    break;
+                                }
+                            }
                             // show the search bar UI
                             if (!($("#SearchBar").hasClass("show-flex"))) {
                                 $("#SearchBar").addClass("show-flex");
@@ -3321,10 +3331,14 @@ define(function (require) {
                             if (window.Application.searchIndex === 0) {
                                 // can't go back -- disable the back button
                                 $("#SearchPrev").prop('disabled', true);
+                            } else {
+                                $("#SearchPrev").prop('disabled', false);
                             }
                             if (window.Application.searchIndex === (window.Application.searchList.length - 1)) {
                                 // can't go forward -- disable the next button
                                 $("#SearchNext").prop('disabled', true);
+                            } else {
+                                $("#SearchNext").prop('disabled', false);
                             }
                             searchRS = src + " -> " + tgt;
                             $("#SearchRS").html(searchRS);
