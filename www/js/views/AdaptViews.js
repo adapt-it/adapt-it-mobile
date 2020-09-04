@@ -32,9 +32,6 @@ define(function (require) {
         usfm        = require('utils/usfm'),
         spModels    = require('app/models/sourcephrase'),
         kbModels    = require('app/models/targetunit'),
-        projModel   = require('app/models/project'),
-        chapterModel = require('app/models/chapter'),
-        bookModel   = require('app/models/book'),
         tplChapter  = require('text!tpl/Chapter.html'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
@@ -362,6 +359,7 @@ define(function (require) {
         SourcePhraseListView = Marionette.CollectionView.extend({
             chapterid: 0,
             chapterName: "",
+            spSearchList: null,
 
             template: Handlebars.compile(tplSourcePhraseList),
 
@@ -371,6 +369,22 @@ define(function (require) {
                 // - one right now to say "please wait..."
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
+                // clean up -- if we have a searchList on the application, but this chapter isn't in that searchList,
+                // clear out the list
+                if (window.Application.searchList !== null) {
+                    var cid = this.options.chapterid;
+                    var obj = window.Application.searchList.filter(function (elt) {
+                        return elt.attributes.chapterid === cid;
+                    });
+                    if (obj.length === 0) {
+                        // search list doesn't contain this chapter -- nuke it
+                        window.Application.searchList = null;
+                        // also hide the search bar if visible
+                        if ($("#SearchBar").hasClass("show")) {
+                            $("#SearchBar").removeClass("show");
+                        }
+                    }
+                }
             },
             addOne: function (SourcePhrase) {
 //                console.log("SourcePhraseListView::addOne");
@@ -379,7 +393,6 @@ define(function (require) {
                 this.$('#pile-' + SourcePhrase.get('spid')).find('.target').attr('tabindex', idx++);
             },
             render: function () {
-                var top = 0;
                 if (this.collection.length === 0) {
                     // nothing to display yet -- show the "please wait" view
                     template = Handlebars.compile(tplLoadingPleaseWait);
@@ -395,48 +408,72 @@ define(function (require) {
                     // go back and add the individual piles
                     this.collection.each(this.addOne, this);
                     // Do we have a placeholder from a previous adaptation session?
-                    if (project && project.get('lastAdaptedSPID').length > 0) {
-                        // yes -- select it
-                        isSelecting = true;
-                        if ($('#' + project.get('lastAdaptedSPID')).length !== 0) {
-                            // everything's okay -- select the last adapted SPID
-                            selectedStart = $('#' + project.get('lastAdaptedSPID')).get(0);
-                            selectedEnd = selectedStart;
-                            idxStart = $(selectedStart).index() - 1;
-                            idxEnd = idxStart;
-                            // scroll to it if necessary (which it probably is)
-                            top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
-                            console.log("scrollTop: " + top);
-                            $("#content").scrollTop(top);
-                            lastOffset = top;
-                            // now select it
-                            $(selectedStart).mouseup();
+                    if (project) {
+                        if ((window.Application.searchList !== null) && (window.Application.searchList.length > 0)) {
+                            // we're searching for a translation -- set the selected SPID to the first hit in this chapter
+                            var searchRS = "";
+                            project.set('lastAdaptedSPID', window.Application.searchList[window.Application.searchIndex].attributes.spid);
+                            // show the search bar
+                            if (!($("#SearchBar").hasClass("show-flex"))) {
+                                $("#SearchBar").addClass("show-flex");
+                                $("#content").addClass("with-search");
+                            }
+                            if (window.Application.searchIndex === 0) {
+                                // can't go back -- disable the back button
+                                $("#SearchPrev").prop('disabled', true);
+                            }
+                            if (window.Application.searchIndex === (window.Application.searchList.length - 1)) {
+                                // can't go forward -- disable the next button
+                                $("#SearchNext").prop('disabled', true);
+                            }
+                            searchRS = this.stripPunctuation(this.autoRemoveCaps(window.Application.searchList[window.Application.searchIndex].get("source"), true), true);
+                            searchRS += " -> ";
+                            searchRS += this.stripPunctuation(this.autoRemoveCaps(window.Application.searchList[window.Application.searchIndex].get("target"), false), false);
+                            $("#SearchRS").html(searchRS);
+                            $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
+                        }
+                        if (project.get('lastAdaptedSPID').length > 0) {
+                            // not searching, but there is a sourcephrase ID from our last session -- select it now
+                            isSelecting = true;
+                            if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                                console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                                // everything's okay -- select the last adapted SPID
+                                selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                                selectedEnd = selectedStart;
+                                idxStart = $(selectedStart).index() - 1;
+                                idxEnd = idxStart;
+                                scrollToView(selectedStart);
+                                // select it
+                                $(selectedStart).mouseup();
+                            } else {
+                                // for some reason the last adapted SPID has gotten out of sync --
+                                // select the first block instead
+                                selectedStart = $(".pile").first().get(0);
+                                selectedEnd = selectedStart;
+                                idxStart = $(selectedStart).index() - 1;
+                                idxEnd = idxStart;
+                                if (selectedStart !== null) {
+                                    scrollToView(selectedStart);
+                                    $(selectedStart).mouseup();
+                                }
+                            }
                         } else {
-                            // for some reason the last adapted SPID has gotten out of sync --
-                            // select the first block instead
+                            // no last adapted SPID defined -- select the first block
+                            isSelecting = true;
                             selectedStart = $(".pile").first().get(0);
                             selectedEnd = selectedStart;
-                            idxStart = $(selectedStart).index() - 1;
+                            idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
                             idxEnd = idxStart;
                             if (selectedStart !== null) {
-//                                $(selectedStart).find('.source').mouseup();
+                                scrollToView(selectedStart);
                                 $(selectedStart).mouseup();
                             }
-                        }
-                    } else {
-                        // no last adapted SPID defined -- select the first block
-                        isSelecting = true;
-                        selectedStart = $(".pile").first().get(0);
-                        selectedEnd = selectedStart;
-                        idxStart = $(selectedStart).index() - 1; // BUGBUG why off by one?
-                        idxEnd = idxStart;
-                        if (selectedStart !== null) {
-                            $(selectedStart).mouseup();
                         }
                     }
                     // if there's something selected, enable the show translations menu
                     if (selectedStart !== null) {
                         $("#mnuTranslations").removeClass("menu-disabled");
+                        $("#mnuFindRS").removeClass("menu-disabled");
                     }
                 }
                 return this;
@@ -881,6 +918,7 @@ define(function (require) {
                 }
                 if (selectedStart !== null) {
                     $("#mnuTranslations").removeClass("menu-disabled");
+                    $("#mnuFindRS").removeClass("menu-disabled");
                 }
             },
             // Helper method to clear out the selection and disable the toolbar buttons 
@@ -989,6 +1027,9 @@ define(function (require) {
                 $(event.currentTarget).addClass("ui-selecting");
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
+                }
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    $("#mnuFindRS").removeClass("menu-disabled");
                 }
             },
             // user is starting to select one or more piles
@@ -1571,6 +1612,10 @@ define(function (require) {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
                 }
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    $("#mnuFindRS").removeClass("menu-disabled");
+                }
+                
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
                 // initial selection algorithm can be determined
@@ -2235,7 +2280,6 @@ define(function (require) {
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
-                // TODO: save work?
                 var tu = null;
                 var tuid = "";
                 var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
@@ -2253,9 +2297,36 @@ define(function (require) {
                     window.Application.router.navigate("kb/" + tuid, {trigger: true});
                 }
             },
+            // User clicked the Find in Documents menu -- populate the searchList with source phrases
+            // matching the source and target in selectedStart
+            searchForRefString: function () {
+                var dfd = $.Deferred();
+                var strID = $(selectedStart).attr('id');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                var model = this.collection.findWhere({spid: strID});
+                var spList = new spModels.SourcePhraseCollection();
+                $.when(spList.fetch({reset: true, data: {source: model.get("source")}})).done(function () {
+                    window.Application.searchList = spList.filter(function (element) {
+                        // are the strings the same? (ignore case)
+                        if (element.attributes.target.toUpperCase() === model.get("target").toUpperCase()) {
+                            // strings are equivalent -- return true
+                            return true;
+                        }
+                        // do the strings differ in just punctuation?
+                        var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                        tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
+                        if (tmpVal === model.get("target").toUpperCase()) {
+                            return true; // string is the same, it just has punctuation tacked on
+                        }
+                        return false; // at least one condition failed -- these strings are not equivalent
+                    });
+                    dfd.resolve();
+                });
+                return dfd.promise();
+            },
             // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
-            togglePreview: function (event) {
+            togglePreview: function () {
                 if (inPreview === true) {
                     // turn off preview mode
                     $("#chapter").removeClass("preview");
@@ -2867,10 +2938,14 @@ define(function (require) {
                 "click #Placeholder": "togglePlaceholder",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
+                "click #SearchPrev": "onSearchPrev",
+                "click #SearchNext": "onSearchNext",
+                "click #SearchClose": "onSearchClose",
                 "click #mnuPlaceholder": "togglePlaceholder",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
                 "click #mnuTranslations": "onKBTranslations",
+                "click #mnuFindRS": "onSearchRS",
                 "click #mnuPreview": "togglePreview",
                 "click #mnuHelp": "onHelp"
             },
@@ -3073,14 +3148,107 @@ define(function (require) {
                     if (!$("#mnuTranslations").hasClass("menu-disabled")) {
                         $("#mnuTranslations").addClass("menu-disabled");
                     }
+                    if (!$("#mnuFindRS").hasClass("menu-disabled")) {
+                        $("#mnuFindRS").addClass("menu-disabled");
+                    }
                     selectedStart = null; // clear selection itself
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
                     MovingDir = 0;
                 }
             },
+            
+            // User clicked the search previous button -- move to the previous item in the search results list;
+            // wrap around to the end if needed
+            onSearchPrev: function (event) {
+                event.stopPropagation();
+                var spOld = window.Application.searchList[window.Application.searchIndex];
+                // decrement the index and load the sourcephrase
+                window.Application.searchIndex--;
+                if (window.Application.searchIndex === 0) {
+                    // reached the beginning -- disable the back button
+                    $("#SearchPrev").prop('disabled', true);
+                } else if (window.Application.searchIndex === (window.Application.searchList.length - 2)) {
+                    // now able to go forward -- enable the next button
+                    $("#SearchNext").prop('disabled', false);
+                }
+                var spNew = window.Application.searchList[window.Application.searchIndex];
+                // do we need to load a chapter?
+                if (spNew.get("chapterid") !== spOld.get("chapterid")) {
+                    // yes -- load it now
+                    window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
+                }
+                // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
+                project.set('lastAdaptedSPID', spNew.get("spid"));
+                isSelecting = true;
+                lastTapTime = null; // clear out the last tap -- we just want to select this item
+                if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                    console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                    // everything's okay -- select the last adapted SPID
+                    selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                    selectedEnd = selectedStart;
+                    idxStart = $(selectedStart).index() - 1;
+                    idxEnd = idxStart;
+                    // select it
+                    scrollToView(selectedStart);
+                    $(selectedStart).mouseup();
+                }
+            },
+                                                   
+            // User clicked the search next button -- move to the next item in the search results list;
+            // disable the button if we're at the last hit in this chapter
+            onSearchNext: function (event) {
+                event.stopPropagation();
+                var spOld = window.Application.searchList[window.Application.searchIndex];
+                // decrement the index and load the sourcephrase
+                window.Application.searchIndex++;
+                if (window.Application.searchIndex === (window.Application.searchList.length - 1)) {
+                    // reached the end -- disable the forward button
+                    $("#SearchNext").prop('disabled', true);
+                } else if (window.Application.searchIndex === 1) {
+                    // now able to go back -- enable the back button
+                    $("#SearchPrev").prop('disabled', false);
+                }
+                var spNew = window.Application.searchList[window.Application.searchIndex];
+                // do we need to load a chapter?
+                if (spNew.get("chapterid") !== spOld.get("chapterid")) {
+                    // yes -- load it now
+                    window.Application.router.navigate("adapt/" + spNew.get("chapterid"), {trigger: true});
+                }
+                // if we haven't re-routed, our spid is in this chapter. Go to it now.
+                $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
+                project.set('lastAdaptedSPID', spNew.get("spid"));
+                isSelecting = true;
+                lastTapTime = null; // clear out the last tap -- we just want to select this item
+                if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                    console.log("render: selecting lastAdaptedSPID:" + project.get('lastAdaptedSPID'));
+                    // everything's okay -- select the last adapted SPID
+                    selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                    selectedEnd = selectedStart;
+                    idxStart = $(selectedStart).index() - 1;
+                    idxEnd = idxStart;
+                    // select it
+                    scrollToView(selectedStart);
+                    $(selectedStart).mouseup();
+                }
+            },
+                
+            // User clicked the close button -- close the search bar and clear out the search results list, 
+            // indicating that we're no longer searching
+            onSearchClose: function () {
+                // hide the search bar
+                $("#SearchBar").removeClass("show-flex");
+                $("#content").removeClass("with-search");
+                // clear out the list
+                window.Application.searchIndex = 0;
+                if (window.Application.searchList) {
+                    window.Application.searchList.length = 0;
+                }
+            },
+            
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
-            onKBTranslations: function (event) {
+            onKBTranslations: function () {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     return; // menu not enabled -- get out
                 }
@@ -3098,6 +3266,95 @@ define(function (require) {
                 project.set('lastAdaptedSPID', selectedStart.id.substr(5));
                 this.listView.showTranslations();
             },
+            
+            // search for the selectedStart's RefString, IF there is something in the source and target
+            onSearchRS: function (event) {
+                var searchRS = "";
+                event.stopPropagation();
+                // sanity checks: is this menu disabled? Is there a selection to search for?
+                if ($("#mnuFindRS").hasClass("menu-disabled")) {
+                    return;
+                }
+                if (selectedStart === null) {
+                    return; // no selection to look at
+                }
+                // close out any old results
+                this.onSearchClose();
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                // Search for matching source phrases
+                var src = $(selectedStart).find('.source').html().trim();
+                var tgt = $(selectedStart).find('.target').html().trim();
+                var spList = new spModels.SourcePhraseCollection();
+//                var ary = null;
+                spList.fetch({
+                    reset: true,
+                    data: {source: src},
+                    success: function (ary) {
+                        console.log("onSearchRS:success");
+                        window.Application.searchList = ary.filter(function (element) {
+                            // are the strings the same? (ignore case)
+                            if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
+                                // strings are equivalent -- return true
+                                return true;
+                            }
+                            // do the strings differ in just punctuation?
+                            var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                            tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
+                            if (tmpVal === tgt.toUpperCase()) {
+                                return true; // string is the same, it just has punctuation tacked on
+                            }
+                            return false; // at least one condition failed -- these strings are not equivalent
+                        });
+                        if (window.Application.searchList.length > 0) {
+                            // if we made it this far, we have at least one search result (yay!)
+                            // figure out where selectedStart is in the list
+                            var i = 0;
+                            window.Application.searchIndex = 0; // initial value
+                            for (i = 0; i < window.Application.searchList.length; i++) {
+                                if (window.Application.searchList[i].get("spid") === selectedStart.id.substr(5)) {
+                                    // found it -- set the searchIndex value
+                                    window.Application.searchIndex = i;
+                                    break;
+                                }
+                            }
+                            // show the search bar UI
+                            if (!($("#SearchBar").hasClass("show-flex"))) {
+                                $("#SearchBar").addClass("show-flex");
+                                $("#content").addClass("with-search");
+                            }
+                            if (window.Application.searchIndex === 0) {
+                                // can't go back -- disable the back button
+                                $("#SearchPrev").prop('disabled', true);
+                            } else {
+                                $("#SearchPrev").prop('disabled', false);
+                            }
+                            if (window.Application.searchIndex === (window.Application.searchList.length - 1)) {
+                                // can't go forward -- disable the next button
+                                $("#SearchNext").prop('disabled', true);
+                            } else {
+                                $("#SearchNext").prop('disabled', false);
+                            }
+                            searchRS = src + " -> " + tgt;
+                            $("#SearchRS").html(searchRS);
+                            $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
+                        }
+                    },
+                    error: function () {
+                        console.log("onSearchRS");
+                    }
+                });
+                
+                
+                
+//                $.when(this.listView.searchForRefString()).done(function () {
+            },
+            
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
             // to the UI elements on this screen.
             onHelp: function (event) {
