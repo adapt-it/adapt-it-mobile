@@ -2282,7 +2282,7 @@ define(function (require) {
             showTranslations: function () {
                 var tu = null;
                 var tuid = "";
-                var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
+                var sourceValue = this.stripPunctuation(this.autoRemoveCaps($(selectedStart).children('.source').html(), true), true);
                 var projectid = project.get('projectid');
                 // find the selection and TUID
                 var elts = kblist.filter(function (element) {
@@ -3248,7 +3248,7 @@ define(function (require) {
             },
             
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
-            onKBTranslations: function () {
+            onKBTranslations: function (event) {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     return; // menu not enabled -- get out
                 }
