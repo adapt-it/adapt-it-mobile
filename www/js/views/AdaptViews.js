@@ -3289,8 +3289,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 // Search for matching source phrases
-                var src = $(selectedStart).find('.source').html().trim();
-                var tgt = $(selectedStart).find('.target').html().trim();
+                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
+                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
                 var spList = new spModels.SourcePhraseCollection();
 //                var ary = null;
                 spList.fetch({
