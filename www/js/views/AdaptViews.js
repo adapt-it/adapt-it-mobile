@@ -3255,6 +3255,7 @@ define(function (require) {
                 if (selectedStart === null) {
                     return; // no selection to look at
                 }
+                event.stopPropagation();
                 // dismiss the Plus and More menu if visible
                 if ($("#PlusActionsMenu").hasClass("show")) {
                     $("#PlusActionsMenu").toggleClass("show");

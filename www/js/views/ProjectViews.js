@@ -450,7 +450,7 @@ define(function (require) {
                 "click #AutoCapitalize": "onClickAutoCapitalize"
             },
             onFocusInput: function (event) {
-                HideTinyUI();
+//                HideTinyUI();
                 window.Application.scrollIntoViewCenter(event.currentTarget);
 //                event.currentTarget.scrollIntoView(true);
             },

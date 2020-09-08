@@ -18,7 +18,7 @@ require.config({
     // jquery           3.5.1
     // marionette       2.4.2
     // require          2.3.6
-    // spectrum         1.8.0
+    // spectrum         1.8.1
     // text             2.0.15
     // typeahead        0.11.1
     // underscore       1.9.1
