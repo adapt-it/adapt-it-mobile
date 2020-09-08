@@ -54,7 +54,8 @@ define(function (require) {
             initialize: function () {
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
-                this.spList.fetch({reset: true, data: {source: window.Application.spList.at(0).get("source")}});
+                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
+                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 this.render();
             },
             // set the current translation to the provided text

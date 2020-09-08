@@ -26,14 +26,11 @@ define(function (require) {
         lookupView      = null,
         langView        = null,
         newProjectView  = null,
-        editProjectView = null,
         copyProjectView = null,
         homeView        = null,
         importDocView   = null,
         exportDocView   = null,
         showTransView   = null,
-        db              = null,
-        router          = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -239,7 +236,7 @@ define(function (require) {
                             if (typeof result !== 'undefined') {
                                 window.Application.usingImportedKB = true;
                             }
-                        });                        
+                        });
                         window.Application.spList = new spModel.SourcePhraseCollection();
                         // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them

@@ -2282,7 +2282,7 @@ define(function (require) {
             showTranslations: function () {
                 var tu = null;
                 var tuid = "";
-                var sourceValue = this.autoRemoveCaps($(selectedStart).children('.source').html(), true);
+                var sourceValue = this.stripPunctuation(this.autoRemoveCaps($(selectedStart).children('.source').html(), true), true);
                 var projectid = project.get('projectid');
                 // find the selection and TUID
                 var elts = kblist.filter(function (element) {
@@ -3248,13 +3248,14 @@ define(function (require) {
             },
             
             // Show Translation menu handler. Displays the possible translations for the selected sourcephrase.
-            onKBTranslations: function () {
+            onKBTranslations: function (event) {
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     return; // menu not enabled -- get out
                 }
                 if (selectedStart === null) {
                     return; // no selection to look at
                 }
+                event.stopPropagation();
                 // dismiss the Plus and More menu if visible
                 if ($("#PlusActionsMenu").hasClass("show")) {
                     $("#PlusActionsMenu").toggleClass("show");
@@ -3288,8 +3289,8 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 // Search for matching source phrases
-                var src = $(selectedStart).find('.source').html().trim();
-                var tgt = $(selectedStart).find('.target').html().trim();
+                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
+                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
                 var spList = new spModels.SourcePhraseCollection();
 //                var ary = null;
                 spList.fetch({

@@ -19,16 +19,16 @@
 .search-bar {
     left: calc(env(safe-area-inset-left));
     right: calc(env(safe-area-inset-right));
-    top: 103px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: 108px;
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 .scroller {
     bottom: 0;
     bottom: calc(env(safe-area-inset-bottom));
     left: calc(env(safe-area-inset-left));
     right: calc(env(safe-area-inset-right));
-    top: 103px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: 108px;
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 .with-search {
     top: 134px;
