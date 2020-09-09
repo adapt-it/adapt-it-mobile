@@ -2297,33 +2297,6 @@ define(function (require) {
                     window.Application.router.navigate("kb/" + tuid, {trigger: true});
                 }
             },
-            // User clicked the Find in Documents menu -- populate the searchList with source phrases
-            // matching the source and target in selectedStart
-            searchForRefString: function () {
-                var dfd = $.Deferred();
-                var strID = $(selectedStart).attr('id');
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                var model = this.collection.findWhere({spid: strID});
-                var spList = new spModels.SourcePhraseCollection();
-                $.when(spList.fetch({reset: true, data: {source: model.get("source")}})).done(function () {
-                    window.Application.searchList = spList.filter(function (element) {
-                        // are the strings the same? (ignore case)
-                        if (element.attributes.target.toUpperCase() === model.get("target").toUpperCase()) {
-                            // strings are equivalent -- return true
-                            return true;
-                        }
-                        // do the strings differ in just punctuation?
-                        var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
-                        tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
-                        if (tmpVal === model.get("target").toUpperCase()) {
-                            return true; // string is the same, it just has punctuation tacked on
-                        }
-                        return false; // at least one condition failed -- these strings are not equivalent
-                    });
-                    dfd.resolve();
-                });
-                return dfd.promise();
-            },
             // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
             togglePreview: function () {
@@ -3279,6 +3252,12 @@ define(function (require) {
                 if (selectedStart === null) {
                     return; // no selection to look at
                 }
+                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
+                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
+                if ((src.length === 0) || (tgt.length === 0)) {
+                    // no source->target pair to look for -- exit
+                    return;
+                }
                 // close out any old results
                 this.onSearchClose();
                 // dismiss the Plus and More menu if visible
@@ -3289,8 +3268,6 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 // Search for matching source phrases
-                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
-                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
                 var spList = new spModels.SourcePhraseCollection();
 //                var ary = null;
                 spList.fetch({
@@ -3299,6 +3276,11 @@ define(function (require) {
                     success: function (ary) {
                         console.log("onSearchRS:success");
                         window.Application.searchList = ary.filter(function (element) {
+                            // source - needs to match text + punct (the SELECT db statement is wider than we want)
+                            if (src.length !== element.attributes.source.length - (element.attributes.prepuncts.length + element.attributes.follpuncts.length)) {
+                                return false; 
+                            }
+                            // target -
                             // are the strings the same? (ignore case)
                             if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
                                 // strings are equivalent -- return true
@@ -3350,10 +3332,6 @@ define(function (require) {
                         console.log("onSearchRS");
                     }
                 });
-                
-                
-                
-//                $.when(this.listView.searchForRefString()).done(function () {
             },
             
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user
