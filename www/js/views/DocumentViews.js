@@ -3215,7 +3215,7 @@ define(function (require) {
                         content += "  <tu tuid=\"" + Underscore.uniqueId() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
                         // source tuv
                         content += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
-                        content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>";
+                        content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>" + CRLF;
                         // target tuv
                         content += "    <tuv xml:lang=\"" + project.get('TargetLanguageCode') + "\" creationdate=\"" + refstrings[i].cDT + "\" creationid=\"" + refstrings[i].wC + "\"";
                         if (refstrings[i].mDT) {
@@ -3225,7 +3225,7 @@ define(function (require) {
                             }
                         }
                         content += ">" + CRLF;
-                        content += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>";
+                        content += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>" + CRLF;
                     }
                 });
                 // done CONTENT PART -- close out the file
