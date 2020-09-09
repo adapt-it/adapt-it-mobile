@@ -522,7 +522,8 @@ define(function (require) {
                 // navigate to the adapt page
                 window.Application.searchList = this.spInstances; // going to search for these 
                 window.Application.searchIndex = idx;
-                window.Application.router.navigate("adapt/" + cid, {trigger: true});
+                window.location.replace("#adapt/" + cid);
+//                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
