@@ -212,7 +212,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = Underscore.uniqueId(),
+                var newID = Math.floor(Date.now()) + '',
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
@@ -970,7 +970,7 @@ define(function (require) {
                 if (inPreview === true) {
                     return;
                 }
-                console.log("selectingPilesStart: " + $(event.target).attr('id'));
+                console.log("selectingPilesStart: " + $(event.currentTarget).attr('id'));
                 // long press function for selection start
                 longPressTimeout = window.setTimeout(function () {
                     // alert the user that the long-press has been activated
@@ -990,6 +990,9 @@ define(function (require) {
                         $("div").removeClass("ui-longSelecting");
                     }
                 }, 1000);
+                // don't bubble this event
+                event.stopPropagation();
+                event.preventDefault();
                 // typeahead menu selection -- we'll address it in the mouse / touch end event;
                 // make sure the long press timeout gets cleared, and then get out
                 if (isSelectingKB === true) {
@@ -997,9 +1000,6 @@ define(function (require) {
                     clearTimeout(longPressTimeout);
                     return; // get out
                 }
-                // don't bubble this event
-                event.stopPropagation();
-                event.preventDefault();
                 // if there was an old selection, remove it
                 if ((selectedStart !== null) && (isEditing === true)) {
                     console.log("old selection -- need to blur");
@@ -1062,6 +1062,11 @@ define(function (require) {
                 }
                 // Adjust selectedStart and selectedEnd as appropriate (accounting for boundaries, etc.)
                 if (isSelecting === true) {
+                    if (selectedStart === null) {
+                        console.log("selectingPilesMove: isSslecting=true, but there's no selectedStart -- resetting isSelecting to FALSE");
+                        isSelecting = false;
+                        return;
+                    }
                     if (tmpEnd === selectedEnd) {
                         // haven't moved selection since the last time -- exit out
                         return;
@@ -1253,7 +1258,7 @@ define(function (require) {
                 if (inPreview === true) {
                     return;
                 }
-                console.log("selectingPilesEnd");
+                console.log("selectingPilesEnd: " + $(event.currentTarget).attr('id'));
                 clearTimeout(longPressTimeout); // don't need to wait for the long press here
                 // re-add the contenteditable fields
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
@@ -1746,6 +1751,7 @@ define(function (require) {
                 if (isSelecting === true || isLongPressSelection === true) {
                     console.log("oops... pile selection / user mouseup on target, not pile... correcting.");
                     // trigger a click on the parent (pile) instead
+                    event.stopPropagation();
                     $(event.parentElement).mouseup();
                     return;
                 }
@@ -2297,33 +2303,6 @@ define(function (require) {
                     window.Application.router.navigate("kb/" + tuid, {trigger: true});
                 }
             },
-            // User clicked the Find in Documents menu -- populate the searchList with source phrases
-            // matching the source and target in selectedStart
-            searchForRefString: function () {
-                var dfd = $.Deferred();
-                var strID = $(selectedStart).attr('id');
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                var model = this.collection.findWhere({spid: strID});
-                var spList = new spModels.SourcePhraseCollection();
-                $.when(spList.fetch({reset: true, data: {source: model.get("source")}})).done(function () {
-                    window.Application.searchList = spList.filter(function (element) {
-                        // are the strings the same? (ignore case)
-                        if (element.attributes.target.toUpperCase() === model.get("target").toUpperCase()) {
-                            // strings are equivalent -- return true
-                            return true;
-                        }
-                        // do the strings differ in just punctuation?
-                        var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
-                        tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
-                        if (tmpVal === model.get("target").toUpperCase()) {
-                            return true; // string is the same, it just has punctuation tacked on
-                        }
-                        return false; // at least one condition failed -- these strings are not equivalent
-                    });
-                    dfd.resolve();
-                });
-                return dfd.promise();
-            },
             // User clicked on the Preview (toggle) button -- enable or disable
             // preview / target only mode
             togglePreview: function () {
@@ -2350,7 +2329,7 @@ define(function (require) {
                     selectedObj = null,
                     nOrder = 0.0,
                     strID = null,
-                    newID = Underscore.uniqueId(),
+                    newID = Math.floor(Date.now()) + '', // convert to string
                     phObj = null,
                     placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">" +
                                         "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
@@ -2423,7 +2402,7 @@ define(function (require) {
                     tmpNode = null,
                     tmpNextNode = null,
                     coll = this.collection, // needed to find collection within "each" block below
-                    newID = Underscore.uniqueId(),
+                    newID = Math.floor(Date.now()) + '', // convert to string
                     phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
@@ -2593,6 +2572,7 @@ define(function (require) {
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
                     var startIdx = 0,
                         endIdx = 0,
+                        startID = Math.floor(Date.now()),
                         theSource = "";
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -2601,7 +2581,7 @@ define(function (require) {
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
-                        newID = Underscore.uniqueId();
+                        newID = startID + index + ''; // create new IDs that won't collide
                         phraseTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         // pull out any prepuncts / follpuncts from the value
                         // reset counters and temp vars
@@ -2667,7 +2647,7 @@ define(function (require) {
                     tmpNextNode = null,
                     done = false,
                     coll = this.collection, // needed to find collection within "each" block below
-                    newID = Underscore.uniqueId(),
+                    newID = Math.floor(Date.now()) + '',
                     retMarkers = "",
                     RetSource = "",
                     RetTarget = "",
@@ -2799,6 +2779,7 @@ define(function (require) {
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
                     var startIdx = 0,
                         endIdx = 0,
+                        startID = Math.floor(Date.now()),
                         theSource = "";
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -2807,7 +2788,7 @@ define(function (require) {
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
-                        newID = Underscore.uniqueId();
+                        newID = startID + index + ''; // convert to string
                         RetTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         // pull out any prepuncts / follpuncts from the value
                         // reset counters and temp vars
@@ -3279,6 +3260,12 @@ define(function (require) {
                 if (selectedStart === null) {
                     return; // no selection to look at
                 }
+                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
+                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
+                if ((src.length === 0) || (tgt.length === 0)) {
+                    // no source->target pair to look for -- exit
+                    return;
+                }
                 // close out any old results
                 this.onSearchClose();
                 // dismiss the Plus and More menu if visible
@@ -3289,8 +3276,6 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 // Search for matching source phrases
-                var src = this.listView.stripPunctuation($(selectedStart).find('.source').html().trim(), true);
-                var tgt = this.listView.stripPunctuation($(selectedStart).find('.target').html().trim(), false);
                 var spList = new spModels.SourcePhraseCollection();
 //                var ary = null;
                 spList.fetch({
@@ -3299,6 +3284,11 @@ define(function (require) {
                     success: function (ary) {
                         console.log("onSearchRS:success");
                         window.Application.searchList = ary.filter(function (element) {
+                            // source - needs to match text + punct (the SELECT db statement is wider than we want)
+                            if (src.length !== element.attributes.source.length - (element.attributes.prepuncts.length + element.attributes.follpuncts.length)) {
+                                return false; 
+                            }
+                            // target -
                             // are the strings the same? (ignore case)
                             if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
                                 // strings are equivalent -- return true
@@ -3350,10 +3340,6 @@ define(function (require) {
                         console.log("onSearchRS");
                     }
                 });
-                
-                
-                
-//                $.when(this.listView.searchForRefString()).done(function () {
             },
             
             // Help menu handler for the adaptation screen. Starts the hopscotch walkthrough to orient the user

@@ -59,11 +59,11 @@ a {
 input[type="file"] {
     display: none;
 }
-.search-bar {
+.doc-search-bar {
     padding:8px 14px 12px 8px;
 }
 
-.search-key {
+.doc-search-key {
     width: 100%;
 }
 

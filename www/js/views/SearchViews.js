@@ -442,6 +442,8 @@ define(function (require) {
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
+                var sp = window.Application.spList.at(0);
+                var spLength = sp.get("source").length - (sp.get("prepuncts").length + sp.get("follpuncts").length);
                 var tgt = refstrings[index].target;
                 var i = 0;
                 var count = 0;
@@ -450,6 +452,11 @@ define(function (require) {
                 // filter out sourcephrases that have our target - note that the
                 // sourcephrase contains autocaps + punctuation, so we'll need to ignore them
                 var spInstances = this.spList.filter(function (element) {
+                    // SELECT statement used to build this.spList is too broad -- need to tighten source to just
+                    // prepunct + source + follpunct
+                    if (spLength !== element.attributes.source.length - (element.attributes.prepuncts.length + element.attributes.follpuncts.length)) {
+                        return false;
+                    }
                     // are the strings the same? (ignore case)
                     if (element.attributes.target.toUpperCase() === tgt.toUpperCase()) {
                         // strings are equivalent -- return true
@@ -515,7 +522,8 @@ define(function (require) {
                 // navigate to the adapt page
                 window.Application.searchList = this.spInstances; // going to search for these 
                 window.Application.searchIndex = idx;
-                window.Application.router.navigate("adapt/" + cid, {trigger: true});
+                window.location.replace("#adapt/" + cid);
+//                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
