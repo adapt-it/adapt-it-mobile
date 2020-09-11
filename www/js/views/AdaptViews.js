@@ -1613,6 +1613,7 @@ define(function (require) {
                     }
                     $("#Placeholder").prop('disabled', false);
                     $("#mnuPlaceholder").prop('disabled', false);
+                    event.stopPropagation();
                 }
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
@@ -3395,7 +3396,7 @@ define(function (require) {
                     {
                         title: i18next.t('view.hlpttlMore'),
                         content: i18next.t('view.hlpdscMore'),
-                        target: "More",
+                        target: "Plus-menu",
                         placement: "bottom"
                     }
                 ];
@@ -3428,6 +3429,12 @@ define(function (require) {
                         placement: "bottom"
                     },
                     {
+                        title: i18next.t('view.hlpMoreActions'),
+                        content: i18next.t('view.hlpdscMoreActions'),
+                        target: "More-menu",
+                        placement: "bottom"
+                    },
+                    {
                         title: i18next.t('view.hlpttlBack'),
                         content: i18next.t('view.hlpdscBack'),
                         target: "back",
@@ -3435,6 +3442,7 @@ define(function (require) {
                     }
                 ];
                 var theSteps = [];
+                var theStepNums = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
                 if (width < 480) {
                     // Plus button instead of toggles
                     theSteps = step1.concat(stepMoreBtn, stepLastBtns);
@@ -3442,6 +3450,7 @@ define(function (require) {
                     // Toggle buttons
                     theSteps = step1.concat(stepToggleBtns, stepLastBtns);
                 }
+                theStepNums.splice(theSteps.length, (theStepNums.length - theSteps.length)); // trim the step numbers array
                 var tour = {
                     id: "hello-hopscotch",
                     i18n: {
@@ -3450,7 +3459,7 @@ define(function (require) {
                         doneBtn: i18next.t("view.lblFinish"),
                         skipBtn: i18next.t("view.lblNext"),
                         closeTooltip: i18next.t("view.lblNext"),
-                        stepNums: ["1", "2", "3", "4", "5", "6", "7"]
+                        stepNums: theStepNums
                     },
                     steps: theSteps,
                     onClose: function () {
