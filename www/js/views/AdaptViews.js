@@ -212,7 +212,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = Math.floor(Date.now()) + '',
+                var newID = Underscore.uniqueId(),
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
@@ -2301,7 +2301,7 @@ define(function (require) {
                 if (tu) {
                     // found something for this element -- navigate to the KB editor
                     tuid = tu.get('tuid');
-                    window.Application.router.navigate("kb/" + tuid, {trigger: true});
+                    window.Application.router.navigate("kb/" + tuid, {trigger: true, replace: true});
                 }
             },
             // User clicked on the Preview (toggle) button -- enable or disable
@@ -2330,7 +2330,7 @@ define(function (require) {
                     selectedObj = null,
                     nOrder = 0.0,
                     strID = null,
-                    newID = Math.floor(Date.now()) + '', // convert to string
+                    newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
                     placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">" +
                                         "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
@@ -2403,7 +2403,7 @@ define(function (require) {
                     tmpNode = null,
                     tmpNextNode = null,
                     coll = this.collection, // needed to find collection within "each" block below
-                    newID = Math.floor(Date.now()) + '', // convert to string
+                    newID = Math.floor(Date.now()).toString(), // convert to string
                     phraseMarkers = "",
                     phraseSource = "",
                     phraseTarget = "",
@@ -2582,7 +2582,7 @@ define(function (require) {
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
-                        newID = startID + index + ''; // create new IDs that won't collide
+                        newID = (startID + index).toString(); // create new IDs that won't collide
                         phraseTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         // pull out any prepuncts / follpuncts from the value
                         // reset counters and temp vars
@@ -2648,7 +2648,7 @@ define(function (require) {
                     tmpNextNode = null,
                     done = false,
                     coll = this.collection, // needed to find collection within "each" block below
-                    newID = Math.floor(Date.now()) + '',
+                    newID = Math.floor(Date.now()).toString(),
                     retMarkers = "",
                     RetSource = "",
                     RetTarget = "",
@@ -2789,7 +2789,7 @@ define(function (require) {
                     origTarget = selectedObj.get("orig").split("|");
                     selectedObj.get("source").split(ONE_SPACE).forEach(function (value, index) {
                         // add to model
-                        newID = startID + index + ''; // convert to string
+                        newID = (startID + index).toString(); // convert to string
                         RetTarget = (index >= origTarget.length) ? ONE_SPACE : origTarget[index];
                         // pull out any prepuncts / follpuncts from the value
                         // reset counters and temp vars
@@ -3287,7 +3287,7 @@ define(function (require) {
                         window.Application.searchList = ary.filter(function (element) {
                             // source - needs to match text + punct (the SELECT db statement is wider than we want)
                             if (src.length !== element.attributes.source.length - (element.attributes.prepuncts.length + element.attributes.follpuncts.length)) {
-                                return false; 
+                                return false;
                             }
                             // target -
                             // are the strings the same? (ignore case)
