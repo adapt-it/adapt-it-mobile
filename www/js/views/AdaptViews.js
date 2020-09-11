@@ -2301,7 +2301,7 @@ define(function (require) {
                 if (tu) {
                     // found something for this element -- navigate to the KB editor
                     tuid = tu.get('tuid');
-                    window.Application.router.navigate("kb/" + tuid, {trigger: true});
+                    window.Application.router.navigate("kb/" + tuid, {trigger: true, replace: true});
                 }
             },
             // User clicked on the Preview (toggle) button -- enable or disable
