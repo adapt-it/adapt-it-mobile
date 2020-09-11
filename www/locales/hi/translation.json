@@ -229,6 +229,8 @@
         "hlpdscPhrase": "Click the Phrase button to group the selected words together so they can be translated as a single unit.",
         "hlpttlPrevNext": "Previous and Next buttons",
         "hlpdscPrevNext": "Click the Previous and Next buttons to accept the current translation and move to the next or previous untranslated word.",
+        "hlpMoreActions": "More Actions",
+        "hlpdscMoreActions": "Click on the More Actions button to look up translations, find instances of a translation in the project, display a preview of the translated text, or get help for Adapt It Mobile.",
         "hlpttlBack": "Back",
         "hlpdscBack": "When you are done, click on the Back button to return to the home screen.",
         "lblExport": "Export Document",
