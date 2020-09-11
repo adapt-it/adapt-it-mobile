@@ -587,7 +587,7 @@ define(function (require) {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
                 this.bookList.each(function (model) {
-                    lstBooks += "<h3 class=\"topcoat-list__header ttlbook\" id=\"ttl" + model.get("name") + "\">" + model.get("name") + "</h3><ul class=\"topcoat-list__container chapter-list\" id=\"lst" + model.get("name") + "\" style=\"display:none\"></ul>";
+                    lstBooks += "<h3 class=\"topcoat-list__header ttlbook\" id=\"ttl-" + model.get("bookid") + "\">" + model.get("name") + "</h3><ul class=\"topcoat-list__container chapter-list\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);
                 // if there's only one book, "open" it and show the chapters
@@ -619,19 +619,19 @@ define(function (require) {
             },
 
             onSelectBook: function (event) {
-                var key = event.currentTarget.id.substr(3);
+                var key = event.currentTarget.id.substr(4);
                 var lstChapters = "";
                 console.log("onSelectBook:" + key);
                 // hide the other chapters
                 $("#lstBooks > ul").attr("style", "display:none");
-                $("#lst" + key).removeAttr("style");
+                $("#lst-" + key).removeAttr("style");
                 // find each chapter of this book in the chapterlist collection
-                this.chapterList.fetch({reset: true, data: {name: key}});
+                this.chapterList.fetch({reset: true, data: {bookid: key}});
                 this.chapterList.each(function (model) {
                     lstChapters += chapTemplate(model.attributes);
                 });
                 if (this.chapterList.length > 0) {
-                    $("#lst" + key).html(lstChapters);
+                    $("#lst-" + key).html(lstChapters);
                 }
             }
         });
