@@ -17,46 +17,123 @@ define(function (require) {
         // Helper method to upgrade the database schema from the specified version
         upgradeSchema = function (fromVersion) {
             console.log("upgradeSchema: fromVersion=" + fromVersion);
-            if (fromVersion < 1) {
-                // pre-beta (beta = 1)
+            if (fromVersion === 0) {
+                // pre-beta (beta = 1) -- version table does not exist; create it
                 window.Application.db.transaction(function (tx) {
+                    var theSQL = "";
+                    // create the version table and insert our current schema
                     tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
-                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?);', [1], function (tx, res) {
-                        console.log("version table created -- schema version 1");
+                    tx.executeSql('INSERT INTO version (schemaver) VALUES (?);', [CURRSCHEMA], function (tx, res) {
+                        console.log("version table created -- schema version: " + CURRSCHEMA);
                     }, function (err) {
                         console.log("failed to set the version schema");
                     });
-                    // the "real" change for beta -- 7 new columns for AI XML round-tripping
-                    // SQLite only supports adding the columns one at a time via ALTER TABLE
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN flags TEXT;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN texttype INTEGER;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN gloss TEXT;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN freetrans TEXT;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN note TEXT;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN srcwordbreak TEXT;");
-                    tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN tgtwordbreak TEXT;");
+                    // does the sourcephrase table already exist? (probably, but just in case)
+                    if (window.sqlitePlugin) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        if (res.rows.length > 0) {
+                            // sourcephrase table exists and is populated -- update it
+                            // the "real" change for beta -- 7 new columns for AI XML round-tripping
+                            // SQLite only supports adding the columns one at a time via ALTER TABLE
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN flags TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN texttype INTEGER;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN gloss TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN freetrans TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN note TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN srcwordbreak TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN tgtwordbreak TEXT;");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error updating sourcephrase table: " + err.message);
+                    });
+                    // update changes for 1.3 
+                    if (window.sqlitePlugin) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any KB items (likely), we'll need to add 2 columns;
+                        // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                        if ((res.rows.length > 0) && (res.rows.item(0).f === null)) {
+                            // targetunit table exists -- need to add 2 columns
+                            console.log("upgradeSchema: targetunit table exists, and is old: adding columns");
+                            window.Application.db.transaction(function (tx) {
+                                // Check 3: what's the schema version?
+                                tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
+                                tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT DEFAULT \'0\';");
+                            });
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error updating targetunit table: " + err.message);
+                    });
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
                 });
             }
-            if (fromVersion < 2) {
-                // AIM version 1.3 (KB editing)
+            if (fromVersion === 1) {
+                // AIM version 1.3 (KB editing) -- two columns in the targetunit table
                 window.Application.db.transaction(function (tx) {
+                    var theSQL = "";
                     // version table exists (see logic above), but is at version 1; update it here
-                    tx.executeSql('UPDATE version SET schemaver=?;', [2], function (tx, res) {
-                        console.log("version table updated -- schema version 2");
+                    tx.executeSql('UPDATE version SET schemaver=? WHERE id=?;', [CURRSCHEMA, 1], function (tx, res) {
+                        console.log("version table updated -- schema version: " + CURRSCHEMA);
                     }, function (err) {
-                        console.log("failed to set the version schema");
+                        console.log("failed to set the version schema: " + err);
                     });
                     // update changes for 1.3 
-                    // - new column for KB XML round-tripping
-                    // - timestamps go down to refstring node
-                    tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
-                    tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT;");
+                    // First, check to see if the targetunit table exists
+                    if (window.sqlitePlugin) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any KB items AND the new columns aren't there, we'll need to add them;
+                        // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                        if (res.rows.length > 0) {
+                            console.log("upgradeSchema: targetunit table exists. Checking for schema 2 columns...");
+                            if (window.sqlitePlugin) {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
+                            } else {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                // If the user has created any KB items (likely), we'll need to add 2 columns;
+                                // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                                if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
+                                    // targetunit table exists -- need to add 2 columns
+                                    console.log("upgradeSchema: targetunit table exists, and is old: adding columns");
+                                    window.Application.db.transaction(function (tx) {
+                                        // Check 3: what's the schema version?
+                                        tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
+                                        tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT DEFAULT \'0\';");
+                                    }, function (err) {
+                                        // exception thrown -- assume table doesn't exist
+                                        console.log("upgradeSchema: error updating targetunit table: " + err.message);
+                                    });
+                                } else {
+                                    console.log("upgradeSchema: targetunit table populated, but already has column \'f\' -- no need to alter table");
+                                }
+                            }, function (err) {
+                                console.log("upgradeSchema: error getting pragma_table_info for targetunit: " + err.message);
+                            });
+                        } else {
+                            console.log("upgradeSchema: no targetunit table -- table upgrade not needed");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error: " + err.message);
+                    });
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
                 });
-                // ** TODO: update EACH TU by counting words in the source (for mn) and setting f="0"
             }
         },
         // checkSchema
@@ -71,51 +148,27 @@ define(function (require) {
                 return;
             }
             window.Application.db.transaction(function (tx) {
-                // Check 1: is there a sourcephrase table? 
+                // Check 1: is there a version table? 
                 // If not, this is a new DB
                 if (window.sqlitePlugin) {
-                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
                 } else {
-                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
                 }
                 tx.executeSql(theSQL, [], function (tx, res) {
                     if (res.rows.length > 0) {
-                        // sourcephrase table exists -- check the DB version
-                        console.log("checkSchema: sourcephrase table exists");
+                        console.log("checkSchema: version table exists");
                         window.Application.db.transaction(function (tx) {
-                            // Check 2: is there a version table? 
-                            if (window.sqlitePlugin) {
-                                theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
-                            } else {
-                                theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
-                            }
-                            tx.executeSql(theSQL, [], function (tx, res) {
-                                if (res.rows.length > 0) {
-                                    console.log("checkSchema: version table exists");
-                                    window.Application.db.transaction(function (tx) {
-                                        // Check 3: what's the schema version?
-                                        tx.executeSql("SELECT * FROM version;", [], function (tx, res) {
-                                            var schemaVer = parseInt(res.rows.item(0), 10);
-                                            if (schemaVer < CURRSCHEMA) {
-                                                // not the current schema -- upgrade the DB as appropriate
-                                                upgradeSchema(schemaVer);
-                                            } else {
-                                                console.log("checkSchema: running on latest DB schema");
-                                            }
-                                        });
-                                    });
+                            // Check 3: what's the schema version?
+                            tx.executeSql("SELECT * FROM version;", [], function (tx, res) {
+                                var schemaVer = res.rows.item(0).schemaver;
+                                if (schemaVer < CURRSCHEMA) {
+                                    // not the current schema -- upgrade the DB as appropriate
+                                    upgradeSchema(schemaVer);
                                 } else {
-                                    console.log("checkSchema: no version table found - upgrading DB schema");
-                                    // no rows in result -- table doesn't exist
-                                    upgradeSchema(0); // beta is schema ver 1
+                                    console.log("checkSchema: running on latest DB schema");
                                 }
-                            }, function (err) {
-                                // exception thrown -- assume table doesn't exist
-                                console.log("checkSchema: version SELECT error: " + err.message);
-                                upgradeSchema(0);
                             });
-                        }, function (err) {
-                            console.log("checkSchema: SELECT transaction error: " + err.message);
                         });
                     } else {
                         console.log("checkSchema: new DB -- adding version table");
@@ -125,7 +178,7 @@ define(function (require) {
                         window.Application.db.transaction(function (tx) {
                             tx.executeSql('CREATE TABLE IF NOT EXISTS version (id INTEGER primary key, schemaver INTEGER);');
                             tx.executeSql('INSERT INTO version (schemaver) VALUES (?);', [CURRSCHEMA], function (tx, res) {
-                                console.log("version table created -- schema version 1");
+                                console.log("version table created -- schema version: " + CURRSCHEMA);
                             });
                         }, function (err) {
                             console.log("checkSchema: CREATE TABLE error: " + err.message);
