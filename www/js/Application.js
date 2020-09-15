@@ -79,7 +79,7 @@ define(function (require) {
             usingImportedKB: false,
             version: "1.3.0", // appended with milestone / iOS build info
             AndroidBuild: "32", // (was milestone release #)
-            iOSBuild: "1.3.0",
+            iOSBuild: "1.3.1",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -194,6 +194,7 @@ define(function (require) {
                             console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
                             // Attempt to create / open our AIM database now
                             window.Application.db = window.sqlitePlugin.openDatabase({name: DB_NAME, androidDatabaseLocation: directoryEntry.toURL()});
+                            window.Application.checkDBSchema(); // Android only (iOS calls directly)
                             window.Application.onInitDB();
                         }, function (err) {
                             console.log("resolveLocalFileSustemURL error: " + err.message);
