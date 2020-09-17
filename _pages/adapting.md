@@ -27,8 +27,18 @@ Adapt It Mobile is designed for translation between related languages. This sect
     ![Search button]({{ site.baseurl }}/assets/img/Search.png)
 
     If you do not see a Search button, verify that you have [imported some documents](https://github.com/adapt-it/adapt-it-mobile/wiki/Importing-a-document) into Adapt It Mobile. Once you have clicked the Search button, the Search screen displays.
-4. To find a book or chapter to adapt, either click in the search field and start typing the name of the book **or** click the drop-down button and select the book from the list of imported books.
-5. A list of available chapters will display. Click on the desired chapter to begin adapting.
+
+    ![Search screen]({{ site.baseurl }}/assets/img/search-1.png)
+
+4. On this screen you can either search by book or chapter name, or browse the imported book list to find the chapter you want to adapt.
+
+  - To Search for a book or chapter name, click on the Search tab to make sure its selected. Then click in the search edit field and start typing in the name of the book. As you do, matching chapters will display in the search results. Click on the chapter you want to adapt.
+
+    ![Search for a book or chapter]({{ site.baseurl }}/assets/img/search-2.png)
+
+  - To browse the imported book list to find a chapter, click on the Select Document tab to make sure it has the focus. Then click on the document you want to adapt. A list of chapters in that document will display below the selected document. Click on the chapter you want to adapt.
+
+    ![Browse for a book or chapter]({{ site.baseurl }}/assets/img/search-3.png)
 
 ----
 
@@ -56,7 +66,9 @@ Adapting is the heart of the Adapt It Mobile program. If you are familiar with t
 
 Adapt It Mobile allows you to translate a single chapter at a time. The text is laid out with the source text just above the corresponding target text, and any markers just above the source text. As you add target text translations, Adapt It Mobile will remember the words and phrases you've used. If you come across a word or phrase you've translated before, Adapt It Mobile will suggest that same word or phrase.
 
-For a quick walkthrough of the controls on the Adaptation page, click on the help / question mark icon [?] in the upper right hand side of the screen.
+For a quick walkthrough of the controls on the Adaptation page, click on the More Actions menu button in the upper right hand side of the screen and click on the Help menu command.
+
+    ![More Actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
 
 ## To translate a word
 Click on the area just below the source word. You should see an edit box display (and the software keyboard open up if you don't have an external keyboard attached). Type in the equivalent word in the target language.
