@@ -35,6 +35,8 @@ Following is a feature comparison chart that helps explain the differences betwe
 | Adapt document - reviewing mode | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
 | Create phrase / placeholder / retranslation | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | USFM Filtering | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
+| Import / Export Translation Memory |  | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
+| View/Edit Knowledge Base | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | Export document | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | Collaboration with Paratext / Bibledit | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
 | Glossing | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
