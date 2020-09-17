@@ -94,7 +94,7 @@ The Show Translations screen allows you to view and edit the possible translatio
 1. In the adaptation screen, select the translated word or phrase. The selection needs to have text in both the source and target line.
 2. Click the More Actions menu, and then click the Show Translations... menu command. The Show Translations screen will display:
 
-  ![Show Translations]({{ site.baseurl }}/assets/img/Show-Translations.png)
+  ![Show Translations]({{ site.baseurl }}/assets/img/Show_Translations.png)
 
 ### Show Translations screen layout
 
