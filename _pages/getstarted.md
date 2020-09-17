@@ -126,6 +126,10 @@ Now that you have installed Adapt It Mobile, you'll want to take a look at our s
 
 * [Changing the user interface language]({{ site.baseurl }}/advanced-topics#changing-ui-language)
 * [Working with Filtered Text]({{ site.baseurl }}/advanced-topics#filtered-text)
+* [Viewing and editing existing translations]({{ site.baseurl }}/advanced-topics#show-translations)
+* [Searching for a specific translation]({{ site.baseurl }}/advanced-topics#search-for-translation)
+* [Previewing the translation]({{ site.baseurl }}/advanced-topics#preview-mode)
+* [Changing editor settings]({{ site.baseurl }}/advanced-topics#editor-settings)
 
 ## Troubleshooting
 
