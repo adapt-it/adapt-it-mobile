@@ -68,7 +68,7 @@ Adapt It Mobile allows you to translate a single chapter at a time. The text is 
 
 For a quick walkthrough of the controls on the Adaptation page, click on the More Actions menu button in the upper right hand side of the screen and click on the Help menu command.
 
-    ![More Actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
+   ![More Actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
 
 ## To translate a word
 Click on the area just below the source word. You should see an edit box display (and the software keyboard open up if you don't have an external keyboard attached). Type in the equivalent word in the target language.
