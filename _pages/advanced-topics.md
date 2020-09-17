@@ -3,11 +3,14 @@ permalink: /advanced-topics/
 layout: page
 title:  Advanced Topics
 desc:   Get more out of Adapt It Mobile.
-date:   2017-01-03 12:21
+date:   2020-09-17 12:21
 ---
 
 * [Changing the user interface language](#changing-ui-language)
-* [Working with Filtered Text](#filtered-text)
+* [Working with filtered text](#filtered-text)
+* [Viewing and editing existing translations](#show-translations)
+* [Searching for a specific translation](#search-for-translation)
+* [Previewing the translation](#preview-mode)
 * [Changing editor settings](#editor-settings)
 
 ----
@@ -74,11 +77,83 @@ This window has the following elements:
 
 To move to the previous / next filtered marker, click on the forward / back arrows:
 
-![Multiple Filters](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/f-multi.gif)
+![Multiple Filters]({{ site.baseurl }}/assets/img/f-multi.gif)
 
 To close the filtered text window, click on either the X icon in the upper right corner of the window or in the darker area outside the window.
 
-![Single Filters](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/f-single.gif)
+![Single Filters]({{ site.baseurl }}/assets/img/f-single.gif)
+
+----
+
+<a id="show-translations"></a>
+
+## Viewing and Editing Existing Translations
+
+The Show Translations screen allows you to view and edit the possible translations for a selected source phrase in the text. To display the Show Translations screen, complete the following steps:
+
+1. In the adaptation screen, select the translated word or phrase. The selection needs to have text in both the source and target line.
+2. Click the More Actions menu, and then click the Show Translations... menu command. The Show Translations screen will display:
+
+  ![Show Translations]({{ site.baseurl }}/assets/img/Show-Translations.png)
+
+### Show Translations screen layout
+
+On the top portion of the Show Translations screen, Adapt It Mobile displays the current translation (source and target languages are also displayed). 
+
+Below this section, Adapt It Mobile displays the list of available translations and their relative frequencies according to the Knowledge Base. List items in red have been deleted or hidden, and do not appear in the drop-down list when translating.
+
+**Note** If you have imported a Knowledge Base - either from an Adapt It desktop project or from a .TMX file - the relative frequency might not match the number of times the translations appear in your imported documents. 
+
+Click on a translation from the list of available translations to display the actions for that translation. For list items displayed in black, the following actions are available:
+
+  ![Translation Actions]({{ site.baseurl }}/assets/img/st-actions.png)
+
+  - **Use this translation** - Click this button to use the selected transation as the current translation.
+  - **Edit translation** - Click this button to edit the spelling of the selected translation. Note that the old spelling of the translation will remain as a *deleted* item in the available translations list; if you wish to restore the old spelling as an option in the dropdown list during adaptation, you can click the Restore translation button (see below). 
+  - **Find in documents...** - Click this button to find instances of the selected translation in the imported documents. Adapt It Mobile will display the result counts for each chapter on the Show Translations page; to view individual instances, click on an item in the search results list and Adapt It Mobile will load the selected chapter and show the [search results](#search-for-translation) for that translation. 
+  - **Remove translation** - click this button to remove this translation from the dropdown list while adapting. 
+
+For items in red -- that have been deleted or hidden -- the following action is available:
+
+  - **Restore translation** - Click this button to restore the translation, so that it appears in the drop-down list while adapting.
+
+----
+
+<a id="search-for-translation"></a>
+
+## Search for a Specific Translation
+
+Adapt It Mobile supports searching for a specific translation within the documents you've imported into your translation project. To do this, complete the following steps:
+
+1. In the adaptation screen, select the translated word or phrase you would like to search for. The selection needs to have text in both the source and target line.
+2. Click the More Actions menu, and then click the Find in Documents... menu command.
+
+  ![More actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
+
+   Adapt It Mobile will search for the selected translation, and then display a search bar just below the toolbar that contains the results of the search:
+   
+  ![Search Bar]({{ site.baseurl }}/assets/img/search-bar.png)
+   
+  The search bar contains the following elements:
+  
+  - The source and target phrase being searched for
+  - The number of search results within the imported documents, and the current index within that number
+  - Previous and Next buttons that will display and select the previous and next search results, respectively. Note that the search results could span several books or chapters -- Adapt It Mobile will load the book/chapter as needed.
+  - A Close button [ X ] that closes the search bar and clears the current search.
+
+----
+
+<a id="preview-mode"></a>
+
+## Previewing the Translation
+
+As you translate the text, you might want to read through the draft to verify its accuracy and ease of comprehension in the target language. Adapt It Mobile allows you to do this easily with Preview Mode. In Preview Mode, all markers, filters, and source text are hidden, so that only the target language translation is visible.
+
+- To enable Preview mode, click on the More Actions button in the top right of the screen, and then click on the Show Preview menu command.
+  
+  ![More actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
+
+- To disable Preview mode, click on the More Actions button in the top right of the screen, and then click on the Hide Preview menu command.
 
 ----
 
@@ -93,15 +168,6 @@ Currently Adapt It Mobile has the following editor settings that can be modified
 
 - Wrap at Standard Format Markers (default = checked)
   When checked, Adapt It Mobile will cause the UI to display the word or phrase *following* text with USFM markers on a new line. Uncheck this box if you would like the the next phrase to appear just after text with USFM, for a more compact display.
-
-- Show Preview Button (default = unchecked)
-  When checked, Adapt It Mobile displays the Preview Mode button in the toolbar of the Adaptation page:
-  
-  ![Preview button](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/preview.png)
-  
-  Preview Mode allows you to quickly view your translations as you work. Click on the Preview Mode button to show a read-only display of your current translation -- i.e., just the target text. If you spot an area that needs improving, you can click on the Preview Mode button again to return to the normal adaptation mode and make the needed edits. Here is an animation of the Preview Mode in action:
-  
-  ![Preview Mode](https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/preview.gif)
 
 
 
