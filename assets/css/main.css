@@ -59,7 +59,7 @@
   width: 48%; }
 
 #img-main {
-  filter: drop-shadow(0 0 30px #333);
+  filter: drop-shadow(0 6px 12px #999);
   max-width: 700px;
   width:100%; }
 
