@@ -13,8 +13,8 @@
 .announce a {
   color: #1dd8af;}
 
-.bg-white {
-  background-color: #fff; }
+.bg-head {
+  background-color: #dee5e8; }
 
 .small-icon {
   background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
@@ -97,7 +97,7 @@
   padding: 3rem 6px 3rem 6px; }
 
 .site {
-  background-color: #ccc;
+  background-color: #dee5e8;
   padding: 1rem; }
 
 .benefits, .osnote {
