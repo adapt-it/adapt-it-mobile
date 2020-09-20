@@ -13,12 +13,8 @@
 .announce a {
   color: #1dd8af;}
 
-#header {
+#header, #top-menu {
   background-color: #dee5e8; }
-
-.bg-lightblue {
-  background-color: #dee5e8; }
-
 
 .small-icon {
   background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
