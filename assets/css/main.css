@@ -58,7 +58,7 @@
   vertical-align: top;
   width: 48%; }
 
-.img-main {
+#img-main {
   filter: drop-shadow(0 0 30px #333);
   max-width: 700px;
   width:100%; }
