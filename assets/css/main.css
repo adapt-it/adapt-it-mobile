@@ -43,8 +43,7 @@
   background-color: #eee;
   background: linear-gradient(#fafafa, #dee5e8);
   color: #333;
-  height: 450px;
-  overflow-y: hidden;
+  padding-top: 12px;
   text-align: center; }
 
 .small-hero {
