@@ -35,6 +35,16 @@
   white-space: nowrap;
 }
 
+.small-icon-head {
+  background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
+  background-size: cover;
+  border: 0;
+  display: inline-block;
+  height: 32px;
+  margin-right: .5rem;
+  vertical-align: middle;
+  width: 32px; }
+
 .small-icon {
   background: url("https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/master/www/res/icon/ios/icon-83%402x.png") no-repeat;
   background-size: cover;
@@ -42,8 +52,6 @@
   display: inline-block;
   height: 22px;
   margin-right: .5rem;
-  overflow: hidden;
-  padding: 6px;
   vertical-align: baseline;
   width: 22px; }
 
@@ -172,7 +180,6 @@
 /* desktop nav */
 .nav-desktop {
   background-color: #333;
-  height: 64px;
   padding: 0; }
 
 .site-logo {
@@ -185,9 +192,13 @@
 .site-logo a:hover {
   color: inherit; }
 
-.nav-desktop .menu-desktop {
+.nav-desktop {
+  background-color: transparent; }
+
+.menu-desktop {
   line-height: 64px;
   background-color: transparent; }
+
 
 .menu > li > a {
   display: inline-block;
