@@ -29,7 +29,7 @@
   line-height: 32px;
   white-space: nowrap;
 }
-.top-nav-item-left > span {
+.app-title {
   vertical-align: sub;
 }
 .top-nav-item-right {
