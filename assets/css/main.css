@@ -25,13 +25,15 @@
 .top-nav-item-left {
   align-self: flex-start;
   flex-grow: 2;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: normal;
+  line-height: 32px;
   white-space: nowrap;
 }
 .top-nav-item-right {
   align-self: flex-end;
   flex-grow: 1;
+  text-align: right;
   white-space: nowrap;
 }
 
