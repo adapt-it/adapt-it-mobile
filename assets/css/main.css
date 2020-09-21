@@ -17,21 +17,22 @@
   background-color: #dee5e8; }
 
 .top-nav {
-  align-items: baseline;
+  align-items: center;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
 }
 .top-nav-item-left {
-  align-self: flex-start;
   flex-grow: 2;
   font-size: 1.7rem;
   font-weight: normal;
   line-height: 32px;
   white-space: nowrap;
 }
+.top-nav-item-left > span {
+  vertical-align: sub;
+}
 .top-nav-item-right {
-  align-self: flex-end;
   flex-grow: 1;
   text-align: right;
   white-space: nowrap;
