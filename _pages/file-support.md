@@ -1,12 +1,12 @@
 ---
 permalink: /about/file-support
 layout: page
-title:  Text and Paratext
-desc:   Supported file types
-date:   2017-01-03 12:21
+title:  Work with Text and Paratext
+desc:   File types supported by Adapt It Mobile
+date:   2020-09-21 12:21
 ---
 
-## Document import / export
+## Importing and exporting documents
 
 Adapt It Mobile currently supports the following document formats:
 
@@ -15,13 +15,15 @@ Adapt It Mobile currently supports the following document formats:
 - USX
 - Plain text (.txt)
 
-## Clipboard import / export
+## Using the clipboard
 
-Adapt It Mobile also supports copying text from other programs on your mobile device. This can be either plain text, or text formatted in one of the supported formats above. Note that if you are copying formatted text, you'll need to include the entire file. There are formatting markers that indicate the book and chapter, etc., and these need to be included in order for Adapt It Mobile to import the file data properly.
+Adapt It Mobile also supports using your mobile device's cut/copy/paste feature to copy text from other programs. The text copied into Adapt It Mobile can be either plain text or text formatted in one of the supported formats above. 
+
+Note that if you are copying formatted text, you'll need to include the entire file. There are formatting markers that indicate the book and chapter, etc., and these need to be included in order for Adapt It Mobile to import the file data properly.
 
 Adapt It Mobile can also export entire files in any of the above formats to the clipboard.
 
-# Translation memory / Knowledge base import and export
+## Importing a translation memory / knowledge base
 
 Adapt It Mobile can also import and export the following translation memory data formats:
 
