@@ -1,0 +1,7 @@
+{
+  "name": "adapt-it-mobile",
+  "type": "custom",
+  "integrations": {
+    "cordova": {}
+  }
+}
