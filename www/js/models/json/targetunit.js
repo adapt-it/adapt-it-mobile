@@ -9,7 +9,7 @@ define(function (require) {
 
         TargetUnit = Backbone.Model.extend({
 
-            urlRoot: "http://localhost:3000/targetunit"
+            urlRoot: "/targetunit"
 
         }),
 
@@ -17,7 +17,7 @@ define(function (require) {
 
             model: TargetUnit,
 
-            url: "http://localhost:3000/targetunits"
+            url: "/targetunits"
 
         });
 
