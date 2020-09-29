@@ -27,6 +27,13 @@
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <preference name="android-minSdkVersion" value="22" />
         <preference name="android-targetSdkVersion" value="29" />
+        <config-file target="AndroidManifest.xml" mode="replace" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+            <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
+        </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
         <icon density="mdpi" src="www/res/icon/android/mdpi.png" />
         <icon density="hdpi" src="www/res/icon/android/hdpi.png" />
@@ -256,5 +263,4 @@
     <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />
-    <engine name="android" />
 </widget>
