@@ -19,6 +19,7 @@
   "devDependencies": {
     "cordova-android": "^9.0.0",
     "cordova-ios": "^6.1.1",
+    "cordova-uglify": "^0.3.4",
     "fs": "0.0.2",
     "gulp": "^4.0.2",
     "path": "^0.12.7",
@@ -39,6 +40,7 @@
     "cordova-plugin-x-socialsharing": "5.4.0",
     "cordova-sqlite-evcore-extbuild-free": "^0.9.8",
     "cordova.plugins.diagnostic": "^4.0.10",
+    "gulp-uglify": "^3.0.2",
     "npx": "^10.2.2",
     "phonegap-plugin-mobile-accessibility": "https://github.com/phonegap/phonegap-mobile-accessibility.git"
   },
@@ -81,7 +83,7 @@
       "cordova-plugin-splashscreen": {}
     },
     "platforms": [
-      "ios"
+      "android"
     ]
   }
 }
