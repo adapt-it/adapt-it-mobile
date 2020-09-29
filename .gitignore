@@ -230,5 +230,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-config.xml
+# config.xml (now used -- we're compiling from the CLI)
 package-lock.json
