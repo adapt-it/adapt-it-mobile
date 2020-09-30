@@ -78,14 +78,41 @@ define(function (require) {
                     });
                 });
             },
-            destroy: function (options) {
-                window.Application.db.transaction(function (tx) {
+            destroy: function () {
+                var deferred = $.Deferred();
+                console.log("destroy() - removing book: " + this.attributes.bookid);
+                    window.Application.db.transaction(function (tx) {
+                    // get the chapters associated with this bookid
+                    tx.executeSql("SELECT * FROM chapter WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                        // for each chapter, delete the sourcephrases associated with the chapterid - then delete the chapter
+                        var i = 0,
+                            len = 0;
+                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                            window.Application.db.transaction(function (tx) {
+                                var chapterid = res.rows.item(i).chapterid;
+                                tx.executeSql("DELETE FROM sourcephrase WHERE chapterid=?", [chapterid], function (tx, res) {
+                                    console.log("DELETE sourcephrases ok: " + res.toString());
+                                });
+                            });                    
+                        }
+                        // delete the chapters
+                        tx.executeSql("DELETE FROM chapter WHERE bookid=?", [this.attributes.bookid], function (tx, res) {
+                            console.log("DELETE chapters ok: " + res.toString());
+                        });
+                    });
+
+                    // delete the book
                     tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
-//                        console.log("DELETE ok: " + res.toString());
+                        console.log("DELETE bookid ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
                 });
+                return deferred.promise();
             },
             sync: function (method, model, options) {
                 switch (method) {
