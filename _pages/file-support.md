@@ -10,10 +10,12 @@ date:   2020-09-21 12:21
 
 Adapt It Mobile currently supports the following document formats:
 
-- Adapt It desktop (.xml) document
-- USFM
-- USX
-- Plain text (.txt)
+| File Type                    | Description |
+|----------------------------|-------------------------------|
+| **Adapt It desktop (.xml)** | Document format for Adapt It desktop translation document. This document contains source and target (translated) text, as well as formatting markers. |
+| **USFM** | [United Standard Format Markers](https://ubsicap.github.io/usfm/) document. This document format contains text and markup styling, and is supported by a variety of translation programs including Bibledit and Paratext. |
+| **USX** | XML-based document format used by Paratext. |
+| **Plain text (.txt)** | Text document format. When importing, Adapt It Mobile will check this document format for USFM content, as some translation tools will export USFM content with a text (.txt) extension. |
 
 ## Using the clipboard
 
