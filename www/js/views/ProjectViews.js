@@ -1061,6 +1061,7 @@ define(function (require) {
                 $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
+                $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
                 this.removeRegion("container");
             },
@@ -1072,6 +1073,7 @@ define(function (require) {
                 $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
+                $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
                 this.removeRegion("container");
             },
@@ -1198,7 +1200,7 @@ define(function (require) {
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
                 // title
-                this.$("#StepTitle").html(i18n.t('view.lblEditProject'));
+                this.$("#StepTitle").html(i18n.t('view.lblProjectSettings'));
             },
 
             ShowView: function (number) {
@@ -1221,7 +1223,7 @@ define(function (require) {
                     currentView.langName = this.model.get("SourceLanguageName");
                     currentView.langCode = this.model.get("SourceLanguageCode");
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     break;
                 case 2: // target language
@@ -1230,7 +1232,7 @@ define(function (require) {
                     currentView.langName = this.model.get("TargetLanguageName");
                     currentView.langCode = this.model.get("TargetLanguageCode");
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectTargetLanguage'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectTargetLanguage'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
                 case 3: // source font
@@ -1242,7 +1244,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for source font -- special text and retranslations
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
@@ -1259,7 +1261,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for target font -- text differences
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
@@ -1275,25 +1277,25 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 6: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectPunctuation'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectPunctuation'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
                 case 7: // cases
                     currentView = new CasesView({ model: this.model});
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectCases'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectCases'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     break;
                 case 8: // USFM filtering
                     currentView = new USFMFilteringView({ model: this.model});
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProject3Filtering'));
+                    $("#StepTitle").html(i18n.t('view.ttlProjectFiltering'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
                 case 9: // editor and UI language
