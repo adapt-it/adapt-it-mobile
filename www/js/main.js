@@ -7,6 +7,7 @@ require.config({
     // backbone         1.4.0
     // backbone.babysitter 0.1.12
     // backbone.wreqr   1.4.0
+    // circular-progress-bar 1.0.6
     // fastclick        1.0.6
     // featherlight     1.7.6
     // featherlight.gallery 1.7.6
@@ -43,6 +44,7 @@ require.config({
         'featherlight': 'featherlight.min',
         'underscore': 'underscore-min',
         'featherlightGallery': 'featherlight.gallery.min',
+        'circularProgressBar': 'circularProgressBar.min',
         colorpicker: 'spectrum'
     },
     map: {

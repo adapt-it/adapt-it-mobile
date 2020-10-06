@@ -14,6 +14,7 @@ define(function (require) {
         Handlebars      = require('handlebars'),
         Marionette      = require('marionette'),
         cp              = require('colorpicker'),
+        cpb             = require('circularProgressBar'),
         tplEditProject  = require('text!tpl/EditProject.html'),
         tplNewProject   = require('text!tpl/NewProject.html'),
         tplCopyOrImport = require('text!tpl/CopyOrImport.html'),
@@ -85,7 +86,7 @@ define(function (require) {
         // if the screen is too small
         // (Issue #232)
         HideTinyUI = function () {
-            if ((window.innerHeight / 2) < ($("#StepInstructions").height() + $("#StepContainer").height() + $("#WizardSteps").height())) {
+            if ((window.innerHeight / 2) < ($("#WizStepTitle").height() + $("#StepInstructions").height() + $("#StepContainer").height() + $("#WizardSteps").height())) {
                 if (navigator.notification && device.platform === "iOS") {
                     $(".scroller-bottom-tb").css({bottom: "calc(env(safe-area-inset-bottom))"});
                 } else {
@@ -1056,6 +1057,7 @@ define(function (require) {
             },
             OnCancel: function () {
                 // just display the project settings list (don't save)
+                $("#WizStepTitle").hide();
                 $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
@@ -1066,6 +1068,7 @@ define(function (require) {
                 // save the info from the current step
                 this.UpdateProject(step);
                 // show / hide the appropriate UI elements
+                $("#WizStepTitle").hide();
                 $("#StepInstructions").hide();
                 $("#OKCancelButtons").hide();
                 $('#ProjectItems').show();
@@ -1205,6 +1208,7 @@ define(function (require) {
                     container: "#StepContainer"
                 });
                 // hide the project list items
+                $("#WizStepTitle").show();
                 $("#StepInstructions").show();
                 $("#OKCancelButtons").show();
                 $('#ProjectItems').hide();
@@ -1217,6 +1221,7 @@ define(function (require) {
                     currentView.langName = this.model.get("SourceLanguageName");
                     currentView.langCode = this.model.get("SourceLanguageCode");
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     break;
                 case 2: // target language
@@ -1225,6 +1230,7 @@ define(function (require) {
                     currentView.langName = this.model.get("TargetLanguageName");
                     currentView.langCode = this.model.get("TargetLanguageCode");
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectTargetLanguage'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     break;
                 case 3: // source font
@@ -1236,6 +1242,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for source font -- special text and retranslations
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
@@ -1252,6 +1259,7 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     // color variations for target font -- text differences
                     innerHtml = "<div class='control-row' id='dscVariations'><h3>" + i18n.t('view.lblSourceFontVariations');
@@ -1267,21 +1275,25 @@ define(function (require) {
                     currentView = new FontView({ model: theFont});
                     Marionette.triggerMethodOn(currentView, 'show');
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 6: // punctuation
                     currentView = new PunctuationView({ model: this.model});
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectPunctuation'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
                 case 7: // cases
                     currentView = new CasesView({ model: this.model});
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectCases'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     break;
                 case 8: // USFM filtering
                     currentView = new USFMFilteringView({ model: this.model});
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProject3Filtering'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     break;
                 case 9: // editor and UI language
@@ -1306,6 +1318,7 @@ define(function (require) {
                 return this;
             },
             onShow: function () {
+                this.progress = new CircularProgressBar('pie');
                 this.ShowStep(step);
             },
             ////
@@ -1447,6 +1460,7 @@ define(function (require) {
                 innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblSpecialTextColor') + " <input type=\"text\" name=\"color\" id=\'spcolor\' value=\"" + this.model.get('SpecialTextColor') + "\" /></div>";
                 innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblRetranslationColor') + " <input type=\"text\" name=\"color\" id=\'retranscolor\' value=\"" + this.model.get('RetranslationColor') + "\" /></div></div>";
                 this.container.show(currentView);
+                $('#WizStepTitle').hide();
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
                 $('#OKCancelButtons').show();
@@ -1466,6 +1480,7 @@ define(function (require) {
                 innerHtml += "<div class=\'control-row\'>" + i18n.t('view.lblDifferenceColor') + " <input type=\"text\" name=\"color\" id=\'diffcolor\' value=\"" + this.model.get('TextDifferencesColor') + "\" /></div></div>";
                 $('#VarItems').html(innerHtml);
                 this.container.show(currentView);
+                $('#WizStepTitle').hide();
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
                 $('#OKCancelButtons').show();
@@ -1481,12 +1496,14 @@ define(function (require) {
                 Marionette.triggerMethodOn(currentView, 'show');
                 innerHtml = "";
                 this.container.show(currentView);
+                $('#WizStepTitle').hide();
                 $('#StepInstructions').hide();
                 $('#WizardSteps').hide();
                 $('#OKCancelButtons').show();
             },
             OnCancel: function () {
                 // just display the project settings list (don't save)
+                $('#WizStepTitle').show();
                 $('#StepInstructions').show();
                 $("#OKCancelButtons").hide();
                 $('#WizardSteps').show();
@@ -1518,6 +1535,7 @@ define(function (require) {
                 }
                 this.model.save(); // save the changes
                 // display the project settings list
+                $('#WizStepTitle').show();
                 $('#StepInstructions').show();
                 $("#OKCancelButtons").hide();
                 $('#WizardSteps').show();
@@ -1701,7 +1719,8 @@ define(function (require) {
                 currentView = null;
                 innerHtml = "";
                 // set the progress bar
-                $("#progress").attr("style", "width: " + progressPct + "%;");
+                this.progress.percent = progressPct;
+                //$("#progress").attr("style", "width: " + progressPct + "%;");
                 
                 switch (number) {
                 case 1: // source language
@@ -1712,6 +1731,7 @@ define(function (require) {
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
                     // first step -- disable the prev button
                     this.$("#Prev").attr('disabled', 'true');
@@ -1731,6 +1751,7 @@ define(function (require) {
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectTargetLanguage'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
                     // controls
                     if (this.model.get("TargetDir") === "rtl") {
@@ -1744,6 +1765,7 @@ define(function (require) {
                     // title
                     $("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
                     $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 4: // punctuation
@@ -1751,6 +1773,7 @@ define(function (require) {
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectPunctuation'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectPunctuation'));
                     break;
                 case 5: // cases
@@ -1758,6 +1781,7 @@ define(function (require) {
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectCases'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectCases'));
                     // controls
                     // Penultimate step -- enable the next button (only needed
@@ -1770,6 +1794,7 @@ define(function (require) {
                     // title
                     this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectFiltering'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectUSFMFiltering'));
                     // controls
                     // Last step -- change the text of the Next button to "finish"

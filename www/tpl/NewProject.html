@@ -3,13 +3,18 @@
 }}
 
 <div class="topcoat-navigation-bar main_title bg-lightblue" >
-    <div class="topcoat-navigation-bar__item">
+    <div class="topcoat-navigation-bar__item" style="height: 55px; width: 64px;">
+        <div class="pie" data-pie='{ "colorSlice": "#ffffff", "strokeWidth": 5, "size": 50, "fontColor": "#ffffff", "percent": 17 }'></div>
+    
+<!--
         <a class="topcoat-icon-button--quiet back-button" href="#">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
+-->
     </div>
     <div class="topcoat-navigation-bar__item half">
-        <h1 class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle"></h1>
+        <div class="topcoat-navigation-bar__title bg-lightblue" id="StepTitle"></div>
+        <div class="wizard-step-title" id="WizStepTitle"></div>
     </div>
     <div class="topcoat-navigation-bar__item right">{{!
         <a href="#help" class="topcoat-icon-button--quiet">
@@ -24,9 +29,6 @@
 </div>
 <div class="bottom-tb">
 <div id="WizardSteps">
-    <div class='topcoat-progress-bar'>
-        <span class='topcoat-progress' id="progress" style="width:0%;"></span>
-    </div>
     <button class="topcoat-button" id="Prev"><span class="topcoat-icon topcoat-icon--back"></span> <span id="lblPrev"></span></button>
     <button class="topcoat-button" id="Next"><span id="lblNext"></span> <span class="topcoat-icon topcoat-icon--forward" id="imgNext"></span></button>
 </div>
