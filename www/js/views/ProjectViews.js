@@ -27,6 +27,7 @@ define(function (require) {
         tplTargetLanguage   = require('text!tpl/ProjectTargetLanguage.html'),
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
+        tplManageProjs  = require('text!tpl/ManageProjects.html'),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
@@ -890,6 +891,10 @@ define(function (require) {
             }
         }),
         
+        ManageProjsView = Marionette.ItemView.extend({
+            template: Handlebars.compile(tplManageProjs)
+        }),
+        
         EditorAndUIView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplEditorPrefs),
             events: {
@@ -939,6 +944,7 @@ define(function (require) {
             },
             events: {
                 "click #EditorUIPrefs": "OnEditorUIPrefs",
+                "click #CurrentProject": "OnCurrentProject",
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
@@ -962,9 +968,12 @@ define(function (require) {
                 "click #Cancel": "OnCancel",
                 "click #OK": "OnOK"
             },
-            
             OnEditorUIPrefs: function () {
                 step = 9;
+                this.ShowView(step);
+            },
+            OnCurrentProject: function () {
+                step = 10;
                 this.ShowView(step);
             },
             onFocusLanguageName: function (event) {
@@ -1300,6 +1309,11 @@ define(function (require) {
                     break;
                 case 9: // editor and UI language
                     currentView = new EditorAndUIView({model: this.model});
+                    break;
+                case 10: // current project
+                    // instructions
+                    currentView = new ManageProjsView({model: this.model});
+                    $("#StepTitle").html(i18n.t('view.ttlProject'));
                     break;
                 }
                 this.container.show(currentView);

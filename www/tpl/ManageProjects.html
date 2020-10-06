@@ -1,0 +1,11 @@
+{{! ManageProjects.html
+    Template for managing multiple translation projects (AIM 1.4.0). Used by ProjectViews.js.
+}}
+<div id="mobileSelect" class="scroller-notb">
+    <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
+        <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.ttlCurrentProject'}}:<br>{{name}}</div>
+        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div><div class="emphasized-small" id="lblSourceCode">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div><div class="emphasized-small"><span id="tgtPhrase">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</span></div></div></div>
+        <div class="topcoat-list__header" id="lblAllProjects">{{t 'view.ttlAllProjects'}}</div>
+        <ul class="topcoat-list__container chapter-list" id="ProjList"></ul>
+    </div>
+</div>    

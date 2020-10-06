@@ -304,6 +304,15 @@
         "lblChapterInstances_plural": "__chapter__ (__count__ instancias)",
         "ttlDuplicateTranslation": "Esta traducción ya existe",
         "errDuplicateTranslation": "Esta traducción ya existe para el texto actual. Haga clic en Aceptar para crear una traducción diferente o Cancelar para revertir el texto a la traducción anterior.",
+        "ttlProject": "Project",
+        "ttlCurrentProject": "Current Project",
+        "ttlAllProjects": "All Projects",
+        "lblConnectToProject": "Connect to Project...",
+        "lblSwitchProject": "Switch Project...",
+        "lblRemoveProject": "Remove Project",
+        "lblAddProject": "Add Project...",
+        "dscWarnRemoveProject": "WARNING: This will remove the selected project and all its data, including any translation work done on this device. Are you sure you want to do this?",
+        "lblFrequency": "Frequency",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
