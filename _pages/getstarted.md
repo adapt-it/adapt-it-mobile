@@ -29,7 +29,9 @@ Note that the following training videos are available for getting started with A
 - [Adapting text](https://vimeo.com/286248259)
 - [Exporting your translated documents from Adapt It Mobile and copying them to a computer](https://vimeo.com/287095922)
 
-These training videos contain the instructions needed to install, configure, and use Adapt It Mobile 1.0.0; the instructions will be similar to those found below.
+These training videos contain the instructions needed to install, configure, and use Adapt It Mobile 1.0.0; the instructions will be similar to those found below. Here's a direct link, if you'd rather watch the videos here:
+
+<div style='padding:75% 0 0 0;position:relative;'><iframe src='https://vimeo.com/showcase/5368477/embed' allowfullscreen frameborder='0' style='position:absolute;top:0;left:0;width:100%;height:100%;'></iframe></div>
 
 ----
 
