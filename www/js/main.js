@@ -12,7 +12,7 @@ require.config({
     // featherlight     1.7.6
     // featherlight.gallery 1.7.6
     // hammer           2.0.8
-    // handlebars       4.1.1
+    // handlebars       4.7.6
     // hopscotch        0.3.1+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
     //                          ** This is for hopscotch on smaller screens, issue #30 on hopscotch, or #189 on AIM 
     // i18next          1.9.0
@@ -34,7 +34,7 @@ require.config({
         // libraries
         'backbone': 'backbone-min',
         'hammerjs': 'hammer',
-        'handlebars': 'handlebars-v4.1.1',
+        'handlebars': 'handlebars.min-v4.7.6',
         'jquery-hammerjs': 'jquery.hammer',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min', //'jquery-i18next.min',//
