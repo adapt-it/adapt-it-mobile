@@ -1334,7 +1334,6 @@ define(function (require) {
                 return this;
             },
             onShow: function () {
-                this.progress = new CircularProgressBar('pie');
                 this.ShowStep(step);
             },
             ////
@@ -1735,8 +1734,12 @@ define(function (require) {
                 currentView = null;
                 innerHtml = "";
                 // set the progress bar
-                this.progress.percent = progressPct;
-                //$("#progress").attr("style", "width: " + progressPct + "%;");
+                $("#progress").html(""); // clear out the old pie
+                var dp = JSON.parse($("#progress").attr("data-pie"));
+                dp.percent = progressPct; // update progress value
+                $("#progress").attr("data-pie", JSON.stringify(dp));
+                $("#progress").attr("style", "");
+                var progress = new CircularProgressBar('pie'); // create the progress bar
                 
                 switch (number) {
                 case 1: // source language
