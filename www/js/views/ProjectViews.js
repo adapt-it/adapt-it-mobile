@@ -1068,7 +1068,7 @@ define(function (require) {
                 // just display the project settings list (don't save)
                 $("#WizStepTitle").hide();
                 $("#StepInstructions").hide();
-                $("#OKCancelButtons").hide();
+                $("#tbBottom").addClass("hide");
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
@@ -1080,7 +1080,7 @@ define(function (require) {
                 // show / hide the appropriate UI elements
                 $("#WizStepTitle").hide();
                 $("#StepInstructions").hide();
-                $("#OKCancelButtons").hide();
+                $("#tbBottom").addClass("hide");
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
@@ -1221,7 +1221,7 @@ define(function (require) {
                 // hide the project list items
                 $("#WizStepTitle").show();
                 $("#StepInstructions").show();
-                $("#OKCancelButtons").show();
+                $("#tbBottom").removeClass("hide");
                 $('#ProjectItems').hide();
                 // clear out the old view (if any)
                 currentView = null;
