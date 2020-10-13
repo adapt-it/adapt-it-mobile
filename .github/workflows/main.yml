@@ -30,8 +30,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - run: npm install
-    - run: npm install gulp
-    - run: npm install gulp-cli
+    - run: npm install -g gulp
+    - run: npm install -g gulp-cli
     - run: gulp --debug
       env:
         CI: true
