@@ -3,9 +3,22 @@
 }}
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.ttlCurrentProject'}}:<br>{{name}}</div>
-        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div><div class="emphasized-small" id="lblSourceCode">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div><div class="emphasized-small"><span id="tgtPhrase">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</span></div></div></div>
-        <div class="topcoat-list__header" id="lblAllProjects">{{t 'view.ttlAllProjects'}}</div>
+        <div class="topcoat-list__header">{{t 'view.ttlCurrentProject'}}</div>
+        <div class="emphasized" id="lblCurName">{{name}}</div>
+        <div class="emphasized" id="curDetails">Details</div>
+        <div class="details hide" id="grpCurDetails">
+            <div class="emphasized-small">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div>
+            <div class="emphasized-small">{{t 'view.lblLanguageVariant'}}: {{SourceVariant}}</div>
+            <div class="emphasized-small">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
+            <div class="emphasized-small">{{t 'view.lblTextDirection'}}: {{SourceDir}}</div> <hr>
+            <div class="emphasized-small">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
+            <div class="emphasized-small">{{t 'view.lblLanguageVariant'}}: {{TargetVariant}}</div>
+            <div class="emphasized-small">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
+            <div class="emphasized-small">{{t 'view.lblTextDirection'}}: {{TargetDir}}</div>
+        </div>        
+        <div class="emphasized" id="curDelete">Remove Project</div>
+        <div class="topcoat-list__header" id="lblNewProject"><span class="img-plus-small"></span> New Project...</div>
+        <div class="topcoat-list__header">{{t 'view.ttlAllProjects'}}</div>
         <ul class="topcoat-list__container chapter-list" id="ProjList"></ul>
     </div>
 </div>    

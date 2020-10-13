@@ -28,6 +28,8 @@ define(function (require) {
         tplUSFMFiltering    = require('text!tpl/ProjectUSFMFiltering.html'),
         tplEditorPrefs      = require('text!tpl/EditorPrefs.html'),
         tplManageProjs  = require('text!tpl/ManageProjects.html'),
+        tplProjList = require('text!tpl/ProjectList.html'),
+        projList    = Handlebars.compile(tplProjList),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
         langs       = require('utils/languages'),
@@ -1314,6 +1316,21 @@ define(function (require) {
                     // instructions
                     currentView = new ManageProjsView({model: this.model});
                     $("#StepTitle").html(i18n.t('view.ttlProject'));
+                    $("#ProjList").html(projList(window.Application.ProjectList));
+                    //
+                    // all projects
+                        /*
+                                    regions: {
+                container: "#StepContainer"
+            },
+            initialize: function () {
+                this.spList = new spModels.SourcePhraseCollection();
+                this.spList.clearLocal();
+                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
+                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
+                this.render();
+            },
+*/
                     break;
                 }
                 this.container.show(currentView);

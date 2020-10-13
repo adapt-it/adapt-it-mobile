@@ -313,6 +313,10 @@
         "lblAddProject": "Add Project...",
         "dscWarnRemoveProject": "WARNING: This will remove the selected project and all its data, including any translation work done on this device. Are you sure you want to do this?",
         "lblFrequency": "Frequency",
+        "lblTextDirection": "Text Direction",
+        "lblTextRTL": "Right to Left",
+        "lblTextLTR": "Left to Right",
+        "lblTextBidi": "Bidirectional",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
