@@ -317,6 +317,7 @@
         "lblTextRTL": "Right to Left",
         "lblTextLTR": "Left to Right",
         "lblTextBidi": "Bidirectional",
+        "lblDetails": "Details",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

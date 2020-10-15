@@ -1575,12 +1575,15 @@ define(function (require) {
             },
 
             OnPrevStep: function () {
-                // pull the info from the current step (must pass validation)
-                if (this.GetProjectInfo(step) === true) {
-                    if (step > 1) {
+                // special case -- first screen doesn't validate -- it just returns to the welcome screen
+                if (step === 1) {
+                    window.history.go(-1); // return to welcome screen
+                } else {
+                    // pull the info from the current step (must pass validation)
+                    if (this.GetProjectInfo(step) === true) {
                         step--;
+                        this.ShowStep(step);
                     }
-                    this.ShowStep(step);
                 }
             },
 
@@ -1769,8 +1772,6 @@ define(function (require) {
                     // instructions
                     this.$("#WizStepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
                     this.$("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
-                    // first step -- disable the prev button
-                    this.$("#Prev").attr('disabled', 'true');
                     this.$("#lblPrev").html(i18n.t('view.lblPrev'));
                     this.$("#lblNext").html(i18n.t('view.lblNext'));
                     // controls

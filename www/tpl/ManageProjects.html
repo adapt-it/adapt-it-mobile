@@ -1,24 +1,25 @@
 {{! ManageProjects.html
     Template for managing multiple translation projects (AIM 1.4.0). Used by ProjectViews.js.
 }}
-<div id="mobileSelect" class="scroller-notb">
-    <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div class="topcoat-list__header">{{t 'view.ttlCurrentProject'}}</div>
-        <div class="emphasized" id="lblCurName">{{name}}</div>
-        <div class="emphasized" id="curDetails">Details</div>
-        <div class="details hide" id="grpCurDetails">
-            <div class="emphasized-small">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div>
-            <div class="emphasized-small">{{t 'view.lblLanguageVariant'}}: {{SourceVariant}}</div>
-            <div class="emphasized-small">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
-            <div class="emphasized-small">{{t 'view.lblTextDirection'}}: {{SourceDir}}</div> <hr>
-            <div class="emphasized-small">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
-            <div class="emphasized-small">{{t 'view.lblLanguageVariant'}}: {{TargetVariant}}</div>
-            <div class="emphasized-small">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
-            <div class="emphasized-small">{{t 'view.lblTextDirection'}}: {{TargetDir}}</div>
-        </div>        
-        <div class="emphasized" id="curDelete">Remove Project</div>
-        <div class="topcoat-list__header" id="lblNewProject"><span class="img-plus-small"></span> New Project...</div>
-        <div class="topcoat-list__header">{{t 'view.ttlAllProjects'}}</div>
-        <ul class="topcoat-list__container chapter-list" id="ProjList"></ul>
+<div class="control-group">
+<div class="control-row">{{t 'view.ttlCurrentProject'}}</div>
+    <div class="control-row emphasized center" id="lblCurName">{{name}}</div>
+    <div class="control-group rsResults show">
+    <div class="project-details">
+        <a id="SourceLanguage">
+        <div class="control-row">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div>
+        <div class="control-row">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
+        <span class="chevron"></span></a>
     </div>
-</div>    
+    <div class="project-details">
+        <a id="TargetLanguage">
+        <div class="control-row">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
+        <div class="control-row">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
+        <span class="chevron"></span></a>
+    </div>
+    </div>
+    <div class="control-row" id="curDelete"><button id="btnCurDelete" class="btnDelete right"><span class="btn-delete" role="img"></span>{{t 'view.lblRemoveProject'}}</button></div>
+</div>
+<div class="topcoat-list__header" id="lblNewProject"><span class="img-plus-small"></span>{{t 'view.lblAddProject'}}</div>
+<div class="topcoat-list__header">{{t 'view.ttlAllProjects'}}</div>
+<ul class="topcoat-list__container chapter-list" id="ProjList"></ul>

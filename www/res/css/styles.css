@@ -515,6 +515,14 @@ button.light-grey {
     padding: 0;
 }
 
+.topcoat-icon--previous {
+    background: url("images/prev_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
 .topcoat-icon--forward {
     background: url("images/forward_light.svg") no-repeat;
     -webkit-background-size: cover;
