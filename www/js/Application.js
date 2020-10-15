@@ -107,6 +107,16 @@ define(function (require) {
                     return original.apply(this, arguments);
                 };
                 
+                // ios page height workaround
+                if (window.sqlitePlugin && device.platform === "iOS") {
+                    var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
+                    var theRule = "";
+                    theRule = ".page {";
+                    theRule += "height: " + parseInt(window.outerHeight, 10) + "px;";
+                    theRule += "}";
+                    sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+                }
+                
                 // add the UI regions (just the main "content" for now)
                 this.addRegions({
                     main: '#main'
