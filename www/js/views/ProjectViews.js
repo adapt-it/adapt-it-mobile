@@ -890,25 +890,43 @@ define(function (require) {
             template: Handlebars.compile(tplManageProjs),
             events: {
                 "click #btnNewProject": "onAddProject",
-                "click #btnDelete":   "onDeleteCurProject"
-            },
-            onDeleteCurProject: function () {
-                
-            },
-            onAddProject: function () {
-                // Toggle "create new from..." action area
-                $("#projNewActions").toggleClass("hide");
-            },
-            onAddProjectCreateNew: function () {
-            },
-            onAddProjectFromFile: function () {
-                
+                "click .projList": "onClickProject",
+                "click #btnProjSelect": "onSelectProject",
+                "click #btnDelete":   "onDeleteProject"
             },
             onSelectProject: function () {
                 
             },
             onDeleteProject: function () {
                 
+            },
+            onAddProject: function () {
+                // Toggle "create new from..." action area
+                $("#projNewActions").toggleClass("hide");
+            },
+            onClickProject: function (event) {
+                var PROJ_ACTIONS = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div><div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
+                    index = event.currentTarget.id.substr(3);
+                // Toggle the visibility of the action menu bar
+                if ($("#lia-" + index).hasClass("show")) {
+                    // hide it
+                    $("#li-" + index).toggleClass("li-selected");
+                    $(".liActions").html(""); // clear out any old html actions for this refstring
+                    $("#lia-" + index).toggleClass("show");
+                } else {
+                    // get rid of any other visible action bars
+                    $(".topcoat-list__item").removeClass("li-selected");
+                    $(".liActions").html(""); // clear out any old html actions for this refstring
+                    $(".liActions").removeClass("show");
+                    // now show this one
+                    $("#li-" + index).toggleClass("li-selected");
+                    $("#lia-" + index).toggleClass("show");
+                    $("#lia-" + index).html(PROJ_ACTIONS); // normal refstring actions
+                    if ($("#proj-" + index).html() === $("#lblCurName").html()) {
+                        // this is the current translation -- disable the "set translation" button
+                        $("#btnSelect").disable();
+                    }
+                }
             },
             onShow: function () {
                 var projHtml = "";
@@ -917,7 +935,7 @@ define(function (require) {
                 } else {
                     // more than one project defined -- add them here
                     window.Application.ProjectList.each(function (item, index) {
-                        projHtml += "<li class=\"topcoat-list__item id=\"li-" + index + "\"><div class=\"big-link chap-list__item\"><h3>" + item.get('name') + "</h3></div></li>";
+                        projHtml += "<li class=\"topcoat-list__item projList\" id=\"li-" + index + "\"><div class=\"big-link chap-list__item\" id=\"proj-" + index + "\">" + item.get('name') + "</div><div class=\"liActions\" id=\"lia-" + index + "\"></div></li>";
                     });
                     // update the project list
                     $("#ProjList").html(projHtml);

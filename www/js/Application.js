@@ -325,8 +325,17 @@ define(function (require) {
                         window.Application.ProjectList.remove(models);
                     }
                     if (window.Application.currentProject === null) {
-                        // pick the first project in the list, if there is one
-                        window.Application.currentProject = window.Application.ProjectList.at(0);
+                        // check to see if we saved a current project
+                        if (localStorage.getItem("CurrentProjectID")) {
+                            window.Application.currentProject = window.Application.ProjectList.where({projectid: localStorage.getItem("CurrentProjectID")});
+                        } else {
+                            // pick the first project in the list, if there is one
+                            if (window.Application.ProjectList.length > 0) {
+                                window.Application.currentProject = window.Application.ProjectList.at(0);
+                                // save the value for later
+                                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
+                            }
+                        }                        
                     }
                     // now display the home view
                     homeView = new HomeViews.HomeView({model: window.Application.currentProject});
@@ -359,6 +368,15 @@ define(function (require) {
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
                 copyProjectView.delegateEvents();
                 this.ProjectList.add(proj);
+                if (this.currentProject !== null) {
+                    // There's already a project defined. Set this new one as the current project,
+                    // and clear out any local chapter/book/sourcephrase/KB stuff
+                    this.currentProject = proj;
+                    window.Application.BookList.length = 0;
+                    window.Application.ChapterList.length = 0;
+                    window.Application.spList.length = 0;
+                    window.Application.kbList.length = 0;
+                }
                 this.main.show(copyProjectView);
             },
             
@@ -367,6 +385,15 @@ define(function (require) {
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
                 newProjectView.delegateEvents();
                 this.ProjectList.add(proj);
+                if (this.currentProject !== null) {
+                    // There's already a project defined. Set this new one as the current project,
+                    // and clear out any local chapter/book/sourcephrase/KB stuff
+                    this.currentProject = proj;
+                    window.Application.BookList.length = 0;
+                    window.Application.ChapterList.length = 0;
+                    window.Application.spList.length = 0;
+                    window.Application.kbList.length = 0;
+                }
                 this.main.show(newProjectView);
             },
             
@@ -460,6 +487,7 @@ define(function (require) {
                                 proj.set('lastAdaptedName', chapter.get('name'));
                                 proj.save();
                                 window.Application.currentProject = proj;
+                                localStorage.setItem("CurrentProjectID", proj.get("projectid"));
                             }
                             window.Application.main.show(theView);
                         } else {

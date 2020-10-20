@@ -305,7 +305,7 @@
         "ttlCurrentProject": "Dispela projek",
         "ttlAllProjects": "Ol projek",
         "lblConnectToProject": "Konek to projek...",
-        "lblSwitchProject": "Yusim dispela projek...",
+        "lblSelectProject": "Yusim dispela projek...",
         "lblRemoveProject": "Rausim projek",
         "lblAddProject": "Nupela projek...",
         "dscWarnRemoveProject": "WARNING: This will remove the selected project and all its data, including any translation work done on this device. Are you sure you want to do this?",

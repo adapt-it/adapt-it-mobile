@@ -309,7 +309,7 @@
         "ttlCurrentProject": "Projeto atual",
         "ttlAllProjects": "Todos os Projetos",
         "lblConnectToProject": "Conectar ao projeto ...",
-        "lblSwitchProject": "Trabalhe neste projeto",
+        "lblSelectProject": "Trabalhe neste projeto",
         "lblRemoveProject": "Exclua este projeto",
         "lblAddProject": "Novo projeto...",
         "dscWarnRemoveProject": "AVISO: Isso removerá o projeto selecionado e todos os seus dados, incluindo qualquer trabalho de tradução feito neste dispositivo. Você tem certeza de que quer fazer isso?",
