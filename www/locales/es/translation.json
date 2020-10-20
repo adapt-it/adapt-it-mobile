@@ -304,7 +304,7 @@
         "lblChapterInstances_plural": "__chapter__ (__count__ instancias)",
         "ttlDuplicateTranslation": "Esta traducción ya existe",
         "errDuplicateTranslation": "Esta traducción ya existe para el texto actual. Haga clic en Aceptar para crear una traducción diferente o Cancelar para revertir el texto a la traducción anterior.",
-        "ttlProject": "Proyecto",
+        "ttlProject": "Proyectos",
         "ttlCurrentProject": "Proyecto actual",
         "ttlAllProjects": "Todos los proyectos",
         "lblConnectToProject": "Conectarse al proyecto ...",

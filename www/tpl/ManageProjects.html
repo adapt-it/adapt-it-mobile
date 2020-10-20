@@ -4,22 +4,15 @@
 <div class="control-group">
 <div class="control-row">{{t 'view.ttlCurrentProject'}}</div>
     <div class="control-row emphasized center" id="lblCurName">{{name}}</div>
-    <div class="control-group rsResults show">
-    <div class="project-details">
-        <a id="SourceLanguage">
-        <div class="control-row">{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</div>
-        <div class="control-row">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
-        <span class="chevron"></span></a>
-    </div>
-    <div class="project-details">
-        <a id="TargetLanguage">
-        <div class="control-row">{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</div>
-        <div class="control-row">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
-        <span class="chevron"></span></a>
-    </div>
-    </div>
-    <div class="control-row" id="curDelete"><button id="btnCurDelete" class="btnDelete right"><span class="btn-delete" role="img"></span>{{t 'view.lblRemoveProject'}}</button></div>
 </div>
-<div class="topcoat-list__header" id="lblNewProject"><span class="img-plus-small"></span>{{t 'view.lblAddProject'}}</div>
-<div class="topcoat-list__header">{{t 'view.ttlAllProjects'}}</div>
+<div class="control-row l-indent"><button class="topcoat-button" id="btnNewProject"><span class="img-plus-small"></span> {{t 'view.lblAddProject'}}</button></div>
+<div class="control-group hide" id="projNewActions">
+    <ul class="chapter-list topcoat-list__container" id="ProjectItems">
+    <li class="topcoat-list__item" style="border:none;"><a class="big-link" id="settings" title="{{ t 'view.dscCreateProject'}}" href="#project"><span class="btn-newproject"></span>{{ t 'view.lblCreateProject'}}</a></li>
+    <li class="topcoat-list__item" style="border:none;"><a class="big-link" id="import" title="{{ t 'view.dscCopyProject'}}" href="#copy"><span class="btn-copyproject"></span>{{ t 'view.lblCopyProject'}}</a></li>
+    </ul>        
+</div>
+<div class="control-row"></div>
+<div class="topcoat-list__header" id="hdrAllProjects">{{t 'view.ttlAllProjects'}}</div>
 <ul class="topcoat-list__container chapter-list" id="ProjList"></ul>
+<div class="control-row"></div>

@@ -17,22 +17,37 @@
     </div>
 </div>
 <!-- <div class="container" style="height: calc(100% - 70px);"> -->
-<div class="topcoat-list__container scroller-notb">
+<div id="editor" class="topcoat-list__container scroller-notb">
     <div class="Instructions control-row l-indent" id="StepInstructions"></div>
     <div id="StepContainer"></div>
-<ul class="chapter-list topcoat-list__container" id="ProjectItems">
+<div id="ProjectItems">
+<div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblGeneralSettings'}}</div>
+<ul class="chapter-list topcoat-list__container">
 <li class="topcoat-list__item">
     <a id="EditorUIPrefs">
-    <header><h3>{{t 'view.lblGeneralSettings'}}</h3></header>
-    <div class="control-row"></div>
+    <header><h3>Editor and User Interface</h3></header>
     <span class="chevron"></span></a>
 </li>
 <li class="topcoat-list__item">
     <a id="CurrentProject">
-    <header><h3>{{t 'view.ttlProject'}}</h3></header>
-    <div class="control-row">{{name}}</div>
+    <header><h3>Manage Projects</h3></header>
+    <span class="chevron"></span></a>
+</li>
+</ul>
+<div class="topcoat-list__header" id="lblAllTrans">Current Project Settings</div>
+<ul class="chapter-list topcoat-list__container">
+<li class="topcoat-list__item">
+    <a id="SourceLanguage">
+    <header><h3>{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</h3></header>
+    <div class="control-row">{{t 'view.lblCode'}}: {{SourceLanguageCode}}</div>
     <span class="chevron" style="top:1.25rem;"></span></a>
 </li>
+<li class="topcoat-list__item">
+    <a id="TargetLanguage">
+    <header><h3>{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</h3></header>
+    <div class="control-row">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
+    <span class="chevron" style="top:1.25rem;"></span></a>
+</li>    
 <li class="topcoat-list__item">
     <a id="sourceFont">
     <header><h3>{{t 'view.lblSourceFont'}}</h3></header>

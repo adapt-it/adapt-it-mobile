@@ -48,13 +48,6 @@ define(function (require) {
         // Helper methods
         ////
         
-//        languageMatches = function(langs) {
-//            return function findMatches(query, callback) {
-//                var matches = langs.where({name: query});
-//                callback(matches);
-//            }; 
-//        },
-        
         // Helper method that returns the RFC5646 code based on the ISO639 code and variant
         buildFullLanguageCode = function (langCode, langVariant) {
             var fullCode = "";
@@ -894,7 +887,42 @@ define(function (require) {
         }),
         
         ManageProjsView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplManageProjs)
+            template: Handlebars.compile(tplManageProjs),
+            events: {
+                "click #btnNewProject": "onAddProject",
+                "click #btnDelete":   "onDeleteCurProject"
+            },
+            onDeleteCurProject: function () {
+                
+            },
+            onAddProject: function () {
+                // Toggle "create new from..." action area
+                $("#projNewActions").toggleClass("hide");
+            },
+            onAddProjectCreateNew: function () {
+            },
+            onAddProjectFromFile: function () {
+                
+            },
+            onSelectProject: function () {
+                
+            },
+            onDeleteProject: function () {
+                
+            },
+            onShow: function () {
+                var projHtml = "";
+                if (window.Application.ProjectList.length === 1) {
+                    $("#hdrAllProjects").hide();
+                } else {
+                    // more than one project defined -- add them here
+                    window.Application.ProjectList.each(function (item, index) {
+                        projHtml += "<li class=\"topcoat-list__item id=\"li-" + index + "\"><div class=\"big-link chap-list__item\"><h3>" + item.get('name') + "</h3></div></li>";
+                    });
+                    // update the project list
+                    $("#ProjList").html(projHtml);
+                }
+            }
         }),
         
         EditorAndUIView = Marionette.ItemView.extend({
@@ -1074,6 +1102,8 @@ define(function (require) {
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
+                $("#editor").removeClass("scroller-bottom-tb");
+                $("#editor").addClass("scroller-notb");
                 this.removeRegion("container");
             },
             OnOK: function () {
@@ -1086,6 +1116,8 @@ define(function (require) {
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
+                $("#editor").removeClass("scroller-bottom-tb");
+                $("#editor").addClass("scroller-notb");
                 this.removeRegion("container");
             },
 
@@ -1223,6 +1255,8 @@ define(function (require) {
                 // hide the project list items
                 $("#WizStepTitle").show();
                 $("#StepInstructions").show();
+                $("#editor").addClass("scroller-bottom-tb");
+                $("#editor").removeClass("scroller-notb");
                 $("#tbBottom").removeClass("hide");
                 $('#ProjectItems').hide();
                 // clear out the old view (if any)
@@ -1317,20 +1351,11 @@ define(function (require) {
                     currentView = new ManageProjsView({model: this.model});
                     $("#StepTitle").html(i18n.t('view.ttlProject'));
                     $("#ProjList").html(projList(window.Application.ProjectList));
-                    //
-                    // all projects
-                        /*
-                                    regions: {
-                container: "#StepContainer"
-            },
-            initialize: function () {
-                this.spList = new spModels.SourcePhraseCollection();
-                this.spList.clearLocal();
-                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
-                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
-                this.render();
-            },
-*/
+                    break;
+                case 11: // new project
+                    // instructions
+                    currentView = new ProjAddNewView({model: this.model});
+                    $("#StepTitle").html(i18n.t('view.ttlProject'));
                     break;
                 }
                 this.container.show(currentView);
