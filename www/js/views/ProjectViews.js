@@ -311,9 +311,19 @@ define(function (require) {
             onOK: function () {
                 // save the model
                 this.model.save();
+                if (window.Application.currentProject !== null) {
+                    // There's already a project defined, so there might be some local
+                    // chapter/book/sourcephrase/KB stuff -- clear it out so it reloads info from
+                    // our new project instead.
+                    window.Application.BookList.length = 0;
+                    window.Application.ChapterList.length = 0;
+                    window.Application.spList.length = 0;
+                    window.Application.kbList.length = 0;
+                }
+                // Set the current project to our new one
                 window.Application.currentProject = this.model;
                 // head back to the home page
-                window.history.go(-1);
+                window.location.replace("");
             },
             // Handler for the click event on the project file list (mobile only) -
             // reconstitutes the file object from the path and calls importSettingsFile()
@@ -1640,9 +1650,21 @@ define(function (require) {
                         // last step -- finish up
                         // save the model
                         this.model.save();
-                        // head back to the home page
+                        if (window.Application.currentProject !== null) {
+                            // There's already a project defined. Clear out any local 
+                            // chapter/book/sourcephrase/KB stuff so it loads from our new project instead
+                            window.Application.BookList.length = 0;
+                            window.Application.ChapterList.length = 0;
+                            window.Application.spList.length = 0;
+                            window.Application.kbList.length = 0;
+                        }
+                        // set the current project to our new one
                         window.Application.currentProject = this.model;
-                        window.history.go(-1);
+                        // head back to the home page
+                        window.location.replace("");
+                        
+                        // head back to the home page
+//                        window.history.go(-1);
 //                        window.Application.home();
                     }
                 }
