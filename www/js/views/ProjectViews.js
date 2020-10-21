@@ -903,7 +903,7 @@ define(function (require) {
                 "click #btnNewProject": "onAddProject",
                 "click .projList": "onClickProject",
                 "click #btnProjSelect": "onSelectProject",
-                "click #btnDelete":   "onDeleteProject"
+                "click #btnProjDelete":   "onDeleteProject"
             },
             onSelectProject: function (event) {
                 event.stopPropagation();
@@ -921,16 +921,22 @@ define(function (require) {
                 window.location.replace("");
                 
             },
-            onDeleteProject: function () {
-                
+            onDeleteProject: function (event) {
+                event.stopPropagation();
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
+                var proj = window.Application.ProjectList.at(index);
+                // TODO: confirm
+                window.Application.ProjectList.remove(proj); // remove from the collection
+                proj.destroy(); // also deletes everything associated with this project
+                this.showProjects(); // redraw the UI
             },
             onAddProject: function () {
                 // Toggle "create new from..." action area
                 $("#projNewActions").toggleClass("hide");
             },
             onClickProject: function (event) {
-                var PROJ_ACTIONS = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div><div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
-                    CURRENT_PROJ_ACTIONS = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
+                var SELECT_BTN = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div>",
+                    DELETE_BTN = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
                     index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
@@ -948,15 +954,16 @@ define(function (require) {
                     $("#lia-" + index).toggleClass("show");
                     if ($("#proj-" + index).html() === $("#lblCurName").html()) {
                         // this is the current project
-                        $("#lia-" + index).html(CURRENT_PROJ_ACTIONS); // normal refstring actions
+                        $("#lia-" + index).html(DELETE_BTN); // can only delete
                     } else {
-                        $("#lia-" + index).html(PROJ_ACTIONS); // normal refstring actions
+                        $("#lia-" + index).html(SELECT_BTN + DELETE_BTN); // can select and delete
                     }
                 }
             },
-            onShow: function () {
+            showProjects: function () {
                 var projHtml = "";
                 if (window.Application.ProjectList.length === 1) {
+                    $("#ProjList").html("");
                     $("#hdrAllProjects").hide();
                 } else {
                     // more than one project defined -- add them here
@@ -966,6 +973,9 @@ define(function (require) {
                     // update the project list
                     $("#ProjList").html(projHtml);
                 }
+            },
+            onShow: function () {
+                this.showProjects();
             }
         }),
         
@@ -1646,6 +1656,12 @@ define(function (require) {
             OnPrevStep: function () {
                 // special case -- first screen doesn't validate -- it just returns to the welcome screen
                 if (step === 1) {
+                    // delete the project
+                    window.Application.ProjectList.remove(this.model); // remove from the collection
+                    if (this.model.get("projectid") !== "") {
+                        // it's been saved to the DB -- delete it from the DB as well
+                        this.model.destroy(); 
+                    } 
                     window.history.go(-1); // return to welcome screen
                 } else {
                     // pull the info from the current step (must pass validation)

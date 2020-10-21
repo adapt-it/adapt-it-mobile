@@ -467,10 +467,11 @@ define(function (require) {
             },
             destroy: function (options) {
                 var deferred = $.Deferred();
-                console.log("destroy() - removing project: " + this.attributes.projectid);
+                var attributes = this.attributes;
+                console.log("destroy() - removing project: " + attributes.projectid);
                 window.Application.db.transaction(function (tx) {
                     // get the books associated with this projectid
-                    tx.executeSql("SELECT * FROM project WHERE projectid=?;", [this.attributes.projectid], function (tx, res) {
+                    tx.executeSql("SELECT * FROM project WHERE projectid=?;", [attributes.projectid], function (tx, res) {
                         var projidx = 0,
                             projlen = 0;
                         for (projidx = 0, projlen = res.rows.length; projidx < projlen; ++projidx) {
@@ -495,14 +496,14 @@ define(function (require) {
                             });
                         }
                         // delete the books
-                        tx.executeSql("DELETE FROM book WHERE projectid=?;", [this.attributes.projectid], function (tx, res) {
+                        tx.executeSql("DELETE FROM book WHERE projectid=?;", [attributes.projectid], function (tx, res) {
                             console.log("DELETE books ok: " + res.toString());
                         }, function (tx, err) {
                             console.log("DELETE error: " + err.message);
                         });
                     });
                     // delete the project
-                    tx.executeSql("DELETE FROM project WHERE projectid=?;", [this.attributes.projectid], function (tx, res) {
+                    tx.executeSql("DELETE FROM project WHERE projectid=?;", [attributes.projectid], function (tx, res) {
                         console.log("DELETE project ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
