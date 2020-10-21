@@ -322,6 +322,7 @@ define(function (require) {
                 }
                 // Set the current project to our new one
                 window.Application.currentProject = this.model;
+                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
                 // head back to the home page
                 window.location.replace("");
             },
@@ -904,7 +905,20 @@ define(function (require) {
                 "click #btnProjSelect": "onSelectProject",
                 "click #btnDelete":   "onDeleteProject"
             },
-            onSelectProject: function () {
+            onSelectProject: function (event) {
+                event.stopPropagation();
+                var index = event.currentTarget.parentElement.parentElement.id.substr(4);
+                // TODO: confirm
+                window.Application.currentProject = window.Application.ProjectList.at(index);
+                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
+                // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                // from our new project instead
+                window.Application.BookList.length = 0;
+                window.Application.ChapterList.length = 0;
+                window.Application.spList.length = 0;
+                window.Application.kbList.length = 0;
+                // head back to the home page
+                window.location.replace("");
                 
             },
             onDeleteProject: function () {
@@ -916,6 +930,7 @@ define(function (require) {
             },
             onClickProject: function (event) {
                 var PROJ_ACTIONS = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div><div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
+                    CURRENT_PROJ_ACTIONS = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
                     index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
@@ -931,10 +946,11 @@ define(function (require) {
                     // now show this one
                     $("#li-" + index).toggleClass("li-selected");
                     $("#lia-" + index).toggleClass("show");
-                    $("#lia-" + index).html(PROJ_ACTIONS); // normal refstring actions
                     if ($("#proj-" + index).html() === $("#lblCurName").html()) {
-                        // this is the current translation -- disable the "set translation" button
-                        $("#btnSelect").disable();
+                        // this is the current project
+                        $("#lia-" + index).html(CURRENT_PROJ_ACTIONS); // normal refstring actions
+                    } else {
+                        $("#lia-" + index).html(PROJ_ACTIONS); // normal refstring actions
                     }
                 }
             },
@@ -1660,6 +1676,7 @@ define(function (require) {
                         }
                         // set the current project to our new one
                         window.Application.currentProject = this.model;
+                        localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
                         // head back to the home page
                         window.location.replace("");
                         
