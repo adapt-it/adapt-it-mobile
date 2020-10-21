@@ -848,7 +848,7 @@ define(function (require) {
                 var htmlstring = "",
                     filter = this.model.get('FilterMarkers'),
                     value = "false";
-                USFMMarkers.each(function (item, index, list) {
+                USFMMarkers.each(function (item, index) {
                     if (item.get('userCanSetFilter') && item.get('userCanSetFilter') === '1') {
                         value = (filter.indexOf("\\" + item.get('name') + " ") >= 0) ? "true" : "false";
                         htmlstring += "<tr><td><label class='topcoat-checkbox'><input class='c' type='checkbox' id='filter-" + index + " value='" + value;
@@ -905,10 +905,11 @@ define(function (require) {
                 "click #btnProjSelect": "onSelectProject",
                 "click #btnProjDelete":   "onDeleteProject"
             },
+            // User clicked the "switch to this project" button. Sets the current project to the selected project, clears the
+            // local translation stuff (so it reloads the proper project info from the DB), and navigates to the home screen.
             onSelectProject: function (event) {
                 event.stopPropagation();
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
-                // TODO: confirm
                 window.Application.currentProject = window.Application.ProjectList.at(index);
                 localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
                 // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
@@ -919,21 +920,41 @@ define(function (require) {
                 window.Application.kbList.length = 0;
                 // head back to the home page
                 window.location.replace("");
-                
             },
+            // User clicked the Delete project. Confirms the delete intent, and then calls reallyDeleteProj() to actually delete it.
             onDeleteProject: function (event) {
                 event.stopPropagation();
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var proj = window.Application.ProjectList.at(index);
-                // TODO: confirm
-                window.Application.ProjectList.remove(proj); // remove from the collection
-                proj.destroy(); // also deletes everything associated with this project
+                // confirm with the user -- this nukes the project and everything related to it
+                // (translation work and KB)
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.confirm(i18n.t('view.dscWarnRemoveProject'), function (buttonIndex) {
+                        if (buttonIndex === 1) {
+                            this.reallyDeleteProj(proj);
+                        }
+                    }, i18n.t('view.lblRemoveProject'));
+                } else {
+                    // in browser
+                    if (confirm(i18n.t('view.dscWarnRemoveProject'))) {
+                        this.reallyDeleteProj(proj);
+                    }
+                }
+            },
+            // does the dirty work of deleting the project, after the user has confirmed the intent (above)
+            reallyDeleteProj: function (project) {
+                window.Application.ProjectList.remove(project); // remove from the collection
+                project.destroy(); // also deletes everything associated with this project
                 this.showProjects(); // redraw the UI
             },
+            // User clicked the Add Project... toggle button. Just shows/hides the clickable area where the user can either
+            // create or copy a project
             onAddProject: function () {
                 // Toggle "create new from..." action area
                 $("#projNewActions").toggleClass("hide");
             },
+            // User clicked on a project in the list -- shows / hides the available actions for the selected project.
             onClickProject: function (event) {
                 var SELECT_BTN = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div>",
                     DELETE_BTN = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
@@ -960,6 +981,7 @@ define(function (require) {
                     }
                 }
             },
+            // iterates through the project list. If there's only one, hides the list 
             showProjects: function () {
                 var projHtml = "";
                 if (window.Application.ProjectList.length === 1) {
@@ -1151,7 +1173,7 @@ define(function (require) {
             OnCancel: function () {
                 // just display the project settings list (don't save)
                 $("#WizStepTitle").hide();
-                $("#StepInstructions").hide();
+                $("#StepInstructions").addClass("hide");
                 $("#tbBottom").addClass("hide");
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
@@ -1165,7 +1187,7 @@ define(function (require) {
                 this.UpdateProject(step);
                 // show / hide the appropriate UI elements
                 $("#WizStepTitle").hide();
-                $("#StepInstructions").hide();
+                $("#StepInstructions").addClass("hide");
                 $("#tbBottom").addClass("hide");
                 $('#ProjectItems').show();
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
@@ -1308,7 +1330,7 @@ define(function (require) {
                 });
                 // hide the project list items
                 $("#WizStepTitle").show();
-                $("#StepInstructions").show();
+                $("#StepInstructions").removeClass("hide");
                 $("#editor").addClass("scroller-bottom-tb");
                 $("#editor").removeClass("scroller-notb");
                 $("#tbBottom").removeClass("hide");
@@ -1405,11 +1427,6 @@ define(function (require) {
                     currentView = new ManageProjsView({model: this.model});
                     $("#StepTitle").html(i18n.t('view.ttlProject'));
                     $("#ProjList").html(projList(window.Application.ProjectList));
-                    break;
-                case 11: // new project
-                    // instructions
-                    currentView = new ProjAddNewView({model: this.model});
-                    $("#StepTitle").html(i18n.t('view.ttlProject'));
                     break;
                 }
                 this.container.show(currentView);
