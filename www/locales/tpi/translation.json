@@ -315,6 +315,9 @@
         "lblTextLTR": "Han kais na i ran i go long han sut",
         "lblTextBidi": "Tupela i makim rot",
         "lblDetails": "Details",
+        "ttlEditorUI": "Editor and User Interface",
+        "ttlManageProjects": "Manage Projects",
+        "ttlCurrentProjectSettings": "Current Project Settings",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

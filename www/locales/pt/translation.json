@@ -319,6 +319,9 @@
         "lblTextLTR": "Esqeurda para direita",
         "lblTextBidi": "Bidirectionnel",
         "lblDetails": "Detalhes",
+        "ttlEditorUI": "Editor e interface do usuário",
+        "ttlManageProjects": "Administrar Projetos",
+        "ttlCurrentProjectSettings": "Configurações para o projeto atual",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -318,6 +318,9 @@
         "lblTextLTR": "Left to Right",
         "lblTextBidi": "Bidirectional",
         "lblDetails": "Details",
+        "ttlEditorUI": "Editor and User Interface",
+        "ttlManageProjects": "Manage Projects",
+        "ttlCurrentProjectSettings": "Current Project Settings",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
