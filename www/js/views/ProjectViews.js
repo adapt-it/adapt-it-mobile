@@ -1175,7 +1175,7 @@ define(function (require) {
                 $("#WizStepTitle").hide();
                 $("#StepInstructions").addClass("hide");
                 $("#tbBottom").addClass("hide");
-                $('#ProjectItems').show();
+                $('#ProjectItems').removeClass("hide");
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
                 $("#editor").removeClass("scroller-bottom-tb");
@@ -1189,7 +1189,7 @@ define(function (require) {
                 $("#WizStepTitle").hide();
                 $("#StepInstructions").addClass("hide");
                 $("#tbBottom").addClass("hide");
-                $('#ProjectItems').show();
+                $('#ProjectItems').removeClass("hide");
                 $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
                 $(".container").attr("style", "height: calc(100% - 70px);");
                 $("#editor").removeClass("scroller-bottom-tb");
@@ -1334,7 +1334,7 @@ define(function (require) {
                 $("#editor").addClass("scroller-bottom-tb");
                 $("#editor").removeClass("scroller-notb");
                 $("#tbBottom").removeClass("hide");
-                $('#ProjectItems').hide();
+                $('#ProjectItems').addClass("hide");
                 // clear out the old view (if any)
                 currentView = null;
                 switch (number) {
