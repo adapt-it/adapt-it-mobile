@@ -1464,6 +1464,17 @@ define(function (require) {
                     break;
                 }
                 this.container.show(currentView);
+                if (number === 1 || number === 2) {
+                    // the source and target language pages normally wouldn't be messed with once they're set up;
+                    // it's possible that the user needs to correct something in the dialect? At any rate, tell the user
+                    // that new projects can be created in the settings / manage projects page.
+                    if (navigator.notification) {
+                        navigator.notification.alert(i18n.t('view.dscWarnChangeProject'));
+                    } else {
+                        alert(i18n.t('view.dscWarnChangeProject'));
+                    }
+                    
+                }
             }
         }),
 
