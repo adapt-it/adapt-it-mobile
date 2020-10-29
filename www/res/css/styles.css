@@ -105,20 +105,7 @@ input[type="file"] {
 /* welcome screen styles */
 .splash-screen {
     /* fallback solid color */
-/*
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    border: 1px solid #eee;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    box-shadow: 0 0 0 1px #949696;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-*/
     overflow: hidden;
-/*    padding: 22px;*/
     vertical-align: middle;
     width: 90%;
 }
@@ -161,6 +148,7 @@ input[type="file"] {
     margin: 0 auto 6px auto;
     width: 96px;
 }
+
 .waiting {
     /* image from http://www.ajaxload.info/, freely licensed under the WTFPL */
     background: url('images/ajax-loader.gif') no-repeat;
@@ -456,9 +444,11 @@ button.light-grey {
     top: 57px;
 }
 .bottom-tb {
+    background: #eee;
     bottom: 0;
     left: 0;
     padding-bottom: 6px;
+    padding-top: 6px;
     position: fixed;
     right: 0;
 }
@@ -519,6 +509,14 @@ button.light-grey {
 
 .topcoat-icon--back {
     background: url("images/back_light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
+.topcoat-icon--previous {
+    background: url("images/prev_light.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -1317,6 +1315,17 @@ ul.btns {
     vertical-align: sub;
     width: 18px;
 }
+.img-plus-small {
+	background-image: url("images/plus.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 18px;
+    vertical-align: sub;
+    width: 18px;
+}
+
 
 /* AIM buttons -- these have a 6px margin before/after (unlike the topcoat-icon guys above) */
 .btn-adapt{

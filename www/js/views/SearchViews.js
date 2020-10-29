@@ -224,7 +224,7 @@ define(function (require) {
                         $("#lia-" + index).html(RS_ACTIONS); // normal refstring actions
                         if ($("#rs" + index).html() === $("#srcPhrase").html()) {
                             // this is the current translation -- disable the "set translation" button
-                            $("#btnSelect").disable();
+                            $("#btnSelect").prop('disabled', true);
                         }
                     } else {
                         $("#lia-" + index).html(RS_HIDDEN); // this refstring is hidden / deleted

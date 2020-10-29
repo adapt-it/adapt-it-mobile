@@ -3105,6 +3105,7 @@ define(function (require) {
             },
             // User clicked on a blank area of the screen
             unselectPiles: function (event) {
+                var isBlankArea = false;
                 // dismiss the Plus and More menu if visible
                 if ($("#PlusActionsMenu").hasClass("show")) {
                     $("#PlusActionsMenu").toggleClass("show");
@@ -3114,8 +3115,15 @@ define(function (require) {
                 }
                 // stop any help tour
                 hopscotch.endTour();
+                if (event.toElement === null) {
+                    // toElement doesn't work on this device -- use target to obtain where the event hit
+                    isBlankArea = (!($(event.target).hasClass('strip') || $(event.target).hasClass('pile') || $(event.target).hasClass('marker') || $(event.target).hasClass('source') || $(event.target).hasClass('target')));
+                } else {
+                    // toElement works -- use it
+                    isBlankArea = (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target')));
+                }
                 // only do this if we're in a blank area of the screen
-                if (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target'))) {
+                if (isBlankArea === true) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
                     if (selectedStart !== null) {
                         $("div").removeClass("ui-selecting ui-selected ui-longSelecting");

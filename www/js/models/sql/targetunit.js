@@ -88,10 +88,10 @@ define(function (require) {
                     });
                 });
             },
-            destroy: function (options) {
+            destroy: function () {
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("DELETE FROM targetunit WHERE tuid=?;", [this.attributes.tuid], function (tx, res) {
-//                        console.log("DELETE ok: " + res.toString());
+                        console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });
@@ -233,6 +233,7 @@ define(function (require) {
                 var deferred = $.Deferred();
                 var len = 0;
                 var i = 0;
+                var projectid = null;
                 var retValue = null;
                 var results = null;
                 if (method === "read") {
@@ -241,7 +242,7 @@ define(function (require) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('projectid')) {
-                        var projectid = options.data.projectid;
+                         projectid = options.data.projectid;
                         results = targetunits.filter(function (element) {
                             return element.attributes.projectid === projectid.toLowerCase();
                         });
@@ -326,6 +327,23 @@ define(function (require) {
                         // return the promise
                         return deferred.promise();
                     }
+                } else if (method === "delete") {
+                    if (options.data.hasOwnProperty('projectid')) {
+                        projectid = options.data.projectid;
+                        // delete the KB entries for a project
+                        window.Application.db.transaction(function (tx) {
+                            tx.executeSql("DELETE FROM targetunit WHERE projectid=?;", [projectid], function (tx, res) {
+                                console.log("DELETE KB ok: " + res.toString());
+                            }, function (tx, err) {
+                                console.log("DELETE error: " + err.message);
+                            });
+                        }, function (e) {
+                            deferred.reject(e);
+                        }, function () {
+                            deferred.resolve();
+                        });
+                    }
+                    return deferred.promise();
                 }
             }
 

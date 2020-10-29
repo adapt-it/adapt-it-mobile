@@ -17,16 +17,25 @@
     </div>
 </div>
 <!-- <div class="container" style="height: calc(100% - 70px);"> -->
-<div class="topcoat-list__container scroller-notb">
-    <div class="Instructions control-row l-indent" id="StepInstructions"></div>
+<div id="editor" class="topcoat-list__container scroller-notb">
+    <div class="Instructions control-row l-indent hide" id="StepInstructions"></div>
     <div id="StepContainer"></div>
-<ul class="chapter-list topcoat-list__container" id="ProjectItems">
+<div id="ProjectItems">
+<div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblGeneralSettings'}}</div>
+<ul class="chapter-list topcoat-list__container">
 <li class="topcoat-list__item">
     <a id="EditorUIPrefs">
-    <header><h3>{{t 'view.lblGeneralSettings'}}</h3></header>
-    <div class="control-row"></div>
-    <span class="chevron" style="top:1.25rem;"></span></a>
+    <header><h3>{{t 'view.ttlEditorUI'}}</h3></header>
+    <span class="chevron"></span></a>
 </li>
+<li class="topcoat-list__item">
+    <a id="CurrentProject">
+    <header><h3>{{t 'view.ttlManageProjects'}}</h3></header>
+    <span class="chevron"></span></a>
+</li>
+</ul>
+<div class="topcoat-list__header" id="lblAllTrans">{{t 'view.ttlCurrentProjectSettings'}}</div>
+<ul class="chapter-list topcoat-list__container">
 <li class="topcoat-list__item">
     <a id="SourceLanguage">
     <header><h3>{{t 'view.lblSourceLanguageName'}}: {{SourceLanguageName}}</h3></header>
@@ -38,7 +47,7 @@
     <header><h3>{{t 'view.lblTargetLanguageName'}}: {{TargetLanguageName}}</h3></header>
     <div class="control-row">{{t 'view.lblCode'}}: {{TargetLanguageCode}}</div>
     <span class="chevron" style="top:1.25rem;"></span></a>
-</li>
+</li>    
 <li class="topcoat-list__item">
     <a id="sourceFont">
     <header><h3>{{t 'view.lblSourceFont'}}</h3></header>
@@ -76,8 +85,9 @@
     <span class="chevron" style="top:1.25rem;"></span></a>
 </li>
 </ul>
-<!-- </div> -->
-<div id="OKCancelButtons" style="display:none">
+</div>
+<div class="bottom-tb hide" id="tbBottom">
+<div id="OKCancelButtons">
         <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
         <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>
 </div>
