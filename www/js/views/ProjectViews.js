@@ -925,28 +925,62 @@ define(function (require) {
             onDeleteProject: function (event) {
                 event.stopPropagation();
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
+                var ProjDomID = event.currentTarget.parentElement.parentElement.parentElement.id;
                 var proj = window.Application.ProjectList.at(index);
+                var bCurrentProject = false;
+                if (proj.get('name') === $("#lblCurName").html()) {
+                    bCurrentProject = true;
+                }
                 // confirm with the user -- this nukes the project and everything related to it
                 // (translation work and KB)
                 if (navigator.notification) {
                     // on mobile device
                     navigator.notification.confirm(i18n.t('view.dscWarnRemoveProject'), function (buttonIndex) {
                         if (buttonIndex === 1) {
-                            this.reallyDeleteProj(proj);
+                            window.Application.ProjectList.remove(proj); // remove from the collection
+                            proj.destroy(); // also deletes everything associated with this project
+                            if (bCurrentProject === true) {
+                                // just deleted the current project -- if there is a project in the project list
+                                // (i.e., if we didn't nuke all the projects), set the current to the first in the list;
+                                // then navigate us home
+                                if (window.Application.ProjectList.length > 0) {
+                                    // we have at least one project defined -- set the current to the first in the list
+                                    window.Application.currentProject = window.Application.ProjectList.at(0);
+                                    // save the value for later
+                                    localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
+                                }
+                                // navigate to the home screen
+                                window.location.replace("");
+                            } else {
+                                // didn't delete the current project -- just remove the item from the UI
+                                // (We're in a callback, so just hide the item rather than redrawing)
+                                $("#" + ProjDomID).addClass('hide');
+                            }
                         }
                     }, i18n.t('view.lblRemoveProject'));
                 } else {
                     // in browser
                     if (confirm(i18n.t('view.dscWarnRemoveProject'))) {
-                        this.reallyDeleteProj(proj);
+                        window.Application.ProjectList.remove(proj); // remove from the collection
+                        proj.destroy(); // also deletes everything associated with this project
+                        if (bCurrentProject === true) {
+                            // just deleted the current project -- if there is a project in the project list
+                            // (i.e., if we didn't nuke all the projects), set the current to the first in the list;
+                            // then navigate us home
+                            if (window.Application.ProjectList.length > 0) {
+                                // we have at least one project defined -- set the current to the first in the list
+                                window.Application.currentProject = window.Application.ProjectList.at(0);
+                                // save the value for later
+                                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
+                            }
+                            // navigate to the home screen
+                            window.location.replace("");
+                        } else {
+                            // didn't delete the current project -- just redraw the UI
+                            this.showProjects();
+                        }
                     }
                 }
-            },
-            // does the dirty work of deleting the project, after the user has confirmed the intent (above)
-            reallyDeleteProj: function (project) {
-                window.Application.ProjectList.remove(project); // remove from the collection
-                project.destroy(); // also deletes everything associated with this project
-                this.showProjects(); // redraw the UI
             },
             // User clicked the Add Project... toggle button. Just shows/hides the clickable area where the user can either
             // create or copy a project
