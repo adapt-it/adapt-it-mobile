@@ -322,6 +322,7 @@
         "ttlEditorUI": "Editor e interface do usuário",
         "ttlManageProjects": "Administrar Projetos",
         "ttlCurrentProjectSettings": "Configurações para o projeto atual",
+        "dscWarnChangeProject": "Não modifique o idioma de origem e de destino do projeto para criar um novo projeto. Novos projetos podem ser criados na página Administrar Projetos (Configurações> Administrar Projetos).",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

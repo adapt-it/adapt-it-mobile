@@ -321,6 +321,7 @@
         "ttlEditorUI": "Editeur et interface utilisateur",
         "ttlManageProjects": "Administrer les projets",
         "ttlCurrentProjectSettings": "Paramètres du projet actuel",
+        "dscWarnChangeProject": "ne modifiez pas la langue source et cible du projet pour créer un nouveau projet. De nouveaux projets peuvent être créés dans la page Administrer les projets (Paramètres> Administrer les projets).",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
