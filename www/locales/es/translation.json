@@ -321,7 +321,9 @@
         "ttlEditorUI": "Editor e interfaz de usuario",
         "ttlManageProjects": "Administrar Proyectos",
         "ttlCurrentProjectSettings": "Configuración del proyecto actual",
-        "dscWarnChangeProject": "No modifique el idioma de origen y de destino del proyecto para crear un nuevo proyecto. Se pueden crear nuevos proyectos en la página Administrar Proyectos (Configuración> Administrar Proyectos).",
+        "dscEditProjectSourceLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de origen </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
+        "dscEditProjectTargetLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de destino </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
+        "dscWarnChangeProject": "Edite esta configuración solo si hay errores en esta página. Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

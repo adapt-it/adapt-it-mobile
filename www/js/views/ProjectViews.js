@@ -1379,7 +1379,7 @@ define(function (require) {
                     currentView.langCode = this.model.get("SourceLanguageCode");
                     // instructions
                     $("#StepTitle").html(i18n.t('view.ttlProjectSourceLanguage'));
-                    $("#StepInstructions").html(i18n.t('view.dscProjectSourceLanguage'));
+                    $("#StepInstructions").html(i18n.t('view.dscEditProjectSourceLanguage'));
                     break;
                 case 2: // target language
                     languages.fetch({reset: true, data: {name: "    "}}); // clear out languages collection filter
@@ -1388,7 +1388,7 @@ define(function (require) {
                     currentView.langCode = this.model.get("TargetLanguageCode");
                     // instructions
                     $("#StepTitle").html(i18n.t('view.ttlProjectTargetLanguage'));
-                    $("#StepInstructions").html(i18n.t('view.dscProjectTargetLanguage'));
+                    $("#StepInstructions").html(i18n.t('view.dscEditProjectTargetLanguage'));
                     break;
                 case 3: // source font
                     theFont = new fontModel.Font();
