@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "cordova-clipboard": "https://github.com/ihadeed/cordova-clipboard.git",
-    "cordova-lib": "^8.0.0",
+    "cordova-lib": "^9.0.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^6.0.2",
