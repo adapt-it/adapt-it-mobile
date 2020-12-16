@@ -1,5 +1,10 @@
 ![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png)
 
+| iOS        | Android           |
+|:-------------:|:-------------:| 
+| <a href='https://itunes.apple.com/us/app/adapt-it-mobile/id1031605993?ls=1&mt=8'><img alt='Download on the App Store' src='https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png' /></a>     | <a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a> |
+
+
 [![CI Debug Build Status](https://github.com/adapt-it/adapt-it-mobile/workflows/CI%20Debug%20Build/badge.svg)](https://github.com/adapt-it/adapt-it-mobile/actions)
 
 User site: [https://adapt-it.github.io/adapt-it-mobile/](https://adapt-it.github.io/adapt-it-mobile/)
