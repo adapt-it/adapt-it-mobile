@@ -466,13 +466,55 @@ define(function (require) {
                 });
             },
             destroy: function (options) {
+                var deferred = $.Deferred();
+                var attributes = this.attributes;
+                console.log("destroy() - removing project: " + attributes.projectid);
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("DELETE FROM project WHERE projectid=?;", [this.attributes.projectid], function (tx, res) {
-//                        console.log("DELETE ok: " + res.toString());
+                    // get the books associated with this projectid
+                    tx.executeSql("SELECT * FROM project WHERE projectid=?;", [attributes.projectid], function (tx, res) {
+                        var projidx = 0,
+                            projlen = 0;
+                        for (projidx = 0, projlen = res.rows.length; projidx < projlen; ++projidx) {
+                            // get the chapters associated with this bookid
+                            var bookid = res.rows.item(projidx).bookid;
+                            tx.executeSql("SELECT * FROM chapter WHERE bookid=?;", [bookid], function (tx, res) {
+                                // for each chapter, delete the sourcephrases associated with the chapterid - then delete the chapter
+                                var i = 0,
+                                    len = 0;
+                                for (i = 0, len = res.rows.length; i < len; ++i) {
+                                    window.Application.db.transaction(function (tx) {
+                                        var chapterid = res.rows.item(i).chapterid;
+                                        tx.executeSql("DELETE FROM sourcephrase WHERE chapterid=?", [chapterid], function (tx, res) {
+                                            console.log("DELETE sourcephrases ok: " + res.toString());
+                                        });
+                                    });                    
+                                }
+                                // delete the chapters
+                                tx.executeSql("DELETE FROM chapter WHERE bookid=?", [bookid], function (tx, res) {
+                                    console.log("DELETE chapters ok: " + res.toString());
+                                });
+                            });
+                        }
+                        // delete the books
+                        tx.executeSql("DELETE FROM book WHERE projectid=?;", [attributes.projectid], function (tx, res) {
+                            console.log("DELETE books ok: " + res.toString());
+                        }, function (tx, err) {
+                            console.log("DELETE error: " + err.message);
+                        });
+                    });
+                    // delete the project
+                    tx.executeSql("DELETE FROM project WHERE projectid=?;", [attributes.projectid], function (tx, res) {
+                        console.log("DELETE project ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });
+                        
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
                 });
+                return deferred.promise();
             },
             
             sync: function (method, model, options) {

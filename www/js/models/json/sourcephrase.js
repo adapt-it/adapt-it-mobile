@@ -9,7 +9,7 @@ define(function (require) {
 
         SourcePhrase = Backbone.Model.extend({
 
-            urlRoot: "http://localhost:3000/sp"
+            urlRoot: "/sp"
 
         }),
 
@@ -17,7 +17,7 @@ define(function (require) {
 
             model: SourcePhrase,
 
-            url: "http://localhost:3000/sps"
+            url: "/sps"
 
         });
 

@@ -9,7 +9,7 @@ define(function (require) {
 
         Chapter = Backbone.Model.extend({
 
-            urlRoot: "http://localhost:3000/chapter"
+            urlRoot: "/chapter"
 
         }),
 
@@ -17,7 +17,7 @@ define(function (require) {
 
             model: Chapter,
 
-            url: "http://localhost:3000/chapters"
+            url: "/chapters"
 
         });
 

@@ -77,9 +77,9 @@ define(function (require) {
             currentProject: null,
             localURLs: [],
             usingImportedKB: false,
-            version: "1.4.0", // appended with milestone / iOS build info
-            AndroidBuild: "33", // (was milestone release #)
-            iOSBuild: "1.4.0",
+            version: "1.4.2", // appended with milestone / iOS build info
+            AndroidBuild: "34", // (was milestone release #)
+            iOSBuild: "1.4.2",
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -106,6 +106,16 @@ define(function (require) {
                     }
                     return original.apply(this, arguments);
                 };
+                
+                // ios page height workaround
+                if (window.sqlitePlugin && device.platform === "iOS") {
+                    var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
+                    var theRule = "";
+                    theRule = ".page {";
+                    theRule += "height: " + parseInt(window.outerHeight, 10) + "px;";
+                    theRule += "}";
+                    sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)                
+                }
                 
                 // add the UI regions (just the main "content" for now)
                 this.addRegions({
@@ -315,8 +325,17 @@ define(function (require) {
                         window.Application.ProjectList.remove(models);
                     }
                     if (window.Application.currentProject === null) {
-                        // pick the first project in the list, if there is one
-                        window.Application.currentProject = window.Application.ProjectList.at(0);
+                        // check to see if we saved a current project
+                        if (localStorage.getItem("CurrentProjectID")) {
+                            window.Application.currentProject = window.Application.ProjectList.where({projectid: localStorage.getItem("CurrentProjectID")})[0];
+                        } else {
+                            // pick the first project in the list, if there is one
+                            if (window.Application.ProjectList.length > 0) {
+                                window.Application.currentProject = window.Application.ProjectList.at(0);
+                                // save the value for later
+                                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
+                            }
+                        }                        
                     }
                     // now display the home view
                     homeView = new HomeViews.HomeView({model: window.Application.currentProject});
@@ -450,6 +469,7 @@ define(function (require) {
                                 proj.set('lastAdaptedName', chapter.get('name'));
                                 proj.save();
                                 window.Application.currentProject = proj;
+                                localStorage.setItem("CurrentProjectID", proj.get("projectid"));
                             }
                             window.Application.main.show(theView);
                         } else {

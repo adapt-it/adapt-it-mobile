@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-versionCode="34" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1.4.2" version="1.4.2" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
+    <description xml:lang="en">
+        An open source application for translating between related languages.
+    </description>
+    <author email="developers@adapt-it.org" href="http://adapt-it.org/">
+        Adapt It Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <preference name="cordova.plugins.diagnostic.modules" value="BLUETOOTH WIFI EXTERNAL_STORAGE" />
+    <preference name="android-build-tool" value="gradle" />
+    <preference name="Orientation" value="default" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="iosExtraFilesystems" value="documents,documents-nosync,cache,root" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashMaintainAspectRatio" value="false" />
+    <preference name="SplashShowOnlyFirstTime" value="false" />
+    <preference name="AutoHideSplashScreen" value="true" />
+    <platform name="android">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="AndroidLaunchMode" value="singleTask" />
+        <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
+        <preference name="AndroidPersistentFileLocation" value="Internal" />
+        <preference name="android-minSdkVersion" value="22" />
+        <preference name="android-targetSdkVersion" value="29" />
+        <config-file target="AndroidManifest.xml" mode="replace" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+            <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
+        </config-file>
+        <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
+        <icon density="mdpi" src="www/res/icon/android/mdpi.png" />
+        <icon density="hdpi" src="www/res/icon/android/hdpi.png" />
+        <icon density="xhdpi" src="www/res/icon/android/xhdpi.png" />
+        <icon density="xxhdpi" src="www/res/icon/android/xxhdpi.png" />
+        <icon density="xxxhdpi" src="www/res/icon/android/xxxhdpi.png" />
+        <splash density="port-ldpi" src="www/res/screen/android/screen-ldpi-portrait.png" />
+        <splash density="port-mdpi" src="www/res/screen/android/screen-mdpi-portrait.png" />
+        <splash density="port-hdpi" src="www/res/screen/android/screen-hdpi-portrait.png" />
+        <splash density="port-xhdpi" src="www/res/screen/android/screen-xhdpi-portrait.png" />
+        <splash density="port-xxhdpi" src="www/res/screen/android/screen-xxhdpi-portrait.png" />
+        <splash density="port-xxxhdpi" src="www/res/screen/android/screen-xxxhdpi-portrait.png" />
+    </platform>
+    <platform name="ios">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <resource-file src="www/res/icon/ios/usfm_22.png" />
+        <resource-file src="www/res/icon/ios/usfm_44.png" />
+        <resource-file src="www/res/icon/ios/usfm_64.png" />
+        <resource-file src="www/res/icon/ios/usfm_320.png" />
+        <resource-file src="www/res/icon/ios/usx_22.png" />
+        <resource-file src="www/res/icon/ios/usx_44.png" />
+        <resource-file src="www/res/icon/ios/usx_64.png" />
+        <resource-file src="www/res/icon/ios/usx_320.png" />
+        <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">
+            <array>
+                <string>UIInterfaceOrientationPortrait</string>
+                <string>UIInterfaceOrientationLandscapeLeft</string>
+                <string>UIInterfaceOrientationLandscapeRight</string>
+            </array>
+        </config-file>
+        <config-file mode="replace" parent="UIFileSharingEnabled" target="*-Info.plist">
+            <true />
+        </config-file>
+        <config-file mode="replace" parent="ITSAppUsesNonExemptEncryption" target="*-Info.plist">
+            <false />
+        </config-file>
+        <config-file mode="replace" parent="UIRequiresFullScreen" target="*-Info.plist">
+            <false />
+        </config-file>
+        <config-file mode="replace" parent="NSBluetoothAlwaysUsageDescription" target="*-Info.plist">
+            <string>This app requires bluetooth access for AirDrop document export.</string>
+        </config-file>
+        <config-file mode="replace" parent="LSSupportsOpeningDocumentsInPlace" target="*-Info.plist">
+            <true />
+        </config-file>
+        <config-file mode="replace" parent="CFBundleDocumentTypes" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Text File</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>public.plain-text</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Adapt It XML File</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array>
+                        <string>usfm_22.png</string>
+                        <string>usfm_44.png</string>
+                        <string>usfm_64.png</string>
+                        <string>usfm_320.png</string>
+                    </array>
+                    <key>CFBundleTypeName</key>
+                    <string>USFM Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.ubs.document.usfm</string>
+                        <string>org.ubs.document.sfm</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array>
+                        <string>usx_22.png</string>
+                        <string>usx_44.png</string>
+                        <string>usx_64.png</string>
+                        <string>usx_320.png</string>
+                    </array>
+                    <key>CFBundleTypeName</key>
+                    <string>USX Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Owner</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.ubs.document.usx</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+        <config-file mode="replace" parent="UTImportedTypeDeclarations" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.text</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USFM Document</string>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.ubs.document.usfm</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usfm</string>
+                            <string>sfm</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/*</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>USX Document</string>
+                    <key>UTTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.ubs.document.usx</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>usx</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/xml</string>
+                    </dict>
+                </dict>
+            </array>
+        </config-file>
+        <preference name="Orientation" value="all" />
+        <preference name="BackupWebStorage" value="cloud" />
+        <preference name="HideKeyboardFormAccessoryBar" value="true" />
+        <preference name="KeyboardShrinksView" value="true" />
+        <preference name="scheme" value="app" />
+        <preference name="hostname" value="localhost" />
+        <icon height="57" src="www/res/icon/ios/icon.png" width="57" />
+        <icon height="114" src="www/res/icon/ios/icon@2x.png" width="114" />
+        <icon height="60" src="www/res/icon/ios/icon-60.png" width="60" />
+        <icon height="120" src="www/res/icon/ios/icon-60@2x.png" width="120" />
+        <icon height="180" src="www/res/icon/ios/icon-60@3x.png" width="180" />
+        <icon height="72" src="www/res/icon/ios/icon-72.png" width="72" />
+        <icon height="144" src="www/res/icon/ios/icon-72@2x.png" width="144" />
+        <icon height="76" src="www/res/icon/ios/icon-76.png" width="76" />
+        <icon height="152" src="www/res/icon/ios/icon-76@2x.png" width="152" />
+        <icon height="167" src="www/res/icon/ios/icon-83@2x.png" width="167" />
+        <icon height="29" src="www/res/icon/ios/icon-small.png" width="29" />
+        <icon height="58" src="www/res/icon/ios/icon-small@2x.png" width="58" />
+        <icon height="87" src="www/res/icon/ios/icon-small@3x.png" width="87" />
+        <icon height="40" src="www/res/icon/ios/icon-40.png" width="40" />
+        <icon height="80" src="www/res/icon/ios/icon-40@2x.png" width="80" />
+        <icon height="50" src="www/res/icon/ios/icon-50.png" width="50" />
+        <icon height="100" src="www/res/icon/ios/icon-50@2x.png" width="100" />
+        <splash src="www/res/screen/ios/Default@2x~universal~anyany.png" />
+    </platform>
+    <platform name="browser">
+        <preference name="res/icon/electron/icon.png" />
+        <preference name="SplashScreen" value="res/screen/ios/Default@2x~universal~anyany.png" />
+        <preference name="AutoHideSplashScreen" value="true" />
+        <preference name="SplashScreenDelay" value="3000" />
+        <preference name="SplashScreenBackgroundColor" value="#2595cb" />
+        <preference name="ShowSplashScreen" value="false" />
+        <preference name="SplashScreenWidth" value="600" />
+        <preference name="SplashScreenHeight" value="300" />
+    </platform>
+    <platform name="electron">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <preference name="www/res/icon/electron/icon.png" />
+        <preference name="www/res/icon/electron/icon@2x.png" target="installer" />
+    </platform>
+    <platform name="windows">
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
+        <preference name="StatusBarOverlaysWebView" value="true" />
+        <icon src="www/res/icon/windows/storelogo.png" target="StoreLogo" />
+        <icon src="www/res/icon/windows/Square30x30Logo.png" target="Square30x30Logo" />
+        <icon src="www/res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
+        <icon src="www/res/icon/windows/Square70x70Logo.png" target="Square70x70Logo" />
+        <icon src="www/res/icon/windows/Square71x71Logo.png" target="Square71x71Logo" />
+        <icon src="www/res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
+        <icon src="www/res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
+        <icon src="www/res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
+        <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
+    </platform>
+    <plugin name="cordova-plugin-device" spec="^2.0.3" />
+    <plugin name="cordova-plugin-dialogs" spec="^2.0.2" />
+    <plugin name="cordova-plugin-file" spec="^6.0.2" />
+    <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
+    <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.0" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
+    <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
+    <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
+    <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
+    <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />
+</widget>
