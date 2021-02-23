@@ -310,6 +310,34 @@ define(function (require) {
                 inform: "1"
             },
             {
+                name: "sd",
+                description: "Semantic division",
+                userCanSetFilter: "1",
+                navigationText: "descr title",
+                inform: "1"
+            },
+            {
+                name: "sd1",
+                description: "Semantic division",
+                userCanSetFilter: "1",
+                navigationText: "descr title",
+                inform: "1"
+            },
+            {
+                name: "sd2",
+                description: "Semantic division",
+                userCanSetFilter: "1",
+                navigationText: "descr title",
+                inform: "1"
+            },
+            {
+                name: "sd3",
+                description: "Semantic division",
+                userCanSetFilter: "1",
+                navigationText: "descr title",
+                inform: "1"
+            },
+            {
                 name: "hl",
                 description: "Hebrew letter",
                 filter: "1",
@@ -814,6 +842,26 @@ define(function (require) {
                 userCanSetFilter: "1"
             },
             {
+                name: "toca",
+                description: "Alternative language front matter table of contents",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "toca1",
+                description: "Long Alternative language table of contents text",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "toca2",
+                description: "Short Alternative language table of contents text",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "toca3",
+                description: "Alternative language Book Abbreviation",
+                userCanSetFilter: "1"
+            },
+            {
                 name: "pref",
                 description: "Front matter preface",
                 userCanSetFilter: "1"
@@ -875,6 +923,14 @@ define(function (require) {
             },
             /* userCanSetFilter=0 elements -- these guys don't show up in the usfm filtering dialog;
                they're either always visible or always filtered out, depending on the inform property */
+            {
+                name: "usfm",
+                description: "usfm version",
+                special: "1",
+                inform: "1",
+                navigationText: "usfm",
+                userCanSetFilter: "0"
+            },
             {
                 name: "id",
                 description: "File identification (BOOKID, FILENAME, EDITOR, MODIFICATION DATE)",
@@ -941,6 +997,22 @@ define(function (require) {
                 userCanSetFilter: "0"
             },
             {
+                name: "xta",
+                endMarker: "xta*",
+                description: "Target reference(s) extra / added text",
+                filter: "1",
+                inform: "1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "xop",
+                endMarker: "xop*",
+                description: "Published cross reference origen text",
+                filter: "1",
+                inform: "1",
+                userCanSetFilter: "0"
+            },
+            {
                 name: "xk",
                 endMarker: "xk*",
                 description: "A cross reference keyword",
@@ -978,6 +1050,22 @@ define(function (require) {
                 description: "Cross-reference target reference(s), Deuterocanon only",
                 filter: "1",
                 inform: "1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "jmp",
+                endMarker: "jmp*",
+                description: "Link text",
+                filter: "1",
+                inform: "1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "po",
+                description: "Paragraph opening of an epistle/letter",
+                filter: "0",
+                inform: "1",
+                navigationText: "paragraph",
                 userCanSetFilter: "0"
             },
             {
@@ -1179,6 +1267,12 @@ define(function (require) {
                 userCanSetFilter: "0"
             },
             {
+                name: "qd",
+                description: "Hebres note; musical performance comment at end of poetic section",
+                navigationText: "Hebrew note",
+                userCanSetFilter: "0"
+            },
+            {
                 name: "qm",
                 description: "Poetry, left margin",
                 inform: "1",
@@ -1251,6 +1345,12 @@ define(function (require) {
                 description: "A footnote label text item, for marking or 'labelling' the type or alternate translation being provided in the note.",
                 inform: "1",
                 navigationText: "label",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "fw",
+                endMarker: "fw*",
+                description: "Footnote witness list",
                 userCanSetFilter: "0"
             },
             {
@@ -1343,6 +1443,18 @@ define(function (require) {
                 userCanSetFilter: "0"
             },
             {
+                name: "png",
+                endMarker: "png*",
+                description: "Geographic proper name",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "rb",
+                endMarker: "rb*",
+                description: "Ruby glossing text",
+                userCanSetFilter: "0"
+            },
+            {
                 name: "wj",
                 endMarker: "wj*",
                 description: "For marking the words of Jesus",
@@ -1411,8 +1523,64 @@ define(function (require) {
                 userCanSetFilter: "0"
             },
             {
+                name: "sup",
+                endMarker: "sup*",
+                description: "Superscript text",
+                userCanSetFilter: "0"
+            },
+            {
                 name: "ie",
                 description: "Introduction ending marker",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lh",
+                description: "List header",
+                inform: "1",
+                navigationText: "list header",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lf",
+                description: "List footer",
+                inform: "1",
+                navigationText: "list footer",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lik",
+                endMarker: "lik*",
+                description: "List entry key",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "liv",
+                endMarker: "liv*",
+                description: "List entry value",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "liv1",
+                endMarker: "liv1*",
+                description: "List entry value, level 1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "liv2",
+                endMarker: "liv2*",
+                description: "List entry value, level 2",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "liv3",
+                endMarker: "liv3*",
+                description: "List entry value, level 3",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "litl",
+                endMarker: "litl*",
+                description: "List entry total",
                 userCanSetFilter: "0"
             },
             {
@@ -1448,6 +1616,34 @@ define(function (require) {
                 description: "A list entry, level 4",
                 inform: "1",
                 navigationText: "list item L4",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lim",
+                description: "Embedded list entry, level 1 (if single level)",
+                inform: "1",
+                navigationText: "list item",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lim1",
+                description: "Embedded list entry, level 1 (if multiple levels)",
+                inform: "1",
+                navigationText: "list item L1",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lim2",
+                description: "Embedded list entry, level 2",
+                inform: "1",
+                navigationText: "list item L2",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "lim3",
+                description: "Embedded list entry, level 3",
+                inform: "1",
+                navigationText: "list item L3",
                 userCanSetFilter: "0"
             },
             {
@@ -1574,6 +1770,12 @@ define(function (require) {
                 name: "wh",
                 endMarker: "wh*",
                 description: "A Hebrew wordlist text item",
+                userCanSetFilter: "0"
+            },
+            {
+                name: "wa",
+                endMarker: "wa*",
+                description: "Aramaic wordlist text item",
                 userCanSetFilter: "0"
             },
             {
