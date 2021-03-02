@@ -50,10 +50,10 @@ define(function (require) {
         isDirty = false,        // does the target text need to be saved?
         isSelecting = false,    // is the user selecting a pile / range of piles?
         isEditing = false,
-        isPlaceholder = false,
+        isPHBefore = false,
+        isPHAfter = false,
         isPhrase = false,
         isDrafting = true,
-        isSelectingFirstPhrase = false,
         isMergingFromKB = false,
         isAutoPhrase = false,
         isSelectingKB = false,  // is the user working with a select target text dropdown?
@@ -927,7 +927,8 @@ define(function (require) {
                 selectedStart = selectedEnd = null;
                 idxStart = idxEnd = null;
                 isSelecting = false;
-                isPlaceholder = false;
+                isPHBefore = false,
+                isPHAfter = false,
                 isPhrase = false;
                 isRetranslation = false;
                 LongPressSectionStart = null;
@@ -1558,7 +1559,7 @@ define(function (require) {
                     // did the user select a placeholder (before)?
                     if (spid.indexOf("plc") !== -1) {
                         // placeholder -- can remove it, but not add a new one
-                        isPlaceholder = true;
+                        isPHBefore = true,
                         $("#phBefore").prop('title', i18next.t("view.dscDelPlaceholder"));
                         $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
                         $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
@@ -1566,7 +1567,7 @@ define(function (require) {
                         $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
                     } else {
                         // not a placeholder -- can add a new one
-                        isPlaceholder = false;
+                        isPHBefore = false;
                         $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
                         $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
                         $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
@@ -1576,7 +1577,7 @@ define(function (require) {
                     // did the user select a placeholder (after)?
                     if (spid.indexOf("pla") !== -1) {
                         // placeholder -- can remove it, but not add a new one
-                        isPlaceholder = true;
+                        isPHAfter = true;
                         $("#phAfter").prop('title', i18next.t("view.dscDelPlaceholder"));
                         $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
                         $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
@@ -1584,7 +1585,7 @@ define(function (require) {
                         $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
                     } else {
                         // not a placeholder -- can add a new one
-                        isPlaceholder = false;
+                        isPHAfter = false;
                         $("#phAfter").prop('title', i18next.t("view.dscNewPlaceholder"));
                         $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
                         $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
@@ -1647,7 +1648,7 @@ define(function (require) {
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
                 // initial selection algorithm can be determined
-                isSelectingFirstPhrase = true;
+//                isSelectingFirstPhrase = true;
 //                $(selectedStart).find('.target').mouseup();
                 // end EDB
             },
@@ -2360,13 +2361,27 @@ define(function (require) {
                 console.log("placeholder: " + placeHolderHtml);
                 // if the current selection is a placeholder, remove it; if not,
                 // add a placeholder before the current selection
-                if (isPlaceholder === false) {
+                if (isPHBefore === false) {
                     // no placeholder at the selection -- add one
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    // Are there any markers? If so, move them to the placeholder
+                    if (selectedObj.get('markers').length > 0) {
+                        phObj.set('markers', selectedObj.get('markers', {silent: true}));
+                        // remove from the selectedobj and UI
+                        selectedObj.set('markers', "", {silent:true});
+                    }
+                    // Are there any prepuncts? If so, move them to the placeholder
+                    // TODO: what about the existing selectedObj source/target?
+                    if (selectedObj.get('prepuncts').length > 0) {
+                        // add prepuncts to placeholder
+                        phObj.set('prepuncts', selectedObj.get('prepuncts', {silent: true}));
+                        // remove from the selectedobj and UI
+                        selectedObj.set('prepuncts', "", {silent:true});
+                    }
                     // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
                     // Take the average of the order # of the selected start and the item before it. This will be a float.
                     if (this.collection.indexOf(selectedObj) > 0) {
@@ -2392,6 +2407,15 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
+                    if (selectedObj.get('markers').length > 0 || selectedObj.get('prepuncts')) {
+                        // need to transfer some markers and/or prepuncts to the next pile before deleting this object
+                        // find the next pile
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        var theObj = this.collection.findWhere({spid: strID});
+                        theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
+                        theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
+                    }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
                     $(selectedStart).remove();
@@ -2413,7 +2437,7 @@ define(function (require) {
                     $("#NextSP").prop('disabled', true);
                 }
             },
-            // User clicked on the Placeholder _after_ button
+            // User clicked on the Placeholder _after_ button (v. 1.5.0)
             togglePHAfter: function () {
                 // TODO: move placeHolderHtml to templated html
                 var next_edit = null,
@@ -2428,13 +2452,21 @@ define(function (require) {
                 console.log("placeholder: " + placeHolderHtml);
                 // if the current selection is a placeholder, remove it; if not,
                 // add a placeholder before the current selection
-                if (isPlaceholder === false) {
+                if (isPHAfter === false) {
                     // no placeholder at the selection -- add one
                     phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    // Are there any trailing puncts? If so, move them to the end of the placeholder
+                    // TODO: what about the existing selectedObj source/target?
+                    if (selectedObj.get('follpuncts').length > 0) {
+                        // add follpuncts to placeholder
+                        phObj.set('follpuncts', selectedObj.get('follpuncts', {silent: true}));
+                        // remove from the selectedobj and UI
+                        selectedObj.set('follpuncts', "", {silent:true});
+                    }
                     // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
                     // Take the average of the order # of the selected start and the item before it. This will be a float.
                     if (this.collection.indexOf(selectedObj) > 0) {
@@ -2442,8 +2474,9 @@ define(function (require) {
                     } // else nOrder gets the fallback value of 0.0
                     phObj.set('norder', nOrder, {silent: true});
                     phObj.save();
-                    this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
-                    $(selectedStart).before(placeHolderHtml);
+                    // add to the model and UI _after_ the selected position
+                    this.collection.add(phObj, {at: this.collection.indexOf(selectedObj) + 1});
+                    $(selectedStart).after(placeHolderHtml);
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#phAfter").prop('disabled', true);
@@ -3178,6 +3211,18 @@ define(function (require) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
                 this.listView.togglePHBefore(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+            togglePHAfter: function (event) {
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.togglePHAfter(event);
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
