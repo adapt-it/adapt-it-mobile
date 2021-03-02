@@ -36,6 +36,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
+        theSP       = Handlebars.compile(tplSourcePhrase),
         tplFilters  = require('text!tpl/FilterList.html'),
         theFilters  = Handlebars.compile(tplFilters),
         kblist      = null, // real value passed in constructor
@@ -74,7 +75,7 @@ define(function (require) {
         longPressTimeout = null,
         lastOffset = 0,
         ONE_SPACE = " ",
-        
+       
         /////
         // Static methods
         /////
@@ -2353,12 +2354,13 @@ define(function (require) {
                     selectedObj = null,
                     nOrder = 0.0,
                     strID = null,
+                    prePuncts = "",
+                    mkrs = "",
                     newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">" +
-                                        "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
-                                        " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
-                console.log("placeholder: " + placeHolderHtml);
+                    phHtml1 = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">",
+                    phHtml2 = "</div>",
+                    placeHolderHtml = "";
                 // if the current selection is a placeholder, remove it; if not,
                 // add a placeholder before the current selection
                 if (isPHBefore === false) {
@@ -2367,29 +2369,28 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
-                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
-                    // Are there any markers? If so, move them to the placeholder
-                    if (selectedObj.get('markers').length > 0) {
-                        phObj.set('markers', selectedObj.get('markers', {silent: true}));
-                        // remove from the selectedobj and UI
-                        selectedObj.set('markers', "", {silent:true});
-                    }
-                    // Are there any prepuncts? If so, move them to the placeholder
-                    // TODO: what about the existing selectedObj source/target?
-                    if (selectedObj.get('prepuncts').length > 0) {
-                        // add prepuncts to placeholder
-                        phObj.set('prepuncts', selectedObj.get('prepuncts', {silent: true}));
-                        // remove from the selectedobj and UI
-                        selectedObj.set('prepuncts', "", {silent:true});
-                    }
-                    // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
-                    // Take the average of the order # of the selected start and the item before it. This will be a float.
                     if (this.collection.indexOf(selectedObj) > 0) {
                         nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) - 1).get('norder'))) / 2;
                     } // else nOrder gets the fallback value of 0.0
-                    phObj.set('norder', nOrder, {silent: true});
+                    // Are there any leading puncts?
+                    if (selectedObj.get('prepuncts').length > 0) {
+                        // add follpuncts to placeholder
+                        prePuncts = selectedObj.get('prepuncts');
+                        // remove from the selectedobj and UI
+                        selectedObj.set('prepuncts', "", {silent:true});
+                        selectedObj.save();
+                        // TODO: how to redraw?
+                    }
+                    if (selectedObj.get('markers').length > 0) {
+                        mkrs = selectedObj.get('markers');
+                        selectedObj.set('markers', "", {silent:true});
+                        selectedObj.save();
+                        $(selectedStart).find(".marker").html(""); // clear out marker line
+                    }
+                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "...", chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
+                    placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
                     $(selectedStart).before(placeHolderHtml);
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
@@ -2410,11 +2411,14 @@ define(function (require) {
                     if (selectedObj.get('markers').length > 0 || selectedObj.get('prepuncts')) {
                         // need to transfer some markers and/or prepuncts to the next pile before deleting this object
                         // find the next pile
-                        strID = $(selectedStart).attr('id');
+                        next_edit = selectedStart.nextElementSibling;
+                        strID = $(next_edit).attr('id');
                         strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                         var theObj = this.collection.findWhere({spid: strID});
+                        // copy over any info from the placeholder to the next pile
                         theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
                         theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
+                        theObj.save();
                     }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
@@ -2444,38 +2448,33 @@ define(function (require) {
                     selectedObj = null,
                     nOrder = 0.0,
                     strID = null,
+                    follPuncts = "",
                     newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-pla-" + newID + "\" class=\"pile block-height\">" +
-                                        "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
-                                        " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
-                console.log("placeholder: " + placeHolderHtml);
+                    phHtml1 = "<div id=\"pile-pla-" + newID + "\" class=\"pile block-height\">",
+                    phHtml2 = "</div>",
+                    placeHolderHtml = "";
                 // if the current selection is a placeholder, remove it; if not,
                 // add a placeholder before the current selection
                 if (isPHAfter === false) {
                     // no placeholder at the selection -- add one
-                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
-                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
-                    // Are there any trailing puncts? If so, move them to the end of the placeholder
-                    // TODO: what about the existing selectedObj source/target?
+                    nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) + 1).get('norder'))) / 2;
+                    // Are there any trailing puncts?
                     if (selectedObj.get('follpuncts').length > 0) {
                         // add follpuncts to placeholder
-                        phObj.set('follpuncts', selectedObj.get('follpuncts', {silent: true}));
+                        follPuncts = selectedObj.get('follpuncts');
                         // remove from the selectedobj and UI
                         selectedObj.set('follpuncts', "", {silent:true});
+                        selectedObj.save();
                     }
-                    // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
-                    // Take the average of the order # of the selected start and the item before it. This will be a float.
-                    if (this.collection.indexOf(selectedObj) > 0) {
-                        nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) - 1).get('norder'))) / 2;
-                    } // else nOrder gets the fallback value of 0.0
-                    phObj.set('norder', nOrder, {silent: true});
+                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: "...", chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
                     // add to the model and UI _after_ the selected position
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj) + 1});
+                    placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
                     $(selectedStart).after(placeHolderHtml);
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
@@ -2485,7 +2484,7 @@ define(function (require) {
                     $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
-                    next_edit = selectedStart.previousElementSibling;
+                    next_edit = selectedStart.nextElementSibling;
                     selectedStart = next_edit;
                     $(next_edit).find('.target').mouseup();
                 } else {
@@ -2493,6 +2492,17 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
+                    if (selectedObj.get('follpuncts')) {
+                        // need to transfer follpuncts to the previous pile before deleting this object
+                        // find the previous pile
+                        next_edit = selectedStart.previousElementSibling;
+                        strID = $(next_edit).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        var theObj = this.collection.findWhere({spid: strID});
+                        // copy over any info from the placeholder to the previous pile
+                        theObj.set('follpuncts', selectedObj.get('follpuncts') + " " + theObj.get('follpuncts'));
+                        theObj.save();
+                    }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
                     $(selectedStart).remove();
