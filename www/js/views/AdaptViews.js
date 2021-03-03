@@ -2355,6 +2355,7 @@ define(function (require) {
                     nOrder = 0.0,
                     strID = null,
                     prePuncts = "",
+                    src = "...",
                     mkrs = "",
                     newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
@@ -2365,7 +2366,6 @@ define(function (require) {
                 // add a placeholder before the current selection
                 if (isPHBefore === false) {
                     // no placeholder at the selection -- add one
-                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
@@ -2376,8 +2376,12 @@ define(function (require) {
                     if (selectedObj.get('prepuncts').length > 0) {
                         // add follpuncts to placeholder
                         prePuncts = selectedObj.get('prepuncts');
+                        src = prePuncts + src;
                         // remove from the selectedobj and UI
-                        selectedObj.set('prepuncts', "", {silent:true});
+                        if (selectedObj.get('source').startsWith(prePuncts)) {
+                            selectedObj.set('source', selectedObj.get('source').substr(prepuncts.length), {silent: true});
+                        }
+                        selectedObj.set('prepuncts', "", {silent: true});
                         selectedObj.save();
                         // TODO: how to redraw?
                     }
@@ -2385,9 +2389,9 @@ define(function (require) {
                         mkrs = selectedObj.get('markers');
                         selectedObj.set('markers', "", {silent:true});
                         selectedObj.save();
-                        $(selectedStart).find(".marker").html(""); // clear out marker line
+                        $(selectedStart).find(".marker").html("&nbsp;"); // clear out marker line
                     }
-                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "...", chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
@@ -2419,6 +2423,7 @@ define(function (require) {
                         theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
                         theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
                         theObj.save();
+                        $(next_edit).find(".marker").html(theObj.get('markers')); // rebuild marker line if needed
                     }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
@@ -2449,6 +2454,7 @@ define(function (require) {
                     nOrder = 0.0,
                     strID = null,
                     follPuncts = "",
+                    src = "...",
                     newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
                     phHtml1 = "<div id=\"pile-pla-" + newID + "\" class=\"pile block-height\">",
@@ -2466,11 +2472,15 @@ define(function (require) {
                     if (selectedObj.get('follpuncts').length > 0) {
                         // add follpuncts to placeholder
                         follPuncts = selectedObj.get('follpuncts');
+                        src += follPuncts;
+                        if (selectedObj.get('source').endsWith(follPuncts)) {
+                            selectedObj.set('source', selectedObj.get('source').substring(0, (selectedObj.get('source') - follPuncts.length)), {silent: true});
+                        }
                         // remove from the selectedobj and UI
                         selectedObj.set('follpuncts', "", {silent:true});
                         selectedObj.save();
                     }
-                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: "...", chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
                     // add to the model and UI _after_ the selected position
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj) + 1});
