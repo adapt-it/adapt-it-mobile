@@ -2383,7 +2383,7 @@ define(function (require) {
                         }
                         selectedObj.set('prepuncts', "", {silent: true});
                         selectedObj.save();
-                        // TODO: how to redraw?
+                        $(selectedStart).find(".source").html(selectedObj.get('source'));
                     }
                     if (selectedObj.get('markers').length > 0) {
                         mkrs = selectedObj.get('markers');
@@ -2474,11 +2474,12 @@ define(function (require) {
                         follPuncts = selectedObj.get('follpuncts');
                         src += follPuncts;
                         if (selectedObj.get('source').endsWith(follPuncts)) {
-                            selectedObj.set('source', selectedObj.get('source').substring(0, (selectedObj.get('source') - follPuncts.length)), {silent: true});
+                            selectedObj.set('source', selectedObj.get('source').slice(0, -(follPuncts.length)), {silent: true});
                         }
                         // remove from the selectedobj and UI
                         selectedObj.set('follpuncts', "", {silent:true});
                         selectedObj.save();
+                        $(selectedStart).find('.source').html(selectedObj.get('source'));
                     }
                     phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
@@ -2510,7 +2511,10 @@ define(function (require) {
                         strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                         var theObj = this.collection.findWhere({spid: strID});
                         // copy over any info from the placeholder to the previous pile
-                        theObj.set('follpuncts', selectedObj.get('follpuncts') + " " + theObj.get('follpuncts'));
+                        follPuncts = selectedObj.get('follpuncts');
+                        theObj.set('follpuncts', follPuncts + theObj.get('follpuncts'));
+                        theObj.set('source', theObj.get('source')) + follPuncts;
+                        $(next_edit).find('.source').html(theObj.get('source'));
                         theObj.save();
                     }
                     this.collection.remove(selectedObj); // remove from collection
