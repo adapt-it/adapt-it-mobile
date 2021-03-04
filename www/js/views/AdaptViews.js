@@ -36,6 +36,7 @@ define(function (require) {
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplSourcePhraseList = require('text!tpl/SourcePhraseList.html'),
         tplSourcePhrase = require('text!tpl/SourcePhrase.html'),
+        theSP       = Handlebars.compile(tplSourcePhrase),
         tplFilters  = require('text!tpl/FilterList.html'),
         theFilters  = Handlebars.compile(tplFilters),
         kblist      = null, // real value passed in constructor
@@ -50,10 +51,10 @@ define(function (require) {
         isDirty = false,        // does the target text need to be saved?
         isSelecting = false,    // is the user selecting a pile / range of piles?
         isEditing = false,
-        isPlaceholder = false,
+        isPHBefore = false,
+        isPHAfter = false,
         isPhrase = false,
         isDrafting = true,
-        isSelectingFirstPhrase = false,
         isMergingFromKB = false,
         isAutoPhrase = false,
         isSelectingKB = false,  // is the user working with a select target text dropdown?
@@ -74,7 +75,7 @@ define(function (require) {
         longPressTimeout = null,
         lastOffset = 0,
         ONE_SPACE = " ",
-        
+       
         /////
         // Static methods
         /////
@@ -927,17 +928,20 @@ define(function (require) {
                 selectedStart = selectedEnd = null;
                 idxStart = idxEnd = null;
                 isSelecting = false;
-                isPlaceholder = false;
+                isPHBefore = false,
+                isPHAfter = false,
                 isPhrase = false;
                 isRetranslation = false;
                 LongPressSectionStart = null;
                 isLongPressSelection = false;
 
                 $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
-                $("#Placeholder").prop('disabled', true);
+                $("#phBefore").prop('disabled', true);
+                $("#phAfter").prop('disabled', true);
                 $("#Retranslation").prop('disabled', true);
                 $("#Phrase").prop('disabled', true);
-                $("#mnuPlaceholder").prop('disabled', true);
+                $("#mnuPHBefore").prop('disabled', true);
+                $("#mnuPHAfter").prop('disabled', true);
                 $("#mnuRetranslation").prop('disabled', true);
                 $("#mnuPhrase").prop('disabled', true);
             },
@@ -1553,23 +1557,41 @@ define(function (require) {
                     }
                     // ** Icons and labels for the toolbar **
                     spid = $(selectedStart).attr('id');
-                    // did the user select a placeholder?
+                    // did the user select a placeholder (before)?
                     if (spid.indexOf("plc") !== -1) {
                         // placeholder -- can remove it, but not add a new one
-                        isPlaceholder = true;
-                        $("#Placeholder").prop('title', i18next.t("view.dscDelPlaceholder"));
-                        $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
-                        $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
-                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-new");
-                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-delete");
+                        isPHBefore = true,
+                        $("#phBefore").prop('title', i18next.t("view.dscDelPlaceholder"));
+                        $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
+                        $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
+                        $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
+                        $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
                     } else {
                         // not a placeholder -- can add a new one
-                        isPlaceholder = false;
-                        $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
-                        $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
-                        $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
-                        $("#mnuPlaceholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
-                        $("#mnuPlaceholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
+                        isPHBefore = false;
+                        $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                        $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                        $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                        $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                        $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                    }
+                    // did the user select a placeholder (after)?
+                    if (spid.indexOf("pla") !== -1) {
+                        // placeholder -- can remove it, but not add a new one
+                        isPHAfter = true;
+                        $("#phAfter").prop('title', i18next.t("view.dscDelPlaceholder"));
+                        $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
+                        $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
+                        $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
+                        $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
+                    } else {
+                        // not a placeholder -- can add a new one
+                        isPHAfter = false;
+                        $("#phAfter").prop('title', i18next.t("view.dscNewPlaceholder"));
+                        $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
+                        $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
+                        $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
+                        $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
                     }
                     // did the user select a phrase?
                     if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
@@ -1611,8 +1633,10 @@ define(function (require) {
                         $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                         $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                     }
-                    $("#Placeholder").prop('disabled', false);
-                    $("#mnuPlaceholder").prop('disabled', false);
+                    $("#phBefore").prop('disabled', false);
+                    $("#mnuPHBefore").prop('disabled', false);
+                    $("#phAfter").prop('disabled', false);
+                    $("#mnuPHAfter").prop('disabled', false);
                     event.stopPropagation();
                 }
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
@@ -1625,7 +1649,7 @@ define(function (require) {
                 // EDB 10/26/15 - issue #109 (punt): automatic selection of the first item in a selected group
                 // is effecting the selection / deselection in weird ways. Punt on this until a consistent
                 // initial selection algorithm can be determined
-                isSelectingFirstPhrase = true;
+//                isSelectingFirstPhrase = true;
 //                $(selectedStart).find('.target').mouseup();
                 // end EDB
             },
@@ -2323,43 +2347,61 @@ define(function (require) {
                     inPreview = true;
                 }
             },
-            // User clicked on the Placeholder button
-            togglePlaceholder: function (event) {
+            // User clicked on the Placeholder _before_ button
+            togglePHBefore: function () {
                 // TODO: move placeHolderHtml to templated html
                 var next_edit = null,
                     selectedObj = null,
                     nOrder = 0.0,
                     strID = null,
+                    prePuncts = "",
+                    src = "...",
+                    mkrs = "",
                     newID = Math.floor(Date.now()).toString(), // convert to string
                     phObj = null,
-                    placeHolderHtml = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">" +
-                                        "<div class=\"marker\">&nbsp;</div> <div class=\"source\">...</div>" +
-                                        " <div class=\"target differences\" contenteditable=\"true\">&nbsp;</div></div>";
-                console.log("placeholder: " + placeHolderHtml);
+                    phHtml1 = "<div id=\"pile-plc-" + newID + "\" class=\"pile block-height\">",
+                    phHtml2 = "</div>",
+                    placeHolderHtml = "";
                 // if the current selection is a placeholder, remove it; if not,
                 // add a placeholder before the current selection
-                if (isPlaceholder === false) {
+                if (isPHBefore === false) {
                     // no placeholder at the selection -- add one
-                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: "..."});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
-                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
-                    // Order # for placeholder is a little more complicated, since it's a real insert into the collection.
-                    // Take the average of the order # of the selected start and the item before it. This will be a float.
                     if (this.collection.indexOf(selectedObj) > 0) {
                         nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) - 1).get('norder'))) / 2;
                     } // else nOrder gets the fallback value of 0.0
-                    phObj.set('norder', nOrder, {silent: true});
+                    // Are there any leading puncts?
+                    if (selectedObj.get('prepuncts').length > 0) {
+                        // add follpuncts to placeholder
+                        prePuncts = selectedObj.get('prepuncts');
+                        src = prePuncts + src;
+                        // remove from the selectedobj and UI
+                        if (selectedObj.get('source').startsWith(prePuncts)) {
+                            selectedObj.set('source', selectedObj.get('source').substr(prepuncts.length), {silent: true});
+                        }
+                        selectedObj.set('prepuncts', "", {silent: true});
+                        selectedObj.save();
+                        $(selectedStart).find(".source").html(selectedObj.get('source'));
+                    }
+                    if (selectedObj.get('markers').length > 0) {
+                        mkrs = selectedObj.get('markers');
+                        selectedObj.set('markers', "", {silent:true});
+                        selectedObj.save();
+                        $(selectedStart).find(".marker").html("&nbsp;"); // clear out marker line
+                    }
+                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
+                    placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
                     $(selectedStart).before(placeHolderHtml);
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     next_edit = selectedStart.previousElementSibling;
@@ -2370,19 +2412,128 @@ define(function (require) {
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
+                    if (selectedObj.get('markers').length > 0 || selectedObj.get('prepuncts')) {
+                        // need to transfer some markers and/or prepuncts to the next pile before deleting this object
+                        // find the next pile
+                        next_edit = selectedStart.nextElementSibling;
+                        strID = $(next_edit).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        var theObj = this.collection.findWhere({spid: strID});
+                        // copy over any info from the placeholder to the next pile
+                        theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
+                        theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
+                        theObj.set('source', selectedObj.get('prepuncts') + theObj.get('source'));
+                        theObj.save();
+                        $(next_edit).find('.source').html(theObj.get('source'));
+                        $(next_edit).find(".marker").html(theObj.get('markers')); // rebuild marker line if needed
+                    }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db
                     $(selectedStart).remove();
                     // item has been removed, so there is no longer a selection -
                     // clean up the UI accordingly
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('title', i18next.t("view.dscNewPlaceholder"));
-                    $("#Placeholder .topcoat-icon").removeClass("topcoat-icon--placeholder-delete");
-                    $("#Placeholder .topcoat-icon").addClass("topcoat-icon--placeholder-new");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                    $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                    $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
+                    $("#PrevSP").prop('disabled', true);
+                    $("#NextSP").prop('disabled', true);
+                }
+            },
+            // User clicked on the Placeholder _after_ button (v. 1.5.0)
+            togglePHAfter: function () {
+                // TODO: move placeHolderHtml to templated html
+                var next_edit = null,
+                    selectedObj = null,
+                    nOrder = 0.0,
+                    strID = null,
+                    follPuncts = "",
+                    src = "...",
+                    newID = Math.floor(Date.now()).toString(), // convert to string
+                    phObj = null,
+                    phHtml1 = "<div id=\"pile-pla-" + newID + "\" class=\"pile block-height\">",
+                    phHtml2 = "</div>",
+                    placeHolderHtml = "";
+                // if the current selection is a placeholder, remove it; if not,
+                // add a placeholder before the current selection
+                if (isPHAfter === false) {
+                    // no placeholder at the selection -- add one
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    nOrder = (selectedObj.get('norder') + (this.collection.at(this.collection.indexOf(selectedObj) + 1).get('norder'))) / 2;
+                    // Are there any trailing puncts?
+                    if (selectedObj.get('follpuncts').length > 0) {
+                        // add follpuncts to placeholder
+                        follPuncts = selectedObj.get('follpuncts');
+                        src += follPuncts;
+                        if (selectedObj.get('source').endsWith(follPuncts)) {
+                            selectedObj.set('source', selectedObj.get('source').slice(0, -(follPuncts.length)), {silent: true});
+                        }
+                        // remove from the selectedobj and UI
+                        selectedObj.set('follpuncts', "", {silent:true});
+                        selectedObj.save();
+                        $(selectedStart).find('.source').html(selectedObj.get('source'));
+                    }
+                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
+                    phObj.save();
+                    // add to the model and UI _after_ the selected position
+                    this.collection.add(phObj, {at: this.collection.indexOf(selectedObj) + 1});
+                    placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
+                    $(selectedStart).after(placeHolderHtml);
+                    // start adapting at this location
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $("#phAfter").prop('disabled', true);
+                    $("#Retranslation").prop('disabled', true);
+                    $("#Phrase").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
+                    $("#mnuRetranslation").prop('disabled', true);
+                    $("#mnuPhrase").prop('disabled', true);
+                    next_edit = selectedStart.nextElementSibling;
+                    selectedStart = next_edit;
+                    $(next_edit).find('.target').mouseup();
+                } else {
+                    // selection is a placeholder -- delete it from the model and the DOM (html)
+                    strID = $(selectedStart).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    selectedObj = this.collection.findWhere({spid: strID});
+                    if (selectedObj.get('follpuncts')) {
+                        // need to transfer follpuncts to the previous pile before deleting this object
+                        // find the previous pile
+                        next_edit = selectedStart.previousElementSibling;
+                        strID = $(next_edit).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        var theObj = this.collection.findWhere({spid: strID});
+                        // copy over any info from the placeholder to the previous pile
+                        follPuncts = selectedObj.get('follpuncts');
+                        theObj.set('follpuncts', follPuncts + theObj.get('follpuncts'));
+                        theObj.set('source', theObj.get('source') + follPuncts);
+                        $(next_edit).find('.source').html(theObj.get('source'));
+                        theObj.save();
+                    }
+                    this.collection.remove(selectedObj); // remove from collection
+                    selectedObj.destroy(); // delete from db
+                    $(selectedStart).remove();
+                    // item has been removed, so there is no longer a selection -
+                    // clean up the UI accordingly
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                    $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
+                    $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
+                    $("#Retranslation").prop('disabled', true);
+                    $("#Phrase").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     $("#PrevSP").prop('disabled', true);
@@ -2558,10 +2709,12 @@ define(function (require) {
                     }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Phrase
@@ -2630,10 +2783,12 @@ define(function (require) {
                     $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
                     $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
                     $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     $("#PrevSP").prop('disabled', true);
@@ -2765,10 +2920,12 @@ define(function (require) {
                     }
                     // update the toolbar UI
                     $("div").removeClass("ui-selecting ui-selected");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     // start adapting the new Retranslation
@@ -2831,10 +2988,12 @@ define(function (require) {
                     $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
                     $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
                     $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
-                    $("#Placeholder").prop('disabled', true);
+                    $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
-                    $("#mnuPlaceholder").prop('disabled', true);
+                    $("#mnuPHBefore").prop('disabled', true);
+                    $("#mnuPHAfter").prop('disabled', true);
                     $("#mnuRetranslation").prop('disabled', true);
                     $("#mnuPhrase").prop('disabled', true);
                     $("#PrevSP").prop('disabled', true);
@@ -2917,13 +3076,15 @@ define(function (require) {
                 "click #Undo": "UndoClick",
                 "click #Plus-menu": "togglePlusMenu",
                 "click #More-menu": "toggleMoreMenu",
-                "click #Placeholder": "togglePlaceholder",
+                "click #phBefore": "togglePHBefore",
+                "click #phAfter": "togglePHAfter",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
                 "click #SearchPrev": "onSearchPrev",
                 "click #SearchNext": "onSearchNext",
                 "click #SearchClose": "onSearchClose",
-                "click #mnuPlaceholder": "togglePlaceholder",
+                "click #mnuPHBefore": "togglePHBefore",
+                "click #mnuPHAfter": "togglePHAfter",
                 "click #mnuPhrase": "togglePhrase",
                 "click #mnuRetranslation": "toggleRetranslation",
                 "click #mnuTranslations": "onKBTranslations",
@@ -3067,7 +3228,7 @@ define(function (require) {
                 event.stopPropagation();
             },
             // For the placeholders, etc., just pass the event handler down to the list view to handle
-            togglePlaceholder: function (event) {
+            togglePHBefore: function (event) {
                 // dismiss the Plus and More menu if visible
                 if ($("#PlusActionsMenu").hasClass("show")) {
                     $("#PlusActionsMenu").toggleClass("show");
@@ -3075,7 +3236,19 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
-                this.listView.togglePlaceholder(event);
+                this.listView.togglePHBefore(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+            togglePHAfter: function (event) {
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.togglePHAfter(event);
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
@@ -3127,10 +3300,10 @@ define(function (require) {
                     console.log("UnselectPiles: clicked in a blank area; removing selection");
                     if (selectedStart !== null) {
                         $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
-                        $("#Placeholder").prop('disabled', true);
+                        $("#phBefore").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
-                        $("#mnuPlaceholder").prop('disabled', true);
+                        $("#mnuPHBefore").prop('disabled', true);
                         $("#mnuRetranslation").prop('disabled', true);
                         $("#mnuPhrase").prop('disabled', true);
                     }

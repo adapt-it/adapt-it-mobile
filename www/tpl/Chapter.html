@@ -27,10 +27,13 @@
         <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
     </div>
     <div class="topcoat-navigation-bar__item right">
-        <button id="Plus-menu" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--plus-menu"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+        <button id="Plus-menu" title="{{ t 'view.hlpttlMore'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--plus-menu"></span><span class="side-nav__list__item__label">{{ t 'view.hlpttlMore'}}</span></button>
         <div id="PlusActionsMenu" aria-haspopup="true" class="dropdown">
             <div class="topcoat-navigation-bar__item left">
-                <button id="mnuPlaceholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+                <button id="mnuPHBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+            </div>
+            <div class="topcoat-navigation-bar__item left">
+                <button id="mnuPHAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
             </div>
             <div class="topcoat-navigation-bar__item left">
                 <button id="mnuPhrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
@@ -42,7 +45,10 @@
     </div>
     <div class="tb-action-toggles right"> {{! hidden on small screens }}
     <div class="topcoat-navigation-bar__item left">
-        <button id="Placeholder" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--placeholder-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+        <button id="phBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+    </div>
+    <div class="topcoat-navigation-bar__item left">
+        <button id="phAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
     </div>
     <div class="topcoat-navigation-bar__item left">
         <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
