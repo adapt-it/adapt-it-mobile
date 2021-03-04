@@ -43,7 +43,6 @@
     "gulp-uglify": "^3.0.2",
     "npx": "^10.2.2",
     "phonegap-plugin-mobile-accessibility": "https://github.com/phonegap/phonegap-mobile-accessibility.git",
-    "snyk": "^1.401.0"
   },
   "bugs": {
     "url": "https://github.com/adapt-it/adapt-it-mobile/issues"
