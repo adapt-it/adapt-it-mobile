@@ -36,6 +36,7 @@ define(function (require) {
         cbData          = "", // clipboard text (so we call it once)
         scrID           = "",
         fileName        = "",
+        versionSpec     = "", // file type specification version (2.5, 3.0, etc.)
         isClipboard     = false,
         isKB            = false,
         fileList        = [],
@@ -391,6 +392,7 @@ define(function (require) {
                 
                 // Paratext USX document
                 // These are XML-flavored markup files exported from Paratext
+                // (https://ubsicap.github.io/usx/elements.html)
                 var readUSXDoc = function (contents) {
                     var sp = null;
                     var spaceRE = /\s+/;        // select 1+ space chars
@@ -464,6 +466,13 @@ define(function (require) {
                                     // verse with an alternate numbering
                                     markers += " \\va " + element.getAttribute("altnumber") + "\\va*";
                                 }
+                                if (element.attributes.item("sid")) {
+                                    markers += "\\v-sid " + element.getAttribute("sid");
+                                }
+                                if (element.attributes.item("eid")) {
+                                    markers += "\\v-eid " + element.getAttribute("sid");
+                                }
+                                break;
                                 break;
                             case "para":
                                 // the para kind is in the style tag
@@ -479,6 +488,21 @@ define(function (require) {
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
                                 closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                                break;
+                            case "ms":
+                                // milestone markers (USX 3.0), kept in the style attribute
+                                // these can be paired with a sid/eid, or standalone
+                                // we don't do anything with these other than store them at the moment
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                if (element.attributes.item("sid")) {
+                                    markers += "\\ms-sid " + element.getAttribute("sid");
+                                }
+                                if (element.attributes.item("eid")) {
+                                    markers += "\\ms-eid " + element.getAttribute("sid");
+                                }
                                 break;
                             case "figure":
                                 markers += "\\fig ";
@@ -627,6 +651,7 @@ define(function (require) {
                         }
                     };
                     console.log("Reading USX file:" + fileName);
+                    versionSpec = $($xml).find("usx").attr("version");
                     if (fileName.indexOf(".") > -1) {
                         // most likely has an extension -- remove it for our book name guess
                         bookName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -1616,7 +1641,8 @@ define(function (require) {
                 
                 // USFM document
                 // This is the file format for Bibledit and Paratext
-                // See http://paratext.org/about/usfm for format specification
+                // See http://paratext.org/about/usfm for format specification;
+                // Currently supporting USFM v3.0 (see tag list in utils/usfm.js)
                 var readUSFMDoc = function (contents) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
@@ -1665,6 +1691,11 @@ define(function (require) {
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
+                    index = contents.indexOf("\\usfm");
+                    if (index !== -1) {
+                        // usfm version 3.0 or later, probably
+                        versionSpec = contents.substring(index + 5, contents.indexOf(" ", index + 5));
+                    } 
                     // Issue #246: scripture portion support -- 2 checks for portions:
                     // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
                     // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)

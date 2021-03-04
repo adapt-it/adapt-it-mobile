@@ -6,6 +6,9 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        /* USFM: https://ubsicap.github.io/usfm/index.html
+           version support: 3.0
+        */
         /* Converted from AI_USFM.xml, with non-settable markers at the end.
            Many of the style-related properties are moved to the styles.css file; the markers array in AIM
            only maintains the following properties:

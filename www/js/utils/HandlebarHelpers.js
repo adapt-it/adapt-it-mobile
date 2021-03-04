@@ -56,7 +56,7 @@ define(function (require) {
             filterString = window.Application.filterList,
             newID = Underscore.uniqueId(),
             hasSpecialText = false,
-            SpecialTextMarkers = " _heading_base _intro_base _list_base _notes_base _peripherals_base at add bn br bt cap efm ef d di div dvrf f fe fr fk fq fqa fl fp ft fdc fv fm free gm gs gd gp h h1 h2 h3 hr id imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ip ipi ipq ipr iq iq1 iq2 iq3 im imi ili ili1 ili2 imq ib iot io io1 io2 io3 io4 ior iex iqt ie k1 k2 lit mr ms ms1 ms2 ms3 mt mt1 mt2 mt3 mt4 mte mte1 mte2 nc nt note p1 p2 pm pmc pmr pt ps pp pq r rem rr rq s s1 s2 s3 s4 sp sr sx sts",
+            SpecialTextMarkers = " _heading_base _intro_base _list_base _notes_base _peripherals_base at add bn br bt cap efm ef d di div dvrf f fe fr fk fq fqa fl fp ft fdc fv fw fm free gm gs gd gp h h1 h2 h3 hr usfm id imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ip ipi ipq ipr iq iq1 iq2 iq3 im imi ili ili1 ili2 imq ib iot io io1 io2 io3 io4 ior iex iqt ie k1 k2 lit mr ms ms1 ms2 ms3 mt mt1 mt2 mt3 mt4 mte mte1 mte2 nc nt note p1 p2 pm pmc pmr pt ps pp pq r rem rr rq s s1 s2 s3 s4 sp sr sx sts",
             i = 0;
         // if no markers are present, add any special text info and exit
         if (this.markers.length === 0) {
