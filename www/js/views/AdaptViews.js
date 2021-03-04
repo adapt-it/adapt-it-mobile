@@ -2422,7 +2422,9 @@ define(function (require) {
                         // copy over any info from the placeholder to the next pile
                         theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
                         theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
+                        theObj.set('source', selectedObj.get('prepuncts') + theObj.get('source'));
                         theObj.save();
+                        $(next_edit).find('.source').html(theObj.get('source'));
                         $(next_edit).find(".marker").html(theObj.get('markers')); // rebuild marker line if needed
                     }
                     this.collection.remove(selectedObj); // remove from collection
@@ -2513,7 +2515,7 @@ define(function (require) {
                         // copy over any info from the placeholder to the previous pile
                         follPuncts = selectedObj.get('follpuncts');
                         theObj.set('follpuncts', follPuncts + theObj.get('follpuncts'));
-                        theObj.set('source', theObj.get('source')) + follPuncts;
+                        theObj.set('source', theObj.get('source') + follPuncts);
                         $(next_edit).find('.source').html(theObj.get('source'));
                         theObj.save();
                     }
