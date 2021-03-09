@@ -28,6 +28,7 @@
   "dependencies": {
     "cordova-clipboard": "https://github.com/ihadeed/cordova-clipboard.git",
     "cordova-lib": "^9.0.0",
+    "cordova-plugin-customurlscheme": "5.0.2",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^6.0.2",
@@ -74,13 +75,16 @@
       "phonegap-plugin-mobile-accessibility": {},
       "cordova-clipboard": {},
       "cordova.plugins.diagnostic": {},
-      "cordova-plugin-customurlscheme": {
-        "URL_SCHEME": "aimdoc"
-      },
       "cordova-plugin-keyboard": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-statusbar": {},
-      "cordova-plugin-splashscreen": {}
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-customurlscheme": {
+        "URL_SCHEME": "aimdoc",
+        "ANDROID_SCHEME": " ",
+        "ANDROID_HOST": " ",
+        "ANDROID_PATHPREFIX": "/"
+      }
     },
     "platforms": [
       "android"

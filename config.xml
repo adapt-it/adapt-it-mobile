@@ -88,8 +88,8 @@
                     <string>Text File</string>
                     <key>CFBundleTypeRole</key>
                     <string>Editor</string>
-                    <key>LSHandlerRank</key>
-                    <string>Owner</string>
+                    <key>LSHandlerRank</key>                  
+                    <string>Default</string>
                     <key>LSItemContentTypes</key>
                     <array>
                         <string>public.plain-text</string>
@@ -103,7 +103,7 @@
                     <key>CFBundleTypeRole</key>
                     <string>Editor</string>
                     <key>LSHandlerRank</key>
-                    <string>Owner</string>
+                    <string>Default</string>
                     <key>LSItemContentTypes</key>
                     <array>
                         <string>public.xml</string>
@@ -122,7 +122,7 @@
                     <key>CFBundleTypeRole</key>
                     <string>Editor</string>
                     <key>LSHandlerRank</key>
-                    <string>Owner</string>
+                    <string>Default</string>
                     <key>LSItemContentTypes</key>
                     <array>
                         <string>org.ubs.document.usfm</string>
@@ -142,7 +142,7 @@
                     <key>CFBundleTypeRole</key>
                     <string>Editor</string>
                     <key>LSHandlerRank</key>
-                    <string>Owner</string>
+                    <string>Default</string>
                     <key>LSItemContentTypes</key>
                     <array>
                         <string>org.ubs.document.usx</string>
@@ -200,6 +200,27 @@
                         <key>public.filename-extension</key>
                         <array>
                             <string>usx</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/xml</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.xml</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>TMX Document</string>
+                    <key>UTTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.lisa.document.tmx</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>tmx</string>
                         </array>
                         <key>public.mime-type</key>
                         <string>text/xml</string>
