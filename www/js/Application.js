@@ -424,11 +424,12 @@ define(function (require) {
                 console.log("importFile: enter");
                 var proj = window.Application.currentProject;
                 if (proj !== null) {
+                    // We have a project -- load the ImportDocumentView to do the work
                     importDocView = new DocumentViews.ImportDocumentView({model: proj});
                     importDocView.delegateEvents();
                     window.Application.main.show(importDocView);
-                    // call importFile() directly
-                    importDocView.importFile(file, proj);
+                    // call ImportDocumentView::importFromURL() to import the file
+                    importDocView.importFromURL(file, proj);
                 } else {
                     alert("No current project defined -- ignoring open() call");
                 }

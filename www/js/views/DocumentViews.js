@@ -174,8 +174,8 @@ define(function (require) {
             var result = false;
             var errMsg = "";
             var sps = [];
-            if (filename.length === 0) {
-                filename = file.name; 
+            if (fileName.length === 0) {
+                fileName = file.name; 
             }
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
@@ -1041,6 +1041,7 @@ define(function (require) {
                 // specifically for Adapt It XML document files; other files
                 // will be skipped (for now). 
                 // This import also populates the KB and sets the last translated verse in each chapter.
+                // Languages must match the current project's source AND target language
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
                     var spaceRE = /\s+/;        // select 1+ space chars
@@ -1967,8 +1968,14 @@ define(function (require) {
                 ///
                 // END FILE TYPE READERS
                 ///
+
+                // did the FileReader.ReadAsText() call fail?
+                if (this.error) {
+                    importFail(this.error);
+                    return false;
+                }
                 
-                // read doc as appropriate
+                // parse doc contents as appropriate
                 if ((fileName.toLowerCase().indexOf(".usfm") > 0) || (fileName.toLowerCase().indexOf(".sfm") > 0)) {
                     result = readUSFMDoc(this.result);
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
@@ -3394,6 +3401,17 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            // Handler for when another process sends us a file to import. The logic is in
+            // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
+            importFromURL: function (file) {
+                // replace the selection UI with the import UI
+                $("#OK").hide();
+                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                // import the specified file
+                fileName = file.name;
+                importFile(file, this.model);
             },
             // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
