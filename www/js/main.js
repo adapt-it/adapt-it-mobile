@@ -91,6 +91,21 @@ require.config({
 
 });
 
+// Handler for opening / importing a file from another process. This could be called when AIM
+// is up and running, or the OS could be sending us this file before we've initialized
+// (i.e., on startup). Check to see if there's an Application; if there isn't one yet, store
+// the URL in localStorage until we're ready for it (see Application::onInitDB's i18n.init() callback)
+window.handleOpenURL = function(url) {
+    console.log("handleOpenURL: " + url);
+    if (window.Application) {
+        // process is already... handle the URL
+        window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+    } else {
+        // we're still waking up... store the url
+        localStorage.setItem('share_url', url);
+    }
+};
+
 // start the main application object in app.js
 require(["app/Application"], function (Application) {
     "use strict";

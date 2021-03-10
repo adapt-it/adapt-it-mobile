@@ -174,6 +174,9 @@ define(function (require) {
             var result = false;
             var errMsg = "";
             var sps = [];
+            if (filename.length === 0) {
+                filename = file.name; 
+            }
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
