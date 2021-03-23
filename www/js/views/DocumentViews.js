@@ -2065,7 +2065,8 @@ define(function (require) {
                 }
             };
             reader.readAsText(file);
-        },
+        }, // importFile
+        
         
         // Helper method to export the given bookid to the specified file format.
         // Called from ExportDocumentView::onOK once the book, format and filename have been chosen.
@@ -3476,7 +3477,7 @@ define(function (require) {
             onOK: function () {
                 if (isKB === false) {
                     // update the book name if necessary
-                    if ($("#BookName") && $("#BookName").val() !== bookName) {
+                    if ($("#BookName").length > 0 && $("#BookName").val() !== bookName) {
                         // name change -- update all the things
                         var newName = $("#BookName").val().trim();
                         var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
@@ -3509,7 +3510,13 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                window.history.back();
+                if (window.history.length > 1) {
+                    // we got here from the home page
+                    window.history.back();
+                } else {
+                    // we got here from another app (sending us a file)
+                    window.location.replace("");
+                }
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file
@@ -3619,7 +3626,7 @@ define(function (require) {
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
-                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
                                             if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
@@ -3823,7 +3830,13 @@ define(function (require) {
             // User clicked the Cancel button. Here we don't do anything -- just return
             onCancel: function () {
                 // go back to the previous page
-                window.history.go(-1);
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history -- just go home
+                    window.location.replace("");
+                }
             },
             selectDoc: function (event) {
                 var project = window.Application.currentProject;

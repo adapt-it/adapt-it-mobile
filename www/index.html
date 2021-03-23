@@ -3,7 +3,7 @@
 <head>
     <title>Adapt It Mobile</title>
     <!-- default content security policy; used in conjunction w/ whitelist plugin; see https://content-security-policy.com for details -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap://ready file://* https://ssl.gstatic.com aimdoc:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src data: 'self'; connect-src *; object-src 'self'; media-src 'self'; child-src gap://ready 'self' 'unsafe-inline' 'unsafe-eval'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap://ready cdvfile: file://* https://ssl.gstatic.com aim:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src data: 'self'; connect-src *; object-src 'self'; media-src 'self'; child-src gap://ready 'self' 'unsafe-inline' 'unsafe-eval'; form-action 'self';">
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
     <link href="res/topcoat/css/topcoat-mobile-light.min.css" rel="stylesheet">
@@ -15,6 +15,7 @@
     <link href="res/css/styles.css" rel="stylesheet">
     <link href="res/css/overrides.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="www/plugins/LaunchMyApp.js"></script>
     <script data-main="js/main" src="lib/require.js"></script>
 </head>
 

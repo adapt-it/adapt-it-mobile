@@ -259,7 +259,9 @@ define(function (require) {
                         // Did another task launch us (i.e., did our handleOpenURL() from main.js
                         // get called)? If so, pull out the URL and process the resulting file
                         if (localStorage.getItem('share_url')) {
-                            window.resolveLocalFileSystemURL(localStorage.getItem('share_url'), this.processFileEntry, this.processError);
+                            var shareURL = localStorage.getItem('share_url');
+                            console.log("Found stored URL to process:" + shareURL);
+                            window.resolveLocalFileSystemURL(shareURL, this.processFileEntry, this.processError);
                             // clear out localStorage
                             localStorage.setItem('share_url', "");
                         }

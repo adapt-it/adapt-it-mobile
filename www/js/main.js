@@ -98,7 +98,7 @@ require.config({
 window.handleOpenURL = function(url) {
     console.log("handleOpenURL: " + url);
     if (window.Application) {
-        // process is already... handle the URL
+        // ready event has fired and app is ready for events... handle the URL
         window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
     } else {
         // we're still waking up... store the url

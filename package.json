@@ -18,7 +18,7 @@
   ],
   "devDependencies": {
     "cordova-android": "^9.0.0",
-    "cordova-ios": "^6.1.1",
+    "cordova-ios": "^6.2.0",
     "cordova-uglify": "^0.3.4",
     "fs": "0.0.2",
     "gulp": "^4.0.2",
@@ -80,14 +80,15 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-customurlscheme": {
-        "URL_SCHEME": "aimdoc",
+        "URL_SCHEME": "aim",
         "ANDROID_SCHEME": " ",
         "ANDROID_HOST": " ",
         "ANDROID_PATHPREFIX": "/"
       }
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

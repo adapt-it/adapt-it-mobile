@@ -9,7 +9,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <allow-intent href="aimdoc:" />
+    <allow-intent href="aim:*" />
     <preference name="cordova.plugins.diagnostic.modules" value="BLUETOOTH WIFI EXTERNAL_STORAGE" />
     <preference name="android-build-tool" value="gradle" />
     <preference name="Orientation" value="default" />
@@ -153,9 +153,13 @@
         <config-file mode="replace" parent="CFBundleURLTypes" target="*-Info.plist">
             <array>
                 <dict>
-                    <key>CFBundleUrlSchemes</key>
+                    <key>CFBundleTypeRole</key>
+                    <string>Viewer</string>
+                    <key>CFBundleURLName</key>
+                    <string>org.adaptit.aim</string>
+                    <key>CFBundleURLSchemes</key>
                     <array>
-                        <string>aimdoc</string>
+                        <string>aim</string>
                     </array>
                 </dict>
             </array>
