@@ -586,8 +586,8 @@ define(function (require) {
             onShow: function () {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
-                this.bookList.each(function (model) {
-                    lstBooks += "<h3 class=\"topcoat-list__header ttlbook\" id=\"ttl-" + model.get("bookid") + "\">" + model.get("name") + "</h3><ul class=\"topcoat-list__container chapter-list\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                this.bookList.each(function (model, index) {
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);
                 // if there's only one book, "open" it and show the chapters
@@ -622,16 +622,28 @@ define(function (require) {
                 var key = event.currentTarget.id.substr(4);
                 var lstChapters = "";
                 console.log("onSelectBook:" + key);
-                // hide the other chapters
-                $("#lstBooks > ul").attr("style", "display:none");
-                $("#lst-" + key).removeAttr("style");
-                // find each chapter of this book in the chapterlist collection
-                this.chapterList.fetch({reset: true, data: {bookid: key}});
-                this.chapterList.each(function (model) {
-                    lstChapters += chapTemplate(model.attributes);
-                });
-                if (this.chapterList.length > 0) {
-                    $("#lst-" + key).html(lstChapters);
+                // is this item already selected?
+                if ($(event.currentTarget).hasClass("li-selected")) {
+                    // already selected -- unselect (toggle)
+                    $(".cl-indent").html("");
+                    $("#lst-" + key).removeAttr("style");
+                    $(".ttlbook").removeClass("li-selected");
+                } else {
+                    // not selected
+                    // unselect / hide the other chapters
+                    $(".cl-indent").attr("style", "display:none");
+                    $("#lst-" + key).removeAttr("style");
+                    $(".ttlbook").removeClass("li-selected");
+                    // show the "open book" icon
+                    $(event.currentTarget).addClass("li-selected");
+                    // find each chapter of this book in the chapterlist collection
+                    this.chapterList.fetch({reset: true, data: {bookid: key}});
+                    this.chapterList.each(function (model) {
+                        lstChapters += chapTemplate(model.attributes);
+                    });
+                    if (this.chapterList.length > 0) {
+                        $("#lst-" + key).html(lstChapters);
+                    }
                 }
             }
         });

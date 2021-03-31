@@ -460,6 +460,10 @@ button.light-grey {
 .l-indent {
     padding-left: 6px;
 }
+.cl-indent {
+    padding-left: 34px;
+    background-color: #eee;
+}
 #Spacer {
     height: 280px;
     width: 100%;
@@ -1357,7 +1361,7 @@ ul.btns {
 
 
 /* AIM buttons -- these have a 6px margin before/after (unlike the topcoat-icon guys above) */
-.btn-adapt{
+.btn-adapt {
 	background-image: url("../svg/pencil.svg");
     background-position: center;
 	background-repeat: no-repeat;
@@ -1368,6 +1372,21 @@ ul.btns {
     margin-right: 6px;
     vertical-align: sub;
     width: 25px;
+}
+.btn-book {
+	background-image: url("images/book.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.li-selected .btn-book {
+	background-image: url("images/book_open.svg");
 }
 .btn-cancel {
 	background-image: url("images/cancel.svg");
