@@ -321,6 +321,9 @@
         "dscEditProjectSourceLanguage": "Correct any errors to the <em>source language</em> and dialect fields. To create a new project, use the Managim Projeks page (Settings > Managim Projeks).",
         "dscEditProjectTargetLanguage": "Correct any errors to the <em>target language</em> and dialect fields. To create a new project, use the Managim Projeks page (Settings > Managim Projeks).",
         "dscWarnChangeProject": "Do not modify the project's source and target language to create a new project. New projects can be created in the Managim Projeks page (Settings > Managim Projeks).",
+        "lblSelectDoc": "Kisim long laik...",
+        "lblSortModified": "Sevim behain tru",
+        "lblSortName": "Nem",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

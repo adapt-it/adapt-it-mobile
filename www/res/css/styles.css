@@ -681,6 +681,13 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--check {
+    background: url("images/checkmark.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--clipboard {
     background: url("images/clipboard.svg") no-repeat;
     padding: 0;
@@ -975,6 +982,7 @@ ul {
 }
 select.docNav {
     -webkit-align-items: flex-start;
+    align-items: flex-start;
     -webkit-appearance: none;
     -moz-appearance: button;
     background: url(images/drop-down-triangle.png) no-repeat 95% center rgb(221, 225, 225);
@@ -1005,6 +1013,7 @@ select.docNav {
     width: 250px;
     word-spacing: normal;
     -webkit-writing-mode: horizontal-tb;
+    writing-mode: horizontal-tb;
 }
 /*** end temporary topcoat stylings ***/
 .marker {
@@ -1281,7 +1290,7 @@ ul.btns {
     letter-spacing: 1px;
     color: #454545;
     text-shadow: 0 1px #fff;
-    vertical-align: top;
+    /* vertical-align: top; */
     background-color: #e5e9e8;
     box-shadow: inset 0 1px #fff;
     border: 1px solid #9daca9;
@@ -1607,9 +1616,6 @@ ul.btns {
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
-.topcoat-table tr {
-/*    line-height: 1.2rem;*/
-}
 .topcoat-table td {
     padding: 3px;
 }
@@ -1694,14 +1700,15 @@ typeahead styles
     border-radius: 10px;
     -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 .tt-menu::-webkit-scrollbar-track {
     background-color: rgb(221, 225, 225);
     border-radius: 10px;
     -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
-
 
 .tt-menu {
   background-color: #fff;

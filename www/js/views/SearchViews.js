@@ -566,6 +566,7 @@ define(function (require) {
                 "input #search":    "search",
                 "click .ttlbook":   "onSelectBook",
                 "click #btnSearch": "onShowSearch",
+                "click #More-menu": "toggleMoreMenu",
                 "click #btnSelectDocument": "onShowSelectDocument"
             },
             
@@ -581,6 +582,13 @@ define(function (require) {
                 $("#rdoSelectDocument").prop("checked", true);
                 $("#grpSearch").attr("style", "display:none");
                 $("#grpSelectDocument").removeAttr("style");
+            },
+
+            toggleMoreMenu: function (event) {
+                // show/hide the More Actions dropdown menu
+                $("#MoreActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
             
             onShow: function () {

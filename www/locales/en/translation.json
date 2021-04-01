@@ -324,6 +324,9 @@
         "dscEditProjectSourceLanguage": "View and / or correct any settings related to the <u>source language</u> below.<br/> To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscEditProjectTargetLanguage": "View and / or correct any settings related to the <u>target language</u> below.<br/> To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscWarnChangeProject": "Edit these settings only if there are errors on this page. To create a new project, use the Manage Projects page (Settings > Manage Projects).",
+        "lblSelectDoc": "Select...",
+        "lblSortModified": "Recent",
+        "lblSortName": "Name",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

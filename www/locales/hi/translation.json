@@ -18,7 +18,6 @@
         "lblDocuments": "Documents: __number__",
         "lblSourceWords": "Source: __number__",
         "lblTranslations": "Translations: __number__",
-        "lblInstances": "Instances:",
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__versecount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastadapted__ of a total of __versecount__ verses have translation text).",
@@ -323,6 +322,9 @@
         "dscEditProjectSourceLanguage": "Correct any errors to the <em>source language</em> and dialect fields. To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscEditProjectTargetLanguage": "Correct any errors to the <em>target language</em> and dialect fields. To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscWarnChangeProject": "Do not modify the project's source and target language to create a new project. New projects can be created in the Manage Projects page (Settings > Manage Projects).",
+        "lblSelectDoc": "Select...",
+        "lblSortModified": "Recent",
+        "lblSortName": "Name",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
