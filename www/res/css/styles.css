@@ -1786,7 +1786,9 @@ typeahead styles
 	border-width: 13px;
 	margin-left: -13px;
 }
-
+.li-chk {
+    display: none;
+}
 .show {
     display: block;
 }

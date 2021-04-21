@@ -567,6 +567,9 @@ define(function (require) {
                 "click .ttlbook":   "onSelectBook",
                 "click #btnSearch": "onShowSearch",
                 "click #More-menu": "toggleMoreMenu",
+                "click #mnuSelect": "toggleSelect",
+                "click #mnuSortModified": "onSortModified",
+                "click #mnuSortName": "onSortName",
                 "click #btnSelectDocument": "onShowSelectDocument"
             },
             
@@ -590,10 +593,58 @@ define(function (require) {
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
+
+            toggleSelect: function (event) {
+                // show/hide the More Actions dropdown menu
+                $("#MoreActionsMenu").toggleClass("show");
+                event.stopPropagation();
+            },
+
+            // sort the results view on the last modified date
+            onSortModified: function (event) {
+                var lstBooks = "";
+                if (!$("#chkModified").hasClass("topcoat-icon--check")) {
+                    // not sorted properly - change that.
+                    $("#chkModified").addClass("topcoat-icon--check");
+                    $("#chkName").removeClass("topcoat-icon--check");
+                } 
+                this.bookList.comparator = 'name';
+                this.bookList.sort();
+                this.bookList.each(function (model, index) {
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span id=\"chk-" + model.get("bookid") + "\" class=\"topcoat-checkbox\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                });
+                $("#lstBooks").html(lstBooks);                
+                // show/hide the More Actions dropdown menu
+                $("#MoreActionsMenu").toggleClass("show");
+                event.stopPropagation();
+            },
+
+            // sort the results view on the book name
+            onSortName: function (event) {
+                var lstBooks = "";
+                if (!$("#chkName").hasClass("topcoat-icon--check")) {
+                    // switch to sorting by Name
+                    $("#chkModified").removeClass("topcoat-icon--check");
+                    $("#chkName").addClass("topcoat-icon--check");
+                } 
+                this.bookList.comparator = 'name';
+                this.bookList.sort();
+                this.bookList.each(function (model, index) {
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                });
+                $("#lstBooks").html(lstBooks);
+                // show/hide the More Actions dropdown menu
+                $("#MoreActionsMenu").toggleClass("show");
+                event.stopPropagation();
+            },
+
             
             onShow: function () {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                // initial sort - name
+                this.bookList.comparator = 'name';
+                this.bookList.sort();
                 this.bookList.each(function (model, index) {
                     lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
