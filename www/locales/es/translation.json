@@ -2,7 +2,7 @@
     "view": {
         "ttlMain": "Adapt It Mobile",
         "lblTagline": "Un editor para la traducción entre lenguajes similares",
-        "lblSearch": "Búsqueda",
+        "lblSearch": "Seleccionar / Buscar",
         "lblAdapt": "Adaptar",
         "dscSearch": "Búsqueda...",
         "dscAdapt": "Siga traduciendo desde donde lo dejó",

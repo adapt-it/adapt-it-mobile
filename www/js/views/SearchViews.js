@@ -566,28 +566,18 @@ define(function (require) {
             events: {
                 "input #search":    "search",
                 "click .ttlbook":   "onSelectBook",
-                "click #btnSearch": "onShowSearch",
                 "click #More-menu": "toggleMoreMenu",
                 "click #mnuSelect": "toggleSelect",
                 "click #mnuSortModified": "onSortModified",
                 "click #mnuSortName": "onSortName",
-                "click #btnSelectDocument": "onShowSelectDocument"
             },
             
-            onShowSearch: function () {
-                // show the chapters list
-                $("#rdoSearch").prop("checked", true);
-                $("#grpSearch").removeAttr("style");
-                $("#grpSelectDocument").attr("style", "display:none");
+            toggleSearchBrowse: function () {
+                // switch between displaying the search results and the book / chapter list
+                $("#lstSearch").toggleClass("hide");
+                $("#lstBooks").toggleClass("hide");
             },
             
-            onShowSelectDocument: function () {
-                // show the source words list
-                $("#rdoSelectDocument").prop("checked", true);
-                $("#grpSearch").attr("style", "display:none");
-                $("#grpSelectDocument").removeAttr("style");
-            },
-
             toggleMoreMenu: function (event) {
                 // show/hide the More Actions dropdown menu
                 $("#MoreActionsMenu").toggleClass("show");
@@ -667,17 +657,24 @@ define(function (require) {
                     event.preventDefault();
                 }
                 var key = $('#search').val();
-                // hide the other chapters
-                $("#lstBooks > ul").attr("style", "display:none");
-                this.chapterList.fetch({reset: true, data: {name: key}});
-                this.chapterList.each(function (model) {
-                    lstChapters += chapTemplate(model.attributes);
-                });
-                if (this.chapterList.length > 0) {
-                    $("#lstSearchResults").html(lstChapters);
-                    $("#lblSearchResults").removeAttr("style");
-                } else {
-                    $("#lblSearchResults").attr("style", "display:none");
+                if (key.length > 0 && $("#lstSearch").hasClass("hide")) {
+                    // we have something to search for -- show the search UI
+                    this.toggleSearchBrowse();
+                    // search for the string provided
+                    this.chapterList.fetch({reset: true, data: {name: key}});
+                    this.chapterList.each(function (model) {
+                        lstChapters += chapTemplate(model.attributes);
+                    });
+                    if (this.chapterList.length > 0) {
+                        $("#lstSearchResults").html(lstChapters);
+                        $("#lblSearchResults").removeAttr("style");
+                    } else {
+                        $("#lblSearchResults").attr("style", "display:none");
+                    }
+                }
+                if (key.length === 0 && $("#lstBooks").hasClass("hide")) {
+                    // search is cleared out -- show the books UI
+                    this.toggleSearchBrowse();
                 }
             },
 
