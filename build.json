@@ -2,16 +2,16 @@
     "android": {
         "debug": {
             "keystore": "../certs/aim.keystore",
-            "storePassword": "rithith",
-            "alias": "AIM",
-            "password" : "rithith",
+            "storePassword": "",
+            "alias": "",
+            "password" : "",
             "keystoreType": ""
         },
         "release": {
             "keystore": "../certs/aim.keystore",
-            "storePassword": "rithith",
-            "alias": "AIM",
-            "password" : "rithith",
+            "storePassword": "",
+            "alias": "",
+            "password" : "",
             "keystoreType": ""
         }
     },
