@@ -555,6 +555,7 @@ define(function (require) {
         
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
+            isSelecting: false,
 
             initialize: function () {
                 this.chapterList = new chapterModels.ChapterCollection();
@@ -598,6 +599,9 @@ define(function (require) {
                 // show/hide the More Actions dropdown menu
                 $("#MoreActionsMenu").toggleClass("show");
                 event.stopPropagation();
+                // show/hide the select checkboxes
+                $(".li-chk").toggleClass("show-button");
+                this.isSelecting = !(this.isSelecting);
             },
 
             // sort the results view on the last modified date
@@ -611,7 +615,7 @@ define(function (require) {
                 this.bookList.comparator = 'name';
                 this.bookList.sort();
                 this.bookList.each(function (model, index) {
-                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span id=\"chk-" + model.get("bookid") + "\" class=\"topcoat-checkbox\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);                
                 // show/hide the More Actions dropdown menu
@@ -630,7 +634,7 @@ define(function (require) {
                 this.bookList.comparator = 'name';
                 this.bookList.sort();
                 this.bookList.each(function (model, index) {
-                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);
                 // show/hide the More Actions dropdown menu
@@ -646,7 +650,7 @@ define(function (require) {
                 this.bookList.comparator = 'name';
                 this.bookList.sort();
                 this.bookList.each(function (model, index) {
-                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);
                 // if there's only one book, "open" it and show the chapters
@@ -681,27 +685,34 @@ define(function (require) {
                 var key = event.currentTarget.id.substr(4);
                 var lstChapters = "";
                 console.log("onSelectBook:" + key);
-                // is this item already selected?
-                if ($(event.currentTarget).hasClass("li-selected")) {
-                    // already selected -- unselect (toggle)
-                    $(".cl-indent").html("");
-                    $("#lst-" + key).removeAttr("style");
-                    $(".ttlbook").removeClass("li-selected");
+                // are we in book selection mode (i.e., the dropdown menu)
+                if (this.isSelecting === true) {
+                    $(event.currentTarget).find(".li-chk").toggleClass("chk-selected");
                 } else {
-                    // not selected
-                    // unselect / hide the other chapters
-                    $(".cl-indent").attr("style", "display:none");
-                    $("#lst-" + key).removeAttr("style");
-                    $(".ttlbook").removeClass("li-selected");
-                    // show the "open book" icon
-                    $(event.currentTarget).addClass("li-selected");
-                    // find each chapter of this book in the chapterlist collection
-                    this.chapterList.fetch({reset: true, data: {bookid: key}});
-                    this.chapterList.each(function (model) {
-                        lstChapters += chapTemplate(model.attributes);
-                    });
-                    if (this.chapterList.length > 0) {
-                        $("#lst-" + key).html(lstChapters);
+                    // not in book selection mode -- this click means expand/collapse the
+                    // book to show the chapters
+                    // is this book already opened?
+                    if ($(event.currentTarget).hasClass("li-selected")) {
+                        // already opened -- close (toggle)
+                        $(".cl-indent").html("");
+                        $("#lst-" + key).removeAttr("style");
+                        $(".ttlbook").removeClass("li-selected");
+                    } else {
+                        // not opened
+                        // unselect / hide the other chapters
+                        $(".cl-indent").attr("style", "display:none");
+                        $("#lst-" + key).removeAttr("style");
+                        $(".ttlbook").removeClass("li-selected");
+                        // show the "open book" icon
+                        $(event.currentTarget).addClass("li-selected");
+                        // find each chapter of this book in the chapterlist collection
+                        this.chapterList.fetch({reset: true, data: {bookid: key}});
+                        this.chapterList.each(function (model) {
+                            lstChapters += chapTemplate(model.attributes);
+                        });
+                        if (this.chapterList.length > 0) {
+                            $("#lst-" + key).html(lstChapters);
+                        }
                     }
                 }
             }
