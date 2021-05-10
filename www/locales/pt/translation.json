@@ -324,7 +324,7 @@
         "dscEditProjectSourceLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de origem </u> a seguir. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
         "dscEditProjectTargetLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de destino </u> abaixo. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
         "dscWarnChangeProject": "Edite essas configurações apenas se houver erros nesta página. Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
-        "lblSelectDoc": "Selecione...",
+        "lblSelectDoc": "Selecione documentos",
         "lblSortModified": "Recente",
         "lblSortName": "Nome",
         "_comment" : "****Add new strings BEFORE this line!****"

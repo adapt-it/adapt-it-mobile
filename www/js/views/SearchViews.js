@@ -556,6 +556,7 @@ define(function (require) {
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
             isSelecting: false,
+            nSelected: 0,
 
             initialize: function () {
                 this.chapterList = new chapterModels.ChapterCollection();
@@ -567,9 +568,9 @@ define(function (require) {
                 "input #search":    "search",
                 "click .ttlbook":   "onSelectBook",
                 "click #More-menu": "toggleMoreMenu",
-                "click #mnuSelect": "toggleSelect",
-                "click #mnuSortModified": "onSortModified",
-                "click #mnuSortName": "onSortName",
+                "click #btnDelete": "onDeleteDoc",
+                "click #btnDone": "onDone",
+                "click #mnuSelect": "toggleSelect"
             },
             
             toggleSearchBrowse: function () {
@@ -585,54 +586,42 @@ define(function (require) {
                 event.stopPropagation();
             },
 
-            toggleSelect: function (event) {
-                // show/hide the More Actions dropdown menu
-                $("#MoreActionsMenu").toggleClass("show");
+            // Delete document button handler -- confirm the action, then delete the selected document(s)
+            onDeleteDoc: function () {
+
+            },
+
+            // Done button handler -- just closes out selection mode
+            onDone: function () {
+                this.toggleSelect(); // call toggleSelect() to close out selection mode
+            },
+
+            // Select menu handler -- toggles between browse and document selection modes
+            toggleSelect: function () {
+                // hide the More Actions dropdown menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
                 event.stopPropagation();
                 // show/hide the select checkboxes
                 $(".li-chk").toggleClass("show-button");
+                // show/hide the search and actions groups
+                $("#grpSearch").toggleClass("hide");
+                $("#tbBottom").toggleClass("hide");
                 this.isSelecting = !(this.isSelecting);
+                // change labels as appropriate
+                if (this.isSelecting === true) {
+                    $("#ttlDocuments").html(i18next.t("view.lblSelectDoc"));
+                    $("#lblSelect").html(i18next.t("view.lblDone"));
+                    // also close any opened books
+                    $(".cl-indent").attr("style", "display:none");
+                    $(".ttlbook").removeClass("li-selected");
+            } else {
+                    $("#ttlDocuments").html(i18next.t("view.lblDocumentsInitial"));
+                    $("#lblSelect").html(i18next.t("view.lblSelectDoc"));
+                }
             },
 
-            // sort the results view on the last modified date
-            onSortModified: function (event) {
-                var lstBooks = "";
-                if (!$("#chkModified").hasClass("topcoat-icon--check")) {
-                    // not sorted properly - change that.
-                    $("#chkModified").addClass("topcoat-icon--check");
-                    $("#chkName").removeClass("topcoat-icon--check");
-                } 
-                this.bookList.comparator = 'name';
-                this.bookList.sort();
-                this.bookList.each(function (model, index) {
-                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
-                });
-                $("#lstBooks").html(lstBooks);                
-                // show/hide the More Actions dropdown menu
-                $("#MoreActionsMenu").toggleClass("show");
-                event.stopPropagation();
-            },
-
-            // sort the results view on the book name
-            onSortName: function (event) {
-                var lstBooks = "";
-                if (!$("#chkName").hasClass("topcoat-icon--check")) {
-                    // switch to sorting by Name
-                    $("#chkModified").removeClass("topcoat-icon--check");
-                    $("#chkName").addClass("topcoat-icon--check");
-                } 
-                this.bookList.comparator = 'name';
-                this.bookList.sort();
-                this.bookList.each(function (model, index) {
-                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
-                });
-                $("#lstBooks").html(lstBooks);
-                // show/hide the More Actions dropdown menu
-                $("#MoreActionsMenu").toggleClass("show");
-                event.stopPropagation();
-            },
-
-            
             onShow: function () {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
@@ -647,8 +636,6 @@ define(function (require) {
                 if (this.bookList.length === 1) {
                     $("#lstBooks > h3").first().mouseup();
                 }
-                this.onShowSearch(); // show the search tab
-                $("#search").focus();
             },
             
             search: function (event) {
@@ -685,6 +672,17 @@ define(function (require) {
                 // are we in book selection mode (i.e., the dropdown menu)
                 if (this.isSelecting === true) {
                     $(event.currentTarget).find(".li-chk").toggleClass("chk-selected");
+                    if ($(event.currentTarget).find(".li-chk").hasClass("chk-selected")) {
+                        this.nSelected++;
+                    } else {
+                        this.nSelected--;
+                    }
+                    // enable/disable the Actions buttons as appropriate
+                    if (this.nSelected > 0) {
+                        $("#btnDelete").prop("disabled", false);
+                    } else {
+                        $("#btnDelete").prop("disabled", true);
+                    }
                 } else {
                     // not in book selection mode -- this click means expand/collapse the
                     // book to show the chapters
