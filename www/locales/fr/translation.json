@@ -312,6 +312,7 @@
         "lblRemoveProject": "Supprimer ce projet",
         "lblAddProject": "Nouveau projet...",
         "dscWarnRemoveProject": "AVERTISSEMENT: Cela supprimera le projet sélectionné et toutes ses données, y compris tout travail de traduction effectué sur cet appareil. Es-tu sûr de vouloir faire ça?",
+        "dscWarnDeleteDocument": "AVERTISSEMENT: Cela supprimera les documents sélectionnés de la base de données. Es-tu sûr de vouloir faire ça?",
         "lblFrequency": "La fréquence",
         "lblTextDirection": "Direction du texte",
         "lblTextRTL": "De droite à gauche",

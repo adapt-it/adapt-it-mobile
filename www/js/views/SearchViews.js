@@ -25,7 +25,31 @@ define(function (require) {
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
-        
+
+        deleteSelectedDocs = function () {
+            var key = null;
+            var doc = null;
+            var nodes = [];
+            var i = 0;
+            // iterate through the selected documents
+            $('.li-chk.chk-selected').each(function () {
+                key = this.parentElement.id.substr(3);
+                console.log("deleting bookID: " + key);
+                doc = window.Application.BookList.findWhere({bookid: key});
+                if (doc) {
+                    // remove from the collection
+                    window.Application.BookList.remove(doc);
+                    // destroy the book and contents (SQL includes chapters and sourcephrases)
+                    doc.destroy();
+                    nodes.push("#ttl-" + key); // add UI doc to removal list (see for loop below)
+                }
+            });
+            // remove the deleted docs from the UI
+            for (i=0; i<nodes.length; i++) {
+                $(nodes[i]).remove();
+            }
+        },
+
         NoChildrenView = Marionette.ItemView.extend({
             template: Handlebars.compile("<div id=\"nochildren\"></div>")
         }),
@@ -588,7 +612,26 @@ define(function (require) {
 
             // Delete document button handler -- confirm the action, then delete the selected document(s)
             onDeleteDoc: function () {
-
+                // Confirm the action
+                var strConfirmText = i18next.t('view.dscWarnDeleteDocument');
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.confirm(strConfirmText, function (buttonIndex) {
+                        if (buttonIndex === 1) {
+                            // Delete the selected docs
+                            deleteSelectedDocs();
+                        } 
+                    }, i18next.t('view.ttlDelete'));
+                } else {
+                    // in browser
+                    // need to prepend a title to the confirmation dialog 
+                    strConfirmText = i18next.t('view.ttlDelete') + "\n\n" + strConfirmText;
+                    if (confirm(strConfirmText)) {
+                        // delete the selected docs
+                        deleteSelectedDocs();
+                    } 
+                }
+                // TODO: redraw UI (in selected state?)
             },
 
             // Done button handler -- just closes out selection mode
