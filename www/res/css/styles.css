@@ -185,6 +185,11 @@ input[type="file"] {
     font-size: 1.1rem;
     font-weight: 800;
 }
+/* warning - dangerous operation */
+.danger {
+    color: darkred;
+    font-weight: 800;
+}
 .deleted {
     color: red;
     font-style: italic;

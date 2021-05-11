@@ -991,7 +991,7 @@ define(function (require) {
             // User clicked on a project in the list -- shows / hides the available actions for the selected project.
             onClickProject: function (event) {
                 var SELECT_BTN = "<div class=\"control-row\"><button id=\"btnProjSelect\" class=\"btnSelect\" title=\"" + i18n.t("view.lblSelectProject") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18n.t("view.lblSelectProject") + "</button></div>",
-                    DELETE_BTN = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
+                    DELETE_BTN = "<div class=\"control-row\"><button id=\"btnProjDelete\" title=\"" + i18n.t("view.lblRemoveProject") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18n.t("view.lblRemoveProject") + "</button></div>",
                     index = event.currentTarget.id.substr(3);
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
