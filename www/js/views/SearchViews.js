@@ -25,7 +25,65 @@ define(function (require) {
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
-        
+
+        deleteSelectedDocs = function () {
+            var key = null;
+            var doc = null;
+            var nodes = [];
+            var i = 0;
+            var deletedCurrentDoc = false;
+            var lastAdaptedBookID = window.Application.currentProject.get('lastAdaptedBookID').toString();
+
+            // iterate through the selected documents
+            $('.li-chk.chk-selected').each(function () {
+                key = this.parentElement.id.substr(3);
+                console.log("deleting bookID: " + key);
+                // are we deleting something we were just working on?
+                if (lastAdaptedBookID === key) {
+                    // yup -- flag this condition, so we can deal with it below
+                    deletedCurrentDoc = true;
+                }
+                doc = window.Application.BookList.findWhere({bookid: key});
+                if (doc) {
+                    // remove from the collection
+                    window.Application.BookList.remove(doc);
+                    // destroy the book and contents (SQL includes chapters and sourcephrases)
+                    doc.destroy();
+                    nodes.push("#ttl-" + key); // add UI doc to removal list (see for loop below)
+                }
+            });
+            // remove the deleted docs from the UI
+            for (i=0; i<nodes.length; i++) {
+                $(nodes[i]).remove();
+            }
+            // Did we just delete all the books?
+            if (window.Application.BookList.length === 0) {
+                // no books left in the list -- clear out the last adapted chapter and book
+                window.Application.currentProject.set('lastDocument', "");
+                window.Application.currentProject.set('lastAdaptedBookID', 0);
+                window.Application.currentProject.set('lastAdaptedChapterID', 0);
+                window.Application.currentProject.save();
+            } else if (deletedCurrentDoc === true) {
+                // We just deleted the current Document/book;
+                // reset the current chapter and book to the first book in our collection                
+                var bk = window.Application.BookList.at(0);
+                if (bk) {
+                    var cid = bk.get("chapters")[0];
+                    window.Application.currentProject.set('lastDocument', bk.get("name"));
+                    window.Application.currentProject.set('lastAdaptedBookID', bk.get("bookid"));
+                    window.Application.currentProject.set('lastAdaptedChapterID', cid);
+                    var chapter = window.Application.ChapterList.findWhere({chapterid: cid});
+                    if (chapter) {
+                        window.Application.currentProject.set('lastAdaptedName', chapter.get('name'));
+                    } else {
+                        // can't get the chapter -- just clear out the lastAdaptedName value
+                        window.Application.currentProject.set('lastAdaptedName', "");
+                    }
+                    window.Application.currentProject.save();
+                }
+            }
+        },
+
         NoChildrenView = Marionette.ItemView.extend({
             template: Handlebars.compile("<div id=\"nochildren\"></div>")
         }),
@@ -202,7 +260,7 @@ define(function (require) {
                 
             },
             onClickRefString: function (event) {
-                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
+                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
                     RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>",
                     refstrings = this.model.get("refstring"),
                     index = event.currentTarget.id.substr(3);
@@ -555,6 +613,8 @@ define(function (require) {
         
         LookupView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplLookup),
+            isSelecting: false,
+            nSelected: 0,
 
             initialize: function () {
                 this.chapterList = new chapterModels.ChapterCollection();
@@ -565,37 +625,94 @@ define(function (require) {
             events: {
                 "input #search":    "search",
                 "click .ttlbook":   "onSelectBook",
-                "click #btnSearch": "onShowSearch",
-                "click #btnSelectDocument": "onShowSelectDocument"
+                "click #More-menu": "toggleMoreMenu",
+                "click #btnDelete": "onDeleteDoc",
+                "click #btnDone": "onDone",
+                "click #mnuSelect": "toggleSelect"
             },
             
-            onShowSearch: function () {
-                // show the chapters list
-                $("#rdoSearch").prop("checked", true);
-                $("#grpSearch").removeAttr("style");
-                $("#grpSelectDocument").attr("style", "display:none");
+            toggleSearchBrowse: function () {
+                // switch between displaying the search results and the book / chapter list
+                $("#lstSearch").toggleClass("hide");
+                $("#lstBooks").toggleClass("hide");
             },
             
-            onShowSelectDocument: function () {
-                // show the source words list
-                $("#rdoSelectDocument").prop("checked", true);
-                $("#grpSearch").attr("style", "display:none");
-                $("#grpSelectDocument").removeAttr("style");
+            toggleMoreMenu: function (event) {
+                // show/hide the More Actions dropdown menu
+                $("#MoreActionsMenu").toggleClass("show");
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
             },
-            
+
+            // Delete document button handler -- confirm the action, then delete the selected document(s)
+            onDeleteDoc: function () {
+                // Confirm the action
+                var strConfirmText = i18next.t('view.dscWarnDeleteDocument');
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.confirm(strConfirmText, function (buttonIndex) {
+                        if (buttonIndex === 1) {
+                            // Delete the selected docs
+                            deleteSelectedDocs();
+                        } 
+                    }, i18next.t('view.ttlDelete'));
+                } else {
+                    // in browser
+                    // need to prepend a title to the confirmation dialog 
+                    strConfirmText = i18next.t('view.ttlDelete') + "\n\n" + strConfirmText;
+                    if (confirm(strConfirmText)) {
+                        // delete the selected docs
+                        deleteSelectedDocs();
+                    } 
+                }
+                // TODO: redraw UI (in selected state?)
+            },
+
+            // Done button handler -- just closes out selection mode
+            onDone: function () {
+                this.toggleSelect(); // call toggleSelect() to close out selection mode
+            },
+
+            // Select menu handler -- toggles between browse and document selection modes
+            toggleSelect: function () {
+                // hide the More Actions dropdown menu if visible
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                event.stopPropagation();
+                // show/hide the select checkboxes
+                $(".li-chk").toggleClass("show-button");
+                // show/hide the search and actions groups
+                $("#grpSearch").toggleClass("hide");
+                $("#tbBottom").toggleClass("hide");
+                this.isSelecting = !(this.isSelecting);
+                // change labels as appropriate
+                if (this.isSelecting === true) {
+                    $("#ttlDocuments").html(i18next.t("view.lblSelectDoc"));
+                    $("#lblSelect").html(i18next.t("view.lblDone"));
+                    // also close any opened books
+                    $(".cl-indent").attr("style", "display:none");
+                    $(".ttlbook").removeClass("li-selected");
+            } else {
+                    $("#ttlDocuments").html(i18next.t("view.lblDocumentsInitial"));
+                    $("#lblSelect").html(i18next.t("view.lblSelectDoc"));
+                }
+            },
+
             onShow: function () {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
-                this.bookList.each(function (model) {
-                    lstBooks += "<h3 class=\"topcoat-list__header ttlbook\" id=\"ttl-" + model.get("bookid") + "\">" + model.get("name") + "</h3><ul class=\"topcoat-list__container chapter-list\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
+                // initial sort - name
+                this.bookList.comparator = 'name';
+                this.bookList.sort();
+                this.bookList.each(function (model, index) {
+                    lstBooks += "<li class=\"topcoat-list__item ttlbook\" id=\"ttl-" + model.get("bookid")  + "\"><div class=\"big-link\" id=\"bk-" + model.get("bookid") + "\"><span class=\"li-chk\"></span><span class=\"btn-book\"></span>" + model.get("name") + "</div></li><ul class=\"topcoat-list__container chapter-list cl-indent\" id=\"lst-" + model.get("bookid") + "\" style=\"display:none\"></ul>";
                 });
                 $("#lstBooks").html(lstBooks);
                 // if there's only one book, "open" it and show the chapters
                 if (this.bookList.length === 1) {
                     $("#lstBooks > h3").first().mouseup();
                 }
-                this.onShowSearch(); // show the search tab
-                $("#search").focus();
             },
             
             search: function (event) {
@@ -604,17 +721,24 @@ define(function (require) {
                     event.preventDefault();
                 }
                 var key = $('#search').val();
-                // hide the other chapters
-                $("#lstBooks > ul").attr("style", "display:none");
-                this.chapterList.fetch({reset: true, data: {name: key}});
-                this.chapterList.each(function (model) {
-                    lstChapters += chapTemplate(model.attributes);
-                });
-                if (this.chapterList.length > 0) {
-                    $("#lstSearchResults").html(lstChapters);
-                    $("#lblSearchResults").removeAttr("style");
-                } else {
-                    $("#lblSearchResults").attr("style", "display:none");
+                if (key.length > 0 && $("#lstSearch").hasClass("hide")) {
+                    // we have something to search for -- show the search UI
+                    this.toggleSearchBrowse();
+                    // search for the string provided
+                    this.chapterList.fetch({reset: true, data: {name: key}});
+                    this.chapterList.each(function (model) {
+                        lstChapters += chapTemplate(model.attributes);
+                    });
+                    if (this.chapterList.length > 0) {
+                        $("#lstSearchResults").html(lstChapters);
+                        $("#lblSearchResults").removeAttr("style");
+                    } else {
+                        $("#lblSearchResults").attr("style", "display:none");
+                    }
+                }
+                if (key.length === 0 && $("#lstBooks").hasClass("hide")) {
+                    // search is cleared out -- show the books UI
+                    this.toggleSearchBrowse();
                 }
             },
 
@@ -622,16 +746,46 @@ define(function (require) {
                 var key = event.currentTarget.id.substr(4);
                 var lstChapters = "";
                 console.log("onSelectBook:" + key);
-                // hide the other chapters
-                $("#lstBooks > ul").attr("style", "display:none");
-                $("#lst-" + key).removeAttr("style");
-                // find each chapter of this book in the chapterlist collection
-                this.chapterList.fetch({reset: true, data: {bookid: key}});
-                this.chapterList.each(function (model) {
-                    lstChapters += chapTemplate(model.attributes);
-                });
-                if (this.chapterList.length > 0) {
-                    $("#lst-" + key).html(lstChapters);
+                // are we in book selection mode (i.e., the dropdown menu)
+                if (this.isSelecting === true) {
+                    $(event.currentTarget).find(".li-chk").toggleClass("chk-selected");
+                    if ($(event.currentTarget).find(".li-chk").hasClass("chk-selected")) {
+                        this.nSelected++;
+                    } else {
+                        this.nSelected--;
+                    }
+                    // enable/disable the Actions buttons as appropriate
+                    if (this.nSelected > 0) {
+                        $("#btnDelete").prop("disabled", false);
+                    } else {
+                        $("#btnDelete").prop("disabled", true);
+                    }
+                } else {
+                    // not in book selection mode -- this click means expand/collapse the
+                    // book to show the chapters
+                    // is this book already opened?
+                    if ($(event.currentTarget).hasClass("li-selected")) {
+                        // already opened -- close (toggle)
+                        $(".cl-indent").html("");
+                        $("#lst-" + key).removeAttr("style");
+                        $(".ttlbook").removeClass("li-selected");
+                    } else {
+                        // not opened
+                        // unselect / hide the other chapters
+                        $(".cl-indent").attr("style", "display:none");
+                        $("#lst-" + key).removeAttr("style");
+                        $(".ttlbook").removeClass("li-selected");
+                        // show the "open book" icon
+                        $(event.currentTarget).addClass("li-selected");
+                        // find each chapter of this book in the chapterlist collection
+                        this.chapterList.fetch({reset: true, data: {bookid: key}});
+                        this.chapterList.each(function (model) {
+                            lstChapters += chapTemplate(model.attributes);
+                        });
+                        if (this.chapterList.length > 0) {
+                            $("#lst-" + key).html(lstChapters);
+                        }
+                    }
                 }
             }
         });

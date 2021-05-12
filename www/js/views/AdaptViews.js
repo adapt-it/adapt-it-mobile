@@ -2355,6 +2355,7 @@ define(function (require) {
                     nOrder = 0.0,
                     strID = null,
                     prePuncts = "",
+                    tgtText = "",
                     src = "...",
                     mkrs = "",
                     newID = Math.floor(Date.now()).toString(), // convert to string
@@ -2391,6 +2392,12 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find(".marker").html("&nbsp;"); // clear out marker line
                     }
+                    tgtText = this.autoRemoveCaps(selectedObj.get('target'), false);
+                    if (tgtText !== selectedObj.get('target')) {
+                        selectedObj.set('target', tgtText, {silent:true});
+                        selectedObj.save();
+                        $(selectedStart).find(".target").html(selectedObj.get('target'));
+                    }
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -2423,9 +2430,11 @@ define(function (require) {
                         theObj.set('markers', selectedObj.get('markers') + " " + theObj.get('markers'));
                         theObj.set('prepuncts', selectedObj.get('prepuncts') + " " + theObj.get('prepuncts'));
                         theObj.set('source', selectedObj.get('prepuncts') + theObj.get('source'));
+                        theObj.set('target', this.autoAddCaps(theObj.get('target'), true)); // capitalize if needed
                         theObj.save();
                         $(next_edit).find('.source').html(theObj.get('source'));
                         $(next_edit).find(".marker").html(theObj.get('markers')); // rebuild marker line if needed
+                        $(next_edit).find(".target").html(theObj.get('target')); // rebuild target line if needed
                     }
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete from db

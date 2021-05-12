@@ -12,7 +12,7 @@ require.config({
     // featherlight     1.7.6
     // featherlight.gallery 1.7.6
     // hammer           2.0.8
-    // handlebars       4.7.6
+    // handlebars       4.7.7
     // hopscotch        0.3.1+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
     //                          ** This is for hopscotch on smaller screens, issue #30 on hopscotch, or #189 on AIM 
     // i18next          1.9.0
@@ -34,7 +34,7 @@ require.config({
         // libraries
         'backbone': 'backbone-min',
         'hammerjs': 'hammer',
-        'handlebars': 'handlebars.min-v4.7.6',
+        'handlebars': 'handlebars.min-v4.7.7',
         'jquery-hammerjs': 'jquery.hammer',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min', //'jquery-i18next.min',//
@@ -90,6 +90,21 @@ require.config({
     }
 
 });
+
+// Handler for opening / importing a file from another process. This could be called when AIM
+// is up and running, or the OS could be sending us this file before we've initialized
+// (i.e., on startup). Check to see if there's an Application; if there isn't one yet, store
+// the URL in localStorage until we're ready for it (see Application::onInitDB's i18n.init() callback)
+window.handleOpenURL = function(url) {
+    console.log("handleOpenURL: " + url);
+    if (window.Application) {
+        // ready event has fired and app is ready for events... handle the URL
+        window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+    } else {
+        // we're still waking up... store the url
+        localStorage.setItem('share_url', url);
+    }
+};
 
 // start the main application object in app.js
 require(["app/Application"], function (Application) {

@@ -255,6 +255,16 @@ define(function (require) {
 
                         // Tell backbone we're ready to start loading the View classes.
                         Backbone.history.start();
+
+                        // Did another task launch us (i.e., did our handleOpenURL() from main.js
+                        // get called)? If so, pull out the URL and process the resulting file
+                        if (localStorage.getItem('share_url')) {
+                            var shareURL = localStorage.getItem('share_url');
+                            console.log("Found stored URL to process:" + shareURL);
+                            window.resolveLocalFileSystemURL(shareURL, this.processFileEntry, this.processError);
+                            // clear out localStorage
+                            localStorage.setItem('share_url', "");
+                        }
                     });
                 };
                 // create model collections off the Application object
@@ -394,6 +404,41 @@ define(function (require) {
                         window.Application.main.show(showTransView);
                     });
                 });
+            },
+
+            // Another process has sent us a file via URL. Get the File handle and send it along to
+            // importFileFromURL (below).
+            processFileEntry: function (fileEntry) {
+                console.log("processFileEntry: enter");
+                fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
+            },
+
+            processError: function (error) {
+                // log the error and continue processing
+                console.log("getDirectory error: " + error.code);
+                alert("error: " + error.code);
+            },
+
+            // This is similar to importBooks, EXCEPT that another process is sending a file to us to
+            // open/import (rather than the user picking a file out of a list). Call
+            // ImportDocumentView::importFile() to import the file.
+            importFileFromURL: function (file) {
+                console.log("importFile: enter");
+                var proj = window.Application.currentProject;
+                if (proj !== null) {
+                    // We have a project -- load the ImportDocumentView to do the work
+                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.delegateEvents();
+                    window.Application.main.show(importDocView);
+                    // call ImportDocumentView::importFromURL() to import the file
+                    importDocView.importFromURL(file, proj);
+                } else {
+                    alert("No current project defined -- ignoring open() call");
+                }
+            },
+
+            importFail () {
+                alert("Unable to open file.");
             },
             
             importBooks: function (id) {

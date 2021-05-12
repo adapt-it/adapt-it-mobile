@@ -36,6 +36,7 @@ define(function (require) {
         cbData          = "", // clipboard text (so we call it once)
         scrID           = "",
         fileName        = "",
+        versionSpec     = "", // file type specification version (2.5, 3.0, etc.)
         isClipboard     = false,
         isKB            = false,
         fileList        = [],
@@ -173,6 +174,9 @@ define(function (require) {
             var result = false;
             var errMsg = "";
             var sps = [];
+            if (fileName.length === 0) {
+                fileName = file.name; 
+            }
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
@@ -391,6 +395,7 @@ define(function (require) {
                 
                 // Paratext USX document
                 // These are XML-flavored markup files exported from Paratext
+                // (https://ubsicap.github.io/usx/elements.html)
                 var readUSXDoc = function (contents) {
                     var sp = null;
                     var spaceRE = /\s+/;        // select 1+ space chars
@@ -464,6 +469,13 @@ define(function (require) {
                                     // verse with an alternate numbering
                                     markers += " \\va " + element.getAttribute("altnumber") + "\\va*";
                                 }
+                                if (element.attributes.item("sid")) {
+                                    markers += "\\v-sid " + element.getAttribute("sid");
+                                }
+                                if (element.attributes.item("eid")) {
+                                    markers += "\\v-eid " + element.getAttribute("sid");
+                                }
+                                break;
                                 break;
                             case "para":
                                 // the para kind is in the style tag
@@ -479,6 +491,21 @@ define(function (require) {
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
                                 closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                                break;
+                            case "ms":
+                                // milestone markers (USX 3.0), kept in the style attribute
+                                // these can be paired with a sid/eid, or standalone
+                                // we don't do anything with these other than store them at the moment
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                if (element.attributes.item("sid")) {
+                                    markers += "\\ms-sid " + element.getAttribute("sid");
+                                }
+                                if (element.attributes.item("eid")) {
+                                    markers += "\\ms-eid " + element.getAttribute("sid");
+                                }
                                 break;
                             case "figure":
                                 markers += "\\fig ";
@@ -627,6 +654,7 @@ define(function (require) {
                         }
                     };
                     console.log("Reading USX file:" + fileName);
+                    versionSpec = $($xml).find("usx").attr("version");
                     if (fileName.indexOf(".") > -1) {
                         // most likely has an extension -- remove it for our book name guess
                         bookName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -1013,6 +1041,7 @@ define(function (require) {
                 // specifically for Adapt It XML document files; other files
                 // will be skipped (for now). 
                 // This import also populates the KB and sets the last translated verse in each chapter.
+                // Languages must match the current project's source AND target language
                 var readXMLDoc = function (contents) {
                     var prepunct = "";
                     var spaceRE = /\s+/;        // select 1+ space chars
@@ -1616,7 +1645,8 @@ define(function (require) {
                 
                 // USFM document
                 // This is the file format for Bibledit and Paratext
-                // See http://paratext.org/about/usfm for format specification
+                // See http://paratext.org/about/usfm for format specification;
+                // Currently supporting USFM v3.0 (see tag list in utils/usfm.js)
                 var readUSFMDoc = function (contents) {
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var chapterName = "";
@@ -1665,6 +1695,11 @@ define(function (require) {
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
                     scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
+                    index = contents.indexOf("\\usfm");
+                    if (index !== -1) {
+                        // usfm version 3.0 or later, probably
+                        versionSpec = contents.substring(index + 5, contents.indexOf(" ", index + 5));
+                    } 
                     // Issue #246: scripture portion support -- 2 checks for portions:
                     // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
                     // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
@@ -1933,8 +1968,14 @@ define(function (require) {
                 ///
                 // END FILE TYPE READERS
                 ///
+
+                // did the FileReader.ReadAsText() call fail?
+                if (this.error) {
+                    importFail(this.error);
+                    return false;
+                }
                 
-                // read doc as appropriate
+                // parse doc contents as appropriate
                 if ((fileName.toLowerCase().indexOf(".usfm") > 0) || (fileName.toLowerCase().indexOf(".sfm") > 0)) {
                     result = readUSFMDoc(this.result);
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
@@ -2024,7 +2065,8 @@ define(function (require) {
                 }
             };
             reader.readAsText(file);
-        },
+        }, // importFile
+        
         
         // Helper method to export the given bookid to the specified file format.
         // Called from ExportDocumentView::onOK once the book, format and filename have been chosen.
@@ -3361,6 +3403,17 @@ define(function (require) {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
             },
+            // Handler for when another process sends us a file to import. The logic is in
+            // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
+            importFromURL: function (file) {
+                // replace the selection UI with the import UI
+                $("#OK").hide();
+                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                // import the specified file
+                fileName = file.name;
+                importFile(file, this.model);
+            },
             // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
             // file selections are returned by the browser in the event.currentTarget.files array
@@ -3424,7 +3477,7 @@ define(function (require) {
             onOK: function () {
                 if (isKB === false) {
                     // update the book name if necessary
-                    if ($("#BookName") && $("#BookName").val() !== bookName) {
+                    if ($("#BookName").length > 0 && $("#BookName").val() !== bookName) {
                         // name change -- update all the things
                         var newName = $("#BookName").val().trim();
                         var book = window.Application.BookList.where({projectid: this.model.get('projectid'), name: bookName})[0];
@@ -3457,7 +3510,13 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                window.history.back();
+                if (window.history.length > 1) {
+                    // we got here from the home page
+                    window.history.back();
+                } else {
+                    // we got here from another app (sending us a file)
+                    window.location.replace("");
+                }
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file
@@ -3567,7 +3626,7 @@ define(function (require) {
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
-                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
                                             if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
@@ -3771,7 +3830,13 @@ define(function (require) {
             // User clicked the Cancel button. Here we don't do anything -- just return
             onCancel: function () {
                 // go back to the previous page
-                window.history.go(-1);
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history -- just go home
+                    window.location.replace("");
+                }
             },
             selectDoc: function (event) {
                 var project = window.Application.currentProject;

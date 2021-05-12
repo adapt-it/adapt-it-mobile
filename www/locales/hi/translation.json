@@ -2,7 +2,7 @@
     "view": {
        "ttlMain": "Adapt It Mobile",
         "lblTagline": "A simple tool for related language translation",
-        "lblSearch": "खोजना",
+        "lblSearch": "Browse / Search",
         "lblAdapt": "अनुवाद करना",
         "dscSearch": "Look up a passage to start adapting",
         "dscAdapt":" Continue adapting from where you left off",
@@ -18,7 +18,6 @@
         "lblDocuments": "Documents: __number__",
         "lblSourceWords": "Source: __number__",
         "lblTranslations": "Translations: __number__",
-        "lblInstances": "Instances:",
         "lblStatusFullyTranslated": "Fully translated",
         "lblStatusNotTranslated": "No translations (__versecount__ total verses).",
         "lblStatusPartlyTranslated": "Partly drafted (__lastadapted__ of a total of __versecount__ verses have translation text).",
@@ -311,6 +310,7 @@
         "lblRemoveProject": "Remove Project",
         "lblAddProject": "Add Project...",
         "dscWarnRemoveProject": "WARNING: This will remove the selected project and all its data, including any translation work done on this device. Are you sure you want to do this?",
+        "dscWarnDeleteDocument": "WARNING: This will delete the selected documents from the database. Are you sure you want to do this?",
         "lblFrequency": "Frequency",
         "lblTextDirection": "Text Direction",
         "lblTextRTL": "Right to Left",
@@ -323,6 +323,9 @@
         "dscEditProjectSourceLanguage": "Correct any errors to the <em>source language</em> and dialect fields. To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscEditProjectTargetLanguage": "Correct any errors to the <em>target language</em> and dialect fields. To create a new project, use the Manage Projects page (Settings > Manage Projects).",
         "dscWarnChangeProject": "Do not modify the project's source and target language to create a new project. New projects can be created in the Manage Projects page (Settings > Manage Projects).",
+        "lblSelectDoc": "Select Documents",
+        "lblSortModified": "Recent",
+        "lblSortName": "Name",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

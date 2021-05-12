@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="42px"
+   height="42px"
+   viewBox="0 0 42 42"
+   xml:space="preserve"
+   sodipodi:docname="chk_clear.svg"
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"><metadata
+   id="metadata840"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs838" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1116"
+   inkscape:window-height="790"
+   id="namedview836"
+   showgrid="false"
+   inkscape:zoom="3.7083362"
+   inkscape:cx="21"
+   inkscape:cy="13.373753"
+   inkscape:window-x="128"
+   inkscape:window-y="82"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1"
+   inkscape:document-rotation="0" />
+
+<path
+   style="fill:#ffffff;stroke:#333333;stroke-width:4.41865;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="m 2.2323148,6.6449735 c 0,0 -0.5673265,-4.4268635 4.4146151,-4.4268635 H 35.369067 c 0,0 4.41879,-0.3672177 4.41879,4.4185133 V 35.356961 c 0,0 0.182664,4.576764 -4.41879,4.418513 -4.312379,-0.14831 -28.7221371,0 -28.7221371,0 0,0 -4.5494356,0.433051 -4.4187905,-4.418513 0.092641,-3.44024 0.00418,-28.6415479 0.00418,-28.7119875 z"
+   id="path1415"
+   sodipodi:nodetypes="cscscscsc" /></svg>

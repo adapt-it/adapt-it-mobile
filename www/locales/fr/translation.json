@@ -2,7 +2,7 @@
     "view": {
         "ttlMain": "Adapt It Mobile",
         "lblTagline": "Un outil pour traduire entre des langues similaires",
-        "lblSearch": "Rechercher",
+        "lblSearch": "Choisir / Rechercher",
         "lblAdapt": "Traduire",
         "dscSearch": "Rechercher...",
         "dscAdapt": "Poursuivre l'adaptation de l'endroit où vous vous étiez arrêté",
@@ -312,6 +312,7 @@
         "lblRemoveProject": "Supprimer ce projet",
         "lblAddProject": "Nouveau projet...",
         "dscWarnRemoveProject": "AVERTISSEMENT: Cela supprimera le projet sélectionné et toutes ses données, y compris tout travail de traduction effectué sur cet appareil. Es-tu sûr de vouloir faire ça?",
+        "dscWarnDeleteDocument": "AVERTISSEMENT: Cela supprimera les documents sélectionnés de la base de données. Es-tu sûr de vouloir faire ça?",
         "lblFrequency": "La fréquence",
         "lblTextDirection": "Direction du texte",
         "lblTextRTL": "De droite à gauche",
@@ -324,6 +325,9 @@
         "dscEditProjectSourceLanguage": "Affichez et / ou corrigez les paramètres relatifs à la <u> langue source </u> ci-dessous. <br/> Pour créer un nouveau projet, utilisez la page Administrer les projets (Paramètres> Administrer les projets).",
         "dscEditProjectTargetLanguage": "Affichez et / ou corrigez les paramètres relatifs à la <u> langue cible </u> ci-dessous. <br/> Pour créer un nouveau projet, utilisez la page Administrer les projets (Paramètres> Administrer les projets).",
         "dscWarnChangeProject": "Modifiez ces paramètres uniquement s'il y a des erreurs sur cette page. Pour créer un nouveau projet, utilisez la page Administrer les projets (Paramètres> Administrer les projets).",
+        "lblSelectDoc": "Sélectionnez des documents",
+        "lblSortModified": "Récent",
+        "lblSortName": "Nom",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

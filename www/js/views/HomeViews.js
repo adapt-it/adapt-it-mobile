@@ -140,7 +140,7 @@ define(function (require) {
             template: Handlebars.compile(tplHome),
             
             onShow: function () {
-                books = new bookModel.BookCollection();
+                books = window.Application.BookList;
                 books.fetch({reset: true, data: {name: ""}});
                 clickCount = 0;
             },

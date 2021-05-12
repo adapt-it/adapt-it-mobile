@@ -17,9 +17,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: macos-latest
     
+    # fs-extra dependency requires node v10+
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x, 12.x]
       
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

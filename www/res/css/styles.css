@@ -2,7 +2,7 @@
 /* 
   Base (light blue from AI icon): #2595cb;
   Dark blue: #1F7BA5; 
-  lighter blue: #279ED8:
+  lighter blue: #279ED8;
   Turquoise: #1dd8af;
   - secondary colors
   Cyan: #1ed6e2;
@@ -183,6 +183,11 @@ input[type="file"] {
 .emphasized {
     color: #000;
     font-size: 1.1rem;
+    font-weight: 800;
+}
+/* warning - dangerous operation */
+.danger {
+    color: darkred;
     font-weight: 800;
 }
 .deleted {
@@ -460,6 +465,10 @@ button.light-grey {
 .l-indent {
     padding-left: 6px;
 }
+.cl-indent {
+    padding-left: 34px;
+    background-color: #eee;
+}
 #Spacer {
     height: 280px;
     width: 100%;
@@ -672,6 +681,13 @@ ul {
 }
 .topcoat-icon--cancel {
     background: url("images/cancel.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--check {
+    background: url("images/checkmark.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -971,6 +987,7 @@ ul {
 }
 select.docNav {
     -webkit-align-items: flex-start;
+    align-items: flex-start;
     -webkit-appearance: none;
     -moz-appearance: button;
     background: url(images/drop-down-triangle.png) no-repeat 95% center rgb(221, 225, 225);
@@ -1001,6 +1018,7 @@ select.docNav {
     width: 250px;
     word-spacing: normal;
     -webkit-writing-mode: horizontal-tb;
+    writing-mode: horizontal-tb;
 }
 /*** end temporary topcoat stylings ***/
 .marker {
@@ -1277,7 +1295,7 @@ ul.btns {
     letter-spacing: 1px;
     color: #454545;
     text-shadow: 0 1px #fff;
-    vertical-align: top;
+    /* vertical-align: top; */
     background-color: #e5e9e8;
     box-shadow: inset 0 1px #fff;
     border: 1px solid #9daca9;
@@ -1357,7 +1375,7 @@ ul.btns {
 
 
 /* AIM buttons -- these have a 6px margin before/after (unlike the topcoat-icon guys above) */
-.btn-adapt{
+.btn-adapt {
 	background-image: url("../svg/pencil.svg");
     background-position: center;
 	background-repeat: no-repeat;
@@ -1368,6 +1386,21 @@ ul.btns {
     margin-right: 6px;
     vertical-align: sub;
     width: 25px;
+}
+.btn-book {
+	background-image: url("images/book.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    height: 25px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: sub;
+    width: 25px;
+}
+.li-selected .btn-book {
+	background-image: url("images/book_open.svg");
 }
 .btn-cancel {
 	background-image: url("images/cancel.svg");
@@ -1588,9 +1621,6 @@ ul.btns {
     text-align: center;
     text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
-.topcoat-table tr {
-/*    line-height: 1.2rem;*/
-}
 .topcoat-table td {
     padding: 3px;
 }
@@ -1675,14 +1705,15 @@ typeahead styles
     border-radius: 10px;
     -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 .tt-menu::-webkit-scrollbar-track {
     background-color: rgb(221, 225, 225);
     border-radius: 10px;
     -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
-
 
 .tt-menu {
   background-color: #fff;
@@ -1760,12 +1791,28 @@ typeahead styles
 	border-width: 13px;
 	margin-left: -13px;
 }
-
+.li-chk {
+    display: none;
+	background-image: url("images/chk_clear.svg");
+    background-position: center;
+	background-repeat: no-repeat;
+    background-size: contain;
+    height: 22px;
+    margin: 3px;
+    vertical-align: sub;
+    width: 22px;    
+}
+.chk-selected {
+    background-image: url("images/chk_selected.svg");
+}
 .show {
     display: block;
 }
 .show-flex {
     display: flex;
+}
+.show-button {
+    display: inline-block;
 }
 /***********
 * media queries - for specific device sizes / screen resolutions

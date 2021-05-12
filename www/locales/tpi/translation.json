@@ -2,7 +2,7 @@
     "view": {
         "ttlMain": "Adapt It Mobile",
         "lblTagline": "Tanim Tok i go long narapela Tokples",
-        "lblSearch": "Painim",
+        "lblSearch": "Kisim long laik / Painim",
         "lblAdapt": "Adaptim",
         "dscSearch": "Painim...",
         "dscAdapt": "Mekim wok adaptesen i go het moa",
@@ -309,6 +309,7 @@
         "lblRemoveProject": "Rausim projek",
         "lblAddProject": "Nupela projek...",
         "dscWarnRemoveProject": "WARNING: This will remove the selected project and all its data, including any translation work done on this device. Are you sure you want to do this?",
+        "dscWarnDeleteDocument": "WARNING: This will delete the selected documents from the database. Are you sure you want to do this?",
         "lblFrequency": "Kaunim",
         "lblTextDirection": "Teks direksen",
         "lblTextRTL": "Han sut na i ran i go long han Kais",
@@ -321,6 +322,9 @@
         "dscEditProjectSourceLanguage": "Correct any errors to the <em>source language</em> and dialect fields. To create a new project, use the Managim Projeks page (Settings > Managim Projeks).",
         "dscEditProjectTargetLanguage": "Correct any errors to the <em>target language</em> and dialect fields. To create a new project, use the Managim Projeks page (Settings > Managim Projeks).",
         "dscWarnChangeProject": "Do not modify the project's source and target language to create a new project. New projects can be created in the Managim Projeks page (Settings > Managim Projeks).",
+        "lblSelectDoc": "Kisim long laik buk",
+        "lblSortModified": "Sevim behain tru",
+        "lblSortName": "Nem",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

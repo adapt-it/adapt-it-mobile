@@ -2,14 +2,13 @@
     "view": {
         "ttlMain": "Adapt It Mobile",
         "lblTagline": "Uma ferramenta simples para tradução de idiomas relacionados",
-        "lblSearch": "Pesquisa",
+        "lblSearch": "Escolher / Procurar",
         "lblAdapt": "Traduzir",
         "dscSearch": "Pesquisa...",
         "dscAdapt":" Continue traduzindo de onde você deixou",
         "lblHelp": "Assistência",
         "ttlSearch": "Pesquisa no projecto",
         "ttlSelectDocument": "Selecionar Documento",
-        "lblBook": "Selecione um documento:",
         "lblSearchResults": "Resultados da pesquisa:",
         "lblBook": "Selecione um livro",
         "lblDocumentsInitial": "Documentos",
@@ -313,6 +312,7 @@
         "lblRemoveProject": "Exclua este projeto",
         "lblAddProject": "Novo projeto...",
         "dscWarnRemoveProject": "AVISO: Isso removerá o projeto selecionado e todos os seus dados, incluindo qualquer trabalho de tradução feito neste dispositivo. Você tem certeza de que quer fazer isso?",
+        "dscWarnDeleteDocument": "AVISO: Isso excluirá os documentos selecionados do banco de dados. Você tem certeza de que quer fazer isso?",
         "lblFrequency": "Frequência",
         "lblTextDirection": "Direção do texto",
         "lblTextRTL": "Direita para esquerda",
@@ -325,6 +325,9 @@
         "dscEditProjectSourceLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de origem </u> a seguir. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
         "dscEditProjectTargetLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de destino </u> abaixo. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
         "dscWarnChangeProject": "Edite essas configurações apenas se houver erros nesta página. Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
+        "lblSelectDoc": "Selecione documentos",
+        "lblSortModified": "Recente",
+        "lblSortName": "Nome",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
