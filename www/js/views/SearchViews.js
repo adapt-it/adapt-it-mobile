@@ -31,10 +31,18 @@ define(function (require) {
             var doc = null;
             var nodes = [];
             var i = 0;
+            var deletedCurrentDoc = false;
+            var lastAdaptedBookID = window.Application.currentProject.get('lastAdaptedBookID').toString();
+
             // iterate through the selected documents
             $('.li-chk.chk-selected').each(function () {
                 key = this.parentElement.id.substr(3);
                 console.log("deleting bookID: " + key);
+                // are we deleting something we were just working on?
+                if (lastAdaptedBookID === key) {
+                    // yup -- flag this condition, so we can deal with it below
+                    deletedCurrentDoc = true;
+                }
                 doc = window.Application.BookList.findWhere({bookid: key});
                 if (doc) {
                     // remove from the collection
@@ -47,6 +55,32 @@ define(function (require) {
             // remove the deleted docs from the UI
             for (i=0; i<nodes.length; i++) {
                 $(nodes[i]).remove();
+            }
+            // Did we just delete all the books?
+            if (window.Application.BookList.length === 0) {
+                // no books left in the list -- clear out the last adapted chapter and book
+                window.Application.currentProject.set('lastDocument', "");
+                window.Application.currentProject.set('lastAdaptedBookID', 0);
+                window.Application.currentProject.set('lastAdaptedChapterID', 0);
+                window.Application.currentProject.save();
+            } else if (deletedCurrentDoc === true) {
+                // We just deleted the current Document/book;
+                // reset the current chapter and book to the first book in our collection                
+                var bk = window.Application.BookList.at(0);
+                if (bk) {
+                    var cid = bk.get("chapters")[0];
+                    window.Application.currentProject.set('lastDocument', bk.get("name"));
+                    window.Application.currentProject.set('lastAdaptedBookID', bk.get("bookid"));
+                    window.Application.currentProject.set('lastAdaptedChapterID', cid);
+                    var chapter = window.Application.ChapterList.findWhere({chapterid: cid});
+                    if (chapter) {
+                        window.Application.currentProject.set('lastAdaptedName', chapter.get('name'));
+                    } else {
+                        // can't get the chapter -- just clear out the lastAdaptedName value
+                        window.Application.currentProject.set('lastAdaptedName', "");
+                    }
+                    window.Application.currentProject.save();
+                }
             }
         },
 

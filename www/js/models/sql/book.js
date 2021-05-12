@@ -79,30 +79,30 @@ define(function (require) {
                 });
             },
             destroy: function () {
+                var attributes = this.attributes;
                 var deferred = $.Deferred();
-                console.log("destroy() - removing book: " + this.attributes.bookid);
+                console.log("destroy() - removing book: " + attributes.bookid);
                     window.Application.db.transaction(function (tx) {
                     // get the chapters associated with this bookid
-                    tx.executeSql("SELECT * FROM chapter WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                    tx.executeSql("SELECT * FROM chapter WHERE bookid=?;", [attributes.bookid], function (tx, res) {
                         // for each chapter, delete the sourcephrases associated with the chapterid - then delete the chapter
-                        var i = 0,
-                            len = 0;
-                        for (i = 0, len = res.rows.length; i < len; ++i) {
-                            window.Application.db.transaction(function (tx) {
-                                var chapterid = res.rows.item(i).chapterid;
-                                tx.executeSql("DELETE FROM sourcephrase WHERE chapterid=?", [chapterid], function (tx, res) {
-                                    console.log("DELETE sourcephrases ok: " + res.toString());
-                                });
-                            });                    
+                        var i = 0;
+                        var ids = [];
+                        for (i = 0; i < res.rows.length; i++) {
+                            ids.push(res.rows.item(i).chapterid);
                         }
+                        var args = ids.join(", ");
+                        tx.executeSql("DELETE FROM sourcephrase WHERE chapterid IN (?);", [args], function (tx, res2) {
+                            console.log("DELETE sourcephrases ok: " + res2.toString());
+                        });
                         // delete the chapters
-                        tx.executeSql("DELETE FROM chapter WHERE bookid=?", [this.attributes.bookid], function (tx, res) {
+                        tx.executeSql("DELETE FROM chapter WHERE bookid=?", [attributes.bookid], function (tx, res) {
                             console.log("DELETE chapters ok: " + res.toString());
                         });
                     });
 
                     // delete the book
-                    tx.executeSql("DELETE FROM book WHERE bookid=?;", [this.attributes.bookid], function (tx, res) {
+                    tx.executeSql("DELETE FROM book WHERE bookid=?;", [attributes.bookid], function (tx, res) {
                         console.log("DELETE bookid ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
