@@ -507,6 +507,19 @@ define(function (require) {
                                     markers += "\\ms-eid " + element.getAttribute("sid");
                                 }
                                 break;
+                            case "periph":
+                                // peripheral content markers (USX 3.0), kept in the style attribute
+                                // these can be paired with a sid/eid, or standalone
+                                // we don't do anything with these other than store them at the moment
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += "\\periph ";
+                                markers += element.attributes.item("alt").nodeValue;
+                                markers += "|id=\"";
+                                markers += element.attributes.item("id").nodeValue;
+                                markers += "\"";
+                                break;
                             case "figure":
                                 markers += "\\fig ";
                                 markers += element.attributes.item("desc").nodeValue;
