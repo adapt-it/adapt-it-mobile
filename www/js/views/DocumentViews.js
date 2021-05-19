@@ -2607,6 +2607,12 @@ define(function (require) {
                                                 }
                                             } else if (markers.indexOf("\\rem") > -1) {
                                                 chapterString += "rem";
+                                            } else if (markers.indexOf("\\lh") > -1) {
+                                                chapterString += "lh"; // USX 3.0
+                                            } else if (markers.indexOf("\\lf") > -1) {
+                                                chapterString += "lf"; // USX 3.0
+                                            } else if (markers.indexOf("\\qd") > -1) {
+                                                chapterString += "qd"; // USX 3.0
                                             } else if (markers.indexOf("\\imt") > -1) {
                                                 // extract out what kind this is (e.g., "imt2") - 
                                                 // this goes in the style attribute
@@ -2620,6 +2626,24 @@ define(function (require) {
                                                 // extract out what kind this is (e.g., "m" or "mt2", etc.) - 
                                                 // this goes in the style attribute
                                                 var mpos = markers.indexOf("\\m");
+                                                if (markers.indexOf(" ", mpos) > -1) {
+                                                    chapterString += markers.substring(mpos + 1, (markers.indexOf(" ", mpos)));
+                                                } else {
+                                                    chapterString += markers.substr(mpos + 1);
+                                                }
+                                            } else if (markers.indexOf("\\lim") > -1) {
+                                                // USX 3.0: extract out what kind this is (e.g., "lim" or "lim2", etc.) - 
+                                                // this goes in the style attribute
+                                                var mpos = markers.indexOf("\\lim");
+                                                if (markers.indexOf(" ", mpos) > -1) {
+                                                    chapterString += markers.substring(mpos + 1, (markers.indexOf(" ", mpos)));
+                                                } else {
+                                                    chapterString += markers.substr(mpos + 1);
+                                                }
+                                            } else if (markers.indexOf("\sd") > -1) {
+                                                // USX 3.0: extract out what kind this is (e.g., "sd" or "sd2", etc.) - 
+                                                // this goes in the style attribute
+                                                var mpos = markers.indexOf("\\ds");
                                                 if (markers.indexOf(" ", mpos) > -1) {
                                                     chapterString += markers.substring(mpos + 1, (markers.indexOf(" ", mpos)));
                                                 } else {
