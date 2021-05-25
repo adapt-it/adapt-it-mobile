@@ -535,6 +535,8 @@ define(function (require) {
                                 markers += element.childNodes[0].nodeValue; // inner text is the figure caption
                                 markers += "|";
                                 markers += element.attributes.item("ref").nodeValue;
+                                markers += "|";
+                                markers += element.attributes.item("alt").nodeValue;
                                 markers += "\\fig*";
                                 break;
                             case "note":
@@ -548,6 +550,9 @@ define(function (require) {
                                 }
                                 closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 break;
+                            case "optbreak":
+                                markers += "\\b";
+                                break; 
                             case "table":
                                 break; // do nothing -- table rows are kept
                             case "row":
@@ -2573,7 +2578,7 @@ define(function (require) {
                                             }
                                             chapterString += "\n<para style=\"b\" />";
                                         }
-                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\cl") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\m") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
+                                        if ((markers.indexOf("\\p") > -1) || (markers.indexOf("\\q") > -1) || (markers.indexOf("\\ide") > -1) || (markers.indexOf("\\cl") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\m") > -1) || (markers.indexOf("\\imt") > -1) || (markers.indexOf("\\sd") > -1) || (markers.indexOf("\\lh") > -1) || (markers.indexOf("\\lf") > -1) || (markers.indexOf("\\lim") > -1) || (markers.indexOf("\\rem") > -1) || (markers.indexOf("\\toc") > -1)) {
                                             if (closeNode.length > 0) {
                                                 chapterString += closeNode;
                                             }
@@ -2611,8 +2616,6 @@ define(function (require) {
                                                 chapterString += "lh"; // USX 3.0
                                             } else if (markers.indexOf("\\lf") > -1) {
                                                 chapterString += "lf"; // USX 3.0
-                                            } else if (markers.indexOf("\\qd") > -1) {
-                                                chapterString += "qd"; // USX 3.0
                                             } else if (markers.indexOf("\\imt") > -1) {
                                                 // extract out what kind this is (e.g., "imt2") - 
                                                 // this goes in the style attribute

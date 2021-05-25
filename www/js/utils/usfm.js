@@ -92,6 +92,13 @@ define(function (require) {
                 inform: "1"
             },
             {
+                name: "esb",
+                endMarker: "esbe",
+                description: "Sidebar",
+                filter: "1",
+                userCanSetFilter: "1"
+            },
+            {
                 name: "ca",
                 endMarker: "ca*",
                 description: "Second (alternate) chapter number (for coding dual versification; useful for places where different traditions of chapter breaks need to be supported in the same translation)",
