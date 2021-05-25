@@ -411,8 +411,10 @@ define(function (require) {
                     var i = 0;
                     var lastAdapted = 0;
                     var closingMarker = "";
+                    var nodeStyle = "";
                     var parseNode = function (element) {
                         closingMarker = "";
+                        nodeStyle = "";
                         // process the node itself
                         if ($(element)[0].nodeType === 1) {
                             switch ($(element)[0].tagName) {
@@ -473,9 +475,8 @@ define(function (require) {
                                     markers += "\\v-sid " + element.getAttribute("sid");
                                 }
                                 if (element.attributes.item("eid")) {
-                                    markers += "\\v-eid " + element.getAttribute("sid");
+                                    markers += "\\v-eid " + element.getAttribute("eid");
                                 }
-                                break;
                                 break;
                             case "para":
                                 // the para kind is in the style tag
@@ -489,8 +490,26 @@ define(function (require) {
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
-                                markers += "\\" + element.attributes.item("style").nodeValue;
-                                closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                                nodeStyle = element.attributes.item("style").nodeValue;
+                                if (nodeStyle === "w") {
+                                    // wordlist - add lemma, strong, srcloc attributes
+                                    markers += "\\w ";
+                                    markers += element.childNodes[0].nodeValue; // wordlist item 
+                                    markers += "|lemma=\"" + element.getAttribute("lemma") + "\"";
+                                    markers += " strong=\"" + element.getAttribute("strong") + "\"";
+                                    markers += " srcloc=\"" + element.getAttribute("srcloc") + "\"\\w*";
+                                }
+                                else if (nodeStyle === "rb") {
+                                    // ruby gloss (https://www.w3.org/TR/ruby/) - add gloss attribute
+                                    // Note: this used to be \pro - a pronunciation annotation
+                                    markers += "\\rb ";
+                                    markers += element.childNodes[0].nodeValue; // base word 
+                                    markers += "|gloss=\"" + element.getAttribute("gloss") + "\"\\rb*";
+                                } else {
+                                    // some other char item
+                                    markers += "\\" + element.attributes.item("style").nodeValue;
+                                    closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                                }
                                 break;
                             case "ms":
                                 // milestone markers (USX 3.0), kept in the style attribute
