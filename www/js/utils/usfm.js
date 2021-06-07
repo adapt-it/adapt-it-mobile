@@ -13,7 +13,9 @@ define(function (require) {
            Many of the style-related properties are moved to the styles.css file; the markers array in AIM
            only maintains the following properties:
            - name: the marker name (e.g. "h" for "\h")
-           - type: <para> | <char> | <note> | <table> | <ms> | <periph>
+           - type: _most_ of the USX 3.x element types, used to emit USX -->
+             <book> | <chapter> | <verse> | <para> | <table> (includes tags for table/row/cell) | 
+             <char> | <ms> | <note> | <sidebar> | <periph> | <figure> | <ref>
            - description: brief description of the marker
            - filter: default marker state of the marker
            - userCanSetFilter: whether the marker can be filtered out
@@ -117,7 +119,7 @@ define(function (require) {
             },
             {
                 name: "ca",
-                type: "char",
+                type: "chapter",
                 endMarker: "ca*",
                 description: "Second (alternate) chapter number (for coding dual versification; useful for places where different traditions of chapter breaks need to be supported in the same translation)",
                 filter: "1",
@@ -132,7 +134,7 @@ define(function (require) {
             },
             {
                 name: "cp",
-                type: "para",
+                type: "chapter",
                 description: "Published chapter number (this is a chapter marking that would be used in the published text)",
                 filter: "1",
                 userCanSetFilter: "1"
@@ -1025,7 +1027,7 @@ define(function (require) {
             },
             {
                 name: "fig",
-                type: "para",
+                type: "figure",
                 endMarker: "fig*",
                 description: "Illustration [Columns to span, height, filename, caption text]",
                 filter: "1",
@@ -1053,7 +1055,7 @@ define(function (require) {
             },
             {
                 name: "id",
-                type: "para",
+                type: "book",
                 description: "File identification (BOOKID, FILENAME, EDITOR, MODIFICATION DATE)",
                 png: "1",
                 special: "1",
@@ -1079,7 +1081,7 @@ define(function (require) {
             },
             {
                 name: "c",
-                type: "para",
+                type: "chapter",
                 description: "Chapter number (basic)",
                 usfm: "1",
                 inform: "1",
@@ -1087,7 +1089,7 @@ define(function (require) {
             },
             {
                 name: "v",
-                type: "para",
+                type: "verse",
                 description: "A verse number (basic)",
                 usfm: "1",
                 inform: "1",
@@ -1095,14 +1097,14 @@ define(function (require) {
             },
             {
                 name: "vt",
-                type: "para",
+                type: "verse",
                 description: "Verse text",
                 inform: "1",
                 userCanSetFilter: "0"
             },
             {
                 name: "vn",
-                type: "para",
+                type: "verse",
                 description: "Verse number",
                 inform: "1",
                 userCanSetFilter: "0"
@@ -1581,7 +1583,77 @@ define(function (require) {
                 type: "ms",
                 description: "Translator's section (identifies a section of text that can be translated)",
                 inform: "1",
-                userCanSetFilter: "0"
+                userCanSetFilter: "1"
+            },
+            {
+                name: "ts-s",
+                type: "ms",
+                description: "Translator's section start (paired with ts-e)",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "ts-e",
+                type: "ms",
+                description: "Translator's section end (paired with ts-s)",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt-s",
+                type: "ms",
+                description: "Quotation speaker start",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt-e",
+                type: "ms",
+                description: "Quotation speaker end",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt1-s",
+                type: "ms",
+                description: "Quotation speaker start, L1",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt1-e",
+                type: "ms",
+                description: "Quotation speaker end, L1",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt2-s",
+                type: "ms",
+                description: "Quotation speaker start, L2",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt2-e",
+                type: "ms",
+                description: "Quotation speaker end, L2",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt3-s",
+                type: "ms",
+                description: "Quotation speaker start, L3",
+                inform: "1",
+                userCanSetFilter: "1"
+            },
+            {
+                name: "qt3-e",
+                type: "ms",
+                description: "Quotation speaker end, L3",
+                inform: "1",
+                userCanSetFilter: "1"
             },
             {
                 name: "qt",
@@ -2135,6 +2207,14 @@ define(function (require) {
                 description: "A Study Note text item",
                 filter: "1",
                 userCanSetFilter: "0"
+            },
+            {
+                name: "z-ref",
+                type: "ref",
+                endMarker: "z-ref*",
+                description: "USX ref marker",
+                filter: "1",
+                userCanSetFilter: "1"
             },
             /* EDB 5/27/21: could not find these in USFM 3.0 spec - are they still active? */
             {
