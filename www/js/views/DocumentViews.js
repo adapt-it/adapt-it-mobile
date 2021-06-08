@@ -516,6 +516,15 @@ define(function (require) {
                                     markers += "\\" + element.attributes.item("style").nodeValue;
                                     closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 }
+                                if (element.getAttributes.item("link-href")) {
+                                    markers += "\\z-link-href=\"" + element.getAttributes.item("link-href").nodeValue + "\" ";
+                                }
+                                if (element.getAttributes.item("link-title")) {
+                                    markers += "\\z-link-title=\"" + element.getAttributes.item("link-title").nodeValue + "\" ";
+                                }
+                                if (element.getAttributes.item("link-id")) {
+                                    markers += "\\z-link-id=\"" + element.getAttributes.item("link-id").nodeValue + "\" ";
+                                }
                                 break;
                             case "ms":
                                 // milestone markers (USX 3.0), kept in the style attribute
@@ -608,10 +617,11 @@ define(function (require) {
                                 if (element.attributes.item("category")) {
                                     markers += "\\cat " + element.attributes.item("category").nodeValue + "\\cat*";
                                 }
-                                closingMarker = "\\esbe";
+                                closingMarker = "\\esbe*";
                                 break;
                             case "ref":
                                 markers += "\\z-ref \"" + element.attributes.item("loc").nodeValue + "\"";
+                                closingMarker = "z-ref*";
                                 break;
                             default: // no processing for other nodes
                                 break;
@@ -2617,12 +2627,43 @@ define(function (require) {
                                                 } else if (mkr.type === "periph") {
                                                     chapterString += "<periph style=\"" + strMarker + "\">";
                                                 } else if (mkr.type === "char") {
-                                                    // char styles _usually_ have a closing marker - check
-                                                    if (mkr.endMarker) {
-
-                                                    } else {
-                                                        // basic
+                                                    // wordlist options
+                                                    if (mkr.name.indexOf("w") !== -1) {
+                                                        if (markerAry[i].indexOf("lemma") !== -1) {
+                                                            pos = markers.indexOf("lemma") + 7;
+                                                            strOptions += " lemma=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        if (markerAry[i].indexOf("strong") !== -1) {
+                                                            pos = markers.indexOf("strong") + 8;
+                                                            strOptions += " strong=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        if (markerAry[i].indexOf("srcloc") !== -1) {
+                                                            pos = markers.indexOf("srcloc") + 9;
+                                                            strOptions += " srcloc=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
                                                     }
+                                                    // ruby annotation options
+                                                    if ((mkr.name.indexOf("rb ") !== -1) && (markerAry[i].indexOf("|gloss") !== -1)) {
+                                                        pos = markers.indexOf("gloss") + 8;
+                                                        strOptions += " gloss=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+
+                                                    }
+                                                    // link options (USX 3.x)
+                                                    if (markerAry[i].indexOf("z-link-href") !== -1) {
+                                                        pos = markers.indexOf("link-href") + 12;
+                                                        strOptions += " link-href=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                    }
+                                                    if (markerAry[i].indexOf("z-link-title") !== -1) {
+                                                        pos = markers.indexOf("link-title") + 13;
+                                                        strOptions += " link-title=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                    }
+                                                    if (markerAry[i].indexOf("z-link-id") !== -1) {
+                                                        pos = markers.indexOf("link-id") + 10;
+                                                        strOptions += " link-id=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                    }
+                    
+                                                    chapterString += "<char style=\"" + strMarker + strOptions;
+                                                    chapterString += "\">";
                                                 } else if (mkr.type === "verse") { // <verse>
                                                     if (markers.indexOf("\\v-eid ") > -1) {
                                                         // verse end (USX 3.x+) -
