@@ -469,7 +469,7 @@ define(function (require) {
             },
             {
                 name: "pt",
-                type: "periph",
+                type: "para",
                 description: "Preface title",
                 userCanSetFilter: "1",
                 navigationText: "preface title",
@@ -477,7 +477,7 @@ define(function (require) {
             },
             {
                 name: "ps",
-                type: "periph",
+                type: "para",
                 description: "Preface section heading",
                 userCanSetFilter: "1",
                 navigationText: "preface section head",
@@ -485,7 +485,7 @@ define(function (require) {
             }, // REMOVED PNG /ps tag (conflicts with official one above)
             {
                 name: "pp",
-                type: "periph",
+                type: "para",
                 description: "Preface paragraph",
                 userCanSetFilter: "1",
                 navigationText: "preface paragraph",
@@ -493,7 +493,7 @@ define(function (require) {
             },
             {
                 name: "pq",
-                type: "periph",
+                type: "para",
                 description: "Preface poetry",
                 userCanSetFilter: "1",
                 navigationText: "preface poetry",
@@ -825,7 +825,7 @@ define(function (require) {
             },
             {
                 name: "gm",
-                type: "periph",
+                type: "para",
                 description: "Glossary main entry",
                 userCanSetFilter: "1",
                 navigationText: "glossary main entry",
@@ -833,7 +833,7 @@ define(function (require) {
             },
             {
                 name: "gs",
-                type: "periph",
+                type: "para",
                 description: "Glossary subentry",
                 navigationText: "glossary subentry",
                 userCanSetFilter: "1",
@@ -841,7 +841,7 @@ define(function (require) {
             },
             {
                 name: "gd",
-                type: "periph",
+                type: "para",
                 description: "Glossary definition",
                 userCanSetFilter: "1",
                 navigationText: "glossary definition",
@@ -849,7 +849,7 @@ define(function (require) {
             },
             {
                 name: "gp",
-                type: "periph",
+                type: "para",
                 description: "Glossary paragraph",
                 userCanSetFilter: "1",
                 navigationText: "glossary paragraph",
@@ -857,7 +857,7 @@ define(function (require) {
             },
             {
                 name: "tis",
-                type: "periph",
+                type: "para",
                 description: "Topical index heading (level 1)",
                 userCanSetFilter: "1",
                 navigationText: "topical index L1",
@@ -865,7 +865,7 @@ define(function (require) {
             },
             {
                 name: "tpi",
-                type: "periph",
+                type: "para",
                 description: "Topical index heading (level 2)",
                 userCanSetFilter: "1",
                 navigationText: "topical index L2",
@@ -873,7 +873,7 @@ define(function (require) {
             },
             {
                 name: "tps",
-                type: "periph",
+                type: "para",
                 description: "Topical index heading (level 3)",
                 userCanSetFilter: "1",
                 navigationText: "topical index L3",
@@ -881,7 +881,7 @@ define(function (require) {
             },
             {
                 name: "tir",
-                type: "periph",
+                type: "para",
                 description: "Topical index reference",
                 userCanSetFilter: "1",
                 navigationText: "topical index reference",
@@ -905,21 +905,21 @@ define(function (require) {
             },
             {
                 name: "xtSee",
-                type: "periph",
+                type: "char",
                 endMarker: "xtSee*",
                 description: "Concordance and Names Index markup for an alternate entry target reference.",
                 userCanSetFilter: "1"
             },
             {
                 name: "xtSeeAlso",
-                type: "periph",
+                type: "char",
                 endMarker: "xtSeeAlso*",
                 description: "Concordance and Names Index markup for an additional entry target reference.",
                 userCanSetFilter: "1"
             },
             {
                 name: "pub",
-                type: "periph",
+                type: "para",
                 description: "Front matter publication data",
                 userCanSetFilter: "1"
             },
@@ -969,60 +969,6 @@ define(function (require) {
                 name: "toca3",
                 type: "para",
                 description: "Alternative language Book Abbreviation",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "pref",
-                type: "periph",
-                description: "Front matter preface",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "intro",
-                type: "periph",
-                description: "Front matter introduction",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "conc",
-                type: "periph",
-                description: "Back matter concordance",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "glo",
-                type: "periph",
-                description: "Back matter glossary",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "idx",
-                type: "periph",
-                description: "Back matter index",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "maps",
-                type: "periph",
-                description: "Back matter map index",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "cov",
-                type: "periph",
-                description: "Other peripheral materials - cover",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "spine",
-                type: "periph",
-                description: "Other peripheral materials - spine",
-                userCanSetFilter: "1"
-            },
-            {
-                name: "pubinfo",
-                type: "periph",
-                description: "Publication information - Lang, Credit, Version, Copies, Publisher, Id, Logo",
                 userCanSetFilter: "1"
             },
             {

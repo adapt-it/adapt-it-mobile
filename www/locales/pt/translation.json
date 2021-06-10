@@ -328,6 +328,7 @@
         "lblSelectDoc": "Selecione documentos",
         "lblSortModified": "Recente",
         "lblSortName": "Nome",
+        "dscErrUnsupportedEncoding": "Codificação não suportada (valor do marcador / ide). O Adapt It Mobile só oferece suporte à codificação UTF-8.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

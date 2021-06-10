@@ -1720,6 +1720,7 @@ define(function (require) {
                     var stridx = 0;
                     var chaps = [];
                     var mkr = null;
+                    var encoding = "";
                     var regex1 = new RegExp(/\\c\s1\s/);
 
                     console.log("Reading USFM file:" + fileName);
@@ -1759,6 +1760,17 @@ define(function (require) {
                         // usfm version 3.0 or later, probably
                         versionSpec = contents.substring(index + 5, contents.indexOf(" ", index + 5));
                     } 
+                    // check encoding -- we only support UTF-8 (default for USFM), due to
+                    // sqlite API calls to open the AIM database. 
+                    index = contents.indexOf("\\ide");
+                    if (index !== 1) {
+                        // encoding is specified -- what is it?
+                        encoding = contents.substring(index + 6, contents.indexOf("\n"), index + 6);
+                        if (encoding !== "UTF-8") { // nope -- error out
+                            errMsg = i18n.t("view.dscErrUnsupportedEncoding");
+                            return false;
+                        }
+                    }
                     // Issue #246: scripture portion support -- 2 checks for portions:
                     // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
                     // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
@@ -2477,6 +2489,7 @@ define(function (require) {
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var filtered = false;
                 var exportMarkers = false;
+                var isPeriphBlock = false;
                 var needsEndMarker = "";
                 var markers = "";
                 var i = 0;
@@ -2503,7 +2516,7 @@ define(function (require) {
                 };
                 // starting material -- xml prolog and usx tag
                 // using USX 3.0 (https://ubsicap.github.io/usx/v3.0.0/index.html)
-                content = XML_PROLOG + "\n<usx version=\"3.0\">\n";
+                content = XML_PROLOG + "\n<usx version=\"3.0\">";
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
@@ -2598,11 +2611,14 @@ define(function (require) {
                                                     // TODO: pop off stack
                                                 }
                                                 // what kind of a marker are we looking at?
-                                                if (mkr.type === "note") { // <note>
+                                                if (mkr.type === "xml") { // ignore:
+                                                    // ignore: this is the one \\ide encoding marker, 
+                                                    // handled in the xml block above
+                                                } else if (mkr.type === "note") { // <note>
                                                     chapterString += "<note style=\"" + strMarker + "\">";
                                                 } else if (mkr.type === "book") { // <book>
                                                     if ((markers.indexOf("\\id ")) > -1) {
-                                                        chapterString += "<book code=\"" + bookID + "\" style=\"id\"";
+                                                        chapterString += "\n<book code=\"" + bookID + "\" style=\"id\"";
                                                         if (markers.lastIndexOf("\\") === markers.indexOf("\\id")) {
                                                             chapterString += ">" + value.get("target");
                                                             // this is a simple \\id marker -- more inner text could follow, 
@@ -2612,20 +2628,42 @@ define(function (require) {
                                                         } else {
                                                             // there are more markers after the \\id -- close out the <book> elt and keep processing
                                                             closeNode = "";
-                                                            chapterString += " />\n";
+                                                            chapterString += " />";
                                                         }
-                                                    }            
+                                                    }
                                                 } else if (mkr.type === "table") { // <table>/<row>/<cell>
-                                                    // tables are only defined by table rows; if there
+                                                    // tables are only defined by table rows in USFM; if there
                                                     // have been other markers, start a new table
                                                 } else if (mkr.type === "ms") {
-                                                    if ((mkr.name.indexOf("qt") !== -1) && (markerAry[i].indexOf("who") !== -1)) {
-                                                        // found a "who" param -- add it to strOptions
-                                                        strOptions = " who=\"" + + "\"";
+                                                    if (markers.indexOf("\\ms-eid") > -1) {
+                                                        // ms end (USX 3.x+) -
+                                                        pos = markers.indexOf("ms-eid") + 8;
+                                                        chapterString += "\n<ms eid=\"" + markers.substring(pos, (markers.indexOf(" ", pos))) + "\" />\n";
+                                                    } else {
+                                                        if (markers.indexOf("\\ms-sid") > -1) {
+                                                            // ms start (USX 3.x+) -
+                                                            pos = markers.indexOf("ms-sid") + 8;
+                                                            strOptions += " sid=\"" + markers.substring(pos, (markers.indexOf(" ", pos))) + "\"";
+                                                        }                                                        
+                                                        if ((mkr.name.indexOf("qt") !== -1) && (markerAry[i].indexOf("who") !== -1)) {
+                                                            // found a "who" param -- add it to strOptions
+                                                            pos = markers.indexOf("who") + 7;
+                                                            strOptions += " who=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        // ms-sid
+                                                        chapterString += "\n<ms style=\"" + strMarker + "\"" + strOptions + " />";
                                                     }
-                                                    chapterString += "<ms style=\"" + strMarker + strOptions + "\">";
                                                 } else if (mkr.type === "periph") {
-                                                    chapterString += "<periph style=\"" + strMarker + "\">";
+                                                    if (isPeriphBlock === true) {
+                                                        // close out old periph block
+                                                        chapterString += "\n  </periph>";
+                                                    }
+                                                    isPeriphBlock = true; // now inside a periph block
+                                                    pos = markers.indexOf("periph") + 9;
+                                                    strOptions += " alt=\"" + markers.substring(pos, (markers.indexOf("|", pos))) + "\"";
+                                                    pos = markers.indexOf("id=") + 5;
+                                                    strOptions += " id=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                    chapterString += "\n  <periph" + strOptions + ">";
                                                 } else if (mkr.type === "char") {
                                                     // wordlist options
                                                     if (mkr.name.indexOf("w") !== -1) {
@@ -2671,7 +2709,7 @@ define(function (require) {
                                                         chapterString += "<verse eid=\"" + markers.substring(pos, (markers.indexOf(" ", pos))) + "\" />";
                                                     } else {
                                                         // verse start
-                                                        chapterString += "<verse number=\"";
+                                                        chapterString += "\n<verse number=\"";
                                                         pos = markers.indexOf("\\v ") + 3;
                                                         if (markers.indexOf(" ", pos) > -1) {
                                                             chapterString += markers.substring(pos, (markers.indexOf(" ", pos)));
@@ -3032,6 +3070,10 @@ define(function (require) {
                                 if (closeNode.length > 0) {
                                     content += closeNode;
                                 }
+                                if (isPeriphBlock === true) {
+                                    // close out old periph block
+                                    chapterString += "\n  </periph>";
+                                }
                                 // add the ending node
                                 content += "\n</usx>\n";
                                 if (isClipboard === true) {
@@ -3056,6 +3098,10 @@ define(function (require) {
                             // add a closing paragraph if necessary
                             if (closeNode.length > 0) {
                                 content += closeNode;
+                            }
+                            if (isPeriphBlock === true) {
+                                // close out periph block
+                                content += "\n  </periph>";
                             }
                             // add the ending node
                             content += "\n</usx>\n";
