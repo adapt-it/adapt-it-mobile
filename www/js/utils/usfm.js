@@ -14,7 +14,7 @@ define(function (require) {
            only maintains the following properties:
            - name: the marker name (e.g. "h" for "\h")
            - type: _most_ of the USX 3.x element types, used to emit USX -->
-             <book> | <chapter> | <verse> | <para> | <table> (includes tags for table/row/cell) | 
+             <xml> | <book> | <chapter> | <verse> | <para> | <table> (includes tags for table/row/cell) | 
              <char> | <ms> | <note> | <sidebar> | <periph> | <figure> | <ref>
            - description: brief description of the marker
            - filter: default marker state of the marker
@@ -1011,7 +1011,7 @@ define(function (require) {
             },
             {
                 name: "ide",
-                type: "para",
+                type: "xml",
                 description: "File encoding information",
                 usfm: "1",
                 filter: "1",

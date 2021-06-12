@@ -2490,6 +2490,7 @@ define(function (require) {
                 var filtered = false;
                 var exportMarkers = false;
                 var isPeriphBlock = false;
+                var isBookBlock = false;
                 var needsEndMarker = "";
                 var markers = "";
                 var i = 0;
@@ -2533,6 +2534,10 @@ define(function (require) {
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
                                 markers = value.get("markers");
+                                if (markers.length > 0 && isBookBlock === true) {
+                                    chapterString += "</book>";
+                                    isBookBlock = false;
+                                }
                                 if (filtered === true && markers.length > 0 && needsEndMarker.length === 0) {
                                     // hit the next strip; this is an implicit end to the filtering (there's no end marker)
                                     filtered = false;
@@ -2604,34 +2609,45 @@ define(function (require) {
                                             mkr = markerList.where({name: markerAry[i].substr(0, strMarker)})[0];
                                             if (mkr && mkr.length > 0) {
                                                 strOptions = ""; // clear out the options param
-                                                if (isEndMarker === true) {
-                                                    // just need to pop out / emit ending marker and
-                                                    // continue the loop
-                                                    chapterString += "</" + strMarker + ">";
-                                                    // TODO: pop off stack
-                                                }
                                                 // what kind of a marker are we looking at?
                                                 if (mkr.type === "xml") { // ignore:
                                                     // ignore: this is the one \\ide encoding marker, 
-                                                    // handled in the xml block above
+                                                    // handled in the xml block above (we only support UTF-8 encoding)
                                                 } else if (mkr.type === "note") { // <note>
-                                                    chapterString += "<note style=\"" + strMarker + "\">";
+                                                    if (isEndMarker === true) {
+                                                        // closing marker
+                                                        chapterString += "</note>";
+                                                    } else {
+                                                        // opening marker
+                                                        chapterString += "<note style=\"" + strMarker + "\">";
+                                                    }
                                                 } else if (mkr.type === "book") { // <book>
                                                     if ((markers.indexOf("\\id ")) > -1) {
-                                                        chapterString += "\n<book code=\"" + bookID + "\" style=\"id\"";
-                                                        if (markers.lastIndexOf("\\") === markers.indexOf("\\id")) {
-                                                            chapterString += ">" + value.get("target");
-                                                            // this is a simple \\id marker -- more inner text could follow, 
-                                                            // so set the closeNode and skip to the next item
-                                                            closeNode = "</book>";
-                                                            continue; // skip to the next entry
-                                                        } else {
-                                                            // there are more markers after the \\id -- close out the <book> elt and keep processing
-                                                            closeNode = "";
-                                                            chapterString += " />";
-                                                        }
+                                                        chapterString += "\n<book code=\"" + bookID + "\" style=\"id\">";
                                                     }
+                                                    // the following source phrases up to the next marker go
+                                                    // inside the <book> node; flag it so our next marker string
+                                                    // closes out the <book> (handled above)
+                                                    isBookBlock = true;
                                                 } else if (mkr.type === "table") { // <table>/<row>/<cell>
+                                                    // tables are only defined by table rows in USFM; if there
+                                                    // have been other markers, start a new table
+                                                } else if (mkr.type === "sidebar") { 
+                                                    if (mkr.name === "esbe") {
+                                                        // closing sidebar (yeah, USFM did a weird one here)
+                                                        chapterString += "\n</sidebar>";
+                                                    } else {
+                                                        // opening sidebar
+                                                        if (markers.indexOf("cat ") > -1) {
+                                                            pos = markers.indexOf("cat ") + 5;
+                                                            strOptions += " category=\"" + markers.substring(pos, (markers.indexof("\"", pos))) + "\"";
+                                                        }
+                                                        chapterString += "\n<sidebar style=\"esb\""+ strOptions + ">";
+                                                    }
+                                                } else if (mkr.type === "figure") { 
+                                                    // tables are only defined by table rows in USFM; if there
+                                                    // have been other markers, start a new table
+                                                } else if (mkr.type === "ref") { 
                                                     // tables are only defined by table rows in USFM; if there
                                                     // have been other markers, start a new table
                                                 } else if (mkr.type === "ms") {
@@ -2665,43 +2681,50 @@ define(function (require) {
                                                     strOptions += " id=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
                                                     chapterString += "\n  <periph" + strOptions + ">";
                                                 } else if (mkr.type === "char") {
-                                                    // wordlist options
-                                                    if (mkr.name.indexOf("w") !== -1) {
-                                                        if (markerAry[i].indexOf("lemma") !== -1) {
-                                                            pos = markers.indexOf("lemma") + 7;
-                                                            strOptions += " lemma=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                    // char elements usually have a closing *, which we flag
+                                                    // with isEndMarker=true. Check for it now.
+                                                    if (isEndMarker === true) {
+                                                        // closing <char> marker
+                                                        chapterString += "</char>";
+                                                    } else {
+                                                        // opening <char> marker - first, pull out any options
+                                                        // wordlist options
+                                                        if (mkr.name.indexOf("w") !== -1) {
+                                                            if (markerAry[i].indexOf("lemma") !== -1) {
+                                                                pos = markers.indexOf("lemma") + 7;
+                                                                strOptions += " lemma=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                            }
+                                                            if (markerAry[i].indexOf("strong") !== -1) {
+                                                                pos = markers.indexOf("strong") + 8;
+                                                                strOptions += " strong=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                            }
+                                                            if (markerAry[i].indexOf("srcloc") !== -1) {
+                                                                pos = markers.indexOf("srcloc") + 9;
+                                                                strOptions += " srcloc=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                            }
                                                         }
-                                                        if (markerAry[i].indexOf("strong") !== -1) {
-                                                            pos = markers.indexOf("strong") + 8;
-                                                            strOptions += " strong=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
-                                                        }
-                                                        if (markerAry[i].indexOf("srcloc") !== -1) {
-                                                            pos = markers.indexOf("srcloc") + 9;
-                                                            strOptions += " srcloc=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
-                                                        }
-                                                    }
-                                                    // ruby annotation options
-                                                    if ((mkr.name.indexOf("rb ") !== -1) && (markerAry[i].indexOf("|gloss") !== -1)) {
-                                                        pos = markers.indexOf("gloss") + 8;
-                                                        strOptions += " gloss=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        // ruby annotation options
+                                                        if ((mkr.name.indexOf("rb ") !== -1) && (markerAry[i].indexOf("|gloss") !== -1)) {
+                                                            pos = markers.indexOf("gloss") + 8;
+                                                            strOptions += " gloss=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
 
+                                                        }
+                                                        // link options (USX 3.x)
+                                                        if (markerAry[i].indexOf("z-link-href") !== -1) {
+                                                            pos = markers.indexOf("link-href") + 12;
+                                                            strOptions += " link-href=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        if (markerAry[i].indexOf("z-link-title") !== -1) {
+                                                            pos = markers.indexOf("link-title") + 13;
+                                                            strOptions += " link-title=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        if (markerAry[i].indexOf("z-link-id") !== -1) {
+                                                            pos = markers.indexOf("link-id") + 10;
+                                                            strOptions += " link-id=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
+                                                        }
+                                                        // now emit the <char> node
+                                                        chapterString += "<char style=\"" + strMarker + strOptions + "\">";
                                                     }
-                                                    // link options (USX 3.x)
-                                                    if (markerAry[i].indexOf("z-link-href") !== -1) {
-                                                        pos = markers.indexOf("link-href") + 12;
-                                                        strOptions += " link-href=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
-                                                    }
-                                                    if (markerAry[i].indexOf("z-link-title") !== -1) {
-                                                        pos = markers.indexOf("link-title") + 13;
-                                                        strOptions += " link-title=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
-                                                    }
-                                                    if (markerAry[i].indexOf("z-link-id") !== -1) {
-                                                        pos = markers.indexOf("link-id") + 10;
-                                                        strOptions += " link-id=\"" + markers.substring(pos, (markers.indexOf("\"", pos))) + "\"";
-                                                    }
-                    
-                                                    chapterString += "<char style=\"" + strMarker + strOptions;
-                                                    chapterString += "\">";
                                                 } else if (mkr.type === "verse") { // <verse>
                                                     if (markers.indexOf("\\v-eid ") > -1) {
                                                         // verse end (USX 3.x+) -
