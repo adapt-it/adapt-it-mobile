@@ -433,10 +433,10 @@ define(function (require) {
                                     // verse with an alternate numbering
                                     markers += " \\ca " + element.getAttribute("altnumber") + "\\ca*";
                                 }
-                                if (element.attributes.item("sid")) {
+                                if (element.getAttribute("sid") && element.getAttribute("sid").length > 0) {
                                     markers += "\\c-sid " + element.getAttribute("sid");
                                 }
-                                if (element.attributes.item("eid")) {
+                                if (element.getAttribute("eid") && element.getAttribute("eid").length > 0) {
                                     markers += "\\c-eid " + element.getAttribute("eid");
                                 }
                                 if (element.attributes.item("number").nodeValue !== "1") {
@@ -469,17 +469,17 @@ define(function (require) {
                                 // first, get the verse and number
                                 markers += "\\v " + element.attributes.item("number").nodeValue;
                                 // does this have alt or publishing numbers?
-                                if (element.attributes.item("pubnumber")) {
+                                if (element.getAttribute("pubnumber") && element.getAttribute("pubnumber").length > 0) {
                                     // verse where the published numbering differs from the number
                                     markers += " \\vp " + element.getAttribute("pubnumber") + "\\vp*";
-                                } else if (element.attributes.item("altnumber")) {
+                                } else if (element.getAttribute("altnumber") && element.getAttribute("altnumber").length > 0) {
                                     // verse with an alternate numbering
                                     markers += " \\va " + element.getAttribute("altnumber") + "\\va*";
                                 }
-                                if (element.attributes.item("sid")) {
+                                if (element.getAttribute("sid") && element.getAttribute("sid").length > 0) {
                                     markers += "\\v-sid " + element.getAttribute("sid");
                                 }
-                                if (element.attributes.item("eid")) {
+                                if (element.getAttribute("eid") && element.getAttribute("eid").length > 0) {
                                     markers += "\\v-eid " + element.getAttribute("eid");
                                 }
                                 break;
@@ -515,13 +515,13 @@ define(function (require) {
                                     markers += "\\" + element.attributes.item("style").nodeValue;
                                     closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 }
-                                if (element.getAttributes.item("link-href")) {
+                                if (element.getAttribute("link-href") && element.getAttribute("link-href").length > 0) {
                                     markers += "\\z-link-href=\"" + element.getAttributes.item("link-href").nodeValue + "\" ";
                                 }
-                                if (element.getAttributes.item("link-title")) {
+                                if (element.getAttribute("link-title") && element.getAttribute("link-title").length > 0) {
                                     markers += "\\z-link-title=\"" + element.getAttributes.item("link-title").nodeValue + "\" ";
                                 }
-                                if (element.getAttributes.item("link-id")) {
+                                if (element.getAttribute("link-id") && element.getAttribute("link-id").length > 0) {
                                     markers += "\\z-link-id=\"" + element.getAttributes.item("link-id").nodeValue + "\" ";
                                 }
                                 break;
@@ -533,10 +533,10 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
-                                if (element.attributes.item("sid")) {
+                                if (element.getAttribute("sid") && element.getAttribute("sid").length > 0) {
                                     markers += "\\ms-sid " + element.getAttribute("sid");
                                 }
-                                if (element.attributes.item("eid")) {
+                                if (element.getAttribute("eid") && element.getAttribute("eid").length > 0) {
                                     markers += "\\ms-eid " + element.getAttribute("sid");
                                 }
                                 break;
@@ -562,13 +562,13 @@ define(function (require) {
                                 markers += " size=\"" + element.attributes.item("size").nodeValue + "\"";
                                 markers += " ref=\"" + element.attributes.item("ref").nodeValue + "\"";
                                 // optional atts
-                                if (element.attributes.item("alt")) {
+                                if (element.getAttribute("alt") && element.getAttribute("alt").length > 0) {
                                     markers += " alt=\"" + element.attributes.item("alt").nodeValue + "\"";    
                                 }
-                                if (element.attributes.item("loc")) {
+                                if (element.getAttribute("loc") && element.getAttribute("loc").length > 0) {
                                     markers += " loc=\"" + element.attributes.item("loc").nodeValue + "\"";    
                                 }
-                                if (element.attributes.item("copy")) {
+                                if (element.getAttribute("copy") && element.getAttribute("copy").length > 0) {
                                     markers += " copy=\"" + element.attributes.item("copy").nodeValue + "\"";    
                                 }
                                 closingMarker = "\\fig*";
@@ -579,11 +579,11 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
-                                if (element.attributes.item("caller")) {
+                                if (element.getAttribute("caller") && element.getAttribute("caller").length > 0) {
                                     markers += " " + element.attributes.item("caller").nodeValue;
                                 }
                                 closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
-                                if (element.attributes.item("category")) {
+                                if (element.getAttribute("category") && element.getAttribute("category").length > 0) {
                                     markers += "\\cat " + element.attributes.item("category").nodeValue + "\\cat*";
                                 }
                                 break;
@@ -605,7 +605,7 @@ define(function (require) {
                                 // type is found in the style attribute
                                 markers += "\\" + element.attributes.item("style").nodeValue;
                                 // USFM 3.0 - colspan added to cell/header
-                                if (element.attributes.item("colspan")) {
+                                if (element.getAttribute("colspan") && element.getAttribute("colspan").length > 0) {
                                     markers += "-" + element.attributes.item("colspan").nodeValue;
                                 }
                                 break;
@@ -614,7 +614,7 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += "\\" + element.attributes.item("style").nodeValue;
-                                if (element.attributes.item("category")) {
+                                if (element.getAttribute("category") && element.getAttribute("category").length > 0) {
                                     markers += "\\cat " + element.attributes.item("category").nodeValue + "\\cat*";
                                 }
                                 closingMarker = "\\esbe*";
@@ -2617,10 +2617,7 @@ define(function (require) {
                                             if (mkr) {
                                                 strOptions = ""; // clear out the options param
                                                 // what kind of a marker are we looking at?
-                                                if (mkr.attributes.type === "xml") { // ignore:
-                                                    // ignore: this is the one \\ide encoding marker, 
-                                                    // handled in the xml block above (we only support UTF-8 encoding)
-                                                } else if (mkr.attributes.type === "note") { // <note>
+                                                if (mkr.attributes.type === "note") { // <note>
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
@@ -2926,10 +2923,10 @@ define(function (require) {
                                                     if (markers.indexOf("\\c-eid ") > -1) {
                                                         // chapter end (USX 3.x+) -
                                                         pos = markers.indexOf("\\c-eid ") + 8;
-                                                        chapterString += "<chapter eid=\"" + markers.substring(pos, (markers.indexOf(" ", pos))) + "\" />";
+                                                        chapterString += "\n<chapter eid=\"" + markers.substring(pos, (markers.indexOf(" ", pos))) + "\" />";
                                                     } else {
                                                         // chapter start
-                                                        chapterString += "<chapter number=\"";
+                                                        chapterString += "\n<chapter number=\"";
                                                         pos = markers.indexOf("\\c ") + 3;
                                                         if (markers.indexOf(" ", pos) > -1) {
                                                             chapterString += markers.substring(pos, (markers.indexOf(" ", pos)));
