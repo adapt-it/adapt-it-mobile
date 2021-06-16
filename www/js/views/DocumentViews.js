@@ -606,16 +606,16 @@ define(function (require) {
                                 markers += "\\" + element.attributes.item("style").nodeValue;
                                 // USFM 3.0 - colspan added to cell/header
                                 if (element.getAttribute("colspan") && element.getAttribute("colspan").length > 0) {
-                                    markers += "-" + element.attributes.item("colspan").nodeValue;
+                                    markers += "-" + element.getAttribute("colspan");
                                 }
                                 break;
                             case "sidebar":
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
-                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                markers += "\\esb";
                                 if (element.getAttribute("category") && element.getAttribute("category").length > 0) {
-                                    markers += "\\cat " + element.attributes.item("category").nodeValue + "\\cat*";
+                                    markers += " \\cat " + element.getAttribute("category") + "\\cat*";
                                 }
                                 closingMarker = "\\esbe*";
                                 break;
@@ -710,7 +710,7 @@ define(function (require) {
                         // done with node -- if there was a closing marker, copy it over to the markers
                         // so it gets picked up in the next sourcephrase
                         if (closingMarker.length > 0) {
-                            markers = closingMarker + " "; 
+                            markers += closingMarker + " "; 
                             closingMarker = "";
                         }
                     };
