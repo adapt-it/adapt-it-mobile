@@ -578,13 +578,13 @@ define(function (require) {
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
-                                markers += "\\" + element.attributes.item("style").nodeValue;
+                                markers += "\\" + element.getAttribute("style");
                                 if (element.getAttribute("caller") && element.getAttribute("caller").length > 0) {
-                                    markers += " " + element.attributes.item("caller").nodeValue;
+                                    markers += " " + element.getAttribute("caller") + " ";
                                 }
-                                closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
+                                closingMarker = "\\" + element.getAttribute("style") + "*";
                                 if (element.getAttribute("category") && element.getAttribute("category").length > 0) {
-                                    markers += "\\cat " + element.attributes.item("category").nodeValue + "\\cat*";
+                                    markers += "\\cat " + element.getAttribute("category") + "\\cat*";
                                 }
                                 break;
                             case "optbreak":
@@ -2633,7 +2633,18 @@ define(function (require) {
                                                         chapterString += "</note>";
                                                     } else {
                                                         // opening marker
-                                                        chapterString += "<note style=\"" + strMarker + "\">";
+                                                        if (markerAry[i].indexOf(" ") !== -1) {
+                                                            // has a caller -- pull it out
+                                                            pos = markerAry[i].indexOf(" ") + 1;
+                                                            if (markerAry[i].indexOf(" ", pos) !== -1) {
+                                                                // there is a trailing space
+                                                                strOptions += " caller=\"" + markerAry[i].substring(pos, (markerAry[i].indexOf(" ", pos))) + "\"";
+                                                            } else {
+                                                                // no trailing space
+                                                                strOptions += " caller=\"" + markerAry[i].substring(pos) + "\"";
+                                                            }
+                                                        }
+                                                        chapterString += "<note" + strOptions + " style=\"" + mkr.attributes.name + "\">";
                                                     }
                                                 } else if (mkr.attributes.type === "book") { // <book>
                                                     if (mkr.attributes.name === "id") {
@@ -3032,6 +3043,21 @@ define(function (require) {
                                 if (closeNode.length > 0) {
                                     content += closeNode;
                                 }
+                                if (tableBlockLevel > 0) {
+                                    // close out table tags
+                                    if (tableBlockLevel === 2) {
+                                        chapterString += "</cell></row>\n<table>";
+                                        tableBlockLevel = 0;
+                                    } else {
+                                        chapterString += "</row>\n<table>";
+                                        tableBlockLevel = 0;
+                                    }
+                                }
+                                if (isParaBlock === true) {
+                                    // close out the old para
+                                    chapterString += "</para>";
+                                    isParaBlock = false;
+                                }
                                 if (isPeriphBlock === true) {
                                     // close out old periph block
                                     chapterString += "\n  </periph>";
@@ -3060,6 +3086,21 @@ define(function (require) {
                             // add a closing paragraph if necessary
                             if (closeNode.length > 0) {
                                 content += closeNode;
+                            }
+                            if (tableBlockLevel > 0) {
+                                // close out table tags
+                                if (tableBlockLevel === 2) {
+                                    chapterString += "</cell></row>\n<table>";
+                                    tableBlockLevel = 0;
+                                } else {
+                                    chapterString += "</row>\n<table>";
+                                    tableBlockLevel = 0;
+                                }
+                            }
+                            if (isParaBlock === true) {
+                                // close out the old para
+                                chapterString += "</para>";
+                                isParaBlock = false;
                             }
                             if (isPeriphBlock === true) {
                                 // close out periph block
