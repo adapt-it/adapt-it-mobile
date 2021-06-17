@@ -2499,13 +2499,13 @@ define(function (require) {
                 var markers = "";
                 var i = 0;
                 var spIdx = 0;
+                var mkrIdx = 0;
                 var idxFilters = 0;
                 var pos = 0;
                 var closeNode = ""; // holds ending string for <para> and <book> XML nodes
                 var value = null;
                 var mkr = "";
                 var markerAry = [];
-                var endMarkerAry = [];
                 var isEndMarker = false;
                 var strMarker = "";
                 var strOptions = "";
@@ -2540,8 +2540,9 @@ define(function (require) {
                                 value = spList.at(spIdx);
                                 markers = value.get("markers");
                                 if (markers.length > 0 && isBookBlock === true) {
-                                    // Close out the <book> element before processing the next marker
-                                    chapterString += "</book>";
+                                    // Close out the <book> element -- and add an IDE block -- 
+                                    // before processing the next marker
+                                    chapterString += "</book>\n<para style=\"ide\">UTF-8</para>";
                                     isBookBlock = false;
                                 }
                                 if (filtered === true && markers.length > 0 && needsEndMarker.length === 0) {
@@ -2553,7 +2554,8 @@ define(function (require) {
                                     for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
                                         // sanity check for blank filter strings
                                         if (filterAry[idxFilters].trim().length > 0) {
-                                            if (markers.indexOf(filterAry[idxFilters].trim()) >= 0) {
+                                            mkrIdx = markers.indexOf(filterAry[idxFilters].trim());
+                                            if ((mkrIdx >= 0) && (markers.charAt(mkrIdx - 1) === "\\")) {
                                                 // this is a filtered sourcephrase -- do not export it
                                                 // if there is an end marker associated with this marker,
                                                 // do not export any source phrases until we come across the end marker
@@ -2621,10 +2623,10 @@ define(function (require) {
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
-                                                            chapterString += "</cell></row>\n<table>";
+                                                            chapterString += "</cell>\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         } else {
-                                                            chapterString += "</row>\n<table>";
+                                                            chapterString += "\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         }
                                                     }
@@ -2654,11 +2656,14 @@ define(function (require) {
                                                     // the next marker string. Set a flag so we know to close
                                                     // out the element (we'll handle it above)
                                                     isBookBlock = true;
+                                                } else if (mkr.attributes.type === "xml") {
+                                                    // special case (IDE block); ignore this here, because
+                                                    // we'll add the IDE block when we close the <book> element
                                                 } else if (mkr.attributes.type === "table") { // <table>/<row>/<cell>
                                                     // tables are only defined by table rows in USFM; if there
                                                     // have been other markers, start a new table
                                                     if (tableBlockLevel === 0) {
-                                                        chapterString += "/n<table>";
+                                                        chapterString += "\n<table>";
                                                     }
                                                     if(mkr.attributes.name.indexOf("-") !== -1) {
                                                         // we have a spanning cell of some sort
@@ -2668,9 +2673,9 @@ define(function (require) {
                                                     if (mkr.attributes.name === "tr") {
                                                         if (tableBlockLevel === 2) {
                                                             // cell level - close out old cell/row
-                                                            chapterString += "</cell></row>";
+                                                            chapterString += "</cell>\n </row>";
                                                         }
-                                                        chapterString += "/n  <row style=\"tr\">";
+                                                        chapterString += "\n <row style=\"tr\">";
                                                         tableBlockLevel = 1; // row
                                                     } else if (mkr.attributes.name.indexOf("thr") !== -1) {
                                                         // header cell, right aligned
@@ -2679,7 +2684,7 @@ define(function (require) {
                                                             chapterString += "</cell>";
                                                         }
                                                         tableBlockLevel = 2; // cell
-                                                        chapterString += "/n  <cell style=\"thr\" " + strOptions + " align=\"end\" >";
+                                                        chapterString += "\n  <cell style=\"" + mkr.attributes.name + "\"" + strOptions + " align=\"end\">";
                                                     } else if (mkr.attributes.name.indexOf("th") !== -1) {
                                                         // header cell, right aligned
                                                         if (tableBlockLevel === 2) {
@@ -2687,7 +2692,7 @@ define(function (require) {
                                                             chapterString += "</cell>";
                                                         }
                                                         tableBlockLevel = 2; // cell
-                                                        chapterString += "/n  <cell style=\"th\" " + strOptions + " align=\"center\" >";
+                                                        chapterString += "\n  <cell style=\"" + mkr.attributes.name + "\"" + strOptions + " align=\"start\">";
                                                     } else if (mkr.attributes.name.indexOf("tcr") !== -1) {
                                                         // header cell, right aligned
                                                         if (tableBlockLevel === 2) {
@@ -2695,7 +2700,7 @@ define(function (require) {
                                                             chapterString += "</cell>";
                                                         }
                                                         tableBlockLevel = 2; // cell
-                                                        chapterString += "/n  <cell style=\"tcr\" " + strOptions + " align=\"end\" >";
+                                                        chapterString += "\n  <cell style=\"" + mkr.attributes.name + "\"" + strOptions + " align=\"end\">";
                                                     } else if (mkr.attributes.name.indexOf("tc") !== -1) {
                                                         // header cell, right aligned
                                                         if (tableBlockLevel === 2) {
@@ -2703,16 +2708,16 @@ define(function (require) {
                                                             chapterString += "</cell>";
                                                         }
                                                         tableBlockLevel = 2; // cell
-                                                        chapterString += "/n  <cell style=\"tc\" " + strOptions + " align=\"center\" >";
+                                                        chapterString += "\n  <cell style=\"" + mkr.attributes.name + "\"" + strOptions + " align=\"start\">";
                                                     }
                                                 } else if (mkr.attributes.type === "sidebar") { 
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
-                                                            chapterString += "</cell></row>\n<table>";
+                                                            chapterString += "</cell>\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         } else {
-                                                            chapterString += "</row>\n<table>";
+                                                            chapterString += "\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         }
                                                     }
@@ -2801,10 +2806,10 @@ define(function (require) {
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
-                                                            chapterString += "</cell></row>\n<table>";
+                                                            chapterString += "</cell>\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         } else {
-                                                            chapterString += "</row>\n<table>";
+                                                            chapterString += "\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         }
                                                     }
@@ -2919,10 +2924,10 @@ define(function (require) {
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
-                                                            chapterString += "</cell></row>\n<table>";
+                                                            chapterString += "</cell>\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         } else {
-                                                            chapterString += "</row>\n<table>";
+                                                            chapterString += "\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         }
                                                     }
@@ -2982,10 +2987,10 @@ define(function (require) {
                                                     if (tableBlockLevel > 0) {
                                                         // close out table tags
                                                         if (tableBlockLevel === 2) {
-                                                            chapterString += "</cell></row>\n<table>";
+                                                            chapterString += "</cell>\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         } else {
-                                                            chapterString += "</row>\n<table>";
+                                                            chapterString += "\n </row>\n<table>";
                                                             tableBlockLevel = 0;
                                                         }
                                                     }
@@ -3046,10 +3051,10 @@ define(function (require) {
                                 if (tableBlockLevel > 0) {
                                     // close out table tags
                                     if (tableBlockLevel === 2) {
-                                        chapterString += "</cell></row>\n<table>";
+                                        chapterString += "</cell>\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     } else {
-                                        chapterString += "</row>\n<table>";
+                                        chapterString += "\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     }
                                 }
@@ -3090,10 +3095,10 @@ define(function (require) {
                             if (tableBlockLevel > 0) {
                                 // close out table tags
                                 if (tableBlockLevel === 2) {
-                                    chapterString += "</cell></row>\n<table>";
+                                    chapterString += "</cell>\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 } else {
-                                    chapterString += "</row>\n<table>";
+                                    chapterString += "\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 }
                             }

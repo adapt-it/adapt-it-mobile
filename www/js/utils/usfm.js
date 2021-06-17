@@ -1011,7 +1011,7 @@ define(function (require) {
             },
             {
                 name: "ide",
-                type: "para",
+                type: "xml",
                 description: "File encoding information",
                 usfm: "1",
                 filter: "1",
