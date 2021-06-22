@@ -328,6 +328,7 @@
         "lblSelectDoc": "Select Documents",
         "lblSortModified": "Recent",
         "lblSortName": "Name",
+        "dscErrUnsupportedEncoding": "Unsupported encoding (/ide marker value). Adapt It Mobile currently only supports UTF-8 encoding.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

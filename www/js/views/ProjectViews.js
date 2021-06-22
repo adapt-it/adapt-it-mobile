@@ -375,7 +375,7 @@ define(function (require) {
                 $(".topcoat-progress-bar").hide();
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 // cheater way to tell if running on mobile device
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     // running on device -- use cordova file plugin to select file
                     $("#browserGroup").hide();
                     $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));

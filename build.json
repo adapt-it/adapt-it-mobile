@@ -3,14 +3,14 @@
         "debug": {
             "keystore": "../certs/aim.keystore",
             "storePassword": "",
-            "alias": "",
+            "alias": "AIM",
             "password" : "",
             "keystoreType": ""
         },
         "release": {
             "keystore": "../certs/aim.keystore",
             "storePassword": "",
-            "alias": "",
+            "alias": "AIM",
             "password" : "",
             "keystoreType": ""
         }

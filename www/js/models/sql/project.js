@@ -29,7 +29,7 @@ define(function (require) {
                         console.log("failed to set the version schema");
                     });
                     // does the sourcephrase table already exist? (probably, but just in case)
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
@@ -52,7 +52,7 @@ define(function (require) {
                         console.log("upgradeSchema: error updating sourcephrase table: " + err.message);
                     });
                     // update changes for 1.3 
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
@@ -89,7 +89,7 @@ define(function (require) {
                     });
                     // update changes for 1.3 
                     // First, check to see if the targetunit table exists
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
@@ -99,7 +99,7 @@ define(function (require) {
                         // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
                         if (res.rows.length > 0) {
                             console.log("upgradeSchema: targetunit table exists. Checking for schema 2 columns...");
-                            if (window.sqlitePlugin) {
+                            if (device && (device.platform !== "browser")) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
                             } else {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
@@ -150,7 +150,7 @@ define(function (require) {
             window.Application.db.transaction(function (tx) {
                 // Check 1: is there a version table? 
                 // If not, this is a new DB
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
                 } else {
                     theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
