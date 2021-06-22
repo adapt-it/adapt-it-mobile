@@ -418,6 +418,9 @@ define(function (require) {
                         if ($(element)[0].nodeType === 1) {
                             switch ($(element)[0].tagName) {
                             case "book":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
                                 markers += "\\id " + element.attributes.item("code").nodeValue;
                                 break;
                             case "chapter":
@@ -516,13 +519,13 @@ define(function (require) {
                                     closingMarker = "\\" + element.attributes.item("style").nodeValue + "*";
                                 }
                                 if (element.getAttribute("link-href") && element.getAttribute("link-href").length > 0) {
-                                    markers += "\\z-link-href=\"" + element.getAttributes.item("link-href").nodeValue + "\" ";
+                                    markers += " \\z-link-href=\"" + element.getAttributes.item("link-href").nodeValue + "\"";
                                 }
                                 if (element.getAttribute("link-title") && element.getAttribute("link-title").length > 0) {
-                                    markers += "\\z-link-title=\"" + element.getAttributes.item("link-title").nodeValue + "\" ";
+                                    markers += " \\z-link-title=\"" + element.getAttributes.item("link-title").nodeValue + "\"";
                                 }
                                 if (element.getAttribute("link-id") && element.getAttribute("link-id").length > 0) {
-                                    markers += "\\z-link-id=\"" + element.getAttributes.item("link-id").nodeValue + "\" ";
+                                    markers += " \\z-link-id=\"" + element.getAttributes.item("link-id").nodeValue + "\"";
                                 }
                                 break;
                             case "ms":
@@ -554,6 +557,9 @@ define(function (require) {
                                 markers += "\"";
                                 break;
                             case "figure":
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
                                 markers += "\\fig ";
                                 markers += element.childNodes[0].nodeValue; // inner text is the figure caption
                                 // required atts
@@ -620,8 +626,10 @@ define(function (require) {
                                 closingMarker = "\\esbe*";
                                 break;
                             case "ref":
-                                markers += "\\z-ref loc=\"" + element.attributes.item("loc").nodeValue + "\"";
-                                closingMarker = "\\z-ref*";
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += element.attributes.item("loc").nodeValue + ";";
                                 break;
                             default: // no processing for other nodes
                                 break;
@@ -2160,7 +2168,7 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
-                if (isClipboard === false && window.sqlitePlugin) {
+                if (isClipboard === false && (device && (device.platform !== "browser"))) {
                     // mobile device, going to a file. Show the sharing dialog...
                     // fill sharing info
                     shareOptions.subject = i18n.t("view.lblExport");
@@ -2500,6 +2508,7 @@ define(function (require) {
                 var i = 0;
                 var spIdx = 0;
                 var mkrIdx = 0;
+                var strTemp = "";
                 var idxFilters = 0;
                 var pos = 0;
                 var closeNode = ""; // holds ending string for <para> and <book> XML nodes
@@ -2556,30 +2565,39 @@ define(function (require) {
                                         if (filterAry[idxFilters].trim().length > 0) {
                                             mkrIdx = markers.indexOf(filterAry[idxFilters].trim());
                                             if ((mkrIdx >= 0) && (markers.charAt(mkrIdx - 1) === "\\")) {
-                                                // this is a filtered sourcephrase -- do not export it
-                                                // if there is an end marker associated with this marker,
-                                                // do not export any source phrases until we come across the end marker
-                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
-                                                if (mkr[0].get("endMarker")) {
-                                                    needsEndMarker = mkr[0].get("endMarker");
-                                                }
-                                                filtered = true;
-                                                //console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
-                                                // We have a couple exceptions to the filter:
-                                                // - if the ending marker is in the same marker string, clear the filter flag
-                                                // - if there are markers before the filtered marker, export them
-                                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
-                                                    // found our ending marker -- this sourcephrase is not filtered
-                                                    // first, remove the marker from the markers string so it doesn't print out
-                                                    markers = markers.replace(("\\" + needsEndMarker), '');
-                                                    // now clear our flags so the sourcephrase exports
-                                                    needsEndMarker = "";
-                                                    filtered = false;
+                                                // one more test -- is the marker string _exactly_ the same
+                                                // as our filter?
+                                                if (markers.indexOf(" ", mkrIdx) !== -1) {
+                                                    strTemp = markers.substring(mkrIdx, (markers.indexOf(" ", mkrIdx)));
                                                 } else {
-                                                    markers = markers.substr(0, markers.indexOf(filterAry[idxFilters].trim()) - 1);
-                                                    if (markers.length > 0) {
-                                                        // some markers before we hit the filtered marker -- export them
-                                                        exportMarkers = true;
+                                                    strTemp = markers.substring(mkrIdx);
+                                                }
+                                                if (strTemp.length === filterAry[idxFilters].trim().length) {
+                                                    // this is a filtered sourcephrase -- do not export it
+                                                    // if there is an end marker associated with this marker,
+                                                    // do not export any source phrases until we come across the end marker
+                                                    mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                    if (mkr[0].get("endMarker")) {
+                                                        needsEndMarker = mkr[0].get("endMarker");
+                                                    }
+                                                    filtered = true;
+                                                    //console.log("filtered: " + markers + ", needsEndMarker: " + needsEndMarker);
+                                                    // We have a couple exceptions to the filter:
+                                                    // - if the ending marker is in the same marker string, clear the filter flag
+                                                    // - if there are markers before the filtered marker, export them
+                                                    if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                                        // found our ending marker -- this sourcephrase is not filtered
+                                                        // first, remove the marker from the markers string so it doesn't print out
+                                                        markers = markers.replace(("\\" + needsEndMarker), '');
+                                                        // now clear our flags so the sourcephrase exports
+                                                        needsEndMarker = "";
+                                                        filtered = false;
+                                                    } else {
+                                                        markers = markers.substr(0, markers.indexOf(filterAry[idxFilters].trim()) - 1);
+                                                        if (markers.length > 0) {
+                                                            // some markers before we hit the filtered marker -- export them
+                                                            exportMarkers = true;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -3051,21 +3069,21 @@ define(function (require) {
                                 if (tableBlockLevel > 0) {
                                     // close out table tags
                                     if (tableBlockLevel === 2) {
-                                        chapterString += "</cell>\n </row>\n<table>";
+                                        content += "</cell>\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     } else {
-                                        chapterString += "\n </row>\n<table>";
+                                        content += "\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     }
                                 }
                                 if (isParaBlock === true) {
                                     // close out the old para
-                                    chapterString += "</para>";
+                                    content += "</para>";
                                     isParaBlock = false;
                                 }
                                 if (isPeriphBlock === true) {
                                     // close out old periph block
-                                    chapterString += "\n  </periph>";
+                                    content += "\n  </periph>";
                                 }
                                 // add the ending node
                                 content += "\n</usx>\n";
@@ -3095,16 +3113,16 @@ define(function (require) {
                             if (tableBlockLevel > 0) {
                                 // close out table tags
                                 if (tableBlockLevel === 2) {
-                                    chapterString += "</cell>\n </row>\n<table>";
+                                    content += "</cell>\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 } else {
-                                    chapterString += "\n </row>\n<table>";
+                                    content += "\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 }
                             }
                             if (isParaBlock === true) {
                                 // close out the old para
-                                chapterString += "</para>";
+                                content += "</para>";
                                 isParaBlock = false;
                             }
                             if (isPeriphBlock === true) {
@@ -3255,7 +3273,7 @@ define(function (require) {
                 content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
                 content += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     content += device.uuid;
                 } else {
                     content += "Browser";
@@ -3675,7 +3693,7 @@ define(function (require) {
             // add the project's target language code to the subdirectory
             subdir += window.Application.currentProject.get("TargetLanguageCode");
 
-            if (window.sqlitePlugin) {
+            if (device && (device.platform !== "browser")) {
                 // mobile device
                 if (cordova.file.documentsDirectory !== null) {
                     // iOS, OSX
@@ -3950,8 +3968,8 @@ define(function (require) {
                 // reset the isKB flag
                 isKB = false;
                 
-                // cheater way to tell if running on mobile device
-                if (window.sqlitePlugin) {
+                // on mobile device
+                if (device && (device.platform !== "browser")) {
                     // running on device -- use cordova file plugin to select file
                     $("#OK").hide();
                     $("#browserGroup").hide();
@@ -4263,7 +4281,7 @@ define(function (require) {
             onShow: function () {
                 kblist = window.Application.kbList;
                 kblist.fetch({reset: true, data: {source: ""}});
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     // on mobile device -- need to ask the user whether they want to export
                     // to the clipboard or to a file (which also allows for social sharing)
                     $("#Container").html(Handlebars.compile(tplExportDestination));

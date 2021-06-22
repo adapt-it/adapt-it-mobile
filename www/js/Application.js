@@ -108,7 +108,7 @@ define(function (require) {
                 };
                 
                 // ios page height workaround
-                if (window.sqlitePlugin && device.platform === "iOS") {
+                if (device.platform === "iOS") {
                     var sheet = window.document.styleSheets[window.document.styleSheets.length - 1]; // current stylesheet
                     var theRule = "";
                     theRule = ".page {";
@@ -129,7 +129,7 @@ define(function (require) {
                     slider.slidePage(view.$el);
                 });
                 // keyboard plugin (mobile app only)
-                if (window.sqlitePlugin && device.platform === "iOS") {
+                if (device.platform === "iOS") {
                     // a couple iOS-specific settings
                     Keyboard.shrinkView(true); // resize the view when the keyboard displays
                     Keyboard.hideFormAccessoryBar(true); // don't show the iOS "<> Done" line
@@ -139,7 +139,7 @@ define(function (require) {
                     window.MobileAccessibility.usePreferredTextZoom(false);
                 }
                 // version info
-                if (window.sqlitePlugin && device.platform === "iOS") {
+                if (device.platform === "iOS") {
                     // iOS - internal build #
                     this.version += " (" + this.iOSBuild + ")";
                 } else {
@@ -147,7 +147,7 @@ define(function (require) {
                     this.version += " (" + this.AndroidBuild + ")";
                 }
                 // local dirs (mobile app only)
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     // initialize localURLs
                     this.localURLs    = [
                         cordova.file.documentsDirectory,
@@ -173,14 +173,14 @@ define(function (require) {
                     }
                 }
                 // social sharing plugin / iPad popover coords
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     window.plugins.socialsharing.iPadPopupCoordinates = function () {
                         var rect = document.getElementById('share_button').getBoundingClientRect();
                         return rect.left + "," + rect.top + "," + rect.width + "," + rect.height;
                     };
                 }
                 // create / open the database
-                if (window.sqlitePlugin) {
+                if (device && (device.platform !== "browser")) {
                     if (device.platform === "browser") {
                         // running in browser -- use WebSQL (Chrome / Safari ONLY)
                         this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);

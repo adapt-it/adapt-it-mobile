@@ -1057,7 +1057,7 @@ define(function (require) {
             },
             {
                 name: "xo",
-                type: "note",
+                type: "char",
                 endMarker: "xo*",
                 description: "The cross reference origin reference (basic)",
                 filter: "1",
@@ -1066,7 +1066,7 @@ define(function (require) {
             },
             {
                 name: "xt",
-                type: "note",
+                type: "char",
                 endMarker: "xt*",
                 description: "The cross reference target reference(s), protocanon only (basic)",
                 filter: "1",
@@ -1075,7 +1075,7 @@ define(function (require) {
             },
             {
                 name: "xta",
-                type: "note",
+                type: "char",
                 endMarker: "xta*",
                 description: "Target reference(s) extra / added text",
                 filter: "1",
@@ -1084,7 +1084,7 @@ define(function (require) {
             },
             {
                 name: "xop",
-                type: "note",
+                type: "char",
                 endMarker: "xop*",
                 description: "Published cross reference origen text",
                 filter: "1",
@@ -1093,7 +1093,7 @@ define(function (require) {
             },
             {
                 name: "xk",
-                type: "note",
+                type: "char",
                 endMarker: "xk*",
                 description: "A cross reference keyword",
                 filter: "1",
@@ -1102,7 +1102,7 @@ define(function (require) {
             },
             {
                 name: "xq",
-                type: "note",
+                type: "char",
                 endMarker: "xq*",
                 description: "A cross-reference quotation from the scripture text",
                 filter: "1",
@@ -1111,7 +1111,7 @@ define(function (require) {
             },
             {
                 name: "xot",
-                type: "note",
+                type: "char",
                 endMarker: "xot*",
                 description: "Cross-reference target reference(s), Old Testament only",
                 filter: "1",
@@ -1120,7 +1120,7 @@ define(function (require) {
             },
             {
                 name: "xnt",
-                type: "note",
+                type: "char",
                 endMarker: "xnt*",
                 description: "Cross-reference target reference(s), New Testament only",
                 filter: "1",
@@ -1129,7 +1129,7 @@ define(function (require) {
             },
             {
                 name: "xdc",
-                type: "note",
+                type: "char",
                 endMarker: "xdc*",
                 description: "Cross-reference target reference(s), Deuterocanon only",
                 filter: "1",

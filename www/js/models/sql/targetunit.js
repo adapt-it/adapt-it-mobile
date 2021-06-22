@@ -51,7 +51,7 @@ define(function (require) {
                 if (attributes.user.length > 0) {
                     user = attributes.user;
                 } else {
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         user = device.uuid;
                     } else {
                         user = "Browser";
@@ -73,7 +73,7 @@ define(function (require) {
                 if (attributes.user.length > 0) {
                     user = attributes.user;
                 } else {
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         user = device.uuid;
                     } else {
                         user = "Browser";
@@ -176,7 +176,7 @@ define(function (require) {
                 if (models[0].attributes.user.length > 0) {
                     user = models[0].attributes.user;
                 } else {
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         user = device.uuid;
                     } else {
                         user = "Browser";
@@ -207,7 +207,7 @@ define(function (require) {
                 if (models[0].attributes.user.length > 0) {
                     user = models[0].attributes.user;
                 } else {
-                    if (window.sqlitePlugin) {
+                    if (device && (device.platform !== "browser")) {
                         user = device.uuid;
                     } else {
                         user = "Browser";
