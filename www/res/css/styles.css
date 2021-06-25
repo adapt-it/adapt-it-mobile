@@ -1050,6 +1050,10 @@ div.preview div.block-height {
     height: 30px;
     line-height: 30px;
 }
+div.preview div.pile {
+    min-width: 0;
+    padding: 0 1px;
+}
 /* standard height for a pile / strip-header / chapter-number / filter:
 *  gets overridden by a "real" computed height in addStyleRules (AdaptViews) */
 /*
