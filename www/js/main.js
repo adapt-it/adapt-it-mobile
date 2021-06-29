@@ -99,7 +99,18 @@ window.handleOpenURL = function(url) {
     console.log("handleOpenURL: " + url);
     if (window.Application) {
         // ready event has fired and app is ready for events... handle the URL
-        window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+        window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, 
+            function(err) {
+                var strErr = "handleOpenURL - error: " + JSON.stringify(err);
+                console.log(strErr);
+                if (navigator.notification) {
+                    // on mobile device -- use notification plugin API
+                    navigator.notification.alert(strErr);
+                } else {
+                    // in browser -- use window.confirm / window.alert
+                    alert(strErr);
+                }
+            });
     } else {
         // we're still waking up... store the url
         localStorage.setItem('share_url', url);
