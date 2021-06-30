@@ -437,7 +437,7 @@ define(function (require) {
                 }
             },
 
-            importFail () {
+            importFail: function () {
                 alert("Unable to open file.");
             },
             
