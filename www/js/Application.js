@@ -255,16 +255,6 @@ define(function (require) {
 
                         // Tell backbone we're ready to start loading the View classes.
                         Backbone.history.start();
-
-                        // Did another task launch us (i.e., did our handleOpenURL() from main.js
-                        // get called)? If so, pull out the URL and process the resulting file
-                        if (localStorage.getItem('share_url')) {
-                            var shareURL = localStorage.getItem('share_url');
-                            console.log("Found stored URL to process:" + shareURL);
-                            window.resolveLocalFileSystemURL(shareURL, this.processFileEntry, this.processError);
-                            // clear out localStorage
-                            localStorage.setItem('share_url', "");
-                        }
                     });
                 };
                 // create model collections off the Application object
@@ -324,7 +314,6 @@ define(function (require) {
                 // the project is saved in the device's localStorage.
                 $.when(this.ProjectList.fetch({reset: true, data: {name: ""}})).done(function () {
                     window.Application.ProjectList.each(function (model, index) {
-    //                    console.log("Model: " + model.get('id'));
                         if (model.get('projectid') === "") {
                             // empty project -- mark for removal
                             models.push(model);
@@ -347,10 +336,21 @@ define(function (require) {
                             }
                         }                        
                     }
-                    // now display the home view
-                    homeView = new HomeViews.HomeView({model: window.Application.currentProject});
-                    homeView.delegateEvents();
-                    window.Application.main.show(homeView);
+                    // Did another task launch us (i.e., did our handleOpenURL() from main.js
+                    // get called)? If so, pull out the URL and process the resulting file
+                    if (localStorage.getItem('share_url')) {
+                        // we have a pending import request -- import it now
+                        var shareURL = localStorage.getItem('share_url');
+                        console.log("Found stored URL to process:" + shareURL);
+                        window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                        // clear out localStorage
+                        localStorage.setItem('share_url', "");
+                    } else {
+                        // No pending import requests -- display the home view
+                        homeView = new HomeViews.HomeView({model: window.Application.currentProject});
+                        homeView.delegateEvents();
+                        window.Application.main.show(homeView);
+                    }
                 });
             },
             
