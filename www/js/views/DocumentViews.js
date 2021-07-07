@@ -1777,7 +1777,7 @@ define(function (require) {
                     // check encoding -- we only support UTF-8 (default for USFM), due to
                     // sqlite API calls to open the AIM database. 
                     index = contents.indexOf("\\ide");
-                    if (index !== 1) {
+                    if (index !== -1) {
                         // encoding is specified -- what is it?
                         encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5));
                         if (encoding !== "UTF-8") { // nope -- error out
