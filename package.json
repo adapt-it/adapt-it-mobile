@@ -17,7 +17,8 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-android": "^9.0.0",
+    "cordova-android": "^9.1.0",
+    "cordova-browser": "^6.0.0",
     "cordova-ios": "^6.2.0",
     "cordova-uglify": "^0.3.4",
     "fs": "0.0.2",
@@ -32,6 +33,7 @@
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^6.0.2",
+    "cordova-plugin-filepath": "1.6.0",
     "cordova-plugin-fonts": "^0.6.5",
     "cordova-plugin-keyboard": "git+https://github.com/sinn1/cordova-plugin-keyboard.git",
     "cordova-plugin-network-information": "^2.0.2",
@@ -84,11 +86,13 @@
         "ANDROID_SCHEME": " ",
         "ANDROID_HOST": " ",
         "ANDROID_PATHPREFIX": "/"
-      }
+      },
+      "cordova-plugin-filepath": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "browser",
+      "android"
     ]
   }
 }

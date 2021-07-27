@@ -23,7 +23,7 @@
     left: calc(env(safe-area-inset-left));
     right: calc(env(safe-area-inset-right));
     top: 108px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 .scroller {
     bottom: 0;
@@ -31,7 +31,7 @@
     left: calc(env(safe-area-inset-left));
     right: calc(env(safe-area-inset-right));
     top: 96px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 .with-search {
     top: 129px;
@@ -41,7 +41,7 @@
     left: env(safe-area-inset-left);
     right: env(safe-area-inset-right);
     top: 96px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 .scroller-tb {
     left: env(safe-area-inset-left);
@@ -54,10 +54,11 @@
     left: env(safe-area-inset-left);
     right: env(safe-area-inset-right);
     top: 96px;
-    top: calc(env(safe-area-inset-top) + 52px);
+    top: calc(env(safe-area-inset-top) + 57px);
 }
 @keyframes redraw{
     0% {opacity: 1;}
     100% {opacity: .99;}
 }
+
 animation: redraw 1s linear infinite;

@@ -342,7 +342,15 @@ define(function (require) {
                         // we have a pending import request -- import it now
                         var shareURL = localStorage.getItem('share_url');
                         console.log("Found stored URL to process:" + shareURL);
-                        window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                        if (shareURL.indexOf("content:") !== -1) {
+                            // content://path from Android -- convert to file://
+                            window.FilePath.resolveNativePath(shareURL, function(absolutePath) {
+                                window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                              });
+                        } else {
+                            // not a content://path url -- resolve and process file
+                            window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                        }
                         // clear out localStorage
                         localStorage.setItem('share_url', "");
                     } else {

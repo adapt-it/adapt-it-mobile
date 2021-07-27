@@ -34,6 +34,31 @@
             <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
             <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
         </config-file>
+        <config-file target="AndroidManifest.xml" mode="replace" parent="./application/activity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="content" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="file" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="aim" />
+            </intent-filter>
+        </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
         <icon density="mdpi" src="www/res/icon/android/mdpi.png" />
         <icon density="hdpi" src="www/res/icon/android/hdpi.png" />
@@ -183,6 +208,7 @@
                         <array>
                             <string>usfm</string>
                             <string>sfm</string>
+                            <string>txt</string>
                         </array>
                         <key>public.mime-type</key>
                         <string>text/*</string>
