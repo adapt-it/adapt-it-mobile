@@ -98,23 +98,25 @@ define(function (require) {
             if (isSelectingKB === true) {
                 eltBottom += 36; // guess 2 entries
             }
-            // check to see if we're on a mobile device
-            if (navigator.notification && device.platform === "iOS" && !Keyboard.isVisible) {
-                // on mobile device AND the keyboard hasn't displayed yet:
-                // the viewport height is going to shrink when the software keyboard displays
-                // HACK: subtract the software keyboard from the visible area end -
-                // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
-                // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
-                // work cross-platform
-                console.log("Adjusting docViewBottom - original value: " + docViewBottom);
-                if (window.orientation === 90 || window.orientation === -90) {
-                    // landscape
-                    docViewHeight -= 162; // observed / hard-coded "best effort" value
-                } else {
-                    // portrait
-                    docViewHeight -= 248; // observed / hard-coded "best effort" value
-                }
-            }
+            // EDB BUGBUG: keyboard plugin doesn't return correct isVisible() value on WKWebView
+            
+            // // check to see if we're on a mobile device
+            // if (device.platform === "iOS" && !Keyboard.isVisible) {
+            //     // on mobile device AND the keyboard hasn't displayed yet:
+            //     // the viewport height is going to shrink when the software keyboard displays
+            //     // HACK: subtract the software keyboard from the visible area end -
+            //     // We can only get the keyboard height programmatically on ios, using the keyboard plugin's
+            //     // keyboardHeightWillChange event. Ugh. Fudge it here until we can come up with something that can
+            //     // work cross-platform
+            //     console.log("Adjusting docViewBottom - original value: " + docViewBottom);
+            //     if (window.orientation === 90 || window.orientation === -90) {
+            //         // landscape
+            //         docViewHeight -= 162; // observed / hard-coded "best effort" value
+            //     } else {
+            //         // portrait
+            //         docViewHeight -= 248; // observed / hard-coded "best effort" value
+            //     }
+            // }
             // now calculate docViewBottom
             docViewBottom = docViewTop + docViewHeight;
             console.log("- eltBottom: " + eltBottom + ", docViewHeight: " + docViewHeight + ", docViewBottom: " + docViewBottom);
