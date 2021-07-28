@@ -4035,13 +4035,14 @@ define(function (require) {
                                 var fileStr = "";
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
+                                    console.log("addFileEntry: looking at:" + entries[i].toString());
                                     if (entries[i].isDirectory === true) {
                                         // Recursive -- call back into this subdirectory
                                         DirsRemaining++;
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
-                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                        // if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
                                             if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
@@ -4052,7 +4053,7 @@ define(function (require) {
                                                 fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
                                                 index++;
                                             }
-                                        }
+                                        // }
                                     }
                                 }
                                 statusStr += fileStr;
