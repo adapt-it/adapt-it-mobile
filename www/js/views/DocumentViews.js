@@ -3989,6 +3989,8 @@ define(function (require) {
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     var DirsRemaining = localURLs.length + 1; // + clipboard text
@@ -4029,20 +4031,22 @@ define(function (require) {
                         DirsRemaining--;
                     });
                     var addFileEntry = function (entry) {
+                        console.log("addFileEntry: entry");
                         var dirReader = entry.createReader();
                         dirReader.readEntries(
                             function (entries) {
                                 var fileStr = "";
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
-                                    console.log("addFileEntry: looking at:" + entries[i].toString());
+                                    console.log("addFileEntry: looking at:" + entries[i].fullPath);
                                     if (entries[i].isDirectory === true) {
                                         // Recursive -- call back into this subdirectory
-                                        DirsRemaining++;
+                                        DirsRemaining = DirsRemaining + 1;
+                                        console.log("addFileEntry: Directory found. New DirsRemaining = " + DirsRemaining);
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
-                                        // if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
                                             // only take files from the Download or Document directories
                                             if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
@@ -4053,11 +4057,12 @@ define(function (require) {
                                                 fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
                                                 index++;
                                             }
-                                        // }
+                                        }
                                     }
                                 }
                                 statusStr += fileStr;
-                                DirsRemaining--;
+                                DirsRemaining = DirsRemaining - 1;
+                                console.log("addFileEntry: finished loop. DirsRemaining = " + DirsRemaining);
                                 if (DirsRemaining <= 0) {
                                     if (statusStr.length > 0) {
                                         // display the list of files we found

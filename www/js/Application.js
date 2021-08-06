@@ -153,6 +153,8 @@ define(function (require) {
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     if (device.platform === "Android") {
@@ -170,6 +172,35 @@ define(function (require) {
                         }, function (error) {
                             console.error("The following error occurred: " + error);
                         });
+                        // request runtime permissions if needed
+                        cordova.plugins.diagnostic.getPermissionsAuthorizationStatus(function(statuses){
+                            for (var permission in statuses){
+                                switch(statuses[permission]){
+                                    case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                                        console.log("Permission granted to use "+permission);
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+                                        console.log("Permission to use "+permission+" has not been requested yet; asking now");
+                                        cordova.plugins.diagnostic.requestRuntimePermission(function(status){
+                                            console.log("Runtime permission request result: " + status.toString());
+                                        }, function(error){
+                                            console.error("The following error occurred: "+error);
+                                        }, permission);
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
+                                        console.log("Permission denied to use "+permission+" - ask again?");
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+                                        console.log("Permission permanently denied to use "+permission+" - guess we won't be using it then!");
+                                        break;
+                                }
+                            }
+                        }, function(error){
+                            console.error("The following error occurred: "+error);
+                        },[
+                            cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE,
+                            cordova.plugins.diagnostic.permission.READ_EXTERNAL_STORAGE
+                        ]);
                     }
                 }
                 // social sharing plugin / iPad popover coords
