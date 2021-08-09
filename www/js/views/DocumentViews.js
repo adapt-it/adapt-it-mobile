@@ -3710,9 +3710,9 @@ define(function (require) {
                 } else if (cordova.file.sharedDirectory !== null) {
                     // BB10
                     exportDirectory = cordova.file.sharedDirectory;
-                } else if (cordova.file.externalRootDirectory !== null) {
-                    // Android, BB10
-                    exportDirectory = cordova.file.externalRootDirectory;
+                } else if (cordova.file.externalDataDirectory !== null) {
+                    // Android (external sandbox directory)
+                    exportDirectory = cordova.file.externalDataDirectory;
                 } else {
                     // iOS, Android, BlackBerry 10, windows
                     exportDirectory = cordova.file.DataDirectory;
