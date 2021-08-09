@@ -205,9 +205,13 @@ define(function (require) {
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
-                console.log("importFail(): " + e.message);
-                // update status
-                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: e.message}));
+                console.log("importFail(): " + e.message + " (code: " + e.code + ")");
+                // update status with the failure message and code (if available)
+                var strReason = e.message;
+                if (e.code) {
+                    strReason += " (code: " + e.code + ")";
+                }
+                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
                 if ($("#loading").length) {
                     // mobile "please wait" UI
                     $("#loading").hide();
@@ -1773,7 +1777,7 @@ define(function (require) {
                     // check encoding -- we only support UTF-8 (default for USFM), due to
                     // sqlite API calls to open the AIM database. 
                     index = contents.indexOf("\\ide");
-                    if (index !== 1) {
+                    if (index !== -1) {
                         // encoding is specified -- what is it?
                         encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5));
                         if (encoding !== "UTF-8") { // nope -- error out
@@ -2056,30 +2060,34 @@ define(function (require) {
                     return false;
                 }
                 
+                // convert contents to string
+                var contents = new TextDecoder('utf-8').decode((this.result));
+
                 // parse doc contents as appropriate
                 if ((fileName.toLowerCase().indexOf(".usfm") > 0) || (fileName.toLowerCase().indexOf(".sfm") > 0)) {
-                    result = readUSFMDoc(this.result);
+                    result = readUSFMDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
-                    result = readUSXDoc(this.result);
+                    result = readUSXDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".tmx") > 0) {
-                    result = readTMXDoc(this.result);
+                    result = readTMXDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".xml") > 0) {
                     if (fileName.toLowerCase().indexOf("adaptations.xml") > 0) {
                         // possibly a KB
-                        result = readKBXMLDoc(this.result);
+                        result = readKBXMLDoc(contents);
                     } else {
-                        result = readXMLDoc(this.result);
+                        // possibly an Adapt It XML document
+                        result = readXMLDoc(contents);
                     }
                 } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
                     // find the ID of this book
-                    index = this.result.indexOf("\\id");
+                    index = contents.indexOf("\\id");
                     if (index >= 0) {
                         // _probably_ USFM under the hood -- at least try to read it as USFM
-                        result = readUSFMDoc(this.result);
+                        result = readUSFMDoc(contents);
                     } else {
                         // not USFM -- try reading it as a text document
-                        result = readTextDoc(this.result);
+                        result = readTextDoc(contents);
                     }
                 } else {
                     if (isClipboard === true) {
@@ -2088,64 +2096,65 @@ define(function (require) {
                         // a verse or two will just case it to be treated as regular text, because we're relying on the intro
                         // content to determine the format.
                         var newFileName = "";
-                        if (this.result.indexOf("KB kbVersion") >= 0) {
+                        if (contents.indexOf("KB kbVersion") >= 0) {
                             // _probably_ a Knowledge base document under the hood
-                            result = readKBXMLDoc(this.result);
-                        } else if (this.result.indexOf("AdaptItDoc") >= 0) {
+                            result = readKBXMLDoc(contents);
+                        } else if (contents.indexOf("AdaptItDoc") >= 0) {
                             // _probably_ an Adapt It XML document under the hood
-                            index = this.result.indexOf("S s="); // move to content
-                            index = this.result.indexOf("\\h ", index); // first \\h in content
+                            index = contents.indexOf("S s="); // move to content
+                            index = contents.indexOf("\\h ", index); // first \\h in content
                             if (index > -1) {
                                 // there is a \h marker -- look backwards for the nearest "a" attribute (this is the adapted name)
-                                var i = this.result.lastIndexOf("s=", index) + 3;
+                                var i = contents.lastIndexOf("s=", index) + 3;
                                 // Sanity check -- this \\h element might not have an adaptation
                                 // (if it doesn't, there won't be a a="" after the s="" attribute)
-                                if (this.result.lastIndexOf("a=", index) > i) {
+                                if (contents.lastIndexOf("a=", index) > i) {
                                     // Okay, this looks legit. Pull out the adapted book name from the file.
-                                    index = this.result.lastIndexOf("a=", index) + 3;
-                                    newFileName = this.result.substr(index, this.result.indexOf("\"", index) - index);
+                                    index = contents.lastIndexOf("a=", index) + 3;
+                                    newFileName = contents.substr(index, contents.indexOf("\"", index) - index);
                                     if (newFileName.length > 0) {
                                         fileName = newFileName;
                                     }
                                 }
                             }
-                            result = readXMLDoc(this.result);
-                        } else if (this.result.indexOf("usx version") >= 0) {
+                            result = readXMLDoc(contents);
+                        } else if (contents.indexOf("usx version") >= 0) {
                             // _probably_ USX document under the hood
-                            index = this.result.indexOf("style=\"h\"");
+                            index = contents.indexOf("style=\"h\"");
                             if (index > -1) {
                                 // try to get a readable name from the usx <para style="h"> node
-                                newFileName = this.result.substr(index + 10, (this.result.indexOf("\<", index) - (index + 10))).trim();
+                                newFileName = contents.substr(index + 10, (contents.indexOf("\<", index) - (index + 10))).trim();
                                 if (newFileName.length > 0) {
                                     fileName = newFileName;
                                 }
                             }
-                            result = readUSXDoc(this.result);
-                        } else if (this.result.indexOf("\\id") >= 0) {
+                            result = readUSXDoc(contents);
+                        } else if (contents.indexOf("\\id") >= 0) {
                             // _probably_ USFM under the hood
-                            index = this.result.indexOf("\\h ");
+                            index = contents.indexOf("\\h ");
                             if (index > -1) {
                                 // try to get a readable name from the usfm \\h node
-                                newFileName = this.result.substr(index + 3, (this.result.indexOf("\n", index) - (index + 3))).trim();
+                                newFileName = contents.substr(index + 3, (contents.indexOf("\n", index) - (index + 3))).trim();
                                 if (newFileName.length > 0) {
                                     fileName = newFileName;
                                 }
                             }
-                            result = readUSFMDoc(this.result);
+                            result = readUSFMDoc(contents);
                         } else {
                             // unknown -- try reading it as a text document
-                            result = readTextDoc(this.result);
+                            result = readTextDoc(contents);
                         }
                     } else {
                         // some other extension (or no extension) -- try reading it as a text document
-                        result = readTextDoc(this.result);
+                        result = readTextDoc(contents);
                     }
                 }
                 if (result === false) {
                     importFail(new Error(errMsg));
                 }
             };
-            reader.readAsText(file);
+            reader.readAsArrayBuffer(file);
+            //reader.readAsText(file);
         }, // importFile
         
         
@@ -3701,9 +3710,9 @@ define(function (require) {
                 } else if (cordova.file.sharedDirectory !== null) {
                     // BB10
                     exportDirectory = cordova.file.sharedDirectory;
-                } else if (cordova.file.externalRootDirectory !== null) {
-                    // Android, BB10
-                    exportDirectory = cordova.file.externalRootDirectory;
+                } else if (cordova.file.externalDataDirectory !== null) {
+                    // Android (external sandbox directory)
+                    exportDirectory = cordova.file.externalDataDirectory;
                 } else {
                     // iOS, Android, BlackBerry 10, windows
                     exportDirectory = cordova.file.DataDirectory;
@@ -3811,6 +3820,7 @@ define(function (require) {
             // Handler for when another process sends us a file to import. The logic is in
             // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
             importFromURL: function (file) {
+                console.log("importfromURL: importing file: " + file.fullPath);
                 // replace the selection UI with the import UI
                 $("#OK").hide();
                 $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
@@ -3979,6 +3989,8 @@ define(function (require) {
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     var DirsRemaining = localURLs.length + 1; // + clipboard text
@@ -4019,15 +4031,18 @@ define(function (require) {
                         DirsRemaining--;
                     });
                     var addFileEntry = function (entry) {
+                        console.log("addFileEntry: entry");
                         var dirReader = entry.createReader();
                         dirReader.readEntries(
                             function (entries) {
                                 var fileStr = "";
                                 var i;
                                 for (i = 0; i < entries.length; i++) {
+                                    console.log("addFileEntry: looking at:" + entries[i].fullPath);
                                     if (entries[i].isDirectory === true) {
                                         // Recursive -- call back into this subdirectory
-                                        DirsRemaining++;
+                                        DirsRemaining = DirsRemaining + 1;
+                                        console.log("addFileEntry: Directory found. New DirsRemaining = " + DirsRemaining);
                                         addFileEntry(entries[i]);
                                     } else {
                                         console.log(entries[i].fullPath);
@@ -4046,7 +4061,8 @@ define(function (require) {
                                     }
                                 }
                                 statusStr += fileStr;
-                                DirsRemaining--;
+                                DirsRemaining = DirsRemaining - 1;
+                                console.log("addFileEntry: finished loop. DirsRemaining = " + DirsRemaining);
                                 if (DirsRemaining <= 0) {
                                     if (statusStr.length > 0) {
                                         // display the list of files we found

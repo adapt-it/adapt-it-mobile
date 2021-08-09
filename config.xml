@@ -20,19 +20,47 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
     <platform name="android">
-        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <preference name="android-minSdkVersion" value="22" />
-        <preference name="android-targetSdkVersion" value="29" />
-        <config-file target="AndroidManifest.xml" mode="replace" parent="/manifest">
+        <preference name="android-targetSdkVersion" value="30" />
+        <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_STORAGE_PERMISSION" />
+            <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-            <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
-            <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
+            <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+            <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+        </config-file>
+        <config-file mode="replace" parent="./application/activity" target="AndroidManifest.xml">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="content" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="file" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:scheme="aim" />
+            </intent-filter>
         </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
         <icon density="mdpi" src="www/res/icon/android/mdpi.png" />
@@ -48,7 +76,7 @@
         <splash density="port-xxxhdpi" src="www/res/screen/android/screen-xxxhdpi-portrait.png" />
     </platform>
     <platform name="ios">
-        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <resource-file src="www/res/icon/ios/usfm_22.png" />
         <resource-file src="www/res/icon/ios/usfm_44.png" />
         <resource-file src="www/res/icon/ios/usfm_64.png" />
@@ -88,7 +116,7 @@
                     <string>Text File</string>
                     <key>CFBundleTypeRole</key>
                     <string>Editor</string>
-                    <key>LSHandlerRank</key>                  
+                    <key>LSHandlerRank</key>
                     <string>Default</string>
                     <key>LSItemContentTypes</key>
                     <array>
@@ -183,6 +211,7 @@
                         <array>
                             <string>usfm</string>
                             <string>sfm</string>
+                            <string>txt</string>
                         </array>
                         <key>public.mime-type</key>
                         <string>text/*</string>
@@ -268,12 +297,12 @@
         <preference name="SplashScreenHeight" value="300" />
     </platform>
     <platform name="electron">
-        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <preference name="www/res/icon/electron/icon.png" />
         <preference name="www/res/icon/electron/icon@2x.png" target="installer" />
     </platform>
     <platform name="windows">
-        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.9.8" />
+        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
         <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
         <preference name="StatusBarOverlaysWebView" value="true" />
@@ -287,15 +316,8 @@
         <icon src="www/res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
         <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
     </platform>
-    <plugin name="cordova-plugin-device" spec="^2.0.3" />
-    <plugin name="cordova-plugin-dialogs" spec="^2.0.2" />
-    <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.0" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
-    <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
-    <plugin name="cordova-plugin-network-information" spec="^2.0.2" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />
 </widget>

@@ -153,6 +153,8 @@ define(function (require) {
                         cordova.file.documentsDirectory,
                         cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
+                        cordova.file.dataDirectory,
+                        cordova.file.externalDataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
                     if (device.platform === "Android") {
@@ -170,6 +172,35 @@ define(function (require) {
                         }, function (error) {
                             console.error("The following error occurred: " + error);
                         });
+                        // request runtime permissions if needed
+                        cordova.plugins.diagnostic.getPermissionsAuthorizationStatus(function(statuses){
+                            for (var permission in statuses){
+                                switch(statuses[permission]){
+                                    case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                                        console.log("Permission granted to use "+permission);
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+                                        console.log("Permission to use "+permission+" has not been requested yet; asking now");
+                                        cordova.plugins.diagnostic.requestRuntimePermission(function(status){
+                                            console.log("Runtime permission request result: " + status.toString());
+                                        }, function(error){
+                                            console.error("The following error occurred: "+error);
+                                        }, permission);
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
+                                        console.log("Permission denied to use "+permission+" - ask again?");
+                                        break;
+                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+                                        console.log("Permission permanently denied to use "+permission+" - guess we won't be using it then!");
+                                        break;
+                                }
+                            }
+                        }, function(error){
+                            console.error("The following error occurred: "+error);
+                        },[
+                            cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE,
+                            cordova.plugins.diagnostic.permission.READ_EXTERNAL_STORAGE
+                        ]);
                     }
                 }
                 // social sharing plugin / iPad popover coords
@@ -255,16 +286,6 @@ define(function (require) {
 
                         // Tell backbone we're ready to start loading the View classes.
                         Backbone.history.start();
-
-                        // Did another task launch us (i.e., did our handleOpenURL() from main.js
-                        // get called)? If so, pull out the URL and process the resulting file
-                        if (localStorage.getItem('share_url')) {
-                            var shareURL = localStorage.getItem('share_url');
-                            console.log("Found stored URL to process:" + shareURL);
-                            window.resolveLocalFileSystemURL(shareURL, this.processFileEntry, this.processError);
-                            // clear out localStorage
-                            localStorage.setItem('share_url', "");
-                        }
                     });
                 };
                 // create model collections off the Application object
@@ -324,7 +345,6 @@ define(function (require) {
                 // the project is saved in the device's localStorage.
                 $.when(this.ProjectList.fetch({reset: true, data: {name: ""}})).done(function () {
                     window.Application.ProjectList.each(function (model, index) {
-    //                    console.log("Model: " + model.get('id'));
                         if (model.get('projectid') === "") {
                             // empty project -- mark for removal
                             models.push(model);
@@ -347,10 +367,29 @@ define(function (require) {
                             }
                         }                        
                     }
-                    // now display the home view
-                    homeView = new HomeViews.HomeView({model: window.Application.currentProject});
-                    homeView.delegateEvents();
-                    window.Application.main.show(homeView);
+                    // Did another task launch us (i.e., did our handleOpenURL() from main.js
+                    // get called)? If so, pull out the URL and process the resulting file
+                    if (localStorage.getItem('share_url')) {
+                        // we have a pending import request -- import it now
+                        var shareURL = localStorage.getItem('share_url');
+                        console.log("Found stored URL to process:" + shareURL);
+                        if (shareURL.indexOf("content:") !== -1) {
+                            // content://path from Android -- convert to file://
+                            window.FilePath.resolveNativePath(shareURL, function(absolutePath) {
+                                window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                              });
+                        } else {
+                            // not a content://path url -- resolve and process file
+                            window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
+                        }
+                        // clear out localStorage
+                        localStorage.setItem('share_url', "");
+                    } else {
+                        // No pending import requests -- display the home view
+                        homeView = new HomeViews.HomeView({model: window.Application.currentProject});
+                        homeView.delegateEvents();
+                        window.Application.main.show(homeView);
+                    }
                 });
             },
             
@@ -437,7 +476,7 @@ define(function (require) {
                 }
             },
 
-            importFail () {
+            importFail: function () {
                 alert("Unable to open file.");
             },
             
