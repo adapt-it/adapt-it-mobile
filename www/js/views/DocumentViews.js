@@ -3867,14 +3867,21 @@ define(function (require) {
             // Handler for when another process sends us a file to import. The logic is in
             // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
             importFromURL: function (file) {
-                console.log("importfromURL: importing file: " + file.name);
+                // if this is a content URL from Android, the name is all messed up (it shows "content") -
+                // pull out the real filename that we stored on the Application object earlier
+                // (in either main.js at startup, or when we went to the home screen in Application.js)
+                if (window.Application.importingURL.length > 0) {
+                    fileName = window.Application.importingURL.substr(window.Application.importingURL.lastIndexOf('/') + 1);
+                } else {
+                    fileName = file.name;
+                }
+                console.log("importfromURL: importing file: " + fileName);
                 // replace the selection UI with the import UI
                 $("#browserGroup").hide();
                 $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
                 $("#OK").hide();
                 // import the specified file
-                fileName = file.name;
                 importFile(file, this.model);
             },
             // Handler for when the user clicks the Select button (browser only) -

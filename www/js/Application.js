@@ -80,6 +80,7 @@ define(function (require) {
             version: "1.5.0", // appended with milestone / iOS build info
             AndroidBuild: "34", // (was milestone release #)
             iOSBuild: "1.5.0",
+            importingURL: "", // for other apps in Android-land sending us files to import
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -374,12 +375,14 @@ define(function (require) {
                         var shareURL = localStorage.getItem('share_url');
                         console.log("Found stored URL to process:" + shareURL);
                         if (shareURL.indexOf("content:") !== -1) {
-                            // content://path from Android -- convert to file://
+                            // content://path from Android 
                             window.FilePath.resolveNativePath(shareURL, function(absolutePath) {
+                                window.Application.importingURL = absolutePath;
                                 window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
                               });
                         } else {
                             // not a content://path url -- resolve and process file
+                            window.Application.importingURL = "";
                             window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
                         }
                         // clear out localStorage
@@ -467,6 +470,7 @@ define(function (require) {
                 if (proj !== null) {
                     // We have a project -- load the ImportDocumentView to do the work
                     importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.isLoadingFromURL = true;
                     importDocView.delegateEvents();
                     window.Application.main.show(importDocView);
                     // call ImportDocumentView::importFromURL() to import the file
@@ -490,6 +494,7 @@ define(function (require) {
                             console.log("no project defined");
                         }
                         importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
+                        importDocView.isLoadingFromURL = false;
                         importDocView.delegateEvents();
                         window.Application.main.show(importDocView);
                     });
