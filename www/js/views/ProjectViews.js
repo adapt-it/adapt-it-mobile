@@ -441,6 +441,7 @@ define(function (require) {
                 } else {
                     // running in browser -- use html <input> to select file
                     $("#mobileSelect").hide();
+                    $("#btnClipboard").hide(); // for now, no clipboard .aic import for the browser
                 }
                 $("#OK").attr("disabled", true);
             }
