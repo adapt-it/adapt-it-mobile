@@ -22,6 +22,7 @@
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
@@ -30,8 +31,6 @@
         <preference name="android-targetSdkVersion" value="30" />
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-            <uses-permission android:name="android.permission.READ_STORAGE_PERMISSION" />
-            <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
             <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
@@ -41,25 +40,40 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
+                <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
                 <data android:scheme="content" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
                 <data android:scheme="file" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
-                <data android:scheme="aim" />
+                <data android:mimeType="*/*" />
+                <!-- our mimeType is really broad; limit to our 6 supported filetypes
+                (and work around Android's ugly path pattern matching system) -->
+                <data android:pathPattern=".*\\.xml" />
+                <data android:pathPattern=".*\\.tmx" />
+                <data android:pathPattern=".*\\.txt" />
+                <data android:pathPattern=".*\\.usfm" />
+                <data android:pathPattern=".*\\.sfm" />
+                <data android:pathPattern=".*\\.usx" />
+                <data android:pathPattern=".*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\.tmx" />
+                <data android:pathPattern=".*\\..*\\.txt" />
+                <data android:pathPattern=".*\\..*\\.usfm" />
+                <data android:pathPattern=".*\\..*\\.sfm" />
+                <data android:pathPattern=".*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\.tmx" />
+                <data android:pathPattern=".*\\..*\\..*\\.txt" />
+                <data android:pathPattern=".*\\..*\\..*\\.usfm" />
+                <data android:pathPattern=".*\\..*\\..*\\.sfm" />
+                <data android:pathPattern=".*\\..*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.tmx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.txt" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.usfm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.sfm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.usx" />
             </intent-filter>
         </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
@@ -317,6 +331,7 @@
         <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
     </platform>
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
+    <plugin name="cordova-plugin-filepath" spec="^1.6.0" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />

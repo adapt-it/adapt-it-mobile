@@ -2319,10 +2319,15 @@ define(function (require) {
                                 console.log("finished within sp block");
                                 // done with the chapters
                                 if (isClipboard === true) {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
                                 } else {
                                     // ** we are now done with all the chapters -- write out the file
                                     var blob = new Blob([content], {type: 'text/plain'});
@@ -2337,10 +2342,15 @@ define(function (require) {
                             console.log("finished in a blank block");
                             // done with the chapters
                             if (isClipboard === true) {
-                                // write (copy) text to clipboard
-                                cordova.plugins.clipboard.copy(content);
-                                // directly call success (it's a callback for the file writer)
-                                exportSuccess();
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
                             } else {
                                 var blob = new Blob([content], {type: 'text/plain'});
                                 writer.write(blob);
@@ -2463,10 +2473,15 @@ define(function (require) {
                                 console.log("finished within sp block");
                                 // done with the chapters
                                 if (isClipboard === true) {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
                                 } else {
                                     // ** we are now done with all the chapters -- write out the file
                                     var blob = new Blob([content], {type: 'text/plain'});
@@ -2480,10 +2495,15 @@ define(function (require) {
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
                             if (isClipboard === true) {
-                                // write (copy) text to clipboard
-                                cordova.plugins.clipboard.copy(content);
-                                // directly call success (it's a callback for the file writer)
-                                exportSuccess();
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
                             } else {
                                 // done with the chapters
                                 var blob = new Blob([content], {type: 'text/plain'});
@@ -3097,10 +3117,15 @@ define(function (require) {
                                 // add the ending node
                                 content += "\n</usx>\n";
                                 if (isClipboard === true) {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
                                 } else {
                                     // ** we are now done with all the chapters -- write out the file
                                     var blob = new Blob([content], {type: 'text/plain'});
@@ -3141,10 +3166,15 @@ define(function (require) {
                             // add the ending node
                             content += "\n</usx>\n";
                             if (isClipboard === true) {
-                                // write (copy) text to clipboard
-                                cordova.plugins.clipboard.copy(content);
-                                // directly call success (it's a callback for the file writer)
-                                exportSuccess();
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
                             } else {
                                 var blob = new Blob([content], {type: 'text/plain'});
                                 writer.write(blob);
@@ -3533,10 +3563,15 @@ define(function (require) {
                             // done with the chapters -- add the ending node
                             content += "</AdaptItDoc>\n";
                             if (isClipboard === true) {
-                                // write (copy) text to clipboard
-                                cordova.plugins.clipboard.copy(content);
-                                // directly call success (it's a callback for the file writer)
-                                exportSuccess();
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
                             } else {
                                 var blob = new Blob([content], {type: 'text/plain'});
                                 writer.write(blob);
@@ -3617,10 +3652,15 @@ define(function (require) {
                 // done CONTENT PART -- close out the file
                 content += "     </MAP>" + CRLF + "</KB>" + CRLF;
                 if (isClipboard === true) {
-                    // write (copy) text to clipboard
-                    cordova.plugins.clipboard.copy(content);
-                    // directly call success (it's a callback for the file writer)
-                    exportSuccess();
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
                 } else {
                     var blob = new Blob([content], {type: 'text/plain'});
                     writer.write(blob);
@@ -3687,10 +3727,15 @@ define(function (require) {
                 // done CONTENT PART -- close out the file
                 content += "     </body>" + CRLF + "</tmx>" + CRLF;
                 if (isClipboard === true) {
-                    // write (copy) text to clipboard
-                    cordova.plugins.clipboard.copy(content);
-                    // directly call success (it's a callback for the file writer)
-                    exportSuccess();
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
                 } else {
                     var blob = new Blob([content], {type: 'text/plain'});
                     writer.write(blob);
@@ -3797,6 +3842,7 @@ define(function (require) {
         // AIM from the device or PC, depending on where AIM is run from. 
         ImportDocumentView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplImportDoc),
+            isLoadingFromURL: false,
             
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
@@ -3809,6 +3855,7 @@ define(function (require) {
             events: {
                 "change #selFile": "browserImportDocs",
                 "click .topcoat-list__item": "mobileImportDocs",
+                "click #btnClipboard": "onBrowserClipboard",
                 "click #OK": "onOK"
             },
             // Resume handler -- user placed the app in the background, then resumed.
@@ -3820,13 +3867,22 @@ define(function (require) {
             // Handler for when another process sends us a file to import. The logic is in
             // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
             importFromURL: function (file) {
-                console.log("importfromURL: importing file: " + file.fullPath);
+                // if this is a content URL from Android, the name is all messed up (it shows "content") -
+                // pull out the real filename that we stored on the Application object earlier
+                // (in either main.js at startup, or when we went to the home screen in Application.js)
+                if (window.Application.importingURL.length > 0) {
+                    fileName = window.Application.importingURL.substr(window.Application.importingURL.lastIndexOf('/') + 1);
+                    window.Application.importingURL = "";
+                } else {
+                    fileName = file.name;
+                }
+                console.log("importfromURL: importing file: " + fileName);
                 // replace the selection UI with the import UI
-                $("#OK").hide();
+                $("#browserGroup").hide();
                 $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
+                $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
+                $("#OK").hide();
                 // import the specified file
-                fileName = file.name;
                 importFile(file, this.model);
             },
             // Handler for when the user clicks the Select button (browser only) -
@@ -3843,6 +3899,22 @@ define(function (require) {
                     importFile(files[fileindex], this.model);
                     fileindex++;
                 }
+            },
+            // Handler for when the user clicks the "clipboard text" option in the browser;
+            // copy the clipboard contents, and if they're not empty, import the contents as a file
+            onBrowserClipboard: function() {
+                var model = this.model;
+                navigator.clipboard.readText().then(
+                    (clipText) => {
+                        if (clipText.length > 0) {
+                            isClipboard = true;
+                            console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
+                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
+                            $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
+                            fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
+                            importFile(clipboardFile, model);            
+                        }
+                    });
             },
             // Handler for the when the user clicks a document in the list to import (mobile only) -
             // we gather the file path from the selection, then reconstitute file objects
@@ -3915,8 +3987,9 @@ define(function (require) {
                         if (this.model.get('lastDocument') === bookName) {
                             this.model.set('lastDocument', newName);
                             this.model.set('lastAdaptedName', chapterList[0].get('name'));
+                            this.model.set('lastAdaptedBookID', book.get("bookid"));
+                            this.model.set('lastAdaptedChapterID', chapterList[0].get('chapterid'));                        
                         }
-
                     }
                     // save the model
                     this.model.save();
@@ -3925,13 +3998,8 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                if (window.history.length > 1) {
-                    // we got here from the home page
-                    window.history.back();
-                } else {
-                    // we got here from another app (sending us a file)
-                    window.location.replace("");
-                }
+                window.location.replace("");
+                window.Application.home();
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file
@@ -3978,125 +4046,127 @@ define(function (require) {
                 // reset the isKB flag
                 isKB = false;
                 
-                // on mobile device
-                if (device && (device.platform !== "browser")) {
-                    // running on device -- use cordova file plugin to select file
-                    $("#OK").hide();
-                    $("#browserGroup").hide();
-                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                    var localURLs    = [
-                        cordova.file.dataDirectory,
-                        cordova.file.documentsDirectory,
-                        cordova.file.externalRootDirectory,
-                        cordova.file.sharedDirectory,
-                        cordova.file.dataDirectory,
-                        cordova.file.externalDataDirectory,
-                        cordova.file.syncedDataDirectory
-                    ];
-                    var DirsRemaining = localURLs.length + 1; // + clipboard text
-                    var index = 0;
-                    var i;
-                    var statusStr = "";
-                    // running on device -- check the clipboard for text
-                    // (note that we have to call paste to test for non-empty -- on iOS, testing for data
-                    // on the clipboard/pasteboard was only added in ios 10.)
-                    cordova.plugins.clipboard.paste(function (text) {
-                        DirsRemaining--; // done checking -- remove the placeholder "directory"
-                        console.log("Clipboard paste returned. DirsRemaining = " + DirsRemaining);
-                        if (text !== null && text.length > 0) {
-                            console.log("Clipboard contents: " + text);
-                            // something on the clipboard -- add an option to paste the text as a new Book
-                            statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText') + "<span class='chevron'></span></li>";
-                            index++;
-                        }
-                        cbData = text; // save, so we only call this once
-                        // This function can return first if there's a lot of data on the clipboard (think: xml file).
-                        // Check to see if we're done parsing the directory structure, and refresh the UI if so.
-                        if (DirsRemaining <= 0) {
-                            if (statusStr.length > 0) {
-                                // display the list of files we found
-                                $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-                                $("#tb").html(statusStr);
-                                $("#OK").show();
-                                $("#OK").attr("disabled", true);
-                            } else {
-                                // nothing to select -- inform the user
-                                $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
+                if (this.isLoadingFromURL === false) {
+                    if (device && (device.platform !== "browser")) {
+                        // running on device -- use cordova file plugin to select file
+                        $("#OK").hide();
+                        $("#browserGroup").hide();
+                        $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                        var localURLs    = [
+                            cordova.file.dataDirectory,
+                            cordova.file.documentsDirectory,
+                            cordova.file.externalRootDirectory,
+                            cordova.file.sharedDirectory,
+                            cordova.file.dataDirectory,
+                            cordova.file.externalDataDirectory,
+                            cordova.file.syncedDataDirectory
+                        ];
+                        var DirsRemaining = localURLs.length + 1; // + clipboard text
+                        var index = 0;
+                        var i;
+                        var statusStr = "";
+                        // running on device -- check the clipboard for text
+                        // (note that we have to call paste to test for non-empty -- on iOS, testing for data
+                        // on the clipboard/pasteboard was only added in ios 10.)
+                        cordova.plugins.clipboard.paste(function (text) {
+                            DirsRemaining--; // done checking -- remove the placeholder "directory"
+                            console.log("Clipboard paste returned. DirsRemaining = " + DirsRemaining);
+                            if (text !== null && text.length > 0) {
+                                console.log("Clipboard contents: " + text);
+                                // something on the clipboard -- add an option to paste the text as a new Book
+                                statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText') + "<span class='chevron'></span></li>";
+                                index++;
                             }
-                        }
-                    }, function (error) {
-                        // error in clipboard retrieval -- skip entry
-                        // (seen this when there's data on the clipboard that isn't text/plain)
-                        console.log("Error retrieving clipboard data:" + error);
-                        DirsRemaining--;
-                    });
-                    var addFileEntry = function (entry) {
-                        console.log("addFileEntry: entry");
-                        var dirReader = entry.createReader();
-                        dirReader.readEntries(
-                            function (entries) {
-                                var fileStr = "";
-                                var i;
-                                for (i = 0; i < entries.length; i++) {
-                                    console.log("addFileEntry: looking at:" + entries[i].fullPath);
-                                    if (entries[i].isDirectory === true) {
-                                        // Recursive -- call back into this subdirectory
-                                        DirsRemaining = DirsRemaining + 1;
-                                        console.log("addFileEntry: Directory found. New DirsRemaining = " + DirsRemaining);
-                                        addFileEntry(entries[i]);
-                                    } else {
-                                        console.log(entries[i].fullPath);
-                                        if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
-                                            // only take files from the Download or Document directories
-                                            if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
+                            cbData = text; // save, so we only call this once
+                            // This function can return first if there's a lot of data on the clipboard (think: xml file).
+                            // Check to see if we're done parsing the directory structure, and refresh the UI if so.
+                            if (DirsRemaining <= 0) {
+                                if (statusStr.length > 0) {
+                                    // display the list of files we found
+                                    $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
+                                    $("#tb").html(statusStr);
+                                    $("#OK").show();
+                                    $("#OK").attr("disabled", true);
+                                } else {
+                                    // nothing to select -- inform the user
+                                    $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
+                                }
+                            }
+                        }, function (error) {
+                            // error in clipboard retrieval -- skip entry
+                            // (seen this when there's data on the clipboard that isn't text/plain)
+                            console.log("Error retrieving clipboard data:" + error);
+                            DirsRemaining--;
+                        });
+                        var addFileEntry = function (entry) {
+                            console.log("addFileEntry: entry");
+                            var dirReader = entry.createReader();
+                            dirReader.readEntries(
+                                function (entries) {
+                                    var fileStr = "";
+                                    var i;
+                                    for (i = 0; i < entries.length; i++) {
+                                        console.log("addFileEntry: looking at:" + entries[i].fullPath);
+                                        if (entries[i].isDirectory === true) {
+                                            // Recursive -- call back into this subdirectory
+                                            DirsRemaining = DirsRemaining + 1;
+                                            console.log("addFileEntry: Directory found. New DirsRemaining = " + DirsRemaining);
+                                            addFileEntry(entries[i]);
+                                        } else {
+                                            console.log(entries[i].fullPath);
+                                            if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
+                                                // only take files from the Download or Document directories
+                                                if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
+                                                    (entries[i].name.toLowerCase().indexOf(".tmx") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".usfm") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".sfm") > 0) ||
                                                     (entries[i].name.toLowerCase().indexOf(".xml") > 0)) {
-                                                fileList[index] = entries[i].toURL();
-                                                fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
-                                                index++;
+                                                    fileList[index] = entries[i].toURL();
+                                                    fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
+                                                    index++;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                statusStr += fileStr;
-                                DirsRemaining = DirsRemaining - 1;
-                                console.log("addFileEntry: finished loop. DirsRemaining = " + DirsRemaining);
-                                if (DirsRemaining <= 0) {
-                                    if (statusStr.length > 0) {
-                                        // display the list of files we found
-                                        $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-                                        $("#tb").html(statusStr);
-                                        $("#OK").show();
-                                        $("#OK").attr("disabled", true);
-                                    } else {
-                                        // nothing to select -- inform the user
-                                        $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
+                                    statusStr += fileStr;
+                                    DirsRemaining = DirsRemaining - 1;
+                                    console.log("addFileEntry: finished loop. DirsRemaining = " + DirsRemaining);
+                                    if (DirsRemaining <= 0) {
+                                        if (statusStr.length > 0) {
+                                            // display the list of files we found
+                                            $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
+                                            $("#tb").html(statusStr);
+                                            $("#OK").show();
+                                            $("#OK").attr("disabled", true);
+                                        } else {
+                                            // nothing to select -- inform the user
+                                            $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
+                                        }
                                     }
+                                },
+                                function (error) {
+                                    console.log("readEntries error: " + error.code);
+                                    statusStr += "<p>readEntries error: " + error.code + "</p>";
                                 }
-                            },
-                            function (error) {
-                                console.log("readEntries error: " + error.code);
-                                statusStr += "<p>readEntries error: " + error.code + "</p>";
-                            }
-                        );
-                    };
-                    var addError = function (error) {
-                        // log the error and continue processing
-                        console.log("getDirectory error: " + error.code);
-                        DirsRemaining--;
-                    };
-                    for (i = 0; i < localURLs.length; i++) {
-                        if (localURLs[i] !== null && localURLs[i].length > 0) {
-                            window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
-                        } else {
+                            );
+                        };
+                        var addError = function (error) {
+                            // log the error and continue processing
+                            console.log("getDirectory error: " + error.code);
                             DirsRemaining--;
+                        };
+                        for (i = 0; i < localURLs.length; i++) {
+                            if (localURLs[i] !== null && localURLs[i].length > 0) {
+                                window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+                            } else {
+                                DirsRemaining--;
+                            }
                         }
-                    }
-                } else {
-                    // running in browser -- use html <input> to select file
-                    $("#mobileSelect").hide();
+                    } else {
+                        // running in browser -- use html <input> to select file
+                        $("#mobileSelect").hide();
+                    }       
                 }
             }
         }),
@@ -4297,21 +4367,8 @@ define(function (require) {
             onShow: function () {
                 kblist = window.Application.kbList;
                 kblist.fetch({reset: true, data: {source: ""}});
-                if (device && (device.platform !== "browser")) {
-                    // on mobile device -- need to ask the user whether they want to export
-                    // to the clipboard or to a file (which also allows for social sharing)
-                    $("#Container").html(Handlebars.compile(tplExportDestination));
-                } else {
-                    // in browser -- can only export to a file
-                    var list = "";
-                    var pid = this.model.get('projectid');
-                    this.destination = DestinationEnum.FILE;
-                    $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}}).done(function () {
-                        list = buildDocumentList(pid);
-                        $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
-                        $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
-                    }));
-                }
+                // first step -- clipboard or file?
+                $("#Container").html(Handlebars.compile(tplExportDestination));
             }
         });
     

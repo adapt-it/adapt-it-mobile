@@ -99,21 +99,22 @@ window.handleOpenURL = function(url) {
     console.log("handleOpenURL: " + url);
     if (window.Application) {
         // ready event has fired and app is ready for events... handle the URL
-        window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, 
-            function(err) {
-                var strErr = "handleOpenURL - error: " + JSON.stringify(err);
-                console.log(strErr);
-                if (navigator.notification) {
-                    // on mobile device -- use notification plugin API
-                    navigator.notification.alert(strErr);
-                } else {
-                    // in browser -- use window.confirm / window.alert
-                    alert(strErr);
-                }
-            });
+        console.log("handleOpenURL: app is already open; attempting to process file");
+        if (url.indexOf("content:") !== -1) {
+            // content://path from Android -- pull out the filename and store it on the application obj
+            window.FilePath.resolveNativePath(url, function(absolutePath) {
+                window.Application.importingURL = absolutePath;
+                window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+              });
+        } else {
+            // not a content://path url -- resolve and process file
+            window.Application.importingURL = ""; // clear
+            window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+        }
     } else {
-        // we're still waking up... store the url
-        localStorage.setItem('share_url', url);
+        // we're still waking up... store the url 
+        // (it'll get processed in Application.js when we go to the home page)
+        window.localStorage.setItem('share_url', url);
     }
 };
 

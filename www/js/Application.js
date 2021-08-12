@@ -80,6 +80,7 @@ define(function (require) {
             version: "1.5.0", // appended with milestone / iOS build info
             AndroidBuild: "34", // (was milestone release #)
             iOSBuild: "1.5.0",
+            importingURL: "", // for other apps in Android-land sending us files to import
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
             // browsers that do not support this scrollIntoViewOptions yet.
@@ -369,21 +370,21 @@ define(function (require) {
                     }
                     // Did another task launch us (i.e., did our handleOpenURL() from main.js
                     // get called)? If so, pull out the URL and process the resulting file
-                    if (localStorage.getItem('share_url')) {
-                        // we have a pending import request -- import it now
-                        var shareURL = localStorage.getItem('share_url');
+                    var shareURL = window.localStorage.getItem('share_url');
+                    if (shareURL && shareURL.length > 0) {
                         console.log("Found stored URL to process:" + shareURL);
+                        window.localStorage.removeItem('share_url'); // clear out value
                         if (shareURL.indexOf("content:") !== -1) {
-                            // content://path from Android -- convert to file://
+                            // content://path from Android 
                             window.FilePath.resolveNativePath(shareURL, function(absolutePath) {
+                                window.Application.importingURL = absolutePath;
                                 window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
                               });
                         } else {
                             // not a content://path url -- resolve and process file
+                            window.Application.importingURL = "";
                             window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
                         }
-                        // clear out localStorage
-                        localStorage.setItem('share_url', "");
                     } else {
                         // No pending import requests -- display the home view
                         homeView = new HomeViews.HomeView({model: window.Application.currentProject});
@@ -467,6 +468,7 @@ define(function (require) {
                 if (proj !== null) {
                     // We have a project -- load the ImportDocumentView to do the work
                     importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.isLoadingFromURL = true;
                     importDocView.delegateEvents();
                     window.Application.main.show(importDocView);
                     // call ImportDocumentView::importFromURL() to import the file
@@ -490,6 +492,7 @@ define(function (require) {
                             console.log("no project defined");
                         }
                         importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
+                        importDocView.isLoadingFromURL = false;
                         importDocView.delegateEvents();
                         window.Application.main.show(importDocView);
                     });
