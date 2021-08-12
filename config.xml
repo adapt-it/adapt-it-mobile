@@ -22,6 +22,7 @@
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
@@ -44,7 +45,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="aim" />
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />

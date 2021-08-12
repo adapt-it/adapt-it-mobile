@@ -370,10 +370,10 @@ define(function (require) {
                     }
                     // Did another task launch us (i.e., did our handleOpenURL() from main.js
                     // get called)? If so, pull out the URL and process the resulting file
-                    if (localStorage.getItem('share_url')) {
-                        // we have a pending import request -- import it now
-                        var shareURL = localStorage.getItem('share_url');
+                    var shareURL = window.localStorage.getItem('share_url');
+                    if (shareURL && shareURL.length > 0) {
                         console.log("Found stored URL to process:" + shareURL);
+                        window.localStorage.removeItem('share_url'); // clear out value
                         if (shareURL.indexOf("content:") !== -1) {
                             // content://path from Android 
                             window.FilePath.resolveNativePath(shareURL, function(absolutePath) {
@@ -385,8 +385,6 @@ define(function (require) {
                             window.Application.importingURL = "";
                             window.resolveLocalFileSystemURL(shareURL, window.Application.processFileEntry, window.Application.processError);
                         }
-                        // clear out localStorage
-                        localStorage.setItem('share_url', "");
                     } else {
                         // No pending import requests -- display the home view
                         homeView = new HomeViews.HomeView({model: window.Application.currentProject});

@@ -3872,6 +3872,7 @@ define(function (require) {
                 // (in either main.js at startup, or when we went to the home screen in Application.js)
                 if (window.Application.importingURL.length > 0) {
                     fileName = window.Application.importingURL.substr(window.Application.importingURL.lastIndexOf('/') + 1);
+                    window.Application.importingURL = "";
                 } else {
                     fileName = file.name;
                 }
@@ -3986,8 +3987,9 @@ define(function (require) {
                         if (this.model.get('lastDocument') === bookName) {
                             this.model.set('lastDocument', newName);
                             this.model.set('lastAdaptedName', chapterList[0].get('name'));
+                            this.model.set('lastAdaptedBookID', book.get("bookid"));
+                            this.model.set('lastAdaptedChapterID', chapterList[0].get('chapterid'));                        
                         }
-
                     }
                     // save the model
                     this.model.save();
@@ -3996,14 +3998,8 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                if (window.history.length > 1) {
-                    // we got here from the home page
-                    window.history.back();
-                } else {
-                    // we got here from another app (sending us a file)
-                    window.location.replace("");
-                    window.Application.home();
-                }
+                window.location.replace("");
+                window.Application.home();
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file

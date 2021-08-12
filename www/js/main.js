@@ -114,7 +114,7 @@ window.handleOpenURL = function(url) {
     } else {
         // we're still waking up... store the url 
         // (it'll get processed in Application.js when we go to the home page)
-        localStorage.setItem('share_url', url);
+        window.localStorage.setItem('share_url', url);
     }
 };
 
