@@ -99,6 +99,8 @@
         <resource-file src="www/res/icon/ios/usx_44.png" />
         <resource-file src="www/res/icon/ios/usx_64.png" />
         <resource-file src="www/res/icon/ios/usx_320.png" />
+        <!-- EDB 8/16/21 TODO: config-file items are up to date, but some icon files do need to be
+        manually copied over into the XCode project before releasing. -->
         <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
@@ -119,7 +121,7 @@
             <string>This app requires bluetooth access for AirDrop document export.</string>
         </config-file>
         <config-file mode="replace" parent="LSSupportsOpeningDocumentsInPlace" target="*-Info.plist">
-            <true />
+            <false />
         </config-file>
         <config-file mode="replace" parent="CFBundleDocumentTypes" target="*-Info.plist">
             <array>
