@@ -25,6 +25,7 @@
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-filepath": "^1.6.0",
+    "cordova-plugin-keyboard": "git+https://github.com/sinn1/cordova-plugin-keyboard.git",
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-x-socialsharing": "^6.0.3",
     "cordova-sqlite-evcore-extbuild-free": "^0.15.1",
@@ -40,7 +41,6 @@
     "cordova-clipboard": "https://github.com/ihadeed/cordova-clipboard.git",
     "cordova-lib": "^10.0.0",
     "cordova-plugin-fonts": "^0.6.5",
-    "cordova-plugin-keyboard": "git+https://github.com/sinn1/cordova-plugin-keyboard.git",
     "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-statusbar": "^2.4.3",
     "gulp-uglify": "^3.0.2",
@@ -70,7 +70,6 @@
       "cordova-plugin-fonts": {},
       "phonegap-plugin-mobile-accessibility": {},
       "cordova-clipboard": {},
-      "cordova-plugin-keyboard": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-device": {},
@@ -88,7 +87,8 @@
         "ANDROID_SCHEME": " ",
         "ANDROID_HOST": " ",
         "ANDROID_PATHPREFIX": "/"
-      }
+      },
+      "cordova-plugin-keyboard": {}
     },
     "platforms": [
       "ios",
