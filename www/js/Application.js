@@ -79,7 +79,7 @@ define(function (require) {
             usingImportedKB: false,
             version: "1.5.0", // appended with milestone / iOS build info
             AndroidBuild: "34", // (was milestone release #)
-            iOSBuild: "1.5.0",
+            iOSBuild: "1.5.1",
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
