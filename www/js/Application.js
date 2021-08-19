@@ -78,7 +78,7 @@ define(function (require) {
             localURLs: [],
             usingImportedKB: false,
             version: "1.5.0", // appended with milestone / iOS build info
-            AndroidBuild: "34", // (was milestone release #)
+            AndroidBuild: "35", // (was milestone release #)
             iOSBuild: "1.5.1",
             importingURL: "", // for other apps in Android-land sending us files to import
 
