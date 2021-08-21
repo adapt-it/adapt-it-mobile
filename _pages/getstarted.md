@@ -11,8 +11,6 @@ Here you will find step-by-step instructions for setting up Adapt It Mobile on y
 * [Training Videos](#training-videos)
 * [Before you install](#before-you-install)
   * [System requirements](#system-requirements)
-  * [Copy documents to your device](#copy-documents-to-device)
-  * [(Optional) Copy project to your device](#copy-project-to-device)
 * [Installing](#installing-adapt-it-mobile)
 * [Next Steps](#next-steps)
 
@@ -43,47 +41,10 @@ These training videos contain the instructions needed to install, configure, and
 
 ### Make sure your mobile device meets the following system requirements: 
 
-- Apple iPad, iPod or iPhone running iOS 8.x or later
-- Android device running Android 4.0.x or later
-
-<a id="copy-documents-to-device"></a>
-
-### Copy any documents you will be adapting to your device. 
-
-Adapt It Mobile can read text (.txt) files, as well as files from Paratext, Bibledit (.usfm, .usx, .sfm) and Adapt It desktop (.xml). If you have a use case for some other format that you would like us to support, please use the issue tracker to create a [New issue](https://github.com/adapt-it/adapt-it-mobile/issues/new), and we will consider it for a future release.
-
-To copy files to your device, you can use one of the following methods:
-
-- On Android devices, you can copy files from your desktop computer to Google Drive, and then download them using the Google Drive app for Android.
-- On Android devices, you can also directly transfer files to your device using one of the following programs:
-
-  - [Android File Transfer](https://www.android.com/intl/en_us/filetransfer/) 
-  - [Superbeam](https://play.google.com/store/apps/details?id=com.majedev.superbeam&hl=en)
-  - [ES File Explorer](https://play.google.com/store/apps/details?id=com.estrongs.android.pop&hl=en)
-
-  **NOTE: document and project files MUST be copied to the Documents or Downloads directories, or a subdirectory of these directories.**
-
-- On Apple devices, you can use the [Apple File Sharing](https://support.apple.com/en-us/HT201301) capability to directly transfer files to your device.
+- Apple iPad, iPod or iPhone running iOS 9.x or later
+- Android device running Android 5.1.x or later
 
 ---
-**Tip:** If you are looking for a test file to import, you can download one of the following:
-
-- *USFM:* Spanish / Reina-Valera Moderna - [James.usfm](https://raw.githubusercontent.com/pasosdeJesus/biblia_dp/master/ref/reina_valera_moderna_nt/59_James.usfm)
-- *USX:* Any of the [public domain entries on the Digital Bible Library](http://app.thedigitalbiblelibrary.org/entries/public_domain_entries)
-
----
-
-<a id="copy-project-to-device"></a>
-
-### (optional) Copy the Adapt It desktop project file to your device. 
-
-If you have already created an adaptation project in Adapt It desktop with the same source and target languages you will be using for your adaptation, you can copy the project file from your computer to your mobile device and use it in Adapt It Mobile. The project file is named `AI-ProjectConfiguration.aic` and will be located under the directory:
-
-    Adapt It Unicode Work / <project name> / AI-ProjectConfiguration.aic
-
-Use the same method described above to copy the files to your computer. Also note that only project files created using the Unicode version of Adapt It desktop can be copied over; the older Ansi / "regular" version is not supported.
-
-----
 
 <a id="installing-adapt-it-mobile"></a>
 
