@@ -105,5 +105,5 @@ Complete the following steps to import documents into Adapt It Mobile.
 #### Exported File location
 When you Export a document to a file, Adapt It Mobile saves a copy on the local mobile device:
 
-- For iOS, documents are saved in the Documents folder for Adapt It Mobile. You can use the [iTunes Sharing](https://support.apple.com/en-us/HT201301) feature to transfer these files to your computer for forther processing.
+- For iOS, documents are saved in the Documents folder for Adapt It Mobile. You can use the [Apple File Sharing](https://support.apple.com/en-us/HT201301) feature to transfer these files to your computer for forther processing.
 - For Android, documents are stored on the SD card (if available) or the Internal Storage -- in a directory labeled `AIM_Exports_<language code>`, where `<language code>` is the RFC 5646 language code of the *target language*. These files can be copied over to your computer using the [Android File Transfer utility](https://www.android.com/filetransfer/).
