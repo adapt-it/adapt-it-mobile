@@ -106,22 +106,42 @@ If you are importing .usfm document files from Paratext or Bibledit, you can fil
 
 ## Copying a project 
 
-If you have created an adaptation project in Adapt It desktop, you can copy that project's settings to your mobile device and use it in Adapt It Mobile. 
+If you have already created an adaptation project in Adapt It desktop with the same source and target languages you will be using for your adaptation, you can copy the project file from your computer to your mobile device and use it in Adapt It Mobile. The project file is named `AI-ProjectConfiguration.aic` and will be located under the directory:
+
+    Adapt It Unicode Work / <project name> / AI-ProjectConfiguration.aic
 
 **NOTE**: if you don't have an existing project file from Adapt It desktop, you can create one within Adapt It Mobile. [Refer to these instructions for more information](#creating-a-new-project).
 
+#### Step 1: Copy the file to the device
+
+- On Android devices, you can directly transfer files to your device using one of the following programs:
+
+  - [Android File Transfer](https://www.android.com/intl/en_us/filetransfer/) 
+  - [Superbeam](https://play.google.com/store/apps/details?id=com.majedev.superbeam&hl=en)
+  - [ES File Explorer](https://play.google.com/store/apps/details?id=com.estrongs.android.pop&hl=en)
+
+  The Adapt It desktop project file files MUST be placed in one of the following directories on your Android device:
+  
+  - `/data/Android/org.adaptit.adaptitmobile/files`
+  - `/sdcard/data/Android/org.adaptit.adaptitmobile/files` (if you have an external / sdcard installed on your device)
+
+- On Apple devices, you can use the [Apple File Sharing](https://support.apple.com/en-us/HT201301) capability to directly transfer files to your device.
+
+**Important:** only project files created using the Unicode version of Adapt It desktop are compatible with Adapt It Mobile.
+
+#### Step 2: Import (copy) the file into Adapt It Mobile
+
 Complete the following steps to copy a project file into Adapt It Mobile:
 
-1. Copy the project file to the mobile device. For more information on how to do this, [click on this link](https://github.com/adapt-it/adapt-it-mobile/wiki/Before-you-install-Adapt-It-Mobile#copy-any-documents-you-will-be-adapting-to-your-device) .
-2. Open Adapt It Mobile.
-3. On the Welcome screen, click the Continue button.
-4. On the Get Started screen, click the Copy project icon: ![Copy Project]({{ site.baseurl }}/assets/img//project-copy.png)
-5. Select the project file from the list that appears:
-s
+1. Open Adapt It Mobile.
+2. On the Welcome screen, click the Continue button.
+3. On the Get Started screen, click the Copy project icon: ![Copy Project]({{ site.baseurl }}/assets/img//project-copy.png)
+4. Select the project file from the list that appears:
+
 ![Project File]({{ site.baseurl }}/assets/img/AIproject.png)
 
-If no files are listed and a warning displays instead, verify that you have successfully copied the project file to the mobile device.
-6. Click the OK button to return to the main window.
+If no files are listed and a warning displays instead, verify that you have successfully copied the project file to the mobile device, and that it is in the proper directory. Also verify that you have allowed Adapt It Mobile read permissions on your device.
+5. Click the OK button to return to the main window.
 
 ----
 
