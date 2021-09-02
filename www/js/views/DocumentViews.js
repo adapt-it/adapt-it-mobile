@@ -1966,11 +1966,40 @@ define(function (require) {
                             }
                             // also do some processing for verse markers
                             if (markers && markers.indexOf("\\v ") !== -1) {
-                                verseCount++;
-                                // check this sourcephrase for a target - if there is one, consider this verse adapted
-                                // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
-                                if ($(this).attr('t')) {
-                                    lastAdapted++;
+                                // EDB 30 Aug 2021: add blank verses
+                                var vCount = (markers.match(/\\v /g) || []).length;
+                                verseCount = verseCount + vCount; // most of the time, this will just increment by 1
+                                if (vCount > 1) {
+                                    // special case -- blank verses
+                                    var tmpMrks;
+                                    for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
+                                        // pull out the marker for this blank verse
+                                        tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
+                                        markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                        // create a blank sourcephrase (no source or target) for each verse
+                                        spID = Underscore.uniqueId();
+                                        sp = new spModel.SourcePhrase({
+                                            spid: spID,
+                                            norder: norder,
+                                            chapterid: chapterID,
+                                            markers: tmpMrks,
+                                            orig: null,
+                                            prepuncts: prepuncts,
+                                            midpuncts: midpuncts,
+                                            follpuncts: follpuncts,
+                                            source: "",
+                                            target: ""
+                                        });
+                                        prepuncts = "";
+                                        follpuncts = "";
+                                        punctIdx = 0;
+                                        norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                        sps.push(sp);
+                                        // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                        if ((sps.length % MAX_BATCH) === 0) {
+                                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        }
+                                    }
                                 }
                             }
                             s = arr[i];
