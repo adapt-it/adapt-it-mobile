@@ -328,6 +328,7 @@
         "lblSelectDoc": "Sélectionnez des documents",
         "lblSortModified": "Récent",
         "lblSortName": "Nom",
+        "lblEditBlankPiles": "Autoriser l'édition de textes vides",
         "dscErrUnsupportedEncoding": "Encodage non pris en charge (valeur du marqueur /ide). Adapt It Mobile ne prend en charge que l'encodage UTF-8.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },

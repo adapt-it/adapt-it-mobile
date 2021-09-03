@@ -1039,7 +1039,11 @@ define(function (require) {
         EditorAndUIView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplEditorPrefs),
             events: {
+                "click #EditBlankPiles": "onEditBlankPiles",
                 "change #language":   "onSelectCustomLanguage"
+            },
+            onEditBlankPiles: function () {
+                // TODO: warning that turning this on can cause conflicts during subsequent merges 
             },
             onSelectCustomLanguage: function () {
                 // change the radio button selection
@@ -1060,6 +1064,11 @@ define(function (require) {
                     $("#StopAtBoundaries").prop("checked", localStorage.getItem("StopAtBoundaries") === "true");
                 } else {
                     $("#StopAtBoundaries").prop("checked", true); // default is selected
+                }
+                if (localStorage.getItem("AllowEditBlankSP")) {
+                    $("#EditBlankPiles").prop("checked", localStorage.getItem("AllowEditBlankSP") === "true");
+                } else {
+                    $("#EditBlankPiles").prop("checked", false); // default is false (disabled)
                 }
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
@@ -1310,6 +1319,7 @@ define(function (require) {
                     localStorage.setItem(("CopySource"), $("#CopySource").is(":checked") ? true : false);
                     localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
                     localStorage.setItem(("StopAtBoundaries"), $("#StopAtBoundaries").is(":checked") ? true : false);
+                    localStorage.setItem(("AllowEditBlankSP"), $("#EditBlankPiles").is(":checked") ? true : false);
                     if ($("#customLanguage").is(":checked")) {
                         // Use a custom language
                         loc = $('#language').val();
