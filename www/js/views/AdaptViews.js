@@ -363,6 +363,7 @@ define(function (require) {
             chapterid: 0,
             chapterName: "",
             spSearchList: null,
+            allowEditBlankSP: false,
 
             template: Handlebars.compile(tplSourcePhraseList),
 
@@ -372,6 +373,10 @@ define(function (require) {
                 // - one right now to say "please wait..."
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
+                // AIM 1.6.0 - user setting to allow editing blank/empty verses
+                if (localStorage.getItem("AllowEditBlankSP")) {
+                    this.allowEditBlankSP = (localStorage.getItem("AllowEditBlankSP") === "true");
+                } 
                 // clean up -- if we have a searchList on the application, but this chapter isn't in that searchList,
                 // clear out the list
                 if (window.Application.searchList !== null) {
@@ -477,6 +482,10 @@ define(function (require) {
                     if (selectedStart !== null) {
                         $("#mnuTranslations").removeClass("menu-disabled");
                         $("#mnuFindRS").removeClass("menu-disabled");
+                    }
+                    // disable editing blank verses if needed
+                    if (this.allowEditBlankSP === false) {
+                        $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
                     }
                 }
                 return this;
@@ -2339,6 +2348,10 @@ define(function (require) {
                     $(".target").prop('contenteditable', true); // set target to read-write
                     $("#lblPreview").html(i18next.t("view.lblShowPreview"));
                     inPreview = false;
+                    // disable editing blank verses if needed
+                    if (this.allowEditBlankSP === false) {
+                        $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
+                    }
                 } else {
                     // clear out any selections
                     this.clearSelection();
