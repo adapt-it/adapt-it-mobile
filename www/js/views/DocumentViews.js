@@ -1717,6 +1717,15 @@ define(function (require) {
                 };
                 
                 // USFM document
+                // (AIM 1.6.0) this merges a USFM document with an existing document in the DB.
+                // If bOverride is true, the document being imported takes precedence in any conflict;
+                // otherwise, the conflicts are collected and the user is prompted to decide which
+                // version to keep.
+                var mergeUSFMDoc = function (contents, bOverride) {
+
+                };
+
+                // USFM document
                 // This is the file format for Bibledit and Paratext
                 // See http://paratext.org/about/usfm for format specification;
                 // Currently supporting USFM v3.0 (see tag list in utils/usfm.js)
