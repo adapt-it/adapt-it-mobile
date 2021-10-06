@@ -1718,10 +1718,13 @@ define(function (require) {
                 
                 // USFM document
                 // (AIM 1.6.0) this merges a USFM document with an existing document in the DB.
-                // If bOverride is true, the document being imported takes precedence in any conflict;
-                // otherwise, the conflicts are collected and the user is prompted to decide which
-                // version to keep.
-                var mergeUSFMDoc = function (contents, bOverride) {
+                // params:
+                // - contents: string contents of the book being imported
+                // - theBook: book object that we're merging into
+                // - bOverride: if true, forces the imported book to take precedence in any verse collision.
+                //              if false, saves any collisions until after the import, then asks the user which
+                //              version takes precedence in each case.
+                var mergeUSFMDoc = function (contents, theBook, bOverride) {
 
                 };
 
@@ -1744,7 +1747,7 @@ define(function (require) {
                     var chaps = [];
                     var mkr = null;
                     var encoding = "";
-                    var regex1 = new RegExp(/\\c\s1\s/);
+                    var regex1 = new RegExp(/\\c\s1\s/); // specifically chapter 1
 
                     console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
@@ -1768,7 +1771,8 @@ define(function (require) {
                             bookName = fileName;
                         }
                     }
-                    // find the ID of this book
+                    // find the ID of this book:
+                    // any USFM file MUST have an \id marker
                     index = contents.indexOf("\\id");
                     if (index === -1) {
                         // no ID found -- return
@@ -1777,7 +1781,7 @@ define(function (require) {
                     }
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
-                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
+                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0]; // our scripture ID
                     index = contents.indexOf("\\usfm");
                     if (index !== -1) {
                         // usfm version 3.0 or later, probably
@@ -1794,6 +1798,30 @@ define(function (require) {
                             return false;
                         }
                     }
+                    var entries = books.where({scrid: (scrID.get('id'))});
+                    if (entries.length > 0) {
+                        // this book (or a portion thereof) has already been imported -- 
+                        // if any of the chapters overlap, ask the user what they want to do
+                        // (cancel, use the imported doc (override any conflicts with the imported version), or 
+                        // merge this doc with the existing one)
+                        navigator.notification.confirm(
+                            i18n.t("view.ttlDupImport", {document: bookName}), // message
+                            function (buttonIndex) {
+                                if (buttonIndex === 1) {
+                                    // Cancel
+                                } else if (buttonIndex === 2) {
+                                    // Override
+                                    mergeUSFMDoc(contents, entries[0], true);
+                                } else {
+                                    // Merge
+                                    mergeUSFMDoc(contents, entries[0], false);
+                                }
+                            },
+                            'Warning',           // title
+                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName}),i18n.t("view.optMergeImport")]     // buttonLabels
+                        );                        
+                    }
+
                     // Issue #246: scripture portion support -- 2 checks for portions:
                     // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
                     // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
