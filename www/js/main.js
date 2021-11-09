@@ -16,7 +16,7 @@ require.config({
     // hopscotch        0.3.1+  ** NOTE: if upgrading, fold in the hack in hopscotch.js (search for EDB HACK) -
     //                          ** This is for hopscotch on smaller screens, issue #30 on hopscotch, or #189 on AIM 
     // i18next          1.9.0
-    // jquery           3.5.1
+    // jquery           3.6.0
     // marionette       2.4.2
     // require          2.3.6
     // spectrum         1.8.1
@@ -38,7 +38,7 @@ require.config({
         'jquery-hammerjs': 'jquery.hammer',
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min', //'jquery-i18next.min',//
-        'jquery': 'jquery-3.5.1.min',
+        'jquery': 'jquery-3.6.0.min',
         'languages': '../js/utils/languages',
         marionette: 'backbone.marionette',
         'featherlight': 'featherlight.min',

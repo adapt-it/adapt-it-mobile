@@ -330,10 +330,9 @@
         "lblSortName": "Name",
         "lblEditBlankPiles": "Allow Editing of Blank Source Phrases",
         "dscErrUnsupportedEncoding": "Unsupported encoding (/ide marker value). Adapt It Mobile currently only supports UTF-8 encoding.",
-        "ttlDupImport": "Document \"__document__\" has already been imported. What do you want to do?",
-        "optCancelImport": "Cancel this import",
+        "ttlDupImport": "Document \"__document__\" has already been imported. Do you want to update the existing document? (Any translations on existing verses will be lost.)",
+        "optCancelImport": "Cancel",
         "optUpdateImport": "Update \"__document__\"",
-        "optMergeImport": "Merge documents",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

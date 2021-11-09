@@ -330,10 +330,9 @@
         "lblSortName": "Nombre",
         "lblEditBlankPiles": "Permitir la edición de textos que están vacíos",
         "dscErrUnsupportedEncoding": "Codificación no admitida (valor de marcador / ide). Adapt It Mobile solo admite la codificación UTF-8.",
-        "ttlDupImport": "El documento \"__document__\" ya se ha importado.",
+        "ttlDupImport": "El documento \"__document__\" ya se ha importado. ¿Quieres actualizar el documento? (Se perderán todas las traducciones de versículos que ya se hayan importado).",
         "optCancelImport": "Cancelar",
         "optUpdateImport": "Actualizar \"__document__\"",
-        "optMergeImport": "Fusionar los documentos",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

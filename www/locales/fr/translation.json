@@ -330,10 +330,9 @@
         "lblSortName": "Nom",
         "lblEditBlankPiles": "Autoriser l'édition de textes vides",
         "dscErrUnsupportedEncoding": "Encodage non pris en charge (valeur du marqueur /ide). Adapt It Mobile ne prend en charge que l'encodage UTF-8.",
-        "ttlDupImport": "Le document \"__document__\" a déjà été importé.",
+        "ttlDupImport": "Le document \"__document__\" a déjà été importé. Voulez-vous mettre à jour le document ? (Toutes les traductions de versets déjà importés seront perdues.)",
         "optCancelImport": "Annuler",
         "optUpdateImport": "Réactualiser \"__document__\"",
-        "optMergeImport": "Fusionner des documents",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
