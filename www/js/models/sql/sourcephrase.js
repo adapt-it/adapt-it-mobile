@@ -31,6 +31,7 @@ define(function (require) {
             defaults: {
                 spid: "",
                 chapterid: "",
+                vid: "", // 1.6 (verse ID for multiple imports)
                 norder: 0,
                 markers: "",
                 orig: null,
@@ -62,9 +63,9 @@ define(function (require) {
             },
             create: function () {
                 var attributes = this.attributes;
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
+                    tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
@@ -74,9 +75,9 @@ define(function (require) {
             },
             update: function () {
                 var attributes = this.attributes;
-                var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, flags=?, texttype=?, gloss=?, freetrans=?, note=?, srcwordbreak=?, tgtwordbreak=?, source=?, target=? WHERE spid=?;';
+                var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, vid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, flags=?, texttype=?, gloss=?, freetrans=?, note=?, srcwordbreak=?, tgtwordbreak=?, source=?, target=? WHERE spid=?;';
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("SELECT error: " + err.message);
@@ -135,7 +136,7 @@ define(function (require) {
 
             resetFromDB: function () {
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS sourcephrase (id INTEGER primary key, norder REAL, spid TEXT, chapterid TEXT, vid TEXT, markers TEXT, orig TEXT, prepuncts TEXT, midpuncts TEXT, follpuncts TEXT, flags char(22), texttype INTEGER, gloss TEXT, freetrans TEXT, note TEXT, srcwordbreak TEXT, tgtwordbreak TEXT, source TEXT, target TEXT);');
                 }, function (err) {
                     console.log("resetFromDB: CREATE TABLE error: " + err.message);
                 });
@@ -177,17 +178,39 @@ define(function (require) {
             clearLocal: function () {
                 sourcephrases.length = 0;
             },
+
+            // Delete the specified models from the DB --
+            // Note that clearLocal() should be called after this to clear the in-memory objects, 
+            // followed by a read() to get a fresh copy of the "real" DB objects
+            deleteBatch: function (models) {
+                var deferred = $.Deferred();
+                var sql = "DELETE FROM sourcephrase WHERE vid=(?);";
+                var start = new Date().getTime();
+                console.log("deleteBatch: " + models.length + " objects");
+                window.Application.db.transaction(function (tx) {
+                    Underscore.each(models, function (sp) {
+                        tx.executeSql(sql, [sp.attributes.spid]);
+                    });
+                    var end = new Date().getTime();
+                    console.log("deleteBatch: " + models.length + " objects, " + (end - start));
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });
+                return deferred.promise();
+            },
             
             // add an array of SourcePhrase objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
                 console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
-                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.flags, sp.attributes.texttype, sp.attributes.gloss, sp.attributes.freetrans, sp.attributes.note, sp.attributes.srcwordbreak, sp.attributes.tgtwordbreak, sp.attributes.source, sp.attributes.target]);
+                        tx.executeSql(sql, [sp.attributes.spid, sp.attributes.norder, sp.attributes.chapterid, sp.attributes.vid, sp.attributes.markers, sp.attributes.orig, sp.attributes.prepuncts, sp.attributes.midpuncts, sp.attributes.follpuncts, sp.attributes.flags, sp.attributes.texttype, sp.attributes.gloss, sp.attributes.freetrans, sp.attributes.note, sp.attributes.srcwordbreak, sp.attributes.tgtwordbreak, sp.attributes.source, sp.attributes.target]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));

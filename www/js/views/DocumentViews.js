@@ -43,11 +43,13 @@ define(function (require) {
         fileCount       = 0,
         bookid          = "",
         puncts          = [],
-        punctsSource     = [],
-        punctsTarget     = [],
+        punctsSource    = [],
+        punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
+        bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
+                                // in the database?
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
                                     // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
         // this is the complete list of currently supported params you can pass to the plugin (all optional)
@@ -351,6 +353,7 @@ define(function (require) {
                                     spid: spID,
                                     norder: norder,
                                     chapterid: chapterID,
+                                    vid: "", // no verses (plain text)
                                     markers: markers,
                                     orig: null,
                                     prepuncts: prepuncts,
@@ -416,6 +419,7 @@ define(function (require) {
                     var lastAdapted = 0;
                     var closingMarker = "";
                     var nodeStyle = "";
+                    var verseID = Underscore.uniqueId(); // pre-verse 1 initialization
                     var parseNode = function (element) {
                         nodeStyle = "";
                         // process the node itself
@@ -470,6 +474,7 @@ define(function (require) {
                                 break;
                             case "verse":
                                 verseCount++;
+                                verseID = Underscore.uniqueId();
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
@@ -688,6 +693,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: null,
                                             prepuncts: prepuncts,
@@ -1129,6 +1135,7 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
+                    var verseID = new Underscore.uniqueId();
                     var lastAdapted = 0;
                     var markers = "";
                     var firstChapterNumber = "1";
@@ -1409,6 +1416,7 @@ define(function (require) {
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
+                            verseID = Underscore.uniqueId();
                             // check this sourcephrase for a target - if there is one, consider this verse adapted
                             // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
                             if ($(this).attr('t')) {
@@ -1441,6 +1449,7 @@ define(function (require) {
                             spid: spID,
                             norder: norder,
                             chapterid: chapterID,
+                            vid: verseID,
                             markers: markers, //$(this).attr('m'),
                             orig: (origTarget.length > 0) ? origTarget : null,
                             prepuncts: $(this).attr('pp'),
@@ -1523,6 +1532,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: (origTarget.length > 0) ? origTarget : null,
                                             prepuncts: "",
@@ -1570,6 +1580,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: (origTarget.length > 0) ? origTarget : null,
                                             prepuncts: "",
@@ -1607,6 +1618,7 @@ define(function (require) {
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
+                                        vid: verseID,
                                         markers: markers,
                                         orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
@@ -1643,6 +1655,7 @@ define(function (require) {
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
+                                        vid: verseID,
                                         markers: markers,
                                         orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
@@ -1717,18 +1730,6 @@ define(function (require) {
                 };
                 
                 // USFM document
-                // (AIM 1.6.0) this merges a USFM document with an existing document in the DB.
-                // params:
-                // - contents: string contents of the book being imported
-                // - theBook: book object that we're merging into
-                // - bOverride: if true, forces the imported book to take precedence in any verse collision.
-                //              if false, saves any collisions until after the import, then asks the user which
-                //              version takes precedence in each case.
-                var mergeUSFMDoc = function (contents, theBook, bOverride) {
-
-                };
-
-                // USFM document
                 // This is the file format for Bibledit and Paratext
                 // See http://paratext.org/about/usfm for format specification;
                 // Currently supporting USFM v3.0 (see tag list in utils/usfm.js)
@@ -1741,13 +1742,19 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var lastAdapted = 0;
                     var verseCount = 0;
+                    var verseID = Underscore.uniqueId();
                     var i = 0;
                     var punctIdx = 0;
                     var stridx = 0;
+                    var verseNum = "";
+                    var verseEndIdx = 0;
+                    var verseFound = false;
                     var chaps = [];
                     var mkr = null;
+                    var strImportedVerse = "";
                     var encoding = "";
-                    var regex1 = new RegExp(/\\c\s1\s/); // specifically chapter 1
+                    var spsExisting = null;
+                    var arrSPIDs = [];
 
                     console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
@@ -1800,86 +1807,86 @@ define(function (require) {
                     }
                     var entries = books.where({scrid: (scrID.get('id'))});
                     if (entries.length > 0) {
-                        // this book (or a portion thereof) has already been imported -- 
+                        // this book (or a portion thereof) has already been imported --
+                        // use this book object instead of creating a new one
+                        book = entries[0];
+                        // verify that the chapters have been created (this is for pre-1.6.0 imports)
+                        if (scrID.chapters.length !== book.chapters.length) {
+                            // create empty chapters (i.e. with no verses) that are missing in our book
+                            for (i=0; i < scrID.chapters.length; i++) {
+                                chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
+                                // does this chapter name exist?
+                                if (!chapters.where({name: chapterName})[0]) {
+                                    // chapter doesn't exist -- create it now
+                                    chapterID = Underscore.uniqueId();
+                                    chaps.push(chapterID);
+                                    chapter = new chapModel.Chapter({
+                                        chapterid: chapterID,
+                                        bookid: bookID,
+                                        projectid: project.get('projectid'),
+                                        name: chapterName,
+                                        lastadapted: 0,
+                                        versecount: 0
+                                    });
+                                    chapters.add(chapter);                            
+                                }
+                            }
+                        }
                         // if any of the chapters overlap, ask the user what they want to do
-                        // (cancel, use the imported doc (override any conflicts with the imported version), or 
-                        // merge this doc with the existing one)
+                        // (cancel or use the imported doc (override any conflicts with the imported version)
                         navigator.notification.confirm(
                             i18n.t("view.ttlDupImport", {document: bookName}), // message
                             function (buttonIndex) {
                                 if (buttonIndex === 1) {
-                                    // Cancel
-                                } else if (buttonIndex === 2) {
-                                    // Override
-                                    mergeUSFMDoc(contents, entries[0], true);
+                                    // Cancel - return to the main screen
+                                    if (window.history.length > 1) {
+                                        // there actually is a history -- go back
+                                        window.history.back();
+                                    } else {
+                                        // no history (import link from outside app) -- just go home
+                                        window.location.replace("");
+                                    }
                                 } else {
-                                    // Merge
-                                    mergeUSFMDoc(contents, entries[0], false);
+                                    // Override
+                                    bOverride = true;
                                 }
                             },
                             'Warning',           // title
-                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName}),i18n.t("view.optMergeImport")]     // buttonLabels
+                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
                         );                        
-                    }
-
-                    // Issue #246: scripture portion support -- 2 checks for portions:
-                    // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
-                    // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
-                    // These are not perfect checks -- versification sometimes doesn't match
-                    if (regex1.test(contents) === false) {
-                        // there is an \id, but no chapter 1 --> assume scripture portion
-                        isPortion = true;
-                        var newBookName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: i18n.t("view.lblPortion")});
-                        bookName = newBookName;
                     } else {
-                        isPortion = false;
-                    }
-                    // check for duplicate book imports
-                    if (isPortion === false) {
-                        var entries = books.where({scrid: (scrID.get('id'))});
-                        for (i = 0; i < entries.length; i++) {
-                            if (entries[i].attributes.bookid.indexOf("p_") === -1) {
-                                // attempting to import a duplicate full book -- error out
-                                errMsg = i18n.t("view.dscErrDuplicateFile");
-                                return false;
-                            }
+                        // new import -- create the book object, with all the chapter objects 
+                        // (with zero verses for now; they are populated below)
+                        bookID = Underscore.uniqueId();
+                        book = new bookModel.Book({
+                            bookid: bookID,
+                            projectid: project.get('projectid'),
+                            scrid: scrID.get('id'),
+                            name: bookName,
+                            filename: fileName,
+                            chapters: [] // arr -- updated at the end of the import
+                        });
+                        books.add(book);
+                        for (i=0; i < scrID.chapters.length; i++) {
+                            chapterID = Underscore.uniqueId();
+                            chaps.push(chapterID);
+                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
+                            chapter = new chapModel.Chapter({
+                                chapterid: chapterID,
+                                bookid: bookID,
+                                projectid: project.get('projectid'),
+                                name: chapterName,
+                                lastadapted: 0,
+                                versecount: 0
+                            });
+                            chapters.add(chapter);                            
                         }
                     }
-                    // add a book and chapter
-                    if (isPortion === true) {
-                        bookID = Underscore.uniqueId('p_');
-                    } else {
-                        bookID = Underscore.uniqueId();
-                    }
-                    book = new bookModel.Book({
-                        bookid: bookID,
-                        projectid: project.get('projectid'),
-                        scrid: scrID.get('id'),
-                        name: bookName,
-                        filename: fileName,
-                        chapters: [] // arr
-                    });
-                    books.add(book);
-                    // Note that we're adding chapter 1 before we reach the \c 1 marker in the file --
-                    // Usually there's a fair amount of front matter before we reach the chapter itself;
-                    // rather than creating a chapter 0 (which would throw off the search stuff), we'll
-                    // just add the front matter to chapter 1.
-                    chapterID = Underscore.uniqueId();
-                    chaps.push(chapterID);
-                    if (isPortion === true) {
-                        chapterName = bookName;
-                    } else {
-                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
-                    }
-                    chapter = new chapModel.Chapter({
-                        chapterid: chapterID,
-                        bookid: bookID,
-                        projectid: project.get('projectid'),
-                        name: chapterName,
-                        lastadapted: 0,
-                        versecount: 0
-                    });
-                    chapters.add(chapter);
+                    // reset the objects to the beginning of this book (chapter 1)
+                    chapter = chapters.at(0);
+                    chapterID = chapter.get("chapterid");
+                    chapterName = chapter.get("name");
+
                     // set the lastDocument / lastAdapted<xxx> values if not already set
                     if (project.get('lastDocument') === "") {
                         project.set('lastDocument', bookName);
@@ -1927,6 +1934,7 @@ define(function (require) {
                                     spid: spID,
                                     norder: norder,
                                     chapterid: chapterID,
+                                    vid: verseID,
                                     markers: markers,
                                     orig: null,
                                     prepuncts: prepuncts,
@@ -1969,10 +1977,8 @@ define(function (require) {
                             i++;
                         } else {
                             // "normal" sourcephrase token
-                            // Before creating the sourcephrase, look to see if we need to create a chapter element
-                            // (note that we've already created chapter 1, so skip it if we come across it)
-                            // Also note that we don't do the new chapter if this is a Scripture portion
-                            if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1 && isPortion === false) {
+                            // Chapter element -- set the chapter ID to the one we created earlier
+                            if (markers && markers.indexOf("\\c ") !== -1) {
                                 // update the last adapted for the previous chapter before closing it out
                                 chapter.set('versecount', verseCount, {silent: true});
                                 chapter.set('lastadapted', lastAdapted, {silent: true});
@@ -1987,22 +1993,63 @@ define(function (require) {
                                     // space after the chapter #
                                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
                                 }
-                                chapterID = Underscore.uniqueId();
-                                chaps.push(chapterID);
-                                // create the new chapter
-                                chapter = new chapModel.Chapter({
-                                    chapterid: chapterID,
-                                    bookid: bookID,
-                                    projectid: project.get('projectid'),
-                                    name: chapterName,
-                                    lastadapted: 0,
-                                    versecount: 0
-                                });
-                                chapters.add(chapter);
-//                                console.log(chapterName + ": " + chapterID);
+                                // find the chapter in our list
+                                chapter = chapters.where({name: chapterName})[0];
+                                chapterID = chapter.get("chapterid");
+                                spsExisting = sourcePhrases.where({chapterid: chapterID}); // existing source phrases in this chapter (might be empty)
+                                console.log(chapterName + ": " + chapterID + "(" + spsExisting.length + " sourcephrases)");
                             }
                             // also do some processing for verse markers
                             if (markers && markers.indexOf("\\v ") !== -1) {
+                                if (spsExisting.length > 0) {
+                                    // we have some existing sourcephrases for this chapter -- see if this verse needs merging
+                                    // get the verse # (string -- we'll be looking in the sourcephrase markers)
+                                    stridx = markers.indexOf("\\v ") + 3;
+                                    if (markers.lastIndexOf(" ") < stridx) {
+                                        // no space after the chapter # (it's the ending of the string)
+                                        verseNum = "\\v " + markers.substr(stridx);
+                                    } else {
+                                        // space after the chapter #
+                                        verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
+                                    }
+                                    // find the verse number in the spsExisting list's markers
+                                    if (verseFound === true) {
+                                        // verse needs merging -- collect the source phrases up to the next verse in the DB
+                                        // compare the imported verse string to the verse in the DB
+                                        if (contents.indexOf("\\v ", contents.indexOf(verseNum) + 2) > 0) {
+                                            verseEndIdx = contents.indexOf("\\v ", contents.indexOf(verseNum) + 2);
+                                        } else {
+                                            verseEndIdx = contents.length - 1; // last verse
+                                        }
+                                        strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
+                                        // reconstitute the verse in the DB
+
+
+                                        if (strImportedVerse !== "") {
+                                            // verses differ -- replace the existing sourcephrases with the imported data
+                                            // get the order of the first sourcephrase
+                                            norder = 1; // TODO: replace
+                                            // delete the sourcephrases
+                                            // iterate through the selected documents
+                                            $('.li-chk.chk-selected').each(function () {
+                                                key = this.parentElement.id.substr(3);
+                                                console.log("deleting bookID: " + key);
+                                                // are we deleting something we were just working on?
+                                                if (project.lastAdaptedSPID === key) {
+                                                    // yup -- flag this condition, so we can deal with it below
+                                                    deletedCurrentDoc = true;
+                                                }
+                                                spid = sourcePhrases.findWhere({spid: key});
+                                                if (spid) {
+                                                    // remove from the collection
+                                                    sourcePhrases.remove(spid);
+                                                    // destroy the book and contents (SQL includes chapters and sourcephrases)
+                                                    spid.destroy();
+                                                }
+                                            });
+                                        }
+                                    }                                    
+                                }
                                 // EDB 30 Aug 2021: add blank verses
                                 var vCount = (markers.match(/\\v /g) || []).length;
                                 verseCount = verseCount + vCount; // most of the time, this will just increment by 1
@@ -2019,6 +2066,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: tmpMrks,
                                             orig: null,
                                             prepuncts: prepuncts,
@@ -2073,6 +2121,7 @@ define(function (require) {
                                     spid: spID,
                                     norder: norder,
                                     chapterid: chapterID,
+                                    vid: verseID,
                                     markers: markers,
                                     orig: null,
                                     prepuncts: prepuncts,

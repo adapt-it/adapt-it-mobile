@@ -7,7 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         projects    = [],
-        CURRSCHEMA  = 2,
+        CURRSCHEMA  = 3,
         
         // ---
         // STATIC METHODS
@@ -46,6 +46,7 @@ define(function (require) {
                             tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN note TEXT;");
                             tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN srcwordbreak TEXT;");
                             tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN tgtwordbreak TEXT;");
+                            tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN vid TEXT;"); // this comes in 1.6, but we'll add it here
                         }
                     }, function (err) {
                         // exception thrown -- assume table doesn't exist
@@ -126,6 +127,104 @@ define(function (require) {
                             });
                         } else {
                             console.log("upgradeSchema: no targetunit table -- table upgrade not needed");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error: " + err.message);
+                    });
+                    // update changes for 1.6 
+                    // First, check to see if the sourcephrase table exists
+                    if (device && (device.platform !== "browser")) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any sourcephrase items (i.e., they've imported a document) AND the new column isn't there, we'll need to add it;
+                        // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
+                        if (res.rows.length > 0) {
+                            console.log("upgradeSchema: sourcephrase table exists. Checking for schema 3 columns...");
+                            if (device && (device.platform !== "browser")) {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
+                            } else {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                // If the user has created any KB items (likely), we'll need to add 2 columns;
+                                // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
+                                if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
+                                    // sourcephrase table exists -- need to add 2 columns
+                                    console.log("upgradeSchema: sourcephrase table exists, and is old: adding columns");
+                                    window.Application.db.transaction(function (tx) {
+                                        tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN vid TEXT;");
+                                    }, function (err) {
+                                        // exception thrown -- assume table doesn't exist
+                                        console.log("upgradeSchema: error updating sourcephrase table: " + err.message);
+                                    });
+                                } else {
+                                    console.log("upgradeSchema: sourcephrase table populated, but already has column \'vid\' -- no need to alter table");
+                                }
+                            }, function (err) {
+                                console.log("upgradeSchema: error getting pragma_table_info for sourcephrase: " + err.message);
+                            });
+                        } else {
+                            console.log("upgradeSchema: no sourcephrase table -- table upgrade not needed");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error: " + err.message);
+                    });
+                }, function (e) {
+                    console.log("upgradeSchema error: " + e.message);
+                });
+            }
+            if (fromVersion === 2) {
+                // AIM version 1.6 (multiple imports for KIT) -- one column in the sourcephrase table
+                window.Application.db.transaction(function (tx) {
+                    var theSQL = "";
+                    // version table exists (see logic above), but is at version 2; update it here
+                    tx.executeSql('UPDATE version SET schemaver=? WHERE id=?;', [CURRSCHEMA, 1], function (tx, res) {
+                        console.log("version table updated -- schema version: " + CURRSCHEMA);
+                    }, function (err) {
+                        console.log("failed to set the version schema: " + err);
+                    });
+                    // update changes for 1.6 
+                    // First, check to see if the sourcephrase table exists
+                    if (device && (device.platform !== "browser")) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any sourcephrase items (i.e., they've imported a document) AND the new column isn't there, we'll need to add it;
+                        // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
+                        if (res.rows.length > 0) {
+                            console.log("upgradeSchema: sourcephrase table exists. Checking for schema 3 columns...");
+                            if (device && (device.platform !== "browser")) {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
+                            } else {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                // If the user has created any KB items (likely), we'll need to add 2 columns;
+                                // if there's no KB, it'll create the table with all the needed columns (see sourcephrase.js)
+                                if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
+                                    // sourcephrase table exists -- need to add 2 columns
+                                    console.log("upgradeSchema: sourcephrase table exists, and is old: adding columns");
+                                    window.Application.db.transaction(function (tx) {
+                                        tx.executeSql("ALTER TABLE sourcephrase ADD COLUMN vid TEXT;");
+                                    }, function (err) {
+                                        // exception thrown -- assume table doesn't exist
+                                        console.log("upgradeSchema: error updating sourcephrase table: " + err.message);
+                                    });
+                                } else {
+                                    console.log("upgradeSchema: sourcephrase table populated, but already has column \'vid\' -- no need to alter table");
+                                }
+                            }, function (err) {
+                                console.log("upgradeSchema: error getting pragma_table_info for sourcephrase: " + err.message);
+                            });
+                        } else {
+                            console.log("upgradeSchema: no sourcephrase table -- table upgrade not needed");
                         }
                     }, function (err) {
                         // exception thrown -- assume table doesn't exist
