@@ -303,6 +303,7 @@
         <splash src="www/res/screen/ios/Default@2x~universal~anyany.png" />
     </platform>
     <platform name="browser">
+        <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
         <preference name="res/icon/electron/icon.png" />
         <preference name="SplashScreen" value="res/screen/ios/Default@2x~universal~anyany.png" />
         <preference name="AutoHideSplashScreen" value="true" />

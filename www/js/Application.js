@@ -215,7 +215,7 @@ define(function (require) {
                 if (device && (device.platform !== "browser")) {
                     if (device.platform === "browser") {
                         // running in browser -- use WebSQL (Chrome / Safari ONLY)
-                        this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
+                        this.db = window.openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
                         this.onInitDB();
                     } else if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
