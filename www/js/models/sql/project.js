@@ -29,7 +29,7 @@ define(function (require) {
                         console.log("failed to set the version schema");
                     });
                     // does the sourcephrase table already exist? (probably, but just in case)
-                    if (device && (device.platform !== "browser")) {
+                    if (device) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
@@ -53,7 +53,7 @@ define(function (require) {
                         console.log("upgradeSchema: error updating sourcephrase table: " + err.message);
                     });
                     // update changes for 1.3 
-                    if (device && (device.platform !== "browser")) {
+                    if (device) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
@@ -90,7 +90,7 @@ define(function (require) {
                     });
                     // update changes for 1.3 
                     // First, check to see if the targetunit table exists
-                    if (device && (device.platform !== "browser")) {
+                    if (device) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
@@ -100,7 +100,7 @@ define(function (require) {
                         // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
                         if (res.rows.length > 0) {
                             console.log("upgradeSchema: targetunit table exists. Checking for schema 2 columns...");
-                            if (device && (device.platform !== "browser")) {
+                            if (device) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
                             } else {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
@@ -134,7 +134,7 @@ define(function (require) {
                     });
                     // update changes for 1.6 
                     // First, check to see if the sourcephrase table exists
-                    if (device && (device.platform !== "browser")) {
+                    if (device) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
@@ -144,7 +144,7 @@ define(function (require) {
                         // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
                         if (res.rows.length > 0) {
                             console.log("upgradeSchema: sourcephrase table exists. Checking for schema 3 columns...");
-                            if (device && (device.platform !== "browser")) {
+                            if (device) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
                             } else {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
@@ -190,7 +190,7 @@ define(function (require) {
                     });
                     // update changes for 1.6 
                     // First, check to see if the sourcephrase table exists
-                    if (device && (device.platform !== "browser")) {
+                    if (device) {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
                     } else {
                         theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'sourcephrase\';";
@@ -200,7 +200,7 @@ define(function (require) {
                         // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
                         if (res.rows.length > 0) {
                             console.log("upgradeSchema: sourcephrase table exists. Checking for schema 3 columns...");
-                            if (device && (device.platform !== "browser")) {
+                            if (device) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
                             } else {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
@@ -243,13 +243,13 @@ define(function (require) {
         checkSchema = function () {
             var theSQL = "";
             console.log("checkSchema: entry");
-            if (typeof device === "undefined" || device.platform === "browser") {
+            if (typeof device === "undefined") {
                 return;
             }
             window.Application.db.transaction(function (tx) {
                 // Check 1: is there a version table? 
                 // If not, this is a new DB
-                if (device && (device.platform !== "browser")) {
+                if (device) {
                     theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";
                 } else {
                     theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'version\';";

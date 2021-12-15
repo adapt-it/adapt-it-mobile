@@ -1751,7 +1751,9 @@ define(function (require) {
                     var verseFound = false;
                     var chaps = [];
                     var mkr = null;
+                    var tmpnorder = 0;
                     var strImportedVerse = "";
+                    var strExistingVerse = "";
                     var encoding = "";
                     var spsExisting = null;
                     var arrSPIDs = [];
@@ -1807,7 +1809,29 @@ define(function (require) {
                     }
                     var entries = books.where({scrid: (scrID.get('id'))});
                     if (entries.length > 0) {
-                        // this book (or a portion thereof) has already been imported --
+                        // Existing doc -- ask the user what they want to do
+                        // (cancel or use the imported doc (override any conflicts with the imported version)
+                        navigator.notification.confirm(
+                            i18n.t("view.ttlDupImport", {document: bookName}), // message
+                            function (buttonIndex) {
+                                if (buttonIndex === 1) {
+                                    // Cancel - return to the main screen
+                                    if (window.history.length > 1) {
+                                        // there actually is a history -- go back
+                                        window.history.back();
+                                    } else {
+                                        // no history (import link from outside app) -- just go home
+                                        window.location.replace("");
+                                    }
+                                } else {
+                                    // Override
+                                    bOverride = true;
+                                }
+                            },
+                            'Warning',           // title
+                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
+                        );                        
+                        // User decided to import / override any existing content -- 
                         // use this book object instead of creating a new one
                         book = entries[0];
                         // verify that the chapters have been created (this is for pre-1.6.0 imports)
@@ -1832,28 +1856,6 @@ define(function (require) {
                                 }
                             }
                         }
-                        // if any of the chapters overlap, ask the user what they want to do
-                        // (cancel or use the imported doc (override any conflicts with the imported version)
-                        navigator.notification.confirm(
-                            i18n.t("view.ttlDupImport", {document: bookName}), // message
-                            function (buttonIndex) {
-                                if (buttonIndex === 1) {
-                                    // Cancel - return to the main screen
-                                    if (window.history.length > 1) {
-                                        // there actually is a history -- go back
-                                        window.history.back();
-                                    } else {
-                                        // no history (import link from outside app) -- just go home
-                                        window.location.replace("");
-                                    }
-                                } else {
-                                    // Override
-                                    bOverride = true;
-                                }
-                            },
-                            'Warning',           // title
-                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
-                        );                        
                     } else {
                         // new import -- create the book object, with all the chapter objects 
                         // (with zero verses for now; they are populated below)
@@ -2012,6 +2014,16 @@ define(function (require) {
                                         // space after the chapter #
                                         verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
                                     }
+                                    for (i=0; i<spsExisting.length; i++) {
+                                        if (spsExisting[i].get("markers").indexOf(verseNum) > -1) {
+                                            verseFound = true;
+                                            // keep track of the norder and verseID -- we'll use them below
+                                            tmpnorder = spsExisting[i].get("norder");
+                                            verseID = spsExisting[i].get("vid");
+                                            break; // exit the for loop
+                                        }
+                                    }
+
                                     // find the verse number in the spsExisting list's markers
                                     if (verseFound === true) {
                                         // verse needs merging -- collect the source phrases up to the next verse in the DB
@@ -2023,30 +2035,29 @@ define(function (require) {
                                         }
                                         strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
                                         // reconstitute the verse in the DB
-
-
-                                        if (strImportedVerse !== "") {
-                                            // verses differ -- replace the existing sourcephrases with the imported data
-                                            // get the order of the first sourcephrase
-                                            norder = 1; // TODO: replace
-                                            // delete the sourcephrases
-                                            // iterate through the selected documents
-                                            $('.li-chk.chk-selected').each(function () {
-                                                key = this.parentElement.id.substr(3);
-                                                console.log("deleting bookID: " + key);
-                                                // are we deleting something we were just working on?
-                                                if (project.lastAdaptedSPID === key) {
-                                                    // yup -- flag this condition, so we can deal with it below
-                                                    deletedCurrentDoc = true;
+                                        for (i=0; i<spsExisting.length; i++) {
+                                            if (spsExisting[i].get("vid") === verseID) {
+                                                // concatenate
+                                                // add markers, and if needed, pretty-print the text on a newline
+                                                if (spsExisting[i].get("markers").length > 0) {
+                                                    // now add the markers and a space
+                                                    strExistingVerse += spsExisting[i].get("markers") + " ";
                                                 }
-                                                spid = sourcePhrases.findWhere({spid: key});
-                                                if (spid) {
-                                                    // remove from the collection
+                                                strExistingVerse += value.get("source") + " ";
+                                            }
+                                        }
+                                        if (strImportedVerse !== strExistingVerse.trim()) {
+                                            // verses differ -- delete the existing sourcephrases from the DB (we'll import below)
+                                            for (i=0; i<spsExisting.length; i++) {
+                                                if (spsExisting[i].get("vid") === verseID) {
+                                                    // delete this guy
+                                                    spid = spsExisting[i].get("spid");
                                                     sourcePhrases.remove(spid);
-                                                    // destroy the book and contents (SQL includes chapters and sourcephrases)
                                                     spid.destroy();
                                                 }
-                                            });
+                                            }
+                                            // place the imported data where the existing verse used to be
+                                            norder = tmpnorder;
                                         }
                                     }                                    
                                 }
