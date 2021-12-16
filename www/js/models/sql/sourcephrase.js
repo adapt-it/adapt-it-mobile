@@ -63,7 +63,7 @@ define(function (require) {
             },
             create: function () {
                 var attributes = this.attributes;
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
@@ -204,7 +204,7 @@ define(function (require) {
             // add an array of SourcePhrase objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 console.log("addBatch: " + models.length + " objects");
                 console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);

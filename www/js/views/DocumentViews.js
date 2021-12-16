@@ -1808,6 +1808,7 @@ define(function (require) {
                         }
                     }
                     var entries = books.where({scrid: (scrID.get('id'))});
+                    var numChaps = scrID.get("chapters").length;
                     if (entries.length > 0) {
                         // Existing doc -- ask the user what they want to do
                         // (cancel or use the imported doc (override any conflicts with the imported version)
@@ -1835,9 +1836,9 @@ define(function (require) {
                         // use this book object instead of creating a new one
                         book = entries[0];
                         // verify that the chapters have been created (this is for pre-1.6.0 imports)
-                        if (scrID.chapters.length !== book.chapters.length) {
+                        if (numChaps !== book.chapters.length) {
                             // create empty chapters (i.e. with no verses) that are missing in our book
-                            for (i=0; i < scrID.chapters.length; i++) {
+                            for (i=0; i < numChaps; i++) {
                                 chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                                 // does this chapter name exist?
                                 if (!chapters.where({name: chapterName})[0]) {
@@ -1869,7 +1870,7 @@ define(function (require) {
                             chapters: [] // arr -- updated at the end of the import
                         });
                         books.add(book);
-                        for (i=0; i < scrID.chapters.length; i++) {
+                        for (i=0; i < numChaps; i++) {
                             chapterID = Underscore.uniqueId();
                             chaps.push(chapterID);
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
