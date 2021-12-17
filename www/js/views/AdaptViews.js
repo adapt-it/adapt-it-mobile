@@ -2413,7 +2413,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find(".target").html(selectedObj.get('target'));
                     }
-                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
                     placeHolderHtml = phHtml1 + theSP(phObj.attributes) + phHtml2;
@@ -2507,7 +2507,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find('.source').html(selectedObj.get('source'));
                     }
-                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), norder: nOrder, follpuncts: follPuncts});
+                    phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
                     // add to the model and UI _after_ the selected position
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj) + 1});
@@ -2659,6 +2659,7 @@ define(function (require) {
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    phObj.set('vid', selectedObj.get('vid'), {silent: true});
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // phrase just takes same order # as first selected object
                     phObj.save();
                     this.collection.add(phObj);
@@ -2910,6 +2911,7 @@ define(function (require) {
                     selectedObj = this.collection.findWhere({spid: strID});
                     phObj.set('norder', selectedObj.get('norder'), {silent: true}); // retranslation just takes same order # as first selected object
                     phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
+                    phObj.set('vid', selectedObj.get('vid'), {silent: true});
                     // the html code depends on getting a valid ID back from the object after save() completes
                     phObj.save();
                     this.collection.add(phObj);
