@@ -17,7 +17,7 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-ios": "^6.2.0",
+    "cordova-android": "^10.1.1",
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
@@ -27,11 +27,11 @@
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-x-socialsharing": "^6.0.3",
     "cordova-sqlite-evcore-extbuild-free": "^0.15.1",
-    "cordova-uglify": "^0.3.4",
-    "cordova.plugins.diagnostic": "^6.0.3",
+    "cordova-uglify": "^0.0.8",
+    "cordova.plugins.diagnostic": "^3.9.2",
     "es6-promise-plugin": "^4.2.2",
     "fs": "0.0.2",
-    "gulp": "^4.0.2",
+    "gulp": "^3.9.1",
     "path": "^0.12.7",
     "plist": "^3.0.1"
   },
@@ -42,7 +42,7 @@
     "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-statusbar": "^2.4.3",
     "gulp-uglify": "^3.0.2",
-    "npx": "^10.2.2",
+    "npx": "^3.0.0",
     "phonegap-plugin-mobile-accessibility": "https://github.com/phonegap/phonegap-mobile-accessibility.git"
   },
   "bugs": {
@@ -89,7 +89,7 @@
       "cordova-sqlite-evcore-extbuild-free": {}
     },
     "platforms": [
-      "ios"
+      "android"
     ]
   }
 }

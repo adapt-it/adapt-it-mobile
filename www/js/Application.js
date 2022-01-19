@@ -396,7 +396,7 @@ define(function (require) {
             
             checkDBSchema: function () {
                 // verify we're on the latest DB schema (upgrade if necessary)
-                projModel.checkSchema();
+                return projModel.checkSchema();
             },
             
             setUILanguage: function () {

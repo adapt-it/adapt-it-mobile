@@ -16,6 +16,7 @@ define(function (require) {
         // upgradeSchema
         // Helper method to upgrade the database schema from the specified version
         upgradeSchema = function (fromVersion) {
+            var deferred = $.Deferred();
             console.log("upgradeSchema: fromVersion=" + fromVersion);
             if (fromVersion === 0) {
                 // pre-beta (beta = 1) -- version table does not exist; create it
@@ -76,6 +77,8 @@ define(function (require) {
                     });
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
+                }, function () {
+                    deferred.resolve();
                 });
             }
             if (fromVersion === 1) {
@@ -176,6 +179,8 @@ define(function (require) {
                     });
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
+                }, function () {
+                    deferred.resolve();
                 });
             }
             if (fromVersion === 2) {
@@ -232,8 +237,11 @@ define(function (require) {
                     });
                 }, function (e) {
                     console.log("upgradeSchema error: " + e.message);
+                }, function () {
+                    deferred.resolve();
                 });
             }
+            return deferred.promise();            
         },
         // checkSchema
         // Helper method to make sure we're at the latest database schema version. Does the following tests:
@@ -241,6 +249,7 @@ define(function (require) {
         // - check for missing version table AND existing sourcephrase table -- indicates pre-beta schema
         // - check for version table with schemaver < CURRSCHEMA
         checkSchema = function () {
+            var deferred = $.Deferred();
             var theSQL = "";
             console.log("checkSchema: entry");
             if (typeof device === "undefined") {
@@ -286,8 +295,12 @@ define(function (require) {
                 }, function (err) {
                     console.log("checkSchema: CREATE TABLE error: " + err.message);
                 });
+            }, function (e) {
+                deferred.reject(e);
+            }, function () {
+                deferred.resolve();
             });
-            
+            return deferred.promise();            
         },
         
         findById = function (searchKey) {
