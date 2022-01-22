@@ -2060,7 +2060,11 @@ define(function (require) {
                                             // place the imported data where the existing verse used to be
                                             norder = tmpnorder;
                                         }
-                                    }                                    
+                                    } else {
+                                        verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
+                                    }                                  
+                                } else {
+                                    verseID = Underscore.uniqueId(); // new verse in a new chapter -- create a new verse ID
                                 }
                                 // EDB 30 Aug 2021: add blank verses
                                 var vCount = (markers.match(/\\v /g) || []).length;
@@ -2074,6 +2078,7 @@ define(function (require) {
                                         markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
                                         // create a blank sourcephrase (no source or target) for each verse
                                         spID = Underscore.uniqueId();
+                                        verseID = Underscore.uniqueId(); // new verse (blank)
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
                                             norder: norder,
