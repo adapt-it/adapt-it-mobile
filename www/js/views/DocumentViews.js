@@ -2001,6 +2001,20 @@ define(function (require) {
                                 chapterID = chapter.get("chapterid");
                                 spsExisting = sourcePhrases.where({chapterid: chapterID}); // existing source phrases in this chapter (might be empty)
                                 console.log(chapterName + ": " + chapterID + "(" + spsExisting.length + " sourcephrases)");
+                                if (spsExisting.length > 0) {
+                                    // check to see if the source phrase in this chapter have verse IDs assigned
+                                    if (spsExisting[spsExisting.length - 1].get("vid").length === 0) {
+                                        // no verse IDs assigned (this is a pre-1.6 import) -
+                                        // assign verse IDs to each source phrase
+                                        for (i=0; i<spsExisting.length; i++) {
+                                            if (spsExisting[i].get("markers").indexOf("\\v") !== -1) {
+                                                verseID = Underscore.uniqueId(); // new verse -- create a new ID
+                                            }
+                                            spsExisting[i].set('vid', verseID, {silent: true});
+                                            spsExisting[i].save();
+                                        }
+                                    }
+                                }
                             }
                             // also do some processing for verse markers
                             if (markers && markers.indexOf("\\v ") !== -1) {
