@@ -77,9 +77,9 @@ define(function (require) {
             currentProject: null,
             localURLs: [],
             usingImportedKB: false,
-            version: "1.5.0", // appended with milestone / iOS build info
-            AndroidBuild: "35", // (was milestone release #)
-            iOSBuild: "1.5.1",
+            version: "1.6.0", // appended with milestone / iOS build info
+            AndroidBuild: "36", // (was milestone release #)
+            iOSBuild: "1.6.0",
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Mimics Element.scrollIntoView({"block": "center", "behavior": "smooth"}) for
@@ -215,7 +215,7 @@ define(function (require) {
                 if (device && (device.platform !== "browser")) {
                     if (device.platform === "browser") {
                         // running in browser -- use WebSQL (Chrome / Safari ONLY)
-                        this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
+                        this.db = window.openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
                         this.onInitDB();
                     } else if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
@@ -236,8 +236,8 @@ define(function (require) {
                             console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
                             // Attempt to create / open our AIM database now
                             window.Application.db = window.sqlitePlugin.openDatabase({name: DB_NAME, androidDatabaseLocation: directoryEntry.toURL()});
-                            window.Application.checkDBSchema(); // Android only (iOS calls directly)
-                            window.Application.onInitDB();
+                            window.Application.checkDBSchema().then(window.Application.onInitDB()); // Android only (iOS calls directly)
+                            // window.Application.onInitDB();
                         }, function (err) {
                             console.log("resolveLocalFileSustemURL error: " + err.message);
                         });
@@ -396,7 +396,7 @@ define(function (require) {
             
             checkDBSchema: function () {
                 // verify we're on the latest DB schema (upgrade if necessary)
-                projModel.checkSchema();
+                return projModel.checkSchema();
             },
             
             setUILanguage: function () {

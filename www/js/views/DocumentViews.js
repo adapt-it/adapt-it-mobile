@@ -43,11 +43,13 @@ define(function (require) {
         fileCount       = 0,
         bookid          = "",
         puncts          = [],
-        punctsSource     = [],
-        punctsTarget     = [],
+        punctsSource    = [],
+        punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
+        bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
+                                // in the database?
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
                                     // (number can be tuned if needed - this is to avoid memory issues - see issue #138)
         // this is the complete list of currently supported params you can pass to the plugin (all optional)
@@ -90,7 +92,7 @@ define(function (require) {
             }
             return str;
         },
-        
+
         // Helper method to store the specified source and target text in the KB.
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
             var elts = kblist.filter(function (element) {
@@ -351,6 +353,7 @@ define(function (require) {
                                     spid: spID,
                                     norder: norder,
                                     chapterid: chapterID,
+                                    vid: "", // no verses (plain text)
                                     markers: markers,
                                     orig: null,
                                     prepuncts: prepuncts,
@@ -416,6 +419,7 @@ define(function (require) {
                     var lastAdapted = 0;
                     var closingMarker = "";
                     var nodeStyle = "";
+                    var verseID = Underscore.uniqueId(); // pre-verse 1 initialization
                     var parseNode = function (element) {
                         nodeStyle = "";
                         // process the node itself
@@ -470,6 +474,7 @@ define(function (require) {
                                 break;
                             case "verse":
                                 verseCount++;
+                                verseID = Underscore.uniqueId();
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
@@ -688,6 +693,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: null,
                                             prepuncts: prepuncts,
@@ -1129,6 +1135,7 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
+                    var verseID = new Underscore.uniqueId();
                     var lastAdapted = 0;
                     var markers = "";
                     var firstChapterNumber = "1";
@@ -1409,6 +1416,7 @@ define(function (require) {
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
+                            verseID = Underscore.uniqueId();
                             // check this sourcephrase for a target - if there is one, consider this verse adapted
                             // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
                             if ($(this).attr('t')) {
@@ -1441,6 +1449,7 @@ define(function (require) {
                             spid: spID,
                             norder: norder,
                             chapterid: chapterID,
+                            vid: verseID,
                             markers: markers, //$(this).attr('m'),
                             orig: (origTarget.length > 0) ? origTarget : null,
                             prepuncts: $(this).attr('pp'),
@@ -1523,6 +1532,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: (origTarget.length > 0) ? origTarget : null,
                                             prepuncts: "",
@@ -1570,6 +1580,7 @@ define(function (require) {
                                             spid: spID,
                                             norder: norder,
                                             chapterid: chapterID,
+                                            vid: verseID,
                                             markers: markers,
                                             orig: (origTarget.length > 0) ? origTarget : null,
                                             prepuncts: "",
@@ -1607,6 +1618,7 @@ define(function (require) {
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
+                                        vid: verseID,
                                         markers: markers,
                                         orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
@@ -1643,6 +1655,7 @@ define(function (require) {
                                         spid: spID,
                                         norder: norder,
                                         chapterid: chapterID,
+                                        vid: verseID,
                                         markers: markers,
                                         orig: (origTarget.length > 0) ? origTarget : null,
                                         prepuncts: "",
@@ -1729,13 +1742,22 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var lastAdapted = 0;
                     var verseCount = 0;
+                    var verseID = Underscore.uniqueId();
                     var i = 0;
                     var punctIdx = 0;
                     var stridx = 0;
+                    var verseNum = "";
+                    var verseEndIdx = 0;
+                    var verseFound = false;
                     var chaps = [];
                     var mkr = null;
+                    var tmpnorder = 0;
+                    var strImportedVerse = "";
+                    var strExistingVerse = "";
                     var encoding = "";
-                    var regex1 = new RegExp(/\\c\s1\s/);
+                    var spsExisting = null;
+                    var arrSPIDs = [];
+                    var defer = $.Deferred();
 
                     console.log("Reading USFM file:" + fileName);
                     index = contents.indexOf("\\h ");
@@ -1759,7 +1781,8 @@ define(function (require) {
                             bookName = fileName;
                         }
                     }
-                    // find the ID of this book
+                    // find the ID of this book:
+                    // any USFM file MUST have an \id marker
                     index = contents.indexOf("\\id");
                     if (index === -1) {
                         // no ID found -- return
@@ -1768,7 +1791,7 @@ define(function (require) {
                     }
                     markerList.fetch({reset: true, data: {name: ""}});
                     scrIDList.fetch({reset: true, data: {id: ""}});
-                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0];
+                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0]; // our scripture ID
                     index = contents.indexOf("\\usfm");
                     if (index !== -1) {
                         // usfm version 3.0 or later, probably
@@ -1785,297 +1808,408 @@ define(function (require) {
                             return false;
                         }
                     }
-                    // Issue #246: scripture portion support -- 2 checks for portions:
-                    // #1 (here): \id, but no chapter 1 --> assume the user is importing a portion from later in the book
-                    // #2 (below): \id and \c 1, but versification doesn't match our knowledge --> assume portion of chapter 1 (and maybe more)
-                    // These are not perfect checks -- versification sometimes doesn't match
-                    if (regex1.test(contents) === false) {
-                        // there is an \id, but no chapter 1 --> assume scripture portion
-                        isPortion = true;
-                        var newBookName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: i18n.t("view.lblPortion")});
-                        bookName = newBookName;
-                    } else {
-                        isPortion = false;
-                    }
-                    // check for duplicate book imports
-                    if (isPortion === false) {
-                        var entries = books.where({scrid: (scrID.get('id'))});
-                        for (i = 0; i < entries.length; i++) {
-                            if (entries[i].attributes.bookid.indexOf("p_") === -1) {
-                                // attempting to import a duplicate full book -- error out
-                                errMsg = i18n.t("view.dscErrDuplicateFile");
-                                return false;
-                            }
-                        }
-                    }
-                    // add a book and chapter
-                    if (isPortion === true) {
-                        bookID = Underscore.uniqueId('p_');
-                    } else {
-                        bookID = Underscore.uniqueId();
-                    }
-                    book = new bookModel.Book({
-                        bookid: bookID,
-                        projectid: project.get('projectid'),
-                        scrid: scrID.get('id'),
-                        name: bookName,
-                        filename: fileName,
-                        chapters: [] // arr
-                    });
-                    books.add(book);
-                    // Note that we're adding chapter 1 before we reach the \c 1 marker in the file --
-                    // Usually there's a fair amount of front matter before we reach the chapter itself;
-                    // rather than creating a chapter 0 (which would throw off the search stuff), we'll
-                    // just add the front matter to chapter 1.
-                    chapterID = Underscore.uniqueId();
-                    chaps.push(chapterID);
-                    if (isPortion === true) {
-                        chapterName = bookName;
-                    } else {
-                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
-                    }
-                    chapter = new chapModel.Chapter({
-                        chapterid: chapterID,
-                        bookid: bookID,
-                        projectid: project.get('projectid'),
-                        name: chapterName,
-                        lastadapted: 0,
-                        versecount: 0
-                    });
-                    chapters.add(chapter);
-                    // set the lastDocument / lastAdapted<xxx> values if not already set
-                    if (project.get('lastDocument') === "") {
-                        project.set('lastDocument', bookName);
-                    }
-                    if (project.get('lastAdaptedBookID') === 0) {
-                        project.set('lastAdaptedBookID', bookID);
-                        project.set('lastAdaptedChapterID', chapterID);
-                    }
-                    if (project.get('lastAdaptedName') === "") {
-                        project.set('lastAdaptedName', chapterName);
-                    }
-                    
-                    // build SourcePhrases                    
-                    arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
-                    arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
-                    i = 0;
-                    while (i < arr.length) {
-                        // check for a marker
-                        if (arr[i].indexOf("\\") === 0) {
-                            // marker token
-                            if (markers.length > 0) {
-                                markers += " ";
-                            }
-                            markers += arr[i];
-                            // If this is the start of a new paragraph, etc., check to see if there's a "dangling"
-                            // punctuation mark. If so, it belongs as a follPunct of the precious SourcePhrase
-                            if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
-                                sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
-                                prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
-                            }
-                            mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
-                            if (mkr.length > 0 && mkr[0].get("endMarker")) {
-                                // this needs an end marker -- take the entire filter up to the end marker
-                                // and create a single sourcephrase out of it
-                                s = "";
-                                i++;  // don't copy the marker into the source
-                                while (i < arr.length && arr[i].indexOf(mkr[0].get("endMarker")) === -1) {
-                                    // copy the text associated with the marker into the source
-                                    s += " " + arr[i];
-                                    i++;
-                                }
-                                // source contains the entire string; markers contains the marker that caused it
-                                spID = Underscore.uniqueId();
-                                sp = new spModel.SourcePhrase({
-                                    spid: spID,
-                                    norder: norder,
-                                    chapterid: chapterID,
-                                    markers: markers,
-                                    orig: null,
-                                    prepuncts: prepuncts,
-                                    midpuncts: midpuncts,
-                                    follpuncts: follpuncts,
-                                    source: s,
-                                    target: ""
-                                });
-                                markers = "";
-                                prepuncts = "";
-                                follpuncts = "";
-                                punctIdx = 0;
-                                index++;
-                                norder++;
-                                sps.push(sp);
-                                // if necessary, send the next batch of SourcePhrase INSERT transactions
-                                if ((sps.length % MAX_BATCH) === 0) {
-                                    deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
-                                }
-                                
-                            } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
-                                    (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
-                                // Markers with more than one token -- 
-                                // join with the next token
-                                i++;
-                                markers += " " + arr[i];
-                            }
-                            console.log("Marker found: " + markers);
-                            i++;
-                        } else if (arr[i].length === 0) {
-                            // nothing in this token -- skip
-                            i++;
-                        } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
-                            // punctuation token -- add to the prepuncts
-                            prepuncts += arr[i];
-                            i++;
-                        } else if (arr[i].length === 2 && puncts.indexOf(arr[i]) > -1) {
-                            // 2-char punctuation token -- add to the prepuncts
-                            prepuncts += arr[i];
-                            i++;
-                        } else {
-                            // "normal" sourcephrase token
-                            // Before creating the sourcephrase, look to see if we need to create a chapter element
-                            // (note that we've already created chapter 1, so skip it if we come across it)
-                            // Also note that we don't do the new chapter if this is a Scripture portion
-                            if (markers && markers.indexOf("\\c ") !== -1 && markers.indexOf("\\c 1 ") === -1 && isPortion === false) {
-                                // update the last adapted for the previous chapter before closing it out
-                                chapter.set('versecount', verseCount, {silent: true});
-                                chapter.set('lastadapted', lastAdapted, {silent: true});
-                                chapter.save();
-                                verseCount = 0; // reset for the next chapter
-                                lastAdapted = 0; // reset for the next chapter
-                                stridx = markers.indexOf("\\c ") + 3;
-                                if (markers.lastIndexOf(" ") < stridx) {
-                                    // no space after the chapter # (it's the ending of the string)
-                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx)});
+                    var entries = books.where({scrid: (scrID.get('id'))});
+                    var numChaps = scrID.get("chapters").length;
+                    if (entries.length > 0) {
+                        // Existing doc -- ask the user what they want to do
+                        // (cancel or use the imported doc (override any conflicts with the imported version)
+                        // defer.resolve("hi");
+                        navigator.notification.confirm(
+                            i18n.t("view.ttlDupImport", {document: bookName}), // message
+                            function (buttonIndex) {
+                                if (buttonIndex === 1) {
+                                    defer.reject("cancel import (duplicate document)"); // handled in the defer.reject() block at the end of readUSFMDoc() below
                                 } else {
-                                    // space after the chapter #
-                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                    // Override
+                                    bOverride = true;
+                                    // User decided to import / override any existing content -- 
+                                    // use this book object instead of creating a new one
+                                    book = entries[0];
+                                    // verify that the chapters have been created (this is for pre-1.6.0 imports)
+                                    if (numChaps !== book.get('chapters').length) {
+                                        // create empty chapters (i.e. with no verses) that are missing in our book
+                                        for (i=0; i < numChaps; i++) {
+                                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
+                                            // does this chapter name exist?
+                                            if (!chapters.where({name: chapterName})[0]) {
+                                                // chapter doesn't exist -- create it now
+                                                chapterID = Underscore.uniqueId();
+                                                chaps.push(chapterID);
+                                                chapter = new chapModel.Chapter({
+                                                    chapterid: chapterID,
+                                                    bookid: bookID,
+                                                    projectid: project.get('projectid'),
+                                                    name: chapterName,
+                                                    lastadapted: 0,
+                                                    versecount: 0
+                                                });
+                                                chapters.add(chapter);                            
+                                            }
+                                        }
+                                    }
+                                    defer.resolve("confirm override");
                                 }
-                                chapterID = Underscore.uniqueId();
-                                chaps.push(chapterID);
-                                // create the new chapter
-                                chapter = new chapModel.Chapter({
-                                    chapterid: chapterID,
-                                    bookid: bookID,
-                                    projectid: project.get('projectid'),
-                                    name: chapterName,
-                                    lastadapted: 0,
-                                    versecount: 0
-                                });
-                                chapters.add(chapter);
-//                                console.log(chapterName + ": " + chapterID);
-                            }
-                            // also do some processing for verse markers
-                            if (markers && markers.indexOf("\\v ") !== -1) {
-                                // EDB 30 Aug 2021: add blank verses
-                                var vCount = (markers.match(/\\v /g) || []).length;
-                                verseCount = verseCount + vCount; // most of the time, this will just increment by 1
-                                if (vCount > 1) {
-                                    // special case -- blank verses
-                                    var tmpMrks;
-                                    for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
-                                        // pull out the marker for this blank verse
-                                        tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
-                                        markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
-                                        // create a blank sourcephrase (no source or target) for each verse
-                                        spID = Underscore.uniqueId();
-                                        sp = new spModel.SourcePhrase({
-                                            spid: spID,
-                                            norder: norder,
-                                            chapterid: chapterID,
-                                            markers: tmpMrks,
-                                            orig: null,
-                                            prepuncts: prepuncts,
-                                            midpuncts: midpuncts,
-                                            follpuncts: follpuncts,
-                                            source: "",
-                                            target: ""
-                                        });
-                                        prepuncts = "";
-                                        follpuncts = "";
-                                        punctIdx = 0;
-                                        norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
-                                        sps.push(sp);
-                                        // if necessary, send the next batch of SourcePhrase INSERT transactions
-                                        if ((sps.length % MAX_BATCH) === 0) {
-                                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                            },
+                            'Warning',           // title
+                            [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
+                        );                        
+                    } else {
+                        // new import -- create the book object, with all the chapter objects 
+                        // (with zero verses for now; they are populated below)
+                        bookID = Underscore.uniqueId();
+                        book = new bookModel.Book({
+                            bookid: bookID,
+                            projectid: project.get('projectid'),
+                            scrid: scrID.get('id'),
+                            name: bookName,
+                            filename: fileName,
+                            chapters: [] // arr -- updated at the end of the import
+                        });
+                        books.add(book);
+                        for (i=0; i < numChaps; i++) {
+                            chapterID = Underscore.uniqueId();
+                            chaps.push(chapterID);
+                            chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
+                            chapter = new chapModel.Chapter({
+                                chapterid: chapterID,
+                                bookid: bookID,
+                                projectid: project.get('projectid'),
+                                name: chapterName,
+                                lastadapted: 0,
+                                versecount: 0
+                            });
+                            chapters.add(chapter);                            
+                        }
+                        defer.resolve("new import / no confirm needed");
+                    }
+
+                    // edb 4 Feb 2022 -- processing requires a possible pause to confirm the override; we'll wait on the
+                    // callback results and then continue the import or exit (if the user cancels).
+                    defer.then(function (msg) {
+                        console.log(msg);
+                        // Continue processing the file. Note that at this point, the book and all chapters
+                        // have been created for this file (either newly created or merged with an existing one)
+
+                        // reset the objects to the beginning of this book (chapter 1)
+                        chapter = chapters.at(0);
+                        chapterID = chapter.get("chapterid");
+                        chapterName = chapter.get("name");
+
+                        // set the lastDocument / lastAdapted<xxx> values if not already set
+                        if (project.get('lastDocument') === "") {
+                            project.set('lastDocument', bookName);
+                        }
+                        if (project.get('lastAdaptedBookID') === 0) {
+                            project.set('lastAdaptedBookID', bookID);
+                            project.set('lastAdaptedChapterID', chapterID);
+                        }
+                        if (project.get('lastAdaptedName') === "") {
+                            project.set('lastAdaptedName', chapterName);
+                        }
+                        
+                        // build SourcePhrases                    
+                        arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
+                        arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
+                        i = 0;
+                        while (i < arr.length) {
+                            // check for a marker
+                            if (arr[i].indexOf("\\") === 0) {
+                                // marker token
+                                if (markers.length > 0) {
+                                    markers += " ";
+                                }
+                                markers += arr[i];
+                                // If this is the start of a new paragraph, etc., check to see if there's a "dangling"
+                                // punctuation mark. If so, it belongs as a follPunct of the precious SourcePhrase
+                                if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
+                                    sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
+                                    prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
+                                }
+                                mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
+                                if (mkr.length > 0 && mkr[0].get("endMarker")) {
+                                    // this needs an end marker -- take the entire filter up to the end marker
+                                    // and create a single sourcephrase out of it
+                                    s = "";
+                                    i++;  // don't copy the marker into the source
+                                    while (i < arr.length && arr[i].indexOf(mkr[0].get("endMarker")) === -1) {
+                                        // copy the text associated with the marker into the source
+                                        s += " " + arr[i];
+                                        i++;
+                                    }
+                                    // source contains the entire string; markers contains the marker that caused it
+                                    spID = Underscore.uniqueId();
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        norder: norder,
+                                        chapterid: chapterID,
+                                        vid: verseID,
+                                        markers: markers,
+                                        orig: null,
+                                        prepuncts: prepuncts,
+                                        midpuncts: midpuncts,
+                                        follpuncts: follpuncts,
+                                        source: s,
+                                        target: ""
+                                    });
+                                    markers = "";
+                                    prepuncts = "";
+                                    follpuncts = "";
+                                    punctIdx = 0;
+                                    index++;
+                                    norder++;
+                                    sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
+                                    
+                                } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
+                                        (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
+                                    // Markers with more than one token -- 
+                                    // join with the next token
+                                    i++;
+                                    markers += " " + arr[i];
+                                }
+                                console.log("Marker found: " + markers);
+                                i++;
+                            } else if (arr[i].length === 0) {
+                                // nothing in this token -- skip
+                                i++;
+                            } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
+                                // punctuation token -- add to the prepuncts
+                                prepuncts += arr[i];
+                                i++;
+                            } else if (arr[i].length === 2 && puncts.indexOf(arr[i]) > -1) {
+                                // 2-char punctuation token -- add to the prepuncts
+                                prepuncts += arr[i];
+                                i++;
+                            } else {
+                                // "normal" sourcephrase token
+                                // Chapter element -- set the chapter ID to the one we created earlier
+                                if (markers && markers.indexOf("\\c ") !== -1) {
+                                    // update the last adapted for the previous chapter before closing it out
+                                    chapter.set('versecount', verseCount, {silent: true});
+                                    chapter.set('lastadapted', lastAdapted, {silent: true});
+                                    chapter.save();
+                                    verseCount = 0; // reset for the next chapter
+                                    lastAdapted = 0; // reset for the next chapter
+                                    stridx = markers.indexOf("\\c ") + 3;
+                                    if (markers.lastIndexOf(" ") < stridx) {
+                                        // no space after the chapter # (it's the ending of the string)
+                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx)});
+                                    } else {
+                                        // space after the chapter #
+                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                    }
+                                    // find the chapter in our list
+                                    chapter = chapters.where({name: chapterName})[0];
+                                    chapterID = chapter.get("chapterid");
+                                    spsExisting = sourcePhrases.where({chapterid: chapterID}); // existing source phrases in this chapter (might be empty)
+                                    console.log(chapterName + ": " + chapterID + "(" + spsExisting.length + " sourcephrases)");
+                                    if (spsExisting.length > 0) {
+                                        // check to see if the source phrase in this chapter have verse IDs assigned
+                                        if (spsExisting[spsExisting.length - 1].get("vid").length === 0) {
+                                            // no verse IDs assigned (this is a pre-1.6 import) -
+                                            // assign verse IDs to each source phrase
+                                            for (i=0; i<spsExisting.length; i++) {
+                                                if (spsExisting[i].get("markers").indexOf("\\v") !== -1) {
+                                                    verseID = Underscore.uniqueId(); // new verse -- create a new ID
+                                                }
+                                                spsExisting[i].set('vid', verseID, {silent: true});
+                                                spsExisting[i].save();
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            s = arr[i];
-                            // look for leading and trailing punctuation
-                            // leading...
-                            if (puncts.indexOf(arr[i].charAt(0)) > -1) {
-                                // leading punct 
-                                punctIdx = 0;
-                                while (puncts.indexOf(arr[i].charAt(punctIdx)) > -1 && punctIdx < arr[i].length) {
-                                    prepuncts += arr[i].charAt(punctIdx);
-                                    punctIdx++;
+                                // also do some processing for verse markers
+                                if (markers && markers.indexOf("\\v ") !== -1) {
+                                    if (spsExisting.length > 0) {
+                                        // we have some existing sourcephrases for this chapter -- see if this verse needs merging
+                                        // get the verse # (string -- we'll be looking in the sourcephrase markers)
+                                        stridx = markers.indexOf("\\v ") + 3;
+                                        if (markers.lastIndexOf(" ") < stridx) {
+                                            // no space after the chapter # (it's the ending of the string)
+                                            verseNum = "\\v " + markers.substr(stridx);
+                                        } else {
+                                            // space after the chapter #
+                                            verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
+                                        }
+                                        for (i=0; i<spsExisting.length; i++) {
+                                            if (spsExisting[i].get("markers").indexOf(verseNum) > -1) {
+                                                verseFound = true;
+                                                // keep track of the norder and verseID -- we'll use them below
+                                                tmpnorder = spsExisting[i].get("norder");
+                                                verseID = spsExisting[i].get("vid");
+                                                break; // exit the for loop
+                                            }
+                                        }
+
+                                        // find the verse number in the spsExisting list's markers
+                                        if (verseFound === true) {
+                                            // verse needs merging -- collect the source phrases up to the next verse in the DB
+                                            // compare the imported verse string to the verse in the DB
+                                            if (contents.indexOf("\\v ", contents.indexOf(verseNum) + 2) > 0) {
+                                                verseEndIdx = contents.indexOf("\\v ", contents.indexOf(verseNum) + 2);
+                                            } else {
+                                                verseEndIdx = contents.length - 1; // last verse
+                                            }
+                                            strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
+                                            // reconstitute the verse in the DB
+                                            for (i=0; i<spsExisting.length; i++) {
+                                                if (spsExisting[i].get("vid") === verseID) {
+                                                    // concatenate
+                                                    // add markers, and if needed, pretty-print the text on a newline
+                                                    if (spsExisting[i].get("markers").length > 0) {
+                                                        // now add the markers and a space
+                                                        strExistingVerse += spsExisting[i].get("markers") + " ";
+                                                    }
+                                                    strExistingVerse += value.get("source") + " ";
+                                                }
+                                            }
+                                            if (strImportedVerse !== strExistingVerse.trim()) {
+                                                // verses differ -- delete the existing sourcephrases from the DB (we'll import below)
+                                                for (i=0; i<spsExisting.length; i++) {
+                                                    if (spsExisting[i].get("vid") === verseID) {
+                                                        // delete this guy
+                                                        spid = spsExisting[i].get("spid");
+                                                        sourcePhrases.remove(spid);
+                                                        spid.destroy();
+                                                    }
+                                                }
+                                                // place the imported data where the existing verse used to be
+                                                norder = tmpnorder;
+                                            }
+                                        } else {
+                                            verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
+                                        }                                  
+                                    } else {
+                                        verseID = Underscore.uniqueId(); // new verse in a new chapter -- create a new verse ID
+                                    }
+                                    // EDB 30 Aug 2021: add blank verses
+                                    var vCount = (markers.match(/\\v /g) || []).length;
+                                    verseCount = verseCount + vCount; // most of the time, this will just increment by 1
+                                    if (vCount > 1) {
+                                        // special case -- blank verses
+                                        var tmpMrks;
+                                        for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
+                                            // pull out the marker for this blank verse
+                                            tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
+                                            markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                            // create a blank sourcephrase (no source or target) for each verse
+                                            spID = Underscore.uniqueId();
+                                            verseID = Underscore.uniqueId(); // new verse (blank)
+                                            sp = new spModel.SourcePhrase({
+                                                spid: spID,
+                                                norder: norder,
+                                                chapterid: chapterID,
+                                                vid: verseID,
+                                                markers: tmpMrks,
+                                                orig: null,
+                                                prepuncts: prepuncts,
+                                                midpuncts: midpuncts,
+                                                follpuncts: follpuncts,
+                                                source: "",
+                                                target: ""
+                                            });
+                                            prepuncts = "";
+                                            follpuncts = "";
+                                            punctIdx = 0;
+                                            norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                            sps.push(sp);
+                                            // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                            if ((sps.length % MAX_BATCH) === 0) {
+                                                deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            }
+                                        }
+                                    }
                                 }
-                                // remove the punctuation from the "source" of the substring
-//                                s = s.substr(punctIdx);
-                            }
-                            if (punctIdx === s.length) {
-                                // it'a ALL punctuation -- jump to the next token
-                                i++;
-                            } else {
-                                // not all punctuation -- check following punctuation, then create a sourcephrase
-                                if (puncts.indexOf(s.charAt(s.length - 1)) > -1) {
-                                    // trailing punct 
-                                    punctIdx = s.length - 1;
-                                    while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
-                                        follpuncts = s.charAt(punctIdx) + follpuncts;
-                                        punctIdx--;
+                                s = arr[i];
+                                // look for leading and trailing punctuation
+                                // leading...
+                                if (puncts.indexOf(arr[i].charAt(0)) > -1) {
+                                    // leading punct 
+                                    punctIdx = 0;
+                                    while (puncts.indexOf(arr[i].charAt(punctIdx)) > -1 && punctIdx < arr[i].length) {
+                                        prepuncts += arr[i].charAt(punctIdx);
+                                        punctIdx++;
                                     }
                                     // remove the punctuation from the "source" of the substring
-//                                    s = s.substr(0, punctIdx + 1);
+    //                                s = s.substr(punctIdx);
                                 }
-                                // Now create a new sourcephrase
-                                spID = Underscore.uniqueId();
-                                sp = new spModel.SourcePhrase({
-                                    spid: spID,
-                                    norder: norder,
-                                    chapterid: chapterID,
-                                    markers: markers,
-                                    orig: null,
-                                    prepuncts: prepuncts,
-                                    midpuncts: midpuncts,
-                                    follpuncts: follpuncts,
-                                    source: s,
-                                    target: ""
-                                });
-                                markers = "";
-                                prepuncts = "";
-                                follpuncts = "";
-                                punctIdx = 0;
-                                index++;
-                                norder++;
-                                sps.push(sp);
-                                // if necessary, send the next batch of SourcePhrase INSERT transactions
-                                if ((sps.length % MAX_BATCH) === 0) {
-                                    deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                if (punctIdx === s.length) {
+                                    // it'a ALL punctuation -- jump to the next token
+                                    i++;
+                                } else {
+                                    // not all punctuation -- check following punctuation, then create a sourcephrase
+                                    if (puncts.indexOf(s.charAt(s.length - 1)) > -1) {
+                                        // trailing punct 
+                                        punctIdx = s.length - 1;
+                                        while (puncts.indexOf(s.charAt(punctIdx)) > -1 && punctIdx > 0) {
+                                            follpuncts = s.charAt(punctIdx) + follpuncts;
+                                            punctIdx--;
+                                        }
+                                        // remove the punctuation from the "source" of the substring
+    //                                    s = s.substr(0, punctIdx + 1);
+                                    }
+                                    // Now create a new sourcephrase
+                                    spID = Underscore.uniqueId();
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        norder: norder,
+                                        chapterid: chapterID,
+                                        vid: verseID,
+                                        markers: markers,
+                                        orig: null,
+                                        prepuncts: prepuncts,
+                                        midpuncts: midpuncts,
+                                        follpuncts: follpuncts,
+                                        source: s,
+                                        target: ""
+                                    });
+                                    markers = "";
+                                    prepuncts = "";
+                                    follpuncts = "";
+                                    punctIdx = 0;
+                                    index++;
+                                    norder++;
+                                    sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
+                                    i++;
                                 }
-                                i++;
                             }
                         }
-                    }
-                    // add any remaining sourcephrases
-                    if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
-                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
-                    }
-                    // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
-                    // update the last chapter's verseCount
-                    chapter.set('versecount', verseCount, {silent: true});
-                    chapter.save();
-                    book.set('chapters', chaps, {silent: true});
-                    book.save();
-                    return true; // success
+                        // add any remaining sourcephrases
+                        if ((sps.length % MAX_BATCH) > 0) {
+                            $("#status").html(i18n.t("view.dscStatusSaving"));
+                            deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        }
+                        // track all those deferred calls to addBatch -- when they all complete, report the results to the user
+                        $.when.apply($, deferreds).done(function (value) {
+                            importSuccess();
+                        }).fail(function (e) {
+                            importFail(e);
+                        });
+                        // update the last chapter's verseCount
+                        chapter.set('versecount', verseCount, {silent: true});
+                        chapter.save();
+                        book.set('chapters', chaps, {silent: true});
+                        book.save();
+                        return true; // success
+                    }, function (msg) {
+                        console.log(msg);
+                        // User pressed Cancel on import (duplicate doc) - return to the main screen
+                        if (window.history.length > 1) {
+                            // there actually is a history -- go back
+                            window.history.back();
+                        } else {
+                            // no history (import link from outside app) -- just go home
+                            window.location.replace("");
+                        }
+                        return true; // success
+                    }); // (possible pause for user confirmation dialog)
                     // END readUSFMDoc()
                 };
 
