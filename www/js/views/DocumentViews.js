@@ -1887,7 +1887,8 @@ define(function (require) {
                     // callback results and then continue the import or exit (if the user cancels).
                     defer.then(function (msg) {
                         console.log(msg);
-                        // continue processing the file...
+                        // Continue processing the file. Note that at this point, the book and all chapters
+                        // have been created for this file (either newly created or merged with an existing one)
 
                         // reset the objects to the beginning of this book (chapter 1)
                         chapter = chapters.at(0);
