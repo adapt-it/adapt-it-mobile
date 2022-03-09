@@ -2001,8 +2001,7 @@ define(function (require) {
                                 if (markers && markers.indexOf("\\c ") !== -1) {
                                     // update the last adapted for the previous chapter before closing it out
                                     chapter.set('versecount', verseCount, {silent: true});
-                                    chapter.set('lastadapted', lastAdapted, {silent: true});
-                                    chapter.save();
+                                    chapter.set('lastadapted', lastAdapted);
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
                                     stridx = markers.indexOf("\\c ") + 3;
@@ -2205,8 +2204,7 @@ define(function (require) {
                             importFail(e);
                         });
                         // update the last chapter's verseCount
-                        chapter.set('versecount', verseCount, {silent: true});
-                        chapter.save();
+                        chapter.set('versecount', verseCount);
                         return true; // success
                     }, function (msg) {
                         console.log(msg);
