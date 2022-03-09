@@ -1811,9 +1811,13 @@ define(function (require) {
                     var entries = books.where({scrid: (scrID.get('id'))});
                     var numChaps = scrID.get("chapters").length;
                     if (entries.length > 0) {
-                        // Existing doc -- ask the user what they want to do
-                        // (cancel or use the imported doc (override any conflicts with the imported version)
-                        // defer.resolve("hi");
+                        // Existing doc -- 
+                        // First update our book name (the one we have might have come from the clipboard or filename, OR
+                        // the user might have changed it after the last import)
+                        book = entries[0];
+                        bookName = book.get("name");
+                        // Now ask the user what they want to do
+                        // (cancel or use the imported doc / override any conflicts with the imported version)
                         navigator.notification.confirm(
                             i18n.t("view.ttlDupImport", {document: bookName}), // message
                             function (buttonIndex) {
@@ -1844,8 +1848,12 @@ define(function (require) {
                                                     versecount: 0
                                                 });
                                                 chapters.add(chapter);                            
+                                                chapter.save();
                                             }
                                         }
+                                        // update the book chapter array
+                                        book.set('chapters', chaps, {silent: true});
+                                        book.save();                
                                     }
                                     defer.resolve("confirm override");
                                 }
@@ -1863,7 +1871,7 @@ define(function (require) {
                             scrid: scrID.get('id'),
                             name: bookName,
                             filename: fileName,
-                            chapters: [] // arr -- updated at the end of the import
+                            chapters: [] // arr -- updated after we add the chapters
                         });
                         books.add(book);
                         for (i=0; i < numChaps; i++) {
@@ -1878,8 +1886,12 @@ define(function (require) {
                                 lastadapted: 0,
                                 versecount: 0
                             });
-                            chapters.add(chapter);                            
+                            chapters.add(chapter);
+                            chapter.save();
                         }
+                        // update the chapters in our book
+                        book.set('chapters', chaps, {silent: true});
+                        book.save();
                         defer.resolve("new import / no confirm needed");
                     }
 
@@ -2195,8 +2207,6 @@ define(function (require) {
                         // update the last chapter's verseCount
                         chapter.set('versecount', verseCount, {silent: true});
                         chapter.save();
-                        book.set('chapters', chaps, {silent: true});
-                        book.save();
                         return true; // success
                     }, function (msg) {
                         console.log(msg);
