@@ -1855,6 +1855,17 @@ define(function (require) {
                                         book.set('chapters', chaps, {silent: true});
                                         book.save();                
                                     }
+                                    // Check to see if we're importing content that DOES NOT INCLUDE chapter 1
+                                    // (in this case we'll be splicing together a Key It file from a chapter > 1, 
+                                    // so we'll want to avoid importing the \\id marker twice -- it's supposed 
+                                    // to be unique in the file)
+                                    if ((contents.indexOf("\\c 1 ") === -1) && (contents.indexOf("\\c 1\n") === -1)) {
+                                        // importing a chapter other than chapter #1 (Key It file) --
+                                        // first, find the \\id position in the contents
+                                        index = contents.indexOf("\\id");
+                                        // now cut the whole line (up to the \n)
+                                        contents = contents.replace(contents.substring(index, contents.indexOf("\n", index)), "");
+                                    }
                                     defer.resolve("confirm override");
                                 }
                             },
@@ -2000,8 +2011,10 @@ define(function (require) {
                                 // Chapter element -- set the chapter ID to the one we created earlier
                                 if (markers && markers.indexOf("\\c ") !== -1) {
                                     // update the last adapted for the previous chapter before closing it out
-                                    chapter.set('versecount', verseCount, {silent: true});
-                                    chapter.set('lastadapted', lastAdapted);
+                                    if (chapter.get('versecount') < verseCount) {
+                                        // only update if we're increasing the verse count
+                                        chapter.set('versecount', verseCount, {silent: true});
+                                    }
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
                                     stridx = markers.indexOf("\\c ") + 3;
@@ -2203,8 +2216,10 @@ define(function (require) {
                         }).fail(function (e) {
                             importFail(e);
                         });
-                        // update the last chapter's verseCount
-                        chapter.set('versecount', verseCount);
+                        // update the last chapter's verseCount if needed
+                        if (chapter.get('versecount') < verseCount) {
+                            chapter.set('versecount', verseCount);
+                        }
                         return true; // success
                     }, function (msg) {
                         console.log(msg);
