@@ -2205,6 +2205,45 @@ define(function (require) {
                                 }
                             }
                         }
+                        // done with the content array. One final check -- did we end on empty verses?
+                        if (markers && markers.indexOf("\\v ") !== -1) {
+                            var vCount = (markers.match(/\\v /g) || []).length;
+                            verseCount = verseCount + vCount; // most of the time, this will just increment by 1
+                            if (vCount > 1) {
+                                // special case -- blank verses
+                                var tmpMrks;
+                                for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
+                                    // pull out the marker for this blank verse
+                                    tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
+                                    markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                    // create a blank sourcephrase (no source or target) for each verse
+                                    spID = Underscore.uniqueId();
+                                    verseID = Underscore.uniqueId(); // new verse (blank)
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        norder: norder,
+                                        chapterid: chapterID,
+                                        vid: verseID,
+                                        markers: tmpMrks,
+                                        orig: null,
+                                        prepuncts: prepuncts,
+                                        midpuncts: midpuncts,
+                                        follpuncts: follpuncts,
+                                        source: "",
+                                        target: ""
+                                    });
+                                    prepuncts = "";
+                                    follpuncts = "";
+                                    punctIdx = 0;
+                                    norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                    sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
+                                }
+                            }
+                        }
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
                             $("#status").html(i18n.t("view.dscStatusSaving"));
