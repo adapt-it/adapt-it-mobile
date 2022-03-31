@@ -1743,8 +1743,12 @@ define(function (require) {
                     var lastAdapted = 0;
                     var verseCount = 0;
                     var verseID = Underscore.uniqueId();
+                    var firstBlock = true;
                     var i = 0;
+                    var tmpIdx = 0;
                     var punctIdx = 0;
+                    var contentsIdx = 0;
+                    var chapNumber = 0;
                     var stridx = 0;
                     var verseNum = "";
                     var verseEndIdx = 0;
@@ -1756,7 +1760,6 @@ define(function (require) {
                     var strExistingVerse = "";
                     var encoding = "";
                     var spsExisting = null;
-                    var arrSPIDs = [];
                     var defer = $.Deferred();
 
                     console.log("Reading USFM file:" + fileName);
@@ -1917,6 +1920,9 @@ define(function (require) {
                         chapter = chapters.at(0);
                         chapterID = chapter.get("chapterid");
                         chapterName = chapter.get("name");
+                        // get the existing source phrases in this chapter (empty if this is a new import)
+                        spsExisting = sourcePhrases.where({chapterid: chapterID}); 
+                        firstBlock = true;
 
                         // set the lastDocument / lastAdapted<xxx> values if not already set
                         if (project.get('lastDocument') === "") {
@@ -2017,14 +2023,18 @@ define(function (require) {
                                     }
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
+                                    verseID = Underscore.uniqueId(); // chunk before verse 1 is considered a new "verse" for merging purposes
+                                    firstBlock = true; // first block in the chapter (for merging)
                                     stridx = markers.indexOf("\\c ") + 3;
                                     if (markers.lastIndexOf(" ") < stridx) {
                                         // no space after the chapter # (it's the ending of the string)
-                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx)});
+                                        chapNumber = markers.substr(stridx);
                                     } else {
                                         // space after the chapter #
-                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                        chapNumber = markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
                                     }
+                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: chapNumber});
+                                    contentsIdx = contents.indexOf(("\\c " + chapNumber), contentsIdx); // for first block processing
                                     // find the chapter in our list
                                     chapter = chapters.where({name: chapterName})[0];
                                     chapterID = chapter.get("chapterid");
@@ -2035,15 +2045,69 @@ define(function (require) {
                                         if (spsExisting[spsExisting.length - 1].get("vid").length === 0) {
                                             // no verse IDs assigned (this is a pre-1.6 import) -
                                             // assign verse IDs to each source phrase
-                                            for (i=0; i<spsExisting.length; i++) {
-                                                if (spsExisting[i].get("markers").indexOf("\\v") !== -1) {
+                                            for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                if (spsExisting[tmpIdx].get("markers").indexOf("\\v") !== -1) {
                                                     verseID = Underscore.uniqueId(); // new verse -- create a new ID
                                                 }
-                                                spsExisting[i].set('vid', verseID, {silent: true});
-                                                spsExisting[i].save();
+                                                spsExisting[tmpIdx].set('vid', verseID, {silent: true});
+                                                spsExisting[tmpIdx].save();
                                             }
                                         }
                                     }
+                                }
+                                if (spsExisting.length > 0 && firstBlock === true) {
+                                    // special case for merging -- up to the first verse should be treated as one block for comparison
+                                    // (the could be the whole "chapter" if we're looking at front matter with no verse marker)
+                                    // find the whole string to compare
+                                    var chapIdx = contents.indexOf("\\c ", contentsIdx + 2);
+                                    var verseIdx = contents.indexOf("\\v ", contentsIdx + 2);
+                                    if ((chapIdx === -1) && (verseIdx === -1)) {
+                                        // last block -- use entire string
+                                        strImportedVerse = contents.substring(contentsIdx, contents.length - 1);                                        
+                                    } else {
+                                        if ((chapIdx > verseIdx) || (chapIdx === -1)) {
+                                            // either there's a verse first OR there are no more chapters -- 
+                                            // either way, we want the string up to the verse
+                                            strImportedVerse = contents.substring(contentsIdx, verseIdx);
+                                        } else {
+                                            // take the string up to the chapter
+                                            strImportedVerse = contents.substring(contentsIdx, chapIdx);
+                                        }
+                                    }
+                                    // compare the imported block to what we have in the DB
+                                    // reconstitute the verse in the DB
+                                    for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                        // Note that verseID is set to a unique value even for non-verse data (like here)
+                                        if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                            // concatenate
+                                            // add markers, and if needed, pretty-print the text on a newline
+                                            if (spsExisting[tmpIdx].get("markers").length > 0) {
+                                                // now add the markers and a space
+                                                strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
+                                            }
+                                            strExistingVerse += value.get("source") + " ";
+                                        }
+                                    }
+                                    if (strImportedVerse !== strExistingVerse.trim()) {
+                                        // blocks differ -- delete the existing sourcephrases from the DB (we'll import below)
+                                        for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                            if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                                // delete this guy
+                                                spid = spsExisting[tmpIdx].get("spid");
+                                                sourcePhrases.remove(spid);
+                                                spid.destroy();
+                                            }
+                                        }
+                                        // place the imported data where the existing verse used to be
+                                        norder = tmpnorder;
+                                    } else {
+                                        // Merging an existing chapter/verse, but the verse is the same --
+                                        // move our import index to the next verse / chapter position
+                                        while ((i < arr.length) && (arr[i] !== "\v") && (arr[i] !== "\c")) {
+                                            i++;
+                                        }
+                                        markers = ""; // clear out the markers for this verse
+                                    }                                    
                                 }
                                 // also do some processing for verse markers
                                 if (markers && markers.indexOf("\\v ") !== -1) {
@@ -2058,12 +2122,12 @@ define(function (require) {
                                             // space after the chapter #
                                             verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
                                         }
-                                        for (i=0; i<spsExisting.length; i++) {
-                                            if (spsExisting[i].get("markers").indexOf(verseNum) > -1) {
+                                        for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                            if (spsExisting[tmpIdx].get("markers").indexOf(verseNum) > -1) {
                                                 verseFound = true;
                                                 // keep track of the norder and verseID -- we'll use them below
-                                                tmpnorder = spsExisting[i].get("norder");
-                                                verseID = spsExisting[i].get("vid");
+                                                tmpnorder = spsExisting[tmpIdx].get("norder");
+                                                verseID = spsExisting[tmpIdx].get("vid");
                                                 break; // exit the for loop
                                             }
                                         }
@@ -2079,29 +2143,36 @@ define(function (require) {
                                             }
                                             strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
                                             // reconstitute the verse in the DB
-                                            for (i=0; i<spsExisting.length; i++) {
-                                                if (spsExisting[i].get("vid") === verseID) {
+                                            for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                     // concatenate
                                                     // add markers, and if needed, pretty-print the text on a newline
-                                                    if (spsExisting[i].get("markers").length > 0) {
+                                                    if (spsExisting[tmpIdx].get("markers").length > 0) {
                                                         // now add the markers and a space
-                                                        strExistingVerse += spsExisting[i].get("markers") + " ";
+                                                        strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
                                                     }
                                                     strExistingVerse += value.get("source") + " ";
                                                 }
                                             }
                                             if (strImportedVerse !== strExistingVerse.trim()) {
                                                 // verses differ -- delete the existing sourcephrases from the DB (we'll import below)
-                                                for (i=0; i<spsExisting.length; i++) {
-                                                    if (spsExisting[i].get("vid") === verseID) {
+                                                for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                    if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                         // delete this guy
-                                                        spid = spsExisting[i].get("spid");
+                                                        spid = spsExisting[tmpIdx].get("spid");
                                                         sourcePhrases.remove(spid);
                                                         spid.destroy();
                                                     }
                                                 }
                                                 // place the imported data where the existing verse used to be
                                                 norder = tmpnorder;
+                                            } else {
+                                                // Merging an existing chapter/verse, but the verse is the same --
+                                                // move our import index to the next verse / chapter position
+                                                while ((i < arr.length) && (arr[i] !== "\v") && (arr[i] !== "\c")) {
+                                                    i++;
+                                                }
+                                                markers = ""; // clear out the markers for this verse
                                             }
                                         } else {
                                             verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
