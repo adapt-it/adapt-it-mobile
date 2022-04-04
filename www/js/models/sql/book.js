@@ -92,7 +92,9 @@ define(function (require) {
                             ids.push(res.rows.item(i).chapterid);
                         }
                         var args = ids.join(", ");
-                        tx.executeSql("DELETE FROM sourcephrase WHERE chapterid IN (?);", [args], function (tx, res2) {
+                        var sql = "DELETE FROM sourcephrase WHERE chapterid IN (" + args + ");";
+                        console.log("Delete statement: " + sql);
+                        tx.executeSql(sql, [], function (tx, res2) {
                             console.log("DELETE sourcephrases ok: " + res2.toString());
                         });
                         // delete the chapters
