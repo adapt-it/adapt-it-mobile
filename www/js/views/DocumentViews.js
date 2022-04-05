@@ -2023,7 +2023,7 @@ define(function (require) {
                                     }
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
-                                    verseID = Underscore.uniqueId(); // chunk before verse 1 is considered a new "verse" for merging purposes
+                                    verseID = Underscore.uniqueId(); // initial value -- chunk before verse 1 is considered a new "verse"
                                     firstBlock = true; // first block in the chapter (for merging)
                                     stridx = markers.indexOf("\\c ") + 3;
                                     if (markers.lastIndexOf(" ") < stridx) {
@@ -2053,11 +2053,13 @@ define(function (require) {
                                                 spsExisting[tmpIdx].save();
                                             }
                                         }
+                                        // get the verseID from the first block
+                                        verseID = spsExisting[0].get("vid"); 
                                     }
                                 }
                                 if (spsExisting.length > 0 && firstBlock === true) {
                                     // special case for merging -- up to the first verse should be treated as one block for comparison
-                                    // (the could be the whole "chapter" if we're looking at front matter with no verse marker)
+                                    // (could be the whole "chapter" if we're looking at front matter with no verse marker)
                                     // find the whole string to compare
                                     var chapIdx = contents.indexOf("\\c ", contentsIdx + 2);
                                     var verseIdx = contents.indexOf("\\v ", contentsIdx + 2);
@@ -2107,7 +2109,8 @@ define(function (require) {
                                             i++;
                                         }
                                         markers = ""; // clear out the markers for this verse
-                                    }                                    
+                                    }    
+                                    firstBlock = false; // done processing content before the first \\v in a chapter                                
                                 }
                                 // also do some processing for verse markers
                                 if (markers && markers.indexOf("\\v ") !== -1) {
