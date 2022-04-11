@@ -2091,7 +2091,7 @@ define(function (require) {
                                                 // now add the markers and a space
                                                 strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
                                             }
-                                            strExistingVerse += value.get("source") + " ";
+                                            strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                         }
                                     }
                                     if (strImportedVerse !== strExistingVerse.trim()) {
@@ -2158,7 +2158,7 @@ define(function (require) {
                                                         // now add the markers and a space
                                                         strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
                                                     }
-                                                    strExistingVerse += value.get("source") + " ";
+                                                    strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                                 }
                                             }
                                             if (strImportedVerse !== strExistingVerse.trim()) {
