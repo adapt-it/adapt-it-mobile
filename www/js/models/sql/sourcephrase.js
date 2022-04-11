@@ -271,13 +271,11 @@ define(function (require) {
                         // (might need to get them from the db)
                         deferred = $.Deferred();
                         var chapterid = options.data.chapterid;
-                        results = sourcephrases.filter(function (element) {
-                            return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
-                        });
-                        if (results.length === 0) {
+                        if (chapterid.indexOf(", ") !== -1) {
+                            // multiple chapter value (comma separated)
                             // not in collection -- retrieve them from the db
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid=? ORDER BY norder;", [chapterid], function (tx, res) {
+                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (" + chapterid + ") ORDER BY norder;", [], function (tx, res) {
                                     // populate the sourcephrases collection with the query results
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         var sp = new SourcePhrase();
@@ -288,9 +286,7 @@ define(function (require) {
                                     }
                                     // return the filtered results (now that we have them)
                                     console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
-                                    retValue = sourcephrases.filter(function (element) {
-                                        return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
-                                    });
+                                    retValue = sourcephrases;
                                     options.success(retValue);
                                     deferred.resolve(retValue);
                                 });
@@ -299,13 +295,41 @@ define(function (require) {
                                 deferred.reject(e);
                             });
                         } else {
-                            // results already in collection -- return them
-                            console.log("sync: found " + results.length + " sourcephrases for chapterid: " + chapterid);
-                            options.success(results);
-                            deferred.resolve(results);
+                            // single chapter value
+                            results = sourcephrases.filter(function (element) {
+                                return element.attributes.chapterid.toLowerCase().indexOf(chapterid.toLowerCase()) > -1;
+                            });
+                            if (results.length === 0) {
+                                // not in collection -- retrieve them from the db
+                                window.Application.db.transaction(function (tx) {
+                                    tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid=? ORDER BY norder;", [chapterid], function (tx, res) {
+                                        // populate the sourcephrases collection with the query results
+                                        for (i = 0, len = res.rows.length; i < len; ++i) {
+                                            var sp = new SourcePhrase();
+                                            sp.off("change");
+                                            sp.set(res.rows.item(i));
+                                            sourcephrases.push(sp);
+                                            sp.on("change", sp.save, sp);
+                                        }
+                                        // return the filtered results (now that we have them)
+                                        console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
+                                        retValue = sourcephrases;
+                                        options.success(retValue);
+                                        deferred.resolve(retValue);
+                                    });
+                                }, function (e) {
+                                    options.error();
+                                    deferred.reject(e);
+                                });
+                            } else {
+                                // results already in collection -- return them
+                                console.log("sync: found " + results.length + " sourcephrases for chapterid: " + chapterid);
+                                options.success(results);
+                                deferred.resolve(results);
+                            }
+                            // return the promise
+                            return deferred.promise();
                         }
-                        // return the promise
-                        return deferred.promise();
                     } else {
                         return Backbone.sync.apply(this, arguments);
                     }

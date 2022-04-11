@@ -1819,6 +1819,9 @@ define(function (require) {
                         // the user might have changed it after the last import)
                         book = entries[0];
                         bookName = book.get("name");
+                        // load up the sourcephrases for this book, just in case...
+                        var args = book.get("chapters").join(", ");                                    
+                        sourcePhrases.fetch({reset: true, data: {chapterid: args}});
                         // Now ask the user what they want to do
                         // (cancel or use the imported doc / override any conflicts with the imported version)
                         navigator.notification.confirm(
@@ -1835,7 +1838,7 @@ define(function (require) {
                                     // verify that the chapters have been created (this is for pre-1.6.0 imports)
                                     if (numChaps !== book.get('chapters').length) {
                                         // create empty chapters (i.e. with no verses) that are missing in our book
-                                        for (i=0; i < numChaps; i++) {
+                                        for (i=book.get('chapters').length; i < numChaps; i++) {
                                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                                             // does this chapter name exist?
                                             if (!chapters.where({name: chapterName})[0]) {
@@ -1869,7 +1872,8 @@ define(function (require) {
                                         // now cut the whole line (up to the \n)
                                         contents = contents.replace(contents.substring(index, contents.indexOf("\n", index)), "");
                                     }
-                                    defer.resolve("confirm override");
+                                    // finished -- return
+                                    defer.resolve("confirm override");                        
                                 }
                             },
                             'Warning',           // title
