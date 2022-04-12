@@ -1927,6 +1927,8 @@ define(function (require) {
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
                         firstBlock = true;
+                        var tmpID = null;
+                        var tmpObj = null;
 
                         // set the lastDocument / lastAdapted<xxx> values if not already set
                         if (project.get('lastDocument') === "") {
@@ -2099,10 +2101,11 @@ define(function (require) {
                                         for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                             if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                 // delete this guy
-                                                spid = spsExisting[tmpIdx].get("spid");
-                                                sourcePhrases.remove(spid);
-                                                spid.destroy();
-                                            }
+                                                tmpID = spsExisting[tmpIdx].get("spid");
+                                                tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                sourcePhrases.remove(tmpObj);
+                                                tmpObj.destroy();
+                                    }
                                         }
                                         // place the imported data where the existing verse used to be
                                         norder = tmpnorder;
@@ -2166,9 +2169,10 @@ define(function (require) {
                                                 for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                     if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                         // delete this guy
-                                                        spid = spsExisting[tmpIdx].get("spid");
-                                                        sourcePhrases.remove(spid);
-                                                        spid.destroy();
+                                                        tmpID = spsExisting[tmpIdx].get("spid");
+                                                        tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                        sourcePhrases.remove(tmpObj);
+                                                        tmpObj.destroy();
                                                     }
                                                 }
                                                 // place the imported data where the existing verse used to be
