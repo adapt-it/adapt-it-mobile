@@ -1973,6 +1973,12 @@ define(function (require) {
                                     }
                                     // source contains the entire string; markers contains the marker that caused it
                                     spID = Underscore.uniqueId();
+                                    if (markers.indexOf("\\v ") !== -1) {
+                                        // case where a marker with an end marker (e.g., a cross-reference) follows a
+                                        // verse -- need to get a new verse ID
+                                        verseID = Underscore.uniqueId(); 
+                                        // TODO: I _think_ this needs merge code as well?
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
