@@ -1927,6 +1927,10 @@ define(function (require) {
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
                         firstBlock = true;
+                        if (spsExisting.length > 0) {
+                            // set norder to the first item in our existing list
+                            norder = spsExisting[0].get("norder");
+                        }
                         var tmpID = null;
                         var tmpObj = null;
 
@@ -1977,6 +1981,7 @@ define(function (require) {
                                         // case where a marker with an end marker (e.g., a cross-reference) follows a
                                         // verse -- need to get a new verse ID
                                         verseID = Underscore.uniqueId(); 
+                                        norder += 100;
                                         // TODO: I _think_ this needs merge code as well?
                                     }
                                     sp = new spModel.SourcePhrase({
@@ -2075,6 +2080,9 @@ define(function (require) {
                                     // find the whole string to compare
                                     var chapIdx = contents.indexOf("\\c ", contentsIdx + 2);
                                     var verseIdx = contents.indexOf("\\v ", contentsIdx + 2);
+                                    var tmpMarkers = "";
+                                    tmpnorder = 0; // reset tmpnorder (first block)
+                                    verseID = spsExisting[0].get("vid"); // first block / get vid value from spsExisting
                                     if ((chapIdx === -1) && (verseIdx === -1)) {
                                         // last block -- use entire string
                                         strImportedVerse = contents.substring(contentsIdx, contents.length - 1);                                        
@@ -2095,14 +2103,24 @@ define(function (require) {
                                         if (spsExisting[tmpIdx].get("vid") === verseID) {
                                             // concatenate
                                             // add markers, and if needed, pretty-print the text on a newline
-                                            if (spsExisting[tmpIdx].get("markers").length > 0) {
+                                            tmpMarkers = spsExisting[tmpIdx].get("markers");
+                                            if (tmpMarkers.length > 0) {
+                                                if ((tmpMarkers.indexOf("\\v") > -1) || (tmpMarkers.indexOf("\\c") > -1) ||
+                                                        (tmpMarkers.indexOf("\\p") > -1) || (tmpMarkers.indexOf("\\id") > -1) ||
+                                                        (tmpMarkers.indexOf("\\h") > -1) || (tmpMarkers.indexOf("\\toc") > -1) ||
+                                                        (tmpMarkers.indexOf("\\mt") > -1)) {
+                                                    // pretty-printing -- add a newline so the output looks better
+                                                    if (strExistingVerse.length > 0) {
+                                                        strExistingVerse = strExistingVerse.trim() + "\n"; // newline
+                                                    }
+                                                }
                                                 // now add the markers and a space
-                                                strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
+                                                strExistingVerse += tmpMarkers + " ";
                                             }
                                             strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
-                                        }
+                                        } 
                                     }
-                                    if (strImportedVerse !== strExistingVerse.trim()) {
+                                    if (strImportedVerse.trim() !== strExistingVerse.trim()) {
                                         // blocks differ -- delete the existing sourcephrases from the DB (we'll import below)
                                         for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                             if (spsExisting[tmpIdx].get("vid") === verseID) {
@@ -2111,14 +2129,14 @@ define(function (require) {
                                                 tmpObj = sourcePhrases.findWhere({spid: tmpID});
                                                 sourcePhrases.remove(tmpObj);
                                                 tmpObj.destroy();
-                                    }
+                                            }
                                         }
                                         // place the imported data where the existing verse used to be
                                         norder = tmpnorder;
                                     } else {
                                         // Merging an existing chapter/verse, but the verse is the same --
                                         // move our import index to the next verse / chapter position
-                                        while ((i < arr.length) && (arr[i] !== "\v") && (arr[i] !== "\c")) {
+                                        while ((i < arr.length) && (arr[i] !== "\\v") && (arr[i] !== "\\c")) {
                                             i++;
                                         }
                                         markers = ""; // clear out the markers for this verse
@@ -2193,9 +2211,11 @@ define(function (require) {
                                             }
                                         } else {
                                             verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
+                                            norder += 100;
                                         }                                  
                                     } else {
                                         verseID = Underscore.uniqueId(); // new verse in a new chapter -- create a new verse ID
+                                        norder += 100;
                                     }
                                     // EDB 30 Aug 2021: add blank verses
                                     var vCount = (markers.match(/\\v /g) || []).length;
@@ -2226,7 +2246,7 @@ define(function (require) {
                                             prepuncts = "";
                                             follpuncts = "";
                                             punctIdx = 0;
-                                            norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                            norder = norder + 200; // en/KJV longest is 90 words/verse (Esther 8:9)
                                             sps.push(sp);
                                             // if necessary, send the next batch of SourcePhrase INSERT transactions
                                             if ((sps.length % MAX_BATCH) === 0) {
