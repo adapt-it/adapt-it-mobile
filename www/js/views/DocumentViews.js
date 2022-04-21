@@ -2133,21 +2133,26 @@ define(function (require) {
                                         }
                                         // place the imported data where the existing verse used to be
                                         norder = tmpnorder;
+                                        firstBlock = false; // done processing content before the first \\v in a chapter    
+                                        // NO continue -- drop to next block and import this verse                            
                                     } else {
                                         // Merging an existing chapter/verse, but the verse is the same --
                                         // move our import index to the next verse / chapter position
-                                        while ((i < arr.length) && (arr[i] !== "\\v") && (arr[i] !== "\\c")) {
+                                        while ((i < arr.length) && (arr[i] !== "\\v")) {
                                             i++;
                                         }
                                         markers = ""; // clear out the markers for this verse
+                                        firstBlock = false; // done processing content before the first \\v in a chapter
+                                        // jump to while loop
+                                        continue;
                                     }    
-                                    firstBlock = false; // done processing content before the first \\v in a chapter                                
                                 }
                                 // also do some processing for verse markers
                                 if (markers && markers.indexOf("\\v ") !== -1) {
                                     if (spsExisting.length > 0) {
                                         // we have some existing sourcephrases for this chapter -- see if this verse needs merging
                                         // get the verse # (string -- we'll be looking in the sourcephrase markers)
+                                        strExistingVerse = ""; // clear out any old verse info
                                         stridx = markers.indexOf("\\v ") + 3;
                                         if (markers.lastIndexOf(" ") < stridx) {
                                             // no space after the chapter # (it's the ending of the string)
@@ -2175,21 +2180,41 @@ define(function (require) {
                                             } else {
                                                 verseEndIdx = contents.length - 1; // last verse
                                             }
-                                            strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
+                                            // pull out the imported verse, starting at the markers for the verse in the DB
+                                            // (we could have some before the \\v -- like a \\p, for example)
+                                            strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx);
                                             // reconstitute the verse in the DB
                                             for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                 if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                     // concatenate
                                                     // add markers, and if needed, pretty-print the text on a newline
-                                                    if (spsExisting[tmpIdx].get("markers").length > 0) {
+                                                    tmpMarkers = spsExisting[tmpIdx].get("markers");
+                                                    if (tmpMarkers.length > 0) {
+                                                        if ((tmpMarkers.indexOf("\\v") > -1) || (tmpMarkers.indexOf("\\c") > -1) ||
+                                                                (tmpMarkers.indexOf("\\p") > -1) || (tmpMarkers.indexOf("\\id") > -1) ||
+                                                                (tmpMarkers.indexOf("\\h") > -1) || (tmpMarkers.indexOf("\\toc") > -1) ||
+                                                                (tmpMarkers.indexOf("\\mt") > -1)) {
+                                                            // pretty-printing -- add a newline so the output looks better
+                                                            if (strExistingVerse.length > 0) {
+                                                                strExistingVerse = strExistingVerse.trim() + "\n"; // newline
+                                                            }
+                                                        }
                                                         // now add the markers and a space
-                                                        strExistingVerse += spsExisting[tmpIdx].get("markers") + " ";
+                                                        strExistingVerse += tmpMarkers + " ";
                                                     }
                                                     strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                                 }
                                             }
-                                            if (strImportedVerse !== strExistingVerse.trim()) {
-                                                // verses differ -- delete the existing sourcephrases from the DB (we'll import below)
+                                            if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                                // verses differ -- 
+                                                // first, align arr[i] with the marker data from our DB verse, so we don't lose any
+                                                // marker data before the \\v
+                                                var mkrArray = spsExisting[tmpIdx].get("markers").replace(/\\/gi, " \\").split(spaceRE);
+                                                while (arr[i] !== mkrArray[0]) {
+                                                    // go backwards in arr[] until we find the beginning of the markers
+                                                    i--;
+                                                }
+                                                // Now delete the existing sourcephrases from the DB (we'll import below)
                                                 for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                     if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                         // delete this guy
@@ -2204,10 +2229,11 @@ define(function (require) {
                                             } else {
                                                 // Merging an existing chapter/verse, but the verse is the same --
                                                 // move our import index to the next verse / chapter position
-                                                while ((i < arr.length) && (arr[i] !== "\v") && (arr[i] !== "\c")) {
+                                                while ((i < arr.length) && (arr[i] !== "\\v") && (arr[i] !== "\\c")) {
                                                     i++;
                                                 }
                                                 markers = ""; // clear out the markers for this verse
+                                                continue; // jump to while loop
                                             }
                                         } else {
                                             verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
