@@ -88,13 +88,18 @@ define(function (require) {
                         // for each chapter, delete the sourcephrases associated with the chapterid - then delete the chapter
                         var i = 0;
                         var ids = [];
-                        for (i = 0; i < res.rows.length; i++) {
-                            ids.push(res.rows.item(i).chapterid);
+                        var args = "";
+                        if (res.rows.length > 1) {
+                            for (i = 0; i < res.rows.length; i++) {
+                                ids.push("\"" + res.rows.item(i).chapterid + "\"");
+                            }
+                            args = ids.join(", ");
+                        } else {
+                            args = "\"" + res.rows.item[0].chapterid + "\"";
                         }
-                        var args = ids.join(", ");
-                        var sql = "DELETE FROM sourcephrase WHERE chapterid IN (" + args + ");";
-                        console.log("Delete statement: " + sql);
-                        tx.executeSql(sql, [], function (tx, res2) {
+                        var sql = "DELETE FROM sourcephrase WHERE chapterid IN (?);";
+                        console.log("Delete statement: " + sql + ", args: " + args);
+                        tx.executeSql(sql, [args], function (tx, res2) {
                             console.log("DELETE sourcephrases ok: " + res2.toString());
                         });
                         // delete the chapters

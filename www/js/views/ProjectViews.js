@@ -195,7 +195,7 @@ define(function (require) {
                     }
                 }
 //                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
-                value = Underscore.uniqueId();
+                value = self.crypto.randomUUID();
                 project.set("projectid", value, {silent: true});
                 // The following settings require some extra work
                 // Punctuation pairs
@@ -270,7 +270,7 @@ define(function (require) {
                 project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
                 
                 // done -- display the OK button
-                project.set("projectid", Underscore.uniqueId(), {silent: true});
+                project.set("projectid", self.crypto.randomUUID(), {silent: true});
                 $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
                 if ($("#loading").length) {
                     $("#loading").hide();
@@ -477,7 +477,7 @@ define(function (require) {
             // adds one more row, shows the delete button on the current ond, and removes the new-row class
             // from the current row so this method doesn't get called on this row again.
             addNewRow: function (event) {
-                var newID = Underscore.uniqueId();
+                var newID = self.crypto.randomUUID();
                 var index = event.currentTarget.id.substr(2);
                 // remove the class from this row
                 $(("#s-" + index)).removeClass("new-row");
@@ -702,7 +702,7 @@ define(function (require) {
             // adds one more row, shows the delete button on the current ond, and removes the new-row class
             // from the current row so this method doesn't get called on this row again.
             addNewRow: function (event) {
-                var newID = Underscore.uniqueId();
+                var newID = self.crypto.randomUUID();
                 var index = event.currentTarget.id.substr(2);
                 // remove the class from this row
                 $(("#s-" + index)).removeClass("new-row");
@@ -1876,7 +1876,7 @@ define(function (require) {
                     // also set the ID and name of the project, now that we (should) have both source and target defined
                     // Do this only if we don't already have an ID
                     if (this.model.get("projectid") === "") {
-                        value = Underscore.uniqueId();
+                        value = self.crypto.randomUUID();
                         this.model.set("projectid", value, {silent: true});
                     }
                     this.model.set("name", i18n.t("view.lblSourceToTargetAdaptations", {

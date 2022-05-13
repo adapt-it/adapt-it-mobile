@@ -189,7 +189,7 @@ define(function (require) {
                 console.log("deleteBatch: " + models.length + " objects");
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (sp) {
-                        tx.executeSql(sql, [sp.attributes.spid]);
+                        tx.executeSql(sql, [sp.attributes.vid]);
                     });
                     var end = new Date().getTime();
                     console.log("deleteBatch: " + models.length + " objects, " + (end - start));
@@ -275,8 +275,9 @@ define(function (require) {
                             // multiple chapter value (comma separated)
                             // not in collection -- retrieve them from the db
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (" + chapterid + ") ORDER BY norder;", [], function (tx, res) {
-                                    // populate the sourcephrases collection with the query results
+                                //tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (" + chapterid + ") ORDER BY norder;", [], function (tx, res) {
+                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (?) ORDER BY norder;", [chapterid], function (tx, res) {
+                                        // populate the sourcephrases collection with the query results
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         var sp = new SourcePhrase();
                                         sp.off("change");

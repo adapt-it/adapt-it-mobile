@@ -215,7 +215,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = Underscore.uniqueId(),
+                var newID = self.crypto.randomUUID(),
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
