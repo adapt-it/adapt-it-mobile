@@ -271,12 +271,24 @@ define(function (require) {
                         // (might need to get them from the db)
                         deferred = $.Deferred();
                         var chapterid = options.data.chapterid;
-                        if (chapterid.indexOf(", ") !== -1) {
+                        if (Array.isArray(chapterid)) { 
                             // multiple chapter value (comma separated)
                             // not in collection -- retrieve them from the db
                             window.Application.db.transaction(function (tx) {
-                                //tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (" + chapterid + ") ORDER BY norder;", [], function (tx, res) {
-                                tx.executeSql("SELECT * FROM sourcephrase WHERE chapterid IN (?) ORDER BY norder;", [chapterid], function (tx, res) {
+                                var i = 0;
+                                var ids = [];
+                                var args = "";
+                                if (chapterid.length > 1) {
+                                    for (i = 0; i < chapterid.length; i++) {
+                                        ids.push("\"" + chapterid[i] + "\"");
+                                    }
+                                    args = ids.join(", ");
+                                } else {
+                                    args = "\"" + chapterid[0] + "\"";
+                                }
+                                var sql = "SELECT * FROM sourcephrase WHERE chapterid IN (" + args + ") ORDER BY norder;";
+                                console.log("SELECT statement: " + sql);
+                                tx.executeSql(sql, [], function (tx, res) {
                                         // populate the sourcephrases collection with the query results
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         var sp = new SourcePhrase();
@@ -286,12 +298,17 @@ define(function (require) {
                                         sp.on("change", sp.save, sp);
                                     }
                                     // return the filtered results (now that we have them)
-                                    console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
+                                    console.log("SELECT [MULTIPLE] ok: " + res.rows.length + " sourcephrases for chapterids: " + chapterid);
                                     retValue = sourcephrases;
                                     options.success(retValue);
                                     deferred.resolve(retValue);
+                                }, function (e) {
+                                    console.log("SELECT sourcephrase error: " + e);
+                                    options.error();
+                                    deferred.reject(e);
                                 });
                             }, function (e) {
+                                console.log("SELECT error: " + e);
                                 options.error();
                                 deferred.reject(e);
                             });
@@ -313,7 +330,7 @@ define(function (require) {
                                             sp.on("change", sp.save, sp);
                                         }
                                         // return the filtered results (now that we have them)
-                                        console.log("SELECT ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
+                                        console.log("SELECT [SINGLE] ok: " + res.rows.length + " sourcephrases for chapterid: " + chapterid);
                                         retValue = sourcephrases;
                                         options.success(retValue);
                                         deferred.resolve(retValue);

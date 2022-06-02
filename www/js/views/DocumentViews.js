@@ -1819,14 +1819,12 @@ define(function (require) {
                         // the user might have changed it after the last import)
                         book = entries[0];
                         bookName = book.get("name");
-                        // load up the sourcephrases for this book, just in case...
-                        var args = book.get("chapters").join(", ");                                    
-                        sourcePhrases.fetch({reset: true, data: {chapterid: args}});
-                        // Now ask the user what they want to do
+                        // load up the sourcephrases for this book, then ask the user what they want to do
                         // (cancel or use the imported doc / override any conflicts with the imported version)
-                        navigator.notification.confirm(
-                            i18n.t("view.ttlDupImport", {document: bookName}), // message
-                            function (buttonIndex) {
+                        var args = book.get("chapters"); //.join(", ");                                    
+                        $.when(sourcePhrases.fetch({data: {chapterid: args}})).then( function (a) {
+                            console.log("Fetch: " + a);
+                            navigator.notification.confirm(i18n.t("view.ttlDupImport", {document: bookName}), function (buttonIndex) {
                                 if (buttonIndex === 1) {
                                     defer.reject("cancel import (duplicate document)"); // handled in the defer.reject() block at the end of readUSFMDoc() below
                                 } else {
@@ -1878,7 +1876,7 @@ define(function (require) {
                             },
                             'Warning',           // title
                             [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
-                        );                        
+                        )});                        
                     } else {
                         // new import -- create the book object, with all the chapter objects 
                         // (with zero verses for now; they are populated below)
@@ -1926,6 +1924,7 @@ define(function (require) {
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
+                        console.log("Total sourcephrases for book: " + sourcePhrases.length);
                         firstBlock = true;
                         if (spsExisting.length > 0) {
                             // set norder to the first item in our existing list
@@ -1960,7 +1959,7 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += arr[i];
-                                console.log("Marker found: " + markers);
+                                // console.log("Marker found: " + markers);
                                 // If this is the start of a new paragraph, etc., check to see if there's a "dangling"
                                 // punctuation mark. If so, it belongs as a follPunct of the precious SourcePhrase
                                 if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
@@ -2013,6 +2012,7 @@ define(function (require) {
                                             }
                                             // did we find the verse?
                                             if (verseFound === true) {
+                                                console.log("Merging verse w/end marker: " + spsExisting[tmpIdx].get("markers") + ", " + verseID);
                                                 verseFound = false; // clear the flag
                                                 // verse needs merging -- collect the source phrases up to the next verse in the DB
                                                 // compare the imported verse string to the verse in the DB
@@ -2297,6 +2297,7 @@ define(function (require) {
                                         }
                                         // did we find the verse?
                                         if (verseFound === true) {
+                                            console.log("Merging verse: " + spsExisting[tmpIdx].get("markers") + ", " + verseID);
                                             verseFound = false; // clear the flag
                                             // verse needs merging -- collect the source phrases up to the next verse in the DB
                                             // compare the imported verse string to the verse in the DB
@@ -2388,6 +2389,7 @@ define(function (require) {
                                     verseCount = verseCount + vCount; // most of the time, this will just increment by 1
                                     if (vCount > 1) {
                                         // special case -- blank verses
+                                        console.log("Blank verses found: " + vCount);
                                         var tmpMrks;
                                         for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
                                             // pull out the marker for this blank verse
@@ -2407,6 +2409,7 @@ define(function (require) {
                                                         tmpObj = sourcePhrases.findWhere({spid: tmpID});
                                                         sourcePhrases.remove(tmpObj);
                                                         tmpObj.destroy();
+                                                        console.log("Merge blank verse: " + tmpMrks + " (" + spID + ")");
                                                         break; // exit the for loop
                                                     }
                                                 }
@@ -2447,8 +2450,6 @@ define(function (require) {
                                         prepuncts += arr[i].charAt(punctIdx);
                                         punctIdx++;
                                     }
-                                    // remove the punctuation from the "source" of the substring
-    //                                s = s.substr(punctIdx);
                                 }
                                 if (punctIdx === s.length) {
                                     // it'a ALL punctuation -- jump to the next token
@@ -2462,8 +2463,6 @@ define(function (require) {
                                             follpuncts = s.charAt(punctIdx) + follpuncts;
                                             punctIdx--;
                                         }
-                                        // remove the punctuation from the "source" of the substring
-    //                                    s = s.substr(0, punctIdx + 1);
                                     }
                                     // Now create a new sourcephrase
                                     spID = self.crypto.randomUUID();
@@ -2499,8 +2498,9 @@ define(function (require) {
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             var vCount = (markers.match(/\\v /g) || []).length;
                             verseCount = verseCount + vCount; // most of the time, this will just increment by 1
-                            if (vCount > 1) {
+                            if (vCount >= 1) {
                                 // special case -- blank verses
+                                console.log("Empty verse(s) at end: " + vCount);
                                 var tmpMrks;
                                 for (var vIdx = 0; vIdx < vCount; vIdx++) {
                                     // pull out the marker for this blank verse
@@ -2523,6 +2523,7 @@ define(function (require) {
                                                 tmpObj = sourcePhrases.findWhere({spid: tmpID});
                                                 sourcePhrases.remove(tmpObj);
                                                 tmpObj.destroy();
+                                                console.log("Merge blank verse: " + tmpMrks + " (" + spID + ")");
                                                 break; // exit the for loop
                                             }
                                         }
