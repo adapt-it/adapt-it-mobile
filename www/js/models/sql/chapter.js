@@ -27,7 +27,7 @@ define(function (require) {
                 versecount: 0
             },
             initialize: function () {
-                this.on('change', this.save, this);
+                // this.on('change', this.save, this);
             },
             fetch: function () {
                 var deferred = $.Deferred();

@@ -149,7 +149,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = Underscore.uniqueId(),
+                var newID = self.crypto.randomUUID(),
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
@@ -266,7 +266,7 @@ define(function (require) {
                     } else {
                         bookName = fileName;
                     }
-                    bookID = Underscore.uniqueId();
+                    bookID = self.crypto.randomUUID();
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
@@ -277,7 +277,7 @@ define(function (require) {
                     });
                     books.add(book);
                     // (for now, just one chapter -- eventually we could chunk this out based on file size)
-                    chapterID = Underscore.uniqueId();
+                    chapterID = self.crypto.randomUUID();
                     chaps.push(chapterID);
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
@@ -348,7 +348,7 @@ define(function (require) {
 //                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
-                                spID = Underscore.uniqueId();
+                                spID = self.crypto.randomUUID();
                                 sp = new spModel.SourcePhrase({
                                     spid: spID,
                                     norder: norder,
@@ -419,7 +419,7 @@ define(function (require) {
                     var lastAdapted = 0;
                     var closingMarker = "";
                     var nodeStyle = "";
-                    var verseID = Underscore.uniqueId(); // pre-verse 1 initialization
+                    var verseID = self.crypto.randomUUID(); // pre-verse 1 initialization
                     var parseNode = function (element) {
                         nodeStyle = "";
                         // process the node itself
@@ -459,7 +459,7 @@ define(function (require) {
                                     lastAdapted = 0; // reset for the next chapter
                                     // now create the new chapter
                                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: element.attributes.item("number").nodeValue});
-                                    chapterID = Underscore.uniqueId();
+                                    chapterID = self.crypto.randomUUID();
                                     chaps.push(chapterID);
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
@@ -474,7 +474,7 @@ define(function (require) {
                                 break;
                             case "verse":
                                 verseCount++;
-                                verseID = Underscore.uniqueId();
+                                verseID = self.crypto.randomUUID();
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
@@ -688,7 +688,7 @@ define(function (require) {
                                             }
                                         }
                                         // Now create a new sourcephrase
-                                        spID = Underscore.uniqueId();
+                                        spID = self.crypto.randomUUID();
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
                                             norder: norder,
@@ -755,7 +755,7 @@ define(function (require) {
                         return false;
                     }
                     index = 1;
-                    bookID = Underscore.uniqueId();
+                    bookID = self.crypto.randomUUID();
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
@@ -766,7 +766,7 @@ define(function (require) {
                         chapters: []
                     });
                     books.add(book);
-                    chapterID = Underscore.uniqueId();
+                    chapterID = self.crypto.randomUUID();
                     chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
@@ -910,7 +910,7 @@ define(function (require) {
                         });
                         // create the TU
                         // Note that the refstrings array is spliced / cleared out each time
-                        var newID = Underscore.uniqueId(),
+                        var newID = self.crypto.randomUUID(),
                             newTU = new kbModels.TargetUnit({
                                 tuid: newID,
                                 projectid: projectid,
@@ -925,7 +925,7 @@ define(function (require) {
                         newTU.save();
                     });
                     // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = Underscore.uniqueId(),
+                    var newID = self.crypto.randomUUID(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
                             projectid: projectid,
@@ -1074,7 +1074,7 @@ define(function (require) {
                                 tu.update();
                             } else {
                                 // not in list -- create a new TU
-                                var newID = Underscore.uniqueId(),
+                                var newID = self.crypto.randomUUID(),
                                     newTU = new kbModels.TargetUnit({
                                         tuid: newID,
                                         projectid: projectid,
@@ -1097,7 +1097,7 @@ define(function (require) {
                         }
                     });
                     // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = Underscore.uniqueId(),
+                    var newID = self.crypto.randomUUID(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
                             projectid: projectid,
@@ -1135,7 +1135,7 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
-                    var verseID = new Underscore.uniqueId();
+                    var verseID = self.crypto.randomUUID();
                     var lastAdapted = 0;
                     var markers = "";
                     var firstChapterNumber = "1";
@@ -1329,7 +1329,7 @@ define(function (require) {
                             }
                         }
                         // Create the book and chapter 
-                        bookID = Underscore.uniqueId();
+                        bookID = self.crypto.randomUUID();
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
@@ -1343,7 +1343,7 @@ define(function (require) {
                     // Reset the index to the beginning of the file
                     index = 1;
                     // Add the first chapter
-                    chapterID = Underscore.uniqueId();
+                    chapterID = self.crypto.randomUUID();
                     chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
                     chapter = new chapModel.Chapter({
@@ -1399,7 +1399,7 @@ define(function (require) {
                                 lastAdapted = 0; // reset for the next chapter
                                 stridx = markers.indexOf("\\c ") + 3;
                                 chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
-                                chapterID = Underscore.uniqueId();
+                                chapterID = self.crypto.randomUUID();
                                 chaps.push(chapterID);
                                 // create the new chapter
                                 chapter = new chapModel.Chapter({
@@ -1416,7 +1416,7 @@ define(function (require) {
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
-                            verseID = Underscore.uniqueId();
+                            verseID = self.crypto.randomUUID();
                             // check this sourcephrase for a target - if there is one, consider this verse adapted
                             // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
                             if ($(this).attr('t')) {
@@ -1441,9 +1441,9 @@ define(function (require) {
 //                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         if (origTarget.length > 0) {
                             // phrase -- spID has a prefix of "phr-"
-                            spID = "phr-" + Underscore.uniqueId();
+                            spID = "phr-" + self.crypto.randomUUID();
                         } else {
-                            spID = Underscore.uniqueId();
+                            spID = self.crypto.randomUUID();
                         }
                         sp = new spModel.SourcePhrase({
                             spid: spID,
@@ -1524,9 +1524,9 @@ define(function (require) {
                                         // (1) create a sourcephrase with the first part of the token (without the ending marker)
                                         if (origTarget.length > 0) {
                                             // phrase -- spID has a prefix of "phr-"
-                                            spID = "phr-" + Underscore.uniqueId();
+                                            spID = "phr-" + self.crypto.randomUUID();
                                         } else {
-                                            spID = Underscore.uniqueId();
+                                            spID = self.crypto.randomUUID();
                                         }
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
@@ -1572,9 +1572,9 @@ define(function (require) {
                                         console.log("Filter with end marker: " + src);
                                         if (origTarget.length > 0) {
                                             // phrase -- spID has a prefix of "phr-"
-                                            spID = "phr-" + Underscore.uniqueId();
+                                            spID = "phr-" + self.crypto.randomUUID();
                                         } else {
-                                            spID = Underscore.uniqueId();
+                                            spID = self.crypto.randomUUID();
                                         }
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
@@ -1610,9 +1610,9 @@ define(function (require) {
                                     // (1) create a sourcephrase with the first part of the token (without the ending marker)
                                     if (origTarget.length > 0) {
                                         // phrase -- spID has a prefix of "phr-"
-                                        spID = "phr-" + Underscore.uniqueId();
+                                        spID = "phr-" + self.crypto.randomUUID();
                                     } else {
-                                        spID = Underscore.uniqueId();
+                                        spID = self.crypto.randomUUID();
                                     }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -1647,9 +1647,9 @@ define(function (require) {
                                     // regular token - add as a new sourcephrase
                                     if (origTarget.length > 0) {
                                         // phrase -- spID has a prefix of "phr-"
-                                        spID = "phr-" + Underscore.uniqueId();
+                                        spID = "phr-" + self.crypto.randomUUID();
                                     } else {
-                                        spID = Underscore.uniqueId();
+                                        spID = self.crypto.randomUUID();
                                     }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -1742,9 +1742,13 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var lastAdapted = 0;
                     var verseCount = 0;
-                    var verseID = Underscore.uniqueId();
+                    var verseID = self.crypto.randomUUID();
+                    var firstBlock = true;
                     var i = 0;
+                    var tmpIdx = 0;
                     var punctIdx = 0;
+                    var contentsIdx = 0;
+                    var chapNumber = 0;
                     var stridx = 0;
                     var verseNum = "";
                     var verseEndIdx = 0;
@@ -1756,7 +1760,6 @@ define(function (require) {
                     var strExistingVerse = "";
                     var encoding = "";
                     var spsExisting = null;
-                    var arrSPIDs = [];
                     var defer = $.Deferred();
 
                     console.log("Reading USFM file:" + fileName);
@@ -1811,12 +1814,17 @@ define(function (require) {
                     var entries = books.where({scrid: (scrID.get('id'))});
                     var numChaps = scrID.get("chapters").length;
                     if (entries.length > 0) {
-                        // Existing doc -- ask the user what they want to do
-                        // (cancel or use the imported doc (override any conflicts with the imported version)
-                        // defer.resolve("hi");
-                        navigator.notification.confirm(
-                            i18n.t("view.ttlDupImport", {document: bookName}), // message
-                            function (buttonIndex) {
+                        // Existing doc -- 
+                        // First update our book name (the one we have might have come from the clipboard or filename, OR
+                        // the user might have changed it after the last import)
+                        book = entries[0];
+                        bookName = book.get("name");
+                        // load up the sourcephrases for this book, then ask the user what they want to do
+                        // (cancel or use the imported doc / override any conflicts with the imported version)
+                        var args = book.get("chapters"); //.join(", ");                                    
+                        $.when(sourcePhrases.fetch({data: {chapterid: args}})).then( function (a) {
+                            console.log("Fetch: " + a);
+                            navigator.notification.confirm(i18n.t("view.ttlDupImport", {document: bookName}), function (buttonIndex) {
                                 if (buttonIndex === 1) {
                                     defer.reject("cancel import (duplicate document)"); // handled in the defer.reject() block at the end of readUSFMDoc() below
                                 } else {
@@ -1828,12 +1836,12 @@ define(function (require) {
                                     // verify that the chapters have been created (this is for pre-1.6.0 imports)
                                     if (numChaps !== book.get('chapters').length) {
                                         // create empty chapters (i.e. with no verses) that are missing in our book
-                                        for (i=0; i < numChaps; i++) {
+                                        for (i=book.get('chapters').length; i < numChaps; i++) {
                                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                                             // does this chapter name exist?
                                             if (!chapters.where({name: chapterName})[0]) {
                                                 // chapter doesn't exist -- create it now
-                                                chapterID = Underscore.uniqueId();
+                                                chapterID = self.crypto.randomUUID();
                                                 chaps.push(chapterID);
                                                 chapter = new chapModel.Chapter({
                                                     chapterid: chapterID,
@@ -1844,30 +1852,46 @@ define(function (require) {
                                                     versecount: 0
                                                 });
                                                 chapters.add(chapter);                            
+                                                chapter.save();
                                             }
                                         }
+                                        // update the book chapter array
+                                        book.set('chapters', chaps, {silent: true});
+                                        book.save();                
                                     }
-                                    defer.resolve("confirm override");
+                                    // Check to see if we're importing content that DOES NOT INCLUDE chapter 1
+                                    // (in this case we'll be splicing together a Key It file from a chapter > 1, 
+                                    // so we'll want to avoid importing the \\id marker twice -- it's supposed 
+                                    // to be unique in the file)
+                                    if ((contents.indexOf("\\c 1 ") === -1) && (contents.indexOf("\\c 1\n") === -1)) {
+                                        // importing a chapter other than chapter #1 (Key It file) --
+                                        // first, find the \\id position in the contents
+                                        index = contents.indexOf("\\id");
+                                        // now cut the whole line (up to the \n)
+                                        contents = contents.replace(contents.substring(index, contents.indexOf("\n", index)), "");
+                                    }
+                                    // finished -- return
+                                    defer.resolve("confirm override");                        
                                 }
                             },
                             'Warning',           // title
                             [i18n.t("view.optCancelImport"),i18n.t("view.optUpdateImport", {document: bookName})]     // buttonLabels
-                        );                        
+                        )});                        
                     } else {
                         // new import -- create the book object, with all the chapter objects 
                         // (with zero verses for now; they are populated below)
-                        bookID = Underscore.uniqueId();
+                        bookID = self.crypto.randomUUID();
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
                             scrid: scrID.get('id'),
                             name: bookName,
                             filename: fileName,
-                            chapters: [] // arr -- updated at the end of the import
+                            chapters: [] // arr -- updated after we add the chapters
                         });
                         books.add(book);
                         for (i=0; i < numChaps; i++) {
-                            chapterID = Underscore.uniqueId();
+                            chapterID = self.crypto.randomUUID();
                             chaps.push(chapterID);
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                             chapter = new chapModel.Chapter({
@@ -1878,22 +1902,38 @@ define(function (require) {
                                 lastadapted: 0,
                                 versecount: 0
                             });
-                            chapters.add(chapter);                            
+                            chapters.add(chapter);
+                            chapter.save();
                         }
+                        // update the chapters in our book
+                        book.set('chapters', chaps, {silent: true});
+                        book.save();
                         defer.resolve("new import / no confirm needed");
                     }
 
                     // edb 4 Feb 2022 -- processing requires a possible pause to confirm the override; we'll wait on the
                     // callback results and then continue the import or exit (if the user cancels).
                     defer.then(function (msg) {
-                        console.log(msg);
+                        console.log(msg);    
                         // Continue processing the file. Note that at this point, the book and all chapters
                         // have been created for this file (either newly created or merged with an existing one)
 
                         // reset the objects to the beginning of this book (chapter 1)
-                        chapter = chapters.at(0);
-                        chapterID = chapter.get("chapterid");
+                        chapterID = book.get("chapters").at(0); // first chapter of the current book (UUID string)
+                        chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
                         chapterName = chapter.get("name");
+                        // get the existing source phrases in this chapter (empty if this is a new import)
+                        spsExisting = sourcePhrases.where({chapterid: chapterID}); 
+                        console.log("Total sourcephrases for book: " + sourcePhrases.length);
+                        firstBlock = true;
+                        if (spsExisting.length > 0) {
+                            // set norder to the first item in our existing list
+                            norder = spsExisting[0].get("norder");
+                        }
+                        var tmpID = null;
+                        var tmpObj = null;
+                        var tmpMk = "";
+                        var num = /\d/;
 
                         // set the lastDocument / lastAdapted<xxx> values if not already set
                         if (project.get('lastDocument') === "") {
@@ -1919,6 +1959,7 @@ define(function (require) {
                                     markers += " ";
                                 }
                                 markers += arr[i];
+                                // console.log("Marker found: " + markers);
                                 // If this is the start of a new paragraph, etc., check to see if there's a "dangling"
                                 // punctuation mark. If so, it belongs as a follPunct of the precious SourcePhrase
                                 if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
@@ -1937,7 +1978,128 @@ define(function (require) {
                                         i++;
                                     }
                                     // source contains the entire string; markers contains the marker that caused it
-                                    spID = Underscore.uniqueId();
+                                    spID = self.crypto.randomUUID();
+                                    if (markers.indexOf("\\v ") !== -1) {
+                                        // case where a marker with an end marker (e.g., a cross-reference) follows a
+                                        // verse -- need to get a new verse ID
+                                        verseID = self.crypto.randomUUID();
+                                        var vCount = (markers.match(/\\v /g) || []).length;
+                                        verseCount = verseCount + vCount; // most of the time, this will just increment by 1
+                                        // ** MERGE case: verse combined with an end marker
+                                        if (spsExisting.length > 0) {
+                                            // we have some existing sourcephrases for this chapter -- see if this verse needs merging
+                                            // get the verse # (string -- we'll be looking in the sourcephrase markers)
+                                            strExistingVerse = ""; // clear out any old verse info
+                                            stridx = markers.indexOf("\\v ") + 3;
+                                            if (markers.lastIndexOf(" ") < stridx) {
+                                                // no space after the chapter # (it's the ending of the string)
+                                                verseNum = "\\v " + markers.substr(stridx);
+                                            } else {
+                                                // space after the chapter #
+                                                verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
+                                            }
+                                            // find the verse number in the spsExisting list's markers
+                                            for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                tmpMk = spsExisting[tmpIdx].get("markers");
+                                                // test for the exact verse number (e.g., "v 1" but not "v 10")
+                                                if ((tmpMk.indexOf(verseNum) > -1) && (num.test(tmpMk.charAt(tmpMk.indexOf(verseNum) + verseNum.length)) === false)) {
+                                                    verseFound = true;
+                                                    // keep track of the norder and verseID -- we'll use them below
+                                                    tmpnorder = spsExisting[tmpIdx].get("norder");
+                                                    verseID = spsExisting[tmpIdx].get("vid");
+                                                    break; // exit the for loop
+                                                }
+                                            }
+                                            // did we find the verse?
+                                            if (verseFound === true) {
+                                                console.log("Merging verse w/end marker: " + spsExisting[tmpIdx].get("markers") + ", " + verseID);
+                                                verseFound = false; // clear the flag
+                                                // verse needs merging -- collect the source phrases up to the next verse in the DB
+                                                // compare the imported verse string to the verse in the DB
+                                                if (contents.indexOf("\\v ", contents.indexOf(verseNum) + 2) > 0) {
+                                                    verseEndIdx = contents.indexOf("\\v ", contents.indexOf(verseNum) + 2);
+                                                } else {
+                                                    verseEndIdx = contents.length - 1; // last verse
+                                                }
+                                                // pull out the imported verse, starting at the markers for the verse in the DB
+                                                // (we could have some before the \\v -- like a \\p, for example)
+                                                strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx);
+                                                // reconstitute the verse in the DB
+                                                for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                    if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                                        // concatenate
+                                                        // add markers, and if needed, pretty-print the text on a newline
+                                                        tmpMarkers = spsExisting[tmpIdx].get("markers");
+                                                        if (tmpMarkers.length > 0) {
+                                                            if ((tmpMarkers.indexOf("\\v") > -1) || (tmpMarkers.indexOf("\\c") > -1) ||
+                                                                    (tmpMarkers.indexOf("\\p") > -1) || (tmpMarkers.indexOf("\\id") > -1) ||
+                                                                    (tmpMarkers.indexOf("\\h") > -1) || (tmpMarkers.indexOf("\\toc") > -1) ||
+                                                                    (tmpMarkers.indexOf("\\mt") > -1)) {
+                                                                // pretty-printing -- add a newline so the output looks better
+                                                                if (strExistingVerse.length > 0) {
+                                                                    strExistingVerse = strExistingVerse.trim() + "\n"; // newline
+                                                                }
+                                                            }
+                                                            // now add the markers and a space
+                                                            strExistingVerse += tmpMarkers + " ";
+                                                        }
+                                                        strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
+                                                    }
+                                                }
+                                                if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                                    // verses differ -- 
+                                                    // first, align arr[i] with the marker data from our DB verse, so we don't lose any
+                                                    // marker data before the \\v
+                                                    var mkrArray = spsExisting[tmpIdx - 1].get("markers").replace(/\\/gi, " \\").split(spaceRE);
+                                                    // mkrArray could have a blank first slot -- check for that
+                                                    var mkrIdx = 0;
+                                                    if (mkrArray[0].length === 0) {
+                                                        mkrIdx++;
+                                                    }
+                                                    while (arr[i] !== mkrArray[mkrIdx]) {
+                                                        // go backwards in arr[] until we find the beginning of the markers
+                                                        i--;
+                                                    }
+                                                    var tmpStart = -1;
+                                                    var tmpLength = 0;
+                                                    // Now delete the existing sourcephrases from the DB (we'll import below)
+                                                    for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                        if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                                            // delete this guy
+                                                            tmpID = spsExisting[tmpIdx].get("spid");
+                                                            tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                            sourcePhrases.remove(tmpObj);
+                                                            tmpObj.destroy();
+                                                            if (tmpStart === -1) {
+                                                                tmpStart = tmpIdx;
+                                                            }
+                                                            tmpLength++;
+                                                        }
+                                                    }
+                                                    // also clean out spsExisting
+                                                    spsExisting.splice(tmpStart, tmpLength);
+                                                    // place the imported data where the existing verse used to be
+                                                    norder = (tmpnorder - 100);
+                                                    markers = ""; // clear out the markers so we rebuild it correctly
+                                                    continue; // jump to while loop
+                                                } else {
+                                                    // Merging an existing chapter/verse, but the verse is the same --
+                                                    // move our import index to the next verse / chapter position
+                                                    while ((i < arr.length) && (arr[i] !== "\\v") && (arr[i] !== "\\c")) {
+                                                        i++;
+                                                    }
+                                                    markers = ""; // clear out the markers for this verse
+                                                    continue; // jump to while loop
+                                                }
+                                            } else {
+                                                verseID = self.crypto.randomUUID(); // not an existing verse -- create a new verse ID
+                                                norder += 100;
+                                            } 
+                                        } else {
+                                            verseID = self.crypto.randomUUID(); // new verse in a new chapter -- create a new verse ID
+                                            norder += 100;
+                                        }
+                                    }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
@@ -1962,7 +2124,6 @@ define(function (require) {
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     }
-                                    
                                 } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
                                         (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
                                     // Markers with more than one token -- 
@@ -1970,7 +2131,6 @@ define(function (require) {
                                     i++;
                                     markers += " " + arr[i];
                                 }
-                                console.log("Marker found: " + markers);
                                 i++;
                             } else if (arr[i].length === 0) {
                                 // nothing in this token -- skip
@@ -1988,19 +2148,24 @@ define(function (require) {
                                 // Chapter element -- set the chapter ID to the one we created earlier
                                 if (markers && markers.indexOf("\\c ") !== -1) {
                                     // update the last adapted for the previous chapter before closing it out
-                                    chapter.set('versecount', verseCount, {silent: true});
-                                    chapter.set('lastadapted', lastAdapted, {silent: true});
-                                    chapter.save();
+                                    if (chapter.get('versecount') < verseCount) {
+                                        // only update if we're increasing the verse count
+                                        chapter.set('versecount', verseCount, {silent: true});
+                                    }
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
+                                    verseID = self.crypto.randomUUID(); // initial value -- chunk before verse 1 is considered a new "verse"
+                                    firstBlock = true; // first block in the chapter (for merging)
                                     stridx = markers.indexOf("\\c ") + 3;
                                     if (markers.lastIndexOf(" ") < stridx) {
                                         // no space after the chapter # (it's the ending of the string)
-                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx)});
+                                        chapNumber = markers.substr(stridx);
                                     } else {
                                         // space after the chapter #
-                                        chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
+                                        chapNumber = markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
                                     }
+                                    chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: chapNumber});
+                                    contentsIdx = contents.indexOf(("\\c " + chapNumber), contentsIdx); // for first block processing
                                     // find the chapter in our list
                                     chapter = chapters.where({name: chapterName})[0];
                                     chapterID = chapter.get("chapterid");
@@ -2011,21 +2176,105 @@ define(function (require) {
                                         if (spsExisting[spsExisting.length - 1].get("vid").length === 0) {
                                             // no verse IDs assigned (this is a pre-1.6 import) -
                                             // assign verse IDs to each source phrase
-                                            for (i=0; i<spsExisting.length; i++) {
-                                                if (spsExisting[i].get("markers").indexOf("\\v") !== -1) {
-                                                    verseID = Underscore.uniqueId(); // new verse -- create a new ID
+                                            for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                if (spsExisting[tmpIdx].get("markers").indexOf("\\v") !== -1) {
+                                                    verseID = self.crypto.randomUUID(); // new verse -- create a new ID
                                                 }
-                                                spsExisting[i].set('vid', verseID, {silent: true});
-                                                spsExisting[i].save();
+                                                spsExisting[tmpIdx].set('vid', verseID, {silent: true});
+                                                spsExisting[tmpIdx].save();
                                             }
                                         }
+                                        // get the verseID from the first block
+                                        verseID = spsExisting[0].get("vid"); 
                                     }
+                                }
+                                if (spsExisting.length > 0 && firstBlock === true) {
+                                    // special case for merging -- up to the first verse should be treated as one block for comparison
+                                    // (could be the whole "chapter" if we're looking at front matter with no verse marker)
+                                    // find the whole string to compare
+                                    var chapIdx = contents.indexOf("\\c ", contentsIdx + 2);
+                                    var verseIdx = contents.indexOf("\\v ", contentsIdx + 2);
+                                    var tmpMarkers = "";
+                                    tmpnorder = 0; // reset tmpnorder (first block)
+                                    verseID = spsExisting[0].get("vid"); // first block / get vid value from spsExisting
+                                    if ((chapIdx === -1) && (verseIdx === -1)) {
+                                        // last block -- use entire string
+                                        strImportedVerse = contents.substring(contentsIdx, contents.length - 1);                                        
+                                    } else {
+                                        if ((chapIdx > verseIdx) || (chapIdx === -1)) {
+                                            // either there's a verse first OR there are no more chapters -- 
+                                            // either way, we want the string up to the verse
+                                            strImportedVerse = contents.substring(contentsIdx, verseIdx);
+                                        } else {
+                                            // take the string up to the chapter
+                                            strImportedVerse = contents.substring(contentsIdx, chapIdx);
+                                        }
+                                    }
+                                    // compare the imported block to what we have in the DB
+                                    // reconstitute the verse in the DB
+                                    for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                        // Note that verseID is set to a unique value even for non-verse data (like here)
+                                        if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                            // concatenate
+                                            // add markers, and if needed, pretty-print the text on a newline
+                                            tmpMarkers = spsExisting[tmpIdx].get("markers");
+                                            if (tmpMarkers.length > 0) {
+                                                if ((tmpMarkers.indexOf("\\v") > -1) || (tmpMarkers.indexOf("\\c") > -1) ||
+                                                        (tmpMarkers.indexOf("\\p") > -1) || (tmpMarkers.indexOf("\\id") > -1) ||
+                                                        (tmpMarkers.indexOf("\\h") > -1) || (tmpMarkers.indexOf("\\toc") > -1) ||
+                                                        (tmpMarkers.indexOf("\\mt") > -1)) {
+                                                    // pretty-printing -- add a newline so the output looks better
+                                                    if (strExistingVerse.length > 0) {
+                                                        strExistingVerse = strExistingVerse.trim() + "\n"; // newline
+                                                    }
+                                                }
+                                                // now add the markers and a space
+                                                strExistingVerse += tmpMarkers + " ";
+                                            }
+                                            strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
+                                        } 
+                                    }
+                                    if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                        // blocks differ -- delete the existing sourcephrases from the DB (we'll import below)
+                                        var tmpStart = -1;
+                                        var tmpLength = 0;
+                                        for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                            if (spsExisting[tmpIdx].get("vid") === verseID) {
+                                                // delete this guy
+                                                tmpID = spsExisting[tmpIdx].get("spid");
+                                                tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                sourcePhrases.remove(tmpObj);
+                                                tmpObj.destroy();
+                                                if (tmpStart === -1) {
+                                                    tmpStart = tmpIdx;
+                                                }
+                                                tmpLength++;
+                                            }
+                                        }
+                                        // also clean out spsExisting
+                                        spsExisting.splice(tmpStart, tmpLength);
+                                        // place the imported data where the existing verse used to be
+                                        norder = tmpnorder;
+                                        firstBlock = false; // done processing content before the first \\v in a chapter    
+                                        // NO continue -- drop to next block and import this verse                            
+                                    } else {
+                                        // Merging an existing chapter/verse, but the verse is the same --
+                                        // move our import index to the next verse / chapter position
+                                        while ((i < arr.length) && (arr[i] !== "\\v")) {
+                                            i++;
+                                        }
+                                        markers = ""; // clear out the markers for this verse
+                                        firstBlock = false; // done processing content before the first \\v in a chapter
+                                        // jump to while loop
+                                        continue;
+                                    }    
                                 }
                                 // also do some processing for verse markers
                                 if (markers && markers.indexOf("\\v ") !== -1) {
                                     if (spsExisting.length > 0) {
                                         // we have some existing sourcephrases for this chapter -- see if this verse needs merging
                                         // get the verse # (string -- we'll be looking in the sourcephrase markers)
+                                        strExistingVerse = ""; // clear out any old verse info
                                         stridx = markers.indexOf("\\v ") + 3;
                                         if (markers.lastIndexOf(" ") < stridx) {
                                             // no space after the chapter # (it's the ending of the string)
@@ -2034,18 +2283,22 @@ define(function (require) {
                                             // space after the chapter #
                                             verseNum = "\\v " + markers.substr(stridx, markers.indexOf(" ", stridx) - stridx);
                                         }
-                                        for (i=0; i<spsExisting.length; i++) {
-                                            if (spsExisting[i].get("markers").indexOf(verseNum) > -1) {
+                                        // find the verse number in the spsExisting list's markers
+                                        for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                            tmpMk = spsExisting[tmpIdx].get("markers");
+                                            // test for the exact verse number (e.g., "v 1" but not "v 10")
+                                            if ((tmpMk.indexOf(verseNum) > -1) && (num.test(tmpMk.charAt(tmpMk.indexOf(verseNum) + verseNum.length)) === false)) {
                                                 verseFound = true;
                                                 // keep track of the norder and verseID -- we'll use them below
-                                                tmpnorder = spsExisting[i].get("norder");
-                                                verseID = spsExisting[i].get("vid");
+                                                tmpnorder = spsExisting[tmpIdx].get("norder");
+                                                verseID = spsExisting[tmpIdx].get("vid");
                                                 break; // exit the for loop
                                             }
                                         }
-
-                                        // find the verse number in the spsExisting list's markers
+                                        // did we find the verse?
                                         if (verseFound === true) {
+                                            console.log("Merging verse: " + spsExisting[tmpIdx].get("markers") + ", " + verseID);
+                                            verseFound = false; // clear the flag
                                             // verse needs merging -- collect the source phrases up to the next verse in the DB
                                             // compare the imported verse string to the verse in the DB
                                             if (contents.indexOf("\\v ", contents.indexOf(verseNum) + 2) > 0) {
@@ -2053,51 +2306,115 @@ define(function (require) {
                                             } else {
                                                 verseEndIdx = contents.length - 1; // last verse
                                             }
-                                            strImportedVerse = contents.substring(contents.indexOf(verseNum), verseEndIdx);
+                                            // pull out the imported verse, starting at the markers for the verse in the DB
+                                            // (we could have some before the \\v -- like a \\p, for example)
+                                            strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx);
                                             // reconstitute the verse in the DB
-                                            for (i=0; i<spsExisting.length; i++) {
-                                                if (spsExisting[i].get("vid") === verseID) {
+                                            for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                     // concatenate
                                                     // add markers, and if needed, pretty-print the text on a newline
-                                                    if (spsExisting[i].get("markers").length > 0) {
+                                                    tmpMarkers = spsExisting[tmpIdx].get("markers");
+                                                    if (tmpMarkers.length > 0) {
+                                                        if ((tmpMarkers.indexOf("\\v") > -1) || (tmpMarkers.indexOf("\\c") > -1) ||
+                                                                (tmpMarkers.indexOf("\\p") > -1) || (tmpMarkers.indexOf("\\id") > -1) ||
+                                                                (tmpMarkers.indexOf("\\h") > -1) || (tmpMarkers.indexOf("\\toc") > -1) ||
+                                                                (tmpMarkers.indexOf("\\mt") > -1)) {
+                                                            // pretty-printing -- add a newline so the output looks better
+                                                            if (strExistingVerse.length > 0) {
+                                                                strExistingVerse = strExistingVerse.trim() + "\n"; // newline
+                                                            }
+                                                        }
                                                         // now add the markers and a space
-                                                        strExistingVerse += spsExisting[i].get("markers") + " ";
+                                                        strExistingVerse += tmpMarkers + " ";
                                                     }
-                                                    strExistingVerse += value.get("source") + " ";
+                                                    strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                                 }
                                             }
-                                            if (strImportedVerse !== strExistingVerse.trim()) {
-                                                // verses differ -- delete the existing sourcephrases from the DB (we'll import below)
-                                                for (i=0; i<spsExisting.length; i++) {
-                                                    if (spsExisting[i].get("vid") === verseID) {
+                                            if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                                // verses differ -- 
+                                                // first, align arr[i] with the marker data from our DB verse, so we don't lose any
+                                                // marker data before the \\v
+                                                var mkrArray = spsExisting[tmpIdx - 1].get("markers").replace(/\\/gi, " \\").split(spaceRE);
+                                                // mkrArray could have a blank first slot -- check for that
+                                                var mkrIdx = 0;
+                                                if (mkrArray[0].length === 0) {
+                                                    mkrIdx++;
+                                                }
+                                                while (arr[i] !== mkrArray[mkrIdx]) {
+                                                    // go backwards in arr[] until we find the beginning of the markers
+                                                    i--;
+                                                }
+                                                var tmpStart = -1;
+                                                var tmpLength = 0;
+                                                // Now delete the existing sourcephrases from the DB (we'll import below)
+                                                for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                    if (spsExisting[tmpIdx].get("vid") === verseID) {
                                                         // delete this guy
-                                                        spid = spsExisting[i].get("spid");
-                                                        sourcePhrases.remove(spid);
-                                                        spid.destroy();
+                                                        tmpID = spsExisting[tmpIdx].get("spid");
+                                                        tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                        sourcePhrases.remove(tmpObj);
+                                                        tmpObj.destroy();
+                                                        if (tmpStart === -1) {
+                                                            tmpStart = tmpIdx;
+                                                        }
+                                                        tmpLength++;
                                                     }
                                                 }
+                                                // also clean out spsExisting
+                                                spsExisting.splice(tmpStart, tmpLength);
                                                 // place the imported data where the existing verse used to be
-                                                norder = tmpnorder;
+                                                norder = (tmpnorder - 100);
+                                                markers = ""; // clear out the markers so we rebuild it correctly
+                                                continue; // jump to while loop
+                                            } else {
+                                                // Merging an existing chapter/verse, but the verse is the same --
+                                                // move our import index to the next verse / chapter position
+                                                while ((i < arr.length) && (arr[i] !== "\\v") && (arr[i] !== "\\c")) {
+                                                    i++;
+                                                }
+                                                markers = ""; // clear out the markers for this verse
+                                                continue; // jump to while loop
                                             }
                                         } else {
-                                            verseID = Underscore.uniqueId(); // not an existing verse -- create a new verse ID
-                                        }                                  
+                                            verseID = self.crypto.randomUUID(); // not an existing verse -- create a new verse ID
+                                            norder += 100;
+                                        } 
                                     } else {
-                                        verseID = Underscore.uniqueId(); // new verse in a new chapter -- create a new verse ID
+                                        verseID = self.crypto.randomUUID(); // new verse in a new chapter -- create a new verse ID
+                                        norder += 100;
                                     }
                                     // EDB 30 Aug 2021: add blank verses
                                     var vCount = (markers.match(/\\v /g) || []).length;
                                     verseCount = verseCount + vCount; // most of the time, this will just increment by 1
                                     if (vCount > 1) {
                                         // special case -- blank verses
+                                        console.log("Blank verses found: " + vCount);
                                         var tmpMrks;
                                         for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
                                             // pull out the marker for this blank verse
                                             tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
                                             markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
                                             // create a blank sourcephrase (no source or target) for each verse
-                                            spID = Underscore.uniqueId();
-                                            verseID = Underscore.uniqueId(); // new verse (blank)
+                                            spID = self.crypto.randomUUID();
+                                            verseID = self.crypto.randomUUID(); // new verse (blank)
+                                            // if we're merging, check for this blank verse in the DB.
+                                            if (spsExisting.length > 0) {
+                                                for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                                    if (spsExisting[tmpIdx].get("markers").indexOf(tmpMrks) > -1) {
+                                                        // found the blank verse sourcephrase -- delete it
+                                                        norder = spsExisting[tmpIdx].get("norder");
+                                                        verseID = spsExisting[tmpIdx].get("vid");
+                                                        tmpID = spsExisting[tmpIdx].get("spid");
+                                                        tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                        sourcePhrases.remove(tmpObj);
+                                                        tmpObj.destroy();
+                                                        console.log("Merge blank verse: " + tmpMrks + " (" + spID + ")");
+                                                        break; // exit the for loop
+                                                    }
+                                                }
+                                            }
+                                            // create a sourcephrase for this blank verse
                                             sp = new spModel.SourcePhrase({
                                                 spid: spID,
                                                 norder: norder,
@@ -2114,7 +2431,7 @@ define(function (require) {
                                             prepuncts = "";
                                             follpuncts = "";
                                             punctIdx = 0;
-                                            norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                            norder = norder + 200; // en/KJV longest is 90 words/verse (Esther 8:9)
                                             sps.push(sp);
                                             // if necessary, send the next batch of SourcePhrase INSERT transactions
                                             if ((sps.length % MAX_BATCH) === 0) {
@@ -2133,8 +2450,6 @@ define(function (require) {
                                         prepuncts += arr[i].charAt(punctIdx);
                                         punctIdx++;
                                     }
-                                    // remove the punctuation from the "source" of the substring
-    //                                s = s.substr(punctIdx);
                                 }
                                 if (punctIdx === s.length) {
                                     // it'a ALL punctuation -- jump to the next token
@@ -2148,11 +2463,9 @@ define(function (require) {
                                             follpuncts = s.charAt(punctIdx) + follpuncts;
                                             punctIdx--;
                                         }
-                                        // remove the punctuation from the "source" of the substring
-    //                                    s = s.substr(0, punctIdx + 1);
                                     }
                                     // Now create a new sourcephrase
-                                    spID = Underscore.uniqueId();
+                                    spID = self.crypto.randomUUID();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
@@ -2181,6 +2494,65 @@ define(function (require) {
                                 }
                             }
                         }
+                        // done with the content array. One final check -- did we end on empty verses?
+                        if (markers && markers.indexOf("\\v ") !== -1) {
+                            var vCount = (markers.match(/\\v /g) || []).length;
+                            verseCount = verseCount + vCount; // most of the time, this will just increment by 1
+                            if (vCount >= 1) {
+                                // special case -- blank verses
+                                console.log("Empty verse(s) at end: " + vCount);
+                                var tmpMrks;
+                                for (var vIdx = 0; vIdx < vCount; vIdx++) {
+                                    // pull out the marker for this blank verse
+                                    tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
+                                    markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                    if (tmpMrks.length === 0) {
+                                        tmpMrks = markers; // last verse
+                                    }
+                                    // create a blank sourcephrase (no source or target) for each verse
+                                    spID = self.crypto.randomUUID();
+                                    verseID = self.crypto.randomUUID(); // new verse (blank)
+                                    // if we're merging, check for this blank verse in the DB.
+                                    if (spsExisting.length > 0) {
+                                        for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
+                                            if (spsExisting[tmpIdx].get("markers").indexOf(tmpMrks) > -1) {
+                                                // found the blank verse sourcephrase -- delete it
+                                                norder = spsExisting[tmpIdx].get("norder");
+                                                verseID = spsExisting[tmpIdx].get("vid");
+                                                tmpID = spsExisting[tmpIdx].get("spid");
+                                                tmpObj = sourcePhrases.findWhere({spid: tmpID});
+                                                sourcePhrases.remove(tmpObj);
+                                                tmpObj.destroy();
+                                                console.log("Merge blank verse: " + tmpMrks + " (" + spID + ")");
+                                                break; // exit the for loop
+                                            }
+                                        }
+                                    }
+                                    sp = new spModel.SourcePhrase({
+                                        spid: spID,
+                                        norder: norder,
+                                        chapterid: chapterID,
+                                        vid: verseID,
+                                        markers: tmpMrks,
+                                        orig: null,
+                                        prepuncts: prepuncts,
+                                        midpuncts: midpuncts,
+                                        follpuncts: follpuncts,
+                                        source: "",
+                                        target: ""
+                                    });
+                                    prepuncts = "";
+                                    follpuncts = "";
+                                    punctIdx = 0;
+                                    norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
+                                    sps.push(sp);
+                                    // if necessary, send the next batch of SourcePhrase INSERT transactions
+                                    if ((sps.length % MAX_BATCH) === 0) {
+                                        deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    }
+                                }
+                            }
+                        }
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
                             $("#status").html(i18n.t("view.dscStatusSaving"));
@@ -2192,11 +2564,10 @@ define(function (require) {
                         }).fail(function (e) {
                             importFail(e);
                         });
-                        // update the last chapter's verseCount
-                        chapter.set('versecount', verseCount, {silent: true});
-                        chapter.save();
-                        book.set('chapters', chaps, {silent: true});
-                        book.save();
+                        // update the last chapter's verseCount if needed
+                        if (chapter.get('versecount') < verseCount) {
+                            chapter.set('versecount', verseCount);
+                        }
                         return true; // success
                     }, function (msg) {
                         console.log(msg);
@@ -3871,7 +4242,7 @@ define(function (require) {
                     });
                     // emit each source/target refstring as a separate <tu> with a <tuv> for source, target
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "  <tu tuid=\"" + Underscore.uniqueId() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
+                        content += "  <tu tuid=\"" + self.crypto.randomUUID() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
                         // source tuv
                         content += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
                         content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>" + CRLF;
@@ -4073,8 +4444,8 @@ define(function (require) {
                             isClipboard = true;
                             console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
                             var clipboardFile = new Blob([clipText], {type: "text/plain"});
-                            $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
-                            fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
+                            $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
+                            fileName = i18n.t("view.lblText") + "-" + (self.crypto.randomUUID());
                             importFile(clipboardFile, model);            
                         }
                     });
@@ -4097,8 +4468,8 @@ define(function (require) {
                     // accept a Blob (the File object derives from Blob), which is why importFile works.
                     console.log("Clipboard selected. Creating ad hoc file from text.");
                     var clipboardFile = new Blob([cbData], {type: "text/plain"});
-                    $("#status").html(i18n.t("view.dscStatusReading", {document: clipboardFile.name}));
-                    fileName = i18n.t("view.lblText") + "-" + (Underscore.uniqueId());
+                    $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
+                    fileName = i18n.t("view.lblText") + "-" + (self.crypto.randomUUID());
                     importFile(clipboardFile, model);
                 } else {
                     isClipboard = false;
