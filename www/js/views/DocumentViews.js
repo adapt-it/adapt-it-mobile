@@ -1919,8 +1919,8 @@ define(function (require) {
                         // have been created for this file (either newly created or merged with an existing one)
 
                         // reset the objects to the beginning of this book (chapter 1)
-                        chapter = chapters.at(0);
-                        chapterID = chapter.get("chapterid");
+                        chapterID = book.get("chapters").at(0); // first chapter of the current book (UUID string)
+                        chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
