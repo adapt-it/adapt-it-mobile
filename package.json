@@ -17,7 +17,7 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-android": "^10.1.1",
+    "cordova-android": "^10.1.2",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-device": "^2.0.3",
@@ -90,8 +90,8 @@
       "cordova-sqlite-evcore-extbuild-free": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
