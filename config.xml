@@ -28,7 +28,7 @@
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <preference name="android-minSdkVersion" value="22" />
-        <preference name="android-targetSdkVersion" value="30" />
+        <preference name="android-targetSdkVersion" value="31" />
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
