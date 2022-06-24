@@ -2023,7 +2023,7 @@ define(function (require) {
                                                 }
                                                 // pull out the imported verse, starting at the markers for the verse in the DB
                                                 // (we could have some before the \\v -- like a \\p, for example)
-                                                strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx);
+                                                strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx).replace(spaceRE, " ");
                                                 // reconstitute the verse in the DB
                                                 for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                     if (spsExisting[tmpIdx].get("vid") === verseID) {
@@ -2046,7 +2046,7 @@ define(function (require) {
                                                         strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                                     }
                                                 }
-                                                if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                                if (strImportedVerse.trim() !== strExistingVerse.replace(spaceRE, " ").trim()) {
                                                     // verses differ -- 
                                                     // first, align arr[i] with the marker data from our DB verse, so we don't lose any
                                                     // marker data before the \\v
@@ -2210,6 +2210,7 @@ define(function (require) {
                                             strImportedVerse = contents.substring(contentsIdx, chapIdx);
                                         }
                                     }
+                                    strImportedVerse = strImportedVerse.replace(spaceRE, " ");
                                     // compare the imported block to what we have in the DB
                                     // reconstitute the verse in the DB
                                     for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
@@ -2234,7 +2235,7 @@ define(function (require) {
                                             strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                         } 
                                     }
-                                    if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                    if (strImportedVerse.trim() !== strExistingVerse.replace(spaceRE, " ").trim()) {
                                         // blocks differ -- delete the existing sourcephrases from the DB (we'll import below)
                                         var tmpStart = -1;
                                         var tmpLength = 0;
@@ -2308,7 +2309,7 @@ define(function (require) {
                                             }
                                             // pull out the imported verse, starting at the markers for the verse in the DB
                                             // (we could have some before the \\v -- like a \\p, for example)
-                                            strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx);
+                                            strImportedVerse = contents.substring(contents.indexOf(spsExisting[tmpIdx].get("markers")), verseEndIdx).replace(spaceRE, " ");
                                             // reconstitute the verse in the DB
                                             for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                 if (spsExisting[tmpIdx].get("vid") === verseID) {
@@ -2331,7 +2332,7 @@ define(function (require) {
                                                     strExistingVerse += spsExisting[tmpIdx].get("source") + " ";
                                                 }
                                             }
-                                            if (strImportedVerse.trim() !== strExistingVerse.trim()) {
+                                            if (strImportedVerse.trim() !== strExistingVerse.replace(spaceRE, " ").trim()) {
                                                 // verses differ -- 
                                                 // first, align arr[i] with the marker data from our DB verse, so we don't lose any
                                                 // marker data before the \\v
@@ -2390,11 +2391,13 @@ define(function (require) {
                                     if (vCount > 1) {
                                         // special case -- blank verses
                                         console.log("Blank verses found: " + vCount);
-                                        var tmpMrks;
+                                        var tmpMrks, Idx1, Idx2;
                                         for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
                                             // pull out the marker for this blank verse
-                                            tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
-                                            markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                            Idx1 = markers.indexOf("\\v ", 0); // _this_ verse
+                                            Idx2 = markers.indexOf("\\v ", Idx1 + 1); // next verse
+                                            tmpMrks = markers.substring(0, Idx2); // up to the next verse
+                                            markers = markers.substring(Idx2); // remaining marker string
                                             // create a blank sourcephrase (no source or target) for each verse
                                             spID = self.crypto.randomUUID();
                                             verseID = self.crypto.randomUUID(); // new verse (blank)
@@ -2501,11 +2504,13 @@ define(function (require) {
                             if (vCount >= 1) {
                                 // special case -- blank verses
                                 console.log("Empty verse(s) at end: " + vCount);
-                                var tmpMrks;
-                                for (var vIdx = 0; vIdx < vCount; vIdx++) {
+                                var tmpMrks, Idx1, Idx2;
+                                for (var vIdx = 0; vIdx < vCount - 1; vIdx++) {
                                     // pull out the marker for this blank verse
-                                    tmpMrks = markers.substr(0, markers.indexOf("\\v ", 1)); // up to the next verse
-                                    markers = markers.substring(markers.indexOf("\\v ", 1)); // remaining marker string
+                                    Idx1 = markers.indexOf("\\v ", 0); // _this_ verse
+                                    Idx2 = markers.indexOf("\\v ", Idx1 + 1); // next verse
+                                    tmpMrks = markers.substring(0, Idx2); // up to the next verse
+                                    markers = markers.substring(Idx2); // remaining marker string
                                     if (tmpMrks.length === 0) {
                                         tmpMrks = markers; // last verse
                                     }
