@@ -163,11 +163,19 @@ As you translate the text, you might want to read through the draft to verify it
 
 Currently Adapt It Mobile has the following editor settings that can be modified:
 
-- Copy Source (default = checked)
+- Copy Source _(default = checked)_
+  
   When checked, Adapt It Mobile will automatically copy the source into the target field if an entry cannot be found in the Knowledge Base for the current source. Uncheck this box if you would like the target edit field to remain empty if no KB entry can be found for the source.
 
-- Wrap at Standard Format Markers (default = checked)
+- Wrap at Standard Format Markers _(default = checked)_
+  
   When checked, Adapt It Mobile will cause the UI to display the word or phrase *following* text with USFM markers on a new line. Uncheck this box if you would like the the next phrase to appear just after text with USFM, for a more compact display.
 
+- Stop Selection at Boundaries _(default = checked)_
 
+  When checked, Adapt It Mobile will only allow the user to select up to the end of a phrase boundary (for example, all the words up to a punctuation mark). Uncheck this box if you would like to select more sections of text at once.
+  
+- Allow editing of Blank Source Phrases _(Since: 1.6.0 / Default = unchecked)_
+
+  By default, Adapt It Mobile will not allow you to add a target translation for a verse with no source text. Check this box if you would like to add translations for blank verses; however, any translations added will be erased if you import the same chapter and include source text for these verses.
 
