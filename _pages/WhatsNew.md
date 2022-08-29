@@ -3,27 +3,19 @@ permalink: /ReleaseNotes/
 layout: page
 title:  What's new in Adapt It Mobile
 desc:   Learn about the latest updates for Adapt It Mobile
-date:   2019-09-17 12:21
+date:   2022-09-01 12:21
 ---
 
-### What's new in Adapt It Mobile 1.2.0
+### What's new in Adapt It Mobile 1.6.0
 
-#### Split Window Support
+#### Merge full USFM chapters and Scripture portions
 
-Adapt It Mobile now supports side-by-side windowing on devices with larger screens. This type of view is useful for displaying translation help alongside Adapt It Mobile as you translate on a tablet.
+Adapt It Mobile now supports multiple USFM imports of the same Scripture source text book. This is to support import of source text from Key It, the text input app from the Adapt It team -- although any USFM source text should also work, provided the /id marker is included in the file.
 
-![Split Window Display]({{ site.baseurl }}/assets/img/AIM-sxs.png)
+Note that multiple imports of the same source verses will remove any translations for the duplicate verses. Adapt It Mobile will warn the user before importing duplicate USFM files.
 
-#### Project Language Enhancements
+#### Empty / blank source verse handling
 
-Adapt It Mobile has a new autocomplete mechanism for specifying the source and target language of a translation project. Type in a few letters of the language, and a dropdown appears with languages that match. Select a language from the list, and Adapt It Mobile will automatically build the language code for you.
+Adapt It Mobile now displays blank source verses on separate lines. By default blank source verses cannot be translated, but the user can configure this setting in the editor settings for the project.
 
-If you have an exotic script or revision that doesn’t fit the normal language code, you can now override the automatically generated language code and specify a custom RFC 5646 code for the translation project’s source and target languages.
-
-#### And More
-
-- Support for custom special text colors.
-- Fixed punctuation import consistency between file types.
-- Improved phrase selection, including the ability to stop selection at boundaries.
-- Improved support for larger source phrases.
-
+For more information, see the help topic ![Changing Editor Settings]({{ site.baseurl }}/advanced-topics/#editor-settings)
