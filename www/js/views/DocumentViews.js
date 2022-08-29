@@ -149,7 +149,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = self.crypto.randomUUID(),
+                var newID = window.Application.generateUUID(),
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
@@ -266,7 +266,7 @@ define(function (require) {
                     } else {
                         bookName = fileName;
                     }
-                    bookID = self.crypto.randomUUID();
+                    bookID = window.Application.generateUUID();
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
@@ -277,7 +277,7 @@ define(function (require) {
                     });
                     books.add(book);
                     // (for now, just one chapter -- eventually we could chunk this out based on file size)
-                    chapterID = self.crypto.randomUUID();
+                    chapterID = window.Application.generateUUID();
                     chaps.push(chapterID);
                     chapter = new chapModel.Chapter({
                         chapterid: chapterID,
@@ -348,7 +348,7 @@ define(function (require) {
 //                                    s = s.substr(0, punctIdx + 1);
                                 }
                                 // Now create a new sourcephrase
-                                spID = self.crypto.randomUUID();
+                                spID = window.Application.generateUUID();
                                 sp = new spModel.SourcePhrase({
                                     spid: spID,
                                     norder: norder,
@@ -419,7 +419,7 @@ define(function (require) {
                     var lastAdapted = 0;
                     var closingMarker = "";
                     var nodeStyle = "";
-                    var verseID = self.crypto.randomUUID(); // pre-verse 1 initialization
+                    var verseID = window.Application.generateUUID(); // pre-verse 1 initialization
                     var parseNode = function (element) {
                         nodeStyle = "";
                         // process the node itself
@@ -459,7 +459,7 @@ define(function (require) {
                                     lastAdapted = 0; // reset for the next chapter
                                     // now create the new chapter
                                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: element.attributes.item("number").nodeValue});
-                                    chapterID = self.crypto.randomUUID();
+                                    chapterID = window.Application.generateUUID();
                                     chaps.push(chapterID);
                                     chapter = new chapModel.Chapter({
                                         chapterid: chapterID,
@@ -474,7 +474,7 @@ define(function (require) {
                                 break;
                             case "verse":
                                 verseCount++;
-                                verseID = self.crypto.randomUUID();
+                                verseID = window.Application.generateUUID();
                                 if (markers.length > 0) {
                                     markers += " ";
                                 }
@@ -688,7 +688,7 @@ define(function (require) {
                                             }
                                         }
                                         // Now create a new sourcephrase
-                                        spID = self.crypto.randomUUID();
+                                        spID = window.Application.generateUUID();
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
                                             norder: norder,
@@ -755,7 +755,7 @@ define(function (require) {
                         return false;
                     }
                     index = 1;
-                    bookID = self.crypto.randomUUID();
+                    bookID = window.Application.generateUUID();
                     // Create the book and chapter 
                     book = new bookModel.Book({
                         bookid: bookID,
@@ -766,7 +766,7 @@ define(function (require) {
                         chapters: []
                     });
                     books.add(book);
-                    chapterID = self.crypto.randomUUID();
+                    chapterID = window.Application.generateUUID();
                     chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: "1"});
                     chapter = new chapModel.Chapter({
@@ -910,7 +910,7 @@ define(function (require) {
                         });
                         // create the TU
                         // Note that the refstrings array is spliced / cleared out each time
-                        var newID = self.crypto.randomUUID(),
+                        var newID = window.Application.generateUUID(),
                             newTU = new kbModels.TargetUnit({
                                 tuid: newID,
                                 projectid: projectid,
@@ -925,7 +925,7 @@ define(function (require) {
                         newTU.save();
                     });
                     // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = self.crypto.randomUUID(),
+                    var newID = window.Application.generateUUID(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
                             projectid: projectid,
@@ -1074,7 +1074,7 @@ define(function (require) {
                                 tu.update();
                             } else {
                                 // not in list -- create a new TU
-                                var newID = self.crypto.randomUUID(),
+                                var newID = window.Application.generateUUID(),
                                     newTU = new kbModels.TargetUnit({
                                         tuid: newID,
                                         projectid: projectid,
@@ -1097,7 +1097,7 @@ define(function (require) {
                         }
                     });
                     // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = self.crypto.randomUUID(),
+                    var newID = window.Application.generateUUID(),
                         newTU = new kbModels.TargetUnit({
                             tuid: newID,
                             projectid: projectid,
@@ -1135,7 +1135,7 @@ define(function (require) {
                     // find the USFM ID of this book
                     var scrIDList = new scrIDs.ScrIDCollection();
                     var verseCount = 0;
-                    var verseID = self.crypto.randomUUID();
+                    var verseID = window.Application.generateUUID();
                     var lastAdapted = 0;
                     var markers = "";
                     var firstChapterNumber = "1";
@@ -1329,7 +1329,7 @@ define(function (require) {
                             }
                         }
                         // Create the book and chapter 
-                        bookID = self.crypto.randomUUID();
+                        bookID = window.Application.generateUUID();
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
@@ -1343,7 +1343,7 @@ define(function (require) {
                     // Reset the index to the beginning of the file
                     index = 1;
                     // Add the first chapter
-                    chapterID = self.crypto.randomUUID();
+                    chapterID = window.Application.generateUUID();
                     chaps.push(chapterID);
                     chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: firstChapterNumber});
                     chapter = new chapModel.Chapter({
@@ -1399,7 +1399,7 @@ define(function (require) {
                                 lastAdapted = 0; // reset for the next chapter
                                 stridx = markers.indexOf("\\c ") + 3;
                                 chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: markers.substr(stridx, markers.indexOf(" ", stridx) - stridx)});
-                                chapterID = self.crypto.randomUUID();
+                                chapterID = window.Application.generateUUID();
                                 chaps.push(chapterID);
                                 // create the new chapter
                                 chapter = new chapModel.Chapter({
@@ -1416,7 +1416,7 @@ define(function (require) {
                         }
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             verseCount++;
-                            verseID = self.crypto.randomUUID();
+                            verseID = window.Application.generateUUID();
                             // check this sourcephrase for a target - if there is one, consider this verse adapted
                             // (note that we're only checking the FIRST sp of each verse, not EVERY sp in the verse)
                             if ($(this).attr('t')) {
@@ -1441,9 +1441,9 @@ define(function (require) {
 //                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         if (origTarget.length > 0) {
                             // phrase -- spID has a prefix of "phr-"
-                            spID = "phr-" + self.crypto.randomUUID();
+                            spID = "phr-" + window.Application.generateUUID();
                         } else {
-                            spID = self.crypto.randomUUID();
+                            spID = window.Application.generateUUID();
                         }
                         sp = new spModel.SourcePhrase({
                             spid: spID,
@@ -1524,9 +1524,9 @@ define(function (require) {
                                         // (1) create a sourcephrase with the first part of the token (without the ending marker)
                                         if (origTarget.length > 0) {
                                             // phrase -- spID has a prefix of "phr-"
-                                            spID = "phr-" + self.crypto.randomUUID();
+                                            spID = "phr-" + window.Application.generateUUID();
                                         } else {
-                                            spID = self.crypto.randomUUID();
+                                            spID = window.Application.generateUUID();
                                         }
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
@@ -1572,9 +1572,9 @@ define(function (require) {
                                         console.log("Filter with end marker: " + src);
                                         if (origTarget.length > 0) {
                                             // phrase -- spID has a prefix of "phr-"
-                                            spID = "phr-" + self.crypto.randomUUID();
+                                            spID = "phr-" + window.Application.generateUUID();
                                         } else {
-                                            spID = self.crypto.randomUUID();
+                                            spID = window.Application.generateUUID();
                                         }
                                         sp = new spModel.SourcePhrase({
                                             spid: spID,
@@ -1610,9 +1610,9 @@ define(function (require) {
                                     // (1) create a sourcephrase with the first part of the token (without the ending marker)
                                     if (origTarget.length > 0) {
                                         // phrase -- spID has a prefix of "phr-"
-                                        spID = "phr-" + self.crypto.randomUUID();
+                                        spID = "phr-" + window.Application.generateUUID();
                                     } else {
-                                        spID = self.crypto.randomUUID();
+                                        spID = window.Application.generateUUID();
                                     }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -1647,9 +1647,9 @@ define(function (require) {
                                     // regular token - add as a new sourcephrase
                                     if (origTarget.length > 0) {
                                         // phrase -- spID has a prefix of "phr-"
-                                        spID = "phr-" + self.crypto.randomUUID();
+                                        spID = "phr-" + window.Application.generateUUID();
                                     } else {
-                                        spID = self.crypto.randomUUID();
+                                        spID = window.Application.generateUUID();
                                     }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -1742,7 +1742,7 @@ define(function (require) {
                     var markerList = new USFM.MarkerCollection();
                     var lastAdapted = 0;
                     var verseCount = 0;
-                    var verseID = self.crypto.randomUUID();
+                    var verseID = window.Application.generateUUID();
                     var firstBlock = true;
                     var i = 0;
                     var tmpIdx = 0;
@@ -1841,7 +1841,7 @@ define(function (require) {
                                             // does this chapter name exist?
                                             if (!chapters.where({name: chapterName})[0]) {
                                                 // chapter doesn't exist -- create it now
-                                                chapterID = self.crypto.randomUUID();
+                                                chapterID = window.Application.generateUUID();
                                                 chaps.push(chapterID);
                                                 chapter = new chapModel.Chapter({
                                                     chapterid: chapterID,
@@ -1880,7 +1880,7 @@ define(function (require) {
                     } else {
                         // new import -- create the book object, with all the chapter objects 
                         // (with zero verses for now; they are populated below)
-                        bookID = self.crypto.randomUUID();
+                        bookID = window.Application.generateUUID();
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
@@ -1891,7 +1891,7 @@ define(function (require) {
                         });
                         books.add(book);
                         for (i=0; i < numChaps; i++) {
-                            chapterID = self.crypto.randomUUID();
+                            chapterID = window.Application.generateUUID();
                             chaps.push(chapterID);
                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                             chapter = new chapModel.Chapter({
@@ -1919,7 +1919,7 @@ define(function (require) {
                         // have been created for this file (either newly created or merged with an existing one)
 
                         // reset the objects to the beginning of this book (chapter 1)
-                        chapterID = book.get("chapters").at(0); // first chapter of the current book (UUID string)
+                        chapterID = book.get("chapters")[0]; // first chapter of the current book (UUID string)
                         chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
@@ -1978,11 +1978,11 @@ define(function (require) {
                                         i++;
                                     }
                                     // source contains the entire string; markers contains the marker that caused it
-                                    spID = self.crypto.randomUUID();
+                                    spID = window.Application.generateUUID();
                                     if (markers.indexOf("\\v ") !== -1) {
                                         // case where a marker with an end marker (e.g., a cross-reference) follows a
                                         // verse -- need to get a new verse ID
-                                        verseID = self.crypto.randomUUID();
+                                        verseID = window.Application.generateUUID();
                                         var vCount = (markers.match(/\\v /g) || []).length;
                                         verseCount = verseCount + vCount; // most of the time, this will just increment by 1
                                         // ** MERGE case: verse combined with an end marker
@@ -2092,11 +2092,11 @@ define(function (require) {
                                                     continue; // jump to while loop
                                                 }
                                             } else {
-                                                verseID = self.crypto.randomUUID(); // not an existing verse -- create a new verse ID
+                                                verseID = window.Application.generateUUID(); // not an existing verse -- create a new verse ID
                                                 norder += 100;
                                             } 
                                         } else {
-                                            verseID = self.crypto.randomUUID(); // new verse in a new chapter -- create a new verse ID
+                                            verseID = window.Application.generateUUID(); // new verse in a new chapter -- create a new verse ID
                                             norder += 100;
                                         }
                                     }
@@ -2154,7 +2154,7 @@ define(function (require) {
                                     }
                                     verseCount = 0; // reset for the next chapter
                                     lastAdapted = 0; // reset for the next chapter
-                                    verseID = self.crypto.randomUUID(); // initial value -- chunk before verse 1 is considered a new "verse"
+                                    verseID = window.Application.generateUUID(); // initial value -- chunk before verse 1 is considered a new "verse"
                                     firstBlock = true; // first block in the chapter (for merging)
                                     stridx = markers.indexOf("\\c ") + 3;
                                     if (markers.lastIndexOf(" ") < stridx) {
@@ -2178,7 +2178,7 @@ define(function (require) {
                                             // assign verse IDs to each source phrase
                                             for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
                                                 if (spsExisting[tmpIdx].get("markers").indexOf("\\v") !== -1) {
-                                                    verseID = self.crypto.randomUUID(); // new verse -- create a new ID
+                                                    verseID = window.Application.generateUUID(); // new verse -- create a new ID
                                                 }
                                                 spsExisting[tmpIdx].set('vid', verseID, {silent: true});
                                                 spsExisting[tmpIdx].save();
@@ -2378,11 +2378,11 @@ define(function (require) {
                                                 continue; // jump to while loop
                                             }
                                         } else {
-                                            verseID = self.crypto.randomUUID(); // not an existing verse -- create a new verse ID
+                                            verseID = window.Application.generateUUID(); // not an existing verse -- create a new verse ID
                                             norder += 100;
                                         } 
                                     } else {
-                                        verseID = self.crypto.randomUUID(); // new verse in a new chapter -- create a new verse ID
+                                        verseID = window.Application.generateUUID(); // new verse in a new chapter -- create a new verse ID
                                         norder += 100;
                                     }
                                     // EDB 30 Aug 2021: add blank verses
@@ -2399,8 +2399,8 @@ define(function (require) {
                                             tmpMrks = markers.substring(0, Idx2); // up to the next verse
                                             markers = markers.substring(Idx2); // remaining marker string
                                             // create a blank sourcephrase (no source or target) for each verse
-                                            spID = self.crypto.randomUUID();
-                                            verseID = self.crypto.randomUUID(); // new verse (blank)
+                                            spID = window.Application.generateUUID();
+                                            verseID = window.Application.generateUUID(); // new verse (blank)
                                             // if we're merging, check for this blank verse in the DB.
                                             if (spsExisting.length > 0) {
                                                 for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
@@ -2468,7 +2468,7 @@ define(function (require) {
                                         }
                                     }
                                     // Now create a new sourcephrase
-                                    spID = self.crypto.randomUUID();
+                                    spID = window.Application.generateUUID();
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
                                         norder: norder,
@@ -2515,8 +2515,8 @@ define(function (require) {
                                         tmpMrks = markers; // last verse
                                     }
                                     // create a blank sourcephrase (no source or target) for each verse
-                                    spID = self.crypto.randomUUID();
-                                    verseID = self.crypto.randomUUID(); // new verse (blank)
+                                    spID = window.Application.generateUUID();
+                                    verseID = window.Application.generateUUID(); // new verse (blank)
                                     // if we're merging, check for this blank verse in the DB.
                                     if (spsExisting.length > 0) {
                                         for (tmpIdx=0; tmpIdx<spsExisting.length; tmpIdx++) {
@@ -4247,7 +4247,7 @@ define(function (require) {
                     });
                     // emit each source/target refstring as a separate <tu> with a <tuv> for source, target
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "  <tu tuid=\"" + self.crypto.randomUUID() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
+                        content += "  <tu tuid=\"" + window.Application.generateUUID() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
                         // source tuv
                         content += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
                         content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>" + CRLF;
@@ -4450,7 +4450,7 @@ define(function (require) {
                             console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
                             var clipboardFile = new Blob([clipText], {type: "text/plain"});
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            fileName = i18n.t("view.lblText") + "-" + (self.crypto.randomUUID());
+                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
                             importFile(clipboardFile, model);            
                         }
                     });
@@ -4474,7 +4474,7 @@ define(function (require) {
                     console.log("Clipboard selected. Creating ad hoc file from text.");
                     var clipboardFile = new Blob([cbData], {type: "text/plain"});
                     $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                    fileName = i18n.t("view.lblText") + "-" + (self.crypto.randomUUID());
+                    fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
                     importFile(clipboardFile, model);
                 } else {
                     isClipboard = false;
