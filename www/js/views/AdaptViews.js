@@ -215,7 +215,7 @@ define(function (require) {
                 tu.update();
             } else {
                 // no entry in KB with this source -- add one
-                var newID = self.crypto.randomUUID(),
+                var newID = window.Application.generateUUID(),
                     newTU = new kbModels.TargetUnit({
                         tuid: newID,
                         projectid: projectid,
