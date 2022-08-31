@@ -22,6 +22,8 @@
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/icon/android/icon-nobg-288.png" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#279ED8" />
         <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
