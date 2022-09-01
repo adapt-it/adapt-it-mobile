@@ -80,7 +80,7 @@ define(function (require) {
             usingImportedKB: false,
             version: "1.6.0", // appended with milestone / iOS build info
             AndroidBuild: "36", // (was milestone release #)
-            iOSBuild: "1.6.2",
+            iOSBuild: "2", // iOS uploaded build number for this release (increments from 1) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Utility function from https://www.sobyte.net/post/2022-02/js-crypto-randomuuid/
