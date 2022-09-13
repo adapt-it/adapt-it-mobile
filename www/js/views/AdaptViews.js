@@ -851,7 +851,7 @@ define(function (require) {
                                                 window.Application.home();
                                             }
                                         },
-                                        i18next.t('ttlMain'),
+                                        i18next.t('view.ttlMain'),
                                         [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
                                     );
                                 } else {

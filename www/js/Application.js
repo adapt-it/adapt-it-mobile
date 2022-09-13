@@ -77,10 +77,9 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            usingImportedKB: false,
-            version: "1.6.0", // appended with milestone / iOS build info
-            AndroidBuild: "36", // (was milestone release #)
-            iOSBuild: "2", // iOS uploaded build number for this release (increments from 1) 
+            version: "1.7.0", // appended with milestone / iOS build info
+            AndroidBuild: "37", // (was milestone release #)
+            iOSBuild: "1", // iOS uploaded build number for this release (increments from 1) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Utility function from https://www.sobyte.net/post/2022-02/js-crypto-randomuuid/
@@ -299,22 +298,16 @@ define(function (require) {
                         // Callback when i18next is finished initializing
                         var IMPORTED_KB_FILE = "**ImportedKBFile**";
 
-                        // Load any app-wide collections
-                        window.Application.BookList = new bookModel.BookCollection();
-                        window.Application.BookList.fetch({reset: true, data: {name: ""}});
+                        // Create the app-wide collections
                         window.Application.ProjectList = new projModel.ProjectCollection();
-                        window.Application.ProjectList.fetch({reset: true, data: {name: ""}});
+                        window.Application.BookList = new bookModel.BookCollection();
                         window.Application.ChapterList = new chapterModel.ChapterCollection();
-                        window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
                         window.Application.kbList = new kbModels.TargetUnitCollection();
-                        $.when(window.Application.kbList.fetch({reset: true, data: {name: ""}})).done(function () {
-                            var result = window.Application.kbList.findWhere({'source': IMPORTED_KB_FILE});
-                            if (typeof result !== 'undefined') {
-                                window.Application.usingImportedKB = true;
-                            }
-                        });
                         window.Application.spList = new spModel.SourcePhraseCollection();
-                        // Note: sourcephrases are not held as a singleton (for a NT, this could result in ~300MB of memory) --
+                        // Note on these collections:
+                        // The ProjectList is populated at startup in home() below; if there is a current project,
+                        // the books, chapters, and KB are loaded for the current project in home() as well.   
+                        // The sourcephrases are not held as an app-wide collection (for a NT, this could result in ~300MB of memory) --
                         // Instead, they are instantiated on the pages that need them
                         // (DocumentViews for doc import/export and AdaptViews for adapting)
 
@@ -400,6 +393,13 @@ define(function (require) {
                                 localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
                             }
                         }                        
+                    }
+                    // Is there a current project?
+                    if (window.Application.currentProject !== null) {
+                        // there's a "real" current project -- load the books, chapter, and KB
+                        window.Application.BookList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
+                        window.Application.ChapterList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
+                        window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
                     }
                     // Did another task launch us (i.e., did our handleOpenURL() from main.js
                     // get called)? If so, pull out the URL and process the resulting file
@@ -518,34 +518,25 @@ define(function (require) {
             importBooks: function (id) {
                 console.log("importBooks");
                 // update the book and chapter lists, then show the import docs view
-                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
-                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
-                        var proj = window.Application.ProjectList.where({projectid: id});
-                        if (proj === null) {
-                            console.log("no project defined");
-                        }
-                        importDocView = new DocumentViews.ImportDocumentView({model: proj[0]});
-                        importDocView.isLoadingFromURL = false;
-                        importDocView.delegateEvents();
-                        window.Application.main.show(importDocView);
-                    });
-                });
+                var proj = window.Application.currentProject;
+                if (proj !== null) {
+                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.isLoadingFromURL = false;
+                    importDocView.delegateEvents();
+                    window.Application.main.show(importDocView);
+                }
             },
 
             exportBooks: function (id) {
                 console.log("exportBooks");
-                // update the book and chapter lists, then show the export docs view
-                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
-                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
-                        var proj = window.Application.ProjectList.where({projectid: id});
-                        if (proj === null) {
-                            console.log("no project defined");
-                        }
-                        exportDocView = new DocumentViews.ExportDocumentView({model: proj[0]});
-                        exportDocView.delegateEvents();
-                        window.Application.main.show(exportDocView);
-                    });
-                });
+                var proj = window.Application.currentProject;
+                if (proj === null) {
+                    console.log("no project defined");
+                } else {
+                    exportDocView = new DocumentViews.ExportDocumentView({model: proj});
+                    exportDocView.delegateEvents();
+                    window.Application.main.show(exportDocView);
+                }
             },
             
             lookupChapter: function (id) {
