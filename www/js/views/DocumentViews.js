@@ -825,11 +825,12 @@ define(function (require) {
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
-                        IMPORTED_KB_FILE = "**ImportedKBFile**",
                         mn = "",
                         f = "",
                         src = "",
                         srcName = "",
+                        defer = $.Deferred(),
+                        bMerge = false,
                         tgtName = "";
 
                     // ** Sanity check #1: Is this a KB? 
@@ -860,87 +861,187 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrWrongKB");
                         return false;
                     }
-                    // Sanity check #3: have we already imported this KB file?
-                    // (We'll add a special TU to indicate we have)
-                    try {
-                        // we're looking for an exact match ONLY
-                        result = kblist.findWhere({'source': IMPORTED_KB_FILE});
-                        if (typeof result === 'undefined') {
-                            result = null;
-                        }
-                    } catch (err) {
-                        console.log(err);
-                    }
-                    if (result) {
-                        errMsg = i18n.t("view.dscErrDuplicateKB");
-                        return false; // error out -- can't import KB multiple times
-                    }
-                    // ** Now start parsing the KB itself
-                    isKB = true; // we're importing a knowledge base
-                    var $xml = $(xmlDoc);
-                    markers = "";
-                    $($xml).find("MAP > TU").each(function () {
-                        // pull out the MAP number - it'll be stored in the mn entry for each TU
-                        mn = this.parentNode.getAttribute('mn');
-                        // pull out the attributes from the TU element
-                        f = this.getAttribute('f');
-                        src = this.getAttribute('k');
-                        // now collect the refstrings
-                        $(this).children("RS").each(function (refstring) {
-                            var newRS = {
-                                'target': this.getAttribute('a'),  //klb
-                                'n': this.getAttribute('n'),
-                                'cDT': this.getAttribute('cDT'),
-                                'df': this.getAttribute('df'),
-                                'wC': this.getAttribute('wC')
-                            };
-                            // optional attributes for modified / deleted time
-                            if (this.hasAttribute('mDT')) {
-                                newRS['mDT'] = this.getAttribute('mDT');
+
+                    // AIM 1.7.0: KB restore support (#461)
+                    // This is a KB that matches our project. Is our KB empty?
+                    if (window.Application.kbList.length > 0) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeKB", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the existing KB
+                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
                             }
-                            if (this.hasAttribute('dDT')) {
-                                newRS['dDT'] = this.getAttribute('dDT');
+                        }, i18n.t("view.ttlImportKB"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        console.log(msg);    
+                        // ** Now start parsing the KB itself
+                        isKB = true; // we're importing a knowledge base
+                        var $xml = $(xmlDoc);
+                        var bFoundRS = false;
+                        var theRS = null;
+                        var tuCount = 0;
+                        markers = "";
+                        $($xml).find("MAP > TU").each(function () {
+                            // pull out the MAP number - it'll be stored in the mn entry for each TU
+                            mn = this.parentNode.getAttribute('mn');
+                            // pull out the attributes from the TU element
+                            f = this.getAttribute('f');
+                            src = this.getAttribute('k');
+                            tuCount++;
+                            if (bMerge === true) {
+                                // Merging with an existing KB -- search for this TU in kbList
+                                // Note that a Merge will only add to the refcount for existing refstrings, and
+                                // add add refstrings that are not found in the db. No other changes are made.
+                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}]);
+                                if (theTU) {
+                                    bFoundRS = false;
+                                    // found a matching TU -- merge the refstrings with the existing ones
+                                    $(this).children("RS").each(function (refstring) {
+                                        // Does our TU have this refstring?
+                                        theRS = theTU.get("refstring");
+                                        for (i=0; i< theRS.count; i++) {
+                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                                // found the refstring -- add this refcount to the one in our KB
+                                                theRS[i].n = theRS[i].n + this.getAttribute('n');
+                                                bFoundRS = true;
+                                                break; // done searching
+                                            }
+                                        }
+                                        if (bFoundRS === false) {
+                                            // refstring not found -- add a new one
+                                            var newRS = {
+                                                'target': this.getAttribute('a'),  //klb
+                                                'n': this.getAttribute('n'),
+                                                'cDT': this.getAttribute('cDT'),
+                                                'df': this.getAttribute('df'),
+                                                'wC': this.getAttribute('wC')
+                                            };
+                                            // optional attributes for modified / deleted time
+                                            if (this.hasAttribute('mDT')) {
+                                                newRS['mDT'] = this.getAttribute('mDT');
+                                            }
+                                            if (this.hasAttribute('dDT')) {
+                                                newRS['dDT'] = this.getAttribute('dDT');
+                                            }
+                                            refstrings.push(newRS);
+                                        }
+                                    });
+                                    // done merging -- save our changes to this TU
+                                    theTU.save();                                    
+                                } else {
+                                    // TU not found -- create a new one with the refstrings from the file
+                                    // First collect the refstrings
+                                    $(this).children("RS").each(function (refstring) {
+                                        var newRS = {
+                                            'target': this.getAttribute('a'),  //klb
+                                            'n': this.getAttribute('n'),
+                                            'cDT': this.getAttribute('cDT'),
+                                            'df': this.getAttribute('df'),
+                                            'wC': this.getAttribute('wC')
+                                        };
+                                        // optional attributes for modified / deleted time
+                                        if (this.hasAttribute('mDT')) {
+                                            newRS['mDT'] = this.getAttribute('mDT');
+                                        }
+                                        if (this.hasAttribute('dDT')) {
+                                            newRS['dDT'] = this.getAttribute('dDT');
+                                        }
+                                        refstrings.push(newRS);
+                                    });
+                                    // next, sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // now create the TU
+                                    var newID = window.Application.generateUUID();
+                                    var newTU = new kbModels.TargetUnit({
+                                        tuid: newID,
+                                        projectid: projectid,
+                                        source: src,
+                                        mn: mn,
+                                        f: f,
+                                        refstring: refstrings.splice(0, refstrings.length),
+                                        timestamp: timestamp
+                                    });
+                                    // add this TU to our internal list and save to the db
+                                    newTU.save();
+                                }
+                            } else {
+                                // Not merging -- just create new objects for each item in the file
+                                // now collect the refstrings
+                                $(this).children("RS").each(function (refstring) {
+                                    var newRS = {
+                                        'target': this.getAttribute('a'),  //klb
+                                        'n': this.getAttribute('n'),
+                                        'cDT': this.getAttribute('cDT'),
+                                        'df': this.getAttribute('df'),
+                                        'wC': this.getAttribute('wC')
+                                    };
+                                    // optional attributes for modified / deleted time
+                                    if (this.hasAttribute('mDT')) {
+                                        newRS['mDT'] = this.getAttribute('mDT');
+                                    }
+                                    if (this.hasAttribute('dDT')) {
+                                        newRS['dDT'] = this.getAttribute('dDT');
+                                    }
+                                    refstrings.push(newRS);
+                                });
+                                // sort the refstrings collection on "n" (refcount)
+                                refstrings.sort(function (a, b) {
+                                    // high to low
+                                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                });
+                                // create the TU
+                                // Note that the refstrings array is spliced / cleared out each time
+                                var newID = window.Application.generateUUID(),
+                                    newTU = new kbModels.TargetUnit({
+                                        tuid: newID,
+                                        projectid: projectid,
+                                        source: src,
+                                        mn: mn,
+                                        f: f,
+                                        refstring: refstrings.splice(0, refstrings.length),
+                                        timestamp: timestamp
+                                    });
+                                // add to our internal list and save to the db
+                                newTU.save();
                             }
-                            refstrings.push(newRS);
                         });
-                        // sort the refstrings collection on "n" (refcount)
-                        refstrings.sort(function (a, b) {
-                            // high to low
-                            return parseInt(b.n, 10) - parseInt(a.n, 10);
-                        });
-                        // create the TU
-                        // Note that the refstrings array is spliced / cleared out each time
-                        var newID = window.Application.generateUUID(),
-                            newTU = new kbModels.TargetUnit({
-                                tuid: newID,
-                                projectid: projectid,
-                                source: src,
-                                mn: mn,
-                                f: f,
-                                refstring: refstrings.splice(0, refstrings.length),
-                                timestamp: timestamp
-                            });
-                        // add to our internal list and save to the db
-                        kblist.add(newTU);
-                        newTU.save();
-                    });
-                    // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = window.Application.generateUUID(),
-                        newTU = new kbModels.TargetUnit({
-                            tuid: newID,
-                            projectid: projectid,
-                            source: IMPORTED_KB_FILE,
-                            mn: '0',
-                            f: '0',
-                            refstring: '',
-                            timestamp: ''
-                        });
-                    kblist.add(newTU);
-                    newTU.save();
-                    window.Application.usingImportedKB = true; // also set our app-level flag
-                    // Exit out with SUCCESS status                    
-                    importSuccess();
-                    return true; // success
+                        console.log("imported " + tuCount + " TU objects");
+                        // import KB done --
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
+                    }); 
                 };
 
                 // Translation Memory Exchange (TMX) document
@@ -957,7 +1058,7 @@ define(function (require) {
                         refstrings = [],
                         found = false,
                         project = window.Application.currentProject,
-                        projectid = "",
+                        projectid = project.get("projectid"),
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         result = null,
@@ -965,13 +1066,14 @@ define(function (require) {
                         tgtElt = null,
                         tu = null,
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
-                        IMPORTED_KB_FILE = "**ImportedKBFile**",
                         n = "",
                         mn = "",
                         f = "",
                         tgt = "",
-                        src = "";
-
+                        src = "",
+                        defer = $.Deferred(),
+                        bMerge = false;
+    
                     // ** Sanity check #1: Is this a TMX file? 
                     i = contents.indexOf("<tmx ");
                     index = contents.indexOf("version", i);
@@ -999,120 +1101,211 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
-                    // Sanity check #3: have we already imported this file?
-                    // (Search for a known special TU that indicates we have)
-                    try {
-                        // we're looking for an exact match ONLY
-                        result = kblist.findWhere({'source': IMPORTED_KB_FILE});
-                        if (typeof result === 'undefined') {
-                            result = null;
-                        }
-                    } catch (err) {
-                        console.log(err);
-                    }
-                    if (result) {
-                        errMsg = i18n.t("view.dscErrDuplicateKB");
-                        return false; // error out -- can't import KB multiple times
-                    }
-                    // ** Now start parsing the file itself
-                    isKB = true; // we're importing a knowledge base
-                    var $xml = $(xmlDoc);
-                    markers = "";
-                    $($xml).find("tu").each(function () {
-                        // pull out the source and target elements from the tu element
-                        srcElt = $(this).children("[xml\\:lang=" + project.get("SourceLanguageCode") + "]");
-                        tgtElt = $(this).children("[xml\\:lang=" + project.get("TargetLanguageCode") + "]");
-                        // if we found both a matching source and target in this TU,
-                        // extract the data and add the new item
-                        if ((srcElt.length > 0) && (tgtElt.length > 0)) {
-                            n = this.getAttribute('usagecount');
-                            // do we already have this source value in our kblist?
-                            src = $(srcElt).find("seg").html().trim();
-                            tgt = $(tgtElt).find("seg").html().trim();
-                            var elts = kblist.filter(function (element) {
-                                return (element.attributes.projectid === projectid &&
-                                   element.attributes.source === src);
-                            });
-                            if (elts.length > 0) {
-                                tu = elts[0];
-                                found = false;
-                                refstrings = tu.get('refstring');
-                                // in list -- do we have a refstring for the target?
-                                for (i = 0; i < refstrings.length; i++) {
-                                    if (refstrings[i].target === tgt) {
-                                        // there is a refstring for this target value -- increment it
-                                        if (refstrings[i].n < 0) {
-                                            // special case -- this value was removed, but now we've got it again:
-                                            // reset the count to 1 in this case
-                                            refstrings[i].n = '1';
-                                        } else {
-                                            refstrings[i].n++;
-                                        }
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (found === false) {
-                                    // no entry in KB with this source/target -- add one
-                                    var newRS = {
-                                            'target': Underscore.unescape(tgt),  //klb
-                                            'n': '1',
-                                            'cDT': timestamp,
-                                            'df': '0',
-                                            'wC': ""
-                                        };
-                                    refstrings.push(newRS);
-                                }
-                                // sort the refstrings collection on "n" (refcount)
-                                refstrings.sort(function (a, b) {
-                                    // high to low
-                                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+
+                    // AIM 1.7.0: TMX restore support (#461)
+                    // This is a TMX file that matches our project. Is our KB empty?
+                    if (window.Application.kbList.length > 0) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the existing KB
+                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
                                 });
-                                // update the KB model
-                                tu.set('refstring', refstrings, {silent: true});
-                                tu.set('timestamp', timestamp, {silent: true});
-                                tu.update();
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
+                            }
+                        }, i18n.t("view.ttlImportTMX"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        console.log(msg);    
+                    
+                        // ** Now start parsing the file itself
+                        isKB = true; // we're importing a knowledge base
+                        var $xml = $(xmlDoc);
+                        var tuCount = 0;
+                        markers = "";
+                        $($xml).find("tu").each(function () {
+                            // pull out the source and target elements from the tu element
+                            srcElt = $(this).children("[xml\\:lang=" + project.get("SourceLanguageCode") + "]");
+                            tgtElt = $(this).children("[xml\\:lang=" + project.get("TargetLanguageCode") + "]");
+                            if ((srcElt.length > 0) && (tgtElt.length > 0)) {
+                                n = this.getAttribute('usagecount');
+                                // do we already have this source value in our kblist?
+                                src = $(srcElt).find("seg").html().trim();
+                                tgt = $(tgtElt).find("seg").html().trim();
                             } else {
-                                // not in list -- create a new TU
-                                var newID = window.Application.generateUUID(),
-                                    newTU = new kbModels.TargetUnit({
-                                        tuid: newID,
-                                        projectid: projectid,
-                                        source: src,
-                                        refstring: [
-                                            {
-                                                target: Underscore.unescape(tgt),  //klb
+                                return true; // no data in this elt -- continue to next tu elt
+                            }
+                            // okay, there's something in the source and target -- are we merging or just populated the KB?
+                            tuCount++;
+                            if (bMerge === true) {
+                                // Merge selected -- check to see if we already have this TU in our kblist
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (refstrings[i].n < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = refstrings[i].n + n;
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
                                                 'n': '1',
                                                 'cDT': timestamp,
                                                 'df': '0',
                                                 'wC': ""
-                                            }
-                                        ],
-                                        timestamp: timestamp,
-                                        user: ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
                                     });
-                                kblist.add(newTU);
-                                newTU.save();
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: ""
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
+
+                            } else {
+                                // No merge needed -- the KB is empty
+                                // is there an existing TU for this element?
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    // found a TU for this source -- add a new refstring
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (refstrings[i].n < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = refstrings[i].n + n;
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: ""
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
                             }
-                        }
-                    });
-                    // import complete. Add a special TU to indicate that we've imported this KB
-                    var newID = window.Application.generateUUID(),
-                        newTU = new kbModels.TargetUnit({
-                            tuid: newID,
-                            projectid: projectid,
-                            source: IMPORTED_KB_FILE,
-                            mn: '0',
-                            f: '0',
-                            refstring: '',
-                            timestamp: ''
                         });
-                    kblist.add(newTU);
-                    newTU.save();
-                    window.Application.usingImportedKB = true; // also set our app-level flag
-                    // Exit out with SUCCESS status                    
-                    importSuccess();
-                    return true; // success
+                        console.log("imported " + tuCount + " TU objects");
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
+                    });
                 };
                 
                 // Adapt It XML document
@@ -1150,7 +1343,7 @@ define(function (require) {
                     var searchIdx = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
-                    
+                
                     // Helper method to strip any starting / ending punctuation from the source or target field.
                     // This method is called from:
                     // - selectedAdaptation before the target text available for editing

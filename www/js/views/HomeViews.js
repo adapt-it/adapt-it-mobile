@@ -45,6 +45,7 @@ define(function (require) {
             // clear KB
             targetunits.clearAll();
             // clear all project data
+            localStorage.removeItem("CurrentProjectID");
             window.Application.currentProject = null;
             projects.clearAll();
             // refresh the view

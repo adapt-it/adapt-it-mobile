@@ -817,7 +817,7 @@ define(function (require) {
                         // if we reached the last pile, check to see if there's another chapter to adapt
                         if (next_edit === null) {
                             // Check for a chapter after the current one in the current book
-                            var nextChapter = 0;
+                            var nextChapter = "";
                             var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
                             var chaps = book[0].get('chapters');
                             if (chaps.length > 1) {
@@ -833,7 +833,7 @@ define(function (require) {
                             if (navigator.notification) {
                                 // on mobile device
                                 navigator.notification.beep(1);
-                                if (nextChapter > 0) {
+                                if (nextChapter.length > 0) {
                                     navigator.notification.confirm(
                                         i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
                                         function (buttonIndex) {
@@ -851,7 +851,7 @@ define(function (require) {
                                                 window.Application.home();
                                             }
                                         },
-                                        i18next.t('ttlMain'),
+                                        i18next.t('view.ttlMain'),
                                         [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
                                     );
                                 } else {
