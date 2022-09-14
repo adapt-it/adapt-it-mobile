@@ -174,7 +174,7 @@ define(function (require) {
                 // delete the KB entries for a project
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("DELETE FROM targetunit WHERE projectid=?;", [projectid], function (tx, res) {
-                        console.log("DELETE KB ok: " + res.toString());
+                        console.log("Clear KB for project ok: " + res.rowsAffected + " rows affected.");
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
                     });

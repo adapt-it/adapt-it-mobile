@@ -872,9 +872,10 @@ define(function (require) {
                             case 1: 
                                 // Restore
                                 // Delete the existing KB
-                                window.Application.kbList.clearKBForProject(projectid); // clear the db
-                                window.Application.kbList.reset(); // clear the local list
-                                defer.resolve("Restore selected");
+                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
                                 break;
                             case 2: 
                                 // Merge
@@ -992,7 +993,6 @@ define(function (require) {
                                         timestamp: timestamp
                                     });
                                     // add this TU to our internal list and save to the db
-                                    kblist.add(newTU);
                                     newTU.save();
                                 }
                             } else {
@@ -1033,11 +1033,10 @@ define(function (require) {
                                         timestamp: timestamp
                                     });
                                 // add to our internal list and save to the db
-                                kblist.add(newTU);
                                 newTU.save();
                             }
                         });
-                        console.log("imported " + tuCount + " TU objects; KB count: " + kblist.length);
+                        console.log("imported " + tuCount + " TU objects");
                         // import KB done --
                         // Exit out with SUCCESS status                    
                         importSuccess();
@@ -1059,7 +1058,7 @@ define(function (require) {
                         refstrings = [],
                         found = false,
                         project = window.Application.currentProject,
-                        projectid = "",
+                        projectid = project.get("projectid"),
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         result = null,
@@ -1113,9 +1112,10 @@ define(function (require) {
                             case 1: 
                                 // Restore
                                 // Delete the existing KB
-                                window.Application.kbList.clearKBForProject(projectid); // clear the db
-                                window.Application.kbList.reset(); // clear the local list
-                                defer.resolve("Restore selected");
+                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
                                 break;
                             case 2: 
                                 // Merge
@@ -1226,8 +1226,8 @@ define(function (require) {
                                             timestamp: timestamp,
                                             user: ""
                                         });
-                                    kblist.add(newTU);
-                                    newTU.save();                                    
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
                                 }
 
                             } else {
@@ -1296,12 +1296,12 @@ define(function (require) {
                                             timestamp: timestamp,
                                             user: ""
                                         });
-                                    kblist.add(newTU);
-                                    newTU.save();                                    
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
                                 }
                             }
                         });
-                        console.log("imported " + tuCount + " TU objects; KB count: " + kblist.length);
+                        console.log("imported " + tuCount + " TU objects");
                         // Exit out with SUCCESS status                    
                         importSuccess();
                         return true; // success
