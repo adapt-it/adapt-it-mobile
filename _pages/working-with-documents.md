@@ -41,8 +41,13 @@ Complete the following steps to import documents into Adapt It Mobile.
 
     ![Select documents and Import]({{ site.baseurl }}/assets/img/import-docs.png)
 
-    When Adapt It Mobile finishes importing, an OK button will display.
-6. Click the OK button to return to the home page.
+    Adapt It Mobile will import the document.
+
+6. When Adapt It Mobile finishes importing, it will prompt you to enter a name for the imported text (or clipboard snippet). You can either accept the name that it has suggested, or specify another name for the document.
+
+    ![Specify name for the imported document]({{ site.baseurl }}/assets/img/import-name.png)
+
+7. Click the OK button to return to the home page.
 
 ----
 
