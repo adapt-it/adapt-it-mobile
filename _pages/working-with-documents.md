@@ -37,6 +37,7 @@ Complete the following steps to import documents into Adapt It Mobile.
   - Translation Memory eXchange (.TMX) format
   
     ***Note:*** If you see a warning message instead of a list of available documents, Adapt It Mobile has not found any documents on your device that it can import. If this is the case, [copy the files to your mobile device]({{ site.baseurl }}/getstarted#copy-project-to-device) and retry this operation.
+    
 5. Select the document you would like to import. 
 
     ![Select documents and Import]({{ site.baseurl }}/assets/img/import-docs.png)
@@ -57,9 +58,9 @@ Complete the following steps to import documents into Adapt It Mobile.
 
 1. On the main Adapt It Mobile screen, click Export Document.
 
-  ![Export button]({{ site.baseurl }}/assets/img/export.png)
+   ![Export button]({{ site.baseurl }}/assets/img/export.png)
 
-  If you do not see an Export Document link, you might not have imported any documents. Follow the steps to [import a document](#importing-a-document) and [adapt a document]({{ site.baseurl }}/adapting).
+   If you do not see an Export Document link, you might not have imported any documents. Follow the steps to [import a document](#importing-a-document) and [adapt a document]({{ site.baseurl }}/adapting).
 
 2. Select where you would like to send the file:
 
@@ -68,30 +69,30 @@ Complete the following steps to import documents into Adapt It Mobile.
 
 3. Select the document you would like to export. You can also select the Knowledge Base for export if desired.
 
-  ![Export select document]({{ site.baseurl }}/assets/img/export-sel-doc.png)
+   ![Export select document]({{ site.baseurl }}/assets/img/export-sel-doc.png)
 
 4. Select the format you would like to export the document to, and the filename to export to (if you selected Export to File). 
 
-  ![Export File format]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
+   ![Export File format]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
 
-  Adapt It Mobile currently supports the following file formats:
+   Adapt It Mobile currently supports the following file formats:
 
-  - Adapt It desktop (.xml) (this includes the source and target text for the project)
-  - [USFM](http://paratext.org/about/usfm) (.sfm)
-  - [USX](https://app.thedigitalbiblelibrary.org/static/docs/usx/index.html) (.usx)
-  - Plain text (.txt) with no formatting
+   - Adapt It desktop (.xml) (this includes the source and target text for the project)
+   - [USFM](http://paratext.org/about/usfm) (.sfm)
+   - [USX](https://app.thedigitalbiblelibrary.org/static/docs/usx/index.html) (.usx)
+   - Plain text (.txt) with no formatting
   
-  If you selected the Knowledge Base for export, Adapt It Mobile will display two options for the file format:
+   If you selected the Knowledge Base for export, Adapt It Mobile will display two options for the file format:
   
-  ![KB Format]({{ site.baseurl }}/assets/img//export-kb-sel-fmt.png)
+   ![KB Format]({{ site.baseurl }}/assets/img//export-kb-sel-fmt.png)
 
-  - Adapt It desktop (.xml) (you cannot modify the file name for this file, as it includes the source and target language info for the project)
-  - Translation Memory Exchange (.tmx)
+   - Adapt It desktop (.xml) (you cannot modify the file name for this file, as it includes the source and target language info for the project)
+   - Translation Memory Exchange (.tmx)
 
 5. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
 
-  - If you selected Copy to Clipboard, Adapt It Mobile will copy the document to the Clipboard.
-  - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device (see [Exported File Location](#exported-file-location) for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
+   - If you selected Copy to Clipboard, Adapt It Mobile will copy the document to the Clipboard.
+   - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device (see [Exported File Location](#exported-file-location) for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
     
     - SMS (text messaging)
     - email
@@ -99,7 +100,7 @@ Complete the following steps to import documents into Adapt It Mobile.
     - Bluetooth (Android)
     - AirDrop (iOS)
     
-   Note that these export options require you to configure them before exporting (for example, you need to turn Bluetooth on and pair with a computer before attempting to export)
+   Note that these export options require you to configure them before exporting (for example, you need to turn Bluetooth on and pair with a computer before attempting to export).
 
 6. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
 
