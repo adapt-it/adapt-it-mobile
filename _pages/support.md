@@ -50,7 +50,6 @@ Following are some tips that might help in adapting the text more efficiently.
 
 * **Turn off auto suggestions** on your keyboard. The words that are given in the suggestions are most likely in a different language than you'll be using. To disable suggestions on your phone, follow these instructions:
   * [Android (video)](https://www.youtube.com/watch?v=fLKd8g4zRPQ)
-  * [Windows Phone 8](http://www.digitalcitizen.life/how-turn-off-text-autocorrect-text-suggestions-windows-phone)
   * [iOS](http://appleinsider.com/articles/14/09/26/how-to-customize-hide-or-remove-quicktype-suggestions-with-the-ios-8-keyboard)
 
 <a id="auto-caps"></a>
