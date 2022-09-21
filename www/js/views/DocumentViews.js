@@ -2828,7 +2828,9 @@ define(function (require) {
                         // a verse or two will just case it to be treated as regular text, because we're relying on the intro
                         // content to determine the format.
                         var newFileName = "";
-                        if (contents.indexOf("KB kbVersion") >= 0) {
+                        if (contents.indexOf("tmx version=") >= 0) {
+                            result = readTMXDoc(contents);
+                        } else if (contents.indexOf("KB kbVersion") >= 0) {
                             // _probably_ a Knowledge base document under the hood
                             result = readKBXMLDoc(contents);
                         } else if (contents.indexOf("AdaptItDoc") >= 0) {
