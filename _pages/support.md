@@ -29,8 +29,8 @@ date:   2017-01-03 12:21
 
 Before installing, make sure your mobile device meets the following minimum system requirements:
 
-- Apple iPad, iPod or iPhone running iOS 8.x or later
-- Android device running Android 4.4.x or later
+- Apple iPad, iPod or iPhone running iOS 11.0 or later
+- Android device running Android 5.1 or later
 
 ----
 
