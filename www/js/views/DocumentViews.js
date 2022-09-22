@@ -930,7 +930,13 @@ define(function (require) {
                                         for (i=0; i< theRS.count; i++) {
                                             if (this.getAttribute('a') === theRS[i].get('target')) {
                                                 // found the refstring -- add this refcount to the one in our KB
-                                                theRS[i].n = theRS[i].n + this.getAttribute('n');
+                                                if (Number(theRS[i].n) < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    theRS[i].n = this.getAttribute('n');
+                                                } else {
+                                                    theRS[i].n = String(Number(theRS[i].n) + Number(this.getAttribute('n')));
+                                                }
                                                 bFoundRS = true;
                                                 break; // done searching
                                             }
@@ -1176,12 +1182,12 @@ define(function (require) {
                                     for (i = 0; i < refstrings.length; i++) {
                                         if (refstrings[i].target === tgt) {
                                             // there is a refstring for this target value -- increment it
-                                            if (refstrings[i].n < 0) {
+                                            if (Number(refstrings[i].n) < 0) {
                                                 // special case -- this value was removed, but now we've got it again:
                                                 // reset the count to 1 in this case
                                                 refstrings[i].n = n;
                                             } else {
-                                                refstrings[i].n = refstrings[i].n + n;
+                                                refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
                                             }
                                             found = true;
                                             break;

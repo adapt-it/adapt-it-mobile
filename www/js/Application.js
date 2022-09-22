@@ -79,7 +79,7 @@ define(function (require) {
             localURLs: [],
             version: "1.7.0", // appended with milestone / iOS build info
             AndroidBuild: "37", // (was milestone release #)
-            iOSBuild: "1", // iOS uploaded build number for this release (increments from 1) 
+            iOSBuild: "4", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Utility function from https://www.sobyte.net/post/2022-02/js-crypto-randomuuid/
