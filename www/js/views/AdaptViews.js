@@ -146,10 +146,10 @@ define(function (require) {
         },
     
         // Helper method to store the specified source and target text in the KB.
-        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
+        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid, isGloss) {
             var elts = kblist.filter(function (element) {
                 return (element.attributes.projectid === projectid &&
-                   element.attributes.source === sourceValue);
+                   element.attributes.source === sourceValue && element.attributes.isGloss === isGloss);
             });
             console.log("saveinKB: sourceValue=" + sourceValue + ", targetValue=" + targetValue + ", oldTargetValue=" + oldTargetValue);
             var tu = null,
@@ -230,18 +230,19 @@ define(function (require) {
                             }
                         ],
                         timestamp: timestamp,
-                        user: ""
+                        user: "",
+                        isGloss: isGloss
                     });
                 kblist.add(newTU);
                 newTU.save();
             }
         },
         // Helper method to remove a target value from the KB. Called from onUndo().
-        removeFromKB = function (sourceValue, targetValue, projectid) {
+        removeFromKB = function (sourceValue, targetValue, projectid, isGloss) {
             console.log("removeFromKB - sourceValue=" + sourceValue + ", targetValue=" + targetValue + ", projectid=" + projectid);
             var elts = kblist.filter(function (element) {
                 return (element.attributes.projectid === projectid &&
-                   element.attributes.source === sourceValue);
+                   element.attributes.source === sourceValue && element.attributes.isGloss === isGloss);
             });
             var tu = null,
                 curDate = new Date(),
@@ -2152,7 +2153,7 @@ define(function (require) {
                 // remove the KB entry
                 removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
                              this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim(), false),
-                             project.get('projectid'));
+                             project.get('projectid'), 0);
                 // set the edit field back to its previous value
                 $(lastPile).find(".target").html(origText);
                 // update the model with the new target text
@@ -2241,7 +2242,7 @@ define(function (require) {
                             console.log("User deleted target text: " + origText + " -- removing from KB and DB.");
                             // There was a target text, but the user deleted it. Remove the old text from the KB.
                             removeFromKB(this.autoRemoveCaps(model.get('source'), true),
-                                     origText, project.get('projectid'));
+                                     origText, project.get('projectid'), 0);
                             // update the model with the new target text (nothing)
                             model.save({target: trimmedValue});
                         }
@@ -2256,7 +2257,7 @@ define(function (require) {
                             saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
                                      Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
                                      Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(), false),
-                                     project.get('projectid'));
+                                     project.get('projectid'), 0);
                         }
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
@@ -2664,7 +2665,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'));
+                    saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'), 0);
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -2791,7 +2792,7 @@ define(function (require) {
                         nOrder = nOrder + 1;
                         // add to KB
                         if (phraseTarget.length > 0) {
-                            saveInKB(thisObj.stripPunctuation(thisObj.autoRemoveCaps(value), true), phraseTarget, "", project.get('projectid'));
+                            saveInKB(thisObj.stripPunctuation(thisObj.autoRemoveCaps(value), true), phraseTarget, "", project.get('projectid'), 0);
                         }
                         // add to UI
                         $(selectedStart).before("<div class=\"pile block-height\" id=\"pile-" + phObj.get('spid') + "\"></div>");
@@ -2799,7 +2800,7 @@ define(function (require) {
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
-                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid')); // remove from KB
+                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid'), 0); // remove from KB
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
