@@ -338,6 +338,9 @@
         "optRestore": "Restaurar",
         "optMerge": "Combinar",
         "optUpdateImport": "Actualizar \"__document__\"",
+        "lblGlossKB": "Base de conocimientos glosando",
+        "ttlImportGlossKB": "Importar archivo de base de conocimientos glosando??",
+        "dscRestoreOrMergeGlossKB": "Este es un archivo de base de conocimientos glosando. Puede restaurar la base de conocimiento glosando desde el archivo importado o combinar el archivo con las glosas existentes.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
