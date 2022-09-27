@@ -170,11 +170,11 @@ define(function (require) {
 
             // removes all targetunits for the specified projectid
             // This is done when the user is restoring from a KB file to clean out what's currently in the DB
-            clearKBForProject: function (projectid) {
+            clearKBForProject: function (projectid, isGloss) {
                 var deferred = $.Deferred();
                 // delete the KB entries for a project
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("DELETE FROM targetunit WHERE projectid=?;", [projectid], function (tx, res) {
+                    tx.executeSql("DELETE FROM targetunit WHERE (projectid=? AND isGloss=?);", [projectid, isGloss], function (tx, res) {
                         console.log("Clear KB for project ok: " + res.rowsAffected + " rows affected.");
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);

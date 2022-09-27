@@ -84,8 +84,15 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             // If the KB is not empty, add an entry
-            if (kblist !== null && kblist.length > 0) {
-                str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-kb'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
+            if (kblist !== null) {
+                // non-gloss KB entries (can export to KB .xml or .tmx)
+                if (kblist.findWhere({isGloss: 0}).length > 0) {
+                    str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-kb'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
+                }
+                // gloss KB entries (can export to Glosses.xml)
+                if (kblist.findWhere({isGloss: 1}).length > 0) {
+                    str += "<li class='topcoat-list__item docListItem' id=\'glosskb\'><span class='btn-glosskb'></span>" + i18n.t("view.lblGlossKB") + "<span class='chevron'></span></li>";
+                }
             }
             for (i = 0; i < entries.length; i++) {
                 str += "<li class='topcoat-list__item docListItem' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
@@ -872,7 +879,7 @@ define(function (require) {
                             case 1: 
                                 // Restore
                                 // Delete the existing KB
-                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
                                     window.Application.kbList.reset(); // clear the local list
                                     defer.resolve("Restore selected");
                                 });
@@ -1110,7 +1117,7 @@ define(function (require) {
 
                     // AIM 1.7.0: TMX restore support (#461)
                     // This is a TMX file that matches our project. Is our KB empty?
-                    if (window.Application.kbList.length > 0) {
+                    if (window.Application.kbList.findWhere({isGloss: 0}).length > 0) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
@@ -1118,7 +1125,7 @@ define(function (require) {
                             case 1: 
                                 // Restore
                                 // Delete the existing KB
-                                $.when(window.Application.kbList.clearKBForProject(projectid)).done(function() {
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
                                     window.Application.kbList.reset(); // clear the local list
                                     defer.resolve("Restore selected");
                                 });
@@ -1313,6 +1320,240 @@ define(function (require) {
                         return true; // success
                     });
                 };
+
+                var readGlossXMLDoc = function (contents) {
+                    var i = 0,
+                        index = 0,
+                        elts = null,
+                        refstrings = [],
+                        projectid = "",
+                        xmlDoc = $.parseXML(contents),
+                        curDate = new Date(),
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        mn = "",
+                        f = "",
+                        src = "",
+                        srcName = "",
+                        defer = $.Deferred(),
+                        bMerge = false,
+                        tgtName = "";
+
+                    // ** Sanity check #1: Is this a KB? 
+                    i = contents.indexOf("<KB ");
+                    index = contents.indexOf("kbVersion", i);
+                    if (index === -1) {
+                        // No kbVersion element found -- this is most likely not a KB document.
+                        // Return; we can't parse random xml files.
+                        console.log("No kbVersion element found (is this an Adapt It Knowledge Base document?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        return false;
+                    }
+                    // ** Sanity check #2: is this KB from a project in our DB? 
+                    // (source and target need to match a project in the DB -- if they do, get the project ID)
+                    i = contents.indexOf("srcName") + 9;
+                    srcName = contents.substring(i, contents.indexOf("\"", i + 1));
+                    i = contents.indexOf("tgtName") + 9;
+                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
+                    elts = window.Application.ProjectList.filter(function (element) {
+                        return (element.attributes.TargetLanguageName === tgtName &&
+                               element.attributes.SourceLanguageName === srcName);
+                    });
+                    if (elts.length > 0) {
+                        // found a match -- pull out the
+                        projectid = elts[0].attributes.projectid;
+                    } else {
+                        // no match -- exit out (need to create a project with this src/tgt before importing a KB)
+                        errMsg = i18n.t("view.dscErrWrongKB");
+                        return false;
+                    }
+
+                    // AIM 1.7.0: KB restore support (#461)
+                    // This is a KB that matches our project. Is our gloss KB empty?
+                    if (window.Application.kbList.findWhere({isGloss: 1}).length > 0) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeGlossKB", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the gloss KB for this project
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 1)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
+                            }
+                        }, i18n.t("view.ttlImportGlossKB"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        console.log(msg);    
+                        // ** Now start parsing the KB itself
+                        isKB = true; // we're importing a knowledge base
+                        var $xml = $(xmlDoc);
+                        var bFoundRS = false;
+                        var theRS = null;
+                        var tuCount = 0;
+                        markers = "";
+                        $($xml).find("MAP > TU").each(function () {
+                            // pull out the MAP number - it'll be stored in the mn entry for each TU
+                            mn = this.parentNode.getAttribute('mn');
+                            // pull out the attributes from the TU element
+                            f = this.getAttribute('f');
+                            src = this.getAttribute('k');
+                            tuCount++;
+                            if (bMerge === true) {
+                                // Merging with an existing KB -- search for this TU in kbList
+                                // Note that a Merge will only add to the refcount for existing refstrings, and
+                                // add add refstrings that are not found in the db. No other changes are made.
+                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}]);
+                                if (theTU) {
+                                    bFoundRS = false;
+                                    // found a matching TU -- merge the refstrings with the existing ones
+                                    $(this).children("RS").each(function (refstring) {
+                                        // Does our TU have this refstring?
+                                        theRS = theTU.get("refstring");
+                                        for (i=0; i< theRS.count; i++) {
+                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                                // found the refstring -- add this refcount to the one in our KB
+                                                if (Number(theRS[i].n) < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    theRS[i].n = this.getAttribute('n');
+                                                } else {
+                                                    theRS[i].n = String(Number(theRS[i].n) + Number(this.getAttribute('n')));
+                                                }
+                                                bFoundRS = true;
+                                                break; // done searching
+                                            }
+                                        }
+                                        if (bFoundRS === false) {
+                                            // refstring not found -- add a new one
+                                            var newRS = {
+                                                'target': this.getAttribute('a'),  //klb
+                                                'n': this.getAttribute('n'),
+                                                'cDT': this.getAttribute('cDT'),
+                                                'df': this.getAttribute('df'),
+                                                'wC': this.getAttribute('wC')
+                                            };
+                                            // optional attributes for modified / deleted time
+                                            if (this.hasAttribute('mDT')) {
+                                                newRS['mDT'] = this.getAttribute('mDT');
+                                            }
+                                            if (this.hasAttribute('dDT')) {
+                                                newRS['dDT'] = this.getAttribute('dDT');
+                                            }
+                                            refstrings.push(newRS);
+                                        }
+                                    });
+                                    // done merging -- save our changes to this TU
+                                    theTU.save();                                    
+                                } else {
+                                    // TU not found -- create a new one with the refstrings from the file
+                                    // First collect the refstrings
+                                    $(this).children("RS").each(function (refstring) {
+                                        var newRS = {
+                                            'target': this.getAttribute('a'),  //klb
+                                            'n': this.getAttribute('n'),
+                                            'cDT': this.getAttribute('cDT'),
+                                            'df': this.getAttribute('df'),
+                                            'wC': this.getAttribute('wC')
+                                        };
+                                        // optional attributes for modified / deleted time
+                                        if (this.hasAttribute('mDT')) {
+                                            newRS['mDT'] = this.getAttribute('mDT');
+                                        }
+                                        if (this.hasAttribute('dDT')) {
+                                            newRS['dDT'] = this.getAttribute('dDT');
+                                        }
+                                        refstrings.push(newRS);
+                                    });
+                                    // next, sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // now create the TU
+                                    var newID = window.Application.generateUUID();
+                                    var newTU = new kbModels.TargetUnit({
+                                        tuid: newID,
+                                        projectid: projectid,
+                                        source: src,
+                                        mn: mn,
+                                        f: f,
+                                        refstring: refstrings.splice(0, refstrings.length),
+                                        timestamp: timestamp
+                                    });
+                                    // add this TU to our internal list and save to the db
+                                    newTU.save();
+                                }
+                            } else {
+                                // Not merging -- just create new objects for each item in the file
+                                // now collect the refstrings
+                                $(this).children("RS").each(function (refstring) {
+                                    var newRS = {
+                                        'target': this.getAttribute('a'),  //klb
+                                        'n': this.getAttribute('n'),
+                                        'cDT': this.getAttribute('cDT'),
+                                        'df': this.getAttribute('df'),
+                                        'wC': this.getAttribute('wC')
+                                    };
+                                    // optional attributes for modified / deleted time
+                                    if (this.hasAttribute('mDT')) {
+                                        newRS['mDT'] = this.getAttribute('mDT');
+                                    }
+                                    if (this.hasAttribute('dDT')) {
+                                        newRS['dDT'] = this.getAttribute('dDT');
+                                    }
+                                    refstrings.push(newRS);
+                                });
+                                // sort the refstrings collection on "n" (refcount)
+                                refstrings.sort(function (a, b) {
+                                    // high to low
+                                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                });
+                                // create the TU
+                                // Note that the refstrings array is spliced / cleared out each time
+                                var newID = window.Application.generateUUID(),
+                                    newTU = new kbModels.TargetUnit({
+                                        tuid: newID,
+                                        projectid: projectid,
+                                        source: src,
+                                        mn: mn,
+                                        f: f,
+                                        refstring: refstrings.splice(0, refstrings.length),
+                                        timestamp: timestamp
+                                    });
+                                // add to our internal list and save to the db
+                                newTU.save();
+                            }
+                        });
+                        console.log("imported " + tuCount + " TU objects");
+                        // import KB done --
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
+                    }); 
+                };                
                 
                 // Adapt It XML document
                 // While XML is a general purpose document format, we're looking
@@ -2812,6 +3053,8 @@ define(function (require) {
                     if (fileName.toLowerCase().indexOf("adaptations.xml") > 0) {
                         // possibly a KB
                         result = readKBXMLDoc(contents);
+                    } else if (fileName.toLowerCase.indexOf("glossing.xml") > 0) {
+                        result = readGlossXMLDoc(contents);
                     } else {
                         // possibly an Adapt It XML document
                         result = readXMLDoc(contents);
@@ -2836,6 +3079,9 @@ define(function (require) {
                         var newFileName = "";
                         if (contents.indexOf("tmx version=") >= 0) {
                             result = readTMXDoc(contents);
+                        } else if (contents.indexOf("glossingKB=\"1\">\"") >= 0) {
+                            // _probably_ a glossing KB XML document
+                            result = readGlossXMLDoc(contents);
                         } else if (contents.indexOf("KB kbVersion") >= 0) {
                             // _probably_ a Knowledge base document under the hood
                             result = readKBXMLDoc(contents);
@@ -4322,6 +4568,96 @@ define(function (require) {
                 });
             };
             
+            // exportGlossKB
+            // AI glossing KB XML file format
+            var exportGlossKB = function () {
+                var content = "";
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
+                var i = 0;
+                var mn = 1;
+                var refstrings = null;
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
+                var project = window.Application.currentProject;
+                kblist.comparator = function (model) {
+                    return (model.get("mn") && (model.get("isGloss") === 1));
+                };
+                kblist.sort();
+                writer.onwriteend = function () {
+                    console.log("write completed.");
+                    exportSuccess();
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                    exportFail(e);
+                };
+                // opening content
+                content = XML_PROLOG;
+                content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
+                // KB line -- project info
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
+                // END settings xml node
+                // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
+                content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
+                kblist.forEach(function (tu) {
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    if (tu.get('isGloss') === 0) {
+                        // non-gloss KB element -- skip
+                        return; // continue
+                    }
+                    // did the map number change? If so, emit a new <MAP> element
+                    if (tu.get('mn') > mn) {
+                        // create a new MAP element
+                        content += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
+                        mn = tu.get('mn'); // update the map #
+                    }
+                    // create the <TU> element
+                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
+                    // create any refstring elements
+                    refstrings = tu.get('refstring');
+                    // sort the refstrings on "n" (refcount)
+                    refstrings.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    // write them out
+                    for (i = 0; i < refstrings.length; i++) {
+                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
+                        if (refstrings[i].mDT || refstrings[i].dDT) {
+                            // optional datetime info
+                            content += CRLF + "       ";
+                            if (refstrings[i].mDT) {
+                                content += " mDT=\"" + refstrings[i].mDT + "\"";
+                            }
+                            if (refstrings[i].dDT) {
+                                content += " dDT=\"" + refstrings[i].dDT + "\"";
+                            }
+                        }
+                        content += "/>" + CRLF;
+                    }
+                    content += "     </TU>" + CRLF;
+                });
+                // done CONTENT PART -- close out the file
+                content += "     </MAP>" + CRLF + "</KB>" + CRLF;
+                if (isClipboard === true) {
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string for the next chapter
+            };
+
             // exportKB
             // AI knowledge base XML file export
             var exportKB = function () {
@@ -4355,6 +4691,10 @@ define(function (require) {
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    if (tu.get('isGloss') === 1) {
+                        // gloss KB element -- skip
                         return; // continue
                     }
                     // did the map number change? If so, emit a new <MAP> element
