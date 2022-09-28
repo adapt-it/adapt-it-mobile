@@ -39,6 +39,7 @@ define(function (require) {
         versionSpec     = "", // file type specification version (2.5, 3.0, etc.)
         isClipboard     = false,
         isKB            = false,
+        isGlossKB       = false,
         fileList        = [],
         fileCount       = 0,
         bookid          = "",
@@ -199,7 +200,10 @@ define(function (require) {
                 // Did we just import the KB?
                 if (isKB === true) {
                     // KB file -- only display success status
-                    $("#lblDirections").html(i18n.t("view.dscStatusKBImportSuccess", {document: fileName}));
+                    $("#lblDirections").html(i18n.t("view.dscStatusKBImportSuccess"));
+                } else if (isGlossKB === true) {
+                    // Gloss KB file -- only display success status
+                    $("#lblDirections").html(i18n.t("view.dscStatusGlossKBImportSuccess"));
                 } else {
                     // not a KB file:
                     // for regular document files, we did our best to guess a book name --
@@ -1408,7 +1412,7 @@ define(function (require) {
                     defer.then(function (msg) {
                         console.log(msg);    
                         // ** Now start parsing the KB itself
-                        isKB = true; // we're importing a knowledge base
+                        isGlossKB = true; // we're importing a gloss knowledge base
                         var $xml = $(xmlDoc);
                         var bFoundRS = false;
                         var theRS = null;
@@ -5125,6 +5129,7 @@ define(function (require) {
                 kblist.fetch({reset: true, data: {source: ""}});
                 // reset the isKB flag
                 isKB = false;
+                isGlossKB = false;
                 
                 if (this.isLoadingFromURL === false) {
                     if (device && (device.platform !== "browser")) {
