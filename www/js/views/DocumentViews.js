@@ -86,11 +86,11 @@ define(function (require) {
             // If the KB is not empty, add an entry
             if ((kblist !== null) && (kblist.length > 0)) {
                 // non-gloss KB entries (can export to KB .xml or .tmx)
-                if (kblist.findWhere({isGloss: 0}).length > 0) {
+                if (kblist.findWhere({isGloss: 0})) {
                     str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-kb'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
                 }
                 // gloss KB entries (can export to Glosses.xml)
-                if (kblist.findWhere({isGloss: 1}).length > 0) {
+                if (kblist.findWhere({isGloss: 1})) {
                     str += "<li class='topcoat-list__item docListItem' id=\'glosskb\'><span class='btn-glosskb'></span>" + i18n.t("view.lblGlossKB") + "<span class='chevron'></span></li>";
                 }
             }
