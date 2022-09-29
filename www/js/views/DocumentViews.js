@@ -23,7 +23,6 @@ define(function (require) {
         tplExportDoc    = require('text!tpl/Export.html'),
         tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
         tplExportDestination = require('text!tpl/ExportDestination.html'),
-        projModel       = require('app/models/project'),
         bookModel       = require('app/models/book'),
         spModel         = require('app/models/sourcephrase'),
         chapModel       = require('app/models/chapter'),
@@ -85,7 +84,7 @@ define(function (require) {
             var i = 0;
             var entries = window.Application.BookList.where({projectid: pid});
             // If the KB is not empty, add an entry
-            if (kblist !== null) {
+            if ((kblist !== null) && (kblist.length > 0)) {
                 // non-gloss KB entries (can export to KB .xml or .tmx)
                 if (kblist.findWhere({isGloss: 0}).length > 0) {
                     str += "<li class='topcoat-list__item docListItem' id=\'kb\'><span class='btn-kb'></span>" + i18n.t("view.lblKB") + "<span class='chevron'></span></li>";
@@ -875,7 +874,7 @@ define(function (require) {
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our KB empty?
-                    if (window.Application.kbList.length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeKB", {document: bookName}), function (buttonIndex) {
@@ -931,7 +930,7 @@ define(function (require) {
                                 // Merging with an existing KB -- search for this TU in kbList
                                 // Note that a Merge will only add to the refcount for existing refstrings, and
                                 // add add refstrings that are not found in the db. No other changes are made.
-                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}]);
+                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}, {isGloss: 0}]);
                                 if (theTU) {
                                     bFoundRS = false;
                                     // found a matching TU -- merge the refstrings with the existing ones
@@ -1007,7 +1006,8 @@ define(function (require) {
                                         mn: mn,
                                         f: f,
                                         refstring: refstrings.splice(0, refstrings.length),
-                                        timestamp: timestamp
+                                        timestamp: timestamp,
+                                        isGloss: 0
                                     });
                                     // add this TU to our internal list and save to the db
                                     newTU.save();
@@ -1047,7 +1047,8 @@ define(function (require) {
                                         mn: mn,
                                         f: f,
                                         refstring: refstrings.splice(0, refstrings.length),
-                                        timestamp: timestamp
+                                        timestamp: timestamp,
+                                        isGloss: 0
                                     });
                                 // add to our internal list and save to the db
                                 newTU.save();
@@ -1121,7 +1122,7 @@ define(function (require) {
 
                     // AIM 1.7.0: TMX restore support (#461)
                     // This is a TMX file that matches our project. Is our KB empty?
-                    if (window.Application.kbList.findWhere({isGloss: 0}).length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
@@ -1241,7 +1242,8 @@ define(function (require) {
                                                 }
                                             ],
                                             timestamp: timestamp,
-                                            user: ""
+                                            user: "",
+                                            isGloss: 0
                                         });
                                     newTU.save();
                                     kblist.add(newTU);                                  
@@ -1311,7 +1313,8 @@ define(function (require) {
                                                 }
                                             ],
                                             timestamp: timestamp,
-                                            user: ""
+                                            user: "",
+                                            isGloss: 0
                                         });
                                     newTU.save();
                                     kblist.add(newTU);                                  
@@ -1373,7 +1376,7 @@ define(function (require) {
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our gloss KB empty?
-                    if (window.Application.kbList.findWhere({isGloss: 1}).length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeGlossKB", {document: bookName}), function (buttonIndex) {
@@ -1505,7 +1508,8 @@ define(function (require) {
                                         mn: mn,
                                         f: f,
                                         refstring: refstrings.splice(0, refstrings.length),
-                                        timestamp: timestamp
+                                        timestamp: timestamp,
+                                        isGloss: 1
                                     });
                                     // add this TU to our internal list and save to the db
                                     newTU.save();
@@ -1545,7 +1549,8 @@ define(function (require) {
                                         mn: mn,
                                         f: f,
                                         refstring: refstrings.splice(0, refstrings.length),
-                                        timestamp: timestamp
+                                        timestamp: timestamp,
+                                        isGloss: 1
                                     });
                                 // add to our internal list and save to the db
                                 newTU.save();
@@ -5451,9 +5456,10 @@ define(function (require) {
             },
             onShow: function () {
                 kblist = window.Application.kbList;
-                kblist.fetch({reset: true, data: {source: ""}});
-                // first step -- clipboard or file?
-                $("#Container").html(Handlebars.compile(tplExportDestination));
+                $.when(kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function() {
+                    // first step -- clipboard or file?
+                    $("#Container").html(Handlebars.compile(tplExportDestination));
+                });
             }
         });
     

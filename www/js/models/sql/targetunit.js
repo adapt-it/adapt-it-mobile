@@ -60,7 +60,7 @@ define(function (require) {
                 }
                 var sql = "INSERT INTO targetunit (tuid,projectid,source,mn,f,refstring,timestamp,user,isGloss) VALUES (?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user, Attributes.isGloss], function (tx, res) {
+                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.isGloss], function (tx, res) {
                         attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
