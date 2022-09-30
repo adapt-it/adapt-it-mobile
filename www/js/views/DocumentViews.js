@@ -874,7 +874,7 @@ define(function (require) {
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our KB empty?
-                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeKB", {document: bookName}), function (buttonIndex) {
@@ -1122,7 +1122,7 @@ define(function (require) {
 
                     // AIM 1.7.0: TMX restore support (#461)
                     // This is a TMX file that matches our project. Is our KB empty?
-                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
@@ -1358,7 +1358,7 @@ define(function (require) {
 
                     // EDB 30/9/2022 removed -- currently AI does not add the language info to the Glossing KB, so
                     // we can't validate that the KB belongs to this project.
-                    
+
                     // ** Sanity check #2: is this KB from a project in our DB? 
                     // (source and target need to match a project in the DB -- if they do, get the project ID)
                     // i = contents.indexOf("srcName") + 9;
@@ -1380,7 +1380,7 @@ define(function (require) {
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our gloss KB empty?
-                    if (window.Application.kbList.length > 0 && window.Application.kblist.findWhere({isGloss: 0}).length > 0) {
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 1})) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
                         navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeGlossKB", {document: bookName}), function (buttonIndex) {
@@ -3092,7 +3092,7 @@ define(function (require) {
                         var newFileName = "";
                         if (contents.indexOf("tmx version=") >= 0) {
                             result = readTMXDoc(contents);
-                        } else if (contents.indexOf("glossingKB=\"1\">\"") >= 0) {
+                        } else if (contents.indexOf("glossingKB=\"1") >= 0) {
                             // _probably_ a glossing KB XML document
                             result = readGlossXMLDoc(contents);
                         } else if (contents.indexOf("KB kbVersion") >= 0) {
@@ -4607,7 +4607,9 @@ define(function (require) {
                 content = XML_PROLOG;
                 content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
                 // KB line -- project info
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
+                // (Note that we are including scrCode, which is not included in the Glossing.xml file that AI exports at the moment)
+                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
+//                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
                 // END settings xml node
                 // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
                 content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
