@@ -1355,24 +1355,28 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
+
+                    // EDB 30/9/2022 removed -- currently AI does not add the language info to the Glossing KB, so
+                    // we can't validate that the KB belongs to this project.
+                    
                     // ** Sanity check #2: is this KB from a project in our DB? 
                     // (source and target need to match a project in the DB -- if they do, get the project ID)
-                    i = contents.indexOf("srcName") + 9;
-                    srcName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    i = contents.indexOf("tgtName") + 9;
-                    tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    elts = window.Application.ProjectList.filter(function (element) {
-                        return (element.attributes.TargetLanguageName === tgtName &&
-                               element.attributes.SourceLanguageName === srcName);
-                    });
-                    if (elts.length > 0) {
-                        // found a match -- pull out the
-                        projectid = elts[0].attributes.projectid;
-                    } else {
-                        // no match -- exit out (need to create a project with this src/tgt before importing a KB)
-                        errMsg = i18n.t("view.dscErrWrongKB");
-                        return false;
-                    }
+                    // i = contents.indexOf("srcName") + 9;
+                    // srcName = contents.substring(i, contents.indexOf("\"", i + 1));
+                    // i = contents.indexOf("tgtName") + 9;
+                    // tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
+                    // elts = window.Application.ProjectList.filter(function (element) {
+                    //     return (element.attributes.TargetLanguageName === tgtName &&
+                    //            element.attributes.SourceLanguageName === srcName);
+                    // });
+                    // if (elts.length > 0) {
+                    //     // found a match -- pull out the
+                    //     projectid = elts[0].attributes.projectid;
+                    // } else {
+                    //     // no match -- exit out (need to create a project with this src/tgt before importing a KB)
+                    //     errMsg = i18n.t("view.dscErrWrongKB");
+                    //     return false;
+                    // }
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our gloss KB empty?
