@@ -27,7 +27,8 @@ define(function (require) {
                 f: "0",
                 refstring: [],
                 timestamp: "",
-                user: ""
+                user: "",
+                isGloss: 1
             },
 
             initialize: function () {
@@ -57,9 +58,9 @@ define(function (require) {
                         user = "Browser";
                     }
                 }
-                var sql = "INSERT INTO targetunit (tuid,projectid,source,mn,f,refstring,timestamp,user) VALUES (?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO targetunit (tuid,projectid,source,mn,f,refstring,timestamp,user,isGloss) VALUES (?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user], function (tx, res) {
+                    tx.executeSql(sql, [attributes.tuid, attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.isGloss], function (tx, res) {
                         attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
@@ -79,9 +80,9 @@ define(function (require) {
                         user = "Browser";
                     }
                 }
-                var sql = "UPDATE targetunit SET projectid=?, source=?, mn=?, f=?, refstring=?, timestamp=?, user=? WHERE tuid=?;";
+                var sql = "UPDATE targetunit SET projectid=?, source=?, mn=?, f=?, refstring=?, timestamp=?, user=?, isGloss=? WHERE tuid=?;";
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql(sql, [attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.tuid], function (tx, res) {
+                    tx.executeSql(sql, [attributes.projectid, attributes.source, attributes.mn, attributes.f, JSON.stringify(attributes.refstring), attributes.timestamp, user, attributes.isGloss, attributes.tuid], function (tx, res) {
                         console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
                         console.log("UPDATE error: " + err.message);
@@ -131,7 +132,7 @@ define(function (require) {
                 var i = 0,
                     len = 0;
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid text, source text, mn integer, f text, refstring text, timestamp text, user text);');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS targetunit (id integer primary key, tuid text, projectid text, source text, mn integer, f text, refstring text, timestamp text, user text, isGloss integer);');
                     tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
                         var tmpString = "";
                         targetunits.length = 0; // clear out old data
@@ -169,11 +170,11 @@ define(function (require) {
 
             // removes all targetunits for the specified projectid
             // This is done when the user is restoring from a KB file to clean out what's currently in the DB
-            clearKBForProject: function (projectid) {
+            clearKBForProject: function (projectid, isGloss) {
                 var deferred = $.Deferred();
                 // delete the KB entries for a project
                 window.Application.db.transaction(function (tx) {
-                    tx.executeSql("DELETE FROM targetunit WHERE projectid=?;", [projectid], function (tx, res) {
+                    tx.executeSql("DELETE FROM targetunit WHERE (projectid=? AND isGloss=?);", [projectid, isGloss], function (tx, res) {
                         console.log("Clear KB for project ok: " + res.rowsAffected + " rows affected.");
                     }, function (tx, err) {
                         console.log("DELETE error: " + err.message);
@@ -190,7 +191,7 @@ define(function (require) {
             // CREATE an array of TargetUnit objects
             addBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "INSERT INTO targetunit (tuid,projectid,source,mn,f,refstring,timestamp,user) VALUES (?,?,?,?,?,?,?,?);";
+                var sql = "INSERT INTO targetunit (tuid,projectid,source,mn,f,refstring,timestamp,user,isGloss) VALUES (?,?,?,?,?,?,?,?,?);";
                 var start = new Date().getTime();
                 var user = "";
                 if (models[0].attributes.user.length > 0) {
@@ -206,7 +207,7 @@ define(function (require) {
                 console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (tu) {
-                        tx.executeSql(sql, [tu.attributes.tuid, tu.attributes.projectid, tu.attributes.source, tu.attributes.mn, tu.attributes.f, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user]);
+                        tx.executeSql(sql, [tu.attributes.tuid, tu.attributes.projectid, tu.attributes.source, tu.attributes.mn, tu.attributes.f, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user, tu.attributes.isGloss]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));
@@ -221,7 +222,7 @@ define(function (require) {
             // UPDATE an array of TargetUnit objects
             updateBatch: function (models) {
                 var deferred = $.Deferred();
-                var sql = "UPDATE targetunit SET projectid=?, source=?, mn=?, f=?, refstring=?, timestamp=?, user=? WHERE tuid=?;";
+                var sql = "UPDATE targetunit SET projectid=?, source=?, mn=?, f=?, refstring=?, timestamp=?, user=?, isGloss=? WHERE tuid=?;";
                 var start = new Date().getTime();
                 var user = "";
                 if (models[0].attributes.user.length > 0) {
@@ -237,7 +238,7 @@ define(function (require) {
                 console.log("> first word: " + models[0].attributes.source + ", last word: " + models[models.length - 1].attributes.source);
                 window.Application.db.transaction(function (tx) {
                     Underscore.each(models, function (tu) {
-                        tx.executeSql(sql, [tu.attributes.projectid, tu.attributes.source, tu.attributes.mn, tu.attributes.f, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user, tu.attributes.tuid]);
+                        tx.executeSql(sql, [tu.attributes.projectid, tu.attributes.source, tu.attributes.mn, tu.attributes.f, JSON.stringify(tu.attributes.refstring), tu.attributes.timestamp, user, tu.attributes.isGloss, tu.attributes.tuid]);
                     });
                     var end = new Date().getTime();
                     console.log("addBatch: " + models.length + " objects, " + (end - start));

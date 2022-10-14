@@ -285,7 +285,8 @@
         "lblKB": "Base de Conhecimento",
         "dscErrCannotFindKB": "Não foi possível localizar informações sobre a versão da Base de Conhecimento. Este é um arquivo Adapt It Knowledge Base?",
         "dscErrWrongKB": "Este é um arquivo da Base de Conhecimento, mas os nomes dos idiomas de origem e / ou destino não correspondem a nenhum projeto ativo. Importe apenas arquivos da Base de Conhecimento que estão associados a um projeto ativo.",
-        "dscStatusKBImportSuccess": "Arquivo lido com sucesso: \"__document__\".",
+        "dscStatusKBImportSuccess": "A Base de Conhecimento foi importada com sucesso.",
+        "dscStatusGlossKBImportSuccess": "A Base de Conhecimento da glosa foi importada com sucesso.",
         "lblStartTyping": "Começe a digitar...",
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
@@ -338,6 +339,9 @@
         "optRestore": "Restaurar",
         "optMerge": "Mesclar",
         "optUpdateImport": "Atualizar \"__document__\"",
+        "lblGlossKB": "Base de conhecimentos da glosa",
+        "ttlImportGlossKB": "Importar ficheiro de base de conhecimento da glosa?",
+        "dscRestoreOrMergeGlossKB": "Este é um arquivo da base de conhecimento da glosa. Você pode Restaurar a base de conhecimento da glosa do arquivo importado ou Mesclar o arquivo com as glosas existentes.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

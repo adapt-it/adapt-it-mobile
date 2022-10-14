@@ -7,7 +7,7 @@ define(function (require) {
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         projects    = [],
-        CURRSCHEMA  = 3,
+        CURRSCHEMA  = 4,
         
         // ---
         // STATIC METHODS
@@ -63,12 +63,13 @@ define(function (require) {
                         // If the user has created any KB items (likely), we'll need to add 2 columns;
                         // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
                         if ((res.rows.length > 0) && (res.rows.item(0).f === null)) {
-                            // targetunit table exists -- need to add 2 columns
+                            // targetunit table exists -- need to add 3 columns
                             console.log("upgradeSchema: targetunit table exists, and is old: adding columns");
                             window.Application.db.transaction(function (tx) {
-                                // Check 3: what's the schema version?
+                                // add columns
                                 tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
                                 tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT DEFAULT \'0\';");
+                                tx.executeSql("ALTER TABLE targetunit ADD COLUMN isGloss INTEGER;");
                             });
                         }
                     }, function (err) {
@@ -109,15 +110,16 @@ define(function (require) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'f\';";
                             }
                             tx.executeSql(theSQL, [], function (tx, res) {
-                                // If the user has created any KB items (likely), we'll need to add 2 columns;
+                                // If the user has created any KB items (likely), we'll need to add 3 columns;
                                 // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
                                 if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
-                                    // targetunit table exists -- need to add 2 columns
+                                    // targetunit table exists -- need to add 3 columns
                                     console.log("upgradeSchema: targetunit table exists, and is old: adding columns");
                                     window.Application.db.transaction(function (tx) {
-                                        // Check 3: what's the schema version?
+                                        // add columns
                                         tx.executeSql("ALTER TABLE targetunit ADD COLUMN mn INTEGER;");
                                         tx.executeSql("ALTER TABLE targetunit ADD COLUMN f TEXT DEFAULT \'0\';");
+                                        tx.executeSql("ALTER TABLE targetunit ADD COLUMN isGloss INTEGER;");
                                     }, function (err) {
                                         // exception thrown -- assume table doesn't exist
                                         console.log("upgradeSchema: error updating targetunit table: " + err.message);
@@ -146,7 +148,7 @@ define(function (require) {
                         // If the user has created any sourcephrase items (i.e., they've imported a document) AND the new column isn't there, we'll need to add it;
                         // if there's no sourcephrase table, it'll create the table with all the needed columns (see sourcephrase.js)
                         if (res.rows.length > 0) {
-                            console.log("upgradeSchema: sourcephrase table exists. Checking for schema 3 columns...");
+                            console.log("upgradeSchema: sourcephrase table exists. Checking for schema 4 columns...");
                             if (device) {
                                 theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'sourcephrase\') WHERE name=\'vid\';";
                             } else {
@@ -230,6 +232,106 @@ define(function (require) {
                             });
                         } else {
                             console.log("upgradeSchema: no sourcephrase table -- table upgrade not needed");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error: " + err.message);
+                    });
+                    // AIM 1.8.0 (1 column in targetunit): first see if the targetunit table exists
+                    if (device) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any KB items AND the new columns aren't there, we'll need to add them;
+                        // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                        if (res.rows.length > 0) {
+                            console.log("upgradeSchema: targetunit table exists. Checking for schema 4 column...");
+                            if (device) {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'isGloss\';";
+                            } else {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'isGloss\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                // If the user has created any KB items (likely), we'll need to add 1 column;
+                                // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                                if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
+                                    // targetunit table exists -- need to add 3 columns
+                                    console.log("upgradeSchema: targetunit table exists, and is old: adding column");
+                                    window.Application.db.transaction(function (tx) {
+                                        // add columns
+                                        tx.executeSql("ALTER TABLE targetunit ADD COLUMN isGloss INTEGER;");
+                                    }, function (err) {
+                                        // exception thrown -- assume table doesn't exist
+                                        console.log("upgradeSchema: error updating targetunit table: " + err.message);
+                                    });
+                                } else {
+                                    console.log("upgradeSchema: targetunit table populated, but already has column \'isGloss\' -- no need to alter table");
+                                }
+                            }, function (err) {
+                                console.log("upgradeSchema: error getting pragma_table_info for targetunit: " + err.message);
+                            });
+                        } else {
+                            console.log("upgradeSchema: no targetunit table -- table upgrade not needed");
+                        }
+                    }, function (err) {
+                        // exception thrown -- assume table doesn't exist
+                        console.log("upgradeSchema: error: " + err.message);
+                    });
+                }, function (e) {
+                    console.log("upgradeSchema error: " + e.message);
+                }, function () {
+                    deferred.resolve();
+                });
+            }
+            if (fromVersion === 3) {
+                // AIM version 1.8 (glossing KB entries) -- one column in the targetunit table
+                window.Application.db.transaction(function (tx) {
+                    var theSQL = "";
+                    // version table exists (see logic above), but is at version 3; update it here
+                    tx.executeSql('UPDATE version SET schemaver=? WHERE id=?;', [CURRSCHEMA, 1], function (tx, res) {
+                        console.log("version table updated -- schema version: " + CURRSCHEMA);
+                    }, function (err) {
+                        console.log("failed to set the version schema: " + err);
+                    });
+                    // update changes for 1.8 
+                    // First, check to see if the targetunit table exists
+                    if (device) {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    } else {
+                        theSQL = "SELECT name FROM sqlite_master WHERE type=\'table\' and name=\'targetunit\';";
+                    }
+                    tx.executeSql(theSQL, [], function (tx, res) {
+                        // If the user has created any targetunit items (i.e., they've imported a .tmx file or started adapting) AND the new column isn't there, we'll need to add it;
+                        // if there's no targetunit table, it'll create the table with all the needed columns (see targetunit.js)
+                        if (res.rows.length > 0) {
+                            console.log("upgradeSchema: targetunit table exists. Checking for schema 4 column...");
+                            if (device) {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'isGloss\';";
+                            } else {
+                                theSQL = "SELECT COUNT(*) AS cntrec FROM pragma_table_info(\'targetunit\') WHERE name=\'isGloss\';";
+                            }
+                            tx.executeSql(theSQL, [], function (tx, res) {
+                                // If the user has created any KB items (likely), we'll need to add 1 column;
+                                // if there's no KB, it'll create the table with all the needed columns (see targetunit.js)
+                                if ((res.rows.length > 0) && (res.rows.item(0).cntrec.toString() === "0")) {
+                                    // targetunit table exists -- need to add 1 column1
+                                    console.log("upgradeSchema: targetunit table exists, and is old: adding column");
+                                    window.Application.db.transaction(function (tx) {
+                                        tx.executeSql("ALTER TABLE targetunit ADD COLUMN isGloss INTEGER;");
+                                    }, function (err) {
+                                        // exception thrown -- assume table doesn't exist
+                                        console.log("upgradeSchema: error updating targetunit table: " + err.message);
+                                    });
+                                } else {
+                                    console.log("upgradeSchema: targetunit table populated, but already has column \'isGloss\' -- no need to alter table");
+                                }
+                            }, function (err) {
+                                console.log("upgradeSchema: error getting pragma_table_info for targetunit: " + err.message);
+                            });
+                        } else {
+                            console.log("upgradeSchema: no targetunit table -- table upgrade not needed");
                         }
                     }, function (err) {
                         // exception thrown -- assume table doesn't exist

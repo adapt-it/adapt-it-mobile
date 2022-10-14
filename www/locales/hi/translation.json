@@ -284,7 +284,7 @@
         "lblKB": "Knowledge Base",
         "dscErrCannotFindKB": "Unable to locate Knowledge Base version. Is this an Adapt It Knowledge Base file?",
         "dscErrWrongKB": "This is a Knowledge Base file, but the source and/or target language names do not match any active project. Please import only Knowledge Base files that are associated with an active project.",
-        "dscStatusKBImportSuccess": "Knowledge Base file \"__document__\" read successfully.",
+        "dscStatusKBImportSuccess": "Knowledge Base imported successfully.",
         "lblStartTyping": "Start typing...",
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
@@ -336,6 +336,9 @@
         "optRestore": "Restore",
         "optMerge": "Merge",
         "optUpdateImport": "Update \"__document__\"",
+        "lblGlossKB": "Glossing Knowledge Base",
+        "ttlImportGlossKB": "Import Glossing Knowledge Base?",
+        "dscRestoreOrMergeGlossKB": "This is a Glossing Knowledge Base file. You can Restore the Glossing Knowledge Base from the imported file, or Merge the file with existing glosses.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
