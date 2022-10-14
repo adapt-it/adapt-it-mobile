@@ -68,7 +68,8 @@ define(function (require) {
             USX: 3,
             XML: 4,
             KBXML: 5,
-            KBTMX: 6    // https://www.ttt.org/oscarStandards/tmx/
+            KBTMX: 6,    // https://www.ttt.org/oscarStandards/tmx/
+            GLOSSKBXML: 7
         },
         DestinationEnum = {
             FILE: 1,
@@ -101,7 +102,7 @@ define(function (require) {
         },
 
         // Helper method to store the specified source and target text in the KB.
-        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid) {
+        saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid, isGloss) {
             var elts = kblist.filter(function (element) {
                 return (element.attributes.projectid === projectid &&
                    element.attributes.source === sourceValue);
@@ -168,7 +169,8 @@ define(function (require) {
                             }
                         ],
                         timestamp: timestamp,
-                        user: ""
+                        user: "",
+                        isGloss: isGloss
                     });
                 kblist.add(newTU);
                 newTU.save();
@@ -1333,7 +1335,7 @@ define(function (require) {
                         index = 0,
                         elts = null,
                         refstrings = [],
-                        projectid = "",
+                        projectid = project.get("projectid"),
                         xmlDoc = $.parseXML(contents),
                         curDate = new Date(),
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
@@ -1929,7 +1931,13 @@ define(function (require) {
                         // TODO: build up punctpairs
                         if (sp.get('target').length > 0) {
                             saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('a'), false), false),
-                                            "", project.get('projectid'));
+                                            "", project.get('projectid'), 0);
+                        }
+                        // is there a gloss?
+                        if ($(this.attr('g')).length > 0) {
+                            // yes -- add it to the gloss KB
+                            saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('g'), false), false),
+                            "", project.get('projectid'), 1);
                         }
                         markers = ""; // clear out the markers for the next wourcephrase
                         
@@ -4885,6 +4893,9 @@ define(function (require) {
                                 case FileTypeEnum.KBTMX:
                                     exportTMX();
                                     break;
+                                case FileTypeEnum.GLOSSKBXML:
+                                    exportGlossKB();
+                                    break;
                                 }
                             }, exportFail);
                         }, exportFail);
@@ -5397,6 +5408,8 @@ define(function (require) {
                             format = FileTypeEnum.KBXML;
                         } else if ($("#exportKBTMX").is(":checked")) {
                             format = FileTypeEnum.KBTMX;
+                        } else if ($("#exportGlossKBXML").is(":checked")) {
+                            format = FileTypeEnum.GLOSSKBXML;
                         } else {
                             // fallback to plain text
                             format = FileTypeEnum.TXT;
@@ -5437,14 +5450,24 @@ define(function (require) {
                     // exporting the KB
                     $("#FileFormats").hide();
                     $("#KBFormats").show();
+                    $("#glossKBFormat").hide();
                     // select a default of XML for the export format (for now)
                     $("#exportKBXML").prop("checked", true);
                     bookName = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
+                    $("#Filename").prop('disabled', true); // can't change the filename for KB XML
+                } else if (bookid === "glosskb") {
+                    // exporting the gloss KB (really only one option here -- "Glossing.xml")
+                    $("#FileFormats").hide();
+                    $("#KBFormats").hide();
+                    $("#glossKBFormat").show();
+                    $("#exportGlossKBXML").prop("checked", true);
+                    bookName = "Glossing.xml"; // hard coded (no il8n)
                     $("#Filename").prop('disabled', true); // can't change the filename for KB XML
                 } else {
                     // exporting a book
                     $("#FileFormats").show();
                     $("#KBFormats").hide();
+                    $("#glossKBFormat").hide();
                     // if this is going to the clipboard, we don't need a filename
                     if (this.destination === DestinationEnum.CLIPBOARD) {
                         $("#grpFilename").hide();
