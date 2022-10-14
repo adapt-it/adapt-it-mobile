@@ -105,12 +105,13 @@ define(function (require) {
         saveInKB = function (sourceValue, targetValue, oldTargetValue, projectid, isGloss) {
             var elts = kblist.filter(function (element) {
                 return (element.attributes.projectid === projectid &&
-                   element.attributes.source === sourceValue);
+                   element.attributes.source === sourceValue && element.attributes.isGloss === isGloss);
             });
             var tu = null,
                 curDate = new Date(),
                 timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
             if (elts.length > 0) {
+                // this TU exists in the KB
                 tu = elts[0];
             }
             if (tu) {
@@ -1931,10 +1932,10 @@ define(function (require) {
                         // TODO: build up punctpairs
                         if (sp.get('target').length > 0) {
                             saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('a'), false), false),
-                                            "", project.get('projectid'), 0);
+                            "", project.get('projectid'), 0);
                         }
                         // is there a gloss?
-                        if ($(this.attr('g')).length > 0) {
+                        if ($(this).attr('g')) {
                             // yes -- add it to the gloss KB
                             saveInKB(stripPunctuation(autoRemoveCaps(sp.get('source'), true), true), stripPunctuation(autoRemoveCaps($(this).attr('g'), false), false),
                             "", project.get('projectid'), 1);
