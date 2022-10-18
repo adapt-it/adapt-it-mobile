@@ -658,11 +658,11 @@ define(function (require) {
             },
             // Helper method to retrieve the targetunit whose source matches the specified key in the KB.
             // Params: key -- lookup key for the KB
-            findInKB: function (key) {
+            findInKB: function (key, isGloss) {
                 var result = null;
                 try {
                     // we're looking for an exact match ONLY
-                    result = kblist.findWhere({'source': key}); // strNoPunctuation});
+                    result = kblist.findWhere([{'source': key}, {'isGloss': isGloss}]); 
                     if (typeof result === 'undefined') {
                         return null;
                     }
@@ -673,17 +673,17 @@ define(function (require) {
             },
             // helper method to check for a possible partial phrase match in the KB
             // Params: key -- single pile to check for a possible partial match (e.g., the first word in a phrase that's in the KB)
-            possibleKBPhrase: function (key) {
+            possibleKBPhrase: function (key, isGloss) {
                 var aryFilter = null;
                 aryFilter = kblist.filter(function (element) {
-                    return (element.attributes.source.indexOf(key + ONE_SPACE) !== -1) ? true : false;
+                    return ((element.attributes.isGloss === isGloss) && (element.attributes.source.indexOf(key + ONE_SPACE) !== -1)) ? true : false;
                 });
                 return (aryFilter.length !== 0);
             },
             // Helper method to start with the specified source phrase ID and build the biggest "phrase" with an entry in the KB
             // Params: model -- first phrase to start the search (corresponds to selectedStart when merging)
             // Returns: last source phrase (corresponds to selectedEnd when merging)
-            findLargestPhrase: function (pile) {
+            findLargestPhrase: function (pile, isGloss) {
                 var sourceText = "",
                     tu = "",
                     exactMatch = pile,
@@ -705,11 +705,11 @@ define(function (require) {
                         sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true), true);
                         // is there a match for this phrase?
                         tu = kblist.filter(function (element) {
-                            return (element.attributes.source.indexOf(sourceText) !== -1) ? true : false;
+                            return ((element.attributes.source.indexOf(sourceText) !== -1) && (element.attributes.isGloss === isGloss)) ? true : false;
                         });
                         if (tu.length > 0) {
                             // we did a "fuzzy" match (i.e., indexOf) and got some results. Is this an exact match of a KB entry?
-                            if (kblist.findWhere({'source': sourceText}) !== 'undefined') {
+                            if ((kblist.findWhere([{'source': sourceText}, {'isGloss': isGloss}]) !== 'undefined')) {
                                 // this is an exact match -- move the indices and see if we can get a bigger phrase
                                 exactMatch = nextObj;
                                 idxEnd = $(nextObj).index();
@@ -1840,9 +1840,9 @@ define(function (require) {
                         isMergingFromKB = false;
                     } else {
                         // check for a possible KB phrase that needs merging
-                        if ((this.possibleKBPhrase(this.autoRemoveCaps(sourceText, true)) === true) && (selectedEnd === selectedStart)) {
+                        if ((this.possibleKBPhrase(this.autoRemoveCaps(sourceText, true), 0) === true) && (selectedEnd === selectedStart)) {
                             // we have a possible phrase -- see if it's a real one
-                            selectedEnd = this.findLargestPhrase(selectedStart);
+                            selectedEnd = this.findLargestPhrase(selectedStart, 0);
                             if (selectedEnd !== selectedStart) {
                                 isMergingFromKB = true;
                                 // found a merge candidate -- merge it
@@ -1852,7 +1852,7 @@ define(function (require) {
                             }
                         }
                     }
-                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 0);
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
@@ -2036,7 +2036,7 @@ define(function (require) {
                         // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
                             // not a retranslation or placeholder
-                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true));
+                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 0);
                             if (tu !== null) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
@@ -2674,7 +2674,7 @@ define(function (require) {
                     if (isMergingFromKB === false) {
                         // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
                         // is there something in the KB that matches this phrase?
-                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), true);
+                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), 0);
                         if (tu !== null) {
                             // found at least one match -- populate the target with the first match
                             refstrings = tu.get('refstring');
