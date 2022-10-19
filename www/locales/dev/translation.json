@@ -338,6 +338,7 @@
         "dscRestoreOrMergeTMX": "This is a Translation Memory (TMX) file. You can Restore the Knowledge Base from the imported file, or Merge the file with existing translations.",
         "optRestore": "Restore",
         "optMerge": "Merge",
+        "lblGlossing": "Glossing",
         "lblGlossKB": "Glossing Knowledge Base",
         "ttlImportGlossKB": "Import Glossing Knowledge Base?",
         "dscRestoreOrMergeGlossKB": "This is a Glossing Knowledge Base file. You can Restore the Glossing Knowledge Base from the imported file, or Merge the file with existing glosses.",

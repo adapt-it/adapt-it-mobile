@@ -339,6 +339,7 @@
         "optRestore": "Restaurar",
         "optMerge": "Mesclar",
         "optUpdateImport": "Atualizar \"__document__\"",
+        "lblGlossing": "Gloser",
         "lblGlossKB": "Base de conhecimentos da glosa",
         "ttlImportGlossKB": "Importar ficheiro de base de conhecimento da glosa?",
         "dscRestoreOrMergeGlossKB": "Este é um arquivo da base de conhecimento da glosa. Você pode Restaurar a base de conhecimento da glosa do arquivo importado ou Mesclar o arquivo com as glosas existentes.",

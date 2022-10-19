@@ -16,6 +16,7 @@
     <div id="MoreActionsMenu" aria-haspopup="true" class="dropdown-vertical">
     <div id="mnuTranslations" class="menu-disabled"><span id="translations" class="topcoat-icon topcoat-icon--translations"></span><span class="label" id="lblTranslations">{{ t 'view.lblShowTranslations'}}</span></div>
     <div id="mnuFindRS" class="menu-disabled"><span id="findRS" class="topcoat-icon topcoat-icon--search"></span><span class="label" id="lblFindRS">{{ t 'view.lblFindInDocuments'}}</span></div>
+    <div id="mnuGlossing"><span id="glossing" class="topcoat-icon topcoat-icon--glossing"></span><span class="label" id="lblGlossing">{{ t 'view.lblGlossing'}}</span></div>
     <div id="mnuPreview"><span id="preview" class="topcoat-icon topcoat-icon--preview"></span><span class="label" id="lblPreview">{{ t 'view.lblShowPreview'}}</span></div>
     <div id="mnuHelp"><span id="help" class="topcoat-icon topcoat-icon--help"></span><span class="label" id="lblHelp">{{ t 'view.lblHelp'}}</span></div>
     </div>
@@ -64,6 +65,16 @@
     <button class="search light-grey" id="SearchPrev"><span class="img-left-small"></span></button>
     <button class="search light-grey" id="SearchNext"><span class="img-right-small"></span></button>
     <button class="search light-grey" id="SearchClose"><span class="img-cancel-small"></span></button>
+</div>
+<div class="ft" id="ft">
+    <div class="ftbar" id="ftbar">
+        <button class="search light-grey" id="ftPrev"><span class="img-left-small"></span></button>
+        <button class="search light-grey" id="ftNext"><span class="img-right-small"></span></button>
+        <button class="search light-grey" id="ftClose"><span class="img-cancel-small"></span></button>    
+    </div>
+    <div class="fttext" id="fttext" contenteditable="true">
+        Here's some random free text
+    </div>
 </div>
 <div class="topcoat-list__container scroller" id="content">
 <div class="topcoat-list chapter" id="chapter">

@@ -337,6 +337,7 @@
         "optRestore": "Yusim nolis bes gen",
         "optMerge": "Merge",
         "optUpdateImport": "Update \"__document__\"",
+        "lblGlossing": "Wokim Glos",
         "lblGlossKB": "Nolis Base Bilong ol Glos",
         "ttlImportGlossKB": "Impot Nolis Base Bilong ol Glos?",
         "dscRestoreOrMergeGlossKB": "This is a Glossing Knowledge Base file. You can Restore the Glossing Knowledge Base from the imported file, or Merge the file with existing glosses.",
