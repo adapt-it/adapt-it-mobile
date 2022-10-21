@@ -75,7 +75,13 @@ define(function (require) {
         longPressTimeout = null,
         lastOffset = 0,
         ONE_SPACE = " ",
-       
+        editorModeEnum   = {
+            ADAPTING: 1,
+            GLOSSING: 2,
+            FREE_TRANSLATING: 3
+
+        },
+        editorMode = editorModeEnum.ADAPTING, // initial value (adapting)
         /////
         // Static methods
         /////
