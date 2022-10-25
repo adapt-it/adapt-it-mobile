@@ -2355,6 +2355,9 @@ define(function (require) {
                     $(".target").prop('contenteditable', true); // set target to read-write
                     $("#lblPreview").html(i18next.t("view.lblShowPreview"));
                     inPreview = false;
+                    $(".target").removeClass("hide");
+                    $(".gloss").removeClass("hide");
+                    $(".freetrans").removeClass("hide");
                     // disable editing blank verses if needed
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
@@ -2367,6 +2370,21 @@ define(function (require) {
                     $(".target").prop('contenteditable', false); // set target to read-only
                     $("#lblPreview").html(i18next.t("view.lblHidePreview"));
                     inPreview = true;
+                    // preview only the item we're working on (target, gloss, or free translation)
+                    switch(editorMode) {
+                        case editorModeEnum.ADAPTING:
+                            $(".gloss").addClass("hide");
+                            $(".freetrans").addClass("hide");
+                            break;
+                        case editorModeEnum.GLOSSING:
+                            $(".target").addClass("hide");
+                            $(".freetrans").addClass("hide");
+                            break;
+                        case editorModeEnum.FREE_TRANSLATING:
+                            $(".target").addClass("hide");
+                            $(".gloss").addClass("hide");
+                            break;
+                    }
                 }
             },
             // User clicked on the Adapting menu item -- set the current mode to Adapting
