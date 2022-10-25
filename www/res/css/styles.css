@@ -1855,6 +1855,9 @@ typeahead styles
 .show-button {
     display: inline-block;
 }
+.invisible {
+    visibility: hidden;
+}
 /***********
 * media queries - for specific device sizes / screen resolutions
 ***********/

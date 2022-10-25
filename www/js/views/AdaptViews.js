@@ -2369,6 +2369,22 @@ define(function (require) {
                     inPreview = true;
                 }
             },
+            // User clicked on the Adapting menu item -- set the current mode to Adapting
+            onModeAdapting: function () {
+                editorMode = editorModeEnum.ADAPTING;
+
+            },
+            // User clicked on the Glossing menu item -- set the current mode to Glossing
+            onModeGlossing: function () {
+                editorMode = editorModeEnum.GLOSSING;
+
+            },
+            // User clicked on the Free Translation menu item -- set the current mode to Free Translation
+            onModeFreeTrans: function () {
+                editorMode = editorModeEnum.FREE_TRANSLATING;
+
+            },
+        
             // User clicked on the Placeholder _before_ button
             togglePHBefore: function () {
                 // TODO: move placeHolderHtml to templated html
@@ -3071,6 +3087,7 @@ define(function (require) {
                 project = this.project;
                 var chapterid = this.model.get('chapterid');
                 chapter = this.model;
+                editorMode = editorModeEnum.ADAPTING; // initial setting
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
@@ -3123,6 +3140,9 @@ define(function (require) {
                 "click #mnuTranslations": "onKBTranslations",
                 "click #mnuFindRS": "onSearchRS",
                 "click #mnuPreview": "togglePreview",
+                "click #mnuAdapting": "onModeAdapting",
+                "click #mnuGlossing": "onModeGlossing",
+                "click #mnuFreeTrans": "onModeFreeTrans",
                 "click #mnuHelp": "onHelp"
             },
             UndoClick: function (event) {
@@ -3260,6 +3280,73 @@ define(function (require) {
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
+            onModeAdapting: function (event) {
+                // check / uncheck menu items as appropriate
+                if ($("#optAdapting").hasClass("invisible")) {
+                    $("#optAdapting").removeClass("invisible");
+                }
+                if (!$("#optGlossing").hasClass("invisible")) {
+                    $("#optGlossing").addClass("invisible");
+                }
+                if (!$("#optFreeTrans").hasClass("invisible")) {
+                    $("#optFreeTrans").addClass("invisible");
+                }
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.onModeAdapting(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+            onModeGlossing: function (event) {
+                // check / uncheck menu items as appropriate
+                if (!$("#optAdapting").hasClass("invisible")) {
+                    $("#optAdapting").addClass("invisible");
+                }
+                if ($("#optGlossing").hasClass("invisible")) {
+                    $("#optGlossing").removeClass("invisible");
+                }
+                if (!$("#optFreeTrans").hasClass("invisible")) {
+                    $("#optFreeTrans").addClass("invisible");
+                }
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.onModeGlossing(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+            onModeFreeTrans: function (event) {
+                // check / uncheck menu items as appropriate
+                if (!$("#optAdapting").hasClass("invisible")) {
+                    $("#optAdapting").addClass("invisible");
+                }
+                if (!$("#optGlossing").hasClass("invisible")) {
+                    $("#optGlossing").addClass("invisible");
+                }
+                if ($("#optFreeTrans").hasClass("invisible")) {
+                    $("#optFreeTrans").removeClass("invisible");
+                }
+                // dismiss the Plus and More menu if visible
+                if ($("#PlusActionsMenu").hasClass("show")) {
+                    $("#PlusActionsMenu").toggleClass("show");
+                }
+                if ($("#MoreActionsMenu").hasClass("show")) {
+                    $("#MoreActionsMenu").toggleClass("show");
+                }
+                this.listView.onModeFreeTrans(event);
+                // do not bubble this event up to the title bar
+                event.stopPropagation();
+            },
+
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePHBefore: function (event) {
                 // dismiss the Plus and More menu if visible
