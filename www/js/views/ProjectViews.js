@@ -1070,6 +1070,11 @@ define(function (require) {
                 } else {
                     $("#EditBlankPiles").prop("checked", false); // default is false (disabled)
                 }
+                if (localStorage.getItem("ShowGlossFT")) {
+                    $("#ShowGlossFT").prop("checked", localStorage.getItem("ShowGlossFT") === "true");
+                } else {
+                    $("#ShowGlossFT").prop("checked", false); // default is false (disabled)
+                }
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
                     $('#language').val(localStorage.getItem("UILang"));
@@ -1320,6 +1325,7 @@ define(function (require) {
                     localStorage.setItem(("WrapUSFM"), $("#WrapAtMarker").is(":checked") ? true : false);
                     localStorage.setItem(("StopAtBoundaries"), $("#StopAtBoundaries").is(":checked") ? true : false);
                     localStorage.setItem(("AllowEditBlankSP"), $("#EditBlankPiles").is(":checked") ? true : false);
+                    localStorage.setItem(("ShowGlossFT"), $("#ShowGlossFT").is(":checked") ? true : false);
                     if ($("#customLanguage").is(":checked")) {
                         // Use a custom language
                         loc = $('#language').val();

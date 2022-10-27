@@ -371,6 +371,7 @@ define(function (require) {
             chapterName: "",
             spSearchList: null,
             allowEditBlankSP: false,
+            ShowGlossFT: false,
 
             template: Handlebars.compile(tplSourcePhraseList),
 
@@ -383,6 +384,10 @@ define(function (require) {
                 // AIM 1.6.0 - user setting to allow editing blank/empty verses
                 if (localStorage.getItem("AllowEditBlankSP")) {
                     this.allowEditBlankSP = (localStorage.getItem("AllowEditBlankSP") === "true");
+                } 
+                // AIM 1.8.0 - glosses and free translations
+                if (localStorage.getItem("ShowGlossFT")) {
+                    this.ShowGlossFT = (localStorage.getItem("ShowGlossFT") === "true");
                 } 
                 // clean up -- if we have a searchList on the application, but this chapter isn't in that searchList,
                 // clear out the list
@@ -493,6 +498,12 @@ define(function (require) {
                     // disable editing blank verses if needed
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
+                    }
+                    // hide gloss / free translation lines if needed
+                    if (this.ShowGlossFT === false) {
+                        $("#glossFT").addClass("hide");
+                        $(".gloss").addClass("hide");
+                        $(".freetrans").addClass("hide");
                     }
                 }
                 return this;
@@ -983,7 +994,13 @@ define(function (require) {
                 "mouseup .target": "selectedAdaptation",
                 "touchend .target": "selectedAdaptation",
                 "keydown .target": "editAdaptation",
-                "blur .target": "unselectedAdaptation"
+                "blur .target": "unselectedAdaptation",
+                "mousedown .gloss": "selectingGloss",
+                "touchstart .gloss": "selectingGloss",
+                "mouseup .gloss": "selectedGloss",
+                "touchend .gloss": "selectedGloss",
+                "keydown .gloss": "editGloss",
+                "blur .gloss": "unselectedGloss"
             },
             
             // user is starting to select one or more piles
@@ -1778,6 +1795,23 @@ define(function (require) {
                 }
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
+                // do NOT propogate this up to the Pile - the user is clicking in the edit field
+                event.stopPropagation();
+                event.preventDefault();
+            },
+            // mouseDown / touchStart event handler for the target field
+            selectingGloss: function (event) {
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                if (selectedStart !== null) {
+                    console.log("selectingGloss: old selection -- need to blur");
+                    $("div").removeClass("ui-selecting ui-selected");
+                    $(selectedStart).find(".gloss").blur(); // also triggers a save on the old target field
+                }
+                selectedStart = event.currentTarget.parentElement; // pile
+                console.log("selectingGloss: " + selectedStart.id);
                 // do NOT propogate this up to the Pile - the user is clicking in the edit field
                 event.stopPropagation();
                 event.preventDefault();
