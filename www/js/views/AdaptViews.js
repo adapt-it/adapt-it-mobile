@@ -1533,32 +1533,43 @@ define(function (require) {
                     // we've finished tracking the selection
                     $("div").removeClass("ui-selecting ui-selected");
                     if (idxStart === idxEnd) {
-                        // only one item selected -- can only _create_ a placeholder
-                        // (user can also _delete_ a phrase / retranslation; we'll re-enable
-                        // the button below if they've selected an existing retranslation or phrase
-                        $("#Phrase").prop('disabled', true);
-                        $("#Retranslation").prop('disabled', true);
-                        $("#mnuRetranslation").prop('disabled', true);
-                        $("#mnuPhrase").prop('disabled', true);
-                        // set the class to ui-selected
+                        // update the placeholder/phrase/retranslation buttons IF we're in adapting mode
+                        if (editorMode === editorModeEnum.ADAPTING) {
+                            // only one item selected -- can only _create_ a placeholder
+                            // (user can also _delete_ a phrase / retranslation; we'll re-enable
+                            // the button below if they've selected an existing retranslation or phrase
+                            $("#Phrase").prop('disabled', true);
+                            $("#Retranslation").prop('disabled', true);
+                            $("#mnuRetranslation").prop('disabled', true);
+                            $("#mnuPhrase").prop('disabled', true);
+                        }
+                        // set the selection's class to ui-selected
                         $(selectedStart).addClass("ui-selected");
                     } else if (idxStart < idxEnd) {
-                        // more than one item selected -- can create a placeholder, phrase, retrans
-                        $("#Phrase").prop('disabled', false);
-                        $("#Retranslation").prop('disabled', false);
-                        $("#mnuRetranslation").prop('disabled', false);
-                        $("#mnuPhrase").prop('disabled', false);
+                        // update the placeholder/phrase/retranslation buttons IF we're in adapting mode
+                        if (editorMode === editorModeEnum.ADAPTING) {
+                            // more than one item selected -- can create a placeholder, phrase, retrans
+                            $("#Phrase").prop('disabled', false);
+                            $("#Retranslation").prop('disabled', false);
+                            $("#mnuRetranslation").prop('disabled', false);
+                            $("#mnuPhrase").prop('disabled', false);
+                        }
+                        // set the selection's class to ui-selected
                         $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxStart && index <= idxEnd) {
                                 $(value).addClass("ui-selected");
                             }
                         });
                     } else {
-                        // more than one item selected -- can create a placeholder, phrase, retrans
-                        $("#Phrase").prop('disabled', false);
-                        $("#Retranslation").prop('disabled', false);
-                        $("#mnuRetranslation").prop('disabled', false);
-                        $("#mnuPhrase").prop('disabled', false);
+                        // update the placeholder/phrase/retranslation buttons IF we're in adapting mode
+                        if (editorMode === editorModeEnum.ADAPTING) {
+                            // more than one item selected -- can create a placeholder, phrase, retrans
+                            $("#Phrase").prop('disabled', false);
+                            $("#Retranslation").prop('disabled', false);
+                            $("#mnuRetranslation").prop('disabled', false);
+                            $("#mnuPhrase").prop('disabled', false);
+                        }
+                        // set the selection's class to ui-selected
                         $(selectedStart.parentElement).children().each(function (index, value) {
                             if (index >= idxEnd && index <= idxStart) {
                                 $(value).addClass("ui-selected");
@@ -1573,89 +1584,91 @@ define(function (require) {
                         idxEnd = idxStart;
                         idxStart = tmpIdx;
                     }
-                    // ** Icons and labels for the toolbar **
-                    spid = $(selectedStart).attr('id');
-                    // did the user select a placeholder (before)?
-                    if (spid.indexOf("plc") !== -1) {
-                        // placeholder -- can remove it, but not add a new one
-                        isPHBefore = true,
-                        $("#phBefore").prop('title', i18next.t("view.dscDelPlaceholder"));
-                        $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
-                        $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
-                        $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
-                        $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
-                    } else {
-                        // not a placeholder -- can add a new one
-                        isPHBefore = false;
-                        $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                        $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                        $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                        $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                        $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                    // update the icons and labels for the placeholder/phrase/retranslation buttons IF we're in adapting mode
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        spid = $(selectedStart).attr('id');
+                        // did the user select a placeholder (before)?
+                        if (spid.indexOf("plc") !== -1) {
+                            // placeholder -- can remove it, but not add a new one
+                            isPHBefore = true,
+                            $("#phBefore").prop('title', i18next.t("view.dscDelPlaceholder"));
+                            $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
+                            $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
+                            $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-new");
+                            $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-delete");
+                        } else {
+                            // not a placeholder -- can add a new one
+                            isPHBefore = false;
+                            $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                            $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                            $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                            $("#mnuPHBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                            $("#mnuPHBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                        }
+                        // did the user select a placeholder (after)?
+                        if (spid.indexOf("pla") !== -1) {
+                            // placeholder -- can remove it, but not add a new one
+                            isPHAfter = true;
+                            $("#phAfter").prop('title', i18next.t("view.dscDelPlaceholder"));
+                            $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
+                            $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
+                            $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
+                            $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
+                        } else {
+                            // not a placeholder -- can add a new one
+                            isPHAfter = false;
+                            $("#phAfter").prop('title', i18next.t("view.dscNewPlaceholder"));
+                            $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
+                            $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
+                            $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
+                            $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
+                        }
+                        // did the user select a phrase?
+                        if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
+                            // phrase (single selection) -- can remove it, but not add a new one
+                            isPhrase = true;
+                            $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
+                            $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
+                            $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
+                            $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
+                            $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
+                            $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
+                            $("#mnuPhrase").prop('disabled', false); // enable toolbar button (to delete phrase)
+                        } else {
+                            // not a placeholder -- can add a new one
+                            isPhrase = false;
+                            $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
+                            $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                            $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
+                            $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
+                            $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
+                        }
+                        // did the user select a retranslation?
+                        if (spid.indexOf("ret") !== -1) {
+                            // retranslation -- can remove it, but not add a new one
+                            isRetranslation = true;
+                            $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
+                            $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
+                            $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
+                            $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
+                            $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
+                            $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
+                            $("#mnuRetranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
+                        } else {
+                            // not a retranslation -- can add a new one
+                            isRetranslation = false;
+                            $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
+                            $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                            $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
+                            $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
+                            $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
+                        }
+                        $("#phBefore").prop('disabled', false);
+                        $("#mnuPHBefore").prop('disabled', false);
+                        $("#phAfter").prop('disabled', false);
+                        $("#mnuPHAfter").prop('disabled', false);
+                        event.stopPropagation();
                     }
-                    // did the user select a placeholder (after)?
-                    if (spid.indexOf("pla") !== -1) {
-                        // placeholder -- can remove it, but not add a new one
-                        isPHAfter = true;
-                        $("#phAfter").prop('title', i18next.t("view.dscDelPlaceholder"));
-                        $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
-                        $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
-                        $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-new");
-                        $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-delete");
-                    } else {
-                        // not a placeholder -- can add a new one
-                        isPHAfter = false;
-                        $("#phAfter").prop('title', i18next.t("view.dscNewPlaceholder"));
-                        $("#phAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
-                        $("#phAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
-                        $("#mnuPHAfter .topcoat-icon").removeClass("topcoat-icon--ph-after-delete");
-                        $("#mnuPHAfter .topcoat-icon").addClass("topcoat-icon--ph-after-new");
-                    }
-                    // did the user select a phrase?
-                    if ((spid.indexOf("phr") !== -1) && (selectedStart === selectedEnd)) {
-                        // phrase (single selection) -- can remove it, but not add a new one
-                        isPhrase = true;
-                        $("#Phrase").prop('title', i18next.t("view.dscDelPhrase"));
-                        $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
-                        $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
-                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-new");
-                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-delete");
-                        $("#Phrase").prop('disabled', false); // enable toolbar button (to delete phrase)
-                        $("#mnuPhrase").prop('disabled', false); // enable toolbar button (to delete phrase)
-                    } else {
-                        // not a placeholder -- can add a new one
-                        isPhrase = false;
-                        $("#Phrase").prop('title', i18next.t("view.dscNewPhrase"));
-                        $("#Phrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
-                        $("#Phrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
-                        $("#mnuPhrase .topcoat-icon").removeClass("topcoat-icon--phrase-delete");
-                        $("#mnuPhrase .topcoat-icon").addClass("topcoat-icon--phrase-new");
-                    }
-                    // did the user select a retranslation?
-                    if (spid.indexOf("ret") !== -1) {
-                        // retranslation -- can remove it, but not add a new one
-                        isRetranslation = true;
-                        $("#Retranslation").prop('title', i18next.t("view.dscDelRetranslation"));
-                        $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
-                        $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
-                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-new");
-                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-delete");
-                        $("#Retranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
-                        $("#mnuRetranslation").prop('disabled', false); // enable toolbar button (to delete retranslation)
-                    } else {
-                        // not a retranslation -- can add a new one
-                        isRetranslation = false;
-                        $("#Retranslation").prop('title', i18next.t("view.dscNewRetranslation"));
-                        $("#Retranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
-                        $("#Retranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
-                        $("#mnuRetranslation .topcoat-icon").removeClass("topcoat-icon--retranslation-delete");
-                        $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
-                    }
-                    $("#phBefore").prop('disabled', false);
-                    $("#mnuPHBefore").prop('disabled', false);
-                    $("#phAfter").prop('disabled', false);
-                    $("#mnuPHAfter").prop('disabled', false);
-                    event.stopPropagation();
                 }
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
                     $("#mnuTranslations").removeClass("menu-disabled");
@@ -2395,12 +2408,38 @@ define(function (require) {
             // User clicked on the Glossing menu item -- set the current mode to Glossing
             onModeGlossing: function () {
                 editorMode = editorModeEnum.GLOSSING;
-
+                // Flip the translation / gloss lines?
+                // ********************
+                // disable buttons that don't apply to glossing mode
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                $("#phBefore").prop('disabled', true);
+                $("#phAfter").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+                $("#mnuPHBefore").prop('disabled', true);
+                $("#mnuPHAfter").prop('disabled', true);
+                $("#mnuRetranslation").prop('disabled', true);
+                $("#mnuPhrase").prop('disabled', true);
             },
             // User clicked on the Free Translation menu item -- set the current mode to Free Translation
             onModeFreeTrans: function () {
                 editorMode = editorModeEnum.FREE_TRANSLATING;
-
+                // disable buttons that don't apply to free translation mode
+                $("div").removeClass("ui-selecting ui-selected");
+                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                $("#phBefore").prop('disabled', true);
+                $("#phAfter").prop('disabled', true);
+                $("#Retranslation").prop('disabled', true);
+                $("#Phrase").prop('disabled', true);
+                $("#mnuPHBefore").prop('disabled', true);
+                $("#mnuPHAfter").prop('disabled', true);
+                $("#mnuRetranslation").prop('disabled', true);
+                $("#mnuPhrase").prop('disabled', true);
             },
         
             // User clicked on the Placeholder _before_ button
