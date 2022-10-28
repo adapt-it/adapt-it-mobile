@@ -501,9 +501,9 @@ define(function (require) {
                     }
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
-                        $("#glossFT").addClass("hide");
-                        $(".gloss").addClass("hide");
-                        $(".freetrans").addClass("hide");
+                        $("#glossFT").addClass("hide"); // edit mode dropdown menu items
+                        $(".gloss").addClass("hide"); // gloss line
+                        $(".freetrans").addClass("hide"); // free translation line
                     }
                 }
                 return this;
@@ -908,8 +908,19 @@ define(function (require) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
                     selectedEnd = selectedStart = next_edit;
-                    $(next_edit).find(".target").focus();
-                    $(next_edit).find(".target").mouseup();
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        // adapting
+                        $(next_edit).find(".target").focus();
+                        $(next_edit).find(".target").mouseup();    
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        // glossing
+                        $(next_edit).find(".gloss").focus();
+                        $(next_edit).find(".gloss").mouseup();    
+                    } else {
+                        // free translation
+                        $(next_edit).find(".freetrans").focus();
+                        $(next_edit).find(".freetrans").mouseup();
+                    }
                 } else {
                     // the user is either at the first or last pile. Select it,
                     // but don't set focus on the target edit field.
@@ -1043,7 +1054,13 @@ define(function (require) {
                 if ((selectedStart !== null) && (isEditing === true)) {
                     console.log("old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
-                    $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        $(selectedStart).find(".gloss").blur(); // also triggers a save on the old gloss field
+                    } else {
+                        $(selectedStart).find(".freetrans").blur(); // also triggers a save on the old free translation field
+                    }
                 }
                 // if there was an old target in focus, blur it
                 selectedStart = event.currentTarget; // select the pile
@@ -1327,8 +1344,18 @@ define(function (require) {
                     isSelectingKB = false; // we've now chosen something - OK to blur
                     isDirty = true;
                     $('.tt-menu').css('display', 'none');
-                    $(event.currentTarget).find(".target").typeahead('destroy');
-                    $(event.currentTarget).find(".target").html(theSelection);
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        // adapting
+                        $(event.currentTarget).find(".target").typeahead('destroy');
+                        $(event.currentTarget).find(".target").html(theSelection);
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        // glossing
+                        $(event.currentTarget).find(".gloss").typeahead('destroy');
+                        $(event.currentTarget).find(".gloss").html(theSelection);    
+                    } else {
+                        // free translating
+                        console.log("selectingPilesEnd: weird state / KB selection in FT mode");
+                    }
                     $("#Undo").prop('disabled', false);
                     // clear the long press timeout -- we're selecting a menu item
                     return; // get out
@@ -1788,10 +1815,24 @@ define(function (require) {
                 if (inPreview === true) {
                     return;
                 }
+                // also ignore the event if we're not adapting
+                if (editorMode !== editorModeEnum.ADAPTING) {
+                    // console.log("oops... pile selection / user mouseup on target, not pile... correcting.");
+                    // // trigger a click on the parent (pile) instead
+                    // event.stopPropagation();
+                    // $(event.parentElement).touchstart();
+                    return;
+                }
                 if (selectedStart !== null) {
                     console.log("selectingAdaptation: old selection -- need to blur");
                     $("div").removeClass("ui-selecting ui-selected");
-                    $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        $(selectedStart).find(".target").blur(); // also triggers a save on the old target field
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        $(selectedStart).find(".gloss").blur(); // also triggers a save on the old gloss field
+                    } else {
+                        $(selectedStart).find(".freetrans").blur(); // also triggers a save on the old free translation field
+                    }
                 }
                 selectedStart = event.currentTarget.parentElement; // pile
                 console.log("selectingAdaptation: " + selectedStart.id);
@@ -1803,6 +1844,10 @@ define(function (require) {
             selectingGloss: function (event) {
                 // ignore event if we're in preview mode
                 if (inPreview === true) {
+                    return;
+                }
+                // also ignore the event if we're not glossing
+                if (editorMode !== editorModeEnum.GLOSSING) {
                     return;
                 }
                 if (selectedStart !== null) {
@@ -1834,6 +1879,10 @@ define(function (require) {
 //                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
                 // ignore event if we're in preview mode
                 if (inPreview === true) {
+                    return;
+                }
+                // also ignore the event if we're not adapting
+                if (editorMode !== editorModeEnum.ADAPTING) {
                     return;
                 }
                 
@@ -2150,6 +2199,325 @@ define(function (require) {
                 }
 //                console.log("selectedAdaptation exit / isDirty = " + isDirty + ", origText = " + origText);
             },
+            // mouseUp / touchEnd event handler for the gloss field
+            selectedGloss: function (event) {
+                var tu = null,
+                    i = 0,
+                    strID = "",
+                    model = null,
+                    sourceText = "",
+                    targetText = "",
+                    refstrings = null,
+                    range = null,
+                    selection = null,
+                    KBtarget = [],
+                    options = [],
+                    foundInKB = false;
+                console.log("selectedGloss entry / event type:" + event.type);
+//                console.log("- scrollTop: " + $("#chapter").scrollTop() + ", offsetTop: " + $("#chapter").offset().top);
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                // also ignore the event if we're not glossing
+                if (editorMode !== editorModeEnum.GLOSSING) {
+                    return;
+                }
+                
+                // case where user lifted finger on the target instead of the pile
+                if (isSelecting === true || isLongPressSelection === true) {
+                    console.log("oops... pile selection / user mouseup on target, not pile... correcting.");
+                    // trigger a click on the parent (pile) instead
+                    event.stopPropagation();
+                    $(event.parentElement).mouseup();
+                    return;
+                }
+
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").addClass("hide");
+                    $(".pile").addClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+                
+                // if we got here, the user has clicked on the target (or the focus moved here). Don't propagate the
+                // event to the parent (pile) element when we're done
+                event.stopPropagation();
+                event.preventDefault();
+
+                // clear out any old selection
+                $("div").removeClass("ui-selecting ui-selected");
+                // set the current adaptation cursor
+                if (event.currentTarget.parentElement && event.currentTarget.parentElement.id) {
+                    selectedStart = event.currentTarget.parentElement; // pile
+                }
+                console.log("selectedStart: " + selectedStart.id);
+                // Update lastAdaptedSPID
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
+
+                // enable prev / next buttons
+                $("#PrevSP").prop('disabled', false); // enable toolbar button
+                $("#NextSP").prop('disabled', false); // enable toolbar button
+                isEditing = true;
+                // Is the target field empty?
+                if ($(event.currentTarget).text().trim().length === 0) {
+                    // target is empty -- attempt to populate it
+                    // First, see if there are any available adaptations in the KB
+                    origText = ""; // no text
+                    lastPile = selectedStart;
+                    isDirty = true;
+                    strID = $(selectedStart).attr('id');
+                    if (typeof strID === 'undefined') {
+                        // we've probably run into the typeahead dropdown
+                        return;
+                    }
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
+                    sourceText = model.get('source');
+                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 1);
+                    console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
+                    if (tu !== null) {
+                        // found at least one match -- populate the target with the first match
+                        refstrings = tu.get('refstring');
+                        // first, make sure these refstrings are actually being used
+                        options.length = 0; // clear out any old cruft
+                        for (i = 0; i < refstrings.length; i++) {
+                            if (refstrings[i].n > 0) {
+                                options.push(Underscore.unescape(refstrings[i].target));
+                            }
+                        }
+                        if (options.length === 1) {
+                            // exactly one entry in KB -- populate the field
+                            targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
+                            $(event.currentTarget).html(targetText);
+                            isDirty = true;
+                            // Are we moving?
+                            if (MovingDir === 0) {
+                                // not moving (user clicked on this node) - leave the
+                                // cursor here for the user to make adjustments as necessary
+                                clearKBInput = true;
+                                // select any text in the edit field
+                                if (document.body.createTextRange) {
+                                    range = document.body.createTextRange();
+                                    range.moveToElementText($(event.currentTarget));
+                                    range.select();
+                                } else if (window.getSelection) {
+                                    selection = window.getSelection();
+                                    selection.removeAllRanges();
+                                    range = document.createRange();
+                                    range.selectNodeContents($(event.currentTarget)[0]);
+                                    selection.addRange(range);
+                                }
+                            } else {
+                                // moving (user clicked forward/back at some point)
+                                // mark the current target purple and move the cursor
+                                $(event.currentTarget).addClass('fromkb');
+                                clearKBInput = false;
+                                this.moveCursor(event, true);
+                            }
+                            foundInKB = true;
+                        } else if (options.length > 1) {
+                            // more than one entry in KB -- stop here so the user can choose
+                            MovingDir = 0;
+                            isDirty = false; // no change yet (user needs to select something first)
+                            // auto-caps the options
+                            KBtarget = this.autoAddCaps(model, options);
+                            // create the autocomplete UI
+                            console.log("selectedAdaptation: creating typeahead dropdown with " + KBtarget.length + " options: " + KBtarget.toString());
+                            $(event.currentTarget).typeahead(
+                                {
+                                    hint: true,
+                                    highlight: true,
+                                    minLength: 0
+                                },
+                                {
+                                    name: 'kboptions',
+                                    source: function (request, response) {
+                                        response(KBtarget);
+                                    }
+                                }
+                            );
+                            isSelectingKB = true;
+                            // select any text in the edit field
+                            console.log("selecting text");
+                            if (document.body.createTextRange) {
+                                range = document.body.createTextRange();
+                                range.moveToElementText($(event.currentTarget));
+                                range.select();
+                            } else if (window.getSelection) {
+                                selection = window.getSelection();
+                                selection.removeAllRanges();
+                                range = document.createRange();
+                                range.selectNodeContents($(event.currentTarget)[0]);
+                                selection.addRange(range);
+                            }
+                            if (navigator.notification && Keyboard) {
+                                Keyboard.show();
+                            }
+                            // ios
+                            if (navigator.notification && device.platform === "iOS") {
+                                $(event.currentTarget).setSelectionRange(0, 99999);
+                            }
+                            // it's possible that we went offscreen while looking for the next available slot to adapt.
+                            // Make sure the edit field is in view by scrolling the UI
+                            // scroll the edit field into view
+                            console.log("Scrolling to view...");
+                            scrollToView(selectedStart);
+                        } else {
+                            console.log("selectedGloss: GLOSS TU not null (" + options.length + " options.) ");
+                            // options.length should = 0
+                            // if this isn't a phrase, populate the target with the source text as the next best guess
+                            // // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
+                            // if (strID.indexOf("phr") === -1) {
+                            //     $(event.currentTarget).html(sourceText);
+                            // }
+                            MovingDir = 0; // stop here
+                            clearKBInput = true;
+                            // no change yet -- this is just a suggestion
+                            isDirty = true;
+                            // select any text in the edit field
+                            console.log("selecting text");
+                            if (document.body.createTextRange) {
+                                range = document.body.createTextRange();
+                                range.moveToElementText($(event.currentTarget));
+                                range.select();
+                            } else if (window.getSelection) {
+                                selection = window.getSelection();
+                                selection.removeAllRanges();
+                                range = document.createRange();
+                                range.selectNodeContents($(event.currentTarget)[0]);
+                                selection.addRange(range);
+                            }
+                            // it's possible that we went offscreen while looking for the next available slot to adapt.
+                            // Make sure the edit field is in view by scrolling the UI
+                            // scroll the edit field into view
+                            console.log("Scrolling to view...");
+                            scrollToView(selectedStart);
+                        }
+                    } else {
+                        // nothing in the KB
+                        // if this isn't a phrase, populate the target with the source text as the next best guess
+                        // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
+                        // if (strID.indexOf("phr") === -1) {
+                        //     // not a phrase. Do we want to copy the source over?
+                        //     if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
+                        //         console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
+                        //         $(event.currentTarget).html("");
+                        //     } else {
+                        //         // copy the source text
+                        //         $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
+                        //     }
+                        // }
+                        MovingDir = 0; // stop here
+                        clearKBInput = true;
+                        // no change yet -- this is just a suggestion
+                        isDirty = true;
+                        // select any text in the edit field
+                        console.log("selecting text");
+                        if (document.body.createTextRange) {
+                            range = document.body.createTextRange();
+                            range.moveToElementText($(event.currentTarget));
+                            range.select();
+                        } else if (window.getSelection) {
+                            selection = window.getSelection();
+                            selection.removeAllRanges();
+                            range = document.createRange();
+                            range.selectNodeContents($(event.currentTarget)[0]);
+                            selection.addRange(range);
+                        }
+                        // it's possible that we went offscreen while looking for the next available slot to adapt.
+                        // Make sure the edit field is in view by scrolling the UI
+                        // scroll the edit field into view
+                        console.log("Scrolling to view...");
+                        scrollToView(selectedStart);
+                    }
+                } else {
+                    // something already in the edit field -- are we looking for the next
+                    // empty field, or did we just select this one?
+                    console.log("Target NOT empty (text=" + $(event.currentTarget).text().trim() + "); MovingDir = " + MovingDir + ", isDrafting = " + isDrafting);
+                    if (MovingDir !== 0 && isDrafting === true) {
+                        // looking for the next empty field --
+                        // clear the dirty bit and keep going
+                        isDirty = false;
+                        this.moveCursor(event, (MovingDir === 1) ? true : false);
+                    } else {
+                        // We really selected this field -- stay here.
+                        // reset the dirty bit because
+                        // we haven't made any changes yet
+                        origText = this.stripPunctuation($(event.currentTarget).text().trim(), false);
+                        lastPile = selectedStart;
+                        MovingDir = 0; // stop here
+                        clearKBInput = true;
+                        isDirty = false;
+                        // special case: check to see if there are multiple KB entries for this field; 
+                        // add a typeahead dropdown menu if so
+                        strID = $(selectedStart).attr('id');
+                        strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                        model = this.collection.findWhere({spid: strID});
+                        sourceText = model.get('source');
+                        // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
+                        if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
+                            // not a retranslation or placeholder
+                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 1);
+                            if (tu !== null) {
+                                refstrings = tu.get('refstring');
+                                // first, make sure these refstrings are actually being used
+                                options.length = 0; // clear out any old cruft
+                                for (i = 0; i < refstrings.length; i++) {
+                                    if (refstrings[i].n > 0) {
+                                        options.push(Underscore.unescape(refstrings[i].target));
+                                    }
+                                }
+                                if (options.length > 1) {
+                                    KBtarget = this.autoAddCaps(model, options);
+                                    // create the autocomplete UI
+                                    console.log("selectedGloss: creating typeahead dropdown with " + KBtarget.length + " options: " + KBtarget.toString());
+                                    $(event.currentTarget).typeahead(
+                                        {
+                                            hint: true,
+                                            highlight: true,
+                                            minLength: 0
+                                        },
+                                        {
+                                            name: 'kboptions',
+                                            source: function (request, response) {
+                                                response(KBtarget);
+                                            }
+                                        }
+                                    );
+                                    isSelectingKB = true;
+                                } else {
+                                    // only one entry -- just clean up the target we'll be editing
+                                    $(event.currentTarget).html(origText); // stripped of punctuation
+                                }
+                            } else {
+                                console.log("KB data consistency error: should have a KB entry for source text:" + sourceText);
+                                $(event.currentTarget).html(origText); // stripped of punctuation
+                            }      
+                        }
+                        // select any text in the edit field
+                        if (document.body.createTextRange) {
+                            range = document.body.createTextRange();
+                            range.moveToElementText($(event.currentTarget));
+                            range.select();
+                        } else if (window.getSelection) {
+                            selection = window.getSelection();
+                            selection.removeAllRanges();
+                            range = document.createRange();
+                            range.selectNodeContents($(event.currentTarget)[0]);
+                            selection.addRange(range);
+                        }
+                        // Make sure the edit field is in view by scrolling the UI
+                        console.log("Scrolling to view...");
+                        scrollToView(selectedStart);
+                    }
+                }
+                if (isDirty === true) {
+                    $("#Undo").prop('disabled', false);
+                }
+//                console.log("selectedGloss exit / isDirty = " + isDirty + ", origText = " + origText);
+            },
+
             // keydown event handler for the target field
             editAdaptation: function (event) {
                 var strID = null,
@@ -2192,6 +2560,48 @@ define(function (require) {
                     $("#Undo").prop('disabled', false);
                 }
             },
+            // keydown event handler for the gloss field
+            editGloss: function (event) {
+                var strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("editGloss");
+                if (event.keyCode === 27) {
+                    // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards
+                    strID = $(event.currentTarget.parentElement).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
+                    $(event.currentTarget).html(model.get('gloss'));
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $(event.currentTarget).blur();
+                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- accept the edit and move the cursor
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDirty = true;
+                    // make sure there is a selectedStart, so that we can navigate to the next pile
+                    if (selectedStart === null) {
+                        selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
+                        selectedEnd = selectedStart;
+                    }
+                    if (event.shiftKey) {
+                        MovingDir = -1;
+                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
+                    } else {
+                        MovingDir = 1;
+                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
+                    }
+                } else {
+                    // any other key - set the dirty bit
+                    isDirty = true;
+                    $("#Undo").prop('disabled', false);
+                }
+            },
             // User clicked on the Undo button.
             onUndo: function (event) {
                 // ignore event if we're in preview mode
@@ -2203,24 +2613,41 @@ define(function (require) {
                 var strID = $(lastPile).attr('id');
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 var model = this.collection.findWhere({spid: strID});
-                // remove the KB entry
-                removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
-                             this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim(), false),
-                             project.get('projectid'), 0);
-                // set the edit field back to its previous value
-                $(lastPile).find(".target").html(origText);
-                // update the model with the new target text
-                model.save({target: origText});
-                // if the target differs from the source, make it display in green
-                if (model.get('source') === model.get('target')) {
-                    // source === target --> remove "differences" from the class so the text is black
-                    $(event.currentTarget).removeClass('differences');
-                } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
-                    // source + punctuation == target --> remove "differences"
-                    $(event.currentTarget).removeClass('differences');
-                } else if (!$(event.currentTarget).hasClass('differences')) {
-                    // source != target -- add "differences" to the class so the text is green
-                    $(event.currentTarget).addClass('differences');
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    // adaptation mode
+                    // remove the KB entry
+                    removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                                this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".target").html(), false).trim(), false),
+                                project.get('projectid'), 0);
+                    // set the edit field back to its previous value
+                    $(lastPile).find(".target").html(origText);
+                    // update the model with the new target text
+                    model.save({target: origText});
+                    // if the target differs from the source, make it display in green
+                    if (model.get('source') === model.get('target')) {
+                        // source === target --> remove "differences" from the class so the text is black
+                        $(event.currentTarget).removeClass('differences');
+                    } else if (model.get('target') === model.get('prepuncts') + model.get('source') + model.get('follpuncts')) {
+                        // source + punctuation == target --> remove "differences"
+                        $(event.currentTarget).removeClass('differences');
+                    } else if (!$(event.currentTarget).hasClass('differences')) {
+                        // source != target -- add "differences" to the class so the text is green
+                        $(event.currentTarget).addClass('differences');
+                    }
+                } else if (editorMode === editorModeEnum.GLOSSING) {
+                    // glossing mode
+                    // remove the KB entry
+                    removeFromKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                                this.stripPunctuation(this.autoRemoveCaps($(lastPile).find(".gloss").html(), false).trim(), false),
+                                project.get('projectid'), 1);
+                    // set the edit field back to its previous value
+                    $(lastPile).find(".gloss").html(origText);
+                    // update the model with the new target text
+                    model.save({gloss: origText});
+                    // Note: no "green" differences check
+                } else { 
+                    // free translation mode 
+                    // TODO: implement
                 }
                 // Now disable the Undo button...
                 $("#Undo").prop("disabled", true);
@@ -2373,6 +2800,107 @@ define(function (require) {
                 // re-scroll if necessary
 //                $("#content").scrollTop(lastOffset);
             },
+            // User has moved out of the current gloss input field (blur on gloss field)
+            // this can be called either programatically (tab / shift+tab keydown response) or
+            // by a selection of something else on the page.
+            // This method updates the KB and model (AI Document) if they have any changes.
+            unselectedGloss: function (event) {
+                var value = null,
+                    trimmedValue = null,
+                    strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("unselectedGloss: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
+                if (isSelectingKB === true) {
+                    isSelectingKB = false;
+                }
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+//                    $(".pile").css({})
+                }
+                // disable the undo button (no longer editing)
+//                $("#Undo").prop('disabled', true);
+
+                // get the gloss text
+                value = $(event.currentTarget).text();
+                // if needed use regex to replace chars we don't want stored in escaped format
+                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
+                trimmedValue = value.trim();
+                // find the model object associated with this edit field
+                strID = $(event.currentTarget.parentElement).attr('id');
+                if (strID === undefined) {
+                    console.log("value: " + value);
+                    // make sure the typeahead gets cleaned out and the value saved
+                    isDirty = true;
+                    isSelectingKB = false;
+                    // this might be the tt-input div if we are in a typeahead (multiple KB) input -
+                    // if so, go up one more level to find the pile
+                    strID = $(event.currentTarget.parentElement.parentElement).attr('id');
+                    // destroy the typeahead control in the edit field
+                    $(event.currentTarget).typeahead('destroy');
+                }
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.collection.findWhere({spid: strID});
+                // re-add autocaps if necessary
+                if (trimmedValue.length > 0) {
+                    trimmedValue = this.autoAddCaps(model, trimmedValue);
+                }
+                // check for changes in the edit field
+                isEditing = false;
+                if (isDirty === true) {
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from KB and DB.");
+                            // There was a target text, but the user deleted it. Remove the old text from the KB.
+                            removeFromKB(this.autoRemoveCaps(model.get('source'), true),
+                                     origText, project.get('projectid'), 1);
+                            // update the model with the new gloss text (nothing)
+                            model.save({gloss: trimmedValue});
+                        }
+                    } else {
+                        if ((strID.indexOf("ret") > -1) || (strID.indexOf("plc") > -1)) {
+                            // retranslation or placeholder -- don't save in the KB
+                            console.log("Dirty bit set on retranslation / placeholder. Value:" + trimmedValue);
+                        } else {
+                            // not a retranslation
+                            console.log("Dirty bit set. Saving KB value: " + trimmedValue);
+                            // something has changed -- update the KB
+                            saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('gloss'), false)).trim(), false),
+                                     project.get('projectid'), 1);
+                        }
+                        // add any punctuation back to the target field
+                        $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
+                        // update the model with the new target text
+                        model.save({gloss: this.copyPunctuation(model, trimmedValue)});
+                    }
+                } else {
+                    // dirty bit not set -- go back to what was saved earlier
+                    $(event.currentTarget).html(model.get('gloss'));
+                }
+                // check for an old selection and remove it if needed
+                if (selectedStart !== null) {
+                    // there was an old selection -- remove the ui-selected class
+                    $("div").removeClass("ui-selecting ui-selected");
+                }
+                // remove any old selection ranges
+                if (window.getSelection) {
+                    if (window.getSelection().empty) {  // Chrome
+                        window.getSelection().empty();
+                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+                        window.getSelection().removeAllRanges();
+                    }
+                } else if (document.selection) {  // IE?
+                    document.selection.empty();
+                }
+            },
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
@@ -2399,7 +2927,13 @@ define(function (require) {
                 if (inPreview === true) {
                     // turn off preview mode
                     $("#chapter").removeClass("preview");
-                    $(".target").prop('contenteditable', true); // set target to read-write
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        $(".target").prop('contenteditable', true); // set target to read-write
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        $(".gloss").prop('contenteditable', true); // set target to read-write
+                    } else {
+                        $(".freetrans").prop('contenteditable', true); // set target to read-write
+                    }
                     $("#lblPreview").html(i18next.t("view.lblShowPreview"));
                     inPreview = false;
                     $(".target").removeClass("hide");
@@ -2414,20 +2948,22 @@ define(function (require) {
                     this.clearSelection();
                     // turn on preview mode
                     $("#chapter").addClass("preview");
-                    $(".target").prop('contenteditable', false); // set target to read-only
                     $("#lblPreview").html(i18next.t("view.lblHidePreview"));
                     inPreview = true;
                     // preview only the item we're working on (target, gloss, or free translation)
                     switch(editorMode) {
                         case editorModeEnum.ADAPTING:
+                            $(".target").prop('contenteditable', false); // set target to read-only
                             $(".gloss").addClass("hide");
                             $(".freetrans").addClass("hide");
                             break;
                         case editorModeEnum.GLOSSING:
+                            $(".gloss").prop('contenteditable', false); // set target to read-only
                             $(".target").addClass("hide");
                             $(".freetrans").addClass("hide");
                             break;
                         case editorModeEnum.FREE_TRANSLATING:
+                            $(".freetrans").prop('contenteditable', false); // set target to read-only
                             $(".target").addClass("hide");
                             $(".gloss").addClass("hide");
                             break;
@@ -2437,11 +2973,18 @@ define(function (require) {
             // User clicked on the Adapting menu item -- set the current mode to Adapting
             onModeAdapting: function () {
                 editorMode = editorModeEnum.ADAPTING;
-
+                // disable contenteditable on gloss, freetrans lines
+                $(".target").attr('contenteditable', true);
+                $(".gloss").attr('contenteditable', false);
+                $(".freetrans").attr('contenteditable', false);
             },
             // User clicked on the Glossing menu item -- set the current mode to Glossing
             onModeGlossing: function () {
                 editorMode = editorModeEnum.GLOSSING;
+                // disable contenteditable on target, freetrans lines
+                $(".target").attr('contenteditable', false);
+                $(".gloss").attr('contenteditable', true);
+                $(".freetrans").attr('contenteditable', false);
                 // Flip the translation / gloss lines?
                 // ********************
                 // disable buttons that don't apply to glossing mode
@@ -2461,6 +3004,10 @@ define(function (require) {
             // User clicked on the Free Translation menu item -- set the current mode to Free Translation
             onModeFreeTrans: function () {
                 editorMode = editorModeEnum.FREE_TRANSLATING;
+                // disable contenteditable on gloss, target lines
+                $(".gloss").attr('contenteditable', false);
+                $(".target").attr('contenteditable', false);
+                $(".freetrans").attr('contenteditable', true);
                 // disable buttons that don't apply to free translation mode
                 $("div").removeClass("ui-selecting ui-selected");
                 $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
@@ -3163,8 +3710,13 @@ define(function (require) {
                 if (selectedStart !== null && isDirty === true) {
                     // unsaved change -- save it now
                     console.log("onPause - saving");
-                    $(selectedStart).find(".target").blur();
-                    
+                    if (editorMode === editorModeEnum.ADAPTING) {
+                        $(selectedStart).find(".target").blur();
+                    } else if (editorMode === editorModeEnum.GLOSSING) {
+                        $(selectedStart).find(".gloss").blur();
+                    } else {
+                        $(selectedStart).find(".freetrans").blur();
+                    }
                 }
             },
             // Resume handler -- user placed the app in the background, then resumed.

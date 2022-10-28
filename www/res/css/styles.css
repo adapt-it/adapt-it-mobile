@@ -1184,7 +1184,7 @@ div.preview div.pile {
 .preview .target {
     color: inherit;
 }
-.preview .target:focus {
+.preview .target:focus, .noedit:focus {
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
