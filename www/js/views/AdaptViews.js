@@ -2396,18 +2396,14 @@ define(function (require) {
                         }
                     } else {
                         // nothing in the KB
-                        // if this isn't a phrase, populate the target with the source text as the next best guess
-                        // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
-                        // if (strID.indexOf("phr") === -1) {
-                        //     // not a phrase. Do we want to copy the source over?
-                        //     if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
-                        //         console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
-                        //         $(event.currentTarget).html("");
-                        //     } else {
-                        //         // copy the source text
-                        //         $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
-                        //     }
-                        // }
+                        // Do we want to copy the source over?
+                        if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
+                            console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
+                            $(event.currentTarget).html("");
+                        } else {
+                            // copy the source text
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
+                        }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
                         // no change yet -- this is just a suggestion
