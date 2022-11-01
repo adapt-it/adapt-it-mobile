@@ -396,6 +396,7 @@ button.light-grey {
     overflow: visible;
     text-transform: none;
     -webkit-appearance: button;
+    appearance: button;
 }
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
@@ -500,6 +501,7 @@ button.light-grey {
 .control-group {
     -moz-appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     background-color: #eee;
 /*    background: rgb(221, 225, 225);*/
     border: 1px solid #fafafa;
@@ -989,7 +991,8 @@ select.docNav {
     -webkit-align-items: flex-start;
     align-items: flex-start;
     -webkit-appearance: none;
-    -moz-appearance: button;
+    -moz-appearance: none;
+    appearance: none;
     background: url(images/drop-down-triangle.png) no-repeat 95% center rgb(221, 225, 225);
     border: 1px solid #9daca9;
     -moz-border-radius: 6px;
@@ -1101,7 +1104,7 @@ div.preview div.pile {
     color: black;
     display: inline-block;
     min-width: 1rem;
-    padding: 0 0.3em;
+    padding: 0 0.3em 0.3em 0.3em;
     vertical-align: top;
 }
 .source, .marker {
@@ -1144,7 +1147,6 @@ div.preview div.pile {
     color: MediumSeaGreen;
     font: inherit;
     font-size: 16px;
-    line-height: 2rem;
     margin: 0;
     min-width: -webkit-fill-available;
     vertical-align: top;
@@ -1333,6 +1335,7 @@ ul.btns {
 .btns li a {
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
 	display: inline-block;
 	padding: 12px 6px 12px 6px;
 	position: relative;
@@ -1626,6 +1629,7 @@ ul.btns {
 }
 .inner {
     -webkit-appearance: none;
+    appearance: none;
     background-color: #eee;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;

@@ -304,6 +304,11 @@ define(function (require) {
             theRule += "color: " + project.get('TargetColor') + ";";
             theRule += "}";
             sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
+            // Gloss font (use the same font as target)
+            theRule = ".gloss {";
+            theRule += "font: " + parseInt(project.get('TargetFontSize'), 10) + "px " + project.get('TargetFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
+            theRule += "}";
+            sheet.insertRule(theRule, sheet.cssRules.length); // add to the end (last rule wins)
             // Navigation font
             theRule = ".marker {";
             theRule += "font: " + parseInt(project.get('NavigationFontSize'), 10) + "px " + project.get('NavigationFont') + "," + "\"Source Sans\", helvetica, arial, sans-serif; ";
@@ -2973,6 +2978,9 @@ define(function (require) {
                 $(".target").attr('contenteditable', true);
                 $(".gloss").attr('contenteditable', false);
                 $(".freetrans").attr('contenteditable', false);
+                if (selectedStart !== null) {
+                    $(selectedStart).find(".target").focus();
+                }
             },
             // User clicked on the Glossing menu item -- set the current mode to Glossing
             onModeGlossing: function () {
@@ -2996,6 +3004,9 @@ define(function (require) {
                 $("#mnuPHAfter").prop('disabled', true);
                 $("#mnuRetranslation").prop('disabled', true);
                 $("#mnuPhrase").prop('disabled', true);
+                if (selectedStart !== null) {
+                    $(selectedStart).find(".gloss").focus();
+                }
             },
             // User clicked on the Free Translation menu item -- set the current mode to Free Translation
             onModeFreeTrans: function () {
@@ -3017,6 +3028,9 @@ define(function (require) {
                 $("#mnuPHAfter").prop('disabled', true);
                 $("#mnuRetranslation").prop('disabled', true);
                 $("#mnuPhrase").prop('disabled', true);
+                if (selectedStart !== null) {
+                    $(selectedStart).find(".freetrans").focus();
+                }
             },
         
             // User clicked on the Placeholder _before_ button
