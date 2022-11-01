@@ -396,6 +396,7 @@ button.light-grey {
     overflow: visible;
     text-transform: none;
     -webkit-appearance: button;
+    appearance: button;
 }
 #WizardSteps, #OKCancelButtons {
     line-height: 0.5em;
@@ -500,6 +501,7 @@ button.light-grey {
 .control-group {
     -moz-appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     background-color: #eee;
 /*    background: rgb(221, 225, 225);*/
     border: 1px solid #fafafa;
@@ -989,7 +991,8 @@ select.docNav {
     -webkit-align-items: flex-start;
     align-items: flex-start;
     -webkit-appearance: none;
-    -moz-appearance: button;
+    -moz-appearance: none;
+    appearance: none;
     background: url(images/drop-down-triangle.png) no-repeat 95% center rgb(221, 225, 225);
     border: 1px solid #9daca9;
     -moz-border-radius: 6px;
@@ -1101,7 +1104,7 @@ div.preview div.pile {
     color: black;
     display: inline-block;
     min-width: 1rem;
-    padding: 0 0.3em;
+    padding: 0 0.3em 0.3em 0.3em;
     vertical-align: top;
 }
 .source, .marker {
@@ -1126,6 +1129,30 @@ div.preview div.pile {
     word-wrap: break-word;
 }
 .refstring-list__item:focus {
+    background-color: #fff;
+    border: 1px solid #0036ff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px #6fb5f1;
+    color: #454545;
+}
+.gloss {
+    background: transparent;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: MediumSeaGreen;
+    font: inherit;
+    font-size: 16px;
+    margin: 0;
+    min-width: -webkit-fill-available;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+.gloss:focus {
     background-color: #fff;
     border: 1px solid #0036ff;
     border-radius: 6px;
@@ -1159,7 +1186,7 @@ div.preview div.pile {
 .preview .target {
     color: inherit;
 }
-.preview .target:focus {
+.preview .target:focus, .noedit:focus {
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
@@ -1308,6 +1335,7 @@ ul.btns {
 .btns li a {
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
 	display: inline-block;
 	padding: 12px 6px 12px 6px;
 	position: relative;
@@ -1601,6 +1629,7 @@ ul.btns {
 }
 .inner {
     -webkit-appearance: none;
+    appearance: none;
     background-color: #eee;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -1829,6 +1858,9 @@ typeahead styles
 }
 .show-button {
     display: inline-block;
+}
+.invisible {
+    visibility: hidden;
 }
 /***********
 * media queries - for specific device sizes / screen resolutions
