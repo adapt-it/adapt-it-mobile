@@ -2977,7 +2977,10 @@ define(function (require) {
                 // disable contenteditable on gloss, freetrans lines
                 $(".target").attr('contenteditable', true);
                 $(".gloss").attr('contenteditable', false);
-                $(".freetrans").attr('contenteditable', false);
+                if (($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").removeClass("show-flex");
+                    $("#content").removeClass("with-ft");
+                }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
                 }
@@ -2988,7 +2991,10 @@ define(function (require) {
                 // disable contenteditable on target, freetrans lines
                 $(".target").attr('contenteditable', false);
                 $(".gloss").attr('contenteditable', true);
-                $(".freetrans").attr('contenteditable', false);
+                if (($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").removeClass("show-flex");
+                    $("#content").removeClass("with-ft");// todo: add area for ft
+                }
                 // Flip the translation / gloss lines?
                 // ********************
                 // disable buttons that don't apply to glossing mode
@@ -3014,20 +3020,25 @@ define(function (require) {
                 // disable contenteditable on gloss, target lines
                 $(".gloss").attr('contenteditable', false);
                 $(".target").attr('contenteditable', false);
-                $(".freetrans").attr('contenteditable', true);
-                // disable buttons that don't apply to free translation mode
+                // show the free translation editor area
+                if (!($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").addClass("show-flex");
+                    $("#content").addClass("with-ft");// todo: add area for ft
+                }
+                // hide / disable buttons that don't apply to free translation mode
+                $("#adapt-toolbar").hide();
                 $("div").removeClass("ui-selecting ui-selected");
-                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                $("#phBefore").prop('disabled', true);
-                $("#phAfter").prop('disabled', true);
-                $("#Retranslation").prop('disabled', true);
-                $("#Phrase").prop('disabled', true);
-                $("#mnuPHBefore").prop('disabled', true);
-                $("#mnuPHAfter").prop('disabled', true);
-                $("#mnuRetranslation").prop('disabled', true);
-                $("#mnuPhrase").prop('disabled', true);
+                // $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
+                // $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
+                // $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
+                // $("#phBefore").prop('disabled', true);
+                // $("#phAfter").prop('disabled', true);
+                // $("#Retranslation").prop('disabled', true);
+                // $("#Phrase").prop('disabled', true);
+                // $("#mnuPHBefore").prop('disabled', true);
+                // $("#mnuPHAfter").prop('disabled', true);
+                // $("#mnuRetranslation").prop('disabled', true);
+                // $("#mnuPhrase").prop('disabled', true);
                 if (selectedStart !== null) {
                     $(selectedStart).find(".freetrans").focus();
                 }
@@ -3740,7 +3751,6 @@ define(function (require) {
                 project = this.project;
                 var chapterid = this.model.get('chapterid');
                 chapter = this.model;
-                editorMode = editorModeEnum.ADAPTING; // initial setting
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
@@ -3763,6 +3773,9 @@ define(function (require) {
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
                 addStyleRules(this.project);
+                // initial state: adapting -- show adapting-related UI
+                editorMode = editorModeEnum.ADAPTING;
+                $("#adapt-toolbar").addClass("show");
             },
             ////
             // Event Handlers
@@ -3801,8 +3814,11 @@ define(function (require) {
             UndoClick: function (event) {
                 console.log("UndoClick: entry");
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3836,8 +3852,11 @@ define(function (require) {
                 }
                 console.log("goPrevPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3879,8 +3898,11 @@ define(function (require) {
                 }
                 console.log("goNextPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3904,16 +3926,26 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
+                }
                 // stop any help tour
                 hopscotch.endTour();
-                $("#PlusActionsMenu").toggleClass("show");
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    $("#ft-actions-menu").toggleClass("show");
+                }
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             toggleMoreMenu: function (event) {
                 // hide the plus menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 // stop any help tour
                 hopscotch.endTour();
@@ -3923,8 +3955,11 @@ define(function (require) {
             },
             togglePreview: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3944,12 +3979,25 @@ define(function (require) {
                 if (!$("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").addClass("invisible");
                 }
+                if (!$("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").toggleClass("show");
+                }
+                if ($("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").toggleClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
+                }
+                if ($("#plus-menu-btn").hasClass("topcoat-icon--plus-menu-ft")) {
+                    $("#plus-menu-btn").removeClass("topcoat-icon--plus-menu-ft");
+                    $("#plus-menu-btn").addClass("topcoat-icon--plus-menu");
                 }
                 this.listView.onModeAdapting(event);
                 // do not bubble this event up to the title bar
@@ -3966,9 +4014,18 @@ define(function (require) {
                 if (!$("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").addClass("invisible");
                 }
+                if ($("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").toggleClass("show");
+                }
+                if ($("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").toggleClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3988,12 +4045,25 @@ define(function (require) {
                 if ($("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").removeClass("invisible");
                 }
+                if ($("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").toggleClass("show");
+                }
+                if (!$("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").toggleClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
+                }
+                if ($("#plus-menu-btn").hasClass("topcoat-icon--plus-menu")) {
+                    $("#plus-menu-btn").removeClass("topcoat-icon--plus-menu");
+                    $("#plus-menu-btn").addClass("topcoat-icon--plus-menu-ft");
                 }
                 this.listView.onModeFreeTrans(event);
                 // do not bubble this event up to the title bar
@@ -4003,8 +4073,11 @@ define(function (require) {
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePHBefore: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4015,8 +4088,11 @@ define(function (require) {
             },
             togglePHAfter: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4027,8 +4103,11 @@ define(function (require) {
             },
             togglePhrase: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4039,8 +4118,11 @@ define(function (require) {
             },
             toggleRetranslation: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4053,8 +4135,11 @@ define(function (require) {
             unselectPiles: function (event) {
                 var isBlankArea = false;
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4193,8 +4278,11 @@ define(function (require) {
                 }
                 event.stopPropagation();
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4224,8 +4312,11 @@ define(function (require) {
                 // close out any old results
                 this.onSearchClose();
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4301,8 +4392,11 @@ define(function (require) {
             // to the UI elements on this screen.
             onHelp: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
