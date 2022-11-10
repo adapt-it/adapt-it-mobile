@@ -506,9 +506,23 @@ define(function (require) {
                     }
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
-                        $("#glossFT").addClass("hide"); // edit mode dropdown menu items
+                        // hide edit mode dropdown menu items
+                        $("#MoreActionsMenu hr").addClass("hide");
+                        $("#mnuAdapting").addClass("hide");
+                        $("#mnuGlossing").addClass("hide");
+                        $("#mnuFreeTrans").addClass("hide");
+                        // hide (don't display) gloss and FT lines in the chapter 
                         $(".gloss").addClass("hide"); // gloss line
                         $(".freetrans").addClass("hide"); // free translation line
+                    }
+                    // even if the show gloss / FT menu items are on, is the height enough to display the menu?
+                    var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+                    if (vh < 540) {
+                        // Device is kinda small;
+                        // get rid of the hr elements to add some room
+                        if (!$("#MoreActionsMenu hr").hasClass("hide")) {
+                            $("#MoreActionsMenu hr").addClass("hide");
+                        };
                     }
                 }
                 return this;
