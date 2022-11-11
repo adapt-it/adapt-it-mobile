@@ -3013,17 +3013,6 @@ define(function (require) {
                 // ********************
                 // disable buttons that don't apply to glossing mode
                 $("div").removeClass("ui-selecting ui-selected");
-                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                $("#phBefore").prop('disabled', true);
-                $("#phAfter").prop('disabled', true);
-                $("#Retranslation").prop('disabled', true);
-                $("#Phrase").prop('disabled', true);
-                $("#mnuPHBefore").prop('disabled', true);
-                $("#mnuPHAfter").prop('disabled', true);
-                $("#mnuRetranslation").prop('disabled', true);
-                $("#mnuPhrase").prop('disabled', true);
                 if (selectedStart !== null) {
                     $(selectedStart).find(".gloss").focus();
                 }
@@ -3039,20 +3028,7 @@ define(function (require) {
                     $("#freetrans").addClass("show-flex");
                     $("#content").addClass("with-ft");// todo: add area for ft
                 }
-                // hide / disable buttons that don't apply to free translation mode
-                $("#adapt-toolbar").hide();
                 $("div").removeClass("ui-selecting ui-selected");
-                // $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                // $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                // $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                // $("#phBefore").prop('disabled', true);
-                // $("#phAfter").prop('disabled', true);
-                // $("#Retranslation").prop('disabled', true);
-                // $("#Phrase").prop('disabled', true);
-                // $("#mnuPHBefore").prop('disabled', true);
-                // $("#mnuPHAfter").prop('disabled', true);
-                // $("#mnuRetranslation").prop('disabled', true);
-                // $("#mnuPhrase").prop('disabled', true);
                 if (selectedStart !== null) {
                     $(selectedStart).find(".freetrans").focus();
                 }
@@ -3994,12 +3970,15 @@ define(function (require) {
                     $("#optFreeTrans").addClass("invisible");
                 }
                 if (!$("#adapt-toolbar").hasClass("show")) {
-                    $("#adapt-toolbar").toggleClass("show");
+                    $("#adapt-toolbar").addClass("show");
                 }
                 if ($("#ft-toolbar").hasClass("show")) {
-                    $("#ft-toolbar").toggleClass("show");
+                    $("#ft-toolbar").removeClass("show");
                 }
                 // dismiss the Plus and More menu if visible
+                if ($("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").removeClass("invisible");
+                }
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
                 }
@@ -4029,12 +4008,15 @@ define(function (require) {
                     $("#optFreeTrans").addClass("invisible");
                 }
                 if ($("#adapt-toolbar").hasClass("show")) {
-                    $("#adapt-toolbar").toggleClass("show");
+                    $("#adapt-toolbar").removeClass("show");
                 }
                 if ($("#ft-toolbar").hasClass("show")) {
-                    $("#ft-toolbar").toggleClass("show");
+                    $("#ft-toolbar").removeClass("show");
                 }
                 // dismiss the Plus and More menu if visible
+                if (!$("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").addClass("invisible");
+                }
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
                 }
@@ -4060,12 +4042,15 @@ define(function (require) {
                     $("#optFreeTrans").removeClass("invisible");
                 }
                 if ($("#adapt-toolbar").hasClass("show")) {
-                    $("#adapt-toolbar").toggleClass("show");
+                    $("#adapt-toolbar").removeClass("show");
                 }
                 if (!$("#ft-toolbar").hasClass("show")) {
-                    $("#ft-toolbar").toggleClass("show");
+                    $("#ft-toolbar").addClass("show");
                 }
                 // dismiss the Plus and More menu if visible
+                if ($("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").removeClass("invisible");
+                }
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
                 }
