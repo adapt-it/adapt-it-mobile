@@ -504,6 +504,9 @@ define(function (require) {
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
                     }
+                    // initial state -- hide (don't display) gloss and FT lines in the chapter 
+                    $(".gloss").addClass("hide"); // gloss line
+                    $(".freetrans").addClass("hide"); // free translation line
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
                         // hide edit mode dropdown menu items
@@ -511,9 +514,6 @@ define(function (require) {
                         $("#mnuAdapting").addClass("hide");
                         $("#mnuGlossing").addClass("hide");
                         $("#mnuFreeTrans").addClass("hide");
-                        // hide (don't display) gloss and FT lines in the chapter 
-                        $(".gloss").addClass("hide"); // gloss line
-                        $(".freetrans").addClass("hide"); // free translation line
                     }
                     // even if the show gloss / FT menu items are on, is the height enough to display the menu?
                     var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
@@ -2995,6 +2995,13 @@ define(function (require) {
                     $("#freetrans").removeClass("show-flex");
                     $("#content").removeClass("with-ft");
                 }
+                // hide the gloss and FT lines
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if (!$(".freetrans").hasClass("hide")) {
+                    $(".freetrans").addClass("hide");
+                }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
                 }
@@ -3011,7 +3018,14 @@ define(function (require) {
                 }
                 // Flip the translation / gloss lines?
                 // ********************
-                // disable buttons that don't apply to glossing mode
+                // show the gloss line only
+                if ($(".gloss").hasClass("hide")) {
+                    $(".gloss").removeClass("hide");
+                }
+                if (!$(".freetrans").hasClass("hide")) {
+                    $(".freetrans").addClass("hide");
+                }
+            // disable buttons that don't apply to glossing mode
                 $("div").removeClass("ui-selecting ui-selected");
                 if (selectedStart !== null) {
                     $(selectedStart).find(".gloss").focus();
@@ -3023,15 +3037,22 @@ define(function (require) {
                 // disable contenteditable on gloss, target lines
                 $(".gloss").attr('contenteditable', false);
                 $(".target").attr('contenteditable', false);
+                // show the FT line only
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if ($(".freetrans").hasClass("hide")) {
+                    $(".freetrans").removeClass("hide");
+                }
                 // show the free translation editor area
                 if (!($("#freetrans").hasClass("show-flex"))) {
                     $("#freetrans").addClass("show-flex");
                     $("#content").addClass("with-ft");// todo: add area for ft
                 }
                 $("div").removeClass("ui-selecting ui-selected");
-                if (selectedStart !== null) {
-                    $(selectedStart).find(".freetrans").focus();
-                }
+                // initially select the strip containing the selectedStart
+                $(selectedStart).trigger("doubletap");
+                $("#fteditor").focus();
             },
         
             // User clicked on the Placeholder _before_ button
