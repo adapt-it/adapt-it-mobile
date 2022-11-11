@@ -1262,6 +1262,23 @@ div.preview div.pile {
     box-shadow: 0 0 0 2px #6fb5f1;
     color: #454545;
 }
+.ft {
+    background: transparent;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #b26200;
+    font: inherit;
+    font-size: 16px;
+    margin: 0;
+    min-width: -webkit-fill-available;
+    vertical-align: top;
+    word-wrap: break-word;
+}
 .target {
     background: transparent;
     background-clip: padding-box;

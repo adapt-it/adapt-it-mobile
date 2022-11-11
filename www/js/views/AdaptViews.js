@@ -2999,8 +2999,8 @@ define(function (require) {
                 if (!$(".gloss").hasClass("hide")) {
                     $(".gloss").addClass("hide");
                 }
-                if (!$(".freetrans").hasClass("hide")) {
-                    $(".freetrans").addClass("hide");
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
                 }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
@@ -3022,8 +3022,8 @@ define(function (require) {
                 if ($(".gloss").hasClass("hide")) {
                     $(".gloss").removeClass("hide");
                 }
-                if (!$(".freetrans").hasClass("hide")) {
-                    $(".freetrans").addClass("hide");
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
                 }
             // disable buttons that don't apply to glossing mode
                 $("div").removeClass("ui-selecting ui-selected");
@@ -3041,8 +3041,8 @@ define(function (require) {
                 if (!$(".gloss").hasClass("hide")) {
                     $(".gloss").addClass("hide");
                 }
-                if ($(".freetrans").hasClass("hide")) {
-                    $(".freetrans").removeClass("hide");
+                if ($(".ft").hasClass("hide")) {
+                    $(".ft").removeClass("hide");
                 }
                 // show the free translation editor area
                 if (!($("#freetrans").hasClass("show-flex"))) {
