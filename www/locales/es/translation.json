@@ -339,7 +339,7 @@
         "optRestore": "Restaurar",
         "optMerge": "Combinar",
         "optUpdateImport": "Actualizar \"__document__\"",
-        "lblShowGlossFT": "Mostrar Gloses y Traducciónes libres",
+        "lblShowGlossFT": "Permitir Modos Gloses y Traducciónes libres",
         "lblAdapting": "Adaptar",
         "lblFreeTranslation": "Traducción libre",
         "lblGlossing": "Glosar",

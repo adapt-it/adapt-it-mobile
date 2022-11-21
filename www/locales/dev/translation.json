@@ -338,7 +338,7 @@
         "dscRestoreOrMergeTMX": "This is a Translation Memory (TMX) file. You can Restore the Knowledge Base from the imported file, or Merge the file with existing translations.",
         "optRestore": "Restore",
         "optMerge": "Merge",
-        "lblShowGlossFT": "Show Glosses and Free Translations",
+        "lblShowGlossFT": "Show Gloss and Free Translation Modes",
         "lblAdapting": "Adapting",
         "lblFreeTranslation": "Free Translation",
         "lblGlossing": "Glossing",

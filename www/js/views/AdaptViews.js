@@ -762,18 +762,27 @@ define(function (require) {
                 return exactMatch;
             },
             // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
-            // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
+            // slot that requires attention. This is our S8 / auto-insertion procedure. 
+            // ADAPTING OUTCOMES:
             // - next source phrase has exactly 1 possible translation in the KB -> auto-insert and continue moving
             // - next source phrase is already translataed (i.e., has something in the target field) -> skip and continue
             //   moving
             // - next source phrase has no possible translation -> suggest the source and stop here
             // - next source phrase has more than one possible translation -> show a drop-down menu (that also allows
             //   for a new translation) and stop here
+            // GLOSSING OUTCOMES:
+            // - similar to adapting (above), except looking at the sourcephrase.gloss and storing / retrieving from the gloss KB
+            // FREE TRANSLATION OUTCOMES:
+            // - next source phrase is empty -> selection goes from the end of the current selection _to the end of the strip_.
+            //   No auto-insert is done, and no suggestion is placed in the text area.
+            // - next source phrase has a free translation already -> show it in the text area.
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var keep_going = true;
                 var top = 0;
+                var tmpNode = null;
+                var done = false;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -878,7 +887,6 @@ define(function (require) {
                                                 // Next chapter
                                                 // update the URL, but replace the history (so we go back to the welcome screen)
                                                 window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-//                                                window.Application.adaptChapter(nextChapter);
 
                                             } else {
                                                 // exit
@@ -910,7 +918,6 @@ define(function (require) {
                                     if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
                                         // update the URL, but replace the history (so we go back to the welcome screen)
                                         window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-//                                        window.Application.adaptChapter(nextChapter);
                                     } else {
                                         window.Application.home();
                                     }
@@ -937,8 +944,34 @@ define(function (require) {
                         $(next_edit).find(".gloss").mouseup();    
                     } else {
                         // free translation
-                        $(next_edit).find(".freetrans").focus();
-                        $(next_edit).find(".freetrans").mouseup();
+                        // select from next_edit to the end of the strip
+                        done = false;
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
+                        }
+                        while (!done) {
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // check punctuation (go from the inside out)
+                                if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                    // comes before -- don't include
+                                    done = true;
+                                } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                    // comes after -- include
+                                    selectedEnd = tmpNode;
+                                    done = true;
+                                } else {
+                                    // no punctuation
+                                    selectedEnd = tmpNode;
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // set focus on the FT text area
+                        $("#fteditor").focus();
+
                     }
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -1030,7 +1063,11 @@ define(function (require) {
                 "mouseup .gloss": "selectedGloss",
                 "touchend .gloss": "selectedGloss",
                 "keydown .gloss": "editGloss",
-                "blur .gloss": "unselectedGloss"
+                "blur .gloss": "unselectedGloss",
+                "mouseup #fteditor": "selectedFT",
+                "touchend #fteditor": "selectedFT",
+                "keydown #fteditor": "editFT",
+                "blur #fteditor": "unselectedFT"
             },
             
             // user is starting to select one or more piles
@@ -2818,7 +2855,7 @@ define(function (require) {
             // User has moved out of the current gloss input field (blur on gloss field)
             // this can be called either programatically (tab / shift+tab keydown response) or
             // by a selection of something else on the page.
-            // This method updates the KB and model (AI Document) if they have any changes.
+            // This method updates the gloss KB and model (AI Document) if they have any changes.
             unselectedGloss: function (event) {
                 var value = null,
                     trimmedValue = null,
@@ -2916,6 +2953,131 @@ define(function (require) {
                     document.selection.empty();
                 }
             },
+
+            // User clicked the Free Translation edit field
+            selectedFT: function () {
+                // keep a copy of the SPID we're working on
+                if (selectedStart !== null) {
+                    $("#fteditor").attr("data-spid", selectedStart.attr('id'));
+                }
+
+            },
+
+            // user pressed a key in the Free Translation edit field
+            editFT: function (event) {
+                var strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("editFT");
+                if (event.keyCode === 27) {
+                    // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards;
+                    // also note that we're looking at the FT edit area's "data-spid" attribute that
+                    // we copied over from the selectedStart pile
+                    strID = $(event.currentTarget).attr('data-spid');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
+                    $(event.currentTarget).html(model.get('freetrans')); // original FT value for the selected pile
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $(event.currentTarget).blur();
+                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- accept the edit and move the cursor
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDirty = true;
+                    // TODO: FT is not associated with a pile -- hide a selectedStart somewhere in the edit field?
+                    // HOW TO HANDLE? Does clearing out a selectedStart automatically clear out the FT text?
+                    // make sure there is a selectedStart, so that we can navigate to the next pile
+                    // if (selectedStart === null) {
+                    //     selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
+                    //     selectedEnd = selectedStart;
+                    // }
+                    if (event.shiftKey) {
+                        MovingDir = -1;
+                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
+                    } else {
+                        MovingDir = 1;
+                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
+                    }
+                } else {
+                    // any other key - set the dirty bit
+                    isDirty = true;
+                    $("#Undo").prop('disabled', false);
+                }
+            },
+
+            // focus moved from the Free Translation edit field
+            // this can be called either programatically (tab / shift+tab keydown response) or
+            // by a selection of something else on the page.
+            // This method updates the model (AI Document) if they have any changes.
+            unselectedFT: function (event) {
+                var value = null,
+                    trimmedValue = null,
+                    strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("unselectedFT: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
+                if (isSelectingKB === true) {
+                    isSelectingKB = false; // TODO: not sure if this is needed in FT mode
+                }
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+                }
+
+                // get the FT text
+                value = $(event.currentTarget).text();
+                // if needed use regex to replace chars we don't want stored in escaped format
+                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
+                trimmedValue = value.trim();
+                // find the model object associated with this edit field
+                strID = $(event.currentTarget).attr('data-spid');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.collection.findWhere({spid: strID});
+                origText = model.get("freetrans");
+                // check for changes in the edit field
+                isEditing = false;
+                if (isDirty === true) {
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from DB.");
+                            // update the model with the new FT text (nothing)
+                            model.save({freetrans: trimmedValue});
+                        }
+                    } else {
+                        // update the model with the new target text
+                        model.save({freetrans: trimmedValue});
+                    }
+                } else {
+                    // dirty bit not set -- go back to what was saved earlier
+                    $(event.currentTarget).html(model.get('freetrans'));
+                }
+                // check for an old selection and remove it if needed
+                if (selectedStart !== null) {
+                    // there was an old selection -- remove the ui-selected class
+                    $("div").removeClass("ui-selecting ui-selected");
+                }
+                // remove any old selection ranges
+                if (window.getSelection) {
+                    if (window.getSelection().empty) {  // Chrome
+                        window.getSelection().empty();
+                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+                        window.getSelection().removeAllRanges();
+                    }
+                } else if (document.selection) {  // IE?
+                    document.selection.empty();
+                }
+            },
+
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
@@ -3014,7 +3176,7 @@ define(function (require) {
                 $(".gloss").attr('contenteditable', true);
                 if (($("#freetrans").hasClass("show-flex"))) {
                     $("#freetrans").removeClass("show-flex");
-                    $("#content").removeClass("with-ft");// todo: add area for ft
+                    $("#content").removeClass("with-ft");
                 }
                 // Flip the translation / gloss lines?
                 // ********************
@@ -3025,10 +3187,15 @@ define(function (require) {
                 if (!$(".ft").hasClass("hide")) {
                     $(".ft").addClass("hide");
                 }
-            // disable buttons that don't apply to glossing mode
+                // clear any old UI "selecting" blue
                 $("div").removeClass("ui-selecting ui-selected");
+
+                // if there actually _is_ a selection, set the focus and enable the back/fw buttons
                 if (selectedStart !== null) {
                     $(selectedStart).find(".gloss").focus();
+                    // enable prev / next buttons
+                    $("#PrevSP").prop('disabled', false); // enable toolbar button
+                    $("#NextSP").prop('disabled', false); // enable toolbar button
                 }
             },
             // User clicked on the Free Translation menu item -- set the current mode to Free Translation
@@ -3047,14 +3214,18 @@ define(function (require) {
                 // show the free translation editor area
                 if (!($("#freetrans").hasClass("show-flex"))) {
                     $("#freetrans").addClass("show-flex");
-                    $("#content").addClass("with-ft");// todo: add area for ft
+                    $("#content").addClass("with-ft");
                 }
                 $("div").removeClass("ui-selecting ui-selected");
-                // initially select the strip containing the selectedStart
-                $(selectedStart).trigger("doubletap");
-                $("#fteditor").focus();
+                // if there is a current selection, highlight it for editing
+                if (selectedStart !== null) {
+                    $(selectedStart).trigger("doubletap");
+                    $("#fteditor").focus();
+                    // enable prev / next buttons
+                    $("#PrevSP").prop('disabled', false); // enable toolbar button
+                    $("#NextSP").prop('disabled', false); // enable toolbar button
+                }
             },
-        
             // User clicked on the Placeholder _before_ button
             togglePHBefore: function () {
                 // TODO: move placeHolderHtml to templated html
