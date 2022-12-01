@@ -45,6 +45,7 @@ define(function (require) {
         USFMMarkers = null,
         selectedStart = null,
         selectedEnd = null,
+        lastSelectedFT = null,
         idxStart = null,
         idxEnd = null,
         clearKBInput = false,
@@ -827,6 +828,9 @@ define(function (require) {
                     }
                 } else {
                     // move forwards
+                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                        selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
+                    }
                     if ((selectedStart.nextElementSibling !== null) && ($(selectedStart.nextElementSibling).hasClass('pile')) && (!$(selectedStart.nextElementSibling).hasClass('filter'))) {
                         // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
@@ -945,9 +949,11 @@ define(function (require) {
                     } else {
                         // free translation
                         // select from next_edit to the end of the strip
+                        $(selectedEnd).addClass("ui-selected");
                         done = false;
                         if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
                             done = true; // edge case -- current node is a boundary
+                            $(selectedEnd).addClass("ui-selected");
                         }
                         while (!done) {
                             tmpNode = selectedEnd.nextElementSibling;
@@ -960,15 +966,18 @@ define(function (require) {
                                 } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
                                     // comes after -- include
                                     selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selected");
                                     done = true;
                                 } else {
                                     // no punctuation
                                     selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selected");
                                 }
                             } else {
                                 done = true; // exit    
                             }
                         }
+                        lastSelectedFT = selectedEnd; // hold on to the last selection
                         // set focus on the FT text area
                         $("#fteditor").focus();
 
@@ -2730,7 +2739,6 @@ define(function (require) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
                     $(".pile").removeClass("condensed-pile");
-//                    $(".pile").css({})
                 }
                 // disable the undo button (no longer editing)
 //                $("#Undo").prop('disabled', true);
@@ -2873,7 +2881,6 @@ define(function (require) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
                     $(".pile").removeClass("condensed-pile");
-//                    $(".pile").css({})
                 }
                 // disable the undo button (no longer editing)
 //                $("#Undo").prop('disabled', true);
@@ -3219,7 +3226,38 @@ define(function (require) {
                 $("div").removeClass("ui-selecting ui-selected");
                 // if there is a current selection, highlight it for editing
                 if (selectedStart !== null) {
-                    $(selectedStart).trigger("doubletap");
+                    // select to the end of the strip OR the next free translation, whatever comes first
+                    selectedEnd = selectedStart;
+                    $(selectedEnd).addClass("ui-selected");
+                    var done = false,
+                        tmpNode = null;
+                    if ($(selectedEnd).children(".source").first().hasClass("fp")) {
+                        $(selectedEnd).addClass("ui-selected");
+                        done = true; // edge case -- current node is a boundary
+                    }
+                    while (!done) {
+                        tmpNode = selectedEnd.nextElementSibling;
+                        if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                ($(tmpNode).hasClass("moreFilter") === false)) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes before -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- include
+                                selectedEnd = tmpNode;
+                                $(selectedEnd).addClass("ui-selected");
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedEnd = tmpNode;
+                                $(selectedEnd).addClass("ui-selected");
+                            }
+                        } else {
+                            done = true; // exit    
+                        }
+                    }
+                    lastSelectedFT = selectedEnd; // hold on to the last selection
                     $("#fteditor").focus();
                     // enable prev / next buttons
                     $("#PrevSP").prop('disabled', false); // enable toolbar button
