@@ -336,7 +336,7 @@
         <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
     </platform>
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
-    <plugin name="cordova-plugin-filepath" spec="^1.6.0" />
+    <plugin name="cordova-plugin-filepath" spec="https://github.com/VIAVI-Solutions/cordova-plugin-filepath.git" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />
