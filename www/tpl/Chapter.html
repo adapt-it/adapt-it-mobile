@@ -17,11 +17,11 @@
     <div id="mnuTranslations" class="menu-disabled"><span id="translations" class="topcoat-icon topcoat-icon--translations"></span><span class="label" id="lblTranslations">{{ t 'view.lblShowTranslations'}}</span></div>
     <div id="mnuFindRS" class="menu-disabled"><span id="findRS" class="topcoat-icon topcoat-icon--search"></span><span class="label" id="lblFindRS">{{ t 'view.lblFindInDocuments'}}</span></div>
     <div id="mnuPreview"><span id="preview" class="topcoat-icon topcoat-icon--preview"></span><span class="label" id="lblPreview">{{ t 'view.lblShowPreview'}}</span></div>
-    <div id="glossFT"><hr />
+    <hr />
     <div id="mnuAdapting"><span id="optAdapting" class="topcoat-icon topcoat-icon--check"></span><span class="label" id="lblAdapting">{{ t 'view.lblAdapting'}}</span></div>
     <div id="mnuGlossing"><span id="optGlossing" class="topcoat-icon topcoat-icon--check invisible"></span><span class="label" id="lblGlossing">{{ t 'view.lblGlossing'}}</span></div>
     <div id="mnuFreeTrans"><span id="optFreeTrans" class="topcoat-icon topcoat-icon--check invisible"></span><span class="label" id="lblFreeTrans">{{ t 'view.lblFreeTranslation'}}</span></div>
-    <hr /></div>
+    <hr />
     <div id="mnuHelp"><span id="help" class="topcoat-icon topcoat-icon--help"></span><span class="label" id="lblHelp">{{ t 'view.lblHelp'}}</span></div>
     </div>
     </div>
@@ -29,37 +29,35 @@
         <button id="NextSP" title="{{ t 'view.lblNext'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--next"></span><span class="side-nav__list__item__label">{{ t 'view.lblNext'}}</span></button>
     </div>
     <div class="topcoat-navigation-bar__item right">
-        <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
+        <button id="PrevSP" title="{{ t 'view.lblPrev'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--prev"></span><span class="side-nav__list__item__label">{{ t 'view.lblPrev'}}</span></button>
     </div>
     <div class="topcoat-navigation-bar__item right">
-        <button id="Plus-menu" title="{{ t 'view.hlpttlMore'}}" class="topcoat-icon-button--quiet toolbar-button"><span  class="topcoat-icon topcoat-icon--plus-menu"></span><span class="side-nav__list__item__label">{{ t 'view.hlpttlMore'}}</span></button>
-        <div id="PlusActionsMenu" aria-haspopup="true" class="dropdown">
-            <div class="topcoat-navigation-bar__item left">
-                <button id="mnuPHBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
-            </div>
-            <div class="topcoat-navigation-bar__item left">
-                <button id="mnuPHAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
-            </div>
-            <div class="topcoat-navigation-bar__item left">
-                <button id="mnuPhrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
-            </div>
-            <div class="topcoat-navigation-bar__item left">
-                <button id="mnuRetranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
-            </div>
-        </div>    
+        <button id="Plus-menu" title="{{ t 'view.hlpttlMore'}}" class="topcoat-icon-button--quiet toolbar-button"><span id="plus-menu-btn" class="topcoat-icon topcoat-icon--plus-menu"></span><span class="side-nav__list__item__label">{{ t 'view.hlpttlMore'}}</span></button>
+        <div id="adapt-actions-menu" aria-haspopup="true" class="actions-dropdown">
+            <div class="topcoat-navigation-bar__item left"><button id="mnuPHBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button></div>
+            <div class="topcoat-navigation-bar__item left"><button id="mnuPHAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button></div>
+            <div class="topcoat-navigation-bar__item left"><button id="mnuPhrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button></div>
+            <div class="topcoat-navigation-bar__item left"><button id="mnuRetranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button></div>
+        </div>
+        <div id="ft-actions-menu" aria-haspopup="true" class="actions-dropdown">
+            <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="grow-ft"><span class="topcoat-icon topcoat-icon--shrink-lt"></span></button></div>
+            <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="shrink-ft"><span class="topcoat-icon topcoat-icon--grow-lt"></span></button></div>
+            <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="adjust-ft"><span class="topcoat-icon topcoat-icon--adjust-lt"></span></button></div>  
+            <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="delete-ft"><span class="topcoat-icon topcoat-icon--delete-ft-lt"></span></button></div>
+        </div>
     </div>
-    <div class="tb-action-toggles right"> {{! hidden on small screens }}
-    <div class="topcoat-navigation-bar__item left">
-        <button id="phBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
+    <div class="tb-action-toggles">{{! hidden on small screens }}
+    <div class="right action-toggles" id="adapt-toolbar"> 
+        <div class="topcoat-navigation-bar__item left"><button id="phBefore" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-before-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button></div>
+        <div class="topcoat-navigation-bar__item left"><button id="phAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button></div>
+        <div class="topcoat-navigation-bar__item left"><button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button></div>
+        <div class="topcoat-navigation-bar__item left"><button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button></div>
     </div>
-    <div class="topcoat-navigation-bar__item left">
-        <button id="phAfter" title="{{ t 'view.dscPlaceholder'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--ph-after-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPlaceholder'}}</span></button>
-    </div>
-    <div class="topcoat-navigation-bar__item left">
-        <button id="Phrase" title="{{ t 'view.dscPhrase'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--phrase-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblPhrase'}}</span></button>
-    </div>
-    <div class="topcoat-navigation-bar__item left">
-        <button id="Retranslation" title="{{ t 'view.dscRetranslation'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span class="topcoat-icon topcoat-icon--retranslation-new"></span><span class="side-nav__list__item__label">{{ t 'view.lblRetranslation'}}</span></button>
+    <div class="right action-toggles" id="ft-toolbar">
+        <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="grow-ft"><span class="topcoat-icon topcoat-icon--shrink-lt"></span></button></div>
+        <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="shrink-ft"><span class="topcoat-icon topcoat-icon--grow-lt"></span></button></div>
+        <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="adjust-ft"><span class="topcoat-icon topcoat-icon--adjust-lt"></span></button></div>  
+        <div class="topcoat-navigation-bar__item left"><button class="topcoat-icon-button--quiet" id="delete-ft"><span class="topcoat-icon topcoat-icon--delete-ft-lt"></span></button></div>
     </div>
     </div>
 </div>
@@ -70,15 +68,8 @@
     <button class="search light-grey" id="SearchNext"><span class="img-right-small"></span></button>
     <button class="search light-grey" id="SearchClose"><span class="img-cancel-small"></span></button>
 </div>
-<div class="ft" id="ft">
-    <div class="ftbar" id="ftbar">
-        <button class="search light-grey" id="ftPrev"><span class="img-left-small"></span></button>
-        <button class="search light-grey" id="ftNext"><span class="img-right-small"></span></button>
-        <button class="search light-grey" id="ftClose"><span class="img-cancel-small"></span></button>    
-    </div>
-    <div class="fttext" id="fttext" contenteditable="true">
-        Here's some random free text
-    </div>
+<div class="freetrans" id="freetrans">
+    <div class="ft-editor" id="fteditor" contenteditable="true"></div>
 </div>
 <div class="topcoat-list__container scroller" id="content">
 <div class="topcoat-list chapter" id="chapter">

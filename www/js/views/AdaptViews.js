@@ -45,6 +45,7 @@ define(function (require) {
         USFMMarkers = null,
         selectedStart = null,
         selectedEnd = null,
+        lastSelectedFT = null,
         idxStart = null,
         idxEnd = null,
         clearKBInput = false,
@@ -504,11 +505,25 @@ define(function (require) {
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
                     }
+                    // initial state -- hide (don't display) gloss and FT lines in the chapter 
+                    $(".gloss").addClass("hide"); // gloss line
+                    $(".freetrans").addClass("hide"); // free translation line
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
-                        $("#glossFT").addClass("hide"); // edit mode dropdown menu items
-                        $(".gloss").addClass("hide"); // gloss line
-                        $(".freetrans").addClass("hide"); // free translation line
+                        // hide edit mode dropdown menu items
+                        $("#MoreActionsMenu hr").addClass("hide");
+                        $("#mnuAdapting").addClass("hide");
+                        $("#mnuGlossing").addClass("hide");
+                        $("#mnuFreeTrans").addClass("hide");
+                    }
+                    // even if the show gloss / FT menu items are on, is the height enough to display the menu?
+                    var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+                    if (vh < 540) {
+                        // Device is kinda small;
+                        // get rid of the hr elements to add some room
+                        if (!$("#MoreActionsMenu hr").hasClass("hide")) {
+                            $("#MoreActionsMenu hr").addClass("hide");
+                        };
                     }
                 }
                 return this;
@@ -748,18 +763,27 @@ define(function (require) {
                 return exactMatch;
             },
             // Helper method to move the editing cursor forwards or backwards one pile until we hit another empty
-            // slot that requires attention. This is our S8 / auto-insertion procedure. Possible outcomes:
+            // slot that requires attention. This is our S8 / auto-insertion procedure. 
+            // ADAPTING OUTCOMES:
             // - next source phrase has exactly 1 possible translation in the KB -> auto-insert and continue moving
             // - next source phrase is already translataed (i.e., has something in the target field) -> skip and continue
             //   moving
             // - next source phrase has no possible translation -> suggest the source and stop here
             // - next source phrase has more than one possible translation -> show a drop-down menu (that also allows
             //   for a new translation) and stop here
+            // GLOSSING OUTCOMES:
+            // - similar to adapting (above), except looking at the sourcephrase.gloss and storing / retrieving from the gloss KB
+            // FREE TRANSLATION OUTCOMES:
+            // - next source phrase is empty -> selection goes from the end of the current selection _to the end of the strip_.
+            //   No auto-insert is done, and no suggestion is placed in the text area.
+            // - next source phrase has a free translation already -> show it in the text area.
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var keep_going = true;
                 var top = 0;
+                var tmpNode = null;
+                var done = false;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
@@ -804,6 +828,9 @@ define(function (require) {
                     }
                 } else {
                     // move forwards
+                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                        selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
+                    }
                     if ((selectedStart.nextElementSibling !== null) && ($(selectedStart.nextElementSibling).hasClass('pile')) && (!$(selectedStart.nextElementSibling).hasClass('filter'))) {
                         // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
                         next_edit = selectedStart.nextElementSibling;
@@ -864,7 +891,6 @@ define(function (require) {
                                                 // Next chapter
                                                 // update the URL, but replace the history (so we go back to the welcome screen)
                                                 window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-//                                                window.Application.adaptChapter(nextChapter);
 
                                             } else {
                                                 // exit
@@ -896,7 +922,6 @@ define(function (require) {
                                     if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
                                         // update the URL, but replace the history (so we go back to the welcome screen)
                                         window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-//                                        window.Application.adaptChapter(nextChapter);
                                     } else {
                                         window.Application.home();
                                     }
@@ -923,8 +948,39 @@ define(function (require) {
                         $(next_edit).find(".gloss").mouseup();    
                     } else {
                         // free translation
-                        $(next_edit).find(".freetrans").focus();
-                        $(next_edit).find(".freetrans").mouseup();
+                        // select from next_edit to the end of the strip
+                        $(selectedEnd).addClass("ui-selected");
+                        done = false;
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
+                            $(selectedEnd).addClass("ui-selected");
+                        }
+                        while (!done) {
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                // check punctuation (go from the inside out)
+                                if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                    // comes before -- don't include
+                                    done = true;
+                                } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                    // comes after -- include
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selected");
+                                    done = true;
+                                } else {
+                                    // no punctuation
+                                    selectedEnd = tmpNode;
+                                    $(selectedEnd).addClass("ui-selected");
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        lastSelectedFT = selectedEnd; // hold on to the last selection
+                        // set focus on the FT text area
+                        $("#fteditor").focus();
+
                     }
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -1016,7 +1072,11 @@ define(function (require) {
                 "mouseup .gloss": "selectedGloss",
                 "touchend .gloss": "selectedGloss",
                 "keydown .gloss": "editGloss",
-                "blur .gloss": "unselectedGloss"
+                "blur .gloss": "unselectedGloss",
+                "mouseup #fteditor": "selectedFT",
+                "touchend #fteditor": "selectedFT",
+                "keydown #fteditor": "editFT",
+                "blur #fteditor": "unselectedFT"
             },
             
             // user is starting to select one or more piles
@@ -2679,7 +2739,6 @@ define(function (require) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
                     $(".pile").removeClass("condensed-pile");
-//                    $(".pile").css({})
                 }
                 // disable the undo button (no longer editing)
 //                $("#Undo").prop('disabled', true);
@@ -2804,7 +2863,7 @@ define(function (require) {
             // User has moved out of the current gloss input field (blur on gloss field)
             // this can be called either programatically (tab / shift+tab keydown response) or
             // by a selection of something else on the page.
-            // This method updates the KB and model (AI Document) if they have any changes.
+            // This method updates the gloss KB and model (AI Document) if they have any changes.
             unselectedGloss: function (event) {
                 var value = null,
                     trimmedValue = null,
@@ -2822,7 +2881,6 @@ define(function (require) {
                     // smaller window height -- hide the marker line
                     $(".marker").removeClass("hide");
                     $(".pile").removeClass("condensed-pile");
-//                    $(".pile").css({})
                 }
                 // disable the undo button (no longer editing)
 //                $("#Undo").prop('disabled', true);
@@ -2902,6 +2960,131 @@ define(function (require) {
                     document.selection.empty();
                 }
             },
+
+            // User clicked the Free Translation edit field
+            selectedFT: function () {
+                // keep a copy of the SPID we're working on
+                if (selectedStart !== null) {
+                    $("#fteditor").attr("data-spid", selectedStart.attr('id'));
+                }
+
+            },
+
+            // user pressed a key in the Free Translation edit field
+            editFT: function (event) {
+                var strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("editFT");
+                if (event.keyCode === 27) {
+                    // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards;
+                    // also note that we're looking at the FT edit area's "data-spid" attribute that
+                    // we copied over from the selectedStart pile
+                    strID = $(event.currentTarget).attr('data-spid');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
+                    $(event.currentTarget).html(model.get('freetrans')); // original FT value for the selected pile
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $(event.currentTarget).blur();
+                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- accept the edit and move the cursor
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDirty = true;
+                    // TODO: FT is not associated with a pile -- hide a selectedStart somewhere in the edit field?
+                    // HOW TO HANDLE? Does clearing out a selectedStart automatically clear out the FT text?
+                    // make sure there is a selectedStart, so that we can navigate to the next pile
+                    // if (selectedStart === null) {
+                    //     selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
+                    //     selectedEnd = selectedStart;
+                    // }
+                    if (event.shiftKey) {
+                        MovingDir = -1;
+                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
+                    } else {
+                        MovingDir = 1;
+                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
+                    }
+                } else {
+                    // any other key - set the dirty bit
+                    isDirty = true;
+                    $("#Undo").prop('disabled', false);
+                }
+            },
+
+            // focus moved from the Free Translation edit field
+            // this can be called either programatically (tab / shift+tab keydown response) or
+            // by a selection of something else on the page.
+            // This method updates the model (AI Document) if they have any changes.
+            unselectedFT: function (event) {
+                var value = null,
+                    trimmedValue = null,
+                    strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("unselectedFT: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
+                if (isSelectingKB === true) {
+                    isSelectingKB = false; // TODO: not sure if this is needed in FT mode
+                }
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+                }
+
+                // get the FT text
+                value = $(event.currentTarget).text();
+                // if needed use regex to replace chars we don't want stored in escaped format
+                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
+                trimmedValue = value.trim();
+                // find the model object associated with this edit field
+                strID = $(event.currentTarget).attr('data-spid');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.collection.findWhere({spid: strID});
+                origText = model.get("freetrans");
+                // check for changes in the edit field
+                isEditing = false;
+                if (isDirty === true) {
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from DB.");
+                            // update the model with the new FT text (nothing)
+                            model.save({freetrans: trimmedValue});
+                        }
+                    } else {
+                        // update the model with the new target text
+                        model.save({freetrans: trimmedValue});
+                    }
+                } else {
+                    // dirty bit not set -- go back to what was saved earlier
+                    $(event.currentTarget).html(model.get('freetrans'));
+                }
+                // check for an old selection and remove it if needed
+                if (selectedStart !== null) {
+                    // there was an old selection -- remove the ui-selected class
+                    $("div").removeClass("ui-selecting ui-selected");
+                }
+                // remove any old selection ranges
+                if (window.getSelection) {
+                    if (window.getSelection().empty) {  // Chrome
+                        window.getSelection().empty();
+                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+                        window.getSelection().removeAllRanges();
+                    }
+                } else if (document.selection) {  // IE?
+                    document.selection.empty();
+                }
+            },
+
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
@@ -2977,7 +3160,17 @@ define(function (require) {
                 // disable contenteditable on gloss, freetrans lines
                 $(".target").attr('contenteditable', true);
                 $(".gloss").attr('contenteditable', false);
-                $(".freetrans").attr('contenteditable', false);
+                if (($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").removeClass("show-flex");
+                    $("#content").removeClass("with-ft");
+                }
+                // hide the gloss and FT lines
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
+                }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
                 }
@@ -2988,24 +3181,28 @@ define(function (require) {
                 // disable contenteditable on target, freetrans lines
                 $(".target").attr('contenteditable', false);
                 $(".gloss").attr('contenteditable', true);
-                $(".freetrans").attr('contenteditable', false);
+                if (($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").removeClass("show-flex");
+                    $("#content").removeClass("with-ft");
+                }
                 // Flip the translation / gloss lines?
                 // ********************
-                // disable buttons that don't apply to glossing mode
+                // show the gloss line only
+                if ($(".gloss").hasClass("hide")) {
+                    $(".gloss").removeClass("hide");
+                }
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
+                }
+                // clear any old UI "selecting" blue
                 $("div").removeClass("ui-selecting ui-selected");
-                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                $("#phBefore").prop('disabled', true);
-                $("#phAfter").prop('disabled', true);
-                $("#Retranslation").prop('disabled', true);
-                $("#Phrase").prop('disabled', true);
-                $("#mnuPHBefore").prop('disabled', true);
-                $("#mnuPHAfter").prop('disabled', true);
-                $("#mnuRetranslation").prop('disabled', true);
-                $("#mnuPhrase").prop('disabled', true);
+
+                // if there actually _is_ a selection, set the focus and enable the back/fw buttons
                 if (selectedStart !== null) {
                     $(selectedStart).find(".gloss").focus();
+                    // enable prev / next buttons
+                    $("#PrevSP").prop('disabled', false); // enable toolbar button
+                    $("#NextSP").prop('disabled', false); // enable toolbar button
                 }
             },
             // User clicked on the Free Translation menu item -- set the current mode to Free Translation
@@ -3014,25 +3211,59 @@ define(function (require) {
                 // disable contenteditable on gloss, target lines
                 $(".gloss").attr('contenteditable', false);
                 $(".target").attr('contenteditable', false);
-                $(".freetrans").attr('contenteditable', true);
-                // disable buttons that don't apply to free translation mode
+                // show the FT line only
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if ($(".ft").hasClass("hide")) {
+                    $(".ft").removeClass("hide");
+                }
+                // show the free translation editor area
+                if (!($("#freetrans").hasClass("show-flex"))) {
+                    $("#freetrans").addClass("show-flex");
+                    $("#content").addClass("with-ft");
+                }
                 $("div").removeClass("ui-selecting ui-selected");
-                $("#phBefore").prop('title', i18next.t("view.dscNewPlaceholder"));
-                $("#phBefore .topcoat-icon").removeClass("topcoat-icon--ph-before-delete");
-                $("#phBefore .topcoat-icon").addClass("topcoat-icon--ph-before-new");
-                $("#phBefore").prop('disabled', true);
-                $("#phAfter").prop('disabled', true);
-                $("#Retranslation").prop('disabled', true);
-                $("#Phrase").prop('disabled', true);
-                $("#mnuPHBefore").prop('disabled', true);
-                $("#mnuPHAfter").prop('disabled', true);
-                $("#mnuRetranslation").prop('disabled', true);
-                $("#mnuPhrase").prop('disabled', true);
+                // if there is a current selection, highlight it for editing
                 if (selectedStart !== null) {
-                    $(selectedStart).find(".freetrans").focus();
+                    // select to the end of the strip OR the next free translation, whatever comes first
+                    selectedEnd = selectedStart;
+                    $(selectedEnd).addClass("ui-selected");
+                    var done = false,
+                        tmpNode = null;
+                    if ($(selectedEnd).children(".source").first().hasClass("fp")) {
+                        $(selectedEnd).addClass("ui-selected");
+                        done = true; // edge case -- current node is a boundary
+                    }
+                    while (!done) {
+                        tmpNode = selectedEnd.nextElementSibling;
+                        if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                ($(tmpNode).hasClass("moreFilter") === false)) {
+                            // check punctuation (go from the inside out)
+                            if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                // comes before -- don't include
+                                done = true;
+                            } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                // comes after -- include
+                                selectedEnd = tmpNode;
+                                $(selectedEnd).addClass("ui-selected");
+                                done = true;
+                            } else {
+                                // no punctuation
+                                selectedEnd = tmpNode;
+                                $(selectedEnd).addClass("ui-selected");
+                            }
+                        } else {
+                            done = true; // exit    
+                        }
+                    }
+                    lastSelectedFT = selectedEnd; // hold on to the last selection
+                    $("#fteditor").focus();
+                    // enable prev / next buttons
+                    $("#PrevSP").prop('disabled', false); // enable toolbar button
+                    $("#NextSP").prop('disabled', false); // enable toolbar button
                 }
             },
-        
             // User clicked on the Placeholder _before_ button
             togglePHBefore: function () {
                 // TODO: move placeHolderHtml to templated html
@@ -3740,7 +3971,6 @@ define(function (require) {
                 project = this.project;
                 var chapterid = this.model.get('chapterid');
                 chapter = this.model;
-                editorMode = editorModeEnum.ADAPTING; // initial setting
                 this.$list = $('#chapter');
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
@@ -3763,6 +3993,9 @@ define(function (require) {
                 // populate the list view with the source phrase results
                 this.listView = new SourcePhraseListView({collection: this.spList, chapterName: this.model.get('name'), chapterid: chapterid, el: $('#chapter', this.el)});
                 addStyleRules(this.project);
+                // initial state: adapting -- show adapting-related UI
+                editorMode = editorModeEnum.ADAPTING;
+                $("#adapt-toolbar").addClass("show");
             },
             ////
             // Event Handlers
@@ -3801,8 +4034,11 @@ define(function (require) {
             UndoClick: function (event) {
                 console.log("UndoClick: entry");
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3836,8 +4072,11 @@ define(function (require) {
                 }
                 console.log("goPrevPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3879,8 +4118,11 @@ define(function (require) {
                 }
                 console.log("goNextPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3904,16 +4146,26 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
+                }
                 // stop any help tour
                 hopscotch.endTour();
-                $("#PlusActionsMenu").toggleClass("show");
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    $("#ft-actions-menu").toggleClass("show");
+                }
                 // do not bubble this event up to the title bar
                 event.stopPropagation();
             },
             toggleMoreMenu: function (event) {
                 // hide the plus menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 // stop any help tour
                 hopscotch.endTour();
@@ -3923,8 +4175,11 @@ define(function (require) {
             },
             togglePreview: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3944,12 +4199,28 @@ define(function (require) {
                 if (!$("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").addClass("invisible");
                 }
+                if (!$("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").addClass("show");
+                }
+                if ($("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").removeClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").removeClass("invisible");
+                }
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
+                }
+                if ($("#plus-menu-btn").hasClass("topcoat-icon--plus-menu-ft")) {
+                    $("#plus-menu-btn").removeClass("topcoat-icon--plus-menu-ft");
+                    $("#plus-menu-btn").addClass("topcoat-icon--plus-menu");
                 }
                 this.listView.onModeAdapting(event);
                 // do not bubble this event up to the title bar
@@ -3966,9 +4237,21 @@ define(function (require) {
                 if (!$("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").addClass("invisible");
                 }
+                if ($("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").removeClass("show");
+                }
+                if ($("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").removeClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if (!$("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").addClass("invisible");
+                }
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -3988,12 +4271,28 @@ define(function (require) {
                 if ($("#optFreeTrans").hasClass("invisible")) {
                     $("#optFreeTrans").removeClass("invisible");
                 }
+                if ($("#adapt-toolbar").hasClass("show")) {
+                    $("#adapt-toolbar").removeClass("show");
+                }
+                if (!$("#ft-toolbar").hasClass("show")) {
+                    $("#ft-toolbar").addClass("show");
+                }
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#Plus-menu").hasClass("invisible")) {
+                    $("#Plus-menu").removeClass("invisible");
+                }
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
+                }
+                if ($("#plus-menu-btn").hasClass("topcoat-icon--plus-menu")) {
+                    $("#plus-menu-btn").removeClass("topcoat-icon--plus-menu");
+                    $("#plus-menu-btn").addClass("topcoat-icon--plus-menu-ft");
                 }
                 this.listView.onModeFreeTrans(event);
                 // do not bubble this event up to the title bar
@@ -4003,8 +4302,11 @@ define(function (require) {
             // For the placeholders, etc., just pass the event handler down to the list view to handle
             togglePHBefore: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4015,8 +4317,11 @@ define(function (require) {
             },
             togglePHAfter: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4027,8 +4332,11 @@ define(function (require) {
             },
             togglePhrase: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4039,8 +4347,11 @@ define(function (require) {
             },
             toggleRetranslation: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4053,8 +4364,11 @@ define(function (require) {
             unselectPiles: function (event) {
                 var isBlankArea = false;
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4193,8 +4507,11 @@ define(function (require) {
                 }
                 event.stopPropagation();
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4224,8 +4541,11 @@ define(function (require) {
                 // close out any old results
                 this.onSearchClose();
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
@@ -4301,8 +4621,11 @@ define(function (require) {
             // to the UI elements on this screen.
             onHelp: function (event) {
                 // dismiss the Plus and More menu if visible
-                if ($("#PlusActionsMenu").hasClass("show")) {
-                    $("#PlusActionsMenu").toggleClass("show");
+                if ($("#adapt-actions-menu").hasClass("show")) {
+                    $("#adapt-actions-menu").toggleClass("show");
+                }
+                if ($("#ft-actions-menu").hasClass("show")) {
+                    $("#ft-actions-menu").toggleClass("show");
                 }
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");

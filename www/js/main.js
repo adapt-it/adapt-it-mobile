@@ -104,16 +104,21 @@ window.handleOpenURL = function(url) {
             // content://path from Android -- pull out the filename and store it on the application obj
             window.FilePath.resolveNativePath(url, function(absolutePath) {
                 window.Application.importingURL = absolutePath;
+                console.log("handleOpenURL: calling open app with importingURL:" + absolutePath);
                 window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
+              }, function(error) {
+                console.log("handleOpenURL: error in resolveNativePath for content://path URL -- " + error.message());
               });
         } else {
             // not a content://path url -- resolve and process file
+            console.log("handleOpenURL: no content://path URL, calling processFileEntry directly");
             window.Application.importingURL = ""; // clear
             window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
         }
     } else {
         // we're still waking up... store the url 
         // (it'll get processed in Application.js when we go to the home page)
+        console.log("handleOpenURL -- starting up still; will store as share_url:  " + url);
         window.localStorage.setItem('share_url', url);
     }
 };

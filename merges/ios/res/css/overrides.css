@@ -19,6 +19,12 @@
 #DocTitle {
     height: 51px;
 }
+.freetrans {
+    left: calc(env(safe-area-inset-left));
+    right: calc(env(safe-area-inset-right));
+    top: 108px;
+    top: calc(env(safe-area-inset-top) + 57px);
+}
 .search-bar {
     left: calc(env(safe-area-inset-left));
     right: calc(env(safe-area-inset-right));
@@ -36,6 +42,10 @@
 .with-search {
     top: 129px;
     top: calc(env(safe-area-inset-top) + 85px);
+}
+.with-ft {
+    top: 179px;
+    top: calc(env(safe-area-inset-top) + 135px);
 }
 .scroller-notb {
     left: env(safe-area-inset-left);

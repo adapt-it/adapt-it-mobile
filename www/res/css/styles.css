@@ -22,12 +22,24 @@
     font-family: "Scheherazade";
     src: url("../font/Scheherazade-Regular.woff") format('woff');
 }
+.bg-orange {
+    background-color: #ff8c00;
+    color: white;
+}
+.bg-burnt-orange {
+    background-color: #b26200;
+    color: white;
+}
+.bg-darkdarkblue {
+    background-color: #12536d;
+    color: white;
+}
 .bg-darkblue {
     background-color: #1F7BA5;
     color: white;
 }
 .bg-body {
-    background-color: rgb(221, 225, 225);
+    background-color: rgb(142, 186, 186);
     color: #454545;
 }
 .bg-gradient {
@@ -321,6 +333,26 @@ header h3 {
 .rsResults {
     display: none;
 }
+.freetrans {
+    display: none;
+    background-color: #2595cb;
+    border-top: 1px solid #1f7ba5;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    position: absolute;
+    top: 57px;
+    height: 82px;
+    left: 0;
+    padding: 0px 1px;
+    right: 0;
+}
+.ft-bar {
+    justify-content: flex-end;
+}
+.ft-editor {
+    flex: 1 100%;
+    background-color: #eee;
+}
 .search-bar {
     display: none;
     background-color: rgb(215,220,220);
@@ -431,6 +463,9 @@ button.light-grey {
 .with-search {
     top: 90px;
 }
+.with-ft {
+    top: 140px;
+}
 /* most pages - top title bar, no toolbar */
 .scroller-notb {
     bottom: 0;
@@ -486,7 +521,7 @@ button.light-grey {
     white-space: nowrap;
 }
 .fixfixed .scroller-tb,
-.fixfixed .dropdown,
+.fixfixed .actions-dropdown,
 .fixfixed .main_title {
     position:absolute;
 }
@@ -662,6 +697,10 @@ ul {
     display: inline-block;
 }
 
+.action-toggles {
+    display: none; /* overridden on individual toolbars */
+}
+
 #More-menu {
     display: inline-block;
 }
@@ -674,6 +713,20 @@ ul {
 /* AIM topcoat icons --
     These are usually combined with the topcoat-icon class to create a standalone icon, and do _not_ have a padding.
 */
+.topcoat-icon--adjust {
+    background: url("images/adjust.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--adjust-lt {
+    background: url("images/adjust-light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--alert {
     background: url("images/alert.svg") no-repeat;
     -webkit-background-size: cover;
@@ -706,6 +759,34 @@ ul {
     background-size: cover;
     padding: 0;
 }
+.topcoat-icon--delete-ft {
+    background: url("images/delete-ft.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--delete-ft-lt {
+    background: url("images/delete-ft-light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--grow {
+    background: url("images/grow.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--grow-lt {
+    background: url("images/grow-light.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
 .topcoat-icon--info {
     background: url("images/info.svg") no-repeat;
     -webkit-background-size: cover;
@@ -729,6 +810,13 @@ ul {
 }
 .topcoat-icon--plus-menu {
     background: url("images/plus-menu.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--plus-menu-ft {
+    background: url("images/plus-menu-ft.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -828,6 +916,21 @@ ul {
 
 .topcoat-icon--search {
     background: url("../svg/search.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+
+.topcoat-icon--shrink {
+    background: url("images/shrink.svg") no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    padding: 0;
+}
+.topcoat-icon--shrink-lt {
+    background: url("images/shrink-light.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -1158,6 +1261,23 @@ div.preview div.pile {
     border-radius: 6px;
     box-shadow: 0 0 0 2px #6fb5f1;
     color: #454545;
+}
+.ft {
+    background: transparent;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    box-shadow: 0 0 0 2px transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #b26200;
+    font: inherit;
+    font-size: 16px;
+    margin: 0;
+    min-width: -webkit-fill-available;
+    vertical-align: top;
+    word-wrap: break-word;
 }
 .target {
     background: transparent;
@@ -1802,7 +1922,7 @@ typeahead styles
   margin: 0;
 }
 
-.dropdown {
+.actions-dropdown {
 	background: #2595cb;
 	border: 3px solid #fff;
     -webkit-box-shadow: 0px 6px 18px 1px rgba(0,0,0,0.75);
@@ -1813,7 +1933,7 @@ typeahead styles
     right: 70px; /* overwritten in AdaptViews */
     z-index: 2147483647; /* on top */
 }
-.dropdown:after, .dropdown:before {
+.actions-dropdown:after, .actions-dropdown:before {
 	border: solid transparent;
 	bottom: 100%;
 	content: " ";
@@ -1824,13 +1944,13 @@ typeahead styles
 	width: 0;
 }
 
-.dropdown:after {
+.actions-dropdown:after {
 	border-color: rgba(31, 123, 165, 0);
 	border-bottom-color: #2595cb;
 	border-width: 10px;
 	margin-left: -10px;
 }
-.dropdown:before {
+.actions-dropdown:before {
 	border-color: rgba(255, 255, 255, 0);
 	border-bottom-color: #ffffff;
 	border-width: 13px;
