@@ -4146,11 +4146,9 @@ define(function (require) {
                 if ($("#MoreActionsMenu").hasClass("show")) {
                     $("#MoreActionsMenu").toggleClass("show");
                 }
-                if ($("#ft-actions-menu").hasClass("show")) {
-                    $("#ft-actions-menu").toggleClass("show");
-                }
                 // stop any help tour
                 hopscotch.endTour();
+                // toggle the plus menu popup (depends on the editor mode)
                 if (editorMode === editorModeEnum.ADAPTING) {
                     $("#adapt-actions-menu").toggleClass("show");
                 } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
