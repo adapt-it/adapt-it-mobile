@@ -774,23 +774,24 @@ define(function (require) {
             // GLOSSING OUTCOMES:
             // - similar to adapting (above), except looking at the sourcephrase.gloss and storing / retrieving from the gloss KB
             // FREE TRANSLATION OUTCOMES:
-            // - next source phrase is empty -> selection goes from the end of the current selection _to the end of the strip_.
+            // - next source phrase is empty -> selection goes from the end of the current selection _to the end of the strip_ OR
+            //   (to the next source phrase with a FT set - 1). Select this set of source phrases.
             //   No auto-insert is done, and no suggestion is placed in the text area.
-            // - next source phrase has a free translation already -> show it in the text area.
+            // - next source phrase has a free translation already -> show it in the text area. Do the same selection as above
+            //   (select to end of strip or (next SP with a FT set - 1))
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
                 var keep_going = true;
+                var FTEmpty = true;
                 var top = 0;
-                var tmpNode = null;
-                var done = false;
                 console.log("moveCursor");
                 event.stopPropagation();
                 event.preventDefault();
                 // unselect the current edit field before moving
                 $(event.currentTarget).blur();
                 if (moveForward === false) {
-                    // move backwards
+                    // *** move backwards
                     if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).hasClass('pile')) && (!$(selectedStart.previousElementSibling).hasClass('filter'))) {
                         // there is a previous sibling, and it is a non-filtered pile
                         next_edit = selectedStart.previousElementSibling;
@@ -826,8 +827,42 @@ define(function (require) {
                             console.log("reached first pile.");
                         }
                     }
+                    if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
+                        lastSelectedFT = next_edit; // free translation -- lastSelectedFT is the END of the selection
+                        temp_cursor = next_edit;
+                        // keep going backwards until we hit punctuation, the first pile, or a free translation
+                        keep_going = true;
+                        while (keep_going === true) {
+                            // move backwards
+                            if (temp_cursor !== null) {
+                                next_edit = temp_cursor;
+                                if ((next_edit.previousElementSibling !== null) && ($(next_edit.previousElementSibling).hasClass('pile')) && (!$(next_edit.previousElementSibling).hasClass('filter'))) {
+                                    // there is a previous sibling, and it is a non-filtered pile
+                                    temp_cursor = next_edit.previousElementSibling;
+                                    // does it have a free translation?
+                                    var ft = $(temp_cursor).find(".freetrans");
+                                    if (ft.length > 0) {
+                                        // this is our beginning -- stop moving back
+                                        FTEmpty = false;
+                                        console.log("moveCursor (backwards) - stop on FT: " + ft);
+                                        keep_going = false;
+                                    }
+                                } else {
+                                    // reached a stopping point
+                                    keep_going = false;
+                                }
+                            } else {
+                                // no temp_cursor -- stop backing up
+                                keep_going = false;
+                            }
+                        }
+                        // at this point in FT mode, next_edit should be the beginning of the FT cursor and 
+                        // lastSelectedFT should be the end. Set selectedStart and selectedEnd to these values
+                        selectedStart = next_edit;
+                        selectedEnd = lastSelectedFT;
+                    }
                 } else {
-                    // move forwards
+                    // *** move forwards
                     if (editorMode === editorModeEnum.FREE_TRANSLATING) {
                         selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
                     }
@@ -933,54 +968,59 @@ define(function (require) {
 
                         }
                     }
+                    if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
+                        // in FT mode, we need to also find the end of the selection
+                        // first, find out whether the start of our selection has a free translation defined
+                        var ft = $(next_edit).find(".freetrans").html();
+                        if (ft.length > 0) {
+                            FTEmpty = false;
+                        }
+                        // now find the end of the selection
+                        keep_going = true;
+                        while (keep_going === true) {
+                            // move forwards
+                            if (temp_cursor !== null) {
+                                next_edit = temp_cursor;
+                                if ((next_edit.nextElementSibling !== null) && ($(next_edit.nextElementSibling).hasClass('pile')) && (!$(next_edit.nextElementSibling).hasClass('filter'))) {
+                                    // there is a next sibling, and it is a non-filtered pile
+                                    temp_cursor = next_edit.nextElementSibling;
+                                    // does it have a free translation?
+                                    var ft = $(temp_cursor).find(".freetrans").html();
+                                    if (ft.length > 0) {
+                                        // found the next free translation -- stop moving forward
+                                        console.log("moveCursor (forwards) - stop on FT: " + ft);
+                                        keep_going = false;
+                                    }
+                                } else {
+                                    // reached a stopping point
+                                    keep_going = false;
+                                }
+                            } else {
+                                // no temp_cursor -- stop backing up
+                                keep_going = false;
+                            }
+                        }
+
+                    }
                 }
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
-                    selectedEnd = selectedStart = next_edit;
                     if (editorMode === editorModeEnum.ADAPTING) {
                         // adapting
+                        selectedEnd = selectedStart = next_edit;
                         $(next_edit).find(".target").focus();
                         $(next_edit).find(".target").mouseup();    
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         // glossing
+                        selectedEnd = selectedStart = next_edit;
                         $(next_edit).find(".gloss").focus();
                         $(next_edit).find(".gloss").mouseup();    
                     } else {
                         // free translation
-                        // select from next_edit to the end of the strip
-                        $(selectedEnd).addClass("ui-selected");
-                        done = false;
-                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
-                            done = true; // edge case -- current node is a boundary
-                            $(selectedEnd).addClass("ui-selected");
-                        }
-                        while (!done) {
-                            tmpNode = selectedEnd.nextElementSibling;
-                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
-                                    ($(tmpNode).hasClass("moreFilter") === false)) {
-                                // check punctuation (go from the inside out)
-                                if ($(tmpNode).children(".source").first().hasClass("pp")) {
-                                    // comes before -- don't include
-                                    done = true;
-                                } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
-                                    // comes after -- include
-                                    selectedEnd = tmpNode;
-                                    $(selectedEnd).addClass("ui-selected");
-                                    done = true;
-                                } else {
-                                    // no punctuation
-                                    selectedEnd = tmpNode;
-                                    $(selectedEnd).addClass("ui-selected");
-                                }
-                            } else {
-                                done = true; // exit    
-                            }
-                        }
-                        lastSelectedFT = selectedEnd; // hold on to the last selection
                         // set focus on the FT text area
                         $("#fteditor").focus();
-
+                        $("#fteditor").mouseup();
                     }
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -1072,11 +1112,7 @@ define(function (require) {
                 "mouseup .gloss": "selectedGloss",
                 "touchend .gloss": "selectedGloss",
                 "keydown .gloss": "editGloss",
-                "blur .gloss": "unselectedGloss",
-                "mouseup #fteditor": "selectedFT",
-                "touchend #fteditor": "selectedFT",
-                "keydown #fteditor": "editFT",
-                "blur #fteditor": "unselectedFT"
+                "blur .gloss": "unselectedGloss"
             },
             
             // user is starting to select one or more piles
@@ -2961,130 +2997,6 @@ define(function (require) {
                 }
             },
 
-            // User clicked the Free Translation edit field
-            selectedFT: function () {
-                // keep a copy of the SPID we're working on
-                if (selectedStart !== null) {
-                    $("#fteditor").attr("data-spid", selectedStart.attr('id'));
-                }
-
-            },
-
-            // user pressed a key in the Free Translation edit field
-            editFT: function (event) {
-                var strID = null,
-                    model = null;
-                // ignore event if we're in preview mode
-                if (inPreview === true) {
-                    return;
-                }
-                console.log("editFT");
-                if (event.keyCode === 27) {
-                    // Escape key pressed -- cancel the edit (reset the content) and blur
-                    // Note that this key is not on most on-screen keyboards;
-                    // also note that we're looking at the FT edit area's "data-spid" attribute that
-                    // we copied over from the selectedStart pile
-                    strID = $(event.currentTarget).attr('data-spid');
-                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                    model = this.collection.findWhere({spid: strID});
-                    $(event.currentTarget).html(model.get('freetrans')); // original FT value for the selected pile
-                    event.stopPropagation();
-                    event.preventDefault();
-                    $(event.currentTarget).blur();
-                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
-                    // tab or enter key -- accept the edit and move the cursor
-                    event.preventDefault();
-                    event.stopPropagation();
-                    isDirty = true;
-                    // TODO: FT is not associated with a pile -- hide a selectedStart somewhere in the edit field?
-                    // HOW TO HANDLE? Does clearing out a selectedStart automatically clear out the FT text?
-                    // make sure there is a selectedStart, so that we can navigate to the next pile
-                    // if (selectedStart === null) {
-                    //     selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
-                    //     selectedEnd = selectedStart;
-                    // }
-                    if (event.shiftKey) {
-                        MovingDir = -1;
-                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
-                    } else {
-                        MovingDir = 1;
-                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
-                    }
-                } else {
-                    // any other key - set the dirty bit
-                    isDirty = true;
-                    $("#Undo").prop('disabled', false);
-                }
-            },
-
-            // focus moved from the Free Translation edit field
-            // this can be called either programatically (tab / shift+tab keydown response) or
-            // by a selection of something else on the page.
-            // This method updates the model (AI Document) if they have any changes.
-            unselectedFT: function (event) {
-                var value = null,
-                    trimmedValue = null,
-                    strID = null,
-                    model = null;
-                // ignore event if we're in preview mode
-                if (inPreview === true) {
-                    return;
-                }
-                console.log("unselectedFT: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
-                if (isSelectingKB === true) {
-                    isSelectingKB = false; // TODO: not sure if this is needed in FT mode
-                }
-                if ($(window).height() < 200) {
-                    // smaller window height -- hide the marker line
-                    $(".marker").removeClass("hide");
-                    $(".pile").removeClass("condensed-pile");
-                }
-
-                // get the FT text
-                value = $(event.currentTarget).text();
-                // if needed use regex to replace chars we don't want stored in escaped format
-                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
-                trimmedValue = value.trim();
-                // find the model object associated with this edit field
-                strID = $(event.currentTarget).attr('data-spid');
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                model = this.collection.findWhere({spid: strID});
-                origText = model.get("freetrans");
-                // check for changes in the edit field
-                isEditing = false;
-                if (isDirty === true) {
-                    if (trimmedValue.length === 0) {
-                        // empty value entered. Was there text before?
-                        if (origText.length > 0) {
-                            console.log("User deleted target text: " + origText + " -- removing from DB.");
-                            // update the model with the new FT text (nothing)
-                            model.save({freetrans: trimmedValue});
-                        }
-                    } else {
-                        // update the model with the new target text
-                        model.save({freetrans: trimmedValue});
-                    }
-                } else {
-                    // dirty bit not set -- go back to what was saved earlier
-                    $(event.currentTarget).html(model.get('freetrans'));
-                }
-                // check for an old selection and remove it if needed
-                if (selectedStart !== null) {
-                    // there was an old selection -- remove the ui-selected class
-                    $("div").removeClass("ui-selecting ui-selected");
-                }
-                // remove any old selection ranges
-                if (window.getSelection) {
-                    if (window.getSelection().empty) {  // Chrome
-                        window.getSelection().empty();
-                    } else if (window.getSelection().removeAllRanges) {  // Firefox
-                        window.getSelection().removeAllRanges();
-                    }
-                } else if (document.selection) {  // IE?
-                    document.selection.empty();
-                }
-            },
-
             // User clicked the Show Translations button -- find the selection in the KB and
             // navigate to that page
             showTranslations: function () {
@@ -3224,45 +3136,24 @@ define(function (require) {
                     $("#content").addClass("with-ft");
                 }
                 $("div").removeClass("ui-selecting ui-selected");
-                // if there is a current selection, highlight it for editing
-                if (selectedStart !== null) {
-                    // select to the end of the strip OR the next free translation, whatever comes first
-                    selectedEnd = selectedStart;
-                    $(selectedEnd).addClass("ui-selected");
-                    var done = false,
-                        tmpNode = null;
-                    if ($(selectedEnd).children(".source").first().hasClass("fp")) {
-                        $(selectedEnd).addClass("ui-selected");
-                        done = true; // edge case -- current node is a boundary
+                // is there a current selection?
+                if (selectedStart === null) {
+                    // no current selection -- see if there's a lastAdaptedPile
+                    if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                        selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
                     }
-                    while (!done) {
-                        tmpNode = selectedEnd.nextElementSibling;
-                        if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
-                                ($(tmpNode).hasClass("moreFilter") === false)) {
-                            // check punctuation (go from the inside out)
-                            if ($(tmpNode).children(".source").first().hasClass("pp")) {
-                                // comes before -- don't include
-                                done = true;
-                            } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
-                                // comes after -- include
-                                selectedEnd = tmpNode;
-                                $(selectedEnd).addClass("ui-selected");
-                                done = true;
-                            } else {
-                                // no punctuation
-                                selectedEnd = tmpNode;
-                                $(selectedEnd).addClass("ui-selected");
-                            }
-                        } else {
-                            done = true; // exit    
-                        }
+                    if (selectedStart === null) {
+                        // no luck -- just grab the first pile
+                        selectedStart = $(".pile").first().get(0);
                     }
-                    lastSelectedFT = selectedEnd; // hold on to the last selection
-                    $("#fteditor").focus();
-                    // enable prev / next buttons
-                    $("#PrevSP").prop('disabled', false); // enable toolbar button
-                    $("#NextSP").prop('disabled', false); // enable toolbar button
                 }
+                selectedEnd = null; // clear out the end selection so it can be reset
+                // enable prev / next buttons
+                $("#PrevSP").prop('disabled', false); // enable toolbar button
+                $("#NextSP").prop('disabled', false); // enable toolbar button
+                // fire a focus event for the FT editor
+                $("#fteditor").focus();
+                $("#fteditor").mouseup();
             },
             // User clicked on the Placeholder _before_ button
             togglePHBefore: function () {
@@ -4029,6 +3920,11 @@ define(function (require) {
                 "click #mnuAdapting": "onModeAdapting",
                 "click #mnuGlossing": "onModeGlossing",
                 "click #mnuFreeTrans": "onModeFreeTrans",
+                "mouseup #fteditor": "selectedFT",
+                "touchend #fteditor": "selectedFT",
+                "click #fteditor": "selectedFT",
+                "keydown #fteditor": "editFT",
+                "blur #fteditor": "unselectedFT",
                 "click #mnuHelp": "onHelp"
             },
             UndoClick: function (event) {
@@ -4403,6 +4299,206 @@ define(function (require) {
                     LongPressSectionStart = null;
                     isLongPressSelection = false;
                     MovingDir = 0;
+                }
+            },
+            // User clicked the Free Translation edit field
+            selectedFT: function () {
+                console.log("selectedFT: enter");
+                var idxStart = 0, 
+                    idxEnd = 0,
+                    strFT = "",
+                    FTEmpty = true,
+                    keep_going = false,
+                    temp_cursor = null,
+                    next_edit = null;
+
+                // is there a current selection?
+                if (selectedStart === null) {
+                    // no current selection, but we need one -- 
+                    // first see if there's a lastAdaptedPile
+                    if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                        selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                    }
+                    if (selectedStart === null) {
+                        // no lastAdaptedSPID -- just grab the first pile
+                        selectedStart = $(".pile").first().get(0);
+                    }
+                } 
+                // keep a copy of the SPID we're working on
+                $("#fteditor").attr("data-spid", $(selectedStart).attr('id'));
+                // is there already a free translation?
+                strFT = $(selectedStart).find(".freetrans").html();
+                if (strFT) {
+                    FTEmpty = false;
+                } else {
+                    strFT = "";
+                }
+                if (selectedEnd === null) {
+                    // need to find the end of this FT selection
+                    temp_cursor = selectedEnd = selectedStart; // initial value
+                    // move forwards from the start to either the next SP with a free translation defined OR
+                    // the end of the strip
+                    keep_going = true;
+                    while (keep_going === true) {
+                        // move forwards
+                        if (temp_cursor !== null) {
+                            next_edit = temp_cursor;
+                            if ((next_edit.nextElementSibling !== null) && ($(next_edit.nextElementSibling).hasClass('pile')) && (!$(next_edit.nextElementSibling).hasClass('filter'))) {
+                                // there is a next sibling, and it is a non-filtered pile
+                                temp_cursor = next_edit.nextElementSibling;
+                                // does it have a free translation?
+                                var ft = $(temp_cursor).find(".freetrans").html();
+                                if (ft) {
+                                    // found the next free translation -- stop moving forward
+                                    console.log("moveCursor (forwards) - stop on FT: " + ft);
+                                    keep_going = false;
+                                } 
+                            } else {
+                                // reached a stopping point
+                                keep_going = false;
+                            }
+                        } else {
+                            // no temp_cursor
+                            keep_going = false;
+                        }
+                    }
+                    // found the selection end -- set the value
+                    selectedEnd = next_edit;
+                }
+                // now select the piles in the UI, and build the default FT text if we need to
+                idxStart = $(selectedStart).index(); 
+                idxEnd = $(selectedEnd).index();
+                $("div").removeClass("ui-selecting ui-selected");
+                $(selectedStart.parentElement).children().each(function (index, value) {
+                    if (index >= idxStart && index <= idxEnd) {
+                        $(value).addClass("ui-selected");
+                        // if there's no FT defined, build it from the selected target texts
+                        if (FTEmpty === true) {
+                            strFT += $(value).find(".target").html() + " ";
+                        }
+                    }
+                });
+                // Scroll to the selection
+                var top = $(selectedStart)[0].offsetTop - (($(window).height() - $(selectedStart).outerHeight(true)) / 2);
+                console.log("scrollTop: " + top);
+                $("#content").scrollTop(top);
+                lastOffset = top;
+                // add the FT text
+                $("#fteditor").html(strFT.trim());
+            },
+
+            // user pressed a key in the Free Translation edit field
+            editFT: function (event) {
+                console.log("editFT: enter");
+                var strID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                if (event.keyCode === 27) {
+                    // Escape key pressed -- cancel the edit (reset the content) and blur
+                    // Note that this key is not on most on-screen keyboards;
+                    // also note that we're looking at the FT edit area's "data-spid" attribute that
+                    // we copied over from the selectedStart pile
+                    strID = $(event.currentTarget).attr('data-spid');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.spList.findWhere({spid: strID});
+                    $(event.currentTarget).html(model.get('freetrans')); // original FT value for the selected pile
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $(event.currentTarget).blur();
+                } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- accept the edit and move the cursor
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDirty = true;
+                    // TODO: FT is not associated with a pile -- hide a selectedStart somewhere in the edit field?
+                    // HOW TO HANDLE? Does clearing out a selectedStart automatically clear out the FT text?
+                    // make sure there is a selectedStart, so that we can navigate to the next pile
+                    // if (selectedStart === null) {
+                    //     selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
+                    //     selectedEnd = selectedStart;
+                    // }
+                    if (event.shiftKey) {
+                        MovingDir = -1;
+                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
+                    } else {
+                        MovingDir = 1;
+                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
+                    }
+                } else {
+                    // any other key - set the dirty bit
+                    isDirty = true;
+                    $("#Undo").prop('disabled', false);
+                }
+            },
+
+            // focus moved from the Free Translation edit field
+            // this can be called either programatically (tab / shift+tab keydown response) or
+            // by a selection of something else on the page.
+            // This method updates the model (AI Document) if they have any changes.
+            unselectedFT: function (event) {
+                var value = null,
+                    trimmedValue = null,
+                    strID = null,
+                    UI_ID = null,
+                    model = null;
+                // ignore event if we're in preview mode
+                if (inPreview === true) {
+                    return;
+                }
+                console.log("unselectedFT: event type=" + event.type + ", isDirty=" + isDirty + ", scrollTop=" + $("#chapter").scrollTop());
+                if (isSelectingKB === true) {
+                    isSelectingKB = false; // TODO: not sure if this is needed in FT mode
+                }
+                if ($(window).height() < 200) {
+                    // smaller window height -- hide the marker line
+                    $(".marker").removeClass("hide");
+                    $(".pile").removeClass("condensed-pile");
+                }
+
+                // get the FT text
+                value = $(event.currentTarget).text();
+                // if needed use regex to replace chars we don't want stored in escaped format
+                //value = value.replace(new RegExp("&quot;", 'g'), '"');  // klb
+                trimmedValue = value.trim();
+                // find the model object associated with this edit field
+                UI_ID = strID = $(event.currentTarget).attr('data-spid');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.spList.findWhere({spid: strID});
+                origText = model.get("freetrans");
+                // check for changes in the edit field 
+                isEditing = false;
+                if (isDirty === true) {
+                    if (trimmedValue.length === 0) {
+                        // empty value entered. Was there text before?
+                        if (origText.length > 0) {
+                            console.log("User deleted target text: " + origText + " -- removing from DB.");
+                            // update the model with the new FT text (nothing)
+                            model.save({freetrans: trimmedValue});
+                        }
+                    } else {
+                        // update the model with the new target text
+                        model.save({freetrans: trimmedValue});
+                    }
+                    // update the FT line in the selectedStart pile
+                    $(UI_ID).find(".freetrans").html(trimmedValue);
+                } 
+                // check for an old selection and remove it if needed
+                if (selectedStart !== null) {
+                    // there was an old selection -- remove the ui-selected class
+                    $("div").removeClass("ui-selecting ui-selected");
+                }
+                // remove any old selection ranges
+                if (window.getSelection) {
+                    if (window.getSelection().empty) {  // Chrome
+                        window.getSelection().empty();
+                    } else if (window.getSelection().removeAllRanges) {  // Firefox
+                        window.getSelection().removeAllRanges();
+                    }
+                } else if (document.selection) {  // IE?
+                    document.selection.empty();
                 }
             },
             
