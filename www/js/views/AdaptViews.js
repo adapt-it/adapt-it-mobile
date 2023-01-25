@@ -832,6 +832,14 @@ define(function (require) {
                         temp_cursor = next_edit;
                         // keep going backwards until we hit punctuation, the first pile, or a free translation
                         keep_going = true;
+                        // first, check for a FT at the selectedStart
+                        var ft = $(next_edit).find(".ft").html();
+                        if (ft.length > 0) {
+                            // no need to continue backwards; there's a FT here
+                            FTEmpty = false;
+                            console.log("moveCursor (backwards) - not empty / stopping; FT at selection: " + ft);
+                            keep_going = false;
+                        }
                         while (keep_going === true) {
                             // move backwards
                             if (temp_cursor !== null) {
@@ -843,7 +851,8 @@ define(function (require) {
                                     var ft = $(temp_cursor).find(".ft").html();
                                     if (ft.length > 0) {
                                         // this is our beginning -- stop moving back
-                                        FTEmpty = false;
+                                        FTEmpty = false; // this has a free translation defined
+                                        next_edit = temp_cursor; // the FT is the beginning of the selection
                                         console.log("moveCursor (backwards) - stop on FT: " + ft);
                                         keep_going = false;
                                     }
@@ -973,6 +982,7 @@ define(function (require) {
                         var ft = $(next_edit).find(".ft").html();
                         if (ft.length > 0) {
                             FTEmpty = false;
+                            console.log("moveCursor (forwards) - not empty; FT at selection: " + ft);
                         }
                         // now find the end of the selection
                         keep_going = true;
@@ -987,7 +997,7 @@ define(function (require) {
                                     var ft = $(temp_cursor).find(".ft").html();
                                     if (ft.length > 0) {
                                         // found the next free translation -- stop moving forward
-                                        console.log("moveCursor (forwards) - stop on FT: " + ft);
+                                        console.log("moveCursor (forwards) - stopping BEFORE next FT: " + ft);
                                         keep_going = false;
                                     }
                                 } else {
