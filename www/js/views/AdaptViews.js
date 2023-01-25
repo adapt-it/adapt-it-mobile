@@ -828,7 +828,7 @@ define(function (require) {
                         }
                     }
                     if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
-                        lastSelectedFT = next_edit; // free translation -- lastSelectedFT is the END of the selection
+                        selectedEnd = lastSelectedFT = next_edit; // free translation -- lastSelectedFT is the END of the selection
                         temp_cursor = next_edit;
                         // keep going backwards until we hit punctuation, the first pile, or a free translation
                         keep_going = true;
@@ -840,7 +840,7 @@ define(function (require) {
                                     // there is a previous sibling, and it is a non-filtered pile
                                     temp_cursor = next_edit.previousElementSibling;
                                     // does it have a free translation?
-                                    var ft = $(temp_cursor).find(".freetrans");
+                                    var ft = $(temp_cursor).find(".ft").html();
                                     if (ft.length > 0) {
                                         // this is our beginning -- stop moving back
                                         FTEmpty = false;
@@ -856,10 +856,8 @@ define(function (require) {
                                 keep_going = false;
                             }
                         }
-                        // at this point in FT mode, next_edit should be the beginning of the FT cursor and 
-                        // lastSelectedFT should be the end. Set selectedStart and selectedEnd to these values
+                        // set selectedStart to next_edit
                         selectedStart = next_edit;
-                        selectedEnd = lastSelectedFT;
                     }
                 } else {
                     // *** move forwards
@@ -970,8 +968,9 @@ define(function (require) {
                     }
                     if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
                         // in FT mode, we need to also find the end of the selection
+                        selectedStart = selectedEnd = lastSelectedFT = next_edit; // initial value
                         // first, find out whether the start of our selection has a free translation defined
-                        var ft = $(next_edit).find(".freetrans").html();
+                        var ft = $(next_edit).find(".ft").html();
                         if (ft.length > 0) {
                             FTEmpty = false;
                         }
@@ -985,7 +984,7 @@ define(function (require) {
                                     // there is a next sibling, and it is a non-filtered pile
                                     temp_cursor = next_edit.nextElementSibling;
                                     // does it have a free translation?
-                                    var ft = $(temp_cursor).find(".freetrans").html();
+                                    var ft = $(temp_cursor).find(".ft").html();
                                     if (ft.length > 0) {
                                         // found the next free translation -- stop moving forward
                                         console.log("moveCursor (forwards) - stop on FT: " + ft);
@@ -1000,7 +999,8 @@ define(function (require) {
                                 keep_going = false;
                             }
                         }
-
+                        // Set selectedEnd and lastSelectedFT to the end of the selection
+                        selectedEnd = lastSelectedFT = next_edit;
                     }
                 }
                 if (next_edit) {
@@ -1160,7 +1160,7 @@ define(function (require) {
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         $(selectedStart).find(".gloss").blur(); // also triggers a save on the old gloss field
                     } else {
-                        $(selectedStart).find(".freetrans").blur(); // also triggers a save on the old free translation field
+                        $(selectedStart).find("#fteditor").blur(); // also triggers a save on the old free translation field
                     }
                 }
                 // if there was an old target in focus, blur it
@@ -1813,6 +1813,8 @@ define(function (require) {
                         $("#phAfter").prop('disabled', false);
                         $("#mnuPHAfter").prop('disabled', false);
                         event.stopPropagation();
+                    } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                        // in FT mode, update the 
                     }
                 }
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
@@ -1932,7 +1934,7 @@ define(function (require) {
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         $(selectedStart).find(".gloss").blur(); // also triggers a save on the old gloss field
                     } else {
-                        $(selectedStart).find(".freetrans").blur(); // also triggers a save on the old free translation field
+                        $(selectedStart).find("#fteditor").blur(); // also triggers a save on the old free translation field
                     }
                 }
                 selectedStart = event.currentTarget.parentElement; // pile
@@ -3847,7 +3849,7 @@ define(function (require) {
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         $(selectedStart).find(".gloss").blur();
                     } else {
-                        $(selectedStart).find(".freetrans").blur();
+                        $(selectedStart).find("#fteditor").blur();
                     }
                 }
             },
@@ -3987,8 +3989,6 @@ define(function (require) {
                     MovingDir = -1; // backwards
                     this.listView.moveCursor(event, false);
                 }
-                // do not bubble this event up to the title bar
-//                event.stopPropagation();
             },
             // go to the next target field, marking the current field as dirty so that it gets saved
             goNextPile: function (event) {
@@ -4033,8 +4033,6 @@ define(function (require) {
                     MovingDir = 1; // forwards
                     this.listView.moveCursor(event, true);
                 }
-                // do not bubble this event up to the title bar
-//                event.stopPropagation();
             },
             // Plus menu toggle
             togglePlusMenu: function (event) {
@@ -4327,7 +4325,7 @@ define(function (require) {
                 // keep a copy of the SPID we're working on
                 $("#fteditor").attr("data-spid", $(selectedStart).attr('id'));
                 // is there already a free translation?
-                strFT = $(selectedStart).find(".freetrans").html();
+                strFT = $(selectedStart).find(".ft").html();
                 if (strFT) {
                     FTEmpty = false;
                 } else {
@@ -4347,7 +4345,7 @@ define(function (require) {
                                 // there is a next sibling, and it is a non-filtered pile
                                 temp_cursor = next_edit.nextElementSibling;
                                 // does it have a free translation?
-                                var ft = $(temp_cursor).find(".freetrans").html();
+                                var ft = $(temp_cursor).find(".ft").html();
                                 if (ft) {
                                     // found the next free translation -- stop moving forward
                                     console.log("moveCursor (forwards) - stop on FT: " + ft);
@@ -4365,6 +4363,8 @@ define(function (require) {
                     // found the selection end -- set the value
                     selectedEnd = next_edit;
                 }
+                // set the last selected FT slot to then END of our selection
+                lastSelectedFT = selectedEnd;
                 // now select the piles in the UI, and build the default FT text if we need to
                 idxStart = $(selectedStart).index(); 
                 idxEnd = $(selectedEnd).index();
@@ -4483,7 +4483,7 @@ define(function (require) {
                         model.save({freetrans: trimmedValue});
                     }
                     // update the FT line in the selectedStart pile
-                    $(UI_ID).find(".freetrans").html(trimmedValue);
+                    $(UI_ID).find(".ft").html(trimmedValue);
                 } 
                 // check for an old selection and remove it if needed
                 if (selectedStart !== null) {
