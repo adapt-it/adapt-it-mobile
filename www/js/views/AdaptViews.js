@@ -968,7 +968,7 @@ define(function (require) {
                     }
                     if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
                         // in FT mode, we need to also find the end of the selection
-                        selectedStart = selectedEnd = lastSelectedFT = next_edit; // initial value
+                        selectedStart = selectedEnd = lastSelectedFT = temp_cursor = next_edit; // initial value
                         // first, find out whether the start of our selection has a free translation defined
                         var ft = $(next_edit).find(".ft").html();
                         if (ft.length > 0) {
@@ -2746,7 +2746,14 @@ define(function (require) {
                     // Note: no "green" differences check
                 } else { 
                     // free translation mode 
-                    // TODO: implement
+                    // find the model object associated with this edit field
+                    UI_ID = strID = $("#fteditor").attr('data-spid');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.spList.findWhere({spid: strID});
+                    origText = model.get("freetrans");
+                    // set the edit field (and freetrans text) back to their previous values
+                    $("#fteditor").html(origText);
+                    $(UI_ID).find(".ft").html(origText);
                 }
                 // Now disable the Undo button...
                 $("#Undo").prop("disabled", true);
@@ -4348,7 +4355,7 @@ define(function (require) {
                                 var ft = $(temp_cursor).find(".ft").html();
                                 if (ft) {
                                     // found the next free translation -- stop moving forward
-                                    console.log("moveCursor (forwards) - stop on FT: " + ft);
+                                    console.log("selectedFT - stop end of selection before FT: " + ft);
                                     keep_going = false;
                                 } 
                             } else {
@@ -4365,6 +4372,9 @@ define(function (require) {
                 }
                 // set the last selected FT slot to then END of our selection
                 lastSelectedFT = selectedEnd;
+                // we're also working on a specific source phrase (the FT gets saved there) -
+                // set the last selected SPID
+                project.set('lastAdaptedSPID', selectedStart.id.substr(5));
                 // now select the piles in the UI, and build the default FT text if we need to
                 idxStart = $(selectedStart).index(); 
                 idxEnd = $(selectedEnd).index();
@@ -4413,13 +4423,6 @@ define(function (require) {
                     event.preventDefault();
                     event.stopPropagation();
                     isDirty = true;
-                    // TODO: FT is not associated with a pile -- hide a selectedStart somewhere in the edit field?
-                    // HOW TO HANDLE? Does clearing out a selectedStart automatically clear out the FT text?
-                    // make sure there is a selectedStart, so that we can navigate to the next pile
-                    // if (selectedStart === null) {
-                    //     selectedStart = event.currentTarget.parentElement; // select the pile, not the target (the currentTarget)
-                    //     selectedEnd = selectedStart;
-                    // }
                     if (event.shiftKey) {
                         MovingDir = -1;
                         this.moveCursor(event, false);  // shift tab/enter -- move backwards
