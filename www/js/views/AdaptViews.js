@@ -856,6 +856,15 @@ define(function (require) {
                                         console.log("moveCursor (backwards) - stop on FT: " + ft);
                                         keep_going = false;
                                     }
+                                    // check for punctuation (go from the inside out)
+                                    if ($(temp_cursor).children(".source").first().hasClass("fp")) {
+                                        // comes after -- don't include
+                                        keep_going = false;
+                                    } else if ($(temp_cursor).children(".source").first().hasClass("pp")) {
+                                        // comes after -- include
+                                        next_edit = temp_cursor; 
+                                        keep_going = false;
+                                    }
                                 } else {
                                     // reached a stopping point
                                     keep_going = false;
@@ -998,6 +1007,15 @@ define(function (require) {
                                     if (ft.length > 0) {
                                         // found the next free translation -- stop moving forward
                                         console.log("moveCursor (forwards) - stopping BEFORE next FT: " + ft);
+                                        keep_going = false;
+                                    }
+                                    // check for punctuation (go from the inside out)
+                                    if ($(temp_cursor).children(".source").first().hasClass("pp")) {
+                                        // comes before -- don't include
+                                        keep_going = false;
+                                    } else if ($(temp_cursor).children(".source").first().hasClass("fp")) {
+                                        // comes after -- include
+                                        next_edit = temp_cursor; 
                                         keep_going = false;
                                     }
                                 } else {
@@ -4352,7 +4370,7 @@ define(function (require) {
                     // need to find the end of this FT selection
                     temp_cursor = selectedEnd = selectedStart; // initial value
                     // move forwards from the start to either the next SP with a free translation defined OR
-                    // the end of the strip
+                    // punctuation OR the end of the strip
                     keep_going = true;
                     while (keep_going === true) {
                         // move forwards
@@ -4367,7 +4385,16 @@ define(function (require) {
                                     // found the next free translation -- stop moving forward
                                     console.log("selectedFT - stop end of selection before FT: " + ft);
                                     keep_going = false;
-                                } 
+                                }
+                                // check for punctuation (go from the inside out)
+                                if ($(temp_cursor).children(".source").first().hasClass("pp")) {
+                                    // comes before -- don't include
+                                    keep_going = false;
+                                } else if ($(temp_cursor).children(".source").first().hasClass("fp")) {
+                                    // comes after -- include
+                                    next_edit = temp_cursor; 
+                                    keep_going = false;
+                                }
                             } else {
                                 // reached a stopping point
                                 keep_going = false;
