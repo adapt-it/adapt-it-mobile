@@ -1221,7 +1221,8 @@ define(function (require) {
             selectingPilesMove: function (event) {
                 var stopAtBoundaries = false,
                     tmpNode = null,
-                    done = false;
+                    done = false,
+                    ft = "";
                 // ignore event if we're in preview mode
                 if (inPreview === true) {
                     return;
@@ -1282,6 +1283,15 @@ define(function (require) {
                             }
                             if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                                     ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT at the selectedStart
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // don't include this node
+                                        done = true;
+                                        break;
+                                    }
+                                }                
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
@@ -1313,6 +1323,16 @@ define(function (require) {
                         // go backwards 
                         console.log("selectingPilesMove: go backward");
                         tmpNode = selectedEnd = selectedStart; // start at selectedStart
+                        if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                            // first, check for a FT at the selectedStart
+                            ft = $(tmpNode).find(".ft").html();
+                            if (ft.length > 0) {
+                                // include this SP and stop
+                                selectedEnd = tmpNode;
+                                $(selectedEnd).addClass("ui-selecting");
+                                done = true;
+                            }
+                        }
                         $(selectedEnd).addClass("ui-selecting");
                         while (!done) {
                             tmpNode = selectedEnd.previousElementSibling;
@@ -1321,6 +1341,16 @@ define(function (require) {
                             }
                             if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                                     ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT at the selectedStart
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // include this SP and stop
+                                        selectedEnd = tmpNode;
+                                        $(selectedEnd).addClass("ui-selecting");
+                                        done = true;
+                                    }
+                                }                
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
@@ -1352,12 +1382,15 @@ define(function (require) {
                     //console.log("selectedEnd: " + selectedEnd.id);
                 }
             },
-            // user double-tapped on the Pile element -- select the entire strip
+            // Double-tap handler for the Pile element
+            // This method works like a double tap / double click in a word processor; it will select the largest block
+            // available, up to punctuation, free translations (in FT mode), or the end of the strip.
             onDblTapPile: function (event) {
                 // ignore event if we're in preview mode
                 var done = false,
                     stopAtBoundaries = false,
-                    tmpNode = null;
+                    tmpNode = null,
+                    ft = "";
                 if (inPreview === true) {
                     return;
                 }
@@ -1367,11 +1400,28 @@ define(function (require) {
                 }
                 // start out at the current location
                 tmpNode = selectedStart = selectedEnd = event.currentTarget;
+                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    // first, check for a FT at the selectedStart
+                    ft = $(tmpNode).find(".ft").html();
+                    if (ft.length > 0) {
+                        // can't go backwards -- the current selection has a FT defined
+                        done = true;
+                    }
+                }
                 // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
                 while (!done) {
                     tmpNode = selectedStart.previousElementSibling;
                     if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                             ($(tmpNode).hasClass("moreFilter") === false)) {
+                        if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                            // first, check for a FT at the selectedStart
+                            ft = $(tmpNode).find(".ft").html();
+                            if (ft.length > 0) {
+                                // include this SP and stop
+                                selectedStart = tmpNode;
+                                done = true;
+                            }
+                        }
                         // if we're stopping at boundaries, we have one more check... punctuation
                         if (stopAtBoundaries === true) {
                             // check punctuation (go from the inside out)
@@ -1403,6 +1453,16 @@ define(function (require) {
                     tmpNode = selectedEnd.nextElementSibling;
                     if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                             ($(tmpNode).hasClass("moreFilter") === false)) {
+                        // if we're in free translation mode, is there a FT defined at this SP slot?
+                        if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                            // first, check for a FT at the selectedStart
+                            ft = $(tmpNode).find(".ft").html();
+                            if (ft.length > 0) {
+                                // do NOT include this node -- just stop
+                                done = true;
+                                break;
+                            }
+                        }
                         // if we're stopping at boundaries, we have one more check... punctuation
                         if (stopAtBoundaries === true) {
                             // check punctuation (go from the inside out)
@@ -1454,9 +1514,8 @@ define(function (require) {
                     tmpIdx = 0,
                     now = 0,
                     delay = 0,
-                    strStartID = "",
-                    strEndID = "",
-                    spid = "";
+                    spid = "",
+                    ft = "";
                 // prevent weird edit menu appearances (long click)
                 event.preventDefault();
                 event.stopPropagation();
@@ -1532,11 +1591,28 @@ define(function (require) {
                             console.log("double-tap detected -- selecting strip");
                             // start out at the current location
                             tmpNode = selectedStart = selectedEnd = event.currentTarget;
-                            // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
+                            if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                // first, check for a FT at the selectedStart
+                                ft = $(tmpNode).find(".ft").html();
+                                if (ft.length > 0) {
+                                    // there's a FT at the selected start -- don't go through the while loop
+                                    done = true;
+                                }
+                            }
+                                // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
                             while (!done) {
                                 tmpNode = selectedStart.previousElementSibling;
                                 if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
-                                        ($(tmpNode).hasClass("moreFilter") === false)) {
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                        // first, check for a FT at the selectedStart
+                                        ft = $(tmpNode).find(".ft").html();
+                                        if (ft.length > 0) {
+                                            // include this SP and stop
+                                            selectedStart = tmpNode;
+                                            done = true;
+                                        }
+                                    }
                                     // if we're stopping at boundaries, we have one more check... punctuation
                                     if (stopAtBoundaries === true) {
                                         // check punctuation (go from the inside out)
@@ -1568,6 +1644,15 @@ define(function (require) {
                                 tmpNode = selectedEnd.nextElementSibling;
                                 if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                                         ($(tmpNode).hasClass("moreFilter") === false)) {
+                                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                        // first, check for a FT at the selectedStart
+                                        ft = $(tmpNode).find(".ft").html();
+                                        if (ft.length > 0) {
+                                            // do NOT include this SP
+                                            done = true;
+                                            break;
+                                        }
+                                    }
                                     // if we're stopping at boundaries, we have one more check... punctuation
                                     if (stopAtBoundaries === true) {
                                         // check punctuation (go from the inside out)
@@ -1620,6 +1705,15 @@ define(function (require) {
                             }
                             if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                                     ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // do not include this SP
+                                        done = true;
+                                        break;
+                                    }
+                                }                
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
@@ -1647,6 +1741,15 @@ define(function (require) {
                     } else {
                         // go backwards
                         tmpNode = selectedEnd = LongPressSectionStart; // start at LongPressSectionStart
+                        if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                            // first, check for a FT at the selectedStart
+                            ft = $(tmpNode).find(".ft").html();
+                            if (ft.length > 0) {
+                                // include this SP and stop
+                                selectedStart = tmpNode;
+                                done = true;
+                            }
+                        }
                         while (!done) {
                             tmpNode = selectedEnd.previousElementSibling;
                             if ($(tmpNode).index() === $(selectedStart).index()) {
@@ -1654,6 +1757,15 @@ define(function (require) {
                             }
                             if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
                                     ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT at the selectedStart
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // include this SP and stop
+                                        selectedEnd = tmpNode;
+                                        done = true;
+                                    }
+                                }                
                                 // if we're stopping at boundaries, we have one more check... punctuation
                                 if (stopAtBoundaries === true) {
                                     // check punctuation (go from the inside out)
@@ -1842,7 +1954,10 @@ define(function (require) {
                         $("#mnuPHAfter").prop('disabled', false);
                         event.stopPropagation();
                     } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                        // in FT mode, update the 
+                        // free translation
+                        // set focus on the FT text area
+                        $("#fteditor").focus();
+                        $("#fteditor").mouseup();
                     }
                 }
                 if ($("#mnuTranslations").hasClass("menu-disabled")) {
