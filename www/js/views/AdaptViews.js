@@ -4059,6 +4059,10 @@ define(function (require) {
                 "click #phAfter": "togglePHAfter",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
+                "click #grow-ft": "onGrowFT",
+                "click #shrink-ft": "onShrinkFT",
+                "click #adjust-ft": "onAdjustFT",
+                "click #delete-ft": "onDeleteFT",
                 "click #SearchPrev": "onSearchPrev",
                 "click #SearchNext": "onSearchNext",
                 "click #SearchClose": "onSearchClose",
@@ -4657,6 +4661,46 @@ define(function (require) {
                 }
             },
             
+            // User clicked on the grow Free Translation button
+            onGrowFT: function (event) {
+                event.stopPropagation();
+
+            },
+
+            // User clicked on the shrink Free Translation button - 
+            // move the selection in one at the end, and if the user hasn't modified the default free translation text,
+            // adjust the default
+            onShrinkFT: function (event) {
+                event.stopPropagation();
+                if (selectedEnd && selectedEnd !== selectedStart) {
+                    // there is an end selection still set -- move it back one if possible
+                    
+                }
+
+            },
+
+            // User clicked on the adjust Free Translation button
+            onAdjustFT: function (event) {
+                event.stopPropagation();
+
+            },
+
+            // User clicked on the delete Free Translation button -
+            // if there is a FT defined in our selected source phrase, delete it
+            onDeleteFT: function (event) {
+                var strID = null,
+                model = null;
+                event.stopPropagation();
+                // find the model object associated with this edit field
+                strID = $("#fteditor").attr('data-spid');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                model = this.spList.findWhere({spid: strID});
+                // clear out the FT setting in the model
+                if (model) {
+                    model.set('freetrans', "");
+                }
+            },
+
             // User clicked the search previous button -- move to the previous item in the search results list;
             // wrap around to the end if needed
             onSearchPrev: function (event) {
