@@ -4664,7 +4664,73 @@ define(function (require) {
             // User clicked on the grow Free Translation button
             onGrowFT: function (event) {
                 event.stopPropagation();
-
+                var temp_cursor = null,
+                    keep_going = true,
+                    next_edit = null,
+                    strFT = "";
+                if (selectedEnd) {
+                    // there is an end selection set -- move it forwards if possible
+                    if ((selectedEnd.nextElementSibling !== null) && ($(selectedEnd.nextElementSibling).hasClass('pile')) && (!$(selectedEnd.nextElementSibling).hasClass('filter'))) {
+                        // there is a next sibling, and it is a non-filtered pile
+                        next_edit = selectedEnd.nextElementSibling;
+                    } else {
+                        // No next sibling OR we've reached something we need to skip:
+                        // - a filter
+                        // - a header (chapter or verse)
+                        // - a strip marker
+                        // try skipping this item to see if we can find a "real" pile to move to
+                        if (selectedEnd.nextElementSibling !== null) {
+                            temp_cursor = selectedEnd.nextElementSibling;
+                            // handle filtered strips and strip header elements
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
+                                // continue on to the next item that ISN'T a strip header or filtered out of the UI
+                                while (temp_cursor && keep_going === true) {
+                                    temp_cursor = temp_cursor.nextElementSibling; // forwards one more strip
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
+                                        // found a stopping point
+                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
+                                        keep_going = false;
+                                    }
+                                }
+                            }
+                            if (temp_cursor) {
+                                next_edit = temp_cursor;
+                            } else {
+                                next_edit = null;
+                                console.log("reached last pile.");
+                            }
+                        } else {
+                            next_edit = null;
+                            console.log("reached last pile.");
+                        }
+                    }
+                    // did we find a new ending selection point?
+                    if (next_edit) {
+                        // yes -- update selectedEnd and the UI
+                        selectedEnd = next_edit;
+                        // now select the piles in the UI, and build the default FT text if we need to
+                        idxStart = $(selectedStart).index(); 
+                        idxEnd = $(selectedEnd).index();
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $(selectedStart.parentElement).children().each(function (index, value) {
+                            if (index >= idxStart && index <= idxEnd) {
+                                $(value).addClass("ui-selected");
+                                // also build a default FT in case we need it below
+                                strFT += $(value).find(".target").html() + " ";
+                            }
+                        });
+                        // do we need to change the selection in the FT editor field?
+                        if (isDirty === false) {
+                            // user hasn't modified the edit field -- did it come from the selectedStart's ft data?
+                            var ft = $(selectedStart).find(".ft").html();
+                            if (ft.length === 0) {
+                                // nope -- the editor contains auto-generated text -- update it now
+                                $("#fteditor").html(strFT.trim());
+                            }
+                        }
+                    }
+                }
             },
 
             // User clicked on the shrink Free Translation button - 
@@ -4672,9 +4738,72 @@ define(function (require) {
             // adjust the default
             onShrinkFT: function (event) {
                 event.stopPropagation();
+                var temp_cursor = null,
+                    keep_going = true,
+                    next_edit = null,
+                    strFT = "";
                 if (selectedEnd && selectedEnd !== selectedStart) {
                     // there is an end selection still set -- move it back one if possible
-                    
+                    if ((selectedEnd.previousElementSibling !== null) && ($(selectedEnd.previousElementSibling).hasClass('pile')) && (!$(selectedEnd.previousElementSibling).hasClass('filter'))) {
+                        // there is a previous sibling, and it is a non-filtered pile
+                        next_edit = selectedEnd.previousElementSibling;
+                    } else {
+                        // No previous sibling OR we've reached something we need to skip:
+                        // - a filter
+                        // - a header (chapter or verse)
+                        // - a strip marker
+                        // try skipping this item to see if we can find a "real" pile to move to
+                        if (selectedEnd.previousElementSibling !== null) {
+                            temp_cursor = selectedEnd.previousElementSibling;
+                            // handle filtered strips and strip header elements
+                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
+                                // continue on to the previous item that ISN'T a strip header or filtered out of the UI
+                                while (temp_cursor && keep_going === true) {
+                                    temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
+                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
+                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
+                                        // found a stopping point
+                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
+                                        keep_going = false;
+                                    }
+                                }
+                            }
+                            if (temp_cursor) {
+                                next_edit = temp_cursor;
+                            } else {
+                                next_edit = null;
+                                console.log("reached first pile.");
+                            }
+                        } else {
+                            next_edit = null;
+                            console.log("reached first pile.");
+                        }
+                    }
+                    // did we find a new ending selection point?
+                    if (next_edit) {
+                        // yes -- update selectedEnd and the UI
+                        selectedEnd = next_edit;
+                        // now select the piles in the UI, and build the default FT text if we need to
+                        idxStart = $(selectedStart).index(); 
+                        idxEnd = $(selectedEnd).index();
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $(selectedStart.parentElement).children().each(function (index, value) {
+                            if (index >= idxStart && index <= idxEnd) {
+                                $(value).addClass("ui-selected");
+                                // also build a default FT in case we need it below
+                                strFT += $(value).find(".target").html() + " ";
+                            }
+                        });
+                        // do we need to change the selection in the FT editor field?
+                        if (isDirty === false) {
+                            // user hasn't modified the edit field -- did it come from the selectedStart's ft data?
+                            var ft = $(selectedStart).find(".ft").html();
+                            if (ft.length === 0) {
+                                // nope -- the editor contains auto-generated text -- update it now
+                                $("#fteditor").html(strFT.trim());
+                            }
+                        }
+                    }
                 }
 
             },
