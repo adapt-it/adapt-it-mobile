@@ -106,6 +106,7 @@ define(function (require) {
         // update the status bar during the import / export process -
         // This also controls an optional progress bar for longer-running operations 
         updateStatus = function (str, pct) {
+            console.log("updateStatus: " + str);
             $("#status").html(str);
             if (pct) {
                 // show the progress bar with the percent complete; hide the "waiting" animation
@@ -118,6 +119,7 @@ define(function (require) {
                 } else if (pct > 100) {
                     pct = 100;
                 }
+                console.log("updateStatus progress: "+ pct + "%");
                 $("#pbar").width(pct + "%");
             }
         },
@@ -430,7 +432,7 @@ define(function (require) {
                                 // if necessary, send the next batch of SourcePhrase INSERT transactions
                                 if ((sps.length % MAX_BATCH) === 0) {
                                     batchesSent++;
-                                    updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                    updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailWords", {count: sps.length})}), 0);
                                     deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                     deferreds[deferreds.length - 1].done(function() {
                                         updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -445,7 +447,7 @@ define(function (require) {
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
                         batchesSent++;
-                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailWords", {count: sps.length})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                         deferreds[deferreds.length - 1].done(function() {
                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -792,7 +794,7 @@ define(function (require) {
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
                                             batchesSent++;
-                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                             deferreds[deferreds.length - 1].done(function() {
                                                 updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -878,7 +880,7 @@ define(function (require) {
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
                         batchesSent++;
-                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                         deferreds[deferreds.length - 1].done(function() {
                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -1991,7 +1993,7 @@ define(function (require) {
                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                         if ((sps.length % MAX_BATCH) === 0) {
                             batchesSent++;
-                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                             deferreds[deferreds.length - 1].done(function() {
                                 updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2085,7 +2087,7 @@ define(function (require) {
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
                                             batchesSent++;
-                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                             deferreds[deferreds.length - 1].done(function() {
                                                 updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2138,7 +2140,7 @@ define(function (require) {
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
                                             batchesSent++;
-                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                             deferreds[deferreds.length - 1].done(function() {
                                                 updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2181,7 +2183,7 @@ define(function (require) {
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         batchesSent++;
-                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         deferreds[deferreds.length - 1].done(function() {
                                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2223,7 +2225,7 @@ define(function (require) {
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         batchesSent++;
-                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         deferreds[deferreds.length - 1].done(function() {
                                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2242,7 +2244,7 @@ define(function (require) {
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
                         batchesSent++;
-                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                         deferreds[deferreds.length - 1].done(function() {
                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -2695,7 +2697,7 @@ define(function (require) {
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         batchesSent++;
-                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         deferreds[deferreds.length - 1].done(function() {
                                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -3016,7 +3018,7 @@ define(function (require) {
                                             // if necessary, send the next batch of SourcePhrase INSERT transactions
                                             if ((sps.length % MAX_BATCH) === 0) {
                                                 batchesSent++;
-                                                updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                                updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                                 deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                                 deferreds[deferreds.length - 1].done(function() {
                                                     updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -3074,7 +3076,7 @@ define(function (require) {
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         batchesSent++;
-                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         deferreds[deferreds.length - 1].done(function() {
                                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -3141,7 +3143,7 @@ define(function (require) {
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
                                         batchesSent++;
-                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
                                         deferreds[deferreds.length - 1].done(function() {
                                             updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
@@ -3153,7 +3155,7 @@ define(function (require) {
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
                             batchesSent++;
-                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
                             deferreds[deferreds.length - 1].done(function() {
                                 updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
