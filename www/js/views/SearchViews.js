@@ -654,6 +654,8 @@ define(function (require) {
                         if (buttonIndex === 1) {
                             // Delete the selected docs
                             deleteSelectedDocs();
+                            // also disable the delete button (selected items are deleted)
+                            $("#btnDelete").prop("disabled", true);
                         } 
                     }, i18next.t('view.ttlDelete'));
                 } else {
@@ -663,9 +665,10 @@ define(function (require) {
                     if (confirm(strConfirmText)) {
                         // delete the selected docs
                         deleteSelectedDocs();
+                        // also disable the delete button (selected items are deleted)
+                        $("#btnDelete").prop("disabled", true);
                     } 
                 }
-                // TODO: redraw UI (in selected state?)
             },
 
             // Done button handler -- just closes out selection mode

@@ -41,6 +41,8 @@ define(function (require) {
         isGlossKB       = false,
         fileList        = [],
         fileCount       = 0,
+        batchesSent     = 0,
+        intervalID      = 0,
         bookid          = "",
         puncts          = [],
         punctsSource    = [],
@@ -99,6 +101,25 @@ define(function (require) {
                 str += "<li class='topcoat-list__item docListItem' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
             }
             return str;
+        },
+
+        // update the status bar during the import / export process -
+        // This also controls an optional progress bar for longer-running operations 
+        updateStatus = function (str, pct) {
+            $("#status").html(str);
+            if (pct) {
+                // show the progress bar with the percent complete; hide the "waiting" animation
+                if ($("#progress").hasClass("hide")) {
+                    $("#progress").removeClass("hide"); 
+                    $("#waiting").hide();
+                }
+                if (pct < 1) {
+                    pct = 1;
+                } else if (pct > 100) {
+                    pct = 100;
+                }
+                $("#pbar").width(pct + "%");
+            }
         },
 
         // Helper method to store the specified source and target text in the KB.
@@ -189,6 +210,28 @@ define(function (require) {
             if (fileName.length === 0) {
                 fileName = file.name; 
             }
+            // helper method to flatten the state of an array of deferred objects
+            var checkState = function () {
+                if (!deferreds) {
+                    return "pending";
+                }
+                var done = true;
+                for (var i=0; i<deferreds.length; i++) {
+                    if (deferreds[i].state() === "pending") {
+                        done = false;
+                        return "pending";
+                    }
+                }
+                // if we got here, all the deferreds have resolved or rejected. If _any_ have rejected,
+                // return "rejected"; if not, return "resolved"
+                for (var i=0; i<deferreds.length; i++) {
+                    if (deferreds[i].state() === "rejected") {
+                        done = false;
+                        return "rejected";
+                    }
+                }
+                return "resolved";
+            }           
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
@@ -196,6 +239,7 @@ define(function (require) {
                 $("#mobileSelect").html(""); // remove mobile UI (some duplicate IDs)
                 $("#loading").hide();
                 $("#waiting").hide();
+                $("#progress").hide();
                 $("#browserSelect").hide(); // hide the "choose file" button (browser)
                 // show the import status
                 $("#browserGroup").show();
@@ -231,6 +275,7 @@ define(function (require) {
                     // mobile "please wait" UI
                     $("#loading").hide();
                     $("#waiting").hide();
+                    $("#progress").hide();
                     $("#OK").show();
                 }
                 // display the OK button
@@ -384,7 +429,12 @@ define(function (require) {
                                 sps.push(sp);
                                 // if necessary, send the next batch of SourcePhrase INSERT transactions
                                 if ((sps.length % MAX_BATCH) === 0) {
+                                    batchesSent++;
+                                    updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                     deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    deferreds[deferreds.length - 1].done(function() {
+                                        updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                    });
                                 }
                                 i++;
                                 norder++;
@@ -394,15 +444,31 @@ define(function (require) {
 
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
+
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index), {silent: true});
@@ -725,7 +791,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         i++;
                                     }
@@ -806,15 +877,30 @@ define(function (require) {
                     parseNode($($xml).find("usx"));
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function () {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
@@ -1358,28 +1444,6 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
-
-                    // EDB 30/9/2022 removed -- currently AI does not add the language info to the Glossing KB, so
-                    // we can't validate that the KB belongs to this project.
-
-                    // ** Sanity check #2: is this KB from a project in our DB? 
-                    // (source and target need to match a project in the DB -- if they do, get the project ID)
-                    // i = contents.indexOf("srcName") + 9;
-                    // srcName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    // i = contents.indexOf("tgtName") + 9;
-                    // tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    // elts = window.Application.ProjectList.filter(function (element) {
-                    //     return (element.attributes.TargetLanguageName === tgtName &&
-                    //            element.attributes.SourceLanguageName === srcName);
-                    // });
-                    // if (elts.length > 0) {
-                    //     // found a match -- pull out the
-                    //     projectid = elts[0].attributes.projectid;
-                    // } else {
-                    //     // no match -- exit out (need to create a project with this src/tgt before importing a KB)
-                    //     errMsg = i18n.t("view.dscErrWrongKB");
-                    //     return false;
-                    // }
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our gloss KB empty?
@@ -1926,7 +1990,12 @@ define(function (require) {
                         sps.push(sp);
                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                         if ((sps.length % MAX_BATCH) === 0) {
+                            batchesSent++;
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                            deferreds[deferreds.length - 1].done(function() {
+                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                            });
                         }
                         // add this item to the KB
                         // TODO: build up punctpairs
@@ -2015,7 +2084,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         markers = ""; // reset
                                     } else {
@@ -2063,7 +2137,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         markers = ""; // reset                                        
                                     }
@@ -2101,7 +2180,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });
                                     }
                                     markers = ""; // reset
                                     filterIdx++;
@@ -2138,7 +2222,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                     markers = ""; // reset
                                     filterIdx++;
@@ -2152,15 +2241,30 @@ define(function (require) {
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
                     // update the last chapter's verseCount and last adapted verse
                     chapter.set('lastadapted', lastAdapted, {silent: true});
                     chapter.set('versecount', verseCount, {silent: true});
@@ -2383,6 +2487,12 @@ define(function (require) {
                         // reset the objects to the beginning of this book (chapter 1)
                         chapterID = book.get("chapters")[0]; // first chapter of the current book (UUID string)
                         chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
+                        if (chapter === null) {
+                            // Ugh. Can't find the chapter in the list. This _might_ mean that we had a corruption
+                            // when deleting a chapter / book earlier -- error out.
+                            errMsg = i18n.t("view.dscErrMergeNoChapID", {chapter: chapterID});
+                            return false;
+                        }
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
@@ -2584,7 +2694,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                 } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
                                         (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
@@ -2900,7 +3015,12 @@ define(function (require) {
                                             sps.push(sp);
                                             // if necessary, send the next batch of SourcePhrase INSERT transactions
                                             if ((sps.length % MAX_BATCH) === 0) {
+                                                batchesSent++;
+                                                updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                                 deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                                deferreds[deferreds.length - 1].done(function() {
+                                                    updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                                });            
                                             }
                                         }
                                     }
@@ -2953,7 +3073,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                     i++;
                                 }
@@ -3015,22 +3140,43 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                 }
                             }
                         }
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
-                            $("#status").html(i18n.t("view.dscStatusSaving"));
+                            batchesSent++;
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                            deferreds[deferreds.length - 1].done(function() {
+                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                            });
                         }
+
                         // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                        $.when.apply($, deferreds).done(function (value) {
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        intervalID = window.setInterval(function(deferreds) {
+                            var result = checkState(deferreds);
+                            if (result === "pending") {
+                                // pending -- do nothing
+                            } else if (result === "resolved") {
+                                // resolved
+                                clearInterval(intervalID);
+                                intervalID = 0;
+                                importSuccess();
+                            } else {
+                                // rejected
+                                clearInterval(intervalID);
+                                intervalID = 0;
+                                importFail(result);
+                            }
+                        }, 1000);
                         // update the last chapter's verseCount if needed
                         if (chapter.get('versecount') < verseCount) {
                             chapter.set('versecount', verseCount);

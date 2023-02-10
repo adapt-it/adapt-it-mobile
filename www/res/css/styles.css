@@ -525,6 +525,13 @@ button.light-grey {
 .fixfixed .main_title {
     position:absolute;
 }
+#progress {
+    background-color: grey;
+}
+#pbar {
+    width: 1%;
+    background-color: #1F7BA5;
+}
 .control-row {
     padding-bottom: 3px;
     padding-top: 3px;
@@ -759,15 +766,15 @@ ul {
     background-size: cover;
     padding: 0;
 }
-.topcoat-icon--delete-ft {
-    background: url("images/delete-ft.svg") no-repeat;
+.topcoat-icon--ft-off {
+    background: url("images/ft-off.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     padding: 0;
 }
-.topcoat-icon--delete-ft-lt {
-    background: url("images/delete-ft-light.svg") no-repeat;
+.topcoat-icon--ft-on {
+    background: url("images/ft-on.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;

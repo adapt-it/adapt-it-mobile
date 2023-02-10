@@ -76,6 +76,8 @@ define(function (require) {
         longPressTimeout = null,
         lastOffset = 0,
         ONE_SPACE = " ",
+        NO_FT = "^^",
+        emptyFT = false,
         editorModeEnum   = {
             ADAPTING: 1,
             GLOSSING: 2,
@@ -4059,10 +4061,14 @@ define(function (require) {
                 "click #phAfter": "togglePHAfter",
                 "click #Phrase": "togglePhrase",
                 "click #Retranslation": "toggleRetranslation",
-                "click #grow-ft": "onGrowFT",
-                "click #shrink-ft": "onShrinkFT",
-                "click #adjust-ft": "onAdjustFT",
-                "click #delete-ft": "onDeleteFT",
+                "click #growFT": "onGrowFT",
+                "click #shrinkFT": "onShrinkFT",
+                "click #adjustFT": "onAdjustFT",
+                "click #noFT": "toggleNoFT",
+                "click #mnuGrowFT": "onGrowFT",
+                "click #mnuShrinkFT": "onShrinkFT",
+                "click #mnuAdjustFT": "onAdjustFT",
+                "click #mnuNoFT": "toggleNoFT",
                 "click #SearchPrev": "onSearchPrev",
                 "click #SearchNext": "onSearchNext",
                 "click #SearchClose": "onSearchClose",
@@ -4814,19 +4820,26 @@ define(function (require) {
 
             },
 
-            // User clicked on the delete Free Translation button -
-            // if there is a FT defined in our selected source phrase, delete it
-            onDeleteFT: function (event) {
+            // User clicked on the No Free Translation button -
+            // adds / removes the "no free translation" flag for this selection
+            toggleNoFT: function (event) {
                 var strID = null,
-                model = null;
+                    model = null;
                 event.stopPropagation();
                 // find the model object associated with this edit field
                 strID = $("#fteditor").attr('data-spid');
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                 model = this.spList.findWhere({spid: strID});
-                // clear out the FT setting in the model
+                // toggle the FT setting in the model
                 if (model) {
-                    model.set('freetrans', "");
+                    model.set('freetrans', NO_FT);
+                }
+                // toggle the toolbar icon
+                if (emptyFT === true) {
+                    emptyFT = false;
+
+                } else {
+                    emptyFT = true;
                 }
             },
 
