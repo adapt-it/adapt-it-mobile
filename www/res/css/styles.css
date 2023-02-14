@@ -525,11 +525,12 @@ button.light-grey {
 .fixfixed .main_title {
     position:absolute;
 }
-#progress {
-    background-color: grey;
+#pb-bg {
+    background-color: #ccc;
 }
 #pbar {
     width: 1%;
+    height: 6px;
     background-color: #1F7BA5;
 }
 .control-row {

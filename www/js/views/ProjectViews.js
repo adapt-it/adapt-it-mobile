@@ -275,9 +275,9 @@ define(function (require) {
                 if ($("#loading").length) {
                     $("#loading").hide();
                     $("#waiting").hide();
-                    $("#OK").show();
+                    $("#btnOK").show();
                 }
-                $("#OK").removeAttr("disabled");
+                $("#btnOK").removeAttr("disabled");
             };
             reader.readAsText(file, "UTF-8");
         },
