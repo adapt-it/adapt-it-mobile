@@ -76,8 +76,8 @@ define(function (require) {
         longPressTimeout = null,
         lastOffset = 0,
         ONE_SPACE = " ",
-        NO_FT = "^^",
-        emptyFT = false,
+        START_FT_BIT = "0000000001000000000000", // pos 12 (2048 in decimal), per Adapt It Desktop
+        END_FT_BIT   = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
         editorModeEnum   = {
             ADAPTING: 1,
             GLOSSING: 2,
@@ -792,6 +792,10 @@ define(function (require) {
                 event.preventDefault();
                 // unselect the current edit field before moving
                 $(event.currentTarget).blur();
+                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    // if we're doing free translation, blur the editor field so it gets saved as well
+                    $("#fteditor").blur();
+                }
                 if (moveForward === false) {
                     // *** move backwards
                     if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).hasClass('pile')) && (!$(selectedStart.previousElementSibling).hasClass('filter'))) {
@@ -2898,7 +2902,7 @@ define(function (require) {
                     origText = model.get("freetrans");
                     // set the edit field (and freetrans text) back to their previous values
                     $("#fteditor").html(origText);
-                    $(UI_ID).find(".ft").html(origText);
+                    $("#" + UI_ID).find(".ft").html(origText);
                 }
                 // Now disable the Undo button...
                 $("#Undo").prop("disabled", true);
@@ -4064,11 +4068,11 @@ define(function (require) {
                 "click #growFT": "onGrowFT",
                 "click #shrinkFT": "onShrinkFT",
                 "click #adjustFT": "onAdjustFT",
-                "click #noFT": "toggleNoFT",
+                "click #clearFT": "onClearFT",
                 "click #mnuGrowFT": "onGrowFT",
                 "click #mnuShrinkFT": "onShrinkFT",
                 "click #mnuAdjustFT": "onAdjustFT",
-                "click #mnuNoFT": "toggleNoFT",
+                "click #mnuClearFT": "onClearFT",
                 "click #SearchPrev": "onSearchPrev",
                 "click #SearchNext": "onSearchNext",
                 "click #SearchClose": "onSearchClose",
@@ -4546,7 +4550,13 @@ define(function (require) {
                         $(value).addClass("ui-selected");
                         // if there's no FT defined, build it from the selected target texts
                         if (FTEmpty === true) {
-                            strFT += $(value).find(".target").html() + " ";
+                            if ($(value).find(".target").html().length > 0) {
+                                // default is the target text
+                                strFT += $(value).find(".target").html() + " ";
+                            } else {
+                                // fall back on the source text
+                                strFT += $(value).find(".source").html() + " ";
+                            }
                         }
                     }
                 });
@@ -4606,6 +4616,7 @@ define(function (require) {
             unselectedFT: function (event) {
                 var value = null,
                     trimmedValue = null,
+                    tmpFlags = "",
                     strID = null,
                     UI_ID = null,
                     model = null;
@@ -4641,14 +4652,46 @@ define(function (require) {
                         if (origText.length > 0) {
                             console.log("User deleted target text: " + origText + " -- removing from DB.");
                             // update the model with the new FT text (nothing)
-                            model.save({freetrans: trimmedValue});
+                            model.set('freetrans', trimmedValue, {silent: true});
+                            // also update the flags
+                            // current selection (selectedStart): has translation AND start translation flags (position 11 and 12)
+                            tmpFlags = model.get("flags").substring(0,9) + "00" + model.get("flags").substring(12);
+                            model.set('flags', tmpFlags, {silent: true});
+                            model.save();
+                            // selectedEnd: end translation (position 13 from left)
+                            if (selectedEnd !== null) {
+                                strID = $(selectedEnd).attr('id');
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                                model = this.spList.findWhere({spid: strID});
+                                if (model) {
+                                    tmpFlags = model.get("flags").substring(0,8) + "0" + model.get("flags").substring(9);
+                                    model.set('flags', tmpFlags, {silent: true});
+                                    model.save();    
+                                }
+                            }
                         }
                     } else {
                         // update the model with the new target text
-                        model.save({freetrans: trimmedValue});
+                        model.set('freetrans', trimmedValue, {silent: true});
+                        // also update the flags
+                        // current selection (selectedStart): has translation AND start translation flags (position 11 and 12)
+                        tmpFlags = model.get("flags").substring(0,9) + "11" + model.get("flags").substring(11);
+                        model.set('flags', tmpFlags, {silent: true});
+                        model.save();
+                        // selectedEnd: end translation (position 13 from left)
+                        if (selectedEnd !== null) {
+                            strID = $(selectedEnd).attr('id');
+                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                            model = this.spList.findWhere({spid: strID});
+                            if (model) {
+                                tmpFlags = model.get("flags").substring(0,8) + "1" + model.get("flags").substring(9);
+                                model.set('flags', tmpFlags, {silent: true});
+                                model.save();    
+                            }
+                        }
                     }
                     // update the FT line in the selectedStart pile
-                    $(UI_ID).find(".ft").html(trimmedValue);
+                    $("#" + UI_ID).find(".ft").html(trimmedValue);
                 } 
                 // check for an old selection and remove it if needed
                 if (selectedStart !== null) {
@@ -4674,6 +4717,10 @@ define(function (require) {
                     keep_going = true,
                     next_edit = null,
                     strFT = "";
+                if (selectedStart === null) {
+                    // selectedStart got cleared out -- set it to the one we kept in the editor field
+                    selectedStart = $("#fteditor").attr('data-spid');
+                }
                 if (selectedEnd) {
                     // there is an end selection set -- move it forwards if possible
                     if ((selectedEnd.nextElementSibling !== null) && ($(selectedEnd.nextElementSibling).hasClass('pile')) && (!$(selectedEnd.nextElementSibling).hasClass('filter'))) {
@@ -4748,6 +4795,10 @@ define(function (require) {
                     keep_going = true,
                     next_edit = null,
                     strFT = "";
+                if (selectedStart === null) {
+                    // selectedStart got cleared out -- set it to the one we kept in the editor field
+                    selectedStart = $("#fteditor").attr('data-spid');
+                }
                 if (selectedEnd && selectedEnd !== selectedStart) {
                     // there is an end selection still set -- move it back one if possible
                     if ((selectedEnd.previousElementSibling !== null) && ($(selectedEnd.previousElementSibling).hasClass('pile')) && (!$(selectedEnd.previousElementSibling).hasClass('filter'))) {
@@ -4811,36 +4862,18 @@ define(function (require) {
                         }
                     }
                 }
-
             },
 
-            // User clicked on the adjust Free Translation button
-            onAdjustFT: function (event) {
-                event.stopPropagation();
-
-            },
-
-            // User clicked on the No Free Translation button -
-            // adds / removes the "no free translation" flag for this selection
-            toggleNoFT: function (event) {
+            // User clicked on the No Free Translation (toggle) button -
+            // remove the selected model's freetrans value in the editor
+            onClearFT: function (event) {
                 var strID = null,
+                    strValue = "",
                     model = null;
-                event.stopPropagation();
-                // find the model object associated with this edit field
-                strID = $("#fteditor").attr('data-spid');
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                model = this.spList.findWhere({spid: strID});
-                // toggle the FT setting in the model
-                if (model) {
-                    model.set('freetrans', NO_FT);
-                }
-                // toggle the toolbar icon
-                if (emptyFT === true) {
-                    emptyFT = false;
 
-                } else {
-                    emptyFT = true;
-                }
+                event.stopPropagation();
+                // If there's something in the editor, clear it out
+                $("#fteditor").html("");
             },
 
             // User clicked the search previous button -- move to the previous item in the search results list;

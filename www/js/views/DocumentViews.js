@@ -50,6 +50,7 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
+        END_FT_BIT      = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
         bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
                                 // in the database?
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
@@ -2539,6 +2540,10 @@ define(function (require) {
                                 if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
                                     sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
                                     prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
+                                }
+                                // default from AI desktop -- set end Free Translation bit to the last SP before a new verse
+                                if (arr[i] === "\\v") {
+                                    sp.set("flags", END_FT_BIT, {silent: true});
                                 }
                                 mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
                                 if (mkr.length > 0 && mkr[0].get("endMarker")) {
