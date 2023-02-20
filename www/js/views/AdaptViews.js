@@ -4655,7 +4655,7 @@ define(function (require) {
                             model.set('freetrans', trimmedValue, {silent: true});
                             // also update the flags
                             // current selection (selectedStart): has translation AND start translation flags (position 11 and 12)
-                            tmpFlags = model.get("flags").substring(0,9) + "00" + model.get("flags").substring(12);
+                            tmpFlags = model.get("flags").substring(0,9) + "00" + model.get("flags").substring(11);
                             model.set('flags', tmpFlags, {silent: true});
                             model.save();
                             // selectedEnd: end translation (position 13 from left)
