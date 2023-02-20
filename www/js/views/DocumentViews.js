@@ -41,6 +41,8 @@ define(function (require) {
         isGlossKB       = false,
         fileList        = [],
         fileCount       = 0,
+        batchesSent     = 0,
+        intervalID      = 0,
         bookid          = "",
         puncts          = [],
         punctsSource    = [],
@@ -48,6 +50,7 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
+        END_FT_BIT      = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
         bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
                                 // in the database?
         MAX_BATCH       = 10000,    // maximum transaction size for SQLite 
@@ -99,6 +102,27 @@ define(function (require) {
                 str += "<li class='topcoat-list__item docListItem' id=" + entries[i].attributes.bookid + ">" + entries[i].attributes.name + "<span class='chevron'></span></li>";
             }
             return str;
+        },
+
+        // update the status bar during the import / export process -
+        // This also controls an optional progress bar for longer-running operations 
+        updateStatus = function (str, pct) {
+            console.log("updateStatus: " + str);
+            $("#status").html(str);
+            if (pct) {
+                // show the progress bar with the percent complete; hide the "waiting" animation
+                if ($("#pb-bg").hasClass("hide")) {
+                    $("#pb-bg").removeClass("hide"); 
+                    $("#waiting").hide();
+                }
+                if (pct < 1) {
+                    pct = 1;
+                } else if (pct > 100) {
+                    pct = 100;
+                }
+                console.log("updateStatus progress: "+ pct + "%");
+                $("#pbar").width(pct + "%");
+            }
         },
 
         // Helper method to store the specified source and target text in the KB.
@@ -189,6 +213,28 @@ define(function (require) {
             if (fileName.length === 0) {
                 fileName = file.name; 
             }
+            // helper method to flatten the state of an array of deferred objects
+            var checkState = function () {
+                if (!deferreds) {
+                    return "pending";
+                }
+                var done = true;
+                for (var i=0; i<deferreds.length; i++) {
+                    if (deferreds[i].state() === "pending") {
+                        done = false;
+                        return "pending";
+                    }
+                }
+                // if we got here, all the deferreds have resolved or rejected. If _any_ have rejected,
+                // return "rejected"; if not, return "resolved"
+                for (var i=0; i<deferreds.length; i++) {
+                    if (deferreds[i].state() === "rejected") {
+                        done = false;
+                        return "rejected";
+                    }
+                }
+                return "resolved";
+            }           
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
@@ -196,6 +242,7 @@ define(function (require) {
                 $("#mobileSelect").html(""); // remove mobile UI (some duplicate IDs)
                 $("#loading").hide();
                 $("#waiting").hide();
+                $("#pb-bg").hide();
                 $("#browserSelect").hide(); // hide the "choose file" button (browser)
                 // show the import status
                 $("#browserGroup").show();
@@ -214,8 +261,8 @@ define(function (require) {
                     $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                     $("#BookName").val(bookName);
                 }
-                $("#OK").show();
                 // display the OK button
+                $("#OK").removeClass("hide");
                 $("#OK").removeAttr("disabled");
             };
             // Callback for when the file failed to import
@@ -231,10 +278,11 @@ define(function (require) {
                     // mobile "please wait" UI
                     $("#loading").hide();
                     $("#waiting").hide();
-                    $("#OK").show();
+                    $("#pb-bg").hide();
                 }
                 // display the OK button
-                $("#OK").removeAttr("disabled");
+                $("#btnOK").removeClass("hide");
+                $("#btnOK").removeAttr("disabled");
             };
             
             // callback method for when the FileReader has finished loading in the file
@@ -384,7 +432,12 @@ define(function (require) {
                                 sps.push(sp);
                                 // if necessary, send the next batch of SourcePhrase INSERT transactions
                                 if ((sps.length % MAX_BATCH) === 0) {
+                                    batchesSent++;
+                                    updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailWords", {count: sps.length})}), 0);
                                     deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                    deferreds[deferreds.length - 1].done(function() {
+                                        updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                    });
                                 }
                                 i++;
                                 norder++;
@@ -394,15 +447,31 @@ define(function (require) {
 
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailWords", {count: sps.length})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
+
                     // for non-scripture texts, there are no verses. Keep track of how far we are by using a 
                     // negative value for the # of SourcePhrases in the text.
                     chapter.set('versecount', -(index), {silent: true});
@@ -725,7 +794,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         i++;
                                     }
@@ -806,15 +880,30 @@ define(function (require) {
                     parseNode($($xml).find("usx"));
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function () {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
                     // update the last chapter's verseCount
                     chapter.set('versecount', verseCount, {silent: true});
                     chapter.save();
@@ -1358,28 +1447,6 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrCannotFindKB");
                         return false;
                     }
-
-                    // EDB 30/9/2022 removed -- currently AI does not add the language info to the Glossing KB, so
-                    // we can't validate that the KB belongs to this project.
-
-                    // ** Sanity check #2: is this KB from a project in our DB? 
-                    // (source and target need to match a project in the DB -- if they do, get the project ID)
-                    // i = contents.indexOf("srcName") + 9;
-                    // srcName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    // i = contents.indexOf("tgtName") + 9;
-                    // tgtName = contents.substring(i, contents.indexOf("\"", i + 1));
-                    // elts = window.Application.ProjectList.filter(function (element) {
-                    //     return (element.attributes.TargetLanguageName === tgtName &&
-                    //            element.attributes.SourceLanguageName === srcName);
-                    // });
-                    // if (elts.length > 0) {
-                    //     // found a match -- pull out the
-                    //     projectid = elts[0].attributes.projectid;
-                    // } else {
-                    //     // no match -- exit out (need to create a project with this src/tgt before importing a KB)
-                    //     errMsg = i18n.t("view.dscErrWrongKB");
-                    //     return false;
-                    // }
 
                     // AIM 1.7.0: KB restore support (#461)
                     // This is a KB that matches our project. Is our gloss KB empty?
@@ -1926,7 +1993,12 @@ define(function (require) {
                         sps.push(sp);
                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                         if ((sps.length % MAX_BATCH) === 0) {
+                            batchesSent++;
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                            deferreds[deferreds.length - 1].done(function() {
+                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                            });
                         }
                         // add this item to the KB
                         // TODO: build up punctpairs
@@ -2015,7 +2087,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         markers = ""; // reset
                                     } else {
@@ -2063,7 +2140,12 @@ define(function (require) {
                                         sps.push(sp);
                                         // if necessary, send the next batch of SourcePhrase INSERT transactions
                                         if ((sps.length % MAX_BATCH) === 0) {
+                                            batchesSent++;
+                                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                            deferreds[deferreds.length - 1].done(function() {
+                                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                            });        
                                         }
                                         markers = ""; // reset                                        
                                     }
@@ -2101,7 +2183,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });
                                     }
                                     markers = ""; // reset
                                     filterIdx++;
@@ -2138,7 +2225,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                     markers = ""; // reset
                                     filterIdx++;
@@ -2152,15 +2244,30 @@ define(function (require) {
                     });
                     // add any remaining sourcephrases
                     if ((sps.length % MAX_BATCH) > 0) {
-                        $("#status").html(i18n.t("view.dscStatusSaving"));
+                        batchesSent++;
+                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                        deferreds[deferreds.length - 1].done(function() {
+                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                        });
                     }
                     // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                    $.when.apply($, deferreds).done(function (value) {
-                        importSuccess();
-                    }).fail(function (e) {
-                        importFail(e);
-                    });
+                    intervalID = window.setInterval(function() {
+                        var result = checkState();
+                        if (result === "pending") {
+                            // pending -- do nothing
+                        } else if (result === "resolved") {
+                            // resolved
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importSuccess();
+                        } else {
+                            // rejected
+                            clearInterval(intervalID);
+                            intervalID = 0;
+                            importFail(result);
+                        }
+                    }, 1000);
                     // update the last chapter's verseCount and last adapted verse
                     chapter.set('lastadapted', lastAdapted, {silent: true});
                     chapter.set('versecount', verseCount, {silent: true});
@@ -2383,6 +2490,12 @@ define(function (require) {
                         // reset the objects to the beginning of this book (chapter 1)
                         chapterID = book.get("chapters")[0]; // first chapter of the current book (UUID string)
                         chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
+                        if (chapter === null) {
+                            // Ugh. Can't find the chapter in the list. This _might_ mean that we had a corruption
+                            // when deleting a chapter / book earlier -- error out.
+                            errMsg = i18n.t("view.dscErrMergeNoChapID", {chapter: chapterID});
+                            return false;
+                        }
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
@@ -2427,6 +2540,10 @@ define(function (require) {
                                 if ((arr[i] === "\\p" || arr[i] === "\\c" || arr[i] === "\\v") && prepuncts.length > 0) {
                                     sp.set("follpuncts", (sp.get("follpuncts") + prepuncts), {silent: true});
                                     prepuncts = ""; // clear out the punctuation -- it's set on the previous sp now
+                                }
+                                // default from AI desktop -- set end Free Translation bit to the last SP before a new verse
+                                if (arr[i] === "\\v") {
+                                    sp.set("flags", END_FT_BIT, {silent: true});
                                 }
                                 mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
                                 if (mkr.length > 0 && mkr[0].get("endMarker")) {
@@ -2584,7 +2701,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                 } else if ((arr[i] === "\\c") || (arr[i] === "\\ca") || (arr[i] === "\\cp") ||
                                         (arr[i] === "\\v") || (arr[i] === "\\va") || (arr[i] === "\\vp")) {
@@ -2900,7 +3022,12 @@ define(function (require) {
                                             sps.push(sp);
                                             // if necessary, send the next batch of SourcePhrase INSERT transactions
                                             if ((sps.length % MAX_BATCH) === 0) {
+                                                batchesSent++;
+                                                updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                                 deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                                deferreds[deferreds.length - 1].done(function() {
+                                                    updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                                });            
                                             }
                                         }
                                     }
@@ -2953,7 +3080,12 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                     i++;
                                 }
@@ -3015,22 +3147,43 @@ define(function (require) {
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
+                                        batchesSent++;
+                                        updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                                         deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - MAX_BATCH)));
+                                        deferreds[deferreds.length - 1].done(function() {
+                                            updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                                        });    
                                     }
                                 }
                             }
                         }
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
-                            $("#status").html(i18n.t("view.dscStatusSaving"));
+                            batchesSent++;
+                            updateStatus(i18n.t("view.dscStatusSaving", {number: batchesSent, details: i18n.t("view.detailChapterVerse", {chap: chapterName, verse: verseCount})}), 0);
                             deferreds.push(sourcePhrases.addBatch(sps.slice(sps.length - (sps.length % MAX_BATCH))));
+                            deferreds[deferreds.length - 1].done(function() {
+                                updateStatus(i18n.t("view.dscStatusSavingProgress", {number: deferreds.length, total: batchesSent}), Math.floor(deferreds.length / batchesSent * 100));
+                            });
                         }
+
                         // track all those deferred calls to addBatch -- when they all complete, report the results to the user
-                        $.when.apply($, deferreds).done(function (value) {
-                            importSuccess();
-                        }).fail(function (e) {
-                            importFail(e);
-                        });
+                        intervalID = window.setInterval(function(deferreds) {
+                            var result = checkState(deferreds);
+                            if (result === "pending") {
+                                // pending -- do nothing
+                            } else if (result === "resolved") {
+                                // resolved
+                                clearInterval(intervalID);
+                                intervalID = 0;
+                                importSuccess();
+                            } else {
+                                // rejected
+                                clearInterval(intervalID);
+                                intervalID = 0;
+                                importFail(result);
+                            }
+                        }, 1000);
                         // update the last chapter's verseCount if needed
                         if (chapter.get('versecount') < verseCount) {
                             chapter.set('versecount', verseCount);
@@ -3060,7 +3213,7 @@ define(function (require) {
                     importFail(this.error);
                     return false;
                 }
-                
+
                 // convert contents to string
                 var contents = new TextDecoder('utf-8').decode((this.result));
 
@@ -3207,7 +3360,7 @@ define(function (require) {
                 // display the OK button
                 $("#loading").hide();
                 $("#waiting").hide();
-                $("#OK").show();
+                $("#OK").removeClass("hide");
                 $("#OK").removeAttr("disabled");
             };
             // Callback for when the file failed to import
@@ -3219,7 +3372,7 @@ define(function (require) {
                 $("#loading").hide();
                 $("#waiting").hide();
                 // display the OK button
-                $("#OK").show();
+                $("#OK").removeClass("hide");
                 $("#OK").removeAttr("disabled");
             };
             
@@ -4963,6 +5116,7 @@ define(function (require) {
                 "change #selFile": "browserImportDocs",
                 "click .topcoat-list__item": "mobileImportDocs",
                 "click #btnClipboard": "onBrowserClipboard",
+                "click #btnCancel": "onCancel",
                 "click #OK": "onOK"
             },
             // Resume handler -- user placed the app in the background, then resumed.
@@ -4987,8 +5141,10 @@ define(function (require) {
                 // replace the selection UI with the import UI
                 $("#browserGroup").hide();
                 $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                $("#btnCancel").show();                
                 $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
-                $("#OK").hide();
+                $("#btnOK").hide();
                 // import the specified file
                 importFile(file, this.model);
             },
@@ -5028,8 +5184,9 @@ define(function (require) {
             // from the path using the cordova-plugin-file / filesystem API.
             mobileImportDocs: function (event) {
                 // replace the selection UI with the import UI
-                $("#OK").hide();
                 $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                $("#btnCancel").show();                
                 // find all the selected file
                 var index = $(event.currentTarget).attr('id').trim();
                 var model = this.model;
@@ -5067,6 +5224,62 @@ define(function (require) {
                         });
                 }
             },
+            // Handler for the Cancel button (in the loading / please wait template) --
+            // user is cancelling the import (might be hung?)
+            onCancel: function () {
+                // User is cancelling the import operation -- roll back and go home
+                var deletedCurrentDoc = false;
+                var lastAdaptedBookID = window.Application.currentProject.get('lastAdaptedBookID').toString();
+                if (isKB === false) {
+                    // can only really roll back a book import (by deleting it)
+                    var book = window.Application.BookList.where({projectid: this.model.get('projectid'), filename: fileName})[0];
+                    if (book) {
+                        // got as far as saving the book -- did we happen to set this to the current book?
+                        key = book.get("bookid");
+                        console.log("deleting bookID: " + key);
+                        // are we deleting something we were just working on?
+                        if (lastAdaptedBookID === key) {
+                            // yup -- flag this condition, so we can deal with it below
+                            deletedCurrentDoc = true;
+                        }
+                        // First, remove the book from the collection
+                        window.Application.BookList.remove(book);
+                        // ...and destroy the book and contents (SQL includes chapters and sourcephrases)
+                        book.destroy();
+                        // Now do any extra processing to reset the last document, etc...
+                        // Did we just delete all the books?
+                        if (window.Application.BookList.length === 0) {
+                            // no books left in the list -- clear out the last adapted chapter and book
+                            window.Application.currentProject.set('lastDocument', "");
+                            window.Application.currentProject.set('lastAdaptedBookID', 0);
+                            window.Application.currentProject.set('lastAdaptedChapterID', 0);
+                            window.Application.currentProject.save();
+                        } else if (deletedCurrentDoc === true) {
+                            // we deleted the current doc, BUT there are other books in the book list --
+                            // reset the current chapter and book to the first book in our collection                
+                            var bk = window.Application.BookList.at(0);
+                            if (bk) {
+                                var cid = bk.get("chapters")[0];
+                                window.Application.currentProject.set('lastDocument', bk.get("name"));
+                                window.Application.currentProject.set('lastAdaptedBookID', bk.get("bookid"));
+                                window.Application.currentProject.set('lastAdaptedChapterID', cid);
+                                var chapter = window.Application.ChapterList.findWhere({chapterid: cid});
+                                if (chapter) {
+                                    window.Application.currentProject.set('lastAdaptedName', chapter.get('name'));
+                                } else {
+                                    // can't get the chapter -- just clear out the lastAdaptedName value
+                                    window.Application.currentProject.set('lastAdaptedName', "");
+                                }
+                                window.Application.currentProject.save();
+                            }
+                        }
+                    }
+                }
+                // Okay, done deleting / rolling back the import -- now head back to the home page
+                window.location.replace("");
+                window.Application.home();
+            },
+
             // Handler for the OK button -- just returns to the home screen.
             onOK: function () {
                 if (isKB === false) {
@@ -5157,7 +5370,6 @@ define(function (require) {
                 if (this.isLoadingFromURL === false) {
                     if (device && (device.platform !== "browser")) {
                         // running on device -- use cordova file plugin to select file
-                        $("#OK").hide();
                         $("#browserGroup").hide();
                         $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                         var localURLs    = [
@@ -5193,8 +5405,6 @@ define(function (require) {
                                     // display the list of files we found
                                     $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
                                     $("#tb").html(statusStr);
-                                    $("#OK").show();
-                                    $("#OK").attr("disabled", true);
                                 } else {
                                     // nothing to select -- inform the user
                                     $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
@@ -5245,8 +5455,6 @@ define(function (require) {
                                             // display the list of files we found
                                             $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
                                             $("#tb").html(statusStr);
-                                            $("#OK").show();
-                                            $("#OK").attr("disabled", true);
                                         } else {
                                             // nothing to select -- inform the user
                                             $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
@@ -5297,6 +5505,7 @@ define(function (require) {
                 "click #toClipboard": "onToClipboard",
                 "click #toFile": "onToFile",
                 "click #OK": "onOK",
+                "click #btnCancel": "onBtnCancel",
                 "click #Cancel": "onCancel"
             },
             // Resume handler -- user placed the app in the background, then resumed.
@@ -5420,12 +5629,25 @@ define(function (require) {
                         $("#loading").html(i18n.t("view.lblExportingPleaseWait"));
                         $("#status").html(i18n.t("view.dscExporting", {file: filename}));
                         $("#OK").hide();
+                        $("#btnCancel").show();                
                         // perform the export
                         if (this.destination === DestinationEnum.CLIPBOARD) {
                             isClipboard = true;
                         }
                         exportDocument(bookid, format, filename);
                     }
+                }
+            },
+            // User clicked the Cancel button DURING EXPORT. This is probably due to a hung export process
+            onBtnCancel: function () {
+                // TODO: roll back any changes?
+                // go back to the previous page
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history -- just go home
+                    window.location.replace("");
                 }
             },
             // User clicked the Cancel button. Here we don't do anything -- just return

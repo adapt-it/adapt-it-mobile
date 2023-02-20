@@ -525,6 +525,14 @@ button.light-grey {
 .fixfixed .main_title {
     position:absolute;
 }
+#pb-bg {
+    background-color: #ccc;
+}
+#pbar {
+    width: 1%;
+    height: 6px;
+    background-color: #1F7BA5;
+}
 .control-row {
     padding-bottom: 3px;
     padding-top: 3px;
@@ -759,15 +767,8 @@ ul {
     background-size: cover;
     padding: 0;
 }
-.topcoat-icon--delete-ft {
-    background: url("images/delete-ft.svg") no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    padding: 0;
-}
-.topcoat-icon--delete-ft-lt {
-    background: url("images/delete-ft-light.svg") no-repeat;
+.topcoat-icon--delete-light {
+    background: url("images/delete-light.svg") no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
