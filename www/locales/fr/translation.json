@@ -350,6 +350,9 @@
         "lblGlossKB": "Base de connaissances glosant",
         "ttlImportGlossKB": "Importer fichier de la base de connaissances glosant?",
         "dscRestoreOrMergeGlossKB": "Il s'agit d'un fichier de la base de connaissances glosant. Vous pouvez restaurer la base de connaissances glosant à partir du fichier importé ou fusionner le fichier avec des gloses existantes.",
+        "lblDefaultFTText": "Texte de traduction libre par défaut",
+        "lblUseGlossText": "Utiliser le texte des gloses",
+        "lblUseTargetText": "Utiliser le texte de la langue cible",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

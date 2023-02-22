@@ -75,6 +75,7 @@ define(function (require) {
         LongPressSectionStart = null,
         longPressTimeout = null,
         lastOffset = 0,
+        defaultFTTarget = false,
         ONE_SPACE = " ",
         START_FT_BIT = "0000000001000000000000", // pos 12 (2048 in decimal), per Adapt It Desktop
         END_FT_BIT   = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
@@ -507,9 +508,6 @@ define(function (require) {
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
                     }
-                    // initial state -- hide (don't display) gloss and FT lines in the chapter 
-                    $(".gloss").addClass("hide"); // gloss line
-                    $(".freetrans").addClass("hide"); // free translation line
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
                         // hide edit mode dropdown menu items
@@ -517,6 +515,9 @@ define(function (require) {
                         $("#mnuAdapting").addClass("hide");
                         $("#mnuGlossing").addClass("hide");
                         $("#mnuFreeTrans").addClass("hide");
+                        // also hide gloss and FT lines in the chapter 
+                        $(".gloss").addClass("hide"); // gloss line
+                        $(".freetrans").addClass("hide"); // free translation line
                     }
                     // even if the show gloss / FT menu items are on, is the height enough to display the menu?
                     var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
@@ -3235,12 +3236,12 @@ define(function (require) {
                     $("#content").removeClass("with-ft");
                 }
                 // hide the gloss and FT lines
-                if (!$(".gloss").hasClass("hide")) {
-                    $(".gloss").addClass("hide");
-                }
-                if (!$(".ft").hasClass("hide")) {
-                    $(".ft").addClass("hide");
-                }
+                // if (!$(".gloss").hasClass("hide")) {
+                //     $(".gloss").addClass("hide");
+                // }
+                // if (!$(".ft").hasClass("hide")) {
+                //     $(".ft").addClass("hide");
+                // }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
                 }
@@ -3258,12 +3259,12 @@ define(function (require) {
                 // Flip the translation / gloss lines?
                 // ********************
                 // show the gloss line only
-                if ($(".gloss").hasClass("hide")) {
-                    $(".gloss").removeClass("hide");
-                }
-                if (!$(".ft").hasClass("hide")) {
-                    $(".ft").addClass("hide");
-                }
+                // if ($(".gloss").hasClass("hide")) {
+                //     $(".gloss").removeClass("hide");
+                // }
+                // if (!$(".ft").hasClass("hide")) {
+                //     $(".ft").addClass("hide");
+                // }
                 // clear any old UI "selecting" blue
                 $("div").removeClass("ui-selecting ui-selected");
 
@@ -3282,12 +3283,12 @@ define(function (require) {
                 $(".gloss").attr('contenteditable', false);
                 $(".target").attr('contenteditable', false);
                 // show the FT line only
-                if (!$(".gloss").hasClass("hide")) {
-                    $(".gloss").addClass("hide");
-                }
-                if ($(".ft").hasClass("hide")) {
-                    $(".ft").removeClass("hide");
-                }
+                // if (!$(".gloss").hasClass("hide")) {
+                //     $(".gloss").addClass("hide");
+                // }
+                // if ($(".ft").hasClass("hide")) {
+                //     $(".ft").removeClass("hide");
+                // }
                 // show the free translation editor area
                 if (!($("#freetrans").hasClass("show-flex"))) {
                     $("#freetrans").addClass("show-flex");
@@ -4044,6 +4045,9 @@ define(function (require) {
                 addStyleRules(this.project);
                 // initial state: adapting -- show adapting-related UI
                 editorMode = editorModeEnum.ADAPTING;
+                if (localStorage.getItem("DefaultFTTarget") && (localStorage.getItem("DefaultFTTarget") === "true")) {
+                    defaultFTTarget = true;
+                }
                 $("#adapt-toolbar").addClass("show");
             },
             ////
@@ -4245,6 +4249,18 @@ define(function (require) {
                 event.stopPropagation();
             },
             onModeAdapting: function (event) {
+                // blur fields as appropriate (save current values)
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".target").blur();
+                    }
+                } else if (editorMode === editorModeEnum.GLOSSING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".gloss").blur();
+                    }
+                } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    $("#fteditor").blur();
+                }
                 // check / uncheck menu items as appropriate
                 if ($("#optAdapting").hasClass("invisible")) {
                     $("#optAdapting").removeClass("invisible");
@@ -4283,6 +4299,18 @@ define(function (require) {
                 event.stopPropagation();
             },
             onModeGlossing: function (event) {
+                // blur fields as appropriate (save current values)
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".target").blur();
+                    }
+                } else if (editorMode === editorModeEnum.GLOSSING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".gloss").blur();
+                    }
+                } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    $("#fteditor").blur();
+                }
                 // check / uncheck menu items as appropriate
                 if (!$("#optAdapting").hasClass("invisible")) {
                     $("#optAdapting").addClass("invisible");
@@ -4317,6 +4345,18 @@ define(function (require) {
                 event.stopPropagation();
             },
             onModeFreeTrans: function (event) {
+                // blur fields as appropriate (save current values)
+                if (editorMode === editorModeEnum.ADAPTING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".target").blur();
+                    }
+                } else if (editorMode === editorModeEnum.GLOSSING) {
+                    if (selectedStart) {
+                        $(selectedStart).find(".gloss").blur();
+                    }
+                } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                    $("#fteditor").blur();
+                }
                 // check / uncheck menu items as appropriate
                 if (!$("#optAdapting").hasClass("invisible")) {
                     $("#optAdapting").addClass("invisible");
@@ -4548,14 +4588,16 @@ define(function (require) {
                 $(selectedStart.parentElement).children().each(function (index, value) {
                     if (index >= idxStart && index <= idxEnd) {
                         $(value).addClass("ui-selected");
-                        // if there's no FT defined, build it from the selected target texts
+                        // if there's no FT defined, build it
                         if (FTEmpty === true) {
-                            if ($(value).find(".target").html().length > 0) {
-                                // default is the target text
+                            // did the user want the target or gloss text as a default?
+                            // (note that if there's no target or gloss for the selection, the default text will be blank)
+                            if (defaultFTTarget === true) {
+                                // default is target text
                                 strFT += $(value).find(".target").html() + " ";
                             } else {
-                                // fall back on the source text
-                                strFT += $(value).find(".source").html() + " ";
+                                // default is gloss text
+                                strFT += $(value).find(".gloss").html() + " ";
                             }
                         }
                     }

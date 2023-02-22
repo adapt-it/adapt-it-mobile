@@ -350,6 +350,9 @@
         "ttlImportGlossKB": "Import Glossing Knowledge Base?",
         "dscRestoreOrMergeGlossKB": "This is a Glossing Knowledge Base file. You can Restore the Glossing Knowledge Base from the imported file, or Merge the file with existing glosses.",
         "optUpdateImport": "Update \"__document__\"",
+        "lblDefaultFTText": "Default Free Translation Text",
+        "lblUseGlossText": "Use Gloss Text",
+        "lblUseTargetText": "Use Target Text",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
