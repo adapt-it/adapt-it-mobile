@@ -6,13 +6,17 @@
 <div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="EditBlankPiles" value="false"> <div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblEditBlankPiles'}}</label></div>
 <div class="control-row" style="padding-left:6px;"><label class="topcoat-checkbox"><input type="checkbox" id="ShowGlossFT" value="false"> <div class="topcoat-checkbox__checkmark"></div>{{t 'view.lblShowGlossFT'}}</label></div> 
 </div>
-<div class="control-row"></div>
+<div class="control-group hide" id="defaultFT">
+  <div class="control-row">{{ t 'view.lblDefaultFTText'}}</div>
+  <div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="FTUseGloss" name="FT"><div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseGlossText'}}</label></div>
+  <div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="FTUseTarget" name="FT"><div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseTargetText'}}</label></div>
+</div>
 <div class="control-group">
 <div class="control-row">{{ t 'view.ttlLanguage'}}</div>
-<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="deviceLanguage" name="topcoat">
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="deviceLanguage" name="lang">
   <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseDeviceLanguage'}}
 </label></div>
-<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="customLanguage" name="topcoat">
+<div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="customLanguage" name="lang">
     <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseCustomLanguage'}} 
     </label>
     <select id="language" class="docNav" style="margin-left:2em; margin-top: 6px;">

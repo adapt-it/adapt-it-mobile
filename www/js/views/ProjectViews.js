@@ -1040,10 +1040,23 @@ define(function (require) {
             template: Handlebars.compile(tplEditorPrefs),
             events: {
                 "click #EditBlankPiles": "onEditBlankPiles",
+                "click #ShowGlossFT": "onClickShowGlossFT",
                 "change #language":   "onSelectCustomLanguage"
             },
             onEditBlankPiles: function () {
                 // TODO: warning that turning this on can cause conflicts during subsequent merges 
+            },
+            onClickShowGlossFT: function () {
+                if ($('#ShowGlossFT').is(':checked') === true) {
+                    $("#defaultFT").removeClass("hide");
+                    if (localStorage.getItem("DefaultFTTarget")) {
+                        $("#FTUseTarget").prop("checked", true);
+                    } else {
+                        $("#FTUseGloss").prop("checked", true); // default (use Gloss)
+                    }
+                } else {
+                    $("#defaultFT").addClass("hide");
+                }
             },
             onSelectCustomLanguage: function () {
                 // change the radio button selection
@@ -1072,8 +1085,16 @@ define(function (require) {
                 }
                 if (localStorage.getItem("ShowGlossFT")) {
                     $("#ShowGlossFT").prop("checked", localStorage.getItem("ShowGlossFT") === "true");
+                    // Also show the "default FT text" groupbox
+                    $("#defaultFT").removeClass("hide");
                 } else {
                     $("#ShowGlossFT").prop("checked", false); // default is false (disabled)
+                    $("#defaultFT").addClass("hide");
+                }
+                if (localStorage.getItem("DefaultFTTarget") && (localStorage.getItem("DefaultFTTarget") === "true")) {
+                    $("#FTUseTarget").prop("checked", true);
+                } else {
+                    $("#FTUseGloss").prop("checked", true); // default (use Gloss)
                 }
                 if (localStorage.getItem("UILang")) {
                     // use custom language -- select the language used
@@ -1326,6 +1347,7 @@ define(function (require) {
                     localStorage.setItem(("StopAtBoundaries"), $("#StopAtBoundaries").is(":checked") ? true : false);
                     localStorage.setItem(("AllowEditBlankSP"), $("#EditBlankPiles").is(":checked") ? true : false);
                     localStorage.setItem(("ShowGlossFT"), $("#ShowGlossFT").is(":checked") ? true : false);
+                    localStorage.setItem(("DefaultFTTarget"), $("#FTUseTarget").is(":checked") ? true : false);
                     if ($("#customLanguage").is(":checked")) {
                         // Use a custom language
                         loc = $('#language').val();
