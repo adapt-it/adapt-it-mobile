@@ -702,7 +702,7 @@ define(function (require) {
                 var result = null;
                 try {
                     // we're looking for an exact match ONLY
-                    result = kblist.findWhere([{'source': key}, {'isGloss': isGloss}]); 
+                    result = kblist.findWhere({'source': key, 'isGloss': isGloss}); 
                     if (typeof result === 'undefined') {
                         return null;
                     }
@@ -2222,6 +2222,7 @@ define(function (require) {
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
                             targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
+                            console.log("selectedAdaptation: populating field from KB: " + targetText);
                             $(event.currentTarget).html(targetText);
                             isDirty = true;
                             // Are we moving?
