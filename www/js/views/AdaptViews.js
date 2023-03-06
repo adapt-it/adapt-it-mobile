@@ -3081,6 +3081,12 @@ define(function (require) {
                 // disable the undo button (no longer editing)
 //                $("#Undo").prop('disabled', true);
 
+                // remove any earlier kb "purple"
+                if (clearKBInput === true) {
+                    $(".gloss").removeClass("fromkb");
+                    clearKBInput = false;
+                }
+
                 // get the gloss text
                 value = $(event.currentTarget).text();
                 // if needed use regex to replace chars we don't want stored in escaped format
