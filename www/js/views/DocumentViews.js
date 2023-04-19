@@ -5284,11 +5284,12 @@ define(function (require) {
                     }
                 }
                 // Okay, done deleting / rolling back the import -- now head back to the home page
-                window.location.replace("");
                 window.Application.home();
             },
 
-            // Handler for the OK button -- just returns to the home screen.
+            // Handler for the OK button:
+            // - If the user has changed the book name, update the name value in the book and each chapter
+            // - Close out the import and move to the home page
             onOK: function () {
                 if (isKB === false) {
                     // update the book name if necessary
@@ -5300,6 +5301,7 @@ define(function (require) {
                         var chapterName = "";
                         var newChapterName = "";
                         var firstChapWithVerses = null;
+                        var chap = null;
                         // book name
                         if (book) {
                             book.set('name', newName, {silent: true});
@@ -5308,11 +5310,12 @@ define(function (require) {
                         // chapter names in the chapter list
                         var chapterList = window.Application.ChapterList.where({bookid: book.get('bookid')});
                         for (i = 0; i < chapterList.length; i++) {
-                            chapterName = chapterList[i].get('name');
+                            chap = chapterList[i];
+                            chapterName = chap.get('name');
                             newChapterName = chapterName.replace(bookName, newName);
-                            chapterList[i].set('name', newChapterName);
-                            if (firstChapWithVerses === null && chapterList[i].get('versecount') !== 0) {
-                                firstChapWithVerses = chapterList[i];
+                            chap.save({name: newChapterName});
+                            if (firstChapWithVerses === null && chap.get('versecount') !== 0) {
+                                firstChapWithVerses = chap;
                             }
                         }
                         // last document and chapter (if the first import)
@@ -5320,7 +5323,7 @@ define(function (require) {
                         if (this.model.get('lastDocument') === bookName) {
                             this.model.set('lastDocument', newName);
                         }
-                        if (this.model.get('lastAdaptedName') === "") {
+                        if (this.model.get('lastAdaptedName') === "" && firstChapWithVerses !== null) {
                             this.model.set('lastAdaptedName', firstChapWithVerses.get('name'));
                         }
                         if (this.model.get('lastAdaptedBookID') === 0) {
@@ -5337,7 +5340,6 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                window.location.replace("");
                 window.Application.home();
             },
             // Show event handler (from MarionetteJS):

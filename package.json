@@ -19,7 +19,7 @@
   "devDependencies": {
     "cordova-android": "^11.0.0",
     "cordova-clipboard": "github:ihadeed/cordova-clipboard",
-    "cordova-ios": "^6.2.0",
+    "cordova-ios": "^6.3.0",
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
@@ -93,8 +93,8 @@
       "cordova-plugin-filepath": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

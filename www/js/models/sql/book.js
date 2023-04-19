@@ -95,16 +95,20 @@ define(function (require) {
                             }
                             args = ids.join(", ");
                         } else {
-                            args = "\"" + res.rows.item[0].chapterid + "\"";
+                            args = "\"" + res.rows.item(0).chapterid + "\"";
                         }
                         var sql = "DELETE FROM sourcephrase WHERE chapterid IN (?);";
                         console.log("Delete statement: " + sql + ", args: " + args);
                         tx.executeSql(sql, [args], function (tx, res2) {
                             console.log("DELETE sourcephrases ok: " + res2.toString());
+                        }, function (tx, err) {
+                            console.log("book::destroy() / sourcephrase DELETE error: " + err.message);
                         });
                         // delete the chapters
                         tx.executeSql("DELETE FROM chapter WHERE bookid=?", [attributes.bookid], function (tx, res) {
                             console.log("DELETE chapters ok: " + res.toString());
+                        }, function (tx, err) {
+                            console.log("book::destroy() chapter DELETE error: " + err.message);
                         });
                     });
 
@@ -112,7 +116,7 @@ define(function (require) {
                     tx.executeSql("DELETE FROM book WHERE bookid=?;", [attributes.bookid], function (tx, res) {
                         console.log("DELETE bookid ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("DELETE error: " + err.message);
+                        console.log("book::destroy() / book DELETE error: " + err.message);
                     });
                 }, function (e) {
                     deferred.reject(e);
