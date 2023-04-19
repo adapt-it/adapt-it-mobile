@@ -1957,6 +1957,9 @@ typeahead styles
 	border-width: 13px;
 	margin-left: -13px;
 }
+.actions-smaller {
+    right: 90px;
+}
 .li-chk {
     display: none;
 	background-image: url("images/chk_clear.svg");

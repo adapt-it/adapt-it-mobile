@@ -2332,6 +2332,23 @@ define(function (require) {
                     var defer = $.Deferred();
 
                     console.log("Reading USFM file:" + fileName);
+                    // find the ID of this book:
+                    // any USFM file MUST have an \id marker
+                    index = contents.indexOf("\\id");
+                    if (index === -1) {
+                        // no ID found -- return
+                        errMsg = i18n.t("view.dscErrCannotFindID");
+                        return false;
+                    }
+                    markerList.fetch({reset: true, data: {name: ""}});
+                    scrIDList.fetch({reset: true, data: {id: ""}});
+                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0]; // our scripture ID
+                    index = contents.indexOf("\\usfm");
+                    if (index !== -1) {
+                        // usfm version 3.0 or later, probably
+                        versionSpec = contents.substring(index + 5, contents.indexOf(" ", index + 5));
+                    }
+                    // now try to build the book name
                     index = contents.indexOf("\\h ");
                     if (index > -1) {
                         // get the name from the usfm itself
@@ -2350,25 +2367,16 @@ define(function (require) {
                             // most likely has an extension -- remove it for our book name guess
                             bookName = fileName.substring(0, fileName.lastIndexOf('.'));
                         } else {
-                            bookName = fileName;
+                            // it's possible we're dealing with a clipboard USFM fragment.
+                            if (fileName.indexOf(i18n.t("view.lblText") + "-") > -1) {
+                                // This came from the clipboard. There's no \\h marker, but there is an \\id marker.
+                                // Take the bookName from that
+                                bookName = i18n.t("view." + scrID.get("id")); // localized ID book name (only our 6 locales for now)
+                            } else {
+                                bookName = fileName;
+                            }
                         }
                     }
-                    // find the ID of this book:
-                    // any USFM file MUST have an \id marker
-                    index = contents.indexOf("\\id");
-                    if (index === -1) {
-                        // no ID found -- return
-                        errMsg = i18n.t("view.dscErrCannotFindID");
-                        return false;
-                    }
-                    markerList.fetch({reset: true, data: {name: ""}});
-                    scrIDList.fetch({reset: true, data: {id: ""}});
-                    scrID = scrIDList.where({id: contents.substr(index + 4, 3)})[0]; // our scripture ID
-                    index = contents.indexOf("\\usfm");
-                    if (index !== -1) {
-                        // usfm version 3.0 or later, probably
-                        versionSpec = contents.substring(index + 5, contents.indexOf(" ", index + 5));
-                    } 
                     // check encoding -- we only support UTF-8 (default for USFM), due to
                     // sqlite API calls to open the AIM database. 
                     index = contents.indexOf("\\ide");
@@ -2499,7 +2507,7 @@ define(function (require) {
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
                         spsExisting = sourcePhrases.where({chapterid: chapterID}); 
-                        console.log("Total sourcephrases for book: " + sourcePhrases.length);
+                        console.log("Existing sourcephrases for chapter: " + sourcePhrases.length);
                         firstBlock = true;
                         if (spsExisting.length > 0) {
                             // set norder to the first item in our existing list
@@ -5276,11 +5284,12 @@ define(function (require) {
                     }
                 }
                 // Okay, done deleting / rolling back the import -- now head back to the home page
-                window.location.replace("");
                 window.Application.home();
             },
 
-            // Handler for the OK button -- just returns to the home screen.
+            // Handler for the OK button:
+            // - If the user has changed the book name, update the name value in the book and each chapter
+            // - Close out the import and move to the home page
             onOK: function () {
                 if (isKB === false) {
                     // update the book name if necessary
@@ -5291,6 +5300,8 @@ define(function (require) {
                         var i = 0;
                         var chapterName = "";
                         var newChapterName = "";
+                        var firstChapWithVerses = null;
+                        var chap = null;
                         // book name
                         if (book) {
                             book.set('name', newName, {silent: true});
@@ -5299,16 +5310,27 @@ define(function (require) {
                         // chapter names in the chapter list
                         var chapterList = window.Application.ChapterList.where({bookid: book.get('bookid')});
                         for (i = 0; i < chapterList.length; i++) {
-                            chapterName = chapterList[i].get('name');
+                            chap = chapterList[i];
+                            chapterName = chap.get('name');
                             newChapterName = chapterName.replace(bookName, newName);
-                            chapterList[i].set('name', newChapterName);
+                            chap.save({name: newChapterName});
+                            if (firstChapWithVerses === null && chap.get('versecount') !== 0) {
+                                firstChapWithVerses = chap;
+                            }
                         }
                         // last document and chapter (if the first import)
+                        // note that these might have already been set in the readXXXDoc() methods above
                         if (this.model.get('lastDocument') === bookName) {
                             this.model.set('lastDocument', newName);
-                            this.model.set('lastAdaptedName', chapterList[0].get('name'));
+                        }
+                        if (this.model.get('lastAdaptedName') === "" && firstChapWithVerses !== null) {
+                            this.model.set('lastAdaptedName', firstChapWithVerses.get('name'));
+                        }
+                        if (this.model.get('lastAdaptedBookID') === 0) {
                             this.model.set('lastAdaptedBookID', book.get("bookid"));
-                            this.model.set('lastAdaptedChapterID', chapterList[0].get('chapterid'));                        
+                        }
+                        if (this.model.get('lastAdaptedChapterID') === 0) {
+                            this.model.set('lastAdaptedChapterID', firstChapWithVerses.get('chapterid'));                        
                         }
                     }
                     // save the model
@@ -5318,7 +5340,6 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                window.location.replace("");
                 window.Application.home();
             },
             // Show event handler (from MarionetteJS):

@@ -22,15 +22,18 @@
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
-        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/icon/android/icon-nobg-288.png" />
-        <preference name="AndroidWindowSplashScreenBackground" value="#279ED8" />
+        <!-- SDK 26/Android 8.x: currently 5% marketshare as of 2023;
+             Using this as lowest SDK because it supports adaptive icons (for splash / app icon) -->
+        <preference name="android-minSdkVersion" value="26" />
+        <preference name="android-targetSdkVersion" value="32" />
+        <!-- static splash resources no longer used -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/svg/ic_aim_adaptive_splash.xml" />
+        <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#279ED8" />
         <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
-        <preference name="android-minSdkVersion" value="22" />
-        <preference name="android-targetSdkVersion" value="31" />
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -84,12 +87,6 @@
         <icon density="xhdpi" src="www/res/icon/android/xhdpi.png" />
         <icon density="xxhdpi" src="www/res/icon/android/xxhdpi.png" />
         <icon density="xxxhdpi" src="www/res/icon/android/xxxhdpi.png" />
-        <splash density="port-ldpi" src="www/res/screen/android/screen-ldpi-portrait.png" />
-        <splash density="port-mdpi" src="www/res/screen/android/screen-mdpi-portrait.png" />
-        <splash density="port-hdpi" src="www/res/screen/android/screen-hdpi-portrait.png" />
-        <splash density="port-xhdpi" src="www/res/screen/android/screen-xhdpi-portrait.png" />
-        <splash density="port-xxhdpi" src="www/res/screen/android/screen-xxhdpi-portrait.png" />
-        <splash density="port-xxxhdpi" src="www/res/screen/android/screen-xxxhdpi-portrait.png" />
     </platform>
     <platform name="ios">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
