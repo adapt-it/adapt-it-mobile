@@ -27,7 +27,7 @@ Following is a feature comparison chart that helps explain the differences betwe
 
 | Feature                    | ![Adapt It]({{ site.baseurl }}/assets/img/computer.png) Adapt It Desktop | ![Adapt It Mobile]({{ site.baseurl }}/assets/img/tablet.png) Adapt It Mobile |
 |----------------------------|---------------------------------|-------------------------------|
-| Platforms | Windows, Linux, OS X | Android, iOS, Windows Mobile |
+| Platforms | Windows, Linux, OS X | Android, iOS |
 | Create a project | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png)|
 | Import / Copy a project | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png)|
 | Import document | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
@@ -39,8 +39,8 @@ Following is a feature comparison chart that helps explain the differences betwe
 | View/Edit Knowledge Base | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | Export document | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | Collaboration with Paratext / Bibledit | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
-| Glossing | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
-| Free translations | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
+| Glossing | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
+| Free translations | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |
 | Use consistency checker | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) |  |
 | Use Guesser | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | |
 | Edit Notes | ![Yes]({{ site.baseurl }}/assets/img/checkmark.png) | (only by changing USFM filters) |
