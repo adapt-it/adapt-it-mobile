@@ -134,6 +134,8 @@ Click on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to th
 
 Unlike the adaptation editor mode, the user cannot insert / remove placeholders, retranslations, or phrases while glossing. However, the following toolbar buttons are available when in free translation mode:
 
+    ![Free translation toolbar]({{ site.baseurl }}/assets/img/ft-toolbar.png)
+
 ### Expand selection
 
 Click this button to expand the end of the selected text by one word. You can expand the selection up to the phrase boundary (i.e., the next punctuation or verse).
@@ -144,7 +146,7 @@ Click this button to shrink the selected text by one word. You can shrink the se
 
 ### Clear free translation edit field
 
-Click this button to clear / remove the current text in the free translation edit field. You can then leave this selection blank or type in a new free translation for the selected words.
+Click the "trash can" button to clear / remove the current text in the free translation edit field. You can then leave this selection blank or type in a new free translation for the selected words.
 
 The following toolbar buttons are also displayed in each editor mode (adapting, glossing, and free translation):
 
