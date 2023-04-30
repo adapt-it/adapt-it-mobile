@@ -134,7 +134,7 @@ Click on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to th
 
 Unlike the adaptation editor mode, the user cannot insert / remove placeholders, retranslations, or phrases while glossing. However, the following toolbar buttons are available when in free translation mode:
 
-    ![Free translation toolbar]({{ site.baseurl }}/assets/img/ft-toolbar.png)
+![Free translation toolbar]({{ site.baseurl }}/assets/img/ft-toolbar.png)
 
 ### Expand selection
 
