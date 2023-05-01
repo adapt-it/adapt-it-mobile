@@ -85,6 +85,20 @@ Now that you have installed Adapt It Mobile, you'll want to take a look at our s
 * [Inserting a placeholder]({{ site.baseurl }}/adapting#inserting-a-placeholder)
 * [Inserting a retranslation]({{ site.baseurl }}/adapting#inserting-a-retranslation)
 
+## Glossing
+
+* [Enabling gloss and free translation modes]({{ site.baseurl }}/glossing#edit-view-gloss-ft)
+* [Switching editor modes]({{ site.baseurl }}/glossing#switch-editor-modes)
+* [Glossing editor mode]({{ site.baseurl }}/glossing#glossing-mode)
+* [Glossing toolbar]({{ site.baseurl }}/glossing#glossing-toolbar)
+
+## Free translation
+
+* [Enabling gloss and free translation modes]({{ site.baseurl }}/free-translation#edit-view-gloss-ft)
+* [Switching editor modes]({{ site.baseurl }}/free-translation#switch-editor-modes)
+* [Free translation mode]({{ site.baseurl }}/free-translation#free-translation-mode)
+* [Free translation toolbar]({{ site.baseurl }}/free-translation#free-translation-toolbar)
+
 ## Advanced topics
 
 * [Changing the user interface language]({{ site.baseurl }}/advanced-topics#changing-ui-language)
