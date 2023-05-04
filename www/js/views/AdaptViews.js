@@ -3552,7 +3552,7 @@ define(function (require) {
                     PhraseLine0 = "<div id=\"pile-",
                     PhraseLine1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     PhraseLine2 = "</div> <div class=\"source\">",
-                    PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    PhraseLine3 = "</div> <div class=\"target\"  autocapitalize=\"off\" contenteditable=\"true\">",
                     thisObj = this,
                     PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
@@ -3802,7 +3802,7 @@ define(function (require) {
                     RetHtmlLine0 = "<div id=\"pile-",
                     RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     RetHtmlLine2 = "</div> <div class=\"source retranslation\">",
-                    RetHtmlLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    RetHtmlLine3 = "</div> <div class=\"target\"  autocapitalize=\"off\" contenteditable=\"true\">",
                     RetHtmlLine4 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
                 // combine the selection into a new retranslation
