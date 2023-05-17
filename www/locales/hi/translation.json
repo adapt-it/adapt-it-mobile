@@ -350,6 +350,9 @@
         "lblDefaultFTText": "Default Free Translation Text",
         "lblUseGlossText": "Use Gloss Text",
         "lblUseTargetText": "Use Target Text",
+        "lblExportAdaptation": "Export Translation Text",
+        "lblExportGloss": "Export Glosses",
+        "lblExportFT": "Export Free Translation",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

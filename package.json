@@ -1,6 +1,6 @@
 {
   "name": "adapt-it-mobile",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Adapt It Mobile",
   "repository": {
     "type": "git",
@@ -93,8 +93,8 @@
       "cordova-plugin-filepath": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

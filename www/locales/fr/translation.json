@@ -353,6 +353,9 @@
         "lblDefaultFTText": "Texte de traduction libre par défaut",
         "lblUseGlossText": "Utiliser le texte des gloses",
         "lblUseTargetText": "Utiliser le texte de la langue cible",
+        "lblExportAdaptation": "Exporter le texte de traduction",
+        "lblExportGloss": "Exporter les gloses sous forme de texte",
+        "lblExportFT": "Exporter Traduction libre",        
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
