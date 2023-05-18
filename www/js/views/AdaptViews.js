@@ -4480,10 +4480,10 @@ define(function (require) {
                 hopscotch.endTour();
                 if (event.toElement === null) {
                     // toElement doesn't work on this device -- use target to obtain where the event hit
-                    isBlankArea = (!($(event.target).hasClass('strip') || $(event.target).hasClass('pile') || $(event.target).hasClass('marker') || $(event.target).hasClass('source') || $(event.target).hasClass('target')));
+                    isBlankArea = (!($(event.target).hasClass('strip') || $(event.target).hasClass('pile') || $(event.target).hasClass('marker') || $(event.target).hasClass('source') || $(event.target).hasClass('target') || $(event.target).hasClass('ft') || $(event.target).hasClass('gloss')));
                 } else {
                     // toElement works -- use it
-                    isBlankArea = (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target')));
+                    isBlankArea = (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target') || $(event.toElement).hasClass('ft') || $(event.toElement).hasClass('gloss')));
                 }
                 // only do this if we're in a blank area of the screen
                 if (isBlankArea === true) {
