@@ -5859,7 +5859,7 @@ define(function (require) {
             onExportAdaptation: function () {
                 console.log("User is exporting adaptation text");
                 // show the next screen
-                $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportAdaptation'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // Show the file format stuff
                 $("#FileFormats").show();
@@ -5878,7 +5878,7 @@ define(function (require) {
             onExportGloss: function () {
                 console.log("User is exporting gloss text");
                 // show the next screen
-                $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportGloss'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 $("#KBFormats").hide();
                 $("#glossKBFormat").hide();
@@ -5896,7 +5896,7 @@ define(function (require) {
             onExportFT: function () {
                 console.log("User is exporting FT text");
                 // show the next screen
-                $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportFT'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 $("#KBFormats").hide();
                 $("#glossKBFormat").hide();
@@ -5958,6 +5958,7 @@ define(function (require) {
                     list = buildDocumentList(pid);
                     $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
                     $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                    $('#lblDirections').show();
                 }));
             },
             // User selected the clipboard 
@@ -5971,6 +5972,7 @@ define(function (require) {
                     list = buildDocumentList(pid);
                     $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
                     $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                    $('#lblDirections').show();
                 }));
             },
             // User clicked the OK button. Export the selected document to the specified format.
@@ -6086,7 +6088,7 @@ define(function (require) {
                         // "show gloss and FT" is selected -- user might want to export the gloaa or FT instead of the document
                         // Now show the Export Content page to find out what they want to export from this document
                         // show the next screen
-                        $("#lblDirections").html("");
+                        $("#lblDirections").html(i18n.t('view.lblSelectContent'));
                         $("#Container").html(Handlebars.compile(tplExportContent));
                         // remove any file extension found on the book name
                         if (bookName.length > 0) {
@@ -6121,6 +6123,7 @@ define(function (require) {
                 $.when(kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function() {
                     // first step -- clipboard or file?
                     $("#Container").html(Handlebars.compile(tplExportDestination));
+                    $('#lblDirections').hide();
                 });
             }
         });

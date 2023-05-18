@@ -354,8 +354,10 @@
         "lblUseGlossText": "Usar texto de glosas",
         "lblUseTargetText": "Usar texto no idioma de destino",
         "lblExportAdaptation": "Exportar texto de tradução",
-        "lblExportGloss": "Exportar glossários como texto",
-        "lblExportFT": "Exportar Tradução Livre",        
+        "lblSelectContent": "Selecione as informações a serem exportadas.",
+        "lblExportGloss": "Exportar glossários",
+        "lblExportFT": "Exportar Tradução Livre",
+        "lblExportSummary": "__content__ de \"__document__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
