@@ -349,8 +349,13 @@
         "ttlImportGlossKB": "Impot Nolis Base Bilong ol Glos?",
         "dscRestoreOrMergeGlossKB": "This is a Glossing Knowledge Base file. You can Restore the Glossing Knowledge Base from the imported file, or Merge the file with existing glosses.",
         "lblDefaultFTText": "Default Free Translation Text",
-        "lblUseGlossText": "Use Gloss Text",
-        "lblUseTargetText": "Use Target Text",
+        "lblUseGlossText": "Yusim glos teks",
+        "lblUseTargetText": "Yusim trenslesen teks",
+        "lblSelectContent": "Select the type of data to export",
+        "lblExportAdaptation": "Expot trenslesen",
+        "lblExportGloss": "Expot Glos",
+        "lblExportFT": "Expot fri trenslesen",
+        "lblExportSummary": "__content__ bilong \"__document__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

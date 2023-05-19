@@ -444,6 +444,11 @@ button.light-grey {
 .wizard-instructions {
     padding: 6px 6px 6px 6px;
 }
+#lblDirections {
+    height: 24px;
+    background-color: beige;
+    border: 1px white;
+}
 
 .action-button {
     display: block;

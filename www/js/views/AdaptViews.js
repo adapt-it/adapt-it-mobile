@@ -3552,7 +3552,7 @@ define(function (require) {
                     PhraseLine0 = "<div id=\"pile-",
                     PhraseLine1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     PhraseLine2 = "</div> <div class=\"source\">",
-                    PhraseLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    PhraseLine3 = "</div> <div class=\"target\"  autocapitalize=\"off\" contenteditable=\"true\">",
                     thisObj = this,
                     PhraseLine4 = "</div></div>";
                 if (isPhrase === false) {
@@ -3802,7 +3802,7 @@ define(function (require) {
                     RetHtmlLine0 = "<div id=\"pile-",
                     RetHtmlline1 = "\" class=\"pile block-height\"><div class=\"marker\">",
                     RetHtmlLine2 = "</div> <div class=\"source retranslation\">",
-                    RetHtmlLine3 = "</div> <div class=\"target\" contenteditable=\"true\">",
+                    RetHtmlLine3 = "</div> <div class=\"target\"  autocapitalize=\"off\" contenteditable=\"true\">",
                     RetHtmlLine4 = "</div></div>";
                 // if the current selection is a retranslation, remove it; if not,
                 // combine the selection into a new retranslation
@@ -4480,10 +4480,10 @@ define(function (require) {
                 hopscotch.endTour();
                 if (event.toElement === null) {
                     // toElement doesn't work on this device -- use target to obtain where the event hit
-                    isBlankArea = (!($(event.target).hasClass('strip') || $(event.target).hasClass('pile') || $(event.target).hasClass('marker') || $(event.target).hasClass('source') || $(event.target).hasClass('target')));
+                    isBlankArea = (!($(event.target).hasClass('strip') || $(event.target).hasClass('pile') || $(event.target).hasClass('marker') || $(event.target).hasClass('source') || $(event.target).hasClass('target') || $(event.target).hasClass('ft') || $(event.target).hasClass('gloss')));
                 } else {
                     // toElement works -- use it
-                    isBlankArea = (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target')));
+                    isBlankArea = (!($(event.toElement).hasClass('strip') || $(event.toElement).hasClass('pile') || $(event.toElement).hasClass('marker') || $(event.toElement).hasClass('source') || $(event.toElement).hasClass('target') || $(event.toElement).hasClass('ft') || $(event.toElement).hasClass('gloss')));
                 }
                 // only do this if we're in a blank area of the screen
                 if (isBlankArea === true) {

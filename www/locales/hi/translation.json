@@ -350,6 +350,11 @@
         "lblDefaultFTText": "Default Free Translation Text",
         "lblUseGlossText": "Use Gloss Text",
         "lblUseTargetText": "Use Target Text",
+        "lblSelectContent": "Select the type of data to export",
+        "lblExportAdaptation": "Export Translation Text",
+        "lblExportGloss": "Export Glosses",
+        "lblExportFT": "Export Free Translation",
+        "lblExportSummary": "__content__ from \"__document__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

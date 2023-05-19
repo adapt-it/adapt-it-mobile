@@ -21,6 +21,7 @@ define(function (require) {
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         tplImportVerify = require('text!tpl/ImportVerify.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
+        tplExportContent = require('text!tpl/ExportContent.html'),
         tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
         tplExportDestination = require('text!tpl/ExportDestination.html'),
         bookModel       = require('app/models/book'),
@@ -3684,6 +3685,314 @@ define(function (require) {
                 });
             };
 
+            // USFM, but gloss export only
+            var exportUSFMGloss = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var spList = new spModel.SourcePhraseCollection();
+                var markerList = new USFM.MarkerCollection();
+                var markers = "";
+                var i = 0;
+                var idxFilters = 0;
+                var value = null;
+                var chaptersLeft = chapters.length;
+                var filtered = false;
+                var needsEndMarker = "";
+                var mkr = "";
+                var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
+                var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
+                writer.onwriteend = function () {
+                    console.log("write completed.");
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                    exportFail(e);
+                };
+                markerList.fetch({reset: true, data: {name: ""}});
+                console.log("markerList count: " + markerList.length);
+                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                chapters.forEach(function (entry) {
+                    // for each chapter with some adaptation done, get the sourcephrases
+                    if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
+                        spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
+                            console.log("spList: " + spList.length + " items, last id = " + lastSPID);
+                            for (i = 0; i < spList.length; i++) {
+                                value = spList.at(i);
+                                markers = value.get("markers");
+                                // check to see if this sourcephrase is filtered (only looking at the top level)
+                                if (filtered === false) {
+                                    for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                        // sanity check for blank filter strings
+                                        if (filterAry[idxFilters].trim().length > 0) {
+                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                                // this is a filtered sourcephrase -- do not export it
+                                                console.log("filtered: " + markers);
+                                                // however, if there are some markers before we hit our filtered one, 
+                                                // make sure they get exported now
+                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
+                                                if (markers.length > 0) {
+                                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
+                                                            (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) ||
+                                                            (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                                        // pretty-printing -- add a newline so the output looks better
+                                                        chapterString += "\n"; // newline
+                                                    }
+                                                    // now add the markers and a space
+                                                    chapterString += markers + " ";
+                                                }
+                                                chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
+                                                // if there is an end marker associated with this marker,
+                                                // do not export any source phrases until we come across the end marker
+                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                if (mkr[0].get("endMarker")) {
+                                                    needsEndMarker = mkr[0].get("endMarker");
+                                                }
+                                                filtered = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                    // found our ending marker -- this sourcephrase is not filtered
+                                    // first, remove the marker from the markers string so it doesn't print out
+                                    markers = markers.replace(("\\" + needsEndMarker), '');
+                                    // now clear our flags so the sourcephrase exports
+                                    needsEndMarker = "";
+                                    filtered = false;
+                                }
+                                if (filtered === false) {
+                                    // add markers, and if needed, pretty-print the text on a newline
+                                    if (markers.trim().length > 0) {
+                                        if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                            // pretty-printing -- add a newline so the output looks better
+                                            chapterString += "\n"; // newline
+                                        }
+                                        // now add the markers and a space
+                                        chapterString += markers + " ";
+                                    }
+                                    // only emit soursephrase pre/foll puncts if we have something translated in the gloss
+                                    if (value.get("source").length > 0 && value.get("gloss").length > 0) {
+                                        chapterString += value.get("gloss") + " ";
+                                    }
+                                }
+                                if (value.get('spid') === lastSPID) {
+                                    // done -- quit after this sourcePhrase
+                                    console.log("Found last SPID: " + lastSPID);
+                                    break;
+                                }
+                            }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    // ** we are now done with all the chapters -- write out the file
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                            }
+                        });
+                    } else {
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            if (isClipboard === true) {
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
+                            } else {
+                                // done with the chapters
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
+                            content = ""; // clear out the content string
+                        }
+                    }
+                });
+            };
+
+            // USFM, but free translation only
+            var exportUSFMFT = function () {
+                var chapters = window.Application.ChapterList.where({bookid: bookid});
+                var content = "";
+                var spList = new spModel.SourcePhraseCollection();
+                var markerList = new USFM.MarkerCollection();
+                var markers = "";
+                var i = 0;
+                var idxFilters = 0;
+                var value = null;
+                var chaptersLeft = chapters.length;
+                var filtered = false;
+                var needsEndMarker = "";
+                var mkr = "";
+                var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
+                var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
+                writer.onwriteend = function () {
+                    console.log("write completed.");
+                    if (chaptersLeft === 0) {
+                        exportSuccess();
+                    }
+                };
+                writer.onerror = function (e) {
+                    console.log("write failed: " + e.toString());
+                    exportFail(e);
+                };
+                markerList.fetch({reset: true, data: {name: ""}});
+                console.log("markerList count: " + markerList.length);
+                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                chapters.forEach(function (entry) {
+                    // for each chapter with some adaptation done, get the sourcephrases
+                    if (entry.get('lastadapted') !== 0) {
+                        // add a placeholder string for this chapter, so that it ends up in order (the call to
+                        // fetch() is async, and sometimes the chapters are returned out of order)
+                        content += "**" + entry.get("chapterid") + "**";
+                        spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
+                            var chapterString = "";
+                            console.log("spList: " + spList.length + " items, last id = " + lastSPID);
+                            for (i = 0; i < spList.length; i++) {
+                                value = spList.at(i);
+                                markers = value.get("markers");
+                                // check to see if this sourcephrase is filtered (only looking at the top level)
+                                if (filtered === false) {
+                                    for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                        // sanity check for blank filter strings
+                                        if (filterAry[idxFilters].trim().length > 0) {
+                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                                // this is a filtered sourcephrase -- do not export it
+                                                console.log("filtered: " + markers);
+                                                // however, if there are some markers before we hit our filtered one, 
+                                                // make sure they get exported now
+                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
+                                                if (markers.length > 0) {
+                                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
+                                                            (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) ||
+                                                            (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                                        // pretty-printing -- add a newline so the output looks better
+                                                        chapterString += "\n"; // newline
+                                                    }
+                                                    // now add the markers and a space
+                                                    chapterString += markers + " ";
+                                                }
+                                                chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
+                                                // if there is an end marker associated with this marker,
+                                                // do not export any source phrases until we come across the end marker
+                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                if (mkr[0].get("endMarker")) {
+                                                    needsEndMarker = mkr[0].get("endMarker");
+                                                }
+                                                filtered = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                    // found our ending marker -- this sourcephrase is not filtered
+                                    // first, remove the marker from the markers string so it doesn't print out
+                                    markers = markers.replace(("\\" + needsEndMarker), '');
+                                    // now clear our flags so the sourcephrase exports
+                                    needsEndMarker = "";
+                                    filtered = false;
+                                }
+                                if (filtered === false) {
+                                    // add markers, and if needed, pretty-print the text on a newline
+                                    if (markers.trim().length > 0) {
+                                        if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) || (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) || (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                            // pretty-printing -- add a newline so the output looks better
+                                            chapterString += "\n"; // newline
+                                        }
+                                        // now add the markers and a space
+                                        chapterString += markers + " ";
+                                    }
+                                    // only emit soursephrase pre/foll puncts if we have something translated in the target
+                                    if (value.get("source").length > 0 && value.get("freetrans").length > 0) {
+                                        chapterString += value.get("freetrans") + " ";
+                                    }
+                                }
+                                if (value.get('spid') === lastSPID) {
+                                    // done -- quit after this sourcePhrase
+                                    console.log("Found last SPID: " + lastSPID);
+                                    break;
+                                }
+                            }
+                            // Now take the string from this chapter's sourcephrases that we've just built and
+                            // insert them into the correct location in the file's content string
+                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // decrement the chapter count, closing things out if needed
+                            chaptersLeft--;
+                            if (chaptersLeft === 0) {
+                                console.log("finished within sp block");
+                                // done with the chapters
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    // ** we are now done with all the chapters -- write out the file
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                            }
+                        });
+                    } else {
+                        // no sourcephrases to export -- just decrement the chapters, and close things out if needed
+                        chaptersLeft--;
+                        if (chaptersLeft === 0) {
+                            console.log("finished in a blank block");
+                            if (isClipboard === true) {
+                                if (device && (device.platform ==="browser")) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                } else {
+                                    // write (copy) text to clipboard
+                                    cordova.plugins.clipboard.copy(content);
+                                    // directly call success (it's a callback for the file writer)
+                                    exportSuccess();
+                                }
+                            } else {
+                                // done with the chapters
+                                var blob = new Blob([content], {type: 'text/plain'});
+                                writer.write(blob);
+                            }
+                            content = ""; // clear out the content string
+                        }
+                    }
+                });
+            };
+
             // USX document
             var exportUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
@@ -5525,6 +5834,9 @@ define(function (require) {
                 "change .topcoat-radio-button": "changeType",
                 "click #toClipboard": "onToClipboard",
                 "click #toFile": "onToFile",
+                "click #exportAdaptation": "onExportAdaptation",
+                "click #exportGloss": "onExportGloss",
+                "click #exportFT": "onExportFT",
                 "click #OK": "onOK",
                 "click #btnCancel": "onBtnCancel",
                 "click #Cancel": "onCancel"
@@ -5542,6 +5854,61 @@ define(function (require) {
                     var top = event.currentTarget.offsetTop - $("#Filename").outerHeight();
                     $("#mobileSelect").scrollTop(top);
                 }
+            },
+            // User wants to export the adaptation / target text. For Adapt It (.xml) format, this includes the gloss and FT data.
+            onExportAdaptation: function () {
+                console.log("User is exporting adaptation text");
+                // show the next screen
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportAdaptation'), document: bookName}));
+                $("#Container").html(Handlebars.compile(tplExportFormat));
+                // Show the file format stuff
+                $("#FileFormats").show();
+                $("#KBFormats").hide();
+                $("#glossKBFormat").hide();
+                // if this is going to the clipboard, we don't need a filename
+                if (this.destination === DestinationEnum.CLIPBOARD) {
+                    $("#grpFilename").hide();
+                }
+                // select a default of TXT for the export format (for now)
+                $("#exportTXT").prop("checked", true);
+                bookName += ".txt";
+                $("#Filename").val(bookName);
+            },
+            // User wants to export the glosses. This exports to USFM.
+            onExportGloss: function () {
+                console.log("User is exporting gloss text");
+                // show the next screen
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportGloss'), document: bookName}));
+                $("#Container").html(Handlebars.compile(tplExportFormat));
+                $("#KBFormats").hide();
+                $("#glossKBFormat").hide();
+                $("#FileFormats").hide();
+                // if this is going to the clipboard, we don't need a filename
+                if (this.destination === DestinationEnum.CLIPBOARD) {
+                    $("#grpFilename").hide();
+                }
+                // SFM for the export format
+                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblExportUSFM'));
+                bookName += ".sfm";
+                $("#Filename").val(bookName);
+            },
+            // User wants to export the free translation data. This exports to USFM.
+            onExportFT: function () {
+                console.log("User is exporting FT text");
+                // show the next screen
+                $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportFT'), document: bookName}));
+                $("#Container").html(Handlebars.compile(tplExportFormat));
+                $("#KBFormats").hide();
+                $("#glossKBFormat").hide();
+                $("#FileFormats").hide();
+                // if this is going to the clipboard, we don't need a filename
+                if (this.destination === DestinationEnum.CLIPBOARD) {
+                    $("#grpFilename").hide();
+                }
+                // SFM for the export format
+                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblExportUSFM'));
+                bookName += ".sfm";
+                $("#Filename").val(bookName);
             },
             blurFilename: function () {
                 $("#mobileSelect").scrollTop(0);
@@ -5591,6 +5958,7 @@ define(function (require) {
                     list = buildDocumentList(pid);
                     $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
                     $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                    $('#lblDirections').show();
                 }));
             },
             // User selected the clipboard 
@@ -5604,6 +5972,7 @@ define(function (require) {
                     list = buildDocumentList(pid);
                     $("#Container").html("<ul class='topcoat-list__container chapter-list'>" + list + "</ul>");
                     $('#lblDirections').html(i18n.t('view.lblExportSelectDocument'));
+                    $('#lblDirections').show();
                 }));
             },
             // User clicked the OK button. Export the selected document to the specified format.
@@ -5682,6 +6051,7 @@ define(function (require) {
                     window.location.replace("");
                 }
             },
+            
             selectDoc: function (event) {
                 var project = window.Application.currentProject;
                 // get the info for this document
@@ -5691,6 +6061,7 @@ define(function (require) {
                 $("#lblDirections").html(i18n.t('view.lblDocSelected') + bookName);
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 if (bookid === "kb") {
+                    console.log("User exporting KB");
                     // exporting the KB
                     $("#FileFormats").hide();
                     $("#KBFormats").show();
@@ -5700,6 +6071,7 @@ define(function (require) {
                     bookName = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
                     $("#Filename").prop('disabled', true); // can't change the filename for KB XML
                 } else if (bookid === "glosskb") {
+                    console.log("User exporting GLOSS KB");
                     // exporting the gloss KB (really only one option here -- "Glossing.xml")
                     $("#FileFormats").hide();
                     $("#KBFormats").hide();
@@ -5708,22 +6080,41 @@ define(function (require) {
                     bookName = "Glossing.xml"; // hard coded (no il8n)
                     $("#Filename").prop('disabled', true); // can't change the filename for KB XML
                 } else {
+                    console.log("User exporting a document");
                     // exporting a book
-                    $("#FileFormats").show();
-                    $("#KBFormats").hide();
-                    $("#glossKBFormat").hide();
-                    // if this is going to the clipboard, we don't need a filename
-                    if (this.destination === DestinationEnum.CLIPBOARD) {
-                        $("#grpFilename").hide();
-                    }
-                    if (bookName.length > 0) {
-                        if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
-                            bookName = bookName.substr(0, bookName.length - 4);
+                    // Is the "show gloss and FT" check selected?
+                    if (localStorage.getItem("ShowGlossFT") && localStorage.getItem("ShowGlossFT") === "true") {
+                        console.log("User has gloss/FT enabled -- need to ask what they want to export");
+                        // "show gloss and FT" is selected -- user might want to export the gloaa or FT instead of the document
+                        // Now show the Export Content page to find out what they want to export from this document
+                        // show the next screen
+                        $("#lblDirections").html(i18n.t('view.lblSelectContent'));
+                        $("#Container").html(Handlebars.compile(tplExportContent));
+                        // remove any file extension found on the book name
+                        if (bookName.length > 0) {
+                            if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
+                                bookName = bookName.substr(0, bookName.length - 4);
+                            }
                         }
+                    } else {
+                        console.log("User is just exporting the adaptation data");
+                        $("#FileFormats").show();
+                        $("#KBFormats").hide();
+                        $("#glossKBFormat").hide();
+                        // if this is going to the clipboard, we don't need a filename
+                        if (this.destination === DestinationEnum.CLIPBOARD) {
+                            $("#grpFilename").hide();
+                        }
+                        // remove any file extension on the book name
+                        if (bookName.length > 0) {
+                            if ((bookName.indexOf(".xml") > -1) || (bookName.indexOf(".txt") > -1) || (bookName.indexOf(".sfm") > -1) || (bookName.indexOf(".usx") > -1)) {
+                                bookName = bookName.substr(0, bookName.length - 4);
+                            }
+                        }
+                        // select a default of TXT for the export format (for now)
+                        $("#exportTXT").prop("checked", true);
+                        bookName += ".txt";
                     }
-                    // select a default of TXT for the export format (for now)
-                    $("#exportTXT").prop("checked", true);
-                    bookName += ".txt";
                 }
                 $("#Filename").val(bookName);
             },
@@ -5732,6 +6123,7 @@ define(function (require) {
                 $.when(kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function() {
                     // first step -- clipboard or file?
                     $("#Container").html(Handlebars.compile(tplExportDestination));
+                    $('#lblDirections').hide();
                 });
             }
         });

@@ -353,6 +353,11 @@
         "lblDefaultFTText": "Texto de traducción libre predeterminado",
         "lblUseGlossText": "Use texto de glosas",
         "lblUseTargetText": "Usar texto en el idioma de destino",
+        "lblSelectContent": "Selecciona la información a exportar.",
+        "lblExportAdaptation": "Exportar texto de traducción",
+        "lblExportGloss": "Exportar glosas",
+        "lblExportFT": "Exportar traducción libre",
+        "lblExportSummary": "__content__ de \"__document__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
