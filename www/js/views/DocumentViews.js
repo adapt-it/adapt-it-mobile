@@ -66,7 +66,12 @@ define(function (require) {
             appPackageName: '' // Android only, you can provide id of the App you want to share with
         },
         
-        FileTypeEnum    = {
+        contentEnum = {
+            ADAPTATION: 1,
+            GLOSS: 2,
+            FT: 3
+        },
+        FileTypeEnum = {
             TXT: 1,
             USFM: 2,
             USX: 3,
@@ -3330,7 +3335,7 @@ define(function (require) {
         
         // Helper method to export the given bookid to the specified file format.
         // Called from ExportDocumentView::onOK once the book, format and filename have been chosen.
-        exportDocument = function (bookid, format, filename) {
+        exportDocument = function (bookid, format, filename, content) {
             var status = "";
             var writer = null;
             var errMsg = "";
@@ -3557,6 +3562,7 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
+                console.log("exportUSFM: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -3711,6 +3717,7 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
+                console.log("exportUSFMGloss: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -3865,6 +3872,7 @@ define(function (require) {
                     console.log("write failed: " + e.toString());
                     exportFail(e);
                 };
+                console.log("exportUSFMFT: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -5007,7 +5015,7 @@ define(function (require) {
                                     fi = ""; // clear out filter string
                                 }
                                 // line 9 -- lapat, tmpat, gmpat, pupat
-    //                            chapterString += ">";
+                                // chapterString += ">";
                                 // 3 more possible info types
                                 // medial puncts, medial markers, saved words (another <s>)
                                 if (value.get("midpuncts").length > 0) {
@@ -5088,7 +5096,6 @@ define(function (require) {
                 // KB line -- project info
                 // (Note that we are including scrCode, which is not included in the Glossing.xml file that AI exports at the moment)
                 content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
-//                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
                 // END settings xml node
                 // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
                 content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
@@ -5350,7 +5357,14 @@ define(function (require) {
                                     exportText();
                                     break;
                                 case FileTypeEnum.USFM:
-                                    exportUSFM();
+                                    // User could be exporting the translation, gloss, or free translation
+                                    if (content === contentEnum.GLOSS) {
+                                        exportUSFMGloss();
+                                    } else if (content === contentEnum.FT) {
+                                        exportUSFMFT();
+                                    } else { // (content === contentEnum.ADAPTATION)
+                                        exportUSFM();
+                                    }
                                     break;
                                 case FileTypeEnum.USX:
                                     exportUSX();
@@ -5388,7 +5402,14 @@ define(function (require) {
                                     exportText();
                                     break;
                                 case FileTypeEnum.USFM:
-                                    exportUSFM();
+                                    // User could be exporting the translation, gloss, or free translation
+                                    if (content === contentEnum.GLOSS) {
+                                        exportUSFMGloss();
+                                    } else if (content === contentEnum.FT) {
+                                        exportUSFMFT();
+                                    } else { // (content === contentEnum.ADAPTATION)
+                                        exportUSFM();
+                                    }
                                     break;
                                 case FileTypeEnum.USX:
                                     exportUSX();
@@ -5819,6 +5840,7 @@ define(function (require) {
         
         ExportDocumentView = Marionette.ItemView.extend({
             destination: DestinationEnum.FILE,
+            content: contentEnum.ADAPTATION,
             template: Handlebars.compile(tplExportDoc),
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
@@ -5859,6 +5881,7 @@ define(function (require) {
             onExportAdaptation: function () {
                 console.log("User is exporting adaptation text");
                 // show the next screen
+                this.content = contentEnum.ADAPTATION;
                 $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportAdaptation'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 // Show the file format stuff
@@ -5878,6 +5901,7 @@ define(function (require) {
             onExportGloss: function () {
                 console.log("User is exporting gloss text");
                 // show the next screen
+                this.content = contentEnum.GLOSS;
                 $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportGloss'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 $("#KBFormats").hide();
@@ -5896,6 +5920,7 @@ define(function (require) {
             onExportFT: function () {
                 console.log("User is exporting FT text");
                 // show the next screen
+                this.content = contentEnum.FT;
                 $("#lblDirections").html(i18n.t('view.lblExportSummary', {content: i18n.t('view.lblExportFT'), document: bookName}));
                 $("#Container").html(Handlebars.compile(tplExportFormat));
                 $("#KBFormats").hide();
@@ -6011,8 +6036,13 @@ define(function (require) {
                         } else if ($("#exportGlossKBXML").is(":checked")) {
                             format = FileTypeEnum.GLOSSKBXML;
                         } else {
-                            // fallback to plain text
-                            format = FileTypeEnum.TXT;
+                            if (this.content !== contentEnum.ADAPTATION) {
+                                // User is exporting gloss or FT data -- use USFM format
+                                format = FileTypeEnum.USFM;
+                            } else {
+                                // fallback to plain text
+                                format = FileTypeEnum.TXT;
+                            }
                         }
                         // update the UI
                         $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
@@ -6024,7 +6054,7 @@ define(function (require) {
                         if (this.destination === DestinationEnum.CLIPBOARD) {
                             isClipboard = true;
                         }
-                        exportDocument(bookid, format, filename);
+                        exportDocument(bookid, format, filename, this.content);
                     }
                 }
             },
