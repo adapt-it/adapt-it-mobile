@@ -3374,8 +3374,8 @@ define(function (require) {
                 // display the OK button
                 $("#loading").hide();
                 $("#waiting").hide();
-                $("#OK").removeClass("hide");
-                $("#OK").removeAttr("disabled");
+                $("#btnOK").removeClass("hide");
+                $("#btnOK").removeAttr("disabled");
             };
             // Callback for when the file failed to import
             var exportFail = function (e) {
@@ -3386,8 +3386,8 @@ define(function (require) {
                 $("#loading").hide();
                 $("#waiting").hide();
                 // display the OK button
-                $("#OK").removeClass("hide");
-                $("#OK").removeAttr("disabled");
+                $("#btnOK").removeClass("hide");
+                $("#btnOK").removeAttr("disabled");
             };
             
             ///
@@ -3398,6 +3398,9 @@ define(function (require) {
             // - If we encounter the lastSPID, we'll break out of the export loop of the chapter.
             // This logic works well if the user is adapting sequentially. If the user is jumping around in their adaptations,
             // some chapters might have extraneous punctuation from areas where they haven't adapted.
+            //
+            // Also note that the non-AI XML document exports can have empty content if no translations have been done --
+            // we use a flag (bDirty) to track this condition and tell the user if there was nothing to export.
             ///
 
             // Plain Text document
@@ -3417,6 +3420,7 @@ define(function (require) {
                 var filtered = false;
                 var needsEndMarker = "";
                 var mkr = "";
+                var bDirty = false;
                 writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -3430,13 +3434,14 @@ define(function (require) {
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 console.log("filterAry: " + filterAry.toString());
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
+                        bDirty = true;
                         content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
@@ -3515,28 +3520,37 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
-                            // done with the chapters
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
+                            if (bDirty === false) {
+                                // didn't export anything
+                                exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
                             } else {
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                // done with the chapters
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                                content = ""; // clear out the content string
                             }
-                            content = ""; // clear out the content string
                         }
+                    }
+                    if (bDirty === false) {
+                        // didn't export anything
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
                     }
                 });
             };
 
-            // USFM document
+            // USFM document export (target text)
             var exportUSFM = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var content = "";
@@ -3550,6 +3564,7 @@ define(function (require) {
                 var filtered = false;
                 var needsEndMarker = "";
                 var mkr = "";
+                var bDirty = false;
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 writer.onwriteend = function () {
@@ -3565,12 +3580,13 @@ define(function (require) {
                 console.log("exportUSFM: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
+                        bDirty = true;
                         content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
@@ -3670,23 +3686,32 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
+                            if (bDirty === false) {
+                                // didn't export anything
+                                exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
                             } else {
-                                // done with the chapters
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    // done with the chapters
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                                content = ""; // clear out the content string
                             }
-                            content = ""; // clear out the content string
                         }
+                    }
+                    if (bDirty === false) {
+                        // didn't export anything
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
                     }
                 });
             };
@@ -3707,6 +3732,7 @@ define(function (require) {
                 var mkr = "";
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
+                var bDirty = false;
                 writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -3720,12 +3746,13 @@ define(function (require) {
                 console.log("exportUSFMGloss: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
+                        bDirty = true; // we're exporting something
                         content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
@@ -3825,23 +3852,32 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
+                            if (bDirty === false) {
+                                // didn't export anything
+                                exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
                             } else {
-                                // done with the chapters
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    // done with the chapters
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                                content = ""; // clear out the content string
                             }
-                            content = ""; // clear out the content string
                         }
+                    }
+                    if (bDirty === false) {
+                        // didn't export anything
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
                     }
                 });
             };
@@ -3862,6 +3898,7 @@ define(function (require) {
                 var mkr = "";
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
+                var bDirty = false;
                 writer.onwriteend = function () {
                     console.log("write completed.");
                     if (chaptersLeft === 0) {
@@ -3875,12 +3912,13 @@ define(function (require) {
                 console.log("exportUSFMFT: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
+                        bDirty = true; // we're actually writing something
                         content += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
@@ -3980,23 +4018,32 @@ define(function (require) {
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             console.log("finished in a blank block");
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
+                            if (bDirty === false) {
+                                // didn't export anything
+                                exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
                             } else {
-                                // done with the chapters
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
+                                if (isClipboard === true) {
+                                    if (device && (device.platform ==="browser")) {
+                                        // browser -- use clipboard API
+                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                                    } else {
+                                        // write (copy) text to clipboard
+                                        cordova.plugins.clipboard.copy(content);
+                                        // directly call success (it's a callback for the file writer)
+                                        exportSuccess();
+                                    }
+                                } else {
+                                    // done with the chapters
+                                    var blob = new Blob([content], {type: 'text/plain'});
+                                    writer.write(blob);
+                                }
+                                content = ""; // clear out the content string    
                             }
-                            content = ""; // clear out the content string
                         }
+                    }
+                    if (bDirty === false) {
+                        // didn't export anything
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
                     }
                 });
             };
@@ -4050,7 +4097,7 @@ define(function (require) {
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
+                //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
                 chapters.forEach(function (entry) {
                     // for each chapter with some adaptation done, get the sourcephrases
                     if (entry.get('lastadapted') !== 0) {
@@ -5860,6 +5907,7 @@ define(function (require) {
                 "click #exportGloss": "onExportGloss",
                 "click #exportFT": "onExportFT",
                 "click #OK": "onOK",
+                "click #btnOK": "onBtnOK",
                 "click #btnCancel": "onBtnCancel",
                 "click #Cancel": "onCancel"
             },
@@ -6081,6 +6129,17 @@ define(function (require) {
                     window.location.replace("");
                 }
             },
+            // User clicked the OK button AFTER EXPORT success/fail. Here we don't do anything -- just return
+            onBtnOK: function () {
+                // go back to the previous page
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history -- just go home
+                    window.location.replace("");
+                }
+            },
             
             selectDoc: function (event) {
                 var project = window.Application.currentProject;
@@ -6112,6 +6171,8 @@ define(function (require) {
                 } else {
                     console.log("User exporting a document");
                     // exporting a book
+                    // load the chapters if needed 
+                    window.Application.ChapterList.fetch({reset: true, data: {bookid: bookid}});
                     // Is the "show gloss and FT" check selected?
                     if (localStorage.getItem("ShowGlossFT") && localStorage.getItem("ShowGlossFT") === "true") {
                         console.log("User has gloss/FT enabled -- need to ask what they want to export");

@@ -326,9 +326,9 @@
         "ttlEditorUI": "Editor e interfaz de usuario",
         "ttlManageProjects": "Administrar Proyectos",
         "ttlCurrentProjectSettings": "Configuración del proyecto actual",
-        "dscEditProjectSourceLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de origen </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
-        "dscEditProjectTargetLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de destino </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
-        "dscWarnChangeProject": "Edite esta configuración solo si hay errores en esta página. Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración> Administrar proyectos).",
+        "dscEditProjectSourceLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de origen </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos<br/> (Configuración > Administrar proyectos).",
+        "dscEditProjectTargetLanguage": "Vea y / o corrija cualquier configuración relacionada con el <u> idioma de destino </u> a continuación. <br/> Para crear un nuevo proyecto, use la página Administrar proyectos<br/> (Configuración > Administrar proyectos).",
+        "dscWarnChangeProject": "Edite esta configuración solo si hay errores en esta página. Para crear un nuevo proyecto, use la página Administrar proyectos (Configuración > Administrar proyectos).",
         "lblSelectDoc": "Seleccionar Documentos",
         "lblSortModified": "Reciente",
         "lblSortName": "Nombre",
@@ -358,6 +358,7 @@
         "lblExportGloss": "Exportar glosas",
         "lblExportFT": "Exportar traducción libre",
         "lblExportSummary": "__content__ de \"__document__\".",
+        "dscErrNothingToExport": "no se encontró texto para exportar.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
