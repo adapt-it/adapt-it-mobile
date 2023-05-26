@@ -17,7 +17,7 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-android": "^11.0.0",
+    "cordova-android": "^12.0.0",
     "cordova-clipboard": "github:ihadeed/cordova-clipboard",
     "cordova-ios": "^6.3.0",
     "cordova-plugin-customurlscheme": "^5.0.2",

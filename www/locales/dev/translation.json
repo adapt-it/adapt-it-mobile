@@ -358,6 +358,7 @@
         "lblExportGloss": "Export Glosses",
         "lblExportFT": "Export Free Translation",        
         "lblExportSummary": "__content__ from \"__document__\".",
+        "dscErrNothingToExport": "nothing to export.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

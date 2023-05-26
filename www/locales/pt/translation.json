@@ -326,9 +326,9 @@
         "ttlEditorUI": "Editor e interface do usuário",
         "ttlManageProjects": "Administrar Projetos",
         "ttlCurrentProjectSettings": "Configurações para o projeto atual",
-        "dscEditProjectSourceLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de origem </u> a seguir. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
-        "dscEditProjectTargetLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de destino </u> abaixo. <br/> Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
-        "dscWarnChangeProject": "Edite essas configurações apenas se houver erros nesta página. Para criar um novo projeto, use a página Administrar Projetos (Configurações> Administrar Projetos).",
+        "dscEditProjectSourceLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de origem </u> a seguir. <br/> Para criar um novo projeto, use a página Administrar Projetos<br/> (Configurações > Administrar Projetos).",
+        "dscEditProjectTargetLanguage": "Visualize e / ou corrija quaisquer configurações relacionadas ao <u> idioma de destino </u> abaixo. <br/> Para criar um novo projeto, use a página Administrar Projetos<br/> (Configurações > Administrar Projetos).",
+        "dscWarnChangeProject": "Edite essas configurações apenas se houver erros nesta página. Para criar um novo projeto, use a página Administrar Projetos (Configurações > Administrar Projetos).",
         "lblSelectDoc": "Selecione documentos",
         "lblSortModified": "Recente",
         "lblSortName": "Nome",
@@ -358,6 +358,7 @@
         "lblExportGloss": "Exportar glossários",
         "lblExportFT": "Exportar Tradução Livre",
         "lblExportSummary": "__content__ de \"__document__\".",
+        "dscErrNothingToExport": "nenhum texto encontrado para exportar.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
