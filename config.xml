@@ -25,7 +25,7 @@
         <!-- SDK 26/Android 8.x: currently 5% marketshare as of 2023;
              Using this as lowest SDK because it supports adaptive icons (for splash / app icon) -->
         <preference name="android-minSdkVersion" value="26" />
-        <preference name="android-targetSdkVersion" value="32" />
+        <preference name="android-targetSdkVersion" value="33" />
         <!-- static splash resources no longer used -->
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/svg/ic_aim_adaptive_splash.xml" />
         <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#279ED8" />
