@@ -444,7 +444,7 @@ button.light-grey {
 .wizard-instructions {
     padding: 6px 6px 6px 6px;
 }
-#lblDirections {
+#lblExportDirections {
     height: 24px;
     background-color: beige;
     border: 1px white;
