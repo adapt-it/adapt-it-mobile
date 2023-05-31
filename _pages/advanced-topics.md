@@ -23,6 +23,7 @@ Adapt It Mobile supports the following languages for its user interface:
 
 - English
 - French
+- Portuguese
 - Spanish
 - Tok Pisin
 
@@ -178,4 +179,14 @@ Currently Adapt It Mobile has the following editor settings that can be modified
 - Allow editing of Blank Source Phrases _(Since: 1.6.0 / Default = unchecked)_
 
   By default, Adapt It Mobile will not allow you to add a target translation for a verse with no source text. Check this box if you would like to add translations for blank verses; however, any translations added will be erased if you import the same chapter and include source text for these verses.
+
+- Show Gloss and Free Translation Modes _(Since: 1.9.0 / Default = unchecked)_
+
+  By default, Adapt It Mobile will not display the gloss and free translation lines in the adaptation editor. When this box is checked, the gloss and free translation lines are displayed in the editor, and you can select the Gloss and Free Translation editor modes from the More Actions (...) dropdown menu. 
+  Check this box if you would like to display the gloss and free translation lines, as well as select the gloss and free translation editor modes from the More Actions (...) dropdown menu.
+  
+- Default Free Translation Text _(Since: 1.9.0 / default = Use Gloss Text)_
+
+  This editor settings group is only displayed when the user has the Show Gloss and Free Translation Modes setting checked (above). When the user is in the Free Translation editor mode, Adapt It Mobile will take text from either the gloss or target line and use them as a default when moving to a text space that hasn't been filled out (the user can delete this default text and write another translation if desired). Select the Use Gloss Text option if you would like the gloss line to be used as a default in the free translation text field; select the Use Target Text option if you would like the target text line to be used as a default in the free translation text field.
+  
 
