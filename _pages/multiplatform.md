@@ -10,7 +10,7 @@ date:   2020-09-20 12:21
 
 <div><a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a></div>
 
-Adapt It Mobile is compatible with smartphones and tablets running Android 5.1 or newer.
+Adapt It Mobile is compatible with smartphones and tablets running Android 8.0 or newer.
 
 ![Android]({{ site.baseurl }}/assets/img/android.png)
 
