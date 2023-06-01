@@ -41,8 +41,8 @@ These training videos contain the instructions needed to install, configure, and
 
 ### Make sure your mobile device meets the following system requirements: 
 
-- Apple iPad, iPod or iPhone running iOS 9.x or later
-- Android device running Android 5.1.x or later
+- Apple iPad, iPod or iPhone running iOS 11 or later
+- Android device running Android 8.0 or later
 
 ---
 
