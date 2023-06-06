@@ -66,19 +66,31 @@ Complete the following steps to import documents into Adapt It Mobile.
 3. Select the document you would like to export. You can also select the Knowledge Base for export if desired.
 
    ![Export select document]({{ site.baseurl }}/assets/img/export-sel-doc.png)
+   
+   __Gloss and Free Translation document export__
+   
+   If you have the "Show Gloss and Free Translation Modes" option checked in the Editor and User Interface Settings screen _and_ select a document, you will then be prompted to select either the translation, gloss, or free translation data to export from that document. Select the type of data you want to export to continue.
 
 4. Select the format you would like to export the document to, and the filename to export to (if you selected Export to File). 
 
    ![Export File format]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
 
-   Adapt It Mobile currently supports the following file formats:
+    __Translation document export__
+    
+   Adapt It Mobile currently supports the following file formats for translated documents:
 
    - Adapt It desktop (.xml) (this includes the source and target text for the project)
    - [USFM](http://paratext.org/about/usfm) (.sfm)
    - [USX](https://app.thedigitalbiblelibrary.org/static/docs/usx/index.html) (.usx)
    - Plain text (.txt) with no formatting
   
-   If you selected the Knowledge Base for export, Adapt It Mobile will display two options for the file format:
+    __Gloss and Free Translation document export__
+  
+     If you selected gloss or free translation data to export in the previous step, USFM is the only file format available. You can keep the default file name for export, or specify a different file name.
+   
+    __Knowledge Base document export__
+   
+    If you selected the Knowledge Base for export, Adapt It Mobile will display two options for the file format:
   
    ![KB Format]({{ site.baseurl }}/assets/img//export-kb-sel-fmt.png)
 
