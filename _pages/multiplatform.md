@@ -1,10 +1,12 @@
 ---
 permalink: /about/multiplatform
 layout: page
-title:  System Requirements
-desc:   Running Adapt It Mobile on Android and iOS devices
+title:  Multiplatform
+desc:   Work on a tablet or smartphone
 date:   2020-09-20 12:21
 ---
+
+See the context of the translation on a larger tablet. Or perform quick edits on your smartphone. Adapt It Mobile runs on both tablets and smartphones running Android and iOS.
 
 ## Android
 
@@ -12,7 +14,7 @@ date:   2020-09-20 12:21
 
 Adapt It Mobile is compatible with smartphones and tablets running Android 8.0 or newer.
 
-![Android]({{ site.baseurl }}/assets/img/android.png)
+![Android]({{ site.baseurl }}/assets/img/nexus7-landscape.png)
 
 ### Legacy versions
 
@@ -24,4 +26,4 @@ Adapt It Mobile legacy versions 1.0.0 through 1.2.5 are compatible with Android 
 
 On Apple devices, Adapt It Mobile is compatible with smartphones and tablets running iOS 11 or newer.
 
-![iOS]({{ site.baseurl }}/assets/img/ios.png)
+![iOS]({{ site.baseurl }}/assets/img/aim-iphone-landscape.png)
