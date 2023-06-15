@@ -3201,6 +3201,7 @@ define(function (require) {
                     $(".target").removeClass("hide");
                     $(".gloss").removeClass("hide");
                     $(".freetrans").removeClass("hide");
+                    $(".ft").removeClass("hide");
                     // disable editing blank verses if needed
                     if (this.allowEditBlankSP === false) {
                         $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
@@ -3217,17 +3218,20 @@ define(function (require) {
                         case editorModeEnum.ADAPTING:
                             $(".target").prop('contenteditable', false); // set target to read-only
                             $(".gloss").addClass("hide");
+                            $(".ft").addClass("hide");
                             $(".freetrans").addClass("hide");
                             break;
                         case editorModeEnum.GLOSSING:
                             $(".gloss").prop('contenteditable', false); // set target to read-only
                             $(".target").addClass("hide");
+                            $(".ft").addClass("hide");
                             $(".freetrans").addClass("hide");
                             break;
                         case editorModeEnum.FREE_TRANSLATING:
                             $(".freetrans").prop('contenteditable', false); // set target to read-only
                             $(".target").addClass("hide");
                             $(".gloss").addClass("hide");
+                            $(".freetrans").addClass("hide");
                             break;
                     }
                 }
@@ -3243,12 +3247,16 @@ define(function (require) {
                     $("#content").removeClass("with-ft");
                 }
                 // hide the gloss and FT lines
-                // if (!$(".gloss").hasClass("hide")) {
-                //     $(".gloss").addClass("hide");
-                // }
-                // if (!$(".ft").hasClass("hide")) {
-                //     $(".ft").addClass("hide");
-                // }
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
+                }
+                // show the target line if needed (happens in preview mode)
+                if ($(".target").hasClass("hide")) {
+                    $(".target").removeClass("hide");
+                }
                 if (selectedStart !== null) {
                     $(selectedStart).find(".target").focus();
                 }
@@ -3266,12 +3274,15 @@ define(function (require) {
                 // Flip the translation / gloss lines?
                 // ********************
                 // show the gloss line only
-                // if ($(".gloss").hasClass("hide")) {
-                //     $(".gloss").removeClass("hide");
-                // }
-                // if (!$(".ft").hasClass("hide")) {
-                //     $(".ft").addClass("hide");
-                // }
+                if ($(".gloss").hasClass("hide")) {
+                    $(".gloss").removeClass("hide");
+                }
+                if (!$(".ft").hasClass("hide")) {
+                    $(".ft").addClass("hide");
+                }
+                if (!$(".target").hasClass("hide")) {
+                    $(".target").addClass("hide");
+                }
                 // clear any old UI "selecting" blue
                 $("div").removeClass("ui-selecting ui-selected");
 
@@ -3290,12 +3301,15 @@ define(function (require) {
                 $(".gloss").attr('contenteditable', false);
                 $(".target").attr('contenteditable', false);
                 // show the FT line only
-                // if (!$(".gloss").hasClass("hide")) {
-                //     $(".gloss").addClass("hide");
-                // }
-                // if ($(".ft").hasClass("hide")) {
-                //     $(".ft").removeClass("hide");
-                // }
+                if (!$(".gloss").hasClass("hide")) {
+                    $(".gloss").addClass("hide");
+                }
+                if ($(".ft").hasClass("hide")) {
+                    $(".ft").removeClass("hide");
+                }
+                if (!$(".target").hasClass("hide")) {
+                    $(".target").addClass("hide");
+                }
                 // show the free translation editor area
                 if (!($("#freetrans").hasClass("show-flex"))) {
                     $("#freetrans").addClass("show-flex");
