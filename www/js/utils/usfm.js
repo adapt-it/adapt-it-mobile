@@ -1012,7 +1012,7 @@ define(function (require) {
             {
                 name: "ide",
                 type: "xml",
-                description: "File encoding information",
+                description: "File encoding information (UTF-8 is the only supported encoding in AIM)",
                 usfm: "1",
                 filter: "1",
                 userCanSetFilter: "0"
