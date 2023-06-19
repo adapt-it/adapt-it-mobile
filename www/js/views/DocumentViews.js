@@ -1859,6 +1859,7 @@ define(function (require) {
                         }
                         // Create the book and chapter 
                         bookID = window.Application.generateUUID();
+                        bookName = i18n.t('view.' + scrID.get('id'));
                         book = new bookModel.Book({
                             bookid: bookID,
                             projectid: project.get('projectid'),
