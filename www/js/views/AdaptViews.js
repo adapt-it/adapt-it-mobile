@@ -1516,6 +1516,7 @@ define(function (require) {
                 console.log("touches:" + event.touches + ", targetTouches: " + event.targetTouches + ", changedTouches: " + event.changedTouches);
                 var tmpItem = null,
                     tmpNode = null,
+                    lastTimeJustSet = false,
                     done = false,
                     stopAtBoundaries = false,
                     tmpIdx = 0,
@@ -1585,115 +1586,120 @@ define(function (require) {
                     selectedEnd = selectedStart;
                 }
                 // check for double-tap (browser only)
+                // first, set the lastTapTime if not already set
                 if (!navigator.notification && event.type === "mouseup") {
                     if (lastTapTime === null) {
                         lastTapTime = new Date().getTime();
-                        console.log("setting lastTapTime");
-                    } else {
-                        now = new Date().getTime();
-                        delay = now - lastTapTime;
-                        console.log("delay: " + delay);
-                        if ((delay < 500) && (delay > 0)) {
-                            // double-tap -- select the strip
-                            console.log("double-tap detected -- selecting strip");
-                            // start out at the current location
-                            tmpNode = selectedStart = selectedEnd = event.currentTarget;
-                            if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                                // first, check for a FT at the selectedStart
-                                ft = $(tmpNode).find(".ft").html();
-                                if (ft.length > 0) {
-                                    // there's a FT at the selected start -- don't go through the while loop
-                                    done = true;
-                                }
-                            }
-                                // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
-                            while (!done) {
-                                tmpNode = selectedStart.previousElementSibling;
-                                if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
-                                    ($(tmpNode).hasClass("moreFilter") === false)) {
-                                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                                        // first, check for a FT at the selectedStart
-                                        ft = $(tmpNode).find(".ft").html();
-                                        if (ft.length > 0) {
-                                            // include this SP and stop
-                                            selectedStart = tmpNode;
-                                            done = true;
-                                        }
-                                    }
-                                    // if we're stopping at boundaries, we have one more check... punctuation
-                                    if (stopAtBoundaries === true) {
-                                        // check punctuation (go from the inside out)
-                                        if ($(tmpNode).children(".source").first().hasClass("fp")) {
-                                            // comes after -- don't include
-                                            done = true;
-                                        } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
-                                            // comes after -- include
-                                            selectedStart = tmpNode;
-                                            done = true;
-                                        } else {
-                                            // no punctuation
-                                            selectedStart = tmpNode;
-                                        }
-                                    } else {
-                                        // don't care about boundaries -- update selectedStart
-                                        selectedStart = tmpNode;
-                                    }
-                                } else {
-                                    done = true; // exit    
-                                }
-                            }
-                            // now go forward
-                            done = false;
-                            if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
-                                done = true; // edge case -- current node is a boundary
-                            }
-                            while (!done) {
-                                tmpNode = selectedEnd.nextElementSibling;
-                                if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
-                                        ($(tmpNode).hasClass("moreFilter") === false)) {
-                                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                                        // first, check for a FT at the selectedStart
-                                        ft = $(tmpNode).find(".ft").html();
-                                        if (ft.length > 0) {
-                                            // do NOT include this SP
-                                            done = true;
-                                            break;
-                                        }
-                                    }
-                                    // if we're stopping at boundaries, we have one more check... punctuation
-                                    if (stopAtBoundaries === true) {
-                                        // check punctuation (go from the inside out)
-                                        if ($(tmpNode).children(".source").first().hasClass("pp")) {
-                                            // comes before -- don't include
-                                            done = true;
-                                        } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
-                                            // comes after -- include
-                                            selectedEnd = tmpNode;
-                                            done = true;
-                                        } else {
-                                            // no punctuation
-                                            selectedEnd = tmpNode;
-                                        }
-                                    } else {
-                                        // don't care about boundaries -- update selectedEnd
-                                        selectedEnd = tmpNode;
-                                    }
-                                } else {
-                                    done = true; // exit    
-                                }
-                            }
-                            idxStart = $(selectedStart).index();
-                            idxEnd = $(selectedEnd).index();
-                            isSelecting = true; // change the UI color
-                        }
-                        lastTapTime = now; // update the last tap time
+                        console.log("no lastTapTime defined (browser) -- setting");
+                        lastTimeJustSet = true;
                     }
                 } else if (navigator.notification) {
                     // mobile phone
                     if (lastTapTime === null) {
                         lastTapTime = new Date().getTime();
-                        console.log("setting lastTapTime");
+                        console.log("no lastTapTime defined (mobile) -- setting");
+                        lastTimeJustSet = true;
                     }
+                }
+                // now if we didn't just set lastTapTime, check for the delay between lastTapTime and now
+                if (lastTimeJustSet === false) {
+                    now = new Date().getTime();
+                    delay = now - lastTapTime;
+                    console.log("delay: " + delay);
+                    if ((delay < 500) && (delay > 0)) {
+                        // double-tap -- select the strip
+                        console.log("double-tap detected -- selecting strip");
+                        // start out at the current location
+                        tmpNode = selectedStart = selectedEnd = event.currentTarget;
+                        if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                            // first, check for a FT at the selectedStart
+                            ft = $(tmpNode).find(".ft").html();
+                            if (ft.length > 0) {
+                                // there's a FT at the selected start -- don't go through the while loop
+                                done = true;
+                            }
+                        }
+                            // move back / forward until we hit a non-pile class OR filter data OR punctuation (if stopping at boundaries)
+                        while (!done) {
+                            tmpNode = selectedStart.previousElementSibling;
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT at the selectedStart
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // include this SP and stop
+                                        selectedStart = tmpNode;
+                                        done = true;
+                                    }
+                                }
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes after -- include
+                                        selectedStart = tmpNode;
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedStart = tmpNode;
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedStart
+                                    selectedStart = tmpNode;
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        // now go forward
+                        done = false;
+                        if ((stopAtBoundaries === true) && ($(selectedEnd).children(".source").first().hasClass("fp"))) {
+                            done = true; // edge case -- current node is a boundary
+                        }
+                        while (!done) {
+                            tmpNode = selectedEnd.nextElementSibling;
+                            if (tmpNode && ($(tmpNode).hasClass("pile")) && ($(tmpNode).hasClass("filter") === false) &&
+                                    ($(tmpNode).hasClass("moreFilter") === false)) {
+                                if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                                    // first, check for a FT at the selectedStart
+                                    ft = $(tmpNode).find(".ft").html();
+                                    if (ft.length > 0) {
+                                        // do NOT include this SP
+                                        done = true;
+                                        break;
+                                    }
+                                }
+                                // if we're stopping at boundaries, we have one more check... punctuation
+                                if (stopAtBoundaries === true) {
+                                    // check punctuation (go from the inside out)
+                                    if ($(tmpNode).children(".source").first().hasClass("pp")) {
+                                        // comes before -- don't include
+                                        done = true;
+                                    } else if ($(tmpNode).children(".source").first().hasClass("fp")) {
+                                        // comes after -- include
+                                        selectedEnd = tmpNode;
+                                        done = true;
+                                    } else {
+                                        // no punctuation
+                                        selectedEnd = tmpNode;
+                                    }
+                                } else {
+                                    // don't care about boundaries -- update selectedEnd
+                                    selectedEnd = tmpNode;
+                                }
+                            } else {
+                                done = true; // exit    
+                            }
+                        }
+                        idxStart = $(selectedStart).index();
+                        idxEnd = $(selectedEnd).index();
+                        isSelecting = true; // change the UI color
+                    }
+                    lastTapTime = now; // update the last tap time
                 }
                 // check for long press selection
                 if (isLongPressSelection === true && LongPressSectionStart !== selectedStart) {
