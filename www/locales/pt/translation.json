@@ -359,6 +359,10 @@
         "lblExportFT": "Exportar Tradução Livre",
         "lblExportSummary": "__content__ de \"__document__\".",
         "dscErrNothingToExport": "nenhum texto encontrado para exportar.",
+        "ttlImportSFMLex": "Importar arquivo de formato SFM?",
+        "dscRestoreOrMergeSFMLex": "Este é um arquivo de formato SFM contendo dados para a base de conhecimento (\\lx e \\ge). Você pode restaurar a base de conhecimento do arquivo importado ou mesclar o arquivo com as traduções existentes.",
+        "dscErrSFMLexNotFound": "Não foi possível localizar os marcadores \\lx ou \\ge neste arquivo.",
+        "dscErrSFMLexBadMarker": "Marcador desconhecido: \"__mkr__\". Adapt It Mobile só pode atualizar a Base de Conhecimento de arquivos SFM com marcadores \\lx e \\ge.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
