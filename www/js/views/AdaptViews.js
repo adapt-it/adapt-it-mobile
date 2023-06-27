@@ -3279,15 +3279,24 @@ define(function (require) {
                 }
                 // Flip the translation / gloss lines?
                 // ********************
-                // show the gloss line only
+                // show the gloss line
                 if ($(".gloss").hasClass("hide")) {
                     $(".gloss").removeClass("hide");
                 }
+                // hide the FT line
                 if (!$(".ft").hasClass("hide")) {
                     $(".ft").addClass("hide");
                 }
-                if (!$(".target").hasClass("hide")) {
-                    $(".target").addClass("hide");
+                // If we're in preview mode, hide the target; if not, show it. 
+                if (inPreview === true) {
+                    if (!$(".target").hasClass("hide")) {
+                        $(".target").addClass("hide");
+                    }
+                } else {
+                    // show the target line if it's hidden
+                    if ($(".target").hasClass("hide")) {
+                        $(".target").removeClass("hide");
+                    }
                 }
                 // clear any old UI "selecting" blue
                 $("div").removeClass("ui-selecting ui-selected");
