@@ -2319,6 +2319,9 @@ define(function (require) {
                 //    dialog option.
                 var readSFMLexDoc = function (contents) {
                     var defer = $.Deferred(),
+                        spaceRE = /\s+/,        // select 1+ space chars
+                        nonSpaceRE = /[^\s+]/,  // select 1+ non-space chars
+                        i = 0,
                         bMerge = false;
 
                     console.log("readSFMLexDoc - entry");
@@ -2328,7 +2331,7 @@ define(function (require) {
                     if ((1 === -1) || (index === -1)) {
                         // Need to have at least one \lx and one \ge for us to consider this file
                         console.log("No lexeme or definition found -- exiting");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        errMsg = i18n.t("view.dscErrSFMLexNotFound");
                         return false;
                     }
                     // We're looking at a simple list of source/target pairs, with no indication of language
@@ -2338,7 +2341,7 @@ define(function (require) {
                     if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
-                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeKB", {document: bookName}), function (buttonIndex) {
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeSFMLex", {document: bookName}), function (buttonIndex) {
                             switch (buttonIndex) {
                             case 1: 
                                 // Restore
@@ -2365,13 +2368,14 @@ define(function (require) {
                                 }
                                 return true; // success
                             }
-                        }, i18n.t("view.ttlImportKB"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                        }, i18n.t("view.ttlImportSFMLex"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
                     } else {
                         // KB is empty -- no need for prompt; just import
                         defer.resolve("new KB / no confirm needed, just importing");
                     }
 
                     defer.then(function (msg) {
+                        isKB = true; // we're importing knowledge base data
                         var bFoundRS = false;
                         var theTU = null;
                         var theRS = null;
@@ -2380,6 +2384,7 @@ define(function (require) {
                         var mkr = 0;
                         var newTU = false;
                         var rs = "";
+                        var projectid = project.get('projectid');
                         console.log(msg);
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
                         arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
@@ -2396,7 +2401,7 @@ define(function (require) {
                                     mkr = LexMkrEnum.GE;
                                 } else {
                                     // This isn't a SFM \lx \ge document (it supports ONLY those markers) -- error out
-                                    errMsg = i18n.t("view.dscErrUnsupportedEncoding");
+                                    errMsg = i18n.t("view.dscErrSFMLexBadMarker", {mkr: arr[i]});
                                     return false;
                                 }
                                 // Now get the string associated with the marker we collected
