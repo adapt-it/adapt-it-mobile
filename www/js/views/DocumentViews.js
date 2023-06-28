@@ -2322,6 +2322,11 @@ define(function (require) {
                         spaceRE = /\s+/,        // select 1+ space chars
                         nonSpaceRE = /[^\s+]/,  // select 1+ non-space chars
                         i = 0,
+                        refstrings = [],
+                        curDate = new Date(),
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        mn = 1,
+                        f = "0",
                         bMerge = false;
 
                     console.log("readSFMLexDoc - entry");
@@ -2384,6 +2389,7 @@ define(function (require) {
                         var mkr = 0;
                         var newTU = false;
                         var rs = "";
+                        var src = "";
                         var projectid = project.get('projectid');
                         console.log(msg);
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
@@ -2523,6 +2529,9 @@ define(function (require) {
                                         }
                                     }
                                 }                            
+                            } else {
+                                // skip anything else (including empty array elements)
+                                i++;
                             }
                         }
                         console.log("readSFMLexDoc -- tuCount: " + tuCount + ", rsCount: " + rsCount);
@@ -2769,7 +2778,10 @@ define(function (require) {
                         i = 0;
                         while (i < arr.length) {
                             // check for a marker
-                            if (arr[i].indexOf("\\") === 0) {
+                            if (arr[i].length === 0) {
+                                // nothing in this token -- skip
+                                i++;
+                            } else if (arr[i].indexOf("\\") === 0) {
                                 // marker token
                                 if (markers.length > 0) {
                                     markers += " ";
@@ -2956,9 +2968,6 @@ define(function (require) {
                                     i++;
                                     markers += " " + arr[i];
                                 }
-                                i++;
-                            } else if (arr[i].length === 0) {
-                                // nothing in this token -- skip
                                 i++;
                             } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
                                 // punctuation token -- add to the prepuncts
