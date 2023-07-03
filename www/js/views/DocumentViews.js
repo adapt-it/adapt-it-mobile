@@ -316,6 +316,84 @@ define(function (require) {
                     bookID = "",
                     chapterID = "",
                     spID = "";
+
+                ///
+                // HELPER METHODS
+                ///
+
+                // Helper method to strip any starting / ending punctuation from the source or target field.
+                // This is used for file imports that populate the KBs, so that we don't have duplicate KB entries:
+                // (readXMLDoc, readKBXMLDoc, readGlossXMLDoc, readSFMLexDoc, readTMXDoc)
+                // Note that this method also exists in AdaptViews.js, used for updating the KBs during adapting/glossing.
+                var stripPunctuation = function (content, isSource) {
+                    var result = content,
+                        startIdx = 0,
+                        endIdx = content.length;
+                    // check for empty string
+                    if (endIdx === 0) {
+                        return result;
+                    }
+                    if (isSource === false) {
+                        // starting index
+                        while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                            startIdx++;
+                        }
+                        // ending index
+                        while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                            endIdx--;
+                        }
+                    } else {
+                        // starting index
+                        while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
+                            startIdx++;
+                        }
+                        // ending index
+                        while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
+                            endIdx--;
+                        }
+                    }
+                    // sanity check for all punctuation
+                    if (endIdx <= startIdx) {
+                        return "";
+                    }
+                    result = content.substr(startIdx, (endIdx) - startIdx);
+                    return result;
+                };
+                // Helper method to convert theString to lower case using either the source or target case equivalencies.
+                // This is used for file imports that populate the KBs, so that we don't have duplicate KB entries:
+                // (readXMLDoc, readKBXMLDoc, readGlossXMLDoc, readSFMLexDoc, readTMXDoc)
+                // Note that this method also exists in AdaptViews.js, used for updating the KBs during adapting/glossing.
+                var autoRemoveCaps = function (theString, isSource) {
+                    var i = 0,
+                        result = "";
+                    // If we aren't capitalizing for this project, just return theString
+                    if (project.get('AutoCapitalization') === 'false') {
+                        return theString;
+                    }
+                    // is the first letter capitalized?
+                    if (isSource === true) {
+                        // use source case equivalencies
+                        for (i = 0; i < caseSource.length; i++) {
+                            if (caseSource[i].charAt(1) === theString.charAt(0)) {
+                                // uppercase -- convert the first character to lowercase and return the result
+                                result = caseSource[i].charAt(0) + theString.substr(1);
+                                return result;
+                            }
+                        }
+                    } else {
+                        // use target case equivalencies
+                        for (i = 0; i < caseTarget.length; i++) {
+                            if (caseTarget[i].charAt(1) === theString.charAt(0)) {
+                                // uppercase -- convert the first character to lowercase and return the result
+                                result = caseTarget[i].charAt(0) + theString.substr(1);
+                                return result;
+                            }
+                        }
+                    }
+                    // If we got here, the string wasn't uppercase -- just return the same string
+                    return theString;
+                };                
+
                 ///
                 // FILE TYPE READERS
                 ///
@@ -941,6 +1019,7 @@ define(function (require) {
                         mn = "",
                         f = "",
                         src = "",
+                        tgt = "",
                         srcName = "",
                         defer = $.Deferred(),
                         bMerge = false,
@@ -1027,13 +1106,14 @@ define(function (require) {
                             mn = this.parentNode.getAttribute('mn');
                             // pull out the attributes from the TU element
                             f = this.getAttribute('f');
-                            src = this.getAttribute('k');
+                            src = stripPunctuation(autoRemoveCaps(this.getAttribute('k'), true), true);
+                            tgt = stripPunctuation(autoRemoveCaps(this.getAttribute('a'), false), false);
                             tuCount++;
                             if (bMerge === true) {
                                 // Merging with an existing KB -- search for this TU in kbList
                                 // Note that a Merge will only add to the refcount for existing refstrings, and
                                 // add add refstrings that are not found in the db. No other changes are made.
-                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}, {isGloss: 0}]);
+                                var theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
                                 if (theTU) {
                                     bFoundRS = false;
                                     // found a matching TU -- merge the refstrings with the existing ones
@@ -1041,7 +1121,7 @@ define(function (require) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
                                         for (i=0; i< theRS.count; i++) {
-                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                            if (tgt === theRS[i].get('target')) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1057,7 +1137,7 @@ define(function (require) {
                                         if (bFoundRS === false) {
                                             // refstring not found -- add a new one
                                             var newRS = {
-                                                'target': this.getAttribute('a'),  //klb
+                                                'target': tgt,  //klb
                                                 'n': this.getAttribute('n'),
                                                 'cDT': this.getAttribute('cDT'),
                                                 'df': this.getAttribute('df'),
@@ -1080,7 +1160,7 @@ define(function (require) {
                                     // First collect the refstrings
                                     $(this).children("RS").each(function (refstring) {
                                         var newRS = {
-                                            'target': this.getAttribute('a'),  //klb
+                                            'target': tgt,  //klb
                                             'n': this.getAttribute('n'),
                                             'cDT': this.getAttribute('cDT'),
                                             'df': this.getAttribute('df'),
@@ -1120,7 +1200,7 @@ define(function (require) {
                                 // now collect the refstrings
                                 $(this).children("RS").each(function (refstring) {
                                     var newRS = {
-                                        'target': this.getAttribute('a'),  //klb
+                                        'target': tgt,  //klb
                                         'n': this.getAttribute('n'),
                                         'cDT': this.getAttribute('cDT'),
                                         'df': this.getAttribute('df'),
@@ -1276,8 +1356,8 @@ define(function (require) {
                             if ((srcElt.length > 0) && (tgtElt.length > 0)) {
                                 n = this.getAttribute('usagecount');
                                 // do we already have this source value in our kblist?
-                                src = $(srcElt).find("seg").html().trim();
-                                tgt = $(tgtElt).find("seg").html().trim();
+                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("seg").html().trim(), true), true);
+                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("seg").html().trim(), false), false);
                             } else {
                                 return true; // no data in this elt -- continue to next tu elt
                             }
@@ -1443,6 +1523,7 @@ define(function (require) {
                         mn = "",
                         f = "",
                         src = "",
+                        tgt = "",
                         srcName = "",
                         defer = $.Deferred(),
                         bMerge = false,
@@ -1511,13 +1592,14 @@ define(function (require) {
                             mn = this.parentNode.getAttribute('mn');
                             // pull out the attributes from the TU element
                             f = this.getAttribute('f');
-                            src = this.getAttribute('k');
+                            src = stripPunctuation(autoRemoveCaps(this.getAttribute('k'), true), true);
+                            tgt = stripPunctuation(autoRemoveCaps(this.getAttribute('a'), false), false);
                             tuCount++;
                             if (bMerge === true) {
                                 // Merging with an existing KB -- search for this TU in kbList
                                 // Note that a Merge will only add to the refcount for existing refstrings, and
                                 // add add refstrings that are not found in the db. No other changes are made.
-                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}]);
+                                var theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}]);
                                 if (theTU) {
                                     bFoundRS = false;
                                     // found a matching TU -- merge the refstrings with the existing ones
@@ -1525,7 +1607,7 @@ define(function (require) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
                                         for (i=0; i< theRS.count; i++) {
-                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                            if (tgt === theRS[i].get('target')) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1541,7 +1623,7 @@ define(function (require) {
                                         if (bFoundRS === false) {
                                             // refstring not found -- add a new one
                                             var newRS = {
-                                                'target': this.getAttribute('a'),  //klb
+                                                'target': tgt,  //klb
                                                 'n': this.getAttribute('n'),
                                                 'cDT': this.getAttribute('cDT'),
                                                 'df': this.getAttribute('df'),
@@ -1564,7 +1646,7 @@ define(function (require) {
                                     // First collect the refstrings
                                     $(this).children("RS").each(function (refstring) {
                                         var newRS = {
-                                            'target': this.getAttribute('a'),  //klb
+                                            'target': tgt,  //klb
                                             'n': this.getAttribute('n'),
                                             'cDT': this.getAttribute('cDT'),
                                             'df': this.getAttribute('df'),
@@ -1604,7 +1686,7 @@ define(function (require) {
                                 // now collect the refstrings
                                 $(this).children("RS").each(function (refstring) {
                                     var newRS = {
-                                        'target': this.getAttribute('a'),  //klb
+                                        'target': tgt,  //klb
                                         'n': this.getAttribute('n'),
                                         'cDT': this.getAttribute('cDT'),
                                         'df': this.getAttribute('df'),
@@ -1684,77 +1766,6 @@ define(function (require) {
                     var searchIdx = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
-                
-                    // Helper method to strip any starting / ending punctuation from the source or target field.
-                    // This method is called from:
-                    // - selectedAdaptation before the target text available for editing
-                    // - unselectedAdaptation before the target text is stored in the KB
-                    // - togglePhrase before the new phrase is stored in the KB
-                    var stripPunctuation = function (content, isSource) {
-                        var result = content,
-                            startIdx = 0,
-                            endIdx = content.length;
-                        // check for empty string
-                        if (endIdx === 0) {
-                            return result;
-                        }
-                        if (isSource === false) {
-                            // starting index
-                            while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
-                                startIdx++;
-                            }
-                            // ending index
-                            while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
-                                endIdx--;
-                            }
-                        } else {
-                            // starting index
-                            while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
-                                startIdx++;
-                            }
-                            // ending index
-                            while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
-                                endIdx--;
-                            }
-                        }
-                        // sanity check for all punctuation
-                        if (endIdx <= startIdx) {
-                            return "";
-                        }
-                        result = content.substr(startIdx, (endIdx) - startIdx);
-                        return result;
-                    };
-                    // Helper method to convert theString to lower case using either the source or target case equivalencies.
-                    var autoRemoveCaps = function (theString, isSource) {
-                        var i = 0,
-                            result = "";
-                        // If we aren't capitalizing for this project, just return theString
-                        if (project.get('AutoCapitalization') === 'false') {
-                            return theString;
-                        }
-                        // is the first letter capitalized?
-                        if (isSource === true) {
-                            // use source case equivalencies
-                            for (i = 0; i < caseSource.length; i++) {
-                                if (caseSource[i].charAt(1) === theString.charAt(0)) {
-                                    // uppercase -- convert the first character to lowercase and return the result
-                                    result = caseSource[i].charAt(0) + theString.substr(1);
-                                    return result;
-                                }
-                            }
-                        } else {
-                            // use target case equivalencies
-                            for (i = 0; i < caseTarget.length; i++) {
-                                if (caseTarget[i].charAt(1) === theString.charAt(0)) {
-                                    // uppercase -- convert the first character to lowercase and return the result
-                                    result = caseTarget[i].charAt(0) + theString.substr(1);
-                                    return result;
-                                }
-                            }
-                        }
-                        // If we got here, the string wasn't uppercase -- just return the same string
-                        return theString;
-                    };
                     
                     console.log("Reading XML file:" + fileName);
                     bookName = ""; // reset
@@ -1973,7 +1984,7 @@ define(function (require) {
                         }
                         
                         // create the next sourcephrase
-//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
+                        // console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         if (origTarget.length > 0) {
                             // phrase -- spID has a prefix of "phr-"
                             spID = "phr-" + window.Application.generateUUID();
@@ -2421,13 +2432,13 @@ define(function (require) {
                                 // now process the TU as appropriate
                                 if (mkr === LexMkrEnum.LX) {
                                     // TU entry
-                                    src = s.trim();
+                                    src = stripPunctuation(autoRemoveCaps(s.trim(), true), true);
                                     newTU = true;
                                     // look up the TU (might return null if not found -- we'll deal with that case in the refstring block below)
                                     theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
                                 } else {
-                                    // RefString entry
-                                    rs = s.trim();
+                                    // RefString (target) entry
+                                    rs = stripPunctuation(autoRemoveCaps(s.trim(), false), false);
                                     // Are we merging with existing KB entries?
                                     if (bMerge === true) {
                                         if (theTU) {
