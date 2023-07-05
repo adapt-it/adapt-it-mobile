@@ -4,7 +4,7 @@
     {{t 'view.lblCopyPunctuation'}}
 </label></div>
 <div class="control-group" id="PunctMappings" {{#ifCond CopyPunctuation '==' 'false'}}hidden="true"{{else}}{{/ifCond}}>
-    <div class="control-row">{{t 'view.lblCases'}}</div>
+    <div class="control-row">{{t 'view.lblPunctuation'}}</div>
     <div class="control-row"><table class="topcoat-table" id="table"><colgroup><col><col><col style="width:4.5rem;"></colgroup><thead><tr><th>{{t 'view.lblSource'}}</th><th>{{t 'view.lblTarget'}}</th><th>&nbsp;</th></tr></thead>
 {{#each PunctPairs}}
         <tr id="r-{{@index}}"><td><input type="text" id="s-{{@index}}" class="topcoat-text-input s" style="width:100%;" maxlength="2" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input t" style="width:100%;" maxlength="2" value="{{this.t}}"></td><td><button title="{{t 'view.ttlDelete'}}" class="topcoat-icon-button--quiet delete-row" id="d-{{@index}}"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
