@@ -86,6 +86,11 @@ define(function (require) {
             GDRIVE: 3,      // Google Drive (post 1.0)
             ACLOUD: 4       // Apple iCloud (post 1.0)
         },
+        LexMkrEnum = {
+            LX: 1,  // \lx
+            GE: 2,  // \ge
+            ERR: 3  // anything else
+        },
 
         // Helper method to build an html list of documents in the AIM database.
         // Used by ExportDocument.
@@ -311,6 +316,84 @@ define(function (require) {
                     bookID = "",
                     chapterID = "",
                     spID = "";
+
+                ///
+                // HELPER METHODS
+                ///
+
+                // Helper method to strip any starting / ending punctuation from the source or target field.
+                // This is used for file imports that populate the KBs, so that we don't have duplicate KB entries:
+                // (readXMLDoc, readKBXMLDoc, readGlossXMLDoc, readSFMLexDoc, readTMXDoc)
+                // Note that this method also exists in AdaptViews.js, used for updating the KBs during adapting/glossing.
+                var stripPunctuation = function (content, isSource) {
+                    var result = content,
+                        startIdx = 0,
+                        endIdx = content.length;
+                    // check for empty string
+                    if (endIdx === 0) {
+                        return result;
+                    }
+                    if (isSource === false) {
+                        // starting index
+                        while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                            startIdx++;
+                        }
+                        // ending index
+                        while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                            endIdx--;
+                        }
+                    } else {
+                        // starting index
+                        while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
+                            startIdx++;
+                        }
+                        // ending index
+                        while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
+                            endIdx--;
+                        }
+                    }
+                    // sanity check for all punctuation
+                    if (endIdx <= startIdx) {
+                        return "";
+                    }
+                    result = content.substr(startIdx, (endIdx) - startIdx);
+                    return result;
+                };
+                // Helper method to convert theString to lower case using either the source or target case equivalencies.
+                // This is used for file imports that populate the KBs, so that we don't have duplicate KB entries:
+                // (readXMLDoc, readKBXMLDoc, readGlossXMLDoc, readSFMLexDoc, readTMXDoc)
+                // Note that this method also exists in AdaptViews.js, used for updating the KBs during adapting/glossing.
+                var autoRemoveCaps = function (theString, isSource) {
+                    var i = 0,
+                        result = "";
+                    // If we aren't capitalizing for this project, just return theString
+                    if (project.get('AutoCapitalization') === 'false') {
+                        return theString;
+                    }
+                    // is the first letter capitalized?
+                    if (isSource === true) {
+                        // use source case equivalencies
+                        for (i = 0; i < caseSource.length; i++) {
+                            if (caseSource[i].charAt(1) === theString.charAt(0)) {
+                                // uppercase -- convert the first character to lowercase and return the result
+                                result = caseSource[i].charAt(0) + theString.substr(1);
+                                return result;
+                            }
+                        }
+                    } else {
+                        // use target case equivalencies
+                        for (i = 0; i < caseTarget.length; i++) {
+                            if (caseTarget[i].charAt(1) === theString.charAt(0)) {
+                                // uppercase -- convert the first character to lowercase and return the result
+                                result = caseTarget[i].charAt(0) + theString.substr(1);
+                                return result;
+                            }
+                        }
+                    }
+                    // If we got here, the string wasn't uppercase -- just return the same string
+                    return theString;
+                };                
+
                 ///
                 // FILE TYPE READERS
                 ///
@@ -936,6 +1019,7 @@ define(function (require) {
                         mn = "",
                         f = "",
                         src = "",
+                        tgt = "",
                         srcName = "",
                         defer = $.Deferred(),
                         bMerge = false,
@@ -1022,13 +1106,14 @@ define(function (require) {
                             mn = this.parentNode.getAttribute('mn');
                             // pull out the attributes from the TU element
                             f = this.getAttribute('f');
-                            src = this.getAttribute('k');
+                            src = stripPunctuation(autoRemoveCaps(this.getAttribute('k'), true), true);
+                            tgt = stripPunctuation(autoRemoveCaps(this.getAttribute('a'), false), false);
                             tuCount++;
                             if (bMerge === true) {
                                 // Merging with an existing KB -- search for this TU in kbList
                                 // Note that a Merge will only add to the refcount for existing refstrings, and
                                 // add add refstrings that are not found in the db. No other changes are made.
-                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}, {isGloss: 0}]);
+                                var theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
                                 if (theTU) {
                                     bFoundRS = false;
                                     // found a matching TU -- merge the refstrings with the existing ones
@@ -1036,7 +1121,7 @@ define(function (require) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
                                         for (i=0; i< theRS.count; i++) {
-                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                            if (tgt === theRS[i].get('target')) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1052,7 +1137,7 @@ define(function (require) {
                                         if (bFoundRS === false) {
                                             // refstring not found -- add a new one
                                             var newRS = {
-                                                'target': this.getAttribute('a'),  //klb
+                                                'target': tgt,  //klb
                                                 'n': this.getAttribute('n'),
                                                 'cDT': this.getAttribute('cDT'),
                                                 'df': this.getAttribute('df'),
@@ -1075,7 +1160,7 @@ define(function (require) {
                                     // First collect the refstrings
                                     $(this).children("RS").each(function (refstring) {
                                         var newRS = {
-                                            'target': this.getAttribute('a'),  //klb
+                                            'target': tgt,  //klb
                                             'n': this.getAttribute('n'),
                                             'cDT': this.getAttribute('cDT'),
                                             'df': this.getAttribute('df'),
@@ -1115,7 +1200,7 @@ define(function (require) {
                                 // now collect the refstrings
                                 $(this).children("RS").each(function (refstring) {
                                     var newRS = {
-                                        'target': this.getAttribute('a'),  //klb
+                                        'target': tgt,  //klb
                                         'n': this.getAttribute('n'),
                                         'cDT': this.getAttribute('cDT'),
                                         'df': this.getAttribute('df'),
@@ -1271,8 +1356,8 @@ define(function (require) {
                             if ((srcElt.length > 0) && (tgtElt.length > 0)) {
                                 n = this.getAttribute('usagecount');
                                 // do we already have this source value in our kblist?
-                                src = $(srcElt).find("seg").html().trim();
-                                tgt = $(tgtElt).find("seg").html().trim();
+                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("seg").html().trim(), true), true);
+                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("seg").html().trim(), false), false);
                             } else {
                                 return true; // no data in this elt -- continue to next tu elt
                             }
@@ -1438,6 +1523,7 @@ define(function (require) {
                         mn = "",
                         f = "",
                         src = "",
+                        tgt = "",
                         srcName = "",
                         defer = $.Deferred(),
                         bMerge = false,
@@ -1506,13 +1592,14 @@ define(function (require) {
                             mn = this.parentNode.getAttribute('mn');
                             // pull out the attributes from the TU element
                             f = this.getAttribute('f');
-                            src = this.getAttribute('k');
+                            src = stripPunctuation(autoRemoveCaps(this.getAttribute('k'), true), true);
+                            tgt = stripPunctuation(autoRemoveCaps(this.getAttribute('a'), false), false);
                             tuCount++;
                             if (bMerge === true) {
                                 // Merging with an existing KB -- search for this TU in kbList
                                 // Note that a Merge will only add to the refcount for existing refstrings, and
                                 // add add refstrings that are not found in the db. No other changes are made.
-                                var theTU = window.Application.kbList.findWhere([{source: this.getAttribute('k')}, {projectid: projectid}]);
+                                var theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}]);
                                 if (theTU) {
                                     bFoundRS = false;
                                     // found a matching TU -- merge the refstrings with the existing ones
@@ -1520,7 +1607,7 @@ define(function (require) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
                                         for (i=0; i< theRS.count; i++) {
-                                            if (this.getAttribute('a') === theRS[i].get('target')) {
+                                            if (tgt === theRS[i].get('target')) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1536,7 +1623,7 @@ define(function (require) {
                                         if (bFoundRS === false) {
                                             // refstring not found -- add a new one
                                             var newRS = {
-                                                'target': this.getAttribute('a'),  //klb
+                                                'target': tgt,  //klb
                                                 'n': this.getAttribute('n'),
                                                 'cDT': this.getAttribute('cDT'),
                                                 'df': this.getAttribute('df'),
@@ -1559,7 +1646,7 @@ define(function (require) {
                                     // First collect the refstrings
                                     $(this).children("RS").each(function (refstring) {
                                         var newRS = {
-                                            'target': this.getAttribute('a'),  //klb
+                                            'target': tgt,  //klb
                                             'n': this.getAttribute('n'),
                                             'cDT': this.getAttribute('cDT'),
                                             'df': this.getAttribute('df'),
@@ -1599,7 +1686,7 @@ define(function (require) {
                                 // now collect the refstrings
                                 $(this).children("RS").each(function (refstring) {
                                     var newRS = {
-                                        'target': this.getAttribute('a'),  //klb
+                                        'target': tgt,  //klb
                                         'n': this.getAttribute('n'),
                                         'cDT': this.getAttribute('cDT'),
                                         'df': this.getAttribute('df'),
@@ -1679,77 +1766,6 @@ define(function (require) {
                     var searchIdx = 0;
                     var firstBook = false;
                     var isMergedDoc = false;
-                
-                    // Helper method to strip any starting / ending punctuation from the source or target field.
-                    // This method is called from:
-                    // - selectedAdaptation before the target text available for editing
-                    // - unselectedAdaptation before the target text is stored in the KB
-                    // - togglePhrase before the new phrase is stored in the KB
-                    var stripPunctuation = function (content, isSource) {
-                        var result = content,
-                            startIdx = 0,
-                            endIdx = content.length;
-                        // check for empty string
-                        if (endIdx === 0) {
-                            return result;
-                        }
-                        if (isSource === false) {
-                            // starting index
-                            while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
-                                startIdx++;
-                            }
-                            // ending index
-                            while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
-                                endIdx--;
-                            }
-                        } else {
-                            // starting index
-                            while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
-                                startIdx++;
-                            }
-                            // ending index
-                            while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
-                                endIdx--;
-                            }
-                        }
-                        // sanity check for all punctuation
-                        if (endIdx <= startIdx) {
-                            return "";
-                        }
-                        result = content.substr(startIdx, (endIdx) - startIdx);
-                        return result;
-                    };
-                    // Helper method to convert theString to lower case using either the source or target case equivalencies.
-                    var autoRemoveCaps = function (theString, isSource) {
-                        var i = 0,
-                            result = "";
-                        // If we aren't capitalizing for this project, just return theString
-                        if (project.get('AutoCapitalization') === 'false') {
-                            return theString;
-                        }
-                        // is the first letter capitalized?
-                        if (isSource === true) {
-                            // use source case equivalencies
-                            for (i = 0; i < caseSource.length; i++) {
-                                if (caseSource[i].charAt(1) === theString.charAt(0)) {
-                                    // uppercase -- convert the first character to lowercase and return the result
-                                    result = caseSource[i].charAt(0) + theString.substr(1);
-                                    return result;
-                                }
-                            }
-                        } else {
-                            // use target case equivalencies
-                            for (i = 0; i < caseTarget.length; i++) {
-                                if (caseTarget[i].charAt(1) === theString.charAt(0)) {
-                                    // uppercase -- convert the first character to lowercase and return the result
-                                    result = caseTarget[i].charAt(0) + theString.substr(1);
-                                    return result;
-                                }
-                            }
-                        }
-                        // If we got here, the string wasn't uppercase -- just return the same string
-                        return theString;
-                    };
                     
                     console.log("Reading XML file:" + fileName);
                     bookName = ""; // reset
@@ -1968,7 +1984,7 @@ define(function (require) {
                         }
                         
                         // create the next sourcephrase
-//                        console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
+                        // console.log(i + ": " + $(this).attr('s') + ", " + chapterID);
                         if (origTarget.length > 0) {
                             // phrase -- spID has a prefix of "phr-"
                             spID = "phr-" + window.Application.generateUUID();
@@ -2304,6 +2320,236 @@ define(function (require) {
                     return true; // success
                     // END readXMLDoc()
                 };
+
+                // Lexical data doc in SFM format
+                // AIM 1.11.0 / issue #496: This is for pre-populating the KB with keywords using the \lx \ge syntax.
+                // Notes:
+                // 1. \lx and \ge markers are SFM, but not USFM -- they are an easy/quick way to add key terms to a KB
+                //    (see https://github.com/adapt-it/adapt-it-mobile/issues/496 for a sample file)
+                // 2. This method is the equivalent functionality as Adapt It Desktop's Import to Knowledge Base / Standard Format
+                //    dialog option.
+                var readSFMLexDoc = function (contents) {
+                    var defer = $.Deferred(),
+                        spaceRE = /\s+/,        // select 1+ space chars
+                        nonSpaceRE = /[^\s+]/,  // select 1+ non-space chars
+                        i = 0,
+                        refstrings = [],
+                        curDate = new Date(),
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        mn = 1,
+                        f = "0",
+                        bMerge = false;
+
+                    console.log("readSFMLexDoc - entry");
+                    // ** Sanity check: Is this a keyword document? 
+                    i = contents.indexOf("\\lx ");
+                    index = contents.indexOf("\\ge");
+                    if ((1 === -1) || (index === -1)) {
+                        // Need to have at least one \lx and one \ge for us to consider this file
+                        console.log("No lexeme or definition found -- exiting");
+                        errMsg = i18n.t("view.dscErrSFMLexNotFound");
+                        return false;
+                    }
+                    // We're looking at a simple list of source/target pairs, with no indication of language
+                    // (unlike a KB import) -- so we'll assume the file is okay in our project. So the only test
+                    // we can make is to check for a non-empty the KB. If it's not empty, ask the user if they
+                    // want to merge or overwrite the KB.
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeSFMLex", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the existing KB
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
+                            }
+                        }, i18n.t("view.ttlImportSFMLex"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        isKB = true; // we're importing knowledge base data
+                        var bFoundRS = false;
+                        var theTU = null;
+                        var theRS = null;
+                        var tuCount = 0;
+                        var rsCount = 0;
+                        var mkr = 0;
+                        var newTU = false;
+                        var rs = "";
+                        var src = "";
+                        var projectid = project.get('projectid');
+                        console.log(msg);
+                        arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
+                        arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
+                        i = 0;
+                        while (i < arr.length) {
+                            // check for a marker
+                            if (arr[i].indexOf("\\") === 0) {
+                                // marker found. What is it?
+                                if (arr[i] === "\\lx") {
+                                    tuCount++;
+                                    mkr = LexMkrEnum.LX;
+                                } else if (arr[i] === "\\ge") {
+                                    rsCount++;
+                                    mkr = LexMkrEnum.GE;
+                                } else {
+                                    // This isn't a SFM \lx \ge document (it supports ONLY those markers) -- error out
+                                    errMsg = i18n.t("view.dscErrSFMLexBadMarker", {mkr: arr[i]});
+                                    return false;
+                                }
+                                // Now get the string associated with the marker we collected
+                                s = ""; // reset the string
+                                i++;  // start from the next array slot
+                                while (i < arr.length && arr[i].indexOf("\\") === -1) {
+                                    // copy the text associated with the marker into the source
+                                    s += arr[i] + " ";
+                                    i++;
+                                }
+                                // now process the TU as appropriate
+                                if (mkr === LexMkrEnum.LX) {
+                                    // TU entry
+                                    src = stripPunctuation(autoRemoveCaps(s.trim(), true), true);
+                                    newTU = true;
+                                    // look up the TU (might return null if not found -- we'll deal with that case in the refstring block below)
+                                    theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
+                                } else {
+                                    // RefString (target) entry
+                                    rs = stripPunctuation(autoRemoveCaps(s.trim(), false), false);
+                                    // Are we merging with existing KB entries?
+                                    if (bMerge === true) {
+                                        if (theTU) {
+                                            bFoundRS = false;
+                                            // found a matching TU
+                                            // Does our TU have this refstring?
+                                            theRS = theTU.get("refstring");
+                                            for (i=0; i< theRS.count; i++) {
+                                                if (rs === theRS[i].get('target')) {
+                                                    // found the refstring -- add this refcount to the one in our KB
+                                                    if (Number(theRS[i].n) < 0) {
+                                                        // special case -- this value was removed, but now we've got it again:
+                                                        // reset the count to 1 in this case
+                                                        theRS[i].n = '1';
+                                                    } else {
+                                                        theRS[i].n = String(Number(theRS[i].n) + 1);
+                                                    }
+                                                    bFoundRS = true;
+                                                    break; // done searching
+                                                }
+                                            }
+                                            if (bFoundRS === false) {
+                                                // refstring not found -- add a new one
+                                                var newRS = {
+                                                    'target': rs,  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                };
+                                                theRS.push(newRS);
+                                            }
+                                            // done merging -- save our changes to this TU
+                                            theTU.save({refstring: theRS});                                    
+                                        } else {
+                                            // TU not found -- create a new one from the file
+                                            var newRS = {
+                                                'target': rs,
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                            refstrings.push(newRS);
+                                            // now create the TU
+                                            var newID = window.Application.generateUUID();
+                                            var newTU = new kbModels.TargetUnit({
+                                                tuid: newID,
+                                                projectid: projectid,
+                                                source: src,
+                                                mn: mn,
+                                                f: f,
+                                                refstring: refstrings.splice(0, 1), // return 1 element array
+                                                timestamp: timestamp,
+                                                isGloss: 0
+                                            });
+                                            // add this TU to our internal list and save to the db
+                                            newTU.save();
+                                        }
+                                    } else {
+                                        // no merge, just add
+                                        if (theTU) {
+                                            // existing TU -- add this refstring
+                                            theRS = theTU.get("refstring");
+                                            var newRS = {
+                                                'target': rs,  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                            theRS.push(newRS);
+                                            // save our changes to this TU
+                                            theTU.save({refstring: theRS});                                    
+                                        } else {
+                                            // new TU + new refstring
+                                            var newRS = {
+                                                'target': rs,
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                            refstrings.push(newRS);
+                                            // now create the TU
+                                            var newID = window.Application.generateUUID();
+                                            var newTU = new kbModels.TargetUnit({
+                                                tuid: newID,
+                                                projectid: projectid,
+                                                source: src,
+                                                mn: mn,
+                                                f: f,
+                                                refstring: refstrings.splice(0, 1), // return 1 element array
+                                                timestamp: timestamp,
+                                                isGloss: 0
+                                            });
+                                            // add this TU to our internal list and save to the db
+                                            newTU.save();
+                                        }
+                                    }
+                                }                            
+                            } else {
+                                // skip anything else (including empty array elements)
+                                i++;
+                            }
+                        }
+                        console.log("readSFMLexDoc -- tuCount: " + tuCount + ", rsCount: " + rsCount);
+                    });
+                    return true; // success
+                    // END readSFMLexDoc()
+                };
                 
                 // USFM document
                 // This is the file format for Bibledit and Paratext
@@ -2537,13 +2783,16 @@ define(function (require) {
                             project.set('lastAdaptedName', chapterName);
                         }
                         
-                        // build SourcePhrases                    
+                        // build SourcePhrases
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
                         arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
                         i = 0;
                         while (i < arr.length) {
                             // check for a marker
-                            if (arr[i].indexOf("\\") === 0) {
+                            if (arr[i].length === 0) {
+                                // nothing in this token -- skip
+                                i++;
+                            } else if (arr[i].indexOf("\\") === 0) {
                                 // marker token
                                 if (markers.length > 0) {
                                     markers += " ";
@@ -2730,9 +2979,6 @@ define(function (require) {
                                     i++;
                                     markers += " " + arr[i];
                                 }
-                                i++;
-                            } else if (arr[i].length === 0) {
-                                // nothing in this token -- skip
                                 i++;
                             } else if (arr[i].length === 1 && puncts.indexOf(arr[i]) > -1) {
                                 // punctuation token -- add to the prepuncts
@@ -3234,7 +3480,15 @@ define(function (require) {
 
                 // parse doc contents as appropriate
                 if ((fileName.toLowerCase().indexOf(".usfm") > 0) || (fileName.toLowerCase().indexOf(".sfm") > 0)) {
-                    result = readUSFMDoc(contents);
+                    // sfm/usfm doc -- does it contain \lx keywords for our KB?
+                    index = contents.indexOf("\\lx ");
+                    if (index >= 0) {
+                        // looks like it has at least one \lx -- try reading as a sfm lex document
+                        result = readSFMLexDoc(contents);
+                    } else {
+                        // no \lx -- try parsing as a plain old USFM doc
+                        result = readUSFMDoc(contents);
+                    }
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".tmx") > 0) {
@@ -3257,8 +3511,15 @@ define(function (require) {
                         // _probably_ USFM under the hood -- at least try to read it as USFM
                         result = readUSFMDoc(contents);
                     } else {
-                        // not USFM -- try reading it as a text document
-                        result = readTextDoc(contents);
+                        // not a USFM doc per se; does it have keyword lex info for our KB?
+                        index = contents.indexOf("\\lx ");
+                        if (index >= 0) {
+                            // looks like it has at least one \lx -- try reading as a sfm lex document
+                            result = readSFMLexDoc(contents);
+                        } else {
+                            // try reading it as a text document
+                            result = readTextDoc(contents);
+                        }
                     }
                 } else {
                     if (isClipboard === true) {
@@ -3316,6 +3577,9 @@ define(function (require) {
                                 }
                             }
                             result = readUSFMDoc(contents);
+                        } else if (contents.indexOf("\\lx") >= 0) {
+                            // _probably_ \lx data for the KB
+                            result = readSFMLexDoc(contents);    
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);

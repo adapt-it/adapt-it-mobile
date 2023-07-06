@@ -1355,7 +1355,14 @@ define(function (require) {
                         localStorage.setItem(("UILang"), loc);
                         // set the locale, then return
                         i18n.setLng(loc, function (err, t) {
-                            // do nothing?
+                            // return to the main screen
+                            if (window.history.length > 1) {
+                                // there actually is a history -- go back
+                                window.history.back();
+                            } else {
+                                // no history (import link from outside app) -- just go home
+                                window.location.replace("");
+                            }
                         });
                     } else {
                         // use the mobile device's setting
@@ -1366,7 +1373,14 @@ define(function (require) {
                             // device supports ECMA Internationalization API
                             locale = navigator.language.split("-")[0];
                             i18n.setLng(locale, function (err, t) {
-                                // do nothing?
+                                // return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
                             });
                         } else {
                             // fallback - use web browser's language metadata
@@ -1374,11 +1388,17 @@ define(function (require) {
                             locale = lang.split("-")[0];
                             // set the locale, then return
                             i18n.setLng(locale, function (err, t) {
-                                // do nothing?
+                                // return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
                             });
                         }
                     }
-                    
                     break;
                 }
                 this.model.save();

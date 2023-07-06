@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:export-ydpi="22.5"
    inkscape:export-xdpi="22.5"
    inkscape:export-filename="C:\Users\eb1\Documents\GitHub\adapt-it-mobile\www\res\screen\webos\screen-64.png"
    sodipodi:docname="adapt-it-mobile.svg"
-   inkscape:version="1.0beta1 (32d4812, 2019-09-19)"
+   inkscape:version="1.2.1 (9c6d41e, 2022-07-14)"
    version="1.1"
    id="svg2"
    height="256"
-   width="256">
+   width="256"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <title
      id="title3023">adaptit</title>
   <defs
@@ -349,22 +349,25 @@
      inkscape:document-rotation="0"
      objecttolerance="5"
      inkscape:window-maximized="0"
-     inkscape:window-y="23"
-     inkscape:window-x="554"
+     inkscape:window-y="38"
+     inkscape:window-x="72"
      inkscape:window-height="945"
      inkscape:window-width="1612"
      showgrid="false"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="138.48125"
-     inkscape:cx="406.92071"
+     inkscape:cy="138.5"
+     inkscape:cx="288.5"
      inkscape:zoom="1"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#ffffff"
-     id="base" />
+     id="base"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -382,10 +385,10 @@
         </dc:creator>
         <dc:description>Adapt It Mobile applcation icon. Traced from the original by Tashia.</dc:description>
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -417,7 +420,7 @@
        style="fill:url(#linearGradient4003);fill-opacity:1;fill-rule:evenodd;stroke:none" />
     <g
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       transform="matrix(0.91572554,0,0,0.91362961,34.516427,80.34111)"
+       transform="matrix(0.85467717,0,0,0.85272097,32.548666,136.60918)"
        id="g4180">
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:none"
@@ -427,7 +430,7 @@
          inkscape:connector-curvature="0" />
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:none"
-         d="m 131.73126,862.55296 c 14.87129,0.82212 26.79009,3.55905 37.7869,13.36117 11.03366,11.32954 11.19491,12.55013 11.19491,84.7126 v 73.21737 H 156.17094 131.6288 l 0.1025,-171.29114 z"
+         d="m 131.73126,862.55296 c 14.87129,0.82212 26.79009,3.55905 37.7869,13.36117 11.03366,11.32954 11.19491,12.55013 11.19491,84.7126 v 73.21737 h -24.54213 -24.54214 l 0.1025,-171.29114 z"
          id="path2923-5"
          sodipodi:nodetypes="ccccccc"
          inkscape:connector-curvature="0" />

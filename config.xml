@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="41" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.10.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="42" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.11.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -302,6 +302,7 @@
         <icon height="100" src="www/res/icon/ios/icon-50@2x.png" width="100" />
         <icon src="www/res/icon/ios/icon-1024.png" width="1024" height="1024" />
         <splash src="www/res/screen/ios/Default@2x~universal~anyany.png" />
+        <splash src="www/res/screen/ios/Default@3x~universal~anyany.png" />
     </platform>
     <platform name="browser">
         <plugin name="cordova-sqlite-storage" spec="^6.0.0" />

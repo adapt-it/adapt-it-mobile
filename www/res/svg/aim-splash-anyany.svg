@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   inkscape:export-ydpi="384"
-   inkscape:export-xdpi="384"
-   inkscape:export-filename="../icon/ios/icon-1024.png"
-   sodipodi:docname="adapt-it-mobile-nomask.svg"
+   inkscape:export-ydpi="96"
+   inkscape:export-xdpi="96"
+   inkscape:export-filename="../screen/ios/Default@3x~universal~anyany.png"
+   sodipodi:docname="aim-splash-anyany.svg"
    inkscape:version="1.2.1 (9c6d41e, 2022-07-14)"
    version="1.1"
    id="svg2"
-   height="256"
-   width="256"
+   height="2208"
+   width="2208"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -101,17 +101,17 @@
     </linearGradient>
     <inkscape:perspective
        id="perspective10"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 2302.7874 : 1"
+       inkscape:vp_z="744.09448 : 2478.1811 : 1"
        inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_x="0 : 2478.1811 : 1"
        sodipodi:type="inkscape:persp3d" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_x="0 : 1952.5 : 1"
        inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 1952.5 : 1"
+       inkscape:persp3d-origin="0.5 : 1952.3333 : 1"
        id="perspective2902" />
     <linearGradient
        gradientTransform="translate(0.65359477,-0.7745098)"
@@ -195,7 +195,7 @@
        xlink:href="#linearGradient3798"
        inkscape:collect="always" />
     <linearGradient
-       gradientTransform="matrix(0.25026026,0,0,0.2502603,-0.13329556,789.13109)"
+       gradientTransform="matrix(2.1584947,0,0,2.1584951,-1.1496742,733.99355)"
        gradientUnits="userSpaceOnUse"
        y2="32.885021"
        x2="402.7662"
@@ -352,15 +352,15 @@
      objecttolerance="5"
      inkscape:window-maximized="0"
      inkscape:window-y="38"
-     inkscape:window-x="69"
+     inkscape:window-x="213"
      inkscape:window-height="965"
      inkscape:window-width="1464"
      showgrid="false"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="92.408377"
-     inkscape:cx="18.586387"
-     inkscape:zoom="1.91"
+     inkscape:cy="1030.6888"
+     inkscape:cx="1016.3985"
+     inkscape:zoom="0.2799099"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -416,13 +416,13 @@
        rx="0"
        y="796.36224"
        x="0"
-       height="256"
-       width="256"
+       height="2208"
+       width="2208"
        id="rect3995"
-       style="fill:url(#linearGradient4003);fill-opacity:1;fill-rule:evenodd;stroke:none" />
+       style="fill:url(#linearGradient4003);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:8.62501" />
     <g
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       transform="matrix(0.85819852,0,0,0.85623426,31.547377,133.36356)"
+       transform="matrix(0.85819852,0,0,0.85623426,1019.2007,1109.3636)"
        id="g4180">
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:none"
@@ -448,5 +448,15 @@
          style="fill:#ffffff;fill-opacity:1;stroke:none"
          inkscape:connector-curvature="0" />
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:'Gill Sans';-inkscape-font-specification:'Gill Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke-width:0.423307;stroke-linecap:round"
+       x="902.96875"
+       y="2064.6274"
+       id="text4960"><tspan
+         sodipodi:role="line"
+         id="tspan4958"
+         x="902.96875"
+         y="2064.6274">Adapt It Mobile</tspan></text>
   </g>
 </svg>

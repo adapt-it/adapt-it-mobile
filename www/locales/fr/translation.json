@@ -282,8 +282,8 @@
         "lblCopyClipboardText": "Texte du presse-papiers...",
         "lblText": "Texte",
         "lblShowPreviewBtn": "Bouton de prévisualisation",
-        "lblShowPreview": "Prévisualisation",
-        "lblHidePreview": "Traduire",
+        "lblShowPreview": "afficher l'aperçu",
+        "lblHidePreview": "fermer l'aperçu",
         "lblShowTranslations": "Traducciones...",
         "lblEdit": "Éditer",
         "lblKB": "Base de connaissances",
@@ -359,6 +359,10 @@
         "lblExportFT": "Exporter Traduction libre",
         "lblExportSummary": "__content__ de \"__document__\".",
         "dscErrNothingToExport": "aucun texte trouvé à exporter.",
+        "ttlImportSFMLex": "Importer fichier au format SFM?",
+        "dscRestoreOrMergeSFMLex": "Il s'agit d'un fichier au format SFM contenant des données pour la base de connaissances (\\lx et \\ge). Vous pouvez restaurer la base de connaissances à partir du fichier importé ou fusionner le fichier avec des traductions existantes.",
+        "dscErrSFMLexNotFound": "Impossible de trouver les marqueurs \\lx ou \\ge dans ce fichier.",
+        "dscErrSFMLexBadMarker": "Marqueur inconnu: \"__mkr__\". Adapt It Mobile ne peut mettre à jour la base de connaissances qu'à partir de fichiers SFM avec des marqueurs \\lx et \\ge.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
