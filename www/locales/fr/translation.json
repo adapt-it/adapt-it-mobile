@@ -84,7 +84,7 @@
         "lblMore": "Plus",
         "lblSkip": "Passer",
         "lblClose": "Fermer",
-        "lblSourceToTargetAdaptations": "__source__ à __target__ Adaptations",
+        "lblSourceToTargetAdaptations": "Adaptations de __source__ à __target__",
         "ttlHelp": "Information",
         "lblPlaceholder": "Espace réservé",
         "lblPhrase": "Phrase",

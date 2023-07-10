@@ -3497,7 +3497,7 @@ define(function (require) {
                     if (fileName.toLowerCase().indexOf("adaptations.xml") > 0) {
                         // possibly a KB
                         result = readKBXMLDoc(contents);
-                    } else if (fileName.toLowerCase.indexOf("glossing.xml") > 0) {
+                    } else if (fileName.toLowerCase().indexOf("glossing.xml") > 0) {
                         result = readGlossXMLDoc(contents);
                     } else {
                         // possibly an Adapt It XML document
