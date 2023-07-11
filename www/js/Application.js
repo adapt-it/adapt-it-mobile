@@ -395,7 +395,7 @@ define(function (require) {
                         }                        
                     }
                     // Is there a current project?
-                    if (window.Application.currentProject !== null) {
+                    if ((window.Application.currentProject !== undefined) && (window.Application.currentProject !== null)) {
                         // there's a "real" current project -- load the books, chapter, and KB
                         window.Application.BookList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
                         window.Application.ChapterList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
