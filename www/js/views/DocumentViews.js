@@ -1120,8 +1120,8 @@ define(function (require) {
                                     $(this).children("RS").each(function (refstring) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
-                                        for (i=0; i< theRS.count; i++) {
-                                            if (tgt === theRS[i].get('target')) {
+                                        for (i=0; i< theRS.length; i++) {
+                                            if (tgt === theRS[i].target) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1606,8 +1606,8 @@ define(function (require) {
                                     $(this).children("RS").each(function (refstring) {
                                         // Does our TU have this refstring?
                                         theRS = theTU.get("refstring");
-                                        for (i=0; i< theRS.count; i++) {
-                                            if (tgt === theRS[i].get('target')) {
+                                        for (i=0; i< theRS.length; i++) {
+                                            if (tgt === theRS[i].target) {
                                                 // found the refstring -- add this refcount to the one in our KB
                                                 if (Number(theRS[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -2362,7 +2362,7 @@ define(function (require) {
                             case 1: 
                                 // Restore
                                 // Delete the existing KB
-                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
+                                $.when(window.Application.kbList.clearKBForProject(project.get('projectid'), 0)).done(function() {
                                     window.Application.kbList.reset(); // clear the local list
                                     defer.resolve("Restore selected");
                                 });
@@ -2402,6 +2402,7 @@ define(function (require) {
                         var rs = "";
                         var src = "";
                         var projectid = project.get('projectid');
+                        var RSidx = 0;
                         console.log(msg);
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
                         arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
@@ -2434,6 +2435,11 @@ define(function (require) {
                                     // TU entry
                                     src = stripPunctuation(autoRemoveCaps(s.trim(), true), true);
                                     newTU = true;
+                                    // save / clear previous values
+                                    if (theTU) {
+                                        theTU.save();
+                                    }
+                                    refstrings.length = 0; // clear out old refstrings array if needed
                                     // look up the TU (might return null if not found -- we'll deal with that case in the refstring block below)
                                     theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
                                 } else {
@@ -2446,15 +2452,15 @@ define(function (require) {
                                             // found a matching TU
                                             // Does our TU have this refstring?
                                             theRS = theTU.get("refstring");
-                                            for (i=0; i< theRS.count; i++) {
-                                                if (rs === theRS[i].get('target')) {
+                                            for (RSidx=0; RSidx<theRS.length; RSidx++) {
+                                                if (rs === theRS[RSidx].target) {
                                                     // found the refstring -- add this refcount to the one in our KB
-                                                    if (Number(theRS[i].n) < 0) {
+                                                    if (Number(theRS[RSidx].n) < 0) {
                                                         // special case -- this value was removed, but now we've got it again:
                                                         // reset the count to 1 in this case
-                                                        theRS[i].n = '1';
+                                                        theRS[RSidx].n = '1';
                                                     } else {
-                                                        theRS[i].n = String(Number(theRS[i].n) + 1);
+                                                        theRS[RSidx].n = String(Number(theRS[RSidx].n) + 1);
                                                     }
                                                     bFoundRS = true;
                                                     break; // done searching
@@ -2470,9 +2476,8 @@ define(function (require) {
                                                     'wC': ""
                                                 };
                                                 theRS.push(newRS);
+                                                theTU.update();
                                             }
-                                            // done merging -- save our changes to this TU
-                                            theTU.save({refstring: theRS});                                    
                                         } else {
                                             // TU not found -- create a new one from the file
                                             var newRS = {
@@ -2495,8 +2500,8 @@ define(function (require) {
                                                 timestamp: timestamp,
                                                 isGloss: 0
                                             });
-                                            // add this TU to our internal list and save to the db
-                                            newTU.save();
+                                            // add this TU to our internal list
+                                            theTU = newTU;
                                         }
                                     } else {
                                         // no merge, just add
@@ -2512,7 +2517,7 @@ define(function (require) {
                                             };
                                             theRS.push(newRS);
                                             // save our changes to this TU
-                                            theTU.save({refstring: theRS});                                    
+                                            theTU.update();                                    
                                         } else {
                                             // new TU + new refstring
                                             var newRS = {
@@ -2535,8 +2540,8 @@ define(function (require) {
                                                 timestamp: timestamp,
                                                 isGloss: 0
                                             });
-                                            // add this TU to our internal list and save to the db
-                                            newTU.save();
+                                            // add this TU to our internal list
+                                            theTU = newTU;
                                         }
                                     }
                                 }                            
@@ -2545,9 +2550,16 @@ define(function (require) {
                                 i++;
                             }
                         }
+                        // final TU obj save
+                        if (theTU) {
+                            theTU.save();
+                        }
                         console.log("readSFMLexDoc -- tuCount: " + tuCount + ", rsCount: " + rsCount);
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
                     });
-                    return true; // success
+                    // return true; // success
                     // END readSFMLexDoc()
                 };
                 
@@ -5926,7 +5938,13 @@ define(function (require) {
                     }
                 }
                 // Okay, done deleting / rolling back the import -- now head back to the home page
-                window.Application.home();
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history (import link from outside app) -- just go home
+                    window.location.replace("");
+                }
             },
 
             // Handler for the OK button:
@@ -5982,7 +6000,13 @@ define(function (require) {
                 }
                 
                 // head back to the home page
-                window.Application.home();
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history (import link from outside app) -- just go home
+                    window.location.replace("");
+                }
             },
             // Show event handler (from MarionetteJS):
             // - if we're running in a mobile device, we'll use the cordova-plugin-file

@@ -2272,6 +2272,7 @@ define(function (require) {
                                 },
                                 {
                                     name: 'kboptions',
+                                    limit: 10,
                                     source: function (request, response) {
                                         response(KBtarget);
                                     }
@@ -2293,10 +2294,6 @@ define(function (require) {
                             }
                             if (navigator.notification && Keyboard) {
                                 Keyboard.show();
-                            }
-                            // ios
-                            if (navigator.notification && device.platform === "iOS") {
-                                $(event.currentTarget).setSelectionRange(0, 99999);
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
@@ -2420,6 +2417,7 @@ define(function (require) {
                                         },
                                         {
                                             name: 'kboptions',
+                                            limit: 10,
                                             source: function (request, response) {
                                                 response(KBtarget);
                                             }
@@ -2592,6 +2590,7 @@ define(function (require) {
                                 },
                                 {
                                     name: 'kboptions',
+                                    limit: 10,
                                     source: function (request, response) {
                                         response(KBtarget);
                                     }
@@ -2613,10 +2612,6 @@ define(function (require) {
                             }
                             if (navigator.notification && Keyboard) {
                                 Keyboard.show();
-                            }
-                            // ios
-                            if (navigator.notification && device.platform === "iOS") {
-                                $(event.currentTarget).setSelectionRange(0, 99999);
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
                             // Make sure the edit field is in view by scrolling the UI
@@ -2736,6 +2731,7 @@ define(function (require) {
                                         },
                                         {
                                             name: 'kboptions',
+                                            limit: 10,
                                             source: function (request, response) {
                                                 response(KBtarget);
                                             }
