@@ -2435,6 +2435,10 @@ define(function (require) {
                                     // TU entry
                                     src = stripPunctuation(autoRemoveCaps(s.trim(), true), true);
                                     newTU = true;
+                                    // save / clear previous values
+                                    if (theTU) {
+                                        theTU.save();
+                                    }
                                     refstrings.length = 0; // clear out old refstrings array if needed
                                     // look up the TU (might return null if not found -- we'll deal with that case in the refstring block below)
                                     theTU = window.Application.kbList.findWhere([{source: src}, {projectid: projectid}, {isGloss: 0}]);
@@ -2472,9 +2476,8 @@ define(function (require) {
                                                     'wC': ""
                                                 };
                                                 theRS.push(newRS);
+                                                theTU.update();
                                             }
-                                            // done merging -- save our changes to this TU
-                                            theTU.save({refstring: theRS});                                    
                                         } else {
                                             // TU not found -- create a new one from the file
                                             var newRS = {
@@ -2497,8 +2500,7 @@ define(function (require) {
                                                 timestamp: timestamp,
                                                 isGloss: 0
                                             });
-                                            // add this TU to our internal list and save to the db
-                                            newTU.save();
+                                            // add this TU to our internal list
                                             theTU = newTU;
                                         }
                                     } else {
@@ -2515,7 +2517,7 @@ define(function (require) {
                                             };
                                             theRS.push(newRS);
                                             // save our changes to this TU
-                                            theTU.save({refstring: theRS});                                    
+                                            theTU.update();                                    
                                         } else {
                                             // new TU + new refstring
                                             var newRS = {
@@ -2538,8 +2540,7 @@ define(function (require) {
                                                 timestamp: timestamp,
                                                 isGloss: 0
                                             });
-                                            // add this TU to our internal list and save to the db
-                                            newTU.save();
+                                            // add this TU to our internal list
                                             theTU = newTU;
                                         }
                                     }
@@ -2548,6 +2549,10 @@ define(function (require) {
                                 // skip anything else (including empty array elements)
                                 i++;
                             }
+                        }
+                        // final TU obj save
+                        if (theTU) {
+                            theTU.save();
                         }
                         console.log("readSFMLexDoc -- tuCount: " + tuCount + ", rsCount: " + rsCount);
                         // Exit out with SUCCESS status                    
