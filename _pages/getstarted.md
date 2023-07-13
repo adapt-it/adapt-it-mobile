@@ -74,6 +74,8 @@ Now that you have installed Adapt It Mobile, you'll want to take a look at our s
 
 ## Working with Documents
 
+* [Supported file types]({{ site.baseurl }}/working-with-documents#supported-file-types)
+* [Opening a document from another app]({{ site.baseurl }}/working-with-documents#opening-a-document)
 * [Importing a document]({{ site.baseurl }}/working-with-documents#importing-a-document)
 * [Exporting a document]({{ site.baseurl }}/working-with-documents#exporting-a-Document)
 
