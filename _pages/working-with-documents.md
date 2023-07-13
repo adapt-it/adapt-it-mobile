@@ -6,9 +6,46 @@ desc:   How to import and export documents.
 date:   2017-01-03 12:21
 ---
 
+* [Supported file types](#supported-file-types)
+* [Opening a document from another app](#opening-a-document)
 * [Importing a document](#importing-a-document)
 * [Exporting a document](#exporting-a-document)
 
+----
+
+<a id="supported-file-types"></a>
+
+## Supported file types
+
+Adapt It Mobile currently supports the following document formats for opening, import, and export:
+
+- Adapt It desktop (.xml) document
+- USFM
+- USX
+- Plain text (.txt)
+  
+In addition, Adapt It Mobile can also import and export Knowledge Base / translation memory file data:
+
+- Adapt It desktop (.xml) Knowledge Base
+- Translation Memory eXchange (.TMX) format
+- Key term documents in SFM format
+
+----
+
+<a id="opening-a-document"></a>
+
+## Opening a document
+
+When you install Adapt It Mobile, it registers itself on your mobile device that can edit any document of the [supported file types](#supported-file-types). You can use the Share functionality on your device to share the document with Adapt It Mobile. To so this, complete the following steps:
+
+1. Select the document you would like to share with / import into Adapt It Mobile. This must be a document file type that is supported by Adapt It Mobile.
+2. Locate and press the Share button in your app. The share button will look different depending on the app and platform you are using ( [refer to this Wikipedia article for example icons](#https://en.wikipedia.org/wiki/Share_icon) ). Your mobile device should bring up a "share panel," allowing you to select the app to share the document with. Here's an example of a share panel on an iOS device:
+
+   ![iOS share panel]({{ site.baseurl }}/assets/img/share-panel.png)
+3. Select Adapt It Mobile from the share panel. Adapt It Mobile will launch if needed, and import the selected document into the current project. 
+
+   ***Note:*** If you do not see the Adapt It Mobile icon in the share panel, verify that the selected document is one of the supported file types](#supported-file-types).
+   
 ----
 
 <a id="importing-a-document"></a>
@@ -17,22 +54,23 @@ date:   2017-01-03 12:21
 
 Complete the following steps to import documents into Adapt It Mobile.
 
-1. [Copy the files to your mobile device]({{ site.baseurl }}/getstarted#copy-documents-to-device), if you haven't already done so. You can also use your device's Cut / Copy functionality to place snippets of text on the Clipboard -- Adapt It Mobile will recognize that there is text on the clipboard and will add an entry to the list of available documents (see step 4 below).
+1. Copy the files to your mobile device. These files must be placed in the appropriate documents directory for Adapt It Mobile to see them:
+  - On iOS, you must use the [Finder on your Mac](#https://support.apple.com/en-us/HT210598) (macOS Catalina or later), or [iTunes File Sharing](#https://support.apple.com/en-us/HT201301) (Mojave or earlier) to copy files to Adapt It Mobile's documents directory.
+  - On Android, you can use a utility such as Android File Transfer to copy the documents into one of the following directories:
+    
+    - `/data/Android/org.adaptit.adaptitmobile/files`
+    - `/sdcard/data/Android/org.adaptit.adaptitmobile/files`
+    
+  ***TIP:*** You can also use your device's Cut / Copy functionality to place snippets of text on the Clipboard -- Adapt It Mobile will recognize that there is text on the clipboard and will add an entry to the list of available documents (see step 4 below).
+
 2. Open Adapt It Mobile on your device. If you haven't already, [create]({{ site.baseurl }}/Working-with-projects#creating-a-project) or [copy]({{ site.baseurl }}/Working-with-projects#copying-a-project) a project to manage the translation work you'll be doing.
 3. On the main screen, you should see a list of available tasks for your translation project. The second item should be "Import":
 
-    ![Import Documents]({{ site.baseurl }}/assets/img/import.png)
-4. Click the Import Documents button to display the import document screen. Here Adapt It Mobile will automatically scan your mobile device, displaying any documents that Adapt It Mobile can import. If there is text on your device's clipboard, Adapt It Mobile will add an entry titled "Clipboard text...". Adapt It Mobile currently supports the following document formats:
-  - Adapt It desktop (.xml) document
-  - USFM
-  - USX
-  - Plain text (.txt)
+    ![Import]({{ site.baseurl }}/assets/img/import.png)
+    
+4. Click the Import button to display the import document screen. Here Adapt It Mobile will automatically scan your mobile device, displaying any documents that Adapt It Mobile can import. If there is text on your device's clipboard, Adapt It Mobile will add an entry titled "Clipboard text...". 
   
-  In addition, Adapt It Mobile can also import Knowledge Base / translation memory file data:
-  - Adapt It desktop (.xml) Knowledge Base
-  - Translation Memory eXchange (.TMX) format
-  
-    ***Note:*** If you see a warning message instead of a list of available documents, Adapt It Mobile has not found any documents on your device that it can import. If this is the case, [copy the files to your mobile device]({{ site.baseurl }}/getstarted#copy-project-to-device) and retry this operation.
+    ***Note:*** If you see a warning message instead of a list of available documents, Adapt It Mobile has not found any documents on your device that it can import. If this is the case, copy the files to your mobile device using one of the methods in step 1 and retry this operation.
     
 5. Select the document you would like to import. 
 
