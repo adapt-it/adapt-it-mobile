@@ -291,6 +291,7 @@
         "dscErrCannotFindTMX": "Não foi possível localizar as informações do Translation Memory Exchange. Este é um arquivo Translation Memory Exchange (tmx)?",
         "dscErrCannotFindLangTMX": "Este é um arquivo TMX, mas não contém dados do código de idioma \"__lang__\".",
         "dscErrCannotFindLIFT": "Não foi possível localizar as informações do arquivo LIFT. Este é um arquivo Lexical Interchange Format (LIFT)?",
+        "dscErrCannotFindLangLIFT": "Este é um arquivo LIFT, mas não contém dados do código de idioma \"__lang__\".",
         "dscErrWrongKB": "Este é um arquivo da Base de Conhecimento, mas os nomes dos idiomas de origem e / ou destino não correspondem a nenhum projeto ativo. Importe apenas arquivos da Base de Conhecimento que estão associados a um projeto ativo.",
         "dscStatusKBImportSuccess": "A Base de Conhecimento foi importada com sucesso.",
         "dscStatusGlossKBImportSuccess": "A Base de Conhecimento da glosa foi importada com sucesso.",
