@@ -12,15 +12,27 @@
 /* embedded fonts */
 @font-face {
     font-family: "Andika";
-    src: url("../font/Andika-R.woff") format('woff');
+    src: url("../font/Andika-Regular.woff") format('woff');
 }
 @font-face {
-    font-family: "Gentium";
-    src: url("../font/GentiumPlus-R.woff") format('woff');
+    font-family: "Annapurna";
+    src: url("../font/AnnapurnaSIL-Regular.woff") format('woff');
 }
 @font-face {
-    font-family: "Scheherazade";
-    src: url("../font/Scheherazade-Regular.woff") format('woff');
+    font-family: "Doulos";
+    src: url("../font/DoulosSIL-Regular.woff") format('woff');
+}
+@font-face {
+    font-family: "Charis";
+    src: url("../font/CharisSIL-Regular.woff") format('woff');
+}
+@font-face {
+    font-family: "Gentium Plus";
+    src: url("../font/GentiumPlus-Regular.woff") format('woff');
+}
+@font-face {
+    font-family: "Scheherazade New";
+    src: url("../font/ScheherazadeNew-Regular.woff") format('woff');
 }
 .bg-orange {
     background-color: #ff8c00;
