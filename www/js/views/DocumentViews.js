@@ -1245,6 +1245,266 @@ define(function (require) {
                     }); 
                 };
 
+                // Lexicon Interchange Format (LIFT) document
+                // LIFT was developed by SIL as an interchange format for FLEx and other dictionary tools.
+                // AIM does not use all the features of LIFT documents, and so (like in the case of a TMX doc)
+                // our LIFT support should be considered lossy and not recommended for round-tripping data.
+                var readLIFTDoc = function (contents) {
+                    var i = 0,
+                        index = 0,
+                        refstrings = [],
+                        found = false,
+                        project = window.Application.currentProject,
+                        projectid = project.get("projectid"),
+                        xmlDoc = $.parseXML(contents),
+                        curDate = new Date(),
+                        result = null,
+                        srcElt = null,
+                        tgtElt = null,
+                        tu = null,
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        n = "",
+                        mn = "",
+                        f = "",
+                        tgt = "",
+                        src = "",
+                        defer = $.Deferred(),
+                        bMerge = false;
+
+                    // ** Sanity check #1: Is this a TMX file? 
+                    index = contents.indexOf("<lift ");
+                    if (index === -1) {
+                        // No lift element found -- this is most likely not a lift document.
+                        // Return; we can't parse this file.
+                        console.log("No lift element found (is this a LIFT file?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLIFT");
+                        return false;
+                    }
+                    // ** Sanity check #2: does this TMX file contain data related to the current project? 
+                    index = contents.indexOf(project.get("SourceLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("Cannot find source language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("SourceLanguageCode")});
+                        return false;
+                    }
+                    index = contents.indexOf(project.get("TargetLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("Cannot find target language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("TargetLanguageCode")});
+                        return false;
+                    }
+
+                    // This is a TMX file that matches our project. Is our KB empty?
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the existing KB
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
+                            }
+                        }, i18n.t("view.ttlImportTMX"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        console.log(msg);
+                        // ** Now start parsing the file itself
+                        isKB = true; // we're importing a knowledge base
+                        var $xml = $(xmlDoc);
+                        var tuCount = 0;
+                        markers = "";
+                        $($xml).find("entry").each(function () {
+                            // pull out the source and target elements from the entry element
+                            srcElt = $(this).children("lexical-unit > form");
+                            tgtElt = $(this).children("sense > gloss"); // could be > 1
+                            if ((srcElt.length > 0) && (tgtElt.length > 0)) {
+                                n = 1; // no usage count in LIFT
+                                // do we already have this source value in our kblist?
+                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true);
+                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("text").html().trim(), false), false);
+                            } else {
+                                return true; // no data in this element -- continue to next entry element
+                            }
+                            // okay, there's something in the source and target -- are we merging or just populated the KB?
+                            tuCount++;
+                            if (bMerge === true) {
+                                // merging
+                                // Merge selected -- check to see if we already have this TU in our kblist
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (Number(refstrings[i].n) < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: "",
+                                            isGloss: 0
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
+
+                            } else {
+                                // No merge needed -- the KB is empty
+                                // is there an existing TU for this element?
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    // found a TU for this source -- add a new refstring
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (refstrings[i].n < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = refstrings[i].n + n;
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: "",
+                                            isGloss: 0
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
+                            }
+                        });
+                        console.log("imported " + tuCount + " TU objects");
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
+                    });
+                };
+
                 // Translation Memory Exchange (TMX) document
                 // This is an industry standard, and as such only tangentially comforms to Adapt It's model.
                 // TMX files potentially have > 2 languages involved, and don't have a 1:many TU/RS mapping. Instead,
@@ -1282,24 +1542,24 @@ define(function (require) {
                         // No version element found -- this is most likely not a tmx document.
                         // Return; we can't parse this file.
                         console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        errMsg = i18n.t("view.dscErrCannotFindTMX");
                         return false;
                     }
                     // ** Sanity check #2: does this TMX file contain data related to the current project? 
                     index = contents.indexOf(project.get("SourceLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
+                        // This is a TMX file, but not for our project
                         // Return; we can't parse this file.
-                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        console.log("TMX doesn't contain our project's source language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangTMX", {lang: project.get("SourceLanguageCode")});
                         return false;
                     }
                     index = contents.indexOf(project.get("TargetLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
+                        // This is a TMX file, but not for our project
                         // Return; we can't parse this file.
-                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        console.log("TMX doesn't contain our project's target language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangTMX", {lang: project.get("TargetLanguageCode")});
                         return false;
                     }
 
