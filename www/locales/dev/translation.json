@@ -245,7 +245,7 @@
         "hlpttlBack": "Back",
         "hlpdscBack": "When you are done, click on the Back button to return to the home screen.",
         "lblExport": "Export Document",
-        "lblExportSelectDocument": "Select the document you want to export to the local device.",
+        "lblExportSelectDocument": "Select the document you want to export.",
         "lblExportSelectFormat": "Format:",
         "lblExportTo": "Export to:",
         "lblExportToClipboard": "Copy to Clipboard",

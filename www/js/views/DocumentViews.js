@@ -5851,17 +5851,18 @@ define(function (require) {
                 var refstrings = null;
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
                 var content = "";
+                var i = 0;
                 kblist.forEach(function (tu) { 
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
                         return; // continue
                     }
                     // source line
-                    content += "\lx " + tu.get('source') + CRLF;
+                    content += "\\lx " + tu.get('source') + CRLF;
                     refstrings = tu.get('refstring');
                     // emit each TU as a \lx line item, and each refstring as a \ge line item
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "\ge " + refstrings[i].target + CRLF;
+                        content += "\\ge " + refstrings[i].target + CRLF;
                     }
 
                 });
@@ -5889,29 +5890,33 @@ define(function (require) {
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + CRLF + "lift version=\"0.15\">" + CRLF;
                 var curDate = new Date();
-                var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+                var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay());
                 var project = window.Application.currentProject;
                 var i = 0;
                 var refstrings = null;
                 // opening content / LIFT file identification and version
                 content = XML_PROLOG;
-                kblist.forEach(function (tu) { 
-/* 
-<entry id="srapa" dateModified="1991-08-27">
-    <lexical-unit>
-      <form lang="und-Latn"><text>srapa</text></form>
-    </lexical-unit>
-    <sense id="srapa_"><!--id can't be the same as entry id-->
-      <grammatical-info value="vt"/>
-      <gloss lang="en"><text>slap</text></gloss>
-      <definition>
-        <form lang="en">
-          <text>slap with open hand</text>
-        </form>
-      </definition>
-    </sense>
-  </entry>
-*/
+                kblist.forEach(function (tu) {
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    // sort the refstrings on "n" (refcount)
+                    refstrings = tu.get('refstring');
+                    refstrings.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    content += "<entry id=\"" + tu.get('source') + "\" dateModified=\"" + timestamp + "\">" + CRLF;
+                    // source info -- single "lexical-unit" node
+                    content += "  <lexical-unit>" + CRLF + "    <form lang=\"" + project.get('SourceLanguageCode') + "\"><text>"+ tu.get('source') +"</text></form>" + CRLF + "  </lexical-unit>" + CRLF;
+                    for (i = 0; i < refstrings.length; i++) {
+                        // refstring info -- 1+ "sense/gloss" node(s) under each entry
+                        content += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
+                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\><text></text></gloss>" + CRLF;
+                        content += "  </sense>" + CRLF;
+                    }
+                    content += "</entry>" + CRLF;
                 });
                 // done CONTENT PART -- close out the file
                 content += "</lift>" + CRLF;
