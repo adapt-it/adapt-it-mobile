@@ -582,8 +582,11 @@ define(function (require) {
                         }
                         // add the fonts we've embedded with AIM
                         $("#font").append($('<option>', {value : 'Andika'}).text('Andika'));
-                        $("#font").append($('<option>', {value : 'Gentium'}).text('Gentium'));
-                        $("#font").append($('<option>', {value : 'Scheherazade'}).text('Scheherazade'));
+                        $("#font").append($('<option>', {value : 'Annapurna'}).text('Annapurna'));
+                        $("#font").append($('<option>', {value : 'Charis'}).text('Charis'));
+                        $("#font").append($('<option>', {value : 'Doulos'}).text('Doulos'));
+                        $("#font").append($('<option>', {value : 'Gentium Plus'}).text('Gentium Plus'));
+                        $("#font").append($('<option>', {value : 'Scheherazade New'}).text('Scheherazade New'));
                         $("#font").append($('<option>', {value : 'Source Sans'}).text('Source Sans'));
                         // select the current font
                         $("#font option[value=\'" + curFont + "\']").attr('selected', 'selected');

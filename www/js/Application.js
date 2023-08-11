@@ -31,6 +31,7 @@ define(function (require) {
         importDocView   = null,
         exportDocView   = null,
         showTransView   = null,
+        editKBView      = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -77,8 +78,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.11.0", // appended with Android / iOS build info
-            AndroidBuild: "42", // (was milestone release #)
+            version: "1.12.0", // appended with Android / iOS build info
+            AndroidBuild: "43", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -246,9 +247,18 @@ define(function (require) {
                 // create / open the database
                 if (device && (device.platform !== "browser")) {
                     if (device.platform === "browser") {
-                        // running in browser -- use WebSQL (Chrome / Safari ONLY)
-                        this.db = window.openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
-                        this.onInitDB();
+                        // running in browser -- use indexedDB (Chrome / Safari ONLY)
+                        const DBOpenRequest = window.indexedDB.open(DB_NAME);
+                        DBOpenRequest.onerror = (event) => {
+                            console.error("Initialize() - browser indexedDB open error: " + event);
+                        };
+                        DBOpenRequest.onsuccess = (event) => {
+                            // store the result of opening the database in the db
+                            // variable. This is used a lot later on, for opening
+                            // transactions and suchlike.
+                            this.db = DBOpenRequest.result;
+                            this.onInitDB();
+                        };                        
                     } else if (device.platform === "iOS") {
                         // iOS -- Documents dir: db is visible to iTunes, backed up by iCloud
                         this.db = window.sqlitePlugin.openDatabase({name: DB_NAME, iosDatabaseLocation: 'Documents'});
@@ -279,9 +289,17 @@ define(function (require) {
                         this.onInitDB();
                     }
                 } else {
-                    // no sqlite plugin defined -- try just using webSQL
-                    this.db = openDatabase(DB_NAME, '1', 'AIM database', 2 * 1024 * 1024);
-                    this.onInitDB();
+                    const DBOpenRequest = window.indexedDB.open(DB_NAME);
+                    DBOpenRequest.onerror = (event) => {
+                        console.error("Initialize() - indexedDB open error: " + event);
+                    };
+                    DBOpenRequest.onsuccess = (event) => {
+                        // store the result of opening the database in the db
+                        // variable. This is used a lot later on, for opening
+                        // transactions and suchlike.
+                        this.db = DBOpenRequest.result;
+                        this.onInitDB();
+                    };                        
                 }
             },
             
@@ -461,10 +479,21 @@ define(function (require) {
                 this.ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
+
+            editKB: function (id) {
+                console.log("editKB");
+                // update the KB and source Phrase lists, then show the KB editor view
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
+                    var proj = this.ProjectList.where({projectid: id});
+                    editKBView = new SearchViews.KBListView({model: proj});
+                    editKBView.delegateEvents();
+                    window.Application.main.show(editKBView);
+                });
+            },
             
             lookupKB: function (id) {
                 console.log("lookupKB");
-                // update the book and chapter lists, then show the import docs view
+                // update the KB and source phrase list, then display the Show Translations screen
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
                     $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
                         var tu = window.Application.kbList.where({tuid: id});

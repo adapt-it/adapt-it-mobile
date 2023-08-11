@@ -18,6 +18,7 @@ define(function (require) {
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
+        tplTUList       = require('text!tpl/TargetUnitList.html'),
         tplRSList       = require('text!tpl/RefStringList.html'),
         theRefStrings   = Handlebars.compile(tplRSList),
         chapTemplate    = Handlebars.compile(tplChapterList),
@@ -100,6 +101,10 @@ define(function (require) {
             }
         }),
         
+        KBListView = Marionette.LayoutView.extend({
+            template: Handlebars.compile(tplTUList)
+        }),
+
         KBView = Marionette.LayoutView.extend({
             spObj: null,
             spInstances: null,
@@ -794,6 +799,7 @@ define(function (require) {
         });
             
     return {
+        KBListView: KBListView,
         KBView: KBView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView

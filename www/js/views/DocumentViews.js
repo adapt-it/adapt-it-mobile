@@ -78,7 +78,9 @@ define(function (require) {
             XML: 4,
             KBXML: 5,
             KBTMX: 6,    // https://www.ttt.org/oscarStandards/tmx/
-            GLOSSKBXML: 7
+            GLOSSKBXML: 7,
+            SFM_KB: 8, // SFM with \lx \ge markers
+            LIFT: 9 // https://github.com/sillsdev/lift-standard
         },
         DestinationEnum = {
             FILE: 1,
@@ -1245,6 +1247,266 @@ define(function (require) {
                     }); 
                 };
 
+                // Lexicon Interchange Format (LIFT) document
+                // LIFT was developed by SIL as an interchange format for FLEx and other dictionary tools.
+                // AIM does not use all the features of LIFT documents, and so (like in the case of a TMX doc)
+                // our LIFT support should be considered lossy and not recommended for round-tripping data.
+                var readLIFTDoc = function (contents) {
+                    var i = 0,
+                        index = 0,
+                        refstrings = [],
+                        found = false,
+                        project = window.Application.currentProject,
+                        projectid = project.get("projectid"),
+                        xmlDoc = $.parseXML(contents),
+                        curDate = new Date(),
+                        result = null,
+                        srcElt = null,
+                        tgtElt = null,
+                        tu = null,
+                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                        n = "",
+                        mn = "",
+                        f = "",
+                        tgt = "",
+                        src = "",
+                        defer = $.Deferred(),
+                        bMerge = false;
+
+                    // ** Sanity check #1: Is this a TMX file? 
+                    index = contents.indexOf("<lift ");
+                    if (index === -1) {
+                        // No lift element found -- this is most likely not a lift document.
+                        // Return; we can't parse this file.
+                        console.log("No lift element found (is this a LIFT file?) -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLIFT");
+                        return false;
+                    }
+                    // ** Sanity check #2: does this TMX file contain data related to the current project? 
+                    index = contents.indexOf(project.get("SourceLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("Cannot find source language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("SourceLanguageCode")});
+                        return false;
+                    }
+                    index = contents.indexOf(project.get("TargetLanguageCode"));
+                    if (index === -1) {
+                        // No version element found -- this is most likely not a tmx document.
+                        // Return; we can't parse this file.
+                        console.log("Cannot find target language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("TargetLanguageCode")});
+                        return false;
+                    }
+
+                    // This is a TMX file that matches our project. Is our KB empty?
+                    if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
+                        console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
+                        // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
+                        navigator.notification.confirm(i18n.t("view.dscRestoreOrMergeTMX", {document: bookName}), function (buttonIndex) {
+                            switch (buttonIndex) {
+                            case 1: 
+                                // Restore
+                                // Delete the existing KB
+                                $.when(window.Application.kbList.clearKBForProject(projectid, 0)).done(function() {
+                                    window.Application.kbList.reset(); // clear the local list
+                                    defer.resolve("Restore selected");
+                                });
+                                break;
+                            case 2: 
+                                // Merge
+                                defer.resolve("Merge selected");
+                                bMerge = true;
+                                break;
+                            case 3:
+                            default: 
+                                // User pressed Cancel on import - return to the main screen
+                                if (window.history.length > 1) {
+                                    // there actually is a history -- go back
+                                    window.history.back();
+                                } else {
+                                    // no history (import link from outside app) -- just go home
+                                    window.location.replace("");
+                                }
+                                return true; // success
+                            }
+                        }, i18n.t("view.ttlImportTMX"), [i18n.t("view.optRestore"), i18n.t("view.optMerge"), i18n.t("view.optCancelImport")]);
+                    } else {
+                        // KB is empty -- no need for prompt; just import
+                        defer.resolve("new KB / no confirm needed, just importing");
+                    }
+
+                    defer.then(function (msg) {
+                        console.log(msg);
+                        // ** Now start parsing the file itself
+                        isKB = true; // we're importing a knowledge base
+                        var $xml = $(xmlDoc);
+                        var tuCount = 0;
+                        markers = "";
+                        $($xml).find("entry").each(function () {
+                            // pull out the source and target elements from the entry element
+                            srcElt = $(this).children("lexical-unit > form");
+                            tgtElt = $(this).children("sense > gloss"); // could be > 1
+                            if ((srcElt.length > 0) && (tgtElt.length > 0)) {
+                                n = 1; // no usage count in LIFT
+                                // do we already have this source value in our kblist?
+                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true);
+                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("text").html().trim(), false), false);
+                            } else {
+                                return true; // no data in this element -- continue to next entry element
+                            }
+                            // okay, there's something in the source and target -- are we merging or just populated the KB?
+                            tuCount++;
+                            if (bMerge === true) {
+                                // merging
+                                // Merge selected -- check to see if we already have this TU in our kblist
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (Number(refstrings[i].n) < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: "",
+                                            isGloss: 0
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
+
+                            } else {
+                                // No merge needed -- the KB is empty
+                                // is there an existing TU for this element?
+                                var elts = kblist.filter(function (element) {
+                                    return (element.attributes.projectid === projectid &&
+                                    element.attributes.source === src);
+                                });
+                                if (elts.length > 0) {
+                                    // found a TU for this source -- add a new refstring
+                                    tu = elts[0];
+                                    found = false;
+                                    refstrings = tu.get('refstring');
+                                    // in list -- do we have a refstring for the target?
+                                    for (i = 0; i < refstrings.length; i++) {
+                                        if (refstrings[i].target === tgt) {
+                                            // there is a refstring for this target value -- increment it
+                                            if (refstrings[i].n < 0) {
+                                                // special case -- this value was removed, but now we've got it again:
+                                                // reset the count to 1 in this case
+                                                refstrings[i].n = n;
+                                            } else {
+                                                refstrings[i].n = refstrings[i].n + n;
+                                            }
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (found === false) {
+                                        // no entry in KB with this source/target -- add one
+                                        var newRS = {
+                                                'target': Underscore.unescape(tgt),  //klb
+                                                'n': '1',
+                                                'cDT': timestamp,
+                                                'df': '0',
+                                                'wC': ""
+                                            };
+                                        refstrings.push(newRS);
+                                    }
+                                    // sort the refstrings collection on "n" (refcount)
+                                    refstrings.sort(function (a, b) {
+                                        // high to low
+                                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                                    });
+                                    // update the KB model
+                                    tu.set('refstring', refstrings, {silent: true});
+                                    tu.set('timestamp', timestamp, {silent: true});
+                                    tu.update();
+                                } else {
+                                    // not in list -- create a new TU
+                                    var newID = window.Application.generateUUID(),
+                                        newTU = new kbModels.TargetUnit({
+                                            tuid: newID,
+                                            projectid: projectid,
+                                            source: src,
+                                            refstring: [
+                                                {
+                                                    target: Underscore.unescape(tgt),  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                }
+                                            ],
+                                            timestamp: timestamp,
+                                            user: "",
+                                            isGloss: 0
+                                        });
+                                    newTU.save();
+                                    kblist.add(newTU);                                  
+                                }
+                            }
+                        });
+                        console.log("imported " + tuCount + " TU objects");
+                        // Exit out with SUCCESS status                    
+                        importSuccess();
+                        return true; // success
+                    });
+                };
+
                 // Translation Memory Exchange (TMX) document
                 // This is an industry standard, and as such only tangentially comforms to Adapt It's model.
                 // TMX files potentially have > 2 languages involved, and don't have a 1:many TU/RS mapping. Instead,
@@ -1282,24 +1544,24 @@ define(function (require) {
                         // No version element found -- this is most likely not a tmx document.
                         // Return; we can't parse this file.
                         console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        errMsg = i18n.t("view.dscErrCannotFindTMX");
                         return false;
                     }
                     // ** Sanity check #2: does this TMX file contain data related to the current project? 
                     index = contents.indexOf(project.get("SourceLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
+                        // This is a TMX file, but not for our project
                         // Return; we can't parse this file.
-                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        console.log("TMX doesn't contain our project's source language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangTMX", {lang: project.get("SourceLanguageCode")});
                         return false;
                     }
                     index = contents.indexOf(project.get("TargetLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
+                        // This is a TMX file, but not for our project
                         // Return; we can't parse this file.
-                        console.log("No version element found (is this a Translation Memory Exchange file?) -- exiting.");
-                        errMsg = i18n.t("view.dscErrCannotFindKB");
+                        console.log("TMX doesn't contain our project's target language code -- exiting.");
+                        errMsg = i18n.t("view.dscErrCannotFindLangTMX", {lang: project.get("TargetLanguageCode")});
                         return false;
                     }
 
@@ -3512,8 +3774,15 @@ define(function (require) {
                     } else if (fileName.toLowerCase().indexOf("glossing.xml") > 0) {
                         result = readGlossXMLDoc(contents);
                     } else {
-                        // possibly an Adapt It XML document
-                        result = readXMLDoc(contents);
+                        index = contents.indexOf("lift version=");
+                        if (index >= 0) {
+                            // looks like a LIFT document
+                            result = readLIFTDoc(contents);
+                        }
+                        else {
+                            // possibly an Adapt It XML document
+                            result = readXMLDoc(contents);
+                        }
                     }
                 } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
@@ -3591,7 +3860,10 @@ define(function (require) {
                             result = readUSFMDoc(contents);
                         } else if (contents.indexOf("\\lx") >= 0) {
                             // _probably_ \lx data for the KB
-                            result = readSFMLexDoc(contents);    
+                            result = readSFMLexDoc(contents); 
+                        } else if (contents.indexOf("lift version=") >= 0) {
+                            // maybe a LIFT document
+                            result = readLIFTDoc(contents);   
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -5573,6 +5845,98 @@ define(function (require) {
                 content = ""; // clear out the content string for the next chapter
             };
 
+            // KB keyword export in SFM format (these use the \lx and \ge markers)
+            // Note that this is SFM, not USFM. It's a pretty bare-bones export.
+            var exportSFMKB = function () {
+                var refstrings = null;
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
+                var content = "";
+                var i = 0;
+                kblist.forEach(function (tu) { 
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    // source line
+                    content += "\\lx " + tu.get('source') + CRLF;
+                    refstrings = tu.get('refstring');
+                    // emit each TU as a \lx line item, and each refstring as a \ge line item
+                    for (i = 0; i < refstrings.length; i++) {
+                        content += "\\ge " + refstrings[i].target + CRLF;
+                    }
+
+                });
+                // done creating data -- now export
+                if (isClipboard === true) {
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string
+            };
+
+            // LIFT format (https://github.com/sillsdev/lift-standard)
+            var exportLIFT = function () {
+                var content = "";
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + CRLF + "lift version=\"0.15\">" + CRLF;
+                var curDate = new Date();
+                var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay());
+                var project = window.Application.currentProject;
+                var i = 0;
+                var refstrings = null;
+                // opening content / LIFT file identification and version
+                content = XML_PROLOG;
+                kblist.forEach(function (tu) {
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    // sort the refstrings on "n" (refcount)
+                    refstrings = tu.get('refstring');
+                    refstrings.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    content += "<entry id=\"" + tu.get('source') + "\" dateModified=\"" + timestamp + "\">" + CRLF;
+                    // source info -- single "lexical-unit" node
+                    content += "  <lexical-unit>" + CRLF + "    <form lang=\"" + project.get('SourceLanguageCode') + "\"><text>"+ tu.get('source') +"</text></form>" + CRLF + "  </lexical-unit>" + CRLF;
+                    for (i = 0; i < refstrings.length; i++) {
+                        // refstring info -- 1+ "sense/gloss" node(s) under each entry
+                        content += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
+                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\><text></text></gloss>" + CRLF;
+                        content += "  </sense>" + CRLF;
+                    }
+                    content += "</entry>" + CRLF;
+                });
+                // done CONTENT PART -- close out the file
+                content += "</lift>" + CRLF;
+                if (isClipboard === true) {
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string
+            };
+
             var exportTMX = function () {
                 var content = "";
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
@@ -5645,7 +6009,7 @@ define(function (require) {
                     var blob = new Blob([content], {type: 'text/plain'});
                     writer.write(blob);
                 }
-                content = ""; // clear out the content string for the next chapter
+                content = ""; // clear out the content string
             };
             //// *** END export functions
             
@@ -5705,6 +6069,12 @@ define(function (require) {
                                 case FileTypeEnum.GLOSSKBXML:
                                     exportGlossKB();
                                     break;
+                                case FileTypeEnum.SFM_KB:
+                                    exportSFMKB();
+                                    break;
+                                case FileTypeEnum.LIFT:
+                                    exportLIFT();
+                                    break;
                                 }
                             }, exportFail);
                         }, exportFail);
@@ -5746,6 +6116,12 @@ define(function (require) {
                                     break;
                                 case FileTypeEnum.KBTMX:
                                     exportTMX();
+                                    break;
+                                case FileTypeEnum.SFM_KB:
+                                    exportSFMKB();
+                                    break;
+                                case FileTypeEnum.LIFT:
+                                    exportLIFT();
                                     break;
                                 }
                             }, exportFail);
@@ -6296,6 +6672,10 @@ define(function (require) {
                     filename += ".sfm";
                 } else if ($("#exportKBTMX").is(":checked")) {
                     filename += ".tmx";
+                } else if ($("#exportKBSFM").is(":checked")) {
+                    filename += ".sfm";
+                } else if ($("#exportKBLIFT").is(":checked")) {
+                    filename += ".xml";
                 } else if ($("#exportKBXML").is(":checked")) {
                     // special case -- AI requires a special filename
                     // Note: hard-coded (do not localize)
@@ -6370,6 +6750,10 @@ define(function (require) {
                             format = FileTypeEnum.KBXML;
                         } else if ($("#exportKBTMX").is(":checked")) {
                             format = FileTypeEnum.KBTMX;
+                        } else if ($("#exportKBSFM").is(":checked")) {
+                            format = FileTypeEnum.SFM_KB;
+                        } else if ($("#exportKBLIFT").is(":checked")) {
+                            format = FileTypeEnum.LIFT;
                         } else if ($("#exportGlossKBXML").is(":checked")) {
                             format = FileTypeEnum.GLOSSKBXML;
                         } else {
