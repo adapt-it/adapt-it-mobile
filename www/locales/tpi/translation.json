@@ -293,6 +293,8 @@
         "lblStartTyping": "Taipim...",
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
+        "lblExportKBSFM": "\\lx key word data (.sfm)",
+        "lblExportKBLIFT": "Lexicon Interchange / LIFT (.xml)",
         "lblUseTranslation": "Yusim dispela trenslesen",
         "lblEditTranslation": "Editim trenslesen",
         "lblDeleteTranslation": "Rausim trenslesen",

@@ -298,6 +298,8 @@
         "lblStartTyping": "Commencer à écrire...",
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
+        "lblExportKBSFM": "\\lx key word data (.sfm)",
+        "lblExportKBLIFT": "Lexicon Interchange / LIFT (.xml)",
         "lblUseTranslation": "Utilisez cette traduction",
         "lblEditTranslation": "Éditer la traduction",
         "lblDeleteTranslation": "Supprimmer la traduction",

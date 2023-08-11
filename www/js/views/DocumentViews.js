@@ -78,7 +78,9 @@ define(function (require) {
             XML: 4,
             KBXML: 5,
             KBTMX: 6,    // https://www.ttt.org/oscarStandards/tmx/
-            GLOSSKBXML: 7
+            GLOSSKBXML: 7,
+            SFM_KB: 8, // SFM with \lx \ge markers
+            LIFT: 9 // https://github.com/sillsdev/lift-standard
         },
         DestinationEnum = {
             FILE: 1,
@@ -3772,8 +3774,15 @@ define(function (require) {
                     } else if (fileName.toLowerCase().indexOf("glossing.xml") > 0) {
                         result = readGlossXMLDoc(contents);
                     } else {
-                        // possibly an Adapt It XML document
-                        result = readXMLDoc(contents);
+                        index = contents.indexOf("lift version=");
+                        if (index >= 0) {
+                            // looks like a LIFT document
+                            result = readLIFTDoc(contents);
+                        }
+                        else {
+                            // possibly an Adapt It XML document
+                            result = readXMLDoc(contents);
+                        }
                     }
                 } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
@@ -3851,7 +3860,10 @@ define(function (require) {
                             result = readUSFMDoc(contents);
                         } else if (contents.indexOf("\\lx") >= 0) {
                             // _probably_ \lx data for the KB
-                            result = readSFMLexDoc(contents);    
+                            result = readSFMLexDoc(contents); 
+                        } else if (contents.indexOf("lift version=") >= 0) {
+                            // maybe a LIFT document
+                            result = readLIFTDoc(contents);   
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -5833,6 +5845,93 @@ define(function (require) {
                 content = ""; // clear out the content string for the next chapter
             };
 
+            // KB keyword export in SFM format (these use the \lx and \ge markers)
+            // Note that this is SFM, not USFM. It's a pretty bare-bones export.
+            var exportSFMKB = function () {
+                var refstrings = null;
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
+                var content = "";
+                kblist.forEach(function (tu) { 
+                    if (tu.get('source') === "**ImportedKBFile**") {
+                        // skip this entry -- this is our internal "imported KB file" flag
+                        return; // continue
+                    }
+                    // source line
+                    content += "\lx " + tu.get('source') + CRLF;
+                    refstrings = tu.get('refstring');
+                    // emit each TU as a \lx line item, and each refstring as a \ge line item
+                    for (i = 0; i < refstrings.length; i++) {
+                        content += "\ge " + refstrings[i].target + CRLF;
+                    }
+
+                });
+                // done creating data -- now export
+                if (isClipboard === true) {
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string
+            };
+
+            // LIFT format (https://github.com/sillsdev/lift-standard)
+            var exportLIFT = function () {
+                var content = "";
+                var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
+                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + CRLF + "lift version=\"0.15\">" + CRLF;
+                var curDate = new Date();
+                var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+                var project = window.Application.currentProject;
+                var i = 0;
+                var refstrings = null;
+                // opening content / LIFT file identification and version
+                content = XML_PROLOG;
+                kblist.forEach(function (tu) { 
+/* 
+<entry id="srapa" dateModified="1991-08-27">
+    <lexical-unit>
+      <form lang="und-Latn"><text>srapa</text></form>
+    </lexical-unit>
+    <sense id="srapa_"><!--id can't be the same as entry id-->
+      <grammatical-info value="vt"/>
+      <gloss lang="en"><text>slap</text></gloss>
+      <definition>
+        <form lang="en">
+          <text>slap with open hand</text>
+        </form>
+      </definition>
+    </sense>
+  </entry>
+*/
+                });
+                // done CONTENT PART -- close out the file
+                content += "</lift>" + CRLF;
+                if (isClipboard === true) {
+                    if (device && (device.platform ==="browser")) {
+                        // browser -- use clipboard API
+                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
+                    } else {
+                        // write (copy) text to clipboard
+                        cordova.plugins.clipboard.copy(content);
+                        // directly call success (it's a callback for the file writer)
+                        exportSuccess();
+                    }
+                } else {
+                    var blob = new Blob([content], {type: 'text/plain'});
+                    writer.write(blob);
+                }
+                content = ""; // clear out the content string
+            };
+
             var exportTMX = function () {
                 var content = "";
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
@@ -5905,7 +6004,7 @@ define(function (require) {
                     var blob = new Blob([content], {type: 'text/plain'});
                     writer.write(blob);
                 }
-                content = ""; // clear out the content string for the next chapter
+                content = ""; // clear out the content string
             };
             //// *** END export functions
             
@@ -5965,6 +6064,12 @@ define(function (require) {
                                 case FileTypeEnum.GLOSSKBXML:
                                     exportGlossKB();
                                     break;
+                                case FileTypeEnum.SFM_KB:
+                                    exportSFMKB();
+                                    break;
+                                case FileTypeEnum.LIFT:
+                                    exportLIFT();
+                                    break;
                                 }
                             }, exportFail);
                         }, exportFail);
@@ -6006,6 +6111,12 @@ define(function (require) {
                                     break;
                                 case FileTypeEnum.KBTMX:
                                     exportTMX();
+                                    break;
+                                case FileTypeEnum.SFM_KB:
+                                    exportSFMKB();
+                                    break;
+                                case FileTypeEnum.LIFT:
+                                    exportLIFT();
                                     break;
                                 }
                             }, exportFail);
@@ -6556,6 +6667,10 @@ define(function (require) {
                     filename += ".sfm";
                 } else if ($("#exportKBTMX").is(":checked")) {
                     filename += ".tmx";
+                } else if ($("#exportKBSFM").is(":checked")) {
+                    filename += ".sfm";
+                } else if ($("#exportKBLIFT").is(":checked")) {
+                    filename += ".xml";
                 } else if ($("#exportKBXML").is(":checked")) {
                     // special case -- AI requires a special filename
                     // Note: hard-coded (do not localize)
@@ -6630,6 +6745,10 @@ define(function (require) {
                             format = FileTypeEnum.KBXML;
                         } else if ($("#exportKBTMX").is(":checked")) {
                             format = FileTypeEnum.KBTMX;
+                        } else if ($("#exportKBSFM").is(":checked")) {
+                            format = FileTypeEnum.SFM_KB;
+                        } else if ($("#exportKBLIFT").is(":checked")) {
+                            format = FileTypeEnum.LIFT;
                         } else if ($("#exportGlossKBXML").is(":checked")) {
                             format = FileTypeEnum.GLOSSKBXML;
                         } else {
