@@ -299,7 +299,7 @@
         "lblExportKBXML": "Adapt It desktop (.xml)",
         "lblExportKBTMX": "Translation Memory Exchange (.tmx)",
         "lblExportKBSFM": "\\lx key word data (.sfm)",
-        "lblExportKBLIFT": "Lexicon Interchange / LIFT (.xml)",
+        "lblExportKBLIFT": "Lexicon Interchange / LIFT (.lift)",
         "lblUseTranslation": "Yusim dispela trenslesen",
         "lblEditTranslation": "Editim trenslesen",
         "lblDeleteTranslation": "Rausim trenslesen",

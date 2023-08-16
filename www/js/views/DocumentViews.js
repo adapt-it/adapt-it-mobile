@@ -5908,7 +5908,7 @@ define(function (require) {
                     for (i = 0; i < refstrings.length; i++) {
                         // refstring info -- 1+ "sense/gloss" node(s) under each entry
                         content += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
-                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\"><text></text></gloss>" + CRLF;
+                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\"><text>" + refstrings[i].target + "</text></gloss>" + CRLF;
                         content += "  </sense>" + CRLF;
                     }
                     content += "</entry>" + CRLF;
