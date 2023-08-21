@@ -17,22 +17,19 @@ Adapt It Mobile currently supports the following document formats:
 | **USX** | XML-based document format used by Paratext. |
 | **Plain text (.txt)** | Text document format. When importing, Adapt It Mobile will check this document format for USFM content, as some translation tools will export USFM content with a text (.txt) extension. |
 
-## Using the clipboard
+## Translate text from the clipboard? No problem!
 
 Adapt It Mobile also supports using your mobile device's cut/copy/paste feature to copy text from other programs. The text copied into Adapt It Mobile can be either plain text or text formatted in one of the supported formats above. 
 
-Note that if you are copying formatted text, you'll need to include the entire file. There are formatting markers that indicate the book and chapter, etc., and these need to be included in order for Adapt It Mobile to import the file data properly.
-
 Adapt It Mobile can also export entire files in any of the above formats to the clipboard.
 
-## Importing a translation memory / knowledge base
+## Pre-populating your translation memory
 
-Adapt It Mobile can also import and export the following translation memory data formats:
+If your translation team already has a working lexicon--either through [Rapid Word Collection](https://rapidwords.net) or through translation work done in another program--Adapt It Mobile can import that data to pre-populate translation suggestions for you. Adapt It Mobile supports the following translation memory data formats:
 
 - Adapt It desktop (.xml) Knowledge Base
 - Translation Memory Exchange (.TMX) format
-
-Importing these files can speed up the initial translation work, as Adapt It Mobile will have possible translation matches loaded from the memory files.
+- SFM keyword files using \lx and \ge markers
 
 Notes:
 
