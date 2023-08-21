@@ -1262,13 +1262,13 @@ define(function (require) {
                         curDate = new Date(),
                         result = null,
                         srcElt = null,
-                        tgtElt = null,
+                        tgtElts = null,
                         tu = null,
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         n = "",
                         mn = "",
                         f = "",
-                        tgt = "",
+                        tgts = [],
                         src = "",
                         defer = $.Deferred(),
                         bMerge = false;
@@ -1341,18 +1341,22 @@ define(function (require) {
                         isKB = true; // we're importing a knowledge base
                         var $xml = $(xmlDoc);
                         var tuCount = 0;
+                        var rsIdx = 0;
                         markers = "";
                         $($xml).find("entry").each(function () {
                             // pull out the source and target elements from the entry element
                             // find the form that matches our source language code (there can be multiple languages)
                             srcElt = $(this).children("lexical-unit").find("form[lang=\'" + project.get("SourceLanguageCode") + "\']");
                             // find the gloss that matches our target language code (there can be multiple languages)
-                            tgtElt = $(this).children("sense").find("gloss[lang=\'"+ project.get("TargetLanguageCode") + "\']"); // could be > 1
-                            if ((srcElt.length > 0) && (tgtElt.length > 0)) {
+                            tgtElts = $(this).children("sense").find("gloss[lang=\'"+ project.get("TargetLanguageCode") + "\']"); // could be > 1
+                            if ((srcElt.length > 0) && (tgtElts.length > 0)) {
                                 n = 1; // no usage count in LIFT - just set count to 1
                                 // do we already have this source value in our kblist?
-                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true);
-                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("text").html().trim(), false), false);
+                                src = Underscore.unescape(stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true));
+                                // collect the text from each sense / target -- we'll add them to our refstrings
+                                for (i=0; i<tgtElts.length; i++) {
+                                    tgts.push = Underscore.unescape(stripPunctuation(autoRemoveCaps($(tgtElts[i]).find("text").html().trim(), false), false));
+                                }
                             } else {
                                 return true; // no data in this element -- continue to next entry element
                             }
@@ -1367,35 +1371,39 @@ define(function (require) {
                                 });
                                 if (elts.length > 0) {
                                     tu = elts[0];
-                                    found = false;
                                     refstrings = tu.get('refstring');
-                                    // in list -- do we have a refstring for the target?
-                                    for (i = 0; i < refstrings.length; i++) {
-                                        if (refstrings[i].target === tgt) {
-                                            // there is a refstring for this target value -- increment it
-                                            if (Number(refstrings[i].n) < 0) {
-                                                // special case -- this value was removed, but now we've got it again:
-                                                // reset the count to 1 in this case
-                                                refstrings[i].n = n;
-                                            } else {
-                                                refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                    // loop through each sense/target we collected from the lift file
+                                    for (rsIdx = 0; rsIdx < tgts.length; rsIdx++) {
+                                        found = false;
+                                        // do we have a refstring for this target?
+                                        for (i = 0; i < refstrings.length; i++) {
+                                            if (refstrings[i].target === tgt) {
+                                                // there is a refstring for this target value -- increment it
+                                                if (Number(refstrings[i].n) < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    refstrings[i].n = n;
+                                                } else {
+                                                    refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                                }
+                                                found = true;
+                                                break;
                                             }
-                                            found = true;
-                                            break;
+                                        }
+                                        if (found === false) {
+                                            // no entry in KB with this source/target -- add one
+                                            var newRS = {
+                                                    'target': tgts[rsIdx],  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                };
+                                            refstrings.push(newRS);
                                         }
                                     }
-                                    if (found === false) {
-                                        // no entry in KB with this source/target -- add one
-                                        var newRS = {
-                                                'target': Underscore.unescape(tgt),  //klb
-                                                'n': '1',
-                                                'cDT': timestamp,
-                                                'df': '0',
-                                                'wC': ""
-                                            };
-                                        refstrings.push(newRS);
-                                    }
-                                    // sort the refstrings collection on "n" (refcount)
+                                    // done adding all the refstrings for this TU
+                                    // now sort the refstrings collection on "n" (refcount)
                                     refstrings.sort(function (a, b) {
                                         // high to low
                                         return parseInt(b.n, 10) - parseInt(a.n, 10);
@@ -1413,7 +1421,7 @@ define(function (require) {
                                             source: src,
                                             refstring: [
                                                 {
-                                                    target: Underscore.unescape(tgt),  //klb
+                                                    target: tgts,  //klb
                                                     'n': '1',
                                                     'cDT': timestamp,
                                                     'df': '0',
@@ -1438,33 +1446,36 @@ define(function (require) {
                                 if (elts.length > 0) {
                                     // found a TU for this source -- add a new refstring
                                     tu = elts[0];
-                                    found = false;
                                     refstrings = tu.get('refstring');
-                                    // in list -- do we have a refstring for the target?
-                                    for (i = 0; i < refstrings.length; i++) {
-                                        if (refstrings[i].target === tgt) {
-                                            // there is a refstring for this target value -- increment it
-                                            if (refstrings[i].n < 0) {
-                                                // special case -- this value was removed, but now we've got it again:
-                                                // reset the count to 1 in this case
-                                                refstrings[i].n = n;
-                                            } else {
-                                                refstrings[i].n = refstrings[i].n + n;
+                                    // loop through each sense/target we collected from the lift file
+                                    for (rsIdx = 0; rsIdx < tgts.length; rsIdx++) {
+                                        found = false;
+                                        // do we have a refstring for the target?
+                                        for (i = 0; i < refstrings.length; i++) {
+                                            if (refstrings[i].target === tgts[rsIdx]) {
+                                                // there is a refstring for this target value -- increment it
+                                                if (refstrings[i].n < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    refstrings[i].n = n;
+                                                } else {
+                                                    refstrings[i].n = refstrings[i].n + n;
+                                                }
+                                                found = true;
+                                                break;
                                             }
-                                            found = true;
-                                            break;
                                         }
-                                    }
-                                    if (found === false) {
-                                        // no entry in KB with this source/target -- add one
-                                        var newRS = {
-                                                'target': Underscore.unescape(tgt),  //klb
-                                                'n': '1',
-                                                'cDT': timestamp,
-                                                'df': '0',
-                                                'wC': ""
-                                            };
-                                        refstrings.push(newRS);
+                                        if (found === false) {
+                                            // no entry in KB with this source/target -- add one
+                                            var newRS = {
+                                                    'target': tgts[rsIdx],  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                };
+                                            refstrings.push(newRS);
+                                        }
                                     }
                                     // sort the refstrings collection on "n" (refcount)
                                     refstrings.sort(function (a, b) {
@@ -1484,7 +1495,7 @@ define(function (require) {
                                             source: src,
                                             refstring: [
                                                 {
-                                                    target: Underscore.unescape(tgt),  //klb
+                                                    target: tgts,  //klb
                                                     'n': '1',
                                                     'cDT': timestamp,
                                                     'df': '0',
