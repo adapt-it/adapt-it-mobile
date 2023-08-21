@@ -1262,13 +1262,13 @@ define(function (require) {
                         curDate = new Date(),
                         result = null,
                         srcElt = null,
-                        tgtElt = null,
+                        tgtElts = null,
                         tu = null,
                         timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                         n = "",
                         mn = "",
                         f = "",
-                        tgt = "",
+                        tgts = [],
                         src = "",
                         defer = $.Deferred(),
                         bMerge = false;
@@ -1282,25 +1282,23 @@ define(function (require) {
                         errMsg = i18n.t("view.dscErrCannotFindLIFT");
                         return false;
                     }
-                    // ** Sanity check #2: does this TMX file contain data related to the current project? 
+                    // ** Sanity check #2: does this LIFT file contain data related to the current project? 
                     index = contents.indexOf(project.get("SourceLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
-                        // Return; we can't parse this file.
+                        // Return; this file doesn't correspond to the current project.
                         console.log("Cannot find source language code -- exiting.");
                         errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("SourceLanguageCode")});
                         return false;
                     }
                     index = contents.indexOf(project.get("TargetLanguageCode"));
                     if (index === -1) {
-                        // No version element found -- this is most likely not a tmx document.
-                        // Return; we can't parse this file.
+                        // Return; this file doesn't correspond to the current project.
                         console.log("Cannot find target language code -- exiting.");
                         errMsg = i18n.t("view.dscErrCannotFindLangLIFT", {lang: project.get("TargetLanguageCode")});
                         return false;
                     }
 
-                    // This is a TMX file that matches our project. Is our KB empty?
+                    // This is a LIFT file that matches our project. Is our KB empty?
                     if (window.Application.kbList.length > 0 && window.Application.kbList.findWhere({isGloss: 0})) {
                         console.log("Import KB / not empty, object count: " + window.Application.kbList.length);
                         // KB NOT empty -- ask the user if they want to restore from this file or just merge with the KB in our DB
@@ -1343,20 +1341,26 @@ define(function (require) {
                         isKB = true; // we're importing a knowledge base
                         var $xml = $(xmlDoc);
                         var tuCount = 0;
+                        var rsIdx = 0;
                         markers = "";
                         $($xml).find("entry").each(function () {
                             // pull out the source and target elements from the entry element
-                            srcElt = $(this).children("lexical-unit > form");
-                            tgtElt = $(this).children("sense > gloss"); // could be > 1
-                            if ((srcElt.length > 0) && (tgtElt.length > 0)) {
-                                n = 1; // no usage count in LIFT
+                            // find the form that matches our source language code (there can be multiple languages)
+                            srcElt = $(this).children("lexical-unit").find("form[lang=\'" + project.get("SourceLanguageCode") + "\']");
+                            // find the gloss that matches our target language code (there can be multiple languages)
+                            tgtElts = $(this).children("sense").find("gloss[lang=\'"+ project.get("TargetLanguageCode") + "\']"); // could be > 1
+                            if ((srcElt.length > 0) && (tgtElts.length > 0)) {
+                                n = 1; // no usage count in LIFT - just set count to 1
                                 // do we already have this source value in our kblist?
-                                src = stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true);
-                                tgt = stripPunctuation(autoRemoveCaps($(tgtElt).find("text").html().trim(), false), false);
+                                src = Underscore.unescape(stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true));
+                                // collect the text from each sense / target -- we'll add them to our refstrings
+                                for (i=0; i<tgtElts.length; i++) {
+                                    tgts.push = Underscore.unescape(stripPunctuation(autoRemoveCaps($(tgtElts[i]).find("text").html().trim(), false), false));
+                                }
                             } else {
                                 return true; // no data in this element -- continue to next entry element
                             }
-                            // okay, there's something in the source and target -- are we merging or just populated the KB?
+                            // okay, there's something in the source and target -- are we merging or just populating the KB?
                             tuCount++;
                             if (bMerge === true) {
                                 // merging
@@ -1367,35 +1371,39 @@ define(function (require) {
                                 });
                                 if (elts.length > 0) {
                                     tu = elts[0];
-                                    found = false;
                                     refstrings = tu.get('refstring');
-                                    // in list -- do we have a refstring for the target?
-                                    for (i = 0; i < refstrings.length; i++) {
-                                        if (refstrings[i].target === tgt) {
-                                            // there is a refstring for this target value -- increment it
-                                            if (Number(refstrings[i].n) < 0) {
-                                                // special case -- this value was removed, but now we've got it again:
-                                                // reset the count to 1 in this case
-                                                refstrings[i].n = n;
-                                            } else {
-                                                refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                    // loop through each sense/target we collected from the lift file
+                                    for (rsIdx = 0; rsIdx < tgts.length; rsIdx++) {
+                                        found = false;
+                                        // do we have a refstring for this target?
+                                        for (i = 0; i < refstrings.length; i++) {
+                                            if (refstrings[i].target === tgt) {
+                                                // there is a refstring for this target value -- increment it
+                                                if (Number(refstrings[i].n) < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    refstrings[i].n = n;
+                                                } else {
+                                                    refstrings[i].n = String(Number(refstrings[i].n) + Number(n));
+                                                }
+                                                found = true;
+                                                break;
                                             }
-                                            found = true;
-                                            break;
+                                        }
+                                        if (found === false) {
+                                            // no entry in KB with this source/target -- add one
+                                            var newRS = {
+                                                    'target': tgts[rsIdx],  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                };
+                                            refstrings.push(newRS);
                                         }
                                     }
-                                    if (found === false) {
-                                        // no entry in KB with this source/target -- add one
-                                        var newRS = {
-                                                'target': Underscore.unescape(tgt),  //klb
-                                                'n': '1',
-                                                'cDT': timestamp,
-                                                'df': '0',
-                                                'wC': ""
-                                            };
-                                        refstrings.push(newRS);
-                                    }
-                                    // sort the refstrings collection on "n" (refcount)
+                                    // done adding all the refstrings for this TU
+                                    // now sort the refstrings collection on "n" (refcount)
                                     refstrings.sort(function (a, b) {
                                         // high to low
                                         return parseInt(b.n, 10) - parseInt(a.n, 10);
@@ -1413,7 +1421,7 @@ define(function (require) {
                                             source: src,
                                             refstring: [
                                                 {
-                                                    target: Underscore.unescape(tgt),  //klb
+                                                    target: tgts,  //klb
                                                     'n': '1',
                                                     'cDT': timestamp,
                                                     'df': '0',
@@ -1438,33 +1446,36 @@ define(function (require) {
                                 if (elts.length > 0) {
                                     // found a TU for this source -- add a new refstring
                                     tu = elts[0];
-                                    found = false;
                                     refstrings = tu.get('refstring');
-                                    // in list -- do we have a refstring for the target?
-                                    for (i = 0; i < refstrings.length; i++) {
-                                        if (refstrings[i].target === tgt) {
-                                            // there is a refstring for this target value -- increment it
-                                            if (refstrings[i].n < 0) {
-                                                // special case -- this value was removed, but now we've got it again:
-                                                // reset the count to 1 in this case
-                                                refstrings[i].n = n;
-                                            } else {
-                                                refstrings[i].n = refstrings[i].n + n;
+                                    // loop through each sense/target we collected from the lift file
+                                    for (rsIdx = 0; rsIdx < tgts.length; rsIdx++) {
+                                        found = false;
+                                        // do we have a refstring for the target?
+                                        for (i = 0; i < refstrings.length; i++) {
+                                            if (refstrings[i].target === tgts[rsIdx]) {
+                                                // there is a refstring for this target value -- increment it
+                                                if (refstrings[i].n < 0) {
+                                                    // special case -- this value was removed, but now we've got it again:
+                                                    // reset the count to 1 in this case
+                                                    refstrings[i].n = n;
+                                                } else {
+                                                    refstrings[i].n = refstrings[i].n + n;
+                                                }
+                                                found = true;
+                                                break;
                                             }
-                                            found = true;
-                                            break;
                                         }
-                                    }
-                                    if (found === false) {
-                                        // no entry in KB with this source/target -- add one
-                                        var newRS = {
-                                                'target': Underscore.unescape(tgt),  //klb
-                                                'n': '1',
-                                                'cDT': timestamp,
-                                                'df': '0',
-                                                'wC': ""
-                                            };
-                                        refstrings.push(newRS);
+                                        if (found === false) {
+                                            // no entry in KB with this source/target -- add one
+                                            var newRS = {
+                                                    'target': tgts[rsIdx],  //klb
+                                                    'n': '1',
+                                                    'cDT': timestamp,
+                                                    'df': '0',
+                                                    'wC': ""
+                                                };
+                                            refstrings.push(newRS);
+                                        }
                                     }
                                     // sort the refstrings collection on "n" (refcount)
                                     refstrings.sort(function (a, b) {
@@ -1484,7 +1495,7 @@ define(function (require) {
                                             source: src,
                                             refstring: [
                                                 {
-                                                    target: Underscore.unescape(tgt),  //klb
+                                                    target: tgts,  //klb
                                                     'n': '1',
                                                     'cDT': timestamp,
                                                     'df': '0',
@@ -3765,6 +3776,8 @@ define(function (require) {
                     }
                 } else if (fileName.toLowerCase().indexOf(".usx") > 0) {
                     result = readUSXDoc(contents);
+                } else if (fileName.toLowerCase().indexOf(".lift") > 0) {
+                    result = readLIFTDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".tmx") > 0) {
                     result = readTMXDoc(contents);
                 } else if (fileName.toLowerCase().indexOf(".xml") > 0) {
@@ -3774,15 +3787,8 @@ define(function (require) {
                     } else if (fileName.toLowerCase().indexOf("glossing.xml") > 0) {
                         result = readGlossXMLDoc(contents);
                     } else {
-                        index = contents.indexOf("lift version=");
-                        if (index >= 0) {
-                            // looks like a LIFT document
-                            result = readLIFTDoc(contents);
-                        }
-                        else {
-                            // possibly an Adapt It XML document
-                            result = readXMLDoc(contents);
-                        }
+                        // possibly an Adapt It XML document
+                        result = readXMLDoc(contents);
                     }
                 } else if (fileName.toLowerCase().indexOf(".txt") > 0) {
                     // .txt -- check to see if it's really USFM under the hood
@@ -3858,12 +3864,12 @@ define(function (require) {
                                 }
                             }
                             result = readUSFMDoc(contents);
-                        } else if (contents.indexOf("\\lx") >= 0) {
-                            // _probably_ \lx data for the KB
-                            result = readSFMLexDoc(contents); 
                         } else if (contents.indexOf("lift version=") >= 0) {
                             // maybe a LIFT document
                             result = readLIFTDoc(contents);   
+                        } else if (contents.indexOf("\\lx") >= 0) {
+                            // _probably_ \lx data for the KB
+                            result = readSFMLexDoc(contents); 
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -5888,7 +5894,7 @@ define(function (require) {
             var exportLIFT = function () {
                 var content = "";
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
-                var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + CRLF + "lift version=\"0.15\">" + CRLF;
+                var XML_PROLOG = "<?xml version=\"1.0\"?>" + CRLF + "<lift version=\"0.15\">" + CRLF;
                 var curDate = new Date();
                 var timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay());
                 var project = window.Application.currentProject;
@@ -5913,7 +5919,7 @@ define(function (require) {
                     for (i = 0; i < refstrings.length; i++) {
                         // refstring info -- 1+ "sense/gloss" node(s) under each entry
                         content += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
-                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\><text></text></gloss>" + CRLF;
+                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\"><text>" + refstrings[i].target + "</text></gloss>" + CRLF;
                         content += "  </sense>" + CRLF;
                     }
                     content += "</entry>" + CRLF;
@@ -6675,7 +6681,7 @@ define(function (require) {
                 } else if ($("#exportKBSFM").is(":checked")) {
                     filename += ".sfm";
                 } else if ($("#exportKBLIFT").is(":checked")) {
-                    filename += ".xml";
+                    filename += ".lift";
                 } else if ($("#exportKBXML").is(":checked")) {
                     // special case -- AI requires a special filename
                     // Note: hard-coded (do not localize)
