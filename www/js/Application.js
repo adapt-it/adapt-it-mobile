@@ -485,7 +485,7 @@ define(function (require) {
                 // update the KB and source Phrase lists, then show the KB editor view
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
                     var proj = window.Application.ProjectList.where({projectid: id});
-                    editKBView = new SearchViews.KBListView({model: proj});
+                    editKBView = new SearchViews.KBListView({model: proj[0]});
                     editKBView.delegateEvents();
                     window.Application.main.show(editKBView);
                 });

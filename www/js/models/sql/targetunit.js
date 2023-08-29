@@ -268,9 +268,9 @@ define(function (require) {
                             return element.attributes.projectid === projectid.toLowerCase();
                         });
                         if (results.length === 0) {
-                            // not in collection -- retrieve them from the db
+                            // not in collection -- retrieve them from the db (alphabetized)
                             window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * from targetunit;", [], function (tx, res) {
+                                tx.executeSql("SELECT * from targetunit WHERE projectid=? ORDER BY source;", [projectid], function (tx, res) {
                                     var tmpString = "";
                                     for (i = 0, len = res.rows.length; i < len; ++i) {
                                         // add the chapter
@@ -284,10 +284,7 @@ define(function (require) {
                                         tu.on("change", tu.save, tu);
                                     }
                                     console.log("SELECT ok: " + res.rows.length + " targetunit items");
-                                    // return the filtered results (now that we have them)
-                                    retValue = targetunits.filter(function (element) {
-                                        return element.attributes.projectid === projectid.toLowerCase();
-                                    });
+                                    retValue = targetunits;
                                     options.success(retValue);
                                     deferred.resolve(retValue);
                                 });

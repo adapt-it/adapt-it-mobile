@@ -369,6 +369,7 @@
         "dscRestoreOrMergeSFMLex": "This is a Standard Format file containing data for the Knowledge Base (\\lx and \\ge). You can Restore the Knowledge Base from the imported file, or Merge the file with existing translations.",
         "dscErrSFMLexNotFound": "Unable to find \\lx or \\ge data in this file.",
         "dscErrSFMLexBadMarker": "Unknown marker: \"__mkr__\". Adapt It Mobile can only import key word / Standard Format Files with \\lx and \\ge markers.",
+        "ttlTranslations": "Translations",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

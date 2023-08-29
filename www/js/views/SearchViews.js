@@ -15,6 +15,7 @@ define(function (require) {
         chapterModels   = require('app/models/chapter'),
         bookModels      = require('app/models/book'),
         spModels        = require('app/models/sourcephrase'),
+        tuModels        = require('app/models/targetunit'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
@@ -102,7 +103,12 @@ define(function (require) {
         }),
         
         KBListView = Marionette.LayoutView.extend({
-            template: Handlebars.compile(tplTUList)
+            template: Handlebars.compile(tplTUList),
+            initialize: function () {
+                this.TUList = new tuModels.TargetUnitCollection();
+                this.render();
+ 
+            }
         }),
 
         KBView = Marionette.LayoutView.extend({
