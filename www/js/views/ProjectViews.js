@@ -1124,6 +1124,7 @@ define(function (require) {
             events: {
                 "click #EditorUIPrefs": "OnEditorUIPrefs",
                 "click #CurrentProject": "OnCurrentProject",
+                "click #KBEditor": "OnKBEditor",
                 "click #SourceLanguage": "OnEditSourceLanguage",
                 "click #TargetLanguage": "OnEditTargetLanguage",
                 "click #sourceFont": "OnEditSourceFont",
@@ -1154,6 +1155,10 @@ define(function (require) {
             OnCurrentProject: function () {
                 step = 10;
                 this.ShowView(step);
+            },
+            OnKBEditor: function () {
+                // KB editor is on a separate screen; tell the application to display it
+                window.Application.editKB(window.Application.currentProject.get("projectid"));
             },
             onFocusLanguageName: function (event) {
                 window.Application.scrollIntoViewCenter(event.currentTarget);
