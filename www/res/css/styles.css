@@ -1420,7 +1420,7 @@ div.specialtext div.source {
 }
 
 #StepContainer {
-    position: inherit;
+    position: static;
 }
 
 /* Filtered text -- rendered by the "classes" handlebar helper (see sourcephraselist.html / handlebarhelpers.js) */
