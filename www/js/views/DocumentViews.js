@@ -1355,7 +1355,7 @@ define(function (require) {
                                 src = Underscore.unescape(stripPunctuation(autoRemoveCaps($(srcElt).find("text").html().trim(), true), true));
                                 // collect the text from each sense / target -- we'll add them to our refstrings
                                 for (i=0; i<tgtElts.length; i++) {
-                                    tgts.push = Underscore.unescape(stripPunctuation(autoRemoveCaps($(tgtElts[i]).find("text").html().trim(), false), false));
+                                    tgts.push(Underscore.unescape(stripPunctuation(autoRemoveCaps($(tgtElts[i]).find("text").html().trim(), false), false)));
                                 }
                             } else {
                                 return true; // no data in this element -- continue to next entry element
@@ -1377,7 +1377,7 @@ define(function (require) {
                                         found = false;
                                         // do we have a refstring for this target?
                                         for (i = 0; i < refstrings.length; i++) {
-                                            if (refstrings[i].target === tgt) {
+                                            if (refstrings[i].target === tgts[rsIdx]) {
                                                 // there is a refstring for this target value -- increment it
                                                 if (Number(refstrings[i].n) < 0) {
                                                     // special case -- this value was removed, but now we've got it again:
@@ -1414,20 +1414,23 @@ define(function (require) {
                                     tu.update();
                                 } else {
                                     // not in list -- create a new TU
-                                    var newID = window.Application.generateUUID(),
-                                        newTU = new kbModels.TargetUnit({
+                                    var newID = window.Application.generateUUID();
+                                    for (i=0; i<tgts.length; i++) {
+                                        // build up refstrings array with our tgts
+                                        var newRS = {
+                                            'target': tgts[i],  //klb
+                                            'n': '1',
+                                            'cDT': timestamp,
+                                            'df': '0',
+                                            'wC': ""
+                                        };
+                                        refstrings.push(newRS);
+                                    }
+                                    var newTU = new kbModels.TargetUnit({
                                             tuid: newID,
                                             projectid: projectid,
                                             source: src,
-                                            refstring: [
-                                                {
-                                                    target: tgts,  //klb
-                                                    'n': '1',
-                                                    'cDT': timestamp,
-                                                    'df': '0',
-                                                    'wC': ""
-                                                }
-                                            ],
+                                            refstring: refstrings.splice(0, refstrings.length),
                                             timestamp: timestamp,
                                             user: "",
                                             isGloss: 0
@@ -1487,21 +1490,23 @@ define(function (require) {
                                     tu.set('timestamp', timestamp, {silent: true});
                                     tu.update();
                                 } else {
-                                    // not in list -- create a new TU
-                                    var newID = window.Application.generateUUID(),
-                                        newTU = new kbModels.TargetUnit({
+                                    var newID = window.Application.generateUUID();
+                                    for (i=0; i<tgts.length; i++) {
+                                        // build up refstrings array with our tgts
+                                        var newRS = {
+                                            'target': tgts[i],  //klb
+                                            'n': '1',
+                                            'cDT': timestamp,
+                                            'df': '0',
+                                            'wC': ""
+                                        };
+                                        refstrings.push(newRS);
+                                    }
+                                    var newTU = new kbModels.TargetUnit({
                                             tuid: newID,
                                             projectid: projectid,
                                             source: src,
-                                            refstring: [
-                                                {
-                                                    target: tgts,  //klb
-                                                    'n': '1',
-                                                    'cDT': timestamp,
-                                                    'df': '0',
-                                                    'wC': ""
-                                                }
-                                            ],
+                                            refstring: refstrings.splice(0, refstrings.length),
                                             timestamp: timestamp,
                                             user: "",
                                             isGloss: 0
@@ -1510,6 +1515,8 @@ define(function (require) {
                                     kblist.add(newTU);                                  
                                 }
                             }
+                            // clear out arrays
+                            tgts.length = 0;
                         });
                         console.log("imported " + tuCount + " TU objects");
                         // Exit out with SUCCESS status                    
@@ -3864,7 +3871,7 @@ define(function (require) {
                                 }
                             }
                             result = readUSFMDoc(contents);
-                        } else if (contents.indexOf("lift version=") >= 0) {
+                        } else if (contents.indexOf("<lift ") >= 0) {
                             // maybe a LIFT document
                             result = readLIFTDoc(contents);   
                         } else if (contents.indexOf("\\lx") >= 0) {
