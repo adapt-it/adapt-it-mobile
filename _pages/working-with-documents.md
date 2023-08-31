@@ -29,6 +29,7 @@ In addition, Adapt It Mobile can also import and export Knowledge Base / transla
 - Adapt It desktop (.xml) Knowledge Base
 - Translation Memory eXchange (.TMX) format
 - Key term documents in SFM format
+- Lexical Interchange (.LIFT) format
 
 ----
 
@@ -128,12 +129,14 @@ Complete the following steps to import documents into Adapt It Mobile.
    
     __Knowledge Base document export__
    
-    If you selected the Knowledge Base for export, Adapt It Mobile will display two options for the file format:
+    If you selected the Knowledge Base for export, Adapt It Mobile will display options for the file format:
   
    ![KB Format]({{ site.baseurl }}/assets/img//export-kb-sel-fmt.png)
 
    - Adapt It desktop (.xml) (you cannot modify the file name for this file, as it includes the source and target language info for the project)
    - Translation Memory Exchange (.tmx)
+   - Lexical Interchange (.LIFT)
+   - \lx keyword data (.sfm)
 
 5. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
 
