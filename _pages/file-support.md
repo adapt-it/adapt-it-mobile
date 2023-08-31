@@ -29,10 +29,11 @@ If your translation team already has a working lexicon--either through [Rapid Wo
 
 - Adapt It desktop (.xml) Knowledge Base
 - Translation Memory Exchange (.TMX) format
+- Lexical Interchange Format (.LIFT)
 - SFM keyword files using \lx and \ge markers
 
 Notes:
 
 - For import, these files need to have both the same source and target language information as the current project.
 - Adapt It Mobile will also build translation memory data when Adapt It desktop (.xml) documents are loaded, if the documents have some translation work started in them.
-- The TMX file format can include data not relevant to a single source/target translation pair. This extraneous information is not imported by Adapt It Mobile. For this reason, Adapt It Mobile is not recommended for "round-tripping" (i.e., importing, updating, and then exporting) TMX file data.
+- The TMX and LIFT file formats can include data not relevant to a single source/target translation pair. This extraneous information is not imported by Adapt It Mobile. For this reason, Adapt It Mobile is not recommended for "round-tripping" (i.e., importing, updating, and then exporting) TMX or LIFT file data.
