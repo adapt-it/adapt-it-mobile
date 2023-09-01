@@ -78,8 +78,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.12.0", // appended with Android / iOS build info
-            AndroidBuild: "43", // (was milestone release #)
+            version: "1.12.1", // appended with Android / iOS build info
+            AndroidBuild: "44", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -185,57 +185,55 @@ define(function (require) {
                     // initialize localURLs
                     this.localURLs    = [
                         cordova.file.documentsDirectory,
-                        cordova.file.externalRootDirectory,
                         cordova.file.sharedDirectory,
                         cordova.file.dataDirectory,
-                        cordova.file.externalDataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-                    if (device.platform === "Android") {
-                        // request read access to the external storage if we don't have it
-                        cordova.plugins.diagnostic.getExternalStorageAuthorizationStatus(function (status) {
-                            if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED) {
-                                console.log("External storage use is authorized");
-                            } else {
-                                cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (result) {
-                                    console.log("Authorization request for external storage use was " + (result === cordova.plugins.diagnostic.permissionStatus.GRANTED ? "granted" : "denied"));
-                                }, function (error) {
-                                    console.error(error);
-                                });
-                            }
-                        }, function (error) {
-                            console.error("The following error occurred: " + error);
-                        });
-                        // request runtime permissions if needed
-                        cordova.plugins.diagnostic.getPermissionsAuthorizationStatus(function(statuses){
-                            for (var permission in statuses){
-                                switch(statuses[permission]){
-                                    case cordova.plugins.diagnostic.permissionStatus.GRANTED:
-                                        console.log("Permission granted to use "+permission);
-                                        break;
-                                    case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-                                        console.log("Permission to use "+permission+" has not been requested yet; asking now");
-                                        cordova.plugins.diagnostic.requestRuntimePermission(function(status){
-                                            console.log("Runtime permission request result: " + status.toString());
-                                        }, function(error){
-                                            console.error("The following error occurred: "+error);
-                                        }, permission);
-                                        break;
-                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
-                                        console.log("Permission denied to use "+permission+" - ask again?");
-                                        break;
-                                    case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-                                        console.log("Permission permanently denied to use "+permission+" - guess we won't be using it then!");
-                                        break;
-                                }
-                            }
-                        }, function(error){
-                            console.error("The following error occurred: "+error);
-                        },[
-                            cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE,
-                            cordova.plugins.diagnostic.permission.READ_EXTERNAL_STORAGE
-                        ]);
-                    }
+                    // if (device.platform === "Android") {
+                    //     // request read access to the external storage if we don't have it
+                    //     cordova.plugins.diagnostic.getExternalStorageAuthorizationStatus(function (status) {
+                    //         if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED) {
+                    //             console.log("External storage use is authorized");
+                    //         } else {
+                    //             cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (result) {
+                    //                 console.log("Authorization request for external storage use was " + (result === cordova.plugins.diagnostic.permissionStatus.GRANTED ? "granted" : "denied"));
+                    //             }, function (error) {
+                    //                 console.error(error);
+                    //             });
+                    //         }
+                    //     }, function (error) {
+                    //         console.error("The following error occurred: " + error);
+                    //     });
+                    //     // request runtime permissions if needed
+                    //     cordova.plugins.diagnostic.getPermissionsAuthorizationStatus(function(statuses){
+                    //         for (var permission in statuses){
+                    //             switch(statuses[permission]){
+                    //                 case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                    //                     console.log("Permission granted to use "+permission);
+                    //                     break;
+                    //                 case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+                    //                     console.log("Permission to use "+permission+" has not been requested yet; asking now");
+                    //                     cordova.plugins.diagnostic.requestRuntimePermission(function(status){
+                    //                         console.log("Runtime permission request result: " + status.toString());
+                    //                     }, function(error){
+                    //                         console.error("The following error occurred: "+error);
+                    //                     }, permission);
+                    //                     break;
+                    //                 case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
+                    //                     console.log("Permission denied to use "+permission+" - ask again?");
+                    //                     break;
+                    //                 case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+                    //                     console.log("Permission permanently denied to use "+permission+" - guess we won't be using it then!");
+                    //                     break;
+                    //             }
+                    //         }
+                    //     }, function(error){
+                    //         console.error("The following error occurred: "+error);
+                    //     },[
+                    //         cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE,
+                    //         cordova.plugins.diagnostic.permission.READ_EXTERNAL_STORAGE
+                    //     ]);
+                    // }
                 }
                 // social sharing plugin / iPad popover coords
                 if (device && (device.platform !== "browser")) {
@@ -265,14 +263,8 @@ define(function (require) {
                         this.onInitDB();
 
                     } else if (device.platform === "Android") {
-                        // Android -- this could either be on an external SD card or on the device itself
-                        if (cordova.file.externalDataDirectory !== null) {
-                            // has SD card -- use it
-                            db_dir = cordova.file.externalDataDirectory;
-                        } else {
-                            // no SD card -- use the device itself
-                            db_dir = cordova.file.DataDirectory;
-                        }
+                        // Android -- use the device itself
+                        db_dir = cordova.file.dataDirectory;
                         // now attempt to get the directory
                         window.resolveLocalFileSystemURL(db_dir, function (directoryEntry) {
                             console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
