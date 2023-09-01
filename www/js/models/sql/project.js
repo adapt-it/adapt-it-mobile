@@ -357,6 +357,9 @@ define(function (require) {
             if (typeof device === "undefined") {
                 return;
             }
+            if (!window.Application.db) {
+                deferred.reject("checkSchema(): Database not found.");
+            }
             window.Application.db.transaction(function (tx) {
                 // Check 1: is there a version table? 
                 // If not, this is a new DB

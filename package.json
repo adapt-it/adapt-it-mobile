@@ -17,18 +17,18 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-android": "^12.0.0",
+    "cordova-android": "^12.0.1",
     "cordova-clipboard": "github:ihadeed/cordova-clipboard",
     "cordova-ios": "^7.0.0",
     "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
-    "cordova-plugin-file": "^8.0.0",
+    "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-filepath": "github:VIAVI-Solutions/cordova-plugin-filepath",
     "cordova-plugin-keyboard": "git+https://github.com/sinn1/cordova-plugin-keyboard.git",
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-x-socialsharing-android12": "github:IsraelHikingMap/corodova-plugin-socialsharing-android12",
-    "cordova-sqlite-evcore-extbuild-free": "^0.15.1",
+    "cordova-sqlite-evcore-extbuild-free": "^0.18.0",
     "cordova-uglify": "^0.0.8",
     "cordova.plugins.diagnostic": "^3.9.2",
     "fs": "0.0.2",
@@ -84,20 +84,18 @@
         "ANDROID_PATHPREFIX": "/"
       },
       "cordova-plugin-keyboard": {},
-      "cordova-sqlite-evcore-extbuild-free": {},
       "cordova-plugin-x-socialsharing-android12": {
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
       },
       "cordova-clipboard": {},
       "cordova-plugin-filepath": {},
-      "cordova-plugin-file": {
-        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
-      }
+      "cordova-sqlite-evcore-extbuild-free": {},
+      "cordova-plugin-file": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

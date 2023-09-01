@@ -6451,10 +6451,8 @@ define(function (require) {
                         var localURLs    = [
                             cordova.file.dataDirectory,
                             cordova.file.documentsDirectory,
-                            cordova.file.externalRootDirectory,
                             cordova.file.sharedDirectory,
                             cordova.file.dataDirectory,
-                            cordova.file.externalDataDirectory,
                             cordova.file.syncedDataDirectory
                         ];
                         var DirsRemaining = localURLs.length + 1; // + clipboard text
