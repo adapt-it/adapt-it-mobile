@@ -2987,10 +2987,13 @@ define(function (require) {
                                     // to be unique in the file)
                                     if ((contents.indexOf("\\c 1 ") === -1) && (contents.indexOf("\\c 1\n") === -1)) {
                                         // importing a chapter other than chapter #1 (Key It file) --
-                                        // first, find the \\id position in the contents
-                                        index = contents.indexOf("\\id");
-                                        // now cut the whole line (up to the \n)
-                                        contents = contents.replace(contents.substring(index, contents.indexOf("\n", index)), "");
+                                        // first, find the first \\c position in the contents
+                                        index = contents.indexOf("\\c ");
+                                        // skip if there is no \c marker at all (e.g., an appendix of some sort)
+                                        if (index > 0) {
+                                            // remove everything before this point
+                                            contents = contents.replace(contents.substring(0, index - 1), "");
+                                        }
                                     }
                                     // finished -- return
                                     defer.resolve("confirm override");                        
@@ -3030,6 +3033,20 @@ define(function (require) {
                         // update the chapters in our book
                         book.set('chapters', chaps, {silent: true});
                         book.save();
+                        // Check to see if we're importing content that DOES NOT INCLUDE chapter 1
+                        // (in this case we'll be splicing together a Key It file from a chapter > 1, 
+                        // so we'll want to avoid importing the \\id marker twice -- it's supposed 
+                        // to be unique in the file)
+                        if ((contents.indexOf("\\c 1 ") === -1) && (contents.indexOf("\\c 1\n") === -1)) {
+                            // importing a chapter other than chapter #1 (Key It file) --
+                            // first, find the first \\c position in the contents
+                            index = contents.indexOf("\\c ");
+                            // skip if there is no \c marker at all (e.g., an appendix of some sort)
+                            if (index > 0) {
+                                // remove everything before this point
+                                contents = contents.replace(contents.substring(0, index - 1), "");
+                            }
+                        }
                         defer.resolve("new import / no confirm needed");
                     }
 
@@ -3055,25 +3072,29 @@ define(function (require) {
                         console.log("Existing sourcephrases for chapter: " + sourcePhrases.length);
                         firstBlock = true;
                         if (spsExisting.length > 0) {
-                            // set norder to the first item in our existing list
+                            // set norder (and verseID) to the first item in our existing list
                             norder = spsExisting[0].get("norder");
+                            verseID = spsExisting[0].get("vid");
+                        } else {
+                            // no sourcephrases in the first chapter -- set the verse ID to a UUID
+                            verseID = window.Application.generateUUID(); // initial value -- chunk before verse 1 is considered a new "verse"
                         }
                         var tmpID = null;
                         var tmpObj = null;
                         var tmpMk = "";
                         var num = /\d/;
 
-                        // set the lastDocument / lastAdapted<xxx> values if not already set
-                        if (project.get('lastDocument') === "") {
-                            project.set('lastDocument', bookName);
-                        }
-                        if (project.get('lastAdaptedBookID') === 0) {
-                            project.set('lastAdaptedBookID', bookID);
-                            project.set('lastAdaptedChapterID', chapterID);
-                        }
-                        if (project.get('lastAdaptedName') === "") {
-                            project.set('lastAdaptedName', chapterName);
-                        }
+                        // // set the lastDocument / lastAdapted<xxx> values if not already set
+                        // if (project.get('lastDocument') === "") {
+                        //     project.set('lastDocument', bookName);
+                        // }
+                        // if (project.get('lastAdaptedBookID') === 0) {
+                        //     project.set('lastAdaptedBookID', bookID);
+                        //     project.set('lastAdaptedChapterID', chapterID);
+                        // }
+                        // if (project.get('lastAdaptedName') === "") {
+                        //     project.set('lastAdaptedName', chapterName);
+                        // }
                         
                         // build SourcePhrases
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
@@ -3284,6 +3305,20 @@ define(function (require) {
                                 // "normal" sourcephrase token
                                 // Chapter element -- set the chapter ID to the one we created earlier
                                 if (markers && markers.indexOf("\\c ") !== -1) {
+                                    // If we actually had some content in our previous chapter, we can set the lastAdaptedXXX values
+                                    // if they aren't already set
+                                    if (verseCount > 0) {
+                                        if (project.get('lastDocument') === "") {
+                                            project.set('lastDocument', bookName);
+                                        }
+                                        if (project.get('lastAdaptedBookID') === 0) {
+                                            project.set('lastAdaptedBookID', bookID);
+                                            project.set('lastAdaptedChapterID', chapterID);
+                                        }
+                                        if (project.get('lastAdaptedName') === "") {
+                                            project.set('lastAdaptedName', chapterName);
+                                        }
+                                    }
                                     // update the last adapted for the previous chapter before closing it out
                                     if (chapter.get('versecount') < verseCount) {
                                         // only update if we're increasing the verse count
@@ -3644,7 +3679,7 @@ define(function (require) {
                                 }
                             }
                         }
-                        // done with the content array. One final check -- did we end on empty verses?
+                        // done with the content array. Did we end on empty verses?
                         if (markers && markers.indexOf("\\v ") !== -1) {
                             var vCount = (markers.match(/\\v /g) || []).length;
                             verseCount = verseCount + vCount; // most of the time, this will just increment by 1
@@ -3710,6 +3745,27 @@ define(function (require) {
                                 }
                             }
                         }
+                        // Special case: a single chapter import into a new project
+                        // (verseCount ends up > 0, and the lastAdaptedXXX aren't set yet)
+                        if (verseCount > 0) {
+                            if (project.get('lastDocument') === "") {
+                                project.set('lastDocument', bookName);
+                            }
+                            if (project.get('lastAdaptedBookID') === 0) {
+                                project.set('lastAdaptedBookID', bookID);
+                                project.set('lastAdaptedChapterID', chapterID);
+                            }
+                            if (project.get('lastAdaptedName') === "") {
+                                project.set('lastAdaptedName', chapterName);
+                            }
+                        }
+                        // update the verse count for this chapter before closing it out
+                        if (chapter.get('versecount') < verseCount) {
+                            // only update if we're increasing the verse count
+                            chapter.set('versecount', verseCount, {silent: true});
+                            chapter.save();
+                        }
+
                         // add any remaining sourcephrases
                         if ((sps.length % MAX_BATCH) > 0) {
                             batchesSent++;
@@ -3737,10 +3793,6 @@ define(function (require) {
                                 importFail(result);
                             }
                         }, 1000);
-                        // update the last chapter's verseCount if needed
-                        if (chapter.get('versecount') < verseCount) {
-                            chapter.set('versecount', verseCount);
-                        }
                         return true; // success
                     }, function (msg) {
                         console.log(msg);
