@@ -2958,6 +2958,7 @@ define(function (require) {
                                     // verify that the chapters have been created (this is for pre-1.6.0 imports)
                                     if (numChaps !== book.get('chapters').length) {
                                         // create empty chapters (i.e. with no verses) that are missing in our book
+                                        // NOTE that the chapter objects are saved at the end of the USFM import
                                         for (i=book.get('chapters').length; i < numChaps; i++) {
                                             chapterName = i18n.t("view.lblChapterName", {bookName: bookName, chapterNumber: (i + 1)});
                                             // does this chapter name exist?
@@ -2973,8 +2974,7 @@ define(function (require) {
                                                     lastadapted: 0,
                                                     versecount: 0
                                                 });
-                                                chapters.add(chapter);                            
-                                                chapter.save();
+                                                chapters.add(chapter);
                                             }
                                         }
                                         // update the book chapter array
@@ -3005,6 +3005,7 @@ define(function (require) {
                     } else {
                         // new import -- create the book object, with all the chapter objects 
                         // (with zero verses for now; they are populated below)
+                        // NOTE that the chapter objects are saved at the end of the USFM import
                         bookID = window.Application.generateUUID();
                         book = new bookModel.Book({
                             bookid: bookID,
@@ -3028,7 +3029,6 @@ define(function (require) {
                                 versecount: 0
                             });
                             chapters.add(chapter);
-                            chapter.save();
                         }
                         // update the chapters in our book
                         book.set('chapters', chaps, {silent: true});
@@ -3047,6 +3047,7 @@ define(function (require) {
                                 contents = contents.replace(contents.substring(0, index - 1), "");
                             }
                         }
+                        // resolve -- don't need to add a confirm dialog
                         defer.resolve("new import / no confirm needed");
                     }
 
@@ -3763,7 +3764,12 @@ define(function (require) {
                         if (chapter.get('versecount') < verseCount) {
                             // only update if we're increasing the verse count
                             chapter.set('versecount', verseCount, {silent: true});
-                            chapter.save();
+                        }
+                        // now save all the chapters
+                        for (i=0; i < numChaps; i++) {
+                            chapterID = book.get("chapters")[i]; // get next chapterID of the book we're importing
+                            chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
+                            chapter.save(); // save it (could be INSERT or UPDATE operation)
                         }
 
                         // add any remaining sourcephrases
