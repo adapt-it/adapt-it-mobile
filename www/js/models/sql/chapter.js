@@ -49,10 +49,11 @@ define(function (require) {
                 var sql = "INSERT INTO chapter (chapterid,bookid,projectid,name,lastadapted,versecount) VALUES (?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.chapterid, attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount], function (tx, res) {
+                        // console.log ("** CHAPTER INSERT: " + attributes.name);
                         attributes.id = res.insertId;
 //                        console.log("INSERT ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("INSERT (create) error: " + err.message);
+                        console.log("CHAPTER INSERT (create) error: " + err.message);
                     });
                 });
             },
@@ -60,10 +61,11 @@ define(function (require) {
                 var attributes = this.attributes;
                 var sql = 'UPDATE chapter SET bookid=?, projectid=?, name=?, lastadapted=?, versecount=? WHERE chapterid=?;';
                 window.Application.db.transaction(function (tx) {
+                    // console.log ("** CHAPTER UPDATE: " + attributes.name);
                     tx.executeSql(sql, [attributes.bookid, attributes.projectid, attributes.name, attributes.lastadapted, attributes.versecount, attributes.chapterid], function (tx, res) {
 //                        console.log("UPDATE ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("UPDATE error: " + err.message);
+                        console.log("CHAPTER UPDATE error: " + err.message);
                     });
                 });
             },
@@ -72,7 +74,7 @@ define(function (require) {
                     tx.executeSql("DELETE FROM chapter WHERE chapterid=?;", [this.attributes.chapterid], function (tx, res) {
 //                        console.log("DELETE ok: " + res.toString());
                     }, function (tx, err) {
-                        console.log("DELETE error: " + err.message);
+                        console.log("CHAPTER DELETE error: " + err.message);
                     });
                 });
             },
