@@ -78,8 +78,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.12.1", // appended with Android / iOS build info
-            AndroidBuild: "44", // (was milestone release #)
+            version: "1.12.2", // appended with Android / iOS build info
+            AndroidBuild: "45", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -562,13 +562,17 @@ define(function (require) {
             
             lookupChapter: function (id) {
                 console.log("lookupChapter");
-                var proj = this.ProjectList.where({projectid: id});
-                if (proj !== null) {
-                    lookupView = new SearchViews.LookupView({model: proj[0]});
-                    window.Application.main.show(lookupView);
-                } else {
-                    console.log("no project defined");
-                }
+                $.when(window.Application.ProjectList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        var proj = window.Application.ProjectList.where({projectid: id});
+                        if (proj !== null) {
+                            lookupView = new SearchViews.LookupView({model: proj[0]});
+                            window.Application.main.show(lookupView);
+                        } else {
+                            console.log("no project defined");
+                        }
+                    });
+                });
             },
 
             adaptChapter: function (id) {
