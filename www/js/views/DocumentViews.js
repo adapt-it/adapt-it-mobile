@@ -3121,7 +3121,11 @@ define(function (require) {
                                 }
                                 // default from AI desktop -- set end Free Translation bit to the last SP before a new verse
                                 if (arr[i] === "\\v") {
-                                    sp.set("flags", END_FT_BIT, {silent: true});
+                                    // if there's a previous sp, set the flags
+                                    // (special case -- for pre-verse1 data that gets merged, there's no previous sourcephrase defined)
+                                    if (sp !== null) {
+                                        sp.set("flags", END_FT_BIT, {silent: true});
+                                    }
                                 }
                                 mkr = markerList.where({name: arr[i].substr(arr[i].indexOf("\\") + 1)});
                                 if (mkr.length > 0 && mkr[0].get("endMarker")) {
