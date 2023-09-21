@@ -189,51 +189,6 @@ define(function (require) {
                         cordova.file.dataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-                    // if (device.platform === "Android") {
-                    //     // request read access to the external storage if we don't have it
-                    //     cordova.plugins.diagnostic.getExternalStorageAuthorizationStatus(function (status) {
-                    //         if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED) {
-                    //             console.log("External storage use is authorized");
-                    //         } else {
-                    //             cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (result) {
-                    //                 console.log("Authorization request for external storage use was " + (result === cordova.plugins.diagnostic.permissionStatus.GRANTED ? "granted" : "denied"));
-                    //             }, function (error) {
-                    //                 console.error(error);
-                    //             });
-                    //         }
-                    //     }, function (error) {
-                    //         console.error("The following error occurred: " + error);
-                    //     });
-                    //     // request runtime permissions if needed
-                    //     cordova.plugins.diagnostic.getPermissionsAuthorizationStatus(function(statuses){
-                    //         for (var permission in statuses){
-                    //             switch(statuses[permission]){
-                    //                 case cordova.plugins.diagnostic.permissionStatus.GRANTED:
-                    //                     console.log("Permission granted to use "+permission);
-                    //                     break;
-                    //                 case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-                    //                     console.log("Permission to use "+permission+" has not been requested yet; asking now");
-                    //                     cordova.plugins.diagnostic.requestRuntimePermission(function(status){
-                    //                         console.log("Runtime permission request result: " + status.toString());
-                    //                     }, function(error){
-                    //                         console.error("The following error occurred: "+error);
-                    //                     }, permission);
-                    //                     break;
-                    //                 case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
-                    //                     console.log("Permission denied to use "+permission+" - ask again?");
-                    //                     break;
-                    //                 case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-                    //                     console.log("Permission permanently denied to use "+permission+" - guess we won't be using it then!");
-                    //                     break;
-                    //             }
-                    //         }
-                    //     }, function(error){
-                    //         console.error("The following error occurred: "+error);
-                    //     },[
-                    //         cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE,
-                    //         cordova.plugins.diagnostic.permission.READ_EXTERNAL_STORAGE
-                    //     ]);
-                    // }
                 }
                 // social sharing plugin / iPad popover coords
                 if (device && (device.platform !== "browser")) {
@@ -263,15 +218,19 @@ define(function (require) {
                         this.onInitDB();
 
                     } else if (device.platform === "Android") {
-                        // Android -- use the device itself
+                        // Android -- scoped storage wonkiness introduced in stages starting with API 30
+                        // first check the data directory, then check the "default" location
                         db_dir = cordova.file.dataDirectory;
-                        // now attempt to get the directory
+                        console.log("db_dir: " + db_dir);
+                        // // now attempt to get the directory
                         window.resolveLocalFileSystemURL(db_dir, function (directoryEntry) {
-                            console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.toURL());
+                            console.log("Got directoryEntry. Attempting to create / open AIM DB at: " + directoryEntry.nativeURL);
                             // Attempt to create / open our AIM database now
-                            window.Application.db = window.sqlitePlugin.openDatabase({name: DB_NAME, androidDatabaseLocation: directoryEntry.toURL()});
-                            window.Application.checkDBSchema().then(window.Application.onInitDB()); // Android only (iOS calls directly)
-                            // window.Application.onInitDB();
+                            window.Application.db = window.sqlitePlugin.openDatabase({name: DB_NAME, androidDatabaseLocation: directoryEntry.nativeURL}, function(db) {
+                                window.Application.checkDBSchema().then(window.Application.onInitDB()); // Android only (iOS calls directly)
+                            }, function (err) {
+                                console.log("Open database ERROR: " + JSON.stringify(err));
+                            });
                         }, function (err) {
                             console.log("resolveLocalFileSustemURL error: " + err.message);
                         });
@@ -370,7 +329,7 @@ define(function (require) {
             
             onStart: function (app, options) {
                 // check the database schema now that we've created / opened it
-                this.checkDBSchema();
+                // this.checkDBSchema();
             },
             
             // Routes from AppRouter (router.js)

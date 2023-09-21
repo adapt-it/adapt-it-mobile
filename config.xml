@@ -10,7 +10,6 @@
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="aim:*" />
-    <preference name="cordova.plugins.diagnostic.modules" value="BLUETOOTH WIFI EXTERNAL_STORAGE" />
     <preference name="android-build-tool" value="gradle" />
     <preference name="Orientation" value="default" />
     <preference name="DisallowOverscroll" value="true" />
@@ -36,7 +35,6 @@
         <preference name="AndroidPersistentFileLocation" value="Internal" />
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
             <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
             <uses-feature android:name="android.hardware.faketouch" android:required="false" />
