@@ -4,16 +4,14 @@
 DIR=$( cd "$( dirname "$0" )" && pwd )
 TRUNK=$DIR
 CURRENT_OS="OSX" 
-ANDROID_VER="@6.3.0"    # cordova-android version
-IOS_VER="@4.5.4"        # cordova-ios version
-WIN_VER="@latest"       # cordova-windows version
+ANDROID_VER="@12.0.1"    # cordova-android version
+IOS_VER="@7.0.1"        # cordova-ios version
 
 echo " "
 echo "-- Adapt It Mobile build configuration --"
 echo "  Current directory: $DIR"
 echo "  cordova-android: $ANDROID_VER"
 echo "  cordova-ios: $IOS_VER"
-echo "  cordova-win: $WIN_VER"
 echo "-------------------------------------"
 
 # troubleshooting helps -- enable if needed
@@ -49,15 +47,6 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     osType="Linux"
     echo "Linux detected... adding android platform"
     cordova platform add android $ANDROID_VER
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
-    # Ancient mingw Windows thing -- error out
-    echo "unsupported operating system for AIM build"
-    exit 1
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
-    # Windows 10? 64 bit mingw implementation
-    osType="Windows"
-    cordova platform add android $ANDROID_VER
-    cordova platform add windows $WIN_VER
 fi
 
 # build ios and Android platforms
