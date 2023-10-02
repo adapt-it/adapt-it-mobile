@@ -370,6 +370,8 @@
         "dscErrSFMLexNotFound": "No se puede encontrar los marcadores \\lx o \\ge en este archivo.",
         "dscErrSFMLexBadMarker": "Marcador desconocido: \"__mkr__\". Adapt It Mobile solo puede actualizar la Base de conocimiento desde archivos SFM con marcadores \\lx y \\ge.",
         "ttlTranslations": "Traducciones",
+        "ttlProjectName": "Proyecto: __name__",
+        "ttlTotalEntries": "Recuento de elementos: __total__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
