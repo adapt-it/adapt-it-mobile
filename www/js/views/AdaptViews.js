@@ -3165,24 +3165,15 @@ define(function (require) {
                 }
             },
 
-            // User clicked the Show Translations button -- find the selection in the KB and
-            // navigate to that page
+            // User clicked the Show Translations button -- find the source phrase and
+            // navigate to the show translations page
             showTranslations: function () {
-                var tu = null;
-                var tuid = "";
-                var sourceValue = this.stripPunctuation(this.autoRemoveCaps($(selectedStart).children('.source').html(), true), true);
-                var projectid = project.get('projectid');
-                // find the selection and TUID
-                var elts = kblist.filter(function (element) {
-                    return (element.attributes.projectid === projectid && element.attributes.source === sourceValue);
-                });
-                if (elts.length > 0) {
-                    tu = elts[0];
-                }
-                if (tu) {
-                    // found something for this element -- navigate to the KB editor
-                    tuid = tu.get('tuid');
-                    window.Application.router.navigate("tu/" + tuid, {trigger: true, replace: true});
+                var strID = $(selectedStart).attr('id');
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                var selectedObj = this.collection.findWhere({spid: strID});
+                if (selectedObj) {
+                    // found something for this element -- navigate to the SP editor
+                    window.Application.router.navigate("sp/" + strID, {trigger: true, replace: true});
                 }
             },
             // User clicked on the Preview (toggle) button -- enable or disable

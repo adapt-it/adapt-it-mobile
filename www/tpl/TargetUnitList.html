@@ -5,11 +5,17 @@
     <div class="topcoat-navigation-bar__item">
         <a class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a>
     </div>
-    <div class="topcoat-navigation-bar__item half"><h2>{{t 'view.ttlTranslations'}}</h2></div>
+    <div class="topcoat-navigation-bar__item half"><h2>{{t 'view.lblKB'}}</h2></div>
+    <div class="topcoat-navigation-bar__item right">
+        <button id="More-menu" title="{{ t 'view.dscMoreActions'}}" class="topcoat-icon-button--quiet toolbar-button"><span class="topcoat-icon topcoat-icon--more-menu"></span></button>
+        <div id="MoreActionsMenu" aria-haspopup="true" class="dropdown-vertical">
+            <div id="mnuSelect"><span class="label" id="lblSelect">{{ t 'view.lblSelectDoc'}}</span></div>
+        </div>
+    </div>
 </div>
 <div id="kbSearch" class="scroller-notb">
     <div id="grpSearch">
-        <div class="topcoat-list__header" id="lblAllTrans"><span id="lblTotalTranslations" class="right"></span></div>
+        <div class="topcoat-list__header" id="lblAllTrans"><span id="lblProjInfo"></span></div>
         <div class="doc-search-bar"><input id="search" type="search" placeholder="{{ t 'view.dscSearch'}}" class="topcoat-search-input doc-search-key"></div>
         <div class="topcoat-list hide" style="overflow:hidden" id="lstSearch">
             <h3 class="topcoat-list__header" id="lblSearchResults" style="display:none">{{t 'view.lblSearchResults'}}</h3>
@@ -17,7 +23,12 @@
         </div>
         </div>
         <div class="control-row"></div>
-        <ul class="chapter-list topcoat-list__container" id="lstBooks"></ul>
-        <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
+        <ul class="chapter-list topcoat-list__container" id="lstTU"></ul>
     </div>
-</div>    
+</div>
+<div class="bottom-tb hide" id="tbBottom">
+    <div id="OKCancelButtons">
+        <button id="btnDelete" title="{{ t 'view.ttlDelete' }}" class="topcoat-button danger" disabled><span class="btn-delete" role="img"></span> {{ t 'view.ttlDelete'}}</button>
+        <button class="topcoat-button" id="btnDone"><span id="lblDone">{{t 'view.lblDone'}}</span></button>
+    </div>
+</div>

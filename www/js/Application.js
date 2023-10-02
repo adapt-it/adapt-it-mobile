@@ -31,7 +31,7 @@ define(function (require) {
         importDocView   = null,
         exportDocView   = null,
         showTransView   = null,
-        editKBView      = null,
+        editTUView      = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -436,22 +436,38 @@ define(function (require) {
                 // update the KB and source Phrase lists, then show the KB editor view
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
                     var proj = window.Application.ProjectList.where({projectid: id});
-                    editKBView = new SearchViews.KBListView({model: proj[0]});
-                    editKBView.delegateEvents();
-                    window.Application.main.show(editKBView);
+                    editTUView = new SearchViews.TUListView({model: proj[0]});
+                    editTUView.delegateEvents();
+                    window.Application.main.show(editTUView);
                 });
             },
             
-            lookupKB: function (id) {
-                console.log("lookupKB");
-                // update the KB and source phrase list, then display the Show Translations screen
+            editTU: function (id) {
+                console.log("editTU");
+                // update the KB list, then show the view
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
+                    // show the selected TU
+                    var tu = window.Application.kbList.where({tuid: id});
+                    if (tu === null) {
+                        console.log("KB Entry not found:" + id);
+                    }
+                    showTransView = new SearchViews.TUView({model: tu[0]});
+                    showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
+                    showTransView.delegateEvents();
+                    window.Application.main.show(showTransView);
+                });
+            },
+
+            showTranslations: function (id) {
+                console.log("showTranslations");
+                // update the KB and source phrase list, then display the Translations screen with the currently-selected sourcephrase
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
                     $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
                         var tu = window.Application.kbList.where({tuid: id});
                         if (tu === null) {
                             console.log("KB Entry not found:" + id);
                         }
-                        showTransView = new SearchViews.KBView({model: tu[0]});
+                        showTransView = new SearchViews.TUView({model: tu[0]});
                         showTransView.spObj = window.Application.spList[0];
                         showTransView.delegateEvents();
                         window.Application.main.show(showTransView);

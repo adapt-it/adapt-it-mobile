@@ -9,8 +9,11 @@
 </div>
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
-        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang"></div><div class="emphasized center"><span id="tgtPhrase" contenteditable="true"></span></div></div></div>
+        <div id="curSP">
+            <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
+            <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang"></div><div class="emphasized center"><span id="tgtPhrase" contenteditable="true"></span></div></div></div>
+        </div>
+        <div id="noCurSP"></div>
         <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}} <span class="right">{{t 'view.lblFrequency'}}</span></div>
         <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
     </div>

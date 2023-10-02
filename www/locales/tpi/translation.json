@@ -371,6 +371,8 @@
         "dscErrSFMLexBadMarker": "Unknown marker: \"__mkr__\". Adapt It Mobile can only import key word / Standard Format Files with \\lx and \\ge markers.",
         "ttlTranslations": "Trenslesens",
         "ttlProjectName": "Projek: __name__",
+        "ttlTotalTranslations": "(__total__ trenslesen)",
+        "ttlNoTranslations": "Nogat trenslesen",
         "ttlTotalEntries": "Olgeta: __total__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },

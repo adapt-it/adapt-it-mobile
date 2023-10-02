@@ -1419,6 +1419,11 @@ div.specialtext div.source {
     overflow: hidden;
 }
 
+.li-tu {
+    /* less padding on top/bottom */
+    padding: .5rem 1rem .5rem 1rem;
+}
+
 #StepContainer {
     position: static;
 }

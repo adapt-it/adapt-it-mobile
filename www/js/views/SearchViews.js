@@ -102,16 +102,59 @@ define(function (require) {
             }
         }),
         
-        KBListView = Marionette.LayoutView.extend({
+        TUListView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplTUList),
             initialize: function () {
                 this.TUList = new tuModels.TargetUnitCollection();
                 this.render();
- 
+
+            },
+            events: {
+                "click .big-link": "onClickTU"
+            },
+            onClickTU: function (event) {
+                var tuID = event.currentTarget.id;
+                var tu = this.TUList.findWhere({tuid: tuID});
+                if (tu) {
+                    window.Application.router.navigate("tu/" + tuID, {trigger: true});
+                }
+
+            },
+
+            onShow: function () {
+                var lstTU = "";
+                var rs = null;
+                var strInfo = "";
+                this.TUList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                // initial sort - name
+                this.TUList.comparator = 'source';
+                this.TUList.sort();
+                this.TUList.each(function (model, index) {
+                    // TODO: what to do with placeholder text? Currently filtered out here
+                    if (model.get("source").length > 0) {
+                        lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
+                        rs = model.get("refstring");
+                        if (rs.length > 1) {
+                            // multiple translations - give a count
+                            lstTU += i18next.t("view.ttlTotalTranslations", {total: require.length});
+                        } else if (rs.length === 1) {
+                            // exactly 1 translation - just display it
+                            lstTU += rs[0].target;
+                        } else {
+                            // no translations (shouldn't happen)
+                            lstTU += i18next.t("view.ttlNoTranslations");
+                        }
+                        lstTU += "</span><span class=\"chevron\"></span></a></li>";
+                    }
+                });
+                $("#lstTU").html(lstTU);
+                strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: this.TUList.length});
+                $("#lblProjInfo").html(strInfo);
+                // if there's no data, show the empty view
             }
         }),
 
-        KBView = Marionette.LayoutView.extend({
+        TUView = Marionette.LayoutView.extend({
             spObj: null,
             spInstances: null,
             strOldSP: "",
@@ -121,6 +164,7 @@ define(function (require) {
                 container: "#StepContainer"
             },
             initialize: function () {
+                // spList is used for the "find in documents"
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
                 // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
@@ -616,6 +660,11 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
+                if (this.spObj === null) {
+                    // no spObj passed in -- we're looking at the possible translations for a target unit,
+                    // NOT the "show translations" dialog
+                    $("#curSP").hide();
+                }
                 
                 // display the refstrings (and their relative frequency)
                 this.showRefStrings(""); // empty param --> don't select anything
@@ -805,8 +854,8 @@ define(function (require) {
         });
             
     return {
-        KBListView: KBListView,
-        KBView: KBView,
+        TUListView: TUListView,
+        TUView: TUView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView
     };
