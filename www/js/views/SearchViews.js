@@ -315,10 +315,16 @@ define(function (require) {
                 
             },
             onClickRefString: function (event) {
-                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
+                var RS_ACTIONS = "",
                     RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>",
                     refstrings = this.model.get("refstring"),
                     index = event.currentTarget.id.substr(3);
+                if (this.spObj !== null) {
+                    // only add the "select this translation" if we have a current source phrase
+                    RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div>";
+                }
+                // add the rest of the actions
+                RS_ACTIONS += "<div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>";
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
@@ -639,15 +645,9 @@ define(function (require) {
 //                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
+                // fill current translation info
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
-                if (window.Application.spList.length > 0) {
-                    // found a sourcephrase -- fill out the UI
-                    var sp = window.Application.spList.at(0);
-                    $("#srcPhrase").html(sp.get("source"));
-                    $("#tgtPhrase").html(sp.get("target"));
-                }
-                // fill current translation info
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
                 // load the source / target punctuation pairs
@@ -660,12 +660,19 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
+                // source we're looking at
+                $("#srcPhrase").html(this.model.get("source"));
+                // are we looking at a current point in the translation, or just the possible TU refstrings?
                 if (this.spObj === null) {
-                    // no spObj passed in -- we're looking at the possible translations for a target unit,
-                    // NOT the "show translations" dialog
-                    $("#curSP").hide();
-                }
-                
+                    // no spObj passed in -- we're looking at the possible refstrings for a target unit,
+                    // NOT the "show translations" dialog -- hide the current translation stuff
+                    $("#lblCurrentTrans").hide();
+                    $(".tgtbox").hide();
+                } else {
+                    // looking at a current point in the translation (i.e, the Show Translations dialog) -
+                    // show what the current translation for this sourcephrase is
+                    $("#tgtPhrase").html(this.spObj.get("target"));
+                }                
                 // display the refstrings (and their relative frequency)
                 this.showRefStrings(""); // empty param --> don't select anything
             }

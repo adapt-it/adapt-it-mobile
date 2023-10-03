@@ -1,5 +1,9 @@
 {{! TargetUnit.html
     Template for displaying an individual KB target unit (one or more translations for a single source phrase).
+    This template does double duty:
+    - Individual item view for the KB editor (accessed through the settings)
+    - "Show translations" screen (accessed when adapting)
+    TUView in SearchViews.js creates this template.
 }}
 <div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item">
@@ -9,11 +13,9 @@
 </div>
 <div id="mobileSelect" class="scroller-notb">
     <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
-        <div id="curSP">
-            <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
-            <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="center emphasized" id="srcPhrase">{{source}}</div></div><div class="tgtbox"><div><div class="emphasized-small" id="lbltargetLang"></div><div class="emphasized center"><span id="tgtPhrase" contenteditable="true"></span></div></div></div>
-        </div>
-        <div id="noCurSP"></div>
+        <div class="topcoat-list__header" id="lblCurrentTrans">{{t 'view.lblCurrentTranslation'}}</div>
+        <div class="srcbox"><div class="emphasized-small" id="lblSourceLang"></div><div class="emphasized center"><span id="srcPhrase"></span></div></div>
+        <div class="tgtbox"><div class="emphasized-small" id="lbltargetLang"></div><div class="emphasized center"><span id="tgtPhrase" contenteditable="true"></span></div></div>
         <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}} <span class="right">{{t 'view.lblFrequency'}}</span></div>
         <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
     </div>

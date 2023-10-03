@@ -463,14 +463,16 @@ define(function (require) {
                 // update the KB and source phrase list, then display the Translations screen with the currently-selected sourcephrase
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
                     $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
-                        var tu = window.Application.kbList.where({tuid: id});
-                        if (tu === null) {
-                            console.log("KB Entry not found:" + id);
+                        var sp = window.Application.spList.where({spid: id});
+                        if (sp === null || sp.length === 0) {
+                            console.log("sp Entry not found:" + id);
+                        } else {
+                            var tu = window.Application.kbList.findWhere({'source': sp[0].get("source").toLowerCase(), 'isGloss': 0});
+                            showTransView = new SearchViews.TUView({model: tu});
+                            showTransView.spObj = sp[0];
+                            showTransView.delegateEvents();
+                            window.Application.main.show(showTransView);    
                         }
-                        showTransView = new SearchViews.TUView({model: tu[0]});
-                        showTransView.spObj = window.Application.spList[0];
-                        showTransView.delegateEvents();
-                        window.Application.main.show(showTransView);
                     });
                 });
             },
