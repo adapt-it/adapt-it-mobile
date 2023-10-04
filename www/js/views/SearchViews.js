@@ -559,8 +559,7 @@ define(function (require) {
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
-                var sp = this.spList.at(0);
-                var spLength = sp.get("source").length - (sp.get("prepuncts").length + sp.get("follpuncts").length);
+                var spLength = src.length;
                 var tgt = refstrings[index].target;
                 var i = 0;
                 var count = 0;
@@ -580,7 +579,7 @@ define(function (require) {
                         return true;
                     }
                     // do the strings differ in just punctuation?
-                    var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                    var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.prepuncts.length + element.attributes.target.length - element.attributes.follpuncts.length);
                     tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
                     if (tmpVal === tgt.toUpperCase()) {
                         return true; // string is the same, it just has punctuation tacked on
