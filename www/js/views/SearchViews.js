@@ -167,8 +167,6 @@ define(function (require) {
                 // spList is used for the "find in documents"
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
-                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
-                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 this.render();
             },
             // set the current translation to the provided text
@@ -561,7 +559,7 @@ define(function (require) {
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
-                var sp = window.Application.spList.at(0);
+                var sp = this.spList.at(0);
                 var spLength = sp.get("source").length - (sp.get("prepuncts").length + sp.get("follpuncts").length);
                 var tgt = refstrings[index].target;
                 var i = 0;
@@ -645,6 +643,10 @@ define(function (require) {
 //                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
+                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
+                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
+                // also fill out the chapter list
+                window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
                 // fill current translation info
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
