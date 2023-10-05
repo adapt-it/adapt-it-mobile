@@ -461,6 +461,10 @@ define(function (require) {
                             $("#SearchRS").html(searchRS);
                             $("#SearchIndex").html("(" + (window.Application.searchIndex + 1) + "/" + window.Application.searchList.length + ")");
                         }
+                        // disable editing blank verses if needed
+                        if (this.allowEditBlankSP === false) {
+                            $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
+                        }
                         if (project.get('lastAdaptedSPID').length > 0) {
                             // not searching, but there is a sourcephrase ID from our last session -- select it now
                             isSelecting = true;
@@ -503,10 +507,6 @@ define(function (require) {
                     if (selectedStart !== null) {
                         $("#mnuTranslations").removeClass("menu-disabled");
                         $("#mnuFindRS").removeClass("menu-disabled");
-                    }
-                    // disable editing blank verses if needed
-                    if (this.allowEditBlankSP === false) {
-                        $(".nosource").prop('contenteditable', false); // no source -- set target to read-only
                     }
                     // hide gloss / free translation lines if needed
                     if (this.ShowGlossFT === false) {
