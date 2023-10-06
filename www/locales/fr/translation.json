@@ -374,6 +374,7 @@
         "ttlTotalTranslations": "(__total__ traductions)",
         "ttlNoTranslations": "Il n'y a pas de traductions",
         "ttlTotalEntries": "Nombre d'éléments: __total__",
+        "lblNewTU": "Nouvel élément...",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -110,8 +110,10 @@ define(function (require) {
 
             },
             events: {
-                "click .big-link": "onClickTU"
+                "click .big-link": "onClickTU",
+                "click #btnNewTU": "onClickNewTU"
             },
+            // User clicked on a TU item from the list. Show the TUView for this item.
             onClickTU: function (event) {
                 var tuID = event.currentTarget.id;
                 var tu = this.TUList.findWhere({tuid: tuID});
@@ -120,11 +122,17 @@ define(function (require) {
                 }
 
             },
+            // User clicked on the New TU button.
+            onClickNewTU: function () {
+                console.log("onClickNewTU - entry");
 
+            },
             onShow: function () {
                 var lstTU = "";
                 var rs = null;
                 var strInfo = "";
+                // first item in list -- create a new TU
+                // lstTU += "<li class=\"topcoat-list__item\"><a class=\"big-link\" id=\"btnNewTU\"><span class=\"btn-plus\"></span>" + i18next.t("view.lblProjectSettings") + "<span class=\"chevron\"></span></a></li>";
                 this.TUList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
                 // initial sort - name
                 this.TUList.comparator = 'source';
