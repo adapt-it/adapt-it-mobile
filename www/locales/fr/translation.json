@@ -373,8 +373,10 @@
         "ttlProjectName": "Projet: __name__",
         "ttlTotalTranslations": "(__total__ traductions)",
         "ttlNoTranslations": "Il n'y a pas de traductions",
-        "ttlTotalEntries": "Nombre d'éléments: __total__",
-        "lblNewTU": "Nouvel élément...",
+        "ttlTotalEntries": "Nombre d'entrées: __total__",
+        "lblNewTU": "Nouvelle entrée...",
+        "lblNewRS": "Nouvelle traduction...",
+        "dscNewRS": "Entrez une nouvelle traduction pour __source__:",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -375,6 +375,8 @@
         "ttlNoTranslations": "No translations",
         "ttlTotalEntries": "Total Entries: __total__",
         "lblNewTU": "Add Entry...",
+        "lblNewRS": "Add Translation...",
+        "dscNewRS": "Enter a new translation for __source__:",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

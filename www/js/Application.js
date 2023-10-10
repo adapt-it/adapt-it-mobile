@@ -467,11 +467,55 @@ define(function (require) {
                         if (sp === null || sp.length === 0) {
                             console.log("sp Entry not found:" + id);
                         } else {
-                            var tu = window.Application.kbList.findWhere({'source': sp[0].get("source").toLowerCase(), 'isGloss': 0});
-                            showTransView = new SearchViews.TUView({model: tu});
-                            showTransView.spObj = sp[0];
-                            showTransView.delegateEvents();
-                            window.Application.main.show(showTransView);    
+                            // KB lookup involves modifying the case and stripping out the punctuation (see autoRemoveCaps()
+                            // and stripPunctuation() calls in AdaptViews and DocumentViews). 
+                            var src = sp[0].get("source"),
+                                punctsSource = [],
+                                startIdx = 0,
+                                endIdx = src.length;
+                            // First up: stripping out the punctuation
+                            window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
+                                punctsSource.push(elt.s);
+                            });
+                            // starting index
+                            while (startIdx < (src.length - 1) && punctsSource.indexOf(src.charAt(startIdx)) > -1) {
+                                startIdx++;
+                            }
+                            // ending index
+                            while (endIdx > 0 && punctsSource.indexOf(src.charAt(endIdx - 1)) > -1) {
+                                endIdx--;
+                            }
+                            if (endIdx <= startIdx) {
+                                src = "";
+                            }
+                            src = src.substr(startIdx, (endIdx) - startIdx);
+                            // Next up: set the case as appropriate
+                            if (window.Application.currentProject.get("AutoCapitalization") === "true") {
+                                // build up the caseSource array
+                                var caseSource = [];
+                                window.Application.currentProject.get('CasePairs').forEach(function (elt, idx, array) {
+                                    caseSource.push(elt.s);
+                                });
+                                // find the starting character in the source and change it if needed
+                                for (var i = 0; i < caseSource.length; i++) {
+                                    if (caseSource[i].charAt(1) === src.charAt(0)) {
+                                        // uppercase -- convert the first character to lowercase and exit the loop
+                                        src = caseSource[i].charAt(0) + src.substr(1);
+                                        break;
+                                    }
+                                }
+                            }
+                            // Okay, now look up the modified source in the KB
+                            var tu = window.Application.kbList.findWhere({'source': src, 'isGloss': 0});
+                            if (tu !== null) {
+                                showTransView = new SearchViews.TUView({model: tu});
+                                showTransView.spObj = sp[0];
+                                showTransView.delegateEvents();
+                                window.Application.main.show(showTransView);        
+                            } else {
+                                // shouldn't happen?
+                                console.log("showTranslations: source not found in KB -- ignoring call");
+                            }
                         }
                     });
                 });

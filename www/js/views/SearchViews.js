@@ -125,7 +125,6 @@ define(function (require) {
             // User clicked on the New TU button.
             onClickNewTU: function () {
                 console.log("onClickNewTU - entry");
-
             },
             onShow: function () {
                 var lstTU = "";
@@ -298,6 +297,7 @@ define(function (require) {
                 "blur #tgtPhrase": "onBlurTarget",
                 "keydown #tgtphrase": "onEditTarget",
                 "click #btnUndo": "onUndoTarget",
+                "click #btnNewRS": "onNewRS",
                 "click .topcoat-list__item": "onClickRefString",
                 "keydown .refstring-list__item": "onEditRefString",
                 "blur .refstring-list__item": "onBlurRefString",
@@ -317,8 +317,64 @@ define(function (require) {
             onBlurTarget: function () {
                 // hide the undo button
             },
-            onUndoTarget: function () {
-                
+            onUndoTarget: function () {  
+            },
+            // user clicked on the "new translation" button - prompt the user for a new translation string,
+            // and then update the refstrings list if the user clicks OK
+            onNewRS: function () {
+                console.log("onNewRS - entry");
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}), function (results) {
+                        if (results.buttonIndex === 1) {
+                            // new translation in results.input1
+                            this.addNewRS(results.input1);
+                        }
+                    }, i18next.t('view.lblNewRS'));
+                } else {
+                    // in browser
+                    var result = prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}));
+                    if (result !== null) {
+                        // new translation in result
+                        this.addNewRS(result);
+                    }
+                }
+            },
+            // add the new refstring to our model (if needed)
+            addNewRS: function (strTarget) {
+                var refstrings = this.model.get("refstring"),
+                found = false;
+                console.log("addNewRS - attempting to add: " + strTarget);
+                // sanity check -- is this refstring already there?
+                // add or increment the new value
+                for (i = 0; i < refstrings.length; i++) {
+                    if (refstrings[i].target === strTarget) {
+                        // This RefString already exists in the KB - no work to do
+                        found = true;
+                        break;
+                    }
+                }
+                if (found === false) {
+                    // no entry in KB with this source/target -- add one
+                    var newRS = {
+                            'target': Underscore.unescape(strTarget),  //klb
+                            'n': '1',
+                            'cDT': timestamp,
+                            'df': '0',
+                            'wC': ""
+                        };
+                    refstrings.push(newRS);
+                    // re-sort the refstrings according to frequency
+                    refstrings.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    this.model.set('refstring', refstrings, {silent: true});
+                    this.model.update();
+                    this.render(); // added a new refstring -- refresh the UI
+                } else {
+                    console.log("addNewRS -- item already exists, no work to do");
+                }
             },
             onClickRefString: function (event) {
                 var RS_ACTIONS = "",
