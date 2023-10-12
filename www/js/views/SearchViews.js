@@ -33,13 +33,14 @@ define(function (require) {
         addNewRS = function (model, strTarget) {
             var refstrings = model.get("refstring"),
                 selectedIndex = 0,
+                i = 0,
                 curDate = new Date(),
                 timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
                 found = false;
             console.log("addNewRS - attempting to add: " + strTarget);
             // sanity check -- is this refstring already there?
             // add or increment the new value
-            for (var i = 0; i < refstrings.length; i++) {
+            for (i = 0; i < refstrings.length; i++) {
                 if (refstrings[i].target === strTarget) {
                     // This RefString already exists in the KB - no work to do
                     found = true;
@@ -65,6 +66,35 @@ define(function (require) {
                 // model.update();
                 model.save();
                 console.log("addNewRS - saving model");
+                $("#RefStrings").html(theRefStrings(refstrings));
+                // set the frequency meters for each refstring
+                for (i = 0; i < refstrings.length; i++) {
+                    if (strTarget.length > 0) {
+                        // looking to select a refstring after redrawing
+                        if (refstrings[i].target === strTarget) {
+                            selectedIndex = i; // found it
+                        }
+                    }
+                    if (refstrings[i].n > 0) {
+                        // normal refstring instance
+                        $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                    } else {
+                        // deleted refstring
+                        $("#pct-" + i).width("0%");
+                        $("#rs-" + i).addClass("deleted");
+                    }
+                }
+                if (strTarget.length > 0) {
+                    // now select the index we found
+                    $("#rs-" + selectedIndex).click();
+                }
+                // // add the new item to the UI
+                // // (the _full_ refstring list is templated; see RefStringList.html)
+                // var liRS = "<li class=\"topcoat-list__item\" id=\"li-" + (refstrings.length - 1) + "\"><div class=\"big-link\" id='list-rs-" + (refstrings.length - 1) + "'><div id=\"rs-" + (refstrings.length - 1) + "\" class=\"chap-list__item emphasized refstring-list__item\">";
+                // liRS += strTarget + "</div><span class=\"meter-dashed right\"><span id=\"pct-" + (refstrings.length - 1) + "\" class=\"pct\"></span></span></div><div class=\"liActions\" id='lia-" + (refstrings.length - 1) + "'></div></li>";
+                // $("#RefStrings").append(liRS);
+                // // 50% width/frequency, just because
+                // $("#pct-" + (refstrings.length - 1)).width("50%");
             } else {
                 console.log("addNewRS -- item already exists, no work to do");
             }
@@ -372,7 +402,6 @@ define(function (require) {
                         if (results.buttonIndex === 1) {
                             // new translation in results.input1
                             addNewRS(obj, results.input1);
-                            window.Application.router.navigate("sp/" + obj.get("spid"), {trigger: true, replace: true});
                         }
                     }, i18next.t('view.lblNewRS'));
                 } else {
@@ -381,7 +410,6 @@ define(function (require) {
                     if (result !== null) {
                         // new translation in result
                         addNewRS(this.model, result);
-                        window.Application.router.navigate("sp/" + this.model.get("spid"), {trigger: true, replace: true});
                     }
                 }
             },
