@@ -9,6 +9,7 @@ define(function (require) {
     "use strict";
 
     var $           = require('jquery'),
+        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         i18next     = require('i18n'),
@@ -27,6 +28,47 @@ define(function (require) {
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
+
+        // helper method to add a new refstring to a model (if it's not already there)
+        addNewRS = function (model, strTarget) {
+            var refstrings = model.get("refstring"),
+                selectedIndex = 0,
+                curDate = new Date(),
+                timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                found = false;
+            console.log("addNewRS - attempting to add: " + strTarget);
+            // sanity check -- is this refstring already there?
+            // add or increment the new value
+            for (var i = 0; i < refstrings.length; i++) {
+                if (refstrings[i].target === strTarget) {
+                    // This RefString already exists in the KB - no work to do
+                    found = true;
+                    break;
+                }
+            }
+            if (found === false) {
+                // no entry in KB with this source/target -- add one
+                var newRS = {
+                        'target': Underscore.unescape(strTarget),  //klb
+                        'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                        'cDT': timestamp,
+                        'df': '0',
+                        'wC': ""
+                    };
+                refstrings.push(newRS);
+                // re-sort the refstrings according to frequency
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
+                model.set('refstring', refstrings, {silent: true});
+                // model.update();
+                model.save();
+                console.log("addNewRS - saving model");
+            } else {
+                console.log("addNewRS -- item already exists, no work to do");
+            }
+        },
 
         deleteSelectedDocs = function () {
             var key = null;
@@ -325,10 +367,12 @@ define(function (require) {
                 console.log("onNewRS - entry");
                 if (navigator.notification) {
                     // on mobile device
+                    var obj = this.model;
                     navigator.notification.prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}), function (results) {
                         if (results.buttonIndex === 1) {
                             // new translation in results.input1
-                            this.addNewRS(results.input1);
+                            addNewRS(obj, results.input1);
+                            window.Application.router.navigate("sp/" + obj.get("spid"), {trigger: true, replace: true});
                         }
                     }, i18next.t('view.lblNewRS'));
                 } else {
@@ -336,44 +380,9 @@ define(function (require) {
                     var result = prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}));
                     if (result !== null) {
                         // new translation in result
-                        this.addNewRS(result);
+                        addNewRS(this.model, result);
+                        window.Application.router.navigate("sp/" + this.model.get("spid"), {trigger: true, replace: true});
                     }
-                }
-            },
-            // add the new refstring to our model (if needed)
-            addNewRS: function (strTarget) {
-                var refstrings = this.model.get("refstring"),
-                found = false;
-                console.log("addNewRS - attempting to add: " + strTarget);
-                // sanity check -- is this refstring already there?
-                // add or increment the new value
-                for (i = 0; i < refstrings.length; i++) {
-                    if (refstrings[i].target === strTarget) {
-                        // This RefString already exists in the KB - no work to do
-                        found = true;
-                        break;
-                    }
-                }
-                if (found === false) {
-                    // no entry in KB with this source/target -- add one
-                    var newRS = {
-                            'target': Underscore.unescape(strTarget),  //klb
-                            'n': '1',
-                            'cDT': timestamp,
-                            'df': '0',
-                            'wC': ""
-                        };
-                    refstrings.push(newRS);
-                    // re-sort the refstrings according to frequency
-                    refstrings.sort(function (a, b) {
-                        // high to low
-                        return parseInt(b.n, 10) - parseInt(a.n, 10);
-                    });
-                    this.model.set('refstring', refstrings, {silent: true});
-                    this.model.update();
-                    this.render(); // added a new refstring -- refresh the UI
-                } else {
-                    console.log("addNewRS -- item already exists, no work to do");
                 }
             },
             onClickRefString: function (event) {
