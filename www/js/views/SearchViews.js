@@ -66,6 +66,7 @@ define(function (require) {
                 // model.update();
                 model.save();
                 console.log("addNewRS - saving model");
+                // redraw the UI (taken from showRefStrings() below)
                 $("#RefStrings").html(theRefStrings(refstrings));
                 // set the frequency meters for each refstring
                 for (i = 0; i < refstrings.length; i++) {
@@ -88,13 +89,6 @@ define(function (require) {
                     // now select the index we found
                     $("#rs-" + selectedIndex).click();
                 }
-                // // add the new item to the UI
-                // // (the _full_ refstring list is templated; see RefStringList.html)
-                // var liRS = "<li class=\"topcoat-list__item\" id=\"li-" + (refstrings.length - 1) + "\"><div class=\"big-link\" id='list-rs-" + (refstrings.length - 1) + "'><div id=\"rs-" + (refstrings.length - 1) + "\" class=\"chap-list__item emphasized refstring-list__item\">";
-                // liRS += strTarget + "</div><span class=\"meter-dashed right\"><span id=\"pct-" + (refstrings.length - 1) + "\" class=\"pct\"></span></span></div><div class=\"liActions\" id='lia-" + (refstrings.length - 1) + "'></div></li>";
-                // $("#RefStrings").append(liRS);
-                // // 50% width/frequency, just because
-                // $("#pct-" + (refstrings.length - 1)).width("50%");
             } else {
                 console.log("addNewRS -- item already exists, no work to do");
             }
@@ -192,11 +186,11 @@ define(function (require) {
                 if (tu) {
                     window.Application.router.navigate("tu/" + tuID, {trigger: true});
                 }
-
             },
-            // User clicked on the New TU button.
+            // User clicked on the New TU button. Show the TUView for a _new_ item, with an empty/null TU
             onClickNewTU: function () {
                 console.log("onClickNewTU - entry");
+                window.Application.router.navigate("tu/000", {trigger: true});
             },
             onShow: function () {
                 var lstTU = "";
@@ -208,6 +202,7 @@ define(function (require) {
                 // initial sort - name
                 this.TUList.comparator = 'source';
                 this.TUList.sort();
+                lstTU += "<li class=\"topcoat-list__item li-tu\"><div class=\"big-link\" id=\"btnNewTU\"><div class=\"chap-list__item emphasized refstring-list__item filter-burnt-orange\"><span class=\"img-plus-small\" style=\"padding-right: 16px;\"></span>" + i18next.t("view.lblNewTU") + "</div></div></li>";
                 this.TUList.each(function (model, index) {
                     // TODO: what to do with placeholder text? Currently filtered out here
                     if (model.get("source").length > 0) {
@@ -235,6 +230,7 @@ define(function (require) {
 
         TUView = Marionette.LayoutView.extend({
             spObj: null,
+            bNewTU: false,
             spInstances: null,
             strOldSP: "",
             bDirty: false,
@@ -743,6 +739,29 @@ define(function (require) {
 //                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
+                if (this.model === null) {
+                    // this.
+                    // no obj -- create a new TU
+                    // // no entry in KB with this source -- add one
+                    // var newID = window.Application.generateUUID(),
+                    //     newTU = new kbModels.TargetUnit({
+                    //         tuid: newID,
+                    //         projectid: projectid,
+                    //         source: sourceValue,
+                    //         refstring: [
+                    //             {
+                    //                 target: targetValue,
+                    //                 n: "1"
+                    //             }
+                    //         ],
+                    //         timestamp: timestamp,
+                    //         user: "",
+                    //         isGloss: isGloss
+                    //     });
+                    // kblist.add(newTU);
+                    // newTU.save();
+                    
+                }
                 // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
                 this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 // also fill out the chapter list

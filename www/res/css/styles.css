@@ -42,6 +42,9 @@
     background-color: #b26200;
     color: white;
 }
+.filter-burnt-orange { /* use CSS filter to turn black SVG images burnt orange */
+    filter: invert(28%) sepia(67%) saturate(2780%) hue-rotate(33deg) brightness(101%) contrast(101%);
+}
 .bg-darkdarkblue {
     background-color: #12536d;
     color: white;

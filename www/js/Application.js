@@ -441,17 +441,25 @@ define(function (require) {
                     window.Application.main.show(editTUView);
                 });
             },
-            
-            editTU: function (id) {
+
+            showTU: function (id) {
                 console.log("editTU");
                 // update the KB list, then show the view
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
-                    // show the selected TU
-                    var tu = window.Application.kbList.where({tuid: id});
-                    if (tu === null) {
-                        console.log("KB Entry not found:" + id);
+                    var theTU = null;
+                    // are we creating a new TU?
+                    if (id === "000") {
+                        theTU = null;
+                    } else {
+                        // show the selected TU
+                        var tu = window.Application.kbList.where({tuid: id});
+                        if (tu === null) {
+                            console.log("KB Entry not found:" + id);
+                            return; // don't do anything -- this TU is supposed to exist
+                        }
+                        theTU = tu[0];
                     }
-                    showTransView = new SearchViews.TUView({model: tu[0]});
+                    showTransView = new SearchViews.TUView({model: theTU});
                     showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
                     showTransView.delegateEvents();
                     window.Application.main.show(showTransView);

@@ -19,7 +19,7 @@ define(function (require) {
             "project/:id":  "editProject",      // #project/projectID
             "search/:id":   "lookupChapter",    // #search/projectID
             "kb/:id":       "editKB",           // #kb/projectID (KB editor)
-            "tu/:tuid":     "editTU",           // #tu/target unit ID (TU editor)
+            "tu/:tuid":     "showTU",           // #tu/target unit ID (TU editor - ID will be "000" for a new TU)
             "sp/:spid":     "showTranslations", // #sp/source phrase ID (show translations for SP)
             "import/:id":   "importBooks",      // #import/projectID (import books into projectID)
             "export/:id":   "exportBooks",      // #export/projectID (export books from projectID)
