@@ -92,6 +92,17 @@ define(function (require) {
             } else {
                 console.log("addNewRS -- item already exists, no work to do");
             }
+            // are we creating a new TU?
+            if (!$("#tbBottom").hasClass("hide")) {
+                // creating a new TU -- check to see if we have a source and at least 1 refstring
+                if (model.get("source").length > 0 && refstrings.length > 0) {
+                    // we have both -- enable the OK button
+                    $("#OK").prop("disabled", false);
+                } else {
+                    // hmm... one of these failed; disable the OK button
+                    $("#OK").prop("disabled", true);
+                }
+            }
         },
 
         deleteSelectedDocs = function () {
@@ -210,7 +221,7 @@ define(function (require) {
                         rs = model.get("refstring");
                         if (rs.length > 1) {
                             // multiple translations - give a count
-                            lstTU += i18next.t("view.ttlTotalTranslations", {total: require.length});
+                            lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
                         } else if (rs.length === 1) {
                             // exactly 1 translation - just display it
                             lstTU += rs[0].target;
@@ -361,10 +372,11 @@ define(function (require) {
                 }
             },
             events: {
-                "focus #tgtPhrase": "onFocusTarget",
-                "blur #tgtPhrase": "onBlurTarget",
-                "keydown #tgtphrase": "onEditTarget",
-                "click #btnUndo": "onUndoTarget",
+                "click #OK": "onOK",
+                "click #Cancel": "onCancel",
+                "focus #srcPhrase": "onFocusSource",
+                "keydown #srcPhrase": "onEditSource",
+                "blur #srcPhrase": "onBlurSource",
                 "click #btnNewRS": "onNewRS",
                 "click .topcoat-list__item": "onClickRefString",
                 "keydown .refstring-list__item": "onEditRefString",
@@ -376,20 +388,68 @@ define(function (require) {
                 "click .btnSearch": "onClickSearch",
                 "click .btnSearchItem": "onClickSearchItem"
             },
-            onFocusTarget: function () {
-                // show the undo button, in case the user wants to revert  
+            // User clicked the OK button (new TU). Save the TU and add it to our TUList
+            onOK: function () {
+                this.model.save();
+                window.Application.kblist.add(this.model);
+                window.history.go(-1);
             },
-            onEditTarget: function () {
-                // show the undo button, in case the user wants to revert  
+            // User clicked the Cancel button (new TU). Delete the TU and return to the TU List page.
+            onCancel: function () {
+                this.model = null;
+                window.history.go(-1);
             },
-            onBlurTarget: function () {
-                // hide the undo button
+            // Focus set to the source edit field
+            onFocusSource: function () {
+                // reset the dirty bit -- that's all
+                this.bDirty = false;
             },
-            onUndoTarget: function () {  
+            // User typed something in the source text (new TU)
+            onEditSource: function (event) {
+                // pull out the text
+                var value = $("#srcPhrase").text(),
+                    trimmedValue = value.trim();
+                if (trimmedValue.length > 0) {
+                    // there's something here -- enable the "add translation" button if needed
+                    if ($("#btnNewRS").hasClass("filter-gray")) {
+                        $("#btnNewRS").removeClass("filter-gray");    
+                        $("#btnNewRS").addClass("filter-burnt-orange");
+                    }
+                } else {
+                    // no "real" text - disable the "add translation" button if needed
+                    if ($("#btnNewRS").hasClass("filter-burnt-orange")) {
+                        $("#btnNewRS").removeClass("filter-burnt-orange");
+                        $("#btnNewRS").addClass("filter-gray");    
+                    }
+                }
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- blur focus
+                    $("#srcPhrase").blur();
+                } else {
+                    // any other key -- set the dirty bit
+                    this.bDirty = true;
+                }
+            },
+            // Focus moved from the srcPhrase edit field (probably new TU). If the trimmed text is non-empty, set the
+            // source for the current TU
+            onBlurSource: function () {
+                if (this.bDirty === true) {
+                    // text changed in the source edit field -- if it's non-empty, update the source for the current TU
+                    var value = $("#srcPhrase").text(),
+                    trimmedValue = value.trim();
+                    if (trimmedValue.length > 0) {
+                        this.model.set('source', trimmedValue, {silent: true});
+                    }
+                }
+                // reset the dirty bit
+                this.bDirty = false;
             },
             // user clicked on the "new translation" button - prompt the user for a new translation string,
             // and then update the refstrings list if the user clicks OK
             onNewRS: function () {
+                if ($("#btnNewRS").hasClass("filter-gray")) {
+                    return; // button is disabled - exit
+                }
                 console.log("onNewRS - entry");
                 if (navigator.notification) {
                     // on mobile device
@@ -739,38 +799,6 @@ define(function (require) {
 //                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
-                if (this.model === null) {
-                    // this.
-                    // no obj -- create a new TU
-                    // // no entry in KB with this source -- add one
-                    // var newID = window.Application.generateUUID(),
-                    //     newTU = new kbModels.TargetUnit({
-                    //         tuid: newID,
-                    //         projectid: projectid,
-                    //         source: sourceValue,
-                    //         refstring: [
-                    //             {
-                    //                 target: targetValue,
-                    //                 n: "1"
-                    //             }
-                    //         ],
-                    //         timestamp: timestamp,
-                    //         user: "",
-                    //         isGloss: isGloss
-                    //     });
-                    // kblist.add(newTU);
-                    // newTU.save();
-                    
-                }
-                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
-                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
-                // also fill out the chapter list
-                window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
-                // fill current translation info
-                var srcLang = window.Application.currentProject.get('SourceLanguageName');
-                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
-                $("#lblSourceLang").html(srcLang);
-                $("#lbltargetLang").html(tgtLang);
                 // load the source / target punctuation pairs
                 window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);
@@ -781,6 +809,37 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
+                // load the chapter list
+                window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                // display the source and target language names
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                $("#lblSourceLang").html(srcLang);
+                $("#lbltargetLang").html(tgtLang);
+                // is this a new TU?
+                if (this.bNewTU === true) {
+                    var range = null,
+                        selection = null;
+                    // creating a new TU
+                    $("#tbBottom").removeClass("hide"); // show the OK/Cancel button
+                    // disable the OK button until the user adds a source AND target
+                    $("#OK").prop('disabled', true); 
+                    // disable the "Add Translation" button until they type in a source
+                    $("#btnNewRS").removeClass("filter-burnt-orange");
+                    $("#btnNewRS").addClass("filter-gray");
+                    // hide the current translation / target UI
+                    $("#lblCurrentTrans").hide();
+                    $(".tgtbox").hide();
+                    // first item of business is adding the source phrase -- nudge the user there
+                    $("#srcPhrase").prop('contenteditable', true);
+                    $("#srcBox").attr("style", "background: #eee;"); // 
+                    $("#srcPhrase").attr("style", "display:block;")
+                    $("#srcPhrase").focus();
+                    $("#srcPhrase").mouseup();
+                    return; // no further processing
+                }
+                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
+                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 // source we're looking at
                 $("#srcPhrase").html(this.model.get("source"));
                 // are we looking at a current point in the translation, or just the possible TU refstrings?

@@ -446,10 +446,25 @@ define(function (require) {
                 console.log("editTU");
                 // update the KB list, then show the view
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
-                    var theTU = null;
+                    var theTU = null,
+                        bNewTU = false;
                     // are we creating a new TU?
                     if (id === "000") {
-                        theTU = null;
+                        // create a new / temporary TU to pass in to the TUView
+                        // (this object isn't saved or added to the collection yet)
+                        var newID = window.Application.generateUUID(),
+                            curDate = new Date(),
+                            timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                            theTU = new kbModels.TargetUnit({
+                                tuid: newID,
+                                projectid: id,
+                                source: "",
+                                refstring: [],
+                                timestamp: timestamp,
+                                user: "",
+                                isGloss: 0
+                            });
+                        bNewTU = true;
                     } else {
                         // show the selected TU
                         var tu = window.Application.kbList.where({tuid: id});
@@ -458,9 +473,11 @@ define(function (require) {
                             return; // don't do anything -- this TU is supposed to exist
                         }
                         theTU = tu[0];
+                        bNewTU = false;
                     }
                     showTransView = new SearchViews.TUView({model: theTU});
                     showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
+                    showTransView.bNewTU = bNewTU; // set the bNewTU flag as appropriate
                     showTransView.delegateEvents();
                     window.Application.main.show(showTransView);
                 });
