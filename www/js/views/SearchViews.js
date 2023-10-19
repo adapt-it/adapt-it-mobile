@@ -391,8 +391,9 @@ define(function (require) {
             // User clicked the OK button (new TU). Save the TU and add it to our TUList
             onOK: function () {
                 this.model.save();
-                window.Application.kblist.add(this.model);
+                window.Application.kbList.add(this.model);
                 window.history.go(-1);
+                // window.Application.editKB(window.Application.currentProject.get("projectid"));
             },
             // User clicked the Cancel button (new TU). Delete the TU and return to the TU List page.
             onCancel: function () {
@@ -446,11 +447,16 @@ define(function (require) {
             },
             // user clicked on the "new translation" button - prompt the user for a new translation string,
             // and then update the refstrings list if the user clicks OK
-            onNewRS: function () {
+            onNewRS: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                // if there's no source, get out
                 if ($("#btnNewRS").hasClass("filter-gray")) {
                     return; // button is disabled - exit
                 }
                 console.log("onNewRS - entry");
+                // ask the user to provide a target / translation for the source phrase
                 if (navigator.notification) {
                     // on mobile device
                     var obj = this.model;
