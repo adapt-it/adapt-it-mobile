@@ -1,8 +1,7 @@
 {{! TargetUnit.html
     Template for displaying an individual KB target unit (one or more translations for a single source phrase).
-    This template gets called from a few places:
+    This template gets called from:
     - Individual item view for the KB editor (accessed through the settings)
-    - Creating a new TU (same caller - KB editor)
     - "Show translations" screen (accessed when adapting)
     TUView in SearchViews.js creates this template.
 }}
@@ -20,11 +19,5 @@
         <ul class="topcoat-list__container chapter-list"><li class="topcoat-list__item li-tu"><div class="big-link filter-burnt-orange" id="btnNewRS"><div class="chap-list__item emphasized refstring-list__item"><span class="img-plus-small" style="padding-right: 16px;"></span>{{t 'view.lblNewRS'}}</div></div></li></ul>
         <div class="topcoat-list__header" id="lblAllTrans">{{t 'view.lblAllTranslations'}} <span class="right">{{t 'view.lblFrequency'}}</span></div>
         <ul class="topcoat-list__container chapter-list" id="RefStrings"></ul>
-    </div>
-</div>
-<div class="bottom-tb hide" id="tbBottom">
-    <div id="OKCancelButtons">
-            <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
-            <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>
     </div>
 </div>

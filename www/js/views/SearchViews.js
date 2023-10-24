@@ -19,6 +19,7 @@ define(function (require) {
         tuModels        = require('app/models/targetunit'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
+        tplNewTU        = require('text!tpl/NewTU.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
         tplTUList       = require('text!tpl/TargetUnitList.html'),
         tplRSList       = require('text!tpl/RefStringList.html'),
@@ -201,7 +202,7 @@ define(function (require) {
             // User clicked on the New TU button. Show the TUView for a _new_ item, with an empty/null TU
             onClickNewTU: function () {
                 console.log("onClickNewTU - entry");
-                window.Application.router.navigate("tu/000", {trigger: true});
+                window.Application.router.navigate("tu", {trigger: true});
             },
             onShow: function () {
                 var lstTU = "";
@@ -236,6 +237,109 @@ define(function (require) {
                 strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: this.TUList.length});
                 $("#lblProjInfo").html(strInfo);
                 // if there's no data, show the empty view
+            }
+        }),
+
+        NewTUView = Marionette.ItemView.extend({
+            nStep: 0, // step 0 (source) and 1 (target) in this wizard
+            bDirty: false,
+            template: Handlebars.compile(tplNewTU),
+            initialize: function () {
+                // spList is used for the "find in documents"
+                this.spList = new spModels.SourcePhraseCollection();
+                this.spList.clearLocal();
+                this.render();
+            },
+            events: {
+                "click #Done": "onDone",
+                "click #Cancel": "onCancel",
+                "click #Next": "onNext",
+                "input #txtField": "onInputEditField"
+            },
+            // user clicked the Done button. Save the TU and return to the TU List page.
+            onDone: function () {
+                var value = $("#txtField").val(),
+                    trimmedValue = value.trim(),
+                    refstrings = [],
+                    curDate = new Date(),
+                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                    newRS = {
+                        'target': Underscore.unescape(trimmedValue),  //klb
+                        'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                        'cDT': timestamp,
+                        'df': '0',
+                        'wC': ""
+                    };
+                refstrings.push(newRS);
+                this.model.set('refstring', refstrings, {silent: true});
+                this.model.save();
+                window.Application.kbList.add(this.model);
+                window.history.go(-1);
+            },
+            // User clicked the Cancel button (new TU). Delete the TU and return to the TU List page.
+            onCancel: function () {
+                this.model = null;
+                window.history.go(-1);
+            },
+            // User clicked the Next button. Move to the "enter Target text" step.
+            onNext: function () {
+                // pull out the source value from the text field
+                var value = $("#txtField").val(),
+                    trimmedValue = value.trim();
+                this.model.set('source', trimmedValue, {silent: true});
+                this.model.update();
+                // set the step
+                this.nStep = 1;
+                // update the UI
+                $("#lblPrompt").html(i18next.t("view.dscNewRS", {source: trimmedValue}));
+                $("#txtField").val(""); // clear out the edit field
+                $("#Next").addClass('hide');
+                $("#Done").removeClass('hide');
+                $("#Done").prop('disabled', true); // enabled once the user types in some target text
+            },
+            // User typed something in the source text (new TU)
+            onInputEditField: function (event) {
+                // pull out the text
+                var value = $("#txtField").val(),
+                    trimmedValue = value.trim();
+                if (trimmedValue.length > 0) {
+                    // there's some text in the txtField edit box -- enable the UI as appropriate
+                    if (this.nStep === 0) {
+                        $("#Next").prop('disabled', false); 
+                    } else {
+                        $("#Done").prop('disabled', false);
+                    }
+                } else {
+                    // no "real" text - disable the UI as appropriate
+                    if (this.nStep === 0) {
+                        $("#Next").prop('disabled', true); 
+                    } else {
+                        $("#Done").prop('disabled', true); 
+                    }
+                }
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- blur focus
+                    $("#txtField").blur();
+                }
+            },
+            onShow: function () {
+                // load the source / target punctuation pairs
+                window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
+                    punctsSource.push(elt.s);
+                    punctsTarget.push(elt.t);
+                });
+                // load the source / target case pairs
+                window.Application.currentProject.get('CasePairs').forEach(function (elt, idx, array) {
+                    caseSource.push(elt.s);
+                    caseTarget.push(elt.t);
+                });
+                // First step: enter a source word or phrase
+                this.step = 0; // first step
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                $("#lblPrompt").html(i18next.t("view.dscNewSP", {lang: srcLang}));
+                // disable the Next button until the user adds a source
+                $("#Next").prop('disabled', true); 
+                $("#Done").addClass('hide');
             }
         }),
 
@@ -372,11 +476,6 @@ define(function (require) {
                 }
             },
             events: {
-                "click #OK": "onOK",
-                "click #Cancel": "onCancel",
-                "focus #srcPhrase": "onFocusSource",
-                "keydown #srcPhrase": "onEditSource",
-                "blur #srcPhrase": "onBlurSource",
                 "click #btnNewRS": "onNewRS",
                 "click .topcoat-list__item": "onClickRefString",
                 "keydown .refstring-list__item": "onEditRefString",
@@ -387,63 +486,6 @@ define(function (require) {
                 "click .btnSelect": "onClickSelect",
                 "click .btnSearch": "onClickSearch",
                 "click .btnSearchItem": "onClickSearchItem"
-            },
-            // User clicked the OK button (new TU). Save the TU and add it to our TUList
-            onOK: function () {
-                this.model.save();
-                window.Application.kbList.add(this.model);
-                window.history.go(-1);
-                // window.Application.editKB(window.Application.currentProject.get("projectid"));
-            },
-            // User clicked the Cancel button (new TU). Delete the TU and return to the TU List page.
-            onCancel: function () {
-                this.model = null;
-                window.history.go(-1);
-            },
-            // Focus set to the source edit field
-            onFocusSource: function () {
-                // reset the dirty bit -- that's all
-                this.bDirty = false;
-            },
-            // User typed something in the source text (new TU)
-            onEditSource: function (event) {
-                // pull out the text
-                var value = $("#srcPhrase").text(),
-                    trimmedValue = value.trim();
-                if (trimmedValue.length > 0) {
-                    // there's something here -- enable the "add translation" button if needed
-                    if ($("#btnNewRS").hasClass("filter-gray")) {
-                        $("#btnNewRS").removeClass("filter-gray");    
-                        $("#btnNewRS").addClass("filter-burnt-orange");
-                    }
-                } else {
-                    // no "real" text - disable the "add translation" button if needed
-                    if ($("#btnNewRS").hasClass("filter-burnt-orange")) {
-                        $("#btnNewRS").removeClass("filter-burnt-orange");
-                        $("#btnNewRS").addClass("filter-gray");    
-                    }
-                }
-                if ((event.keyCode === 9) || (event.keyCode === 13)) {
-                    // tab or enter key -- blur focus
-                    $("#srcPhrase").blur();
-                } else {
-                    // any other key -- set the dirty bit
-                    this.bDirty = true;
-                }
-            },
-            // Focus moved from the srcPhrase edit field (probably new TU). If the trimmed text is non-empty, set the
-            // source for the current TU
-            onBlurSource: function () {
-                if (this.bDirty === true) {
-                    // text changed in the source edit field -- if it's non-empty, update the source for the current TU
-                    var value = $("#srcPhrase").text(),
-                    trimmedValue = value.trim();
-                    if (trimmedValue.length > 0) {
-                        this.model.set('source', trimmedValue, {silent: true});
-                    }
-                }
-                // reset the dirty bit
-                this.bDirty = false;
             },
             // user clicked on the "new translation" button - prompt the user for a new translation string,
             // and then update the refstrings list if the user clicks OK
@@ -822,28 +864,7 @@ define(function (require) {
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
-                // is this a new TU?
-                if (this.bNewTU === true) {
-                    var range = null,
-                        selection = null;
-                    // creating a new TU
-                    $("#tbBottom").removeClass("hide"); // show the OK/Cancel button
-                    // disable the OK button until the user adds a source AND target
-                    $("#OK").prop('disabled', true); 
-                    // disable the "Add Translation" button until they type in a source
-                    $("#btnNewRS").removeClass("filter-burnt-orange");
-                    $("#btnNewRS").addClass("filter-gray");
-                    // hide the current translation / target UI
-                    $("#lblCurrentTrans").hide();
-                    $(".tgtbox").hide();
-                    // first item of business is adding the source phrase -- nudge the user there
-                    $("#srcPhrase").prop('contenteditable', true);
-                    $("#srcBox").attr("style", "background: #eee;"); // 
-                    $("#srcPhrase").attr("style", "display:block;")
-                    $("#srcPhrase").focus();
-                    $("#srcPhrase").mouseup();
-                    return; // no further processing
-                }
+               
                 // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
                 this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 // source we're looking at
@@ -1049,6 +1070,7 @@ define(function (require) {
     return {
         TUListView: TUListView,
         TUView: TUView,
+        NewTUView: NewTUView,
         LookupView: LookupView,
         ChapterResultsView: ChapterResultsView
     };

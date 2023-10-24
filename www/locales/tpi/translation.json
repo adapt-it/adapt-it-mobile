@@ -376,8 +376,8 @@
         "ttlTotalEntries": "Olgeta: __total__",
         "lblNewTU": "Nupela trenslesen...",
         "lblNewRS": "Nupela trenslesen...",
-        "dscNewSP": "Enter a new source phrase in language \"__lang__\": ",
-        "dscNewRS": "Enter a new translation for \"__source__\": ",
+        "dscNewSP": "Enter a word or phrase in language \"__lang__\".",
+        "dscNewRS": "Enter a translation for \"__source__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
