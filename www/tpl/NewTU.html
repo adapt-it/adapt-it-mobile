@@ -1,0 +1,29 @@
+{{! NewTU.html
+    Template for creating a new TargetUnit. Used by SearchViews.js (TuListView / New Entry).
+}}
+
+<div class="topcoat-navigation-bar main_title bg-lightblue">
+    <div class="topcoat-navigation-bar__item">
+        <a class="topcoat-icon-button--quiet back-button" id="btnBack">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item half">
+        <h2>{{t 'view.lblNewTU'}}</h2>
+    </div>
+</div>
+<div id="mobileSelect" class="scroller-notb">
+    <div class="chapter-list topcoat-list__container" id="Container" style="width:100%">
+        <div class="control-group">
+            <div class="control-row" id="lblText"></div>
+            <div class="control-row"><input type="text" id="txtField" class="topcoat-text-input full" required></div>
+        </div>
+    </div>
+</div>    
+<div class="bottom-tb">
+<div id="WizardSteps">
+    <button class="topcoat-button" id="Cancel"><span id="lblCancel">{{t 'view.lblCancel'}}</span></button>
+    <button class="topcoat-button" id="Next"><span id="lblNext"></span> <span class="topcoat-icon topcoat-icon--forward" id="imgNext"></span></button>
+    <button class="topcoat-button" id="Done"><span id="lblDone">{{t 'view.lblDone'}}</span></button>
+</div>
+</div>

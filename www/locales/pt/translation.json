@@ -376,7 +376,8 @@
         "ttlTotalEntries": "Contagem de itens: __total__",
         "lblNewTU": "Nova iten...",
         "lblNewRS": "Nova tradução...",
-        "dscNewRS": "Digite uma nova tradução para __source__:",
+        "dscNewSP": "Digite uma palavra ou frase no idioma \"__lang__\": ",
+        "dscNewRS": "Digite uma nova tradução para \"__source__\": ",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
