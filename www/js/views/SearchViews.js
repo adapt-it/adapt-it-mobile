@@ -29,11 +29,11 @@ define(function (require) {
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
+        refstrings      = [],
 
-        // helper method to add a new refstring to a model (if it's not already there)
-        addNewRS = function (model, strTarget) {
-            var refstrings = model.get("refstring"),
-                selectedIndex = 0,
+        // helper method to add a new refstring to the static refstrings array (if it's not already there)
+        addNewRS = function (strTarget) {
+            var selectedIndex = 0,
                 i = 0,
                 curDate = new Date(),
                 timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
@@ -51,22 +51,18 @@ define(function (require) {
             if (found === false) {
                 // no entry in KB with this source/target -- add one
                 var newRS = {
-                        'target': Underscore.unescape(strTarget),  //klb
-                        'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
-                        'cDT': timestamp,
-                        'df': '0',
-                        'wC': ""
-                    };
+                    'target': Underscore.unescape(strTarget),  //klb
+                    'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                    'cDT': timestamp,
+                    'df': '0',
+                    'wC': ""
+                };
                 refstrings.push(newRS);
                 // re-sort the refstrings according to frequency
                 refstrings.sort(function (a, b) {
                     // high to low
                     return parseInt(b.n, 10) - parseInt(a.n, 10);
                 });
-                model.set('refstring', refstrings, {silent: true});
-                // model.update();
-                model.save();
-                console.log("addNewRS - saving model");
                 // redraw the UI (taken from showRefStrings() below)
                 $("#RefStrings").html(theRefStrings(refstrings));
                 // set the frequency meters for each refstring
@@ -92,17 +88,6 @@ define(function (require) {
                 }
             } else {
                 console.log("addNewRS -- item already exists, no work to do");
-            }
-            // are we creating a new TU?
-            if (!$("#tbBottom").hasClass("hide")) {
-                // creating a new TU -- check to see if we have a source and at least 1 refstring
-                if (model.get("source").length > 0 && refstrings.length > 0) {
-                    // we have both -- enable the OK button
-                    $("#OK").prop("disabled", false);
-                } else {
-                    // hmm... one of these failed; disable the OK button
-                    $("#OK").prop("disabled", true);
-                }
             }
         },
 
@@ -241,7 +226,6 @@ define(function (require) {
         }),
 
         NewTUView = Marionette.ItemView.extend({
-            nStep: 0, // step 0 (source) and 1 (target) in this wizard
             bDirty: false,
             template: Handlebars.compile(tplNewTU),
             initialize: function () {
@@ -251,75 +235,157 @@ define(function (require) {
                 this.render();
             },
             events: {
+                "click #btnNewRS": "onNewRS",
                 "click #Done": "onDone",
                 "click #Cancel": "onCancel",
-                "click #Next": "onNext",
-                "input #txtField": "onInputEditField"
+                "input #txtSource": "onInputEditField",
+                "input #txtTarget": "onInputEditField"
             },
             // user clicked the Done button. Save the TU and return to the TU List page.
             onDone: function () {
-                var value = $("#txtField").val(),
-                    trimmedValue = value.trim(),
-                    refstrings = [],
+                var txtSource = "",
+                    txtTarget = "",
+                    i = 0,
+                    found = false,
                     curDate = new Date(),
-                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
-                    newRS = {
-                        'target': Underscore.unescape(trimmedValue),  //klb
+                    projectid = window.Application.currentProject.get("projectid"),
+                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+                txtSource = $("#txtSource").val().trim();
+                txtTarget = $("#txtTarget").val().trim();
+                var elts = kblist.filter(function (element) {
+                    return (element.attributes.projectid === projectid &&
+                       element.attributes.source === txtSource && element.attributes.isGloss === 0);
+                });
+                // collect the refstrings if needed
+                if (refstrings.length > 0) {
+                    // we have some refstrings defined -- add them to txtTarget if needed
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === txtTarget) {
+                            found = true; // we already have this value
+                            break;
+                        }
+                    }
+                    if (found === false) {
+                        // txtTarget is not in the refstrings array -- add it
+                        var newRS = {
+                            'target': Underscore.unescape(txtTarget),
+                            'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                            'cDT': timestamp,
+                            'df': '0',
+                            'wC': ""
+                        };
+                        refstrings.push(newRS);
+                    }
+                } else {
+                    // we just have the target text -- add it to our refstrings value
+                    var newRS = {
+                        'target': Underscore.unescape(txtTarget),
                         'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
                         'cDT': timestamp,
                         'df': '0',
                         'wC': ""
                     };
-                refstrings.push(newRS);
-                this.model.set('refstring', refstrings, {silent: true});
-                this.model.save();
-                window.Application.kbList.add(this.model);
+                    refstrings.push(newRS);
+                }
+                // now check to see if our source is in the KB (i.e., if there's a TU matching what the user created)
+                if (elts.length > 0) {
+                    // this TU exists in the KB -- add our refstrings to it if needed
+                    var tu = elts[0],
+                        idx = 0,
+                        tuRS = tu.get('refstring');
+                    // save changes to tu
+                    for (i=0; i<refstrings.length; i++) {
+                        found = false; // reset flag
+                        // is this refstring in the TU already?
+                        for (idx = 0; idx < tuRS.length; idx++) {
+                            if (refstrings[i].target === tuRS[idx].target) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found === false) {
+                            // not found -- add this refstring
+                            tuRS.push(refstrings[i]); 
+                        }
+                    }
+                    // tuRS array updated. Now sort the elements and update the TU with the new data
+                    // re-sort the refstrings according to frequency
+                    tuRS.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    tu.set('refstring', tuRS, {silent: true});
+                    tu.save();
+                } else {
+                    // new TU
+                    // create a new / temporary TU to pass in to the TUView
+                    // (this object isn't saved or added to the collection yet)
+                    var newID = window.Application.generateUUID(),
+                        theTU = new kbModels.TargetUnit({
+                            tuid: newID,
+                            projectid: window.Application.currentProject.get("projectid"),
+                            source: txtSource,
+                            refstring: refstrings,
+                            timestamp: timestamp,
+                            user: "",
+                            isGloss: 0
+                        });
+                    theTU.save();
+                    window.Application.kbList.add(theTU);
+                }
+                // done updating -- return to the TU list page
                 window.history.go(-1);
             },
-            // User clicked the Cancel button (new TU). Delete the TU and return to the TU List page.
+            // User clicked the Cancel button (new TU). Just return to the TU List page.
             onCancel: function () {
-                this.model = null;
                 window.history.go(-1);
             },
-            // User clicked the Next button. Move to the "enter Target text" step.
-            onNext: function () {
-                // pull out the source value from the text field
-                var value = $("#txtField").val(),
-                    trimmedValue = value.trim();
-                this.model.set('source', trimmedValue, {silent: true});
-                this.model.update();
-                // set the step
-                this.nStep = 1;
-                // update the UI
-                $("#lblPrompt").html(i18next.t("view.dscNewRS", {source: trimmedValue}));
-                $("#txtField").val(""); // clear out the edit field
-                $("#Next").addClass('hide');
-                $("#Done").removeClass('hide');
-                $("#Done").prop('disabled', true); // enabled once the user types in some target text
+            // user clicked on the "new translation" button - prompt the user for a new translation string,
+            // and then update the refstrings list if the user clicks OK
+            onNewRS: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                console.log("onNewRS - entry");
+                var txtSource = $("#txtSource").val().trim();
+                // ask the user to provide a target / translation for the source phrase
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.prompt(i18next.t('view.dscNewRS', {source: txtSource}), function (results) {
+                        if (results.buttonIndex === 1) {
+                            // add the new translation returned in results.input1
+                            addNewRS(results.input1);
+                        }
+                    }, i18next.t('view.lblNewRS'));
+                } else {
+                    // in browser
+                    var result = prompt(i18next.t('view.dscNewRS', {source: txtSource}));
+                    if (result !== null) {
+                        // add the new translation returned in result
+                        addNewRS(result);
+                    }
+                }
             },
             // User typed something in the source text (new TU)
             onInputEditField: function (event) {
                 // pull out the text
-                var value = $("#txtField").val(),
-                    trimmedValue = value.trim();
-                if (trimmedValue.length > 0) {
-                    // there's some text in the txtField edit box -- enable the UI as appropriate
-                    if (this.nStep === 0) {
-                        $("#Next").prop('disabled', false); 
-                    } else {
-                        $("#Done").prop('disabled', false);
-                    }
+                var txtSource = "",
+                    txtTarget = "";
+                txtSource = $("#txtSource").val().trim();
+                txtTarget = $("#txtTarget").val().trim();
+                if (txtSource.length > 0 && txtTarget.length > 0) {
+                    // there's some text in the source and target fields -- enable the UI as appropriate
+                    $("#Done").prop('disabled', false);
+                    $("#btnNewRS").addClass("filter-burnt-orange");
+                    $("#btnNewRS").removeClass("filter-gray");
                 } else {
-                    // no "real" text - disable the UI as appropriate
-                    if (this.nStep === 0) {
-                        $("#Next").prop('disabled', true); 
-                    } else {
-                        $("#Done").prop('disabled', true); 
-                    }
+                    $("#Done").prop('disabled', true);
+                    $("#btnNewRS").removeClass("filter-burnt-orange");
+                    $("#btnNewRS").addClass("filter-gray");
                 }
                 if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // tab or enter key -- blur focus
-                    $("#txtField").blur();
+                    event.target.blur();
                 }
             },
             onShow: function () {
@@ -333,14 +399,25 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
-                // First step: enter a source word or phrase
-                this.step = 0; // first step
+                // reset the static refstrings array
+                refstrings.length = 0; 
+                // source and target languages
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
-                $("#lblPrompt").html(i18next.t("view.dscNewSP", {lang: srcLang}));
-                // disable the Next button until the user adds a source
-                $("#Next").prop('disabled', true); 
-                $("#Done").addClass('hide');
-            }
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                if (window.Application.currentProject.get('SourceVariant').length > 0) {
+                    srcLang += " (" + window.Application.currentProject.get('SourceVariant') + ")";
+                };
+                if (window.Application.currentProject.get('TargetVariant').length > 0) {
+                    tgtLang += " (" + window.Application.currentProject.get('TargetVariant') + ")";
+                };
+                $("#lblSource").html(srcLang);
+                $("#lblTarget").html(tgtLang);
+                $("#StepInstructions").html(i18next.t("view.dscNewSP", {src: srcLang, tgt: tgtLang}));
+                // disable the Done and new RS buttons until the user adds a source and target
+                $("#Done").prop('disabled', true);
+                $("#btnNewRS").addClass("filter-gray");
+                $("#btnNewRS").removeClass("filter-burnt-orange");
+        }
         }),
 
         TUView = Marionette.LayoutView.extend({
@@ -493,11 +570,9 @@ define(function (require) {
                 // prevent event from bubbling up
                 event.stopPropagation();
                 event.preventDefault();
-                // if there's no source, get out
-                if ($("#btnNewRS").hasClass("filter-gray")) {
-                    return; // button is disabled - exit
-                }
                 console.log("onNewRS - entry");
+                // the addNewRS() helper works with the static refstrings array. Copy our model's refstrings array there.
+                refstrings = this.model.get('refstring');
                 // ask the user to provide a target / translation for the source phrase
                 if (navigator.notification) {
                     // on mobile device
@@ -505,7 +580,10 @@ define(function (require) {
                     navigator.notification.prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}), function (results) {
                         if (results.buttonIndex === 1) {
                             // new translation in results.input1
-                            addNewRS(obj, results.input1);
+                            addNewRS(results.input1);
+                            // update our model
+                            obj.set('refstring', refstrings, {silent: true});
+                            obj.save();
                         }
                     }, i18next.t('view.lblNewRS'));
                 } else {
@@ -513,7 +591,10 @@ define(function (require) {
                     var result = prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}));
                     if (result !== null) {
                         // new translation in result
-                        addNewRS(this.model, result);
+                        addNewRS(result);
+                        // update our model
+                        this.model.set('refstring', refstrings, {silent: true});
+                        this.model.save();
                     }
                 }
             },
@@ -862,6 +943,12 @@ define(function (require) {
                 // display the source and target language names
                 var srcLang = window.Application.currentProject.get('SourceLanguageName');
                 var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                if (window.Application.currentProject.get('SourceVariant').length > 0) {
+                    srcLang += " (" + window.Application.currentProject.get('SourceVariant') + ")";
+                };
+                if (window.Application.currentProject.get('TargetVariant').length > 0) {
+                    tgtLang += " (" + window.Application.currentProject.get('TargetVariant') + ")";
+                };
                 $("#lblSourceLang").html(srcLang);
                 $("#lbltargetLang").html(tgtLang);
                

@@ -376,7 +376,7 @@
         "ttlTotalEntries": "Recuento de elementos: __total__",
         "lblNewTU": "Nuevo elemento...",
         "lblNewRS": "Nueva Traducción...",
-        "dscNewSP": "Escriba una palabra o frase en el idioma \"__lang__\".",
+        "dscNewSP": "Escriba una palabra o frase en el idioma \"__src__\" y una traducción en el idioma \"__tgt__\". Puede agregar más traducciones haciendo clic en el botón \"Nueva traducción...\".",
         "dscNewRS": "Escriba una traducción para \"__source__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },

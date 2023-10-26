@@ -447,21 +447,7 @@ define(function (require) {
                 console.log("newTU");
                 // update the KB list, then show the view
                 $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function () {
-                    // create a new / temporary TU to pass in to the TUView
-                    // (this object isn't saved or added to the collection yet)
-                    var newID = window.Application.generateUUID(),
-                        curDate = new Date(),
-                        timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
-                        theTU = new kbModels.TargetUnit({
-                            tuid: newID,
-                            projectid: window.Application.currentProject.get("projectid"),
-                            source: "",
-                            refstring: [],
-                            timestamp: timestamp,
-                            user: "",
-                            isGloss: 0
-                        });
-                    newTransView = new SearchViews.NewTUView({model: theTU});
+                    newTransView = new SearchViews.NewTUView();
                     newTransView.delegateEvents();
                     window.Application.main.show(newTransView);
                 });

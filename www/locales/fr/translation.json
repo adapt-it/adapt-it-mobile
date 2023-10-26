@@ -376,7 +376,7 @@
         "ttlTotalEntries": "Nombre d'entrées: __total__",
         "lblNewTU": "Nouvelle entrée...",
         "lblNewRS": "Nouvelle traduction...",
-        "dscNewSP": "Entrez un mot ou une phrase dans la langue \"__lang__\".",
+        "dscNewSP": "Entrez un mot ou une expression dans la langue \"__src__\" et une traduction dans la langue \"__tgt__\". Vous pouvez ajouter plus de traductions en cliquant sur le bouton \"Nouvelle traduction...\".",
         "dscNewRS": "Entrez une traduction pour \"__source__\".",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
