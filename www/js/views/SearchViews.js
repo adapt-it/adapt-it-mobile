@@ -168,9 +168,7 @@ define(function (require) {
         TUListView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplTUList),
             initialize: function () {
-                this.TUList = new tuModels.TargetUnitCollection();
                 this.render();
-
             },
             events: {
                 "click .big-link": "onClickTU",
@@ -195,7 +193,9 @@ define(function (require) {
                 var strInfo = "";
                 // first item in list -- create a new TU
                 // lstTU += "<li class=\"topcoat-list__item\"><a class=\"big-link\" id=\"btnNewTU\"><span class=\"btn-plus\"></span>" + i18next.t("view.lblProjectSettings") + "<span class=\"chevron\"></span></a></li>";
-                this.TUList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                this.TUList = window.Application.kbList;
+                // this.TUList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                console.log("onShow: this.TUList.length = " + this.TUList.length);
                 // initial sort - name
                 this.TUList.comparator = 'source';
                 this.TUList.sort();
@@ -252,7 +252,7 @@ define(function (require) {
                     timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
                 txtSource = $("#txtSource").val().trim();
                 txtTarget = $("#txtTarget").val().trim();
-                var elts = kblist.filter(function (element) {
+                var elts = window.Application.kbList.filter(function (element) {
                     return (element.attributes.projectid === projectid &&
                        element.attributes.source === txtSource && element.attributes.isGloss === 0);
                 });
@@ -321,7 +321,7 @@ define(function (require) {
                     // create a new / temporary TU to pass in to the TUView
                     // (this object isn't saved or added to the collection yet)
                     var newID = window.Application.generateUUID(),
-                        theTU = new kbModels.TargetUnit({
+                        theTU = new tuModels.TargetUnit({
                             tuid: newID,
                             projectid: window.Application.currentProject.get("projectid"),
                             source: txtSource,
