@@ -186,6 +186,7 @@ define(function (require) {
                 this.render();
             },
             events: {
+                "input #search":    "search",
                 "click .big-link": "onClickTU",
                 "click #btnNewTU": "onClickNewTU"
             },
@@ -202,6 +203,42 @@ define(function (require) {
                 console.log("onClickNewTU - entry");
                 window.Application.router.navigate("tu", {trigger: true});
             },
+
+            search: function (event) {
+                var lstTU = "";
+                var rs = null;
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+                this.TUList = window.Application.kbList;
+                var key = $('#search').val();
+                if (key.length > 0) {
+                    // filter based on search text
+                    this.TUList.fetch({data: {source: key}});
+                }
+                this.TUList.comparator = 'source';
+                this.TUList.sort();
+                lstTU += "<li class=\"topcoat-list__item li-tu\"><div class=\"big-link\" id=\"btnNewTU\"><div class=\"chap-list__item emphasized refstring-list__item filter-burnt-orange\"><span class=\"img-plus-small\" style=\"padding-right: 16px;\"></span>" + i18next.t("view.lblNewTU") + "</div></div></li>";
+                this.TUList.each(function (model, index) {
+                    // TODO: what to do with placeholder text? Currently filtered out here
+                    if (model.get("source").length > 0) {
+                        lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
+                        rs = model.get("refstring");
+                        if (rs.length > 1) {
+                            // multiple translations - give a count
+                            lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
+                        } else if (rs.length === 1) {
+                            // exactly 1 translation - just display it
+                            lstTU += rs[0].target;
+                        } else {
+                            // no translations (shouldn't happen)
+                            lstTU += i18next.t("view.ttlNoTranslations");
+                        }
+                        lstTU += "</span><span class=\"chevron\"></span></a></li>";
+                    }
+                });
+                $("#lstTU").html(lstTU);
+            },            
             onShow: function () {
                 var lstTU = "";
                 var rs = null;

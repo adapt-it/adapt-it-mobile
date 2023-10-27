@@ -270,7 +270,7 @@ define(function (require) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('projectid')) {
-                         projectid = options.data.projectid;
+                        projectid = options.data.projectid;
                         results = targetunits.filter(function (element) {
                             return element.attributes.projectid === projectid.toLowerCase();
                         });
@@ -308,11 +308,6 @@ define(function (require) {
                         return deferred.promise();
                     } else if (options.data.hasOwnProperty('source')) {
                         var source = options.data.source;
-                        // special case -- empty source query ==> reset local copy so we force a retrieve
-                        // from the database
-                        if (source === "") {
-                            targetunits.length = 0;
-                        }
                         results = targetunits.filter(function (element) {
                             return element.attributes.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
                         });
@@ -351,6 +346,11 @@ define(function (require) {
                         }
                         // return the promise
                         return deferred.promise();
+                    } else {
+                        results = targetunits;
+                        // results already in collection -- return them
+                        options.success(results);
+                        deferred.resolve(results);
                     }
                 } else if (method === "delete") {
                     if (options.data.hasOwnProperty('projectid')) {
