@@ -655,6 +655,7 @@ define(function (require) {
                                         // found the target char -- build the auto-capped string and place in the
                                         // result array
                                         result.push(caseTarget[targetIdx].charAt(1) + target[optionsIdx].substr(1));
+                                        break; // inner for loop
                                     }
                                 }
                             }
@@ -2220,6 +2221,7 @@ define(function (require) {
                         refstrings = tu.get('refstring');
                         // first, make sure these refstrings are actually being used
                         options.length = 0; // clear out any old cruft
+                        KBtarget.length = 0;
                         for (i = 0; i < refstrings.length; i++) {
                             if (refstrings[i].n > 0) {
                                 options.push(Underscore.unescape(refstrings[i].target));
@@ -2400,6 +2402,7 @@ define(function (require) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
                                 options.length = 0; // clear out any old cruft
+                                KBtarget.length = 0;
                                 for (i = 0; i < refstrings.length; i++) {
                                     if (refstrings[i].n > 0) {
                                         options.push(Underscore.unescape(refstrings[i].target));
@@ -2539,6 +2542,7 @@ define(function (require) {
                         refstrings = tu.get('refstring');
                         // first, make sure these refstrings are actually being used
                         options.length = 0; // clear out any old cruft
+                        KBtarget.length = 0;
                         for (i = 0; i < refstrings.length; i++) {
                             if (refstrings[i].n > 0) {
                                 options.push(Underscore.unescape(refstrings[i].target));
@@ -2714,6 +2718,7 @@ define(function (require) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
                                 options.length = 0; // clear out any old cruft
+                                KBtarget.length = 0;
                                 for (i = 0; i < refstrings.length; i++) {
                                     if (refstrings[i].n > 0) {
                                         options.push(Underscore.unescape(refstrings[i].target));
