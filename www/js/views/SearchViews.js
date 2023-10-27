@@ -2,8 +2,13 @@
 /*global define */
 
 // SearchViews.js
-// Passage / document lookup functionality. Allows the user to search for a document / book and chapter
-// to start adapting.
+// Meta search/lookup view functionality. Houses the following classes:
+// - TUListView: Shows the contents of the KB, with links to TUView and NewTUView
+// - TUView: View/edit individual target unit
+// - NewTUView: Create new target unit
+// - LookupView: Browse / search chapters and books, with links to AdaptView (adapt a selected passage)
+// - ChapterResultsView: List chapters matching a search criteria
+
 define(function (require) {
 
     "use strict";
@@ -30,6 +35,10 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         refstrings      = [],
+
+        ////////
+        // STATIC METHODS
+        ////////
 
         // helper method to add a new refstring to the static refstrings array (if it's not already there)
         addNewRS = function (strTarget) {
@@ -91,6 +100,8 @@ define(function (require) {
             }
         },
 
+        // Helper method to find all items with .chk-selected UI class and delete their associated books/chapters
+        // (also does some project cleanup if the current / all books are deleted)
         deleteSelectedDocs = function () {
             var key = null;
             var doc = null;
@@ -148,6 +159,10 @@ define(function (require) {
                 }
             }
         },
+        ////////
+        // end STATIC METHODS
+        ////////
+
 
         NoChildrenView = Marionette.ItemView.extend({
             template: Handlebars.compile("<div id=\"nochildren\"></div>")
@@ -248,6 +263,7 @@ define(function (require) {
                     i = 0,
                     found = false,
                     curDate = new Date(),
+                    theTU = null,
                     projectid = window.Application.currentProject.get("projectid"),
                     timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
                 txtSource = $("#txtSource").val().trim();
@@ -290,9 +306,9 @@ define(function (require) {
                 // now check to see if our source is in the KB (i.e., if there's a TU matching what the user created)
                 if (elts.length > 0) {
                     // this TU exists in the KB -- add our refstrings to it if needed
-                    var tu = elts[0],
-                        idx = 0,
-                        tuRS = tu.get('refstring');
+                    theTU = elts[0];
+                    var idx = 0,
+                        tuRS = theTU.get('refstring');
                     // save changes to tu
                     for (i=0; i<refstrings.length; i++) {
                         found = false; // reset flag
@@ -314,27 +330,29 @@ define(function (require) {
                         // high to low
                         return parseInt(b.n, 10) - parseInt(a.n, 10);
                     });
-                    tu.set('refstring', tuRS, {silent: true});
-                    tu.save();
+                    theTU.set('refstring', tuRS, {silent: true});
                 } else {
                     // new TU
                     // create a new / temporary TU to pass in to the TUView
                     // (this object isn't saved or added to the collection yet)
-                    var newID = window.Application.generateUUID(),
-                        theTU = new tuModels.TargetUnit({
-                            tuid: newID,
-                            projectid: window.Application.currentProject.get("projectid"),
-                            source: txtSource,
-                            refstring: refstrings,
-                            timestamp: timestamp,
-                            user: "",
-                            isGloss: 0
-                        });
-                    theTU.save();
-                    window.Application.kbList.add(theTU);
+                    var newID = window.Application.generateUUID();
+                    theTU = new tuModels.TargetUnit({
+                        tuid: newID,
+                        projectid: window.Application.currentProject.get("projectid"),
+                        source: txtSource,
+                        refstring: refstrings,
+                        timestamp: timestamp,
+                        user: "",
+                        isGloss: 0
+                    });
                 }
-                // done updating -- return to the TU list page
-                window.history.go(-1);
+                // done updating -- force a refresh of the KB list, then return to the TU list page
+                $.when(theTU.save()).done(function () {
+                    window.Application.kbList.clearLocal(); // clear out the kbList so it gets rebuilt
+                    $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function () {
+                        window.history.go(-1);
+                    });
+                });
             },
             // User clicked the Cancel button (new TU). Just return to the TU List page.
             onCancel: function () {

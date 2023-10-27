@@ -168,6 +168,13 @@ define(function (require) {
                 });
             },
 
+            // Remove just the local targetunits from the collection --
+            // this keeps the in-memory objects to a minimum
+            clearLocal: function () {
+                console.log("targetunitCollection clearLocal() - entry");
+                targetunits.length = 0;
+            },
+
             // removes all targetunits for the specified projectid
             // This is done when the user is restoring from a KB file to clean out what's currently in the DB
             clearKBForProject: function (projectid, isGloss) {
