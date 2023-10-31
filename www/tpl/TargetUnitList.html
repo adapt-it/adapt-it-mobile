@@ -16,16 +16,18 @@
 <div id="kbSearch" class="scroller-notb">
     <div class="control-group">
         <div class="control-row"><span id="lblProjInfo"></span></div>
-        <!-- <div class="control-row"><button class="topcoat-button" id="btnNewTU"><span class="img-plus-small"></span> {{t 'view.lblNewTU'}}</button></div> -->
     </div>
     <div id="grpSearch">
         <div class="doc-search-bar"><input id="search" type="search" placeholder="{{ t 'view.dscSearch'}}" autocapitalize="off" class="topcoat-search-input doc-search-key"></div>
-        <div class="topcoat-list hide" style="overflow:hidden" id="lstSearch">
-            <h3 class="topcoat-list__header" id="lblSearchResults" style="display:none">{{t 'view.lblSearchResults'}}</h3>
-            <ul class="topcoat-list__container chapter-list" id="lstSearchResults"></ul>
+        <ul class="topcoat-list__container chapter-list" id="lstNewTU"><li class="topcoat-list__item li-tu"><div class="big-link" id="btnNewTU"><div class="chap-list__item emphasized refstring-list__item filter-burnt-orange"><span class="img-plus-small" style="padding-right: 16px;"></span>{{ t 'view.lblNewTU' }} </div></div></li></ul>
+        <div class="relative-search-bar" id="SearchBar">
+            <span class="search-label" id="SearchRS"></span>
+            <span class="search-label" id="lblTotals"></span>
+            <button class="search light-grey" id="SearchPrev"><span class="img-left-small"></span></button>
+            <button class="search light-grey" id="SearchNext"><span class="img-right-small"></span></button>
         </div>
-        </div>
-        <ul class="chapter-list topcoat-list__container" id="lstTU"></ul>
+                <!-- <div class="topcoat-list__header" id="lblResults"><span class="right">1-100 of 2000 <button class="search light-grey" id="SearchPrev"><span class="img-left-small"></span></button><button class="search light-grey" id="SearchNext"><span class="img-right-small"></span></button></span></div> -->
+        <ul class="topcoat-list__container chapter-list" id="lstTU"></ul>
     </div>
 </div>
 <div class="bottom-tb hide" id="tbBottom">

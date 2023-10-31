@@ -378,6 +378,8 @@
         "lblNewRS": "Nova tradução...",
         "dscNewSP": "Digite uma palavra ou frase no idioma \"__src__\" e uma tradução no idioma \"__tgt__\". Você pode adicionar mais traduções clicando no botão \"Nova Tradução...\".",
         "dscNewRS": "Digite uma tradução para \"__source__\".",
+        "lblRange": "__pgStart__-__pgEnd__ de __total__",
+        "lblNoEntries": "Nenhuma iten encontrada.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

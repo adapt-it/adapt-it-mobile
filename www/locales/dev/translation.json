@@ -378,6 +378,8 @@
         "lblNewRS": "Add Translation...",
         "dscNewSP": "Enter a word or phrase in language \"__src__\", and a translation in language \"__tgt__\". You can add more translations by clicking on the \"Add Translation...\" button.",
         "dscNewRS": "Enter a translation for \"__source__\".",
+        "lblRange": "__pgStart__-__pgEnd__ of __total__",
+        "lblNoEntries": "No entries found.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -373,7 +373,7 @@ header h3 {
 }
 .search-bar {
     display: none;
-    background-color: rgb(215,220,220);
+    background-color: rgb(214,218,220);
     border-top: 1px solid #1f7ba5;
     flex-direction: row;
     justify-content: flex-end;
@@ -386,6 +386,15 @@ header h3 {
 }
 .search-label {
     padding: 6px;
+}
+.relative-search-bar {
+    background-color: rgb(207,214,218);
+    flex-direction: row;
+    justify-content: flex-end;
+    display: flex;
+    height: 32px;
+    width: 100%;
+    padding: 0px 1px;
 }
 #SearchRS {
     flex-grow: 1;

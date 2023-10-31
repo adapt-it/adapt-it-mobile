@@ -7,7 +7,6 @@
 // - TUView: View/edit individual target unit
 // - NewTUView: Create new target unit
 // - LookupView: Browse / search chapters and books, with links to AdaptView (adapt a selected passage)
-// - ChapterResultsView: List chapters matching a search criteria
 
 define(function (require) {
 
@@ -35,6 +34,7 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         refstrings      = [],
+        PAGE_SIZE       = 100, // arbitrary # of search results to display at once 
 
         ////////
         // STATIC METHODS
@@ -163,23 +163,6 @@ define(function (require) {
         // end STATIC METHODS
         ////////
 
-
-        NoChildrenView = Marionette.ItemView.extend({
-            template: Handlebars.compile("<div id=\"nochildren\"></div>")
-        }),
-        
-        ChapterItemView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplChapterList)
-        }),
-
-        ChapterResultsView = Marionette.CollectionView.extend({
-            childView: ChapterItemView,
-            emptyView: NoChildrenView,
-            initialize: function () {
-                this.collection.on("reset", this.render, this);
-            }
-        }),
-        
         TUListView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplTUList),
             initialize: function () {
@@ -211,47 +194,63 @@ define(function (require) {
                     event.preventDefault();
                 }
                 this.TUList = window.Application.kbList;
-                var key = $('#search').val();
-                if (key.length > 0) {
-                    // filter based on search text
-                    this.TUList.fetch({data: {source: key}});
-                }
-                this.TUList.comparator = 'source';
-                this.TUList.sort();
-                lstTU += "<li class=\"topcoat-list__item li-tu\"><div class=\"big-link\" id=\"btnNewTU\"><div class=\"chap-list__item emphasized refstring-list__item filter-burnt-orange\"><span class=\"img-plus-small\" style=\"padding-right: 16px;\"></span>" + i18next.t("view.lblNewTU") + "</div></div></li>";
-                this.TUList.each(function (model, index) {
-                    // TODO: what to do with placeholder text? Currently filtered out here
-                    if (model.get("source").length > 0) {
-                        lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
-                        rs = model.get("refstring");
-                        if (rs.length > 1) {
-                            // multiple translations - give a count
-                            lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
-                        } else if (rs.length === 1) {
-                            // exactly 1 translation - just display it
-                            lstTU += rs[0].target;
-                        } else {
-                            // no translations (shouldn't happen)
-                            lstTU += i18next.t("view.ttlNoTranslations");
+                var key = $('#search').val().trim();
+                console.log("searching KB for: " + key);
+                // filter based on search text
+                $("#lstTU").html("");
+                var self = this,
+                    lstTU = "",
+                    rs = null;
+                this.TUList.fetch({data: {source: key}}).done( function() {
+                    console.log("fetch returns - element count: " + self.TUList.length);
+                    self.TUList.comparator = 'source';
+                    self.TUList.sort();
+                    self.TUList.each(function (model, index) {
+                        // TODO: what to do with placeholder text? Currently filtered out here
+                        if (model.get("source").length > 0) {
+                            lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
+                            rs = model.get("refstring");
+                            if (rs.length > 1) {
+                                // multiple translations - give a count
+                                lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
+                            } else if (rs.length === 1) {
+                                // exactly 1 translation - just display it
+                                lstTU += rs[0].target;
+                            } else {
+                                // no translations (shouldn't happen)
+                                lstTU += i18next.t("view.ttlNoTranslations");
+                            }
+                            lstTU += "</span><span class=\"chevron\"></span></a></li>";
                         }
-                        lstTU += "</span><span class=\"chevron\"></span></a></li>";
+                    });
+                    if (self.TUList.length === 0) {
+                        $("#lblTotals").html(i18next.t("view.lblNoEntries"));
+                        $("#SearchPrev").prop("disabled", true);
+                        $("#SearchNext").prop("disabled", true);
+                    } else {
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: 100, total: self.TUList.length}));
+                        $("#SearchPrev").prop("disabled", true);
+                        if (self.TUList.length > PAGE_SIZE) {
+                            // more than 1 page of results - enable next button
+                            $("#SearchNext").prop("disabled", false);
+                        } else {
+                            $("#SearchNext").prop("disabled", true);
+                        }
+                        $("#SearchNext").prop("disabled", true);
                     }
+                    $("#lstTU").html(lstTU);
+    
                 });
-                $("#lstTU").html(lstTU);
             },            
             onShow: function () {
                 var lstTU = "";
                 var rs = null;
                 var strInfo = "";
-                // first item in list -- create a new TU
-                // lstTU += "<li class=\"topcoat-list__item\"><a class=\"big-link\" id=\"btnNewTU\"><span class=\"btn-plus\"></span>" + i18next.t("view.lblProjectSettings") + "<span class=\"chevron\"></span></a></li>";
                 this.TUList = window.Application.kbList;
-                // this.TUList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
                 console.log("onShow: this.TUList.length = " + this.TUList.length);
                 // initial sort - name
                 this.TUList.comparator = 'source';
                 this.TUList.sort();
-                lstTU += "<li class=\"topcoat-list__item li-tu\"><div class=\"big-link\" id=\"btnNewTU\"><div class=\"chap-list__item emphasized refstring-list__item filter-burnt-orange\"><span class=\"img-plus-small\" style=\"padding-right: 16px;\"></span>" + i18next.t("view.lblNewTU") + "</div></div></li>";
                 this.TUList.each(function (model, index) {
                     // TODO: what to do with placeholder text? Currently filtered out here
                     if (model.get("source").length > 0) {
@@ -273,7 +272,24 @@ define(function (require) {
                 $("#lstTU").html(lstTU);
                 strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: this.TUList.length});
                 $("#lblProjInfo").html(strInfo);
-                // if there's no data, show the empty view
+                // are there any entries in the KB?
+                if (this.TUList.length === 0) {
+                    // KB is empty - tell the user and disable the prev/next buttons
+                    $("#lblTotals").html(i18next.t("view.lblNoEntries"));
+                    $("#SearchPrev").prop("disabled", true);
+                    $("#SearchNext").prop("disabled", true);
+                } else {
+                    // some items to display -- give totals and enable UI
+                    $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: this.TUList.length}));
+                    $("#SearchPrev").prop("disabled", true);
+                    if (this.TUList.length > PAGE_SIZE) {
+                        // more than 1 page of results - enable next button
+                        $("#SearchNext").prop("disabled", false);
+                    } else {
+                        $("#SearchNext").prop("disabled", true);
+                    }
+                    $("#SearchNext").prop("disabled", true);
+                }
             }
         }),
 
@@ -1214,6 +1230,5 @@ define(function (require) {
         TUView: TUView,
         NewTUView: NewTUView,
         LookupView: LookupView,
-        ChapterResultsView: ChapterResultsView
     };
 });

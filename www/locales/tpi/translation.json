@@ -378,6 +378,8 @@
         "lblNewRS": "Nupela trenslesen...",
         "dscNewSP": "Enter a word or phrase in language \"__lang__\".",
         "dscNewRS": "Enter a translation for \"__source__\".",
+        "lblRange": "__pgStart__-__pgEnd__ of __total__",
+        "lblNoEntries": "No entries found.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

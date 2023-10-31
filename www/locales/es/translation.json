@@ -378,6 +378,8 @@
         "lblNewRS": "Nueva Traducción...",
         "dscNewSP": "Escriba una palabra o frase en el idioma \"__src__\" y una traducción en el idioma \"__tgt__\". Puede agregar más traducciones haciendo clic en el botón \"Nueva traducción...\".",
         "dscNewRS": "Escriba una traducción para \"__source__\".",
+        "lblRange": "__pgStart__-__pgEnd__ de __total__",
+        "lblNoEntries": "No se encontraron elementos.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
