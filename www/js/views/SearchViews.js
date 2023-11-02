@@ -207,24 +207,30 @@ define(function (require) {
             },
             // User clicked on a TU item from the list. Show the TUView for this item.
             onClickTU: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
                 var tuID = event.currentTarget.id;
-                var tu = this.TUList.findWhere({tuid: tuID});
+                var tu = window.Application.kbList.findWhere({tuid: tuID});
                 if (tu) {
                     window.Application.router.navigate("tu/" + tuID, {trigger: true});
                 }
             },
             // User clicked on the New TU button. Show the TUView for a _new_ item, with an empty/null TU
-            onClickNewTU: function () {
+            onClickNewTU: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
                 console.log("onClickNewTU - entry");
                 window.Application.router.navigate("tu", {trigger: true});
             },
             // User clicked on the Previous button - retrieve the previous page of TU items
             onSearchPrevPage: function () {
                 console.log("onSearchPrevPage: entry");
-                searchCursor = searchCursor - PAGE_SIZE;
+                this.searchCursor = this.searchCursor - PAGE_SIZE;
                 // shouldn't happen, but just in case
-                if (searchCursor < 0) {
-                    searchCursor = 0;
+                if (this.searchCursor < 0) {
+                    this.searchCursor = 0;
                 }
                 var key = $('#search').val().trim(),
                     self = this,
@@ -262,7 +268,7 @@ define(function (require) {
             // User clicked the Next button -- retrieve the next page of TU items
             onSearchNextPage: function () {
                 console.log("onSearchNextPage: entry");
-                searchCursor = searchCursor + PAGE_SIZE;
+                this.searchCursor = this.searchCursor + PAGE_SIZE;
                 var key = $('#search').val().trim(),
                     self = this,
                     total = 0,
@@ -311,7 +317,7 @@ define(function (require) {
                 $("#lstTU").html("");
                 var lstTU = "";
                 // Get the first page of filtered items
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, limit: 100}})).done(function () {
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, source: key, limit: 100}})).done(function () {
                     lstTU = buildTUList(window.Application.kbList);
                     $("#lstTU").html(lstTU);
                     // nFilteredTotal from our getCount above
