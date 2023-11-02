@@ -34,7 +34,9 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         refstrings      = [],
-        PAGE_SIZE       = 100, // arbitrary # of search results to display at once 
+        PAGE_SIZE       = 100, // arbitrary # of search results to display at once
+        nKBTotal        = 0,
+        nFilteredTotal  = 0,
 
         ////////
         // STATIC METHODS
@@ -98,6 +100,33 @@ define(function (require) {
             } else {
                 console.log("addNewRS -- item already exists, no work to do");
             }
+        },
+
+        // Helper method that returns the <li> elements shown in the KB list editor
+        buildTUList = function (coll) {
+            var strResult = "",
+                rs = null;
+            coll.comparator = 'source';
+            coll.sort();
+            coll.each(function (model, index) {
+                // TODO: what to do with placeholder text? Currently filtered out here
+                if (model.get("source").length > 0) {
+                    strResult += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
+                    rs = model.get("refstring");
+                    if (rs.length > 1) {
+                        // multiple translations - give a count
+                        strResult += i18next.t("view.ttlTotalTranslations", {total: rs.length});
+                    } else if (rs.length === 1) {
+                        // exactly 1 translation - just display it
+                        strResult += rs[0].target;
+                    } else {
+                        // no translations (shouldn't happen)
+                        strResult += i18next.t("view.ttlNoTranslations");
+                    }
+                    strResult += "</span><span class=\"chevron\"></span></a></li>";
+                }
+            });
+            return strResult;
         },
 
         // Helper method to find all items with .chk-selected UI class and delete their associated books/chapters
@@ -165,11 +194,14 @@ define(function (require) {
 
         TUListView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplTUList),
+            searchCursor: 0,
             initialize: function () {
                 this.render();
             },
             events: {
                 "input #search":    "search",
+                "click #SearchPrev": "onSearchPrevPage",
+                "click #SearchNext": "onSearchNextPage",
                 "click .big-link": "onClickTU",
                 "click #btnNewTU": "onClickNewTU"
             },
@@ -186,110 +218,155 @@ define(function (require) {
                 console.log("onClickNewTU - entry");
                 window.Application.router.navigate("tu", {trigger: true});
             },
-
+            // User clicked on the Previous button - retrieve the previous page of TU items
+            onSearchPrevPage: function () {
+                console.log("onSearchPrevPage: entry");
+                searchCursor = searchCursor - PAGE_SIZE;
+                // shouldn't happen, but just in case
+                if (searchCursor < 0) {
+                    searchCursor = 0;
+                }
+                var key = $('#search').val().trim(),
+                    self = this,
+                    total = 0,
+                    lstTU = "";
+                if (key.length > 0) {
+                    // filtered total
+                    total = nFilteredTotal;
+                } else {
+                    // unfiltered total
+                    total = nKBTotal;
+                }
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0, source: key, limit: PAGE_SIZE, offset: this.searchCursor}})).done(function () {
+                    // fetch the previous page, then display the results
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    if (self.searchCursor > 0) {
+                        // User can go back
+                        $("#SearchPrev").prop("disabled", false);
+                    } else {
+                        // User can't go back
+                        $("#SearchPrev").prop("disabled", true);
+                    }
+                    if (total > (self.searchCursor + PAGE_SIZE)) {
+                        // more than 1 page of results forward - enable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: (self.searchCursor + PAGE_SIZE), total: total}));
+                        $("#SearchNext").prop("disabled", false);
+                    } else {
+                        // <= 1 page of results left -- disable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: total, total: total}));
+                        $("#SearchNext").prop("disabled", true);
+                    }
+                });
+            },
+            // User clicked the Next button -- retrieve the next page of TU items
+            onSearchNextPage: function () {
+                console.log("onSearchNextPage: entry");
+                searchCursor = searchCursor + PAGE_SIZE;
+                var key = $('#search').val().trim(),
+                    self = this,
+                    total = 0,
+                    lstTU = "";
+                if (key.length > 0) {
+                    // filtered total
+                    total = nFilteredTotal;
+                } else {
+                    // unfiltered total
+                    total = nKBTotal;
+                }
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0, source: key, limit: PAGE_SIZE, offset: this.searchCursor}})).done(function () {
+                    // fetch the previous page, then display the results
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    if (self.searchCursor > 0) {
+                        // User can go back
+                        $("#SearchPrev").prop("disabled", false);
+                    } else {
+                        // User can't go back
+                        $("#SearchPrev").prop("disabled", true);
+                    }
+                    if (total > (self.searchCursor + PAGE_SIZE)) {
+                        // more than 1 page of results forward - enable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: (self.searchCursor + PAGE_SIZE), total: total}));
+                        $("#SearchNext").prop("disabled", false);
+                    } else {
+                        // <= 1 page of results left -- disable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: total, total: total}));
+                        $("#SearchNext").prop("disabled", true);
+                    }
+                });
+            },
             search: function (event) {
-                var lstTU = "";
-                var rs = null;
                 if (event.keycode === 13) { // enter key pressed
                     event.preventDefault();
                 }
-                this.TUList = window.Application.kbList;
+                this.searchCursor = 0; // reset to page 1 of search results
                 var key = $('#search').val().trim();
-                console.log("searching KB for: " + key);
-                // filter based on search text
+                console.log("search: looking for pattern: " + key);
+                // Get the count of items matching this filter
+                $.when(window.Application.kbList.getCount({data: {projectid: window.Application.currentProject.get('projectid'), isGloss: "0", source: key}})).done(function (n) {
+                    console.log("search: filtered total KB entries = " + n);
+                    nFilteredTotal = n; // store the total count in a static
+                });
                 $("#lstTU").html("");
-                var self = this,
-                    lstTU = "",
-                    rs = null;
-                this.TUList.fetch({data: {source: key}}).done( function() {
-                    console.log("fetch returns - element count: " + self.TUList.length);
-                    self.TUList.comparator = 'source';
-                    self.TUList.sort();
-                    self.TUList.each(function (model, index) {
-                        // TODO: what to do with placeholder text? Currently filtered out here
-                        if (model.get("source").length > 0) {
-                            lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
-                            rs = model.get("refstring");
-                            if (rs.length > 1) {
-                                // multiple translations - give a count
-                                lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
-                            } else if (rs.length === 1) {
-                                // exactly 1 translation - just display it
-                                lstTU += rs[0].target;
-                            } else {
-                                // no translations (shouldn't happen)
-                                lstTU += i18next.t("view.ttlNoTranslations");
-                            }
-                            lstTU += "</span><span class=\"chevron\"></span></a></li>";
-                        }
-                    });
-                    if (self.TUList.length === 0) {
+                var lstTU = "";
+                // Get the first page of filtered items
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, limit: 100}})).done(function () {
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    // nFilteredTotal from our getCount above
+                    if (nFilteredTotal === 0) {
                         $("#lblTotals").html(i18next.t("view.lblNoEntries"));
                         $("#SearchPrev").prop("disabled", true);
                         $("#SearchNext").prop("disabled", true);
                     } else {
-                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: 100, total: self.TUList.length}));
                         $("#SearchPrev").prop("disabled", true);
-                        if (self.TUList.length > PAGE_SIZE) {
+                        if (nFilteredTotal > PAGE_SIZE) {
                             // more than 1 page of results - enable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: nFilteredTotal}));
                             $("#SearchNext").prop("disabled", false);
                         } else {
+                            // <= 1 page -- disable next button 
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: nFilteredTotal, total: nFilteredTotal}));
                             $("#SearchNext").prop("disabled", true);
                         }
-                        $("#SearchNext").prop("disabled", true);
                     }
-                    $("#lstTU").html(lstTU);
-    
                 });
             },            
             onShow: function () {
                 var lstTU = "";
-                var rs = null;
-                var strInfo = "";
-                this.TUList = window.Application.kbList;
-                console.log("onShow: this.TUList.length = " + this.TUList.length);
-                // initial sort - name
-                this.TUList.comparator = 'source';
-                this.TUList.sort();
-                this.TUList.each(function (model, index) {
-                    // TODO: what to do with placeholder text? Currently filtered out here
-                    if (model.get("source").length > 0) {
-                        lstTU += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
-                        rs = model.get("refstring");
-                        if (rs.length > 1) {
-                            // multiple translations - give a count
-                            lstTU += i18next.t("view.ttlTotalTranslations", {total: rs.length});
-                        } else if (rs.length === 1) {
-                            // exactly 1 translation - just display it
-                            lstTU += rs[0].target;
+                this.searchCursor = 0;
+                // total KB count (non-gloss) for this project
+                $.when(window.Application.kbList.getCount({data: {projectid: window.Application.currentProject.get('projectid'), isGloss: "0"}})).done(function (n) {
+                    console.log("onShow: total KB entries for project (non-gloss) = " + n);
+                    nKBTotal = n; // store the total count in a static
+                    var strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: n});
+                    $("#lblProjInfo").html(strInfo);
+                });
+                // retrieve and display first page of (unfiltered) TU entries
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, limit: 100}})).done(function () {
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    // are there any entries in the KB?
+                    if (window.Application.kbList.length === 0) {
+                        // KB is empty - tell the user and disable the prev/next buttons
+                        $("#lblTotals").html(i18next.t("view.lblNoEntries"));
+                        $("#SearchPrev").prop("disabled", true);
+                        $("#SearchNext").prop("disabled", true);
+                    } else {
+                        // some items to display -- give totals and enable UI
+                        $("#SearchPrev").prop("disabled", true);
+                        if (nKBTotal > PAGE_SIZE) {
+                            // more than 1 page of results - enable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: nKBTotal}));
+                            $("#SearchNext").prop("disabled", false);
                         } else {
-                            // no translations (shouldn't happen)
-                            lstTU += i18next.t("view.ttlNoTranslations");
+                            // <= 1 page of results -- disable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: nKBTotal, total: nKBTotal}));
+                            $("#SearchNext").prop("disabled", true);
                         }
-                        lstTU += "</span><span class=\"chevron\"></span></a></li>";
                     }
                 });
-                $("#lstTU").html(lstTU);
-                strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: this.TUList.length});
-                $("#lblProjInfo").html(strInfo);
-                // are there any entries in the KB?
-                if (this.TUList.length === 0) {
-                    // KB is empty - tell the user and disable the prev/next buttons
-                    $("#lblTotals").html(i18next.t("view.lblNoEntries"));
-                    $("#SearchPrev").prop("disabled", true);
-                    $("#SearchNext").prop("disabled", true);
-                } else {
-                    // some items to display -- give totals and enable UI
-                    $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: this.TUList.length}));
-                    $("#SearchPrev").prop("disabled", true);
-                    if (this.TUList.length > PAGE_SIZE) {
-                        // more than 1 page of results - enable next button
-                        $("#SearchNext").prop("disabled", false);
-                    } else {
-                        $("#SearchNext").prop("disabled", true);
-                    }
-                    $("#SearchNext").prop("disabled", true);
-                }
             }
         }),
 

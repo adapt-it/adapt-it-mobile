@@ -333,7 +333,16 @@ define(function (require) {
                 // this.checkDBSchema();
             },
             
+            checkDBSchema: function () {
+                // verify we're on the latest DB schema (upgrade if necessary)
+                return projModel.checkSchema();
+            },
+
+            // -----------
             // Routes from AppRouter (router.js)
+            // -----------
+
+            // Home page (main view)
             home: function () {
                 // First, look for projects in the project list that aren't complete;
                 // this can happen if the user clicks the back button before completing the 
@@ -396,18 +405,13 @@ define(function (require) {
                     }
                 });
             },
-            
-            checkDBSchema: function () {
-                // verify we're on the latest DB schema (upgrade if necessary)
-                return projModel.checkSchema();
-            },
-            
+            // Set UI language view (language can also be set within project settings / edit project view > UI settings)
             setUILanguage: function () {
                 langView = new HomeViews.UILanguageView();
                 langView.delegateEvents();
                 window.Application.main.show(langView);
             },
-
+            // Edit project view
             editProject: function (id) {
                 // edit the selected project
                 var proj = this.ProjectList.where({projectid: id});
@@ -415,7 +419,7 @@ define(function (require) {
                     window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
                 }
             },
-
+            // Copy project view
             copyProject: function () {
                 var proj = new projModel.Project();
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
@@ -423,7 +427,7 @@ define(function (require) {
                 this.ProjectList.add(proj);
                 this.main.show(copyProjectView);
             },
-            
+            // New Project view (wizard)
             newProject: function () {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
@@ -431,28 +435,23 @@ define(function (require) {
                 this.ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
-
+            // KB editor view
             editKB: function (id) {
                 console.log("editKB");
-                // update the KB and source Phrase lists, then show the KB editor view
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
-                    var proj = window.Application.ProjectList.where({projectid: id});
-                    editTUView = new SearchViews.TUListView({model: proj[0]});
-                    editTUView.delegateEvents();
-                    window.Application.main.show(editTUView);
-                });
+                // show the KB editor view (KB refresh happens inside the view's onShow())
+                var proj = window.Application.ProjectList.where({projectid: id});
+                editTUView = new SearchViews.TUListView({model: proj[0]});
+                editTUView.delegateEvents();
+                window.Application.main.show(editTUView);
             },
-
+            // New Target Unit view
             newTU: function() {
                 console.log("newTU");
-                // update the KB list, then show the view
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function () {
-                    newTransView = new SearchViews.NewTUView();
-                    newTransView.delegateEvents();
-                    window.Application.main.show(newTransView);
-                });
+                newTransView = new SearchViews.NewTUView();
+                newTransView.delegateEvents();
+                window.Application.main.show(newTransView);
             },
-
+            // View / edit TU
             editTU: function (id) {
                 console.log("editTU");
                 // update the KB list, then show the view
@@ -472,7 +471,7 @@ define(function (require) {
                     window.Application.main.show(showTransView);
                 });
             },
-
+            // Show translations (edit TU, but also includes the "current translation" / SP)
             showTranslations: function (id) {
                 console.log("showTranslations");
                 // update the KB and source phrase list, then display the Translations screen with the currently-selected sourcephrase
@@ -535,43 +534,7 @@ define(function (require) {
                     });
                 });
             },
-
-            // Another process has sent us a file via URL. Get the File handle and send it along to
-            // importFileFromURL (below).
-            processFileEntry: function (fileEntry) {
-                console.log("processFileEntry: enter");
-                fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
-            },
-
-            processError: function (error) {
-                // log the error and continue processing
-                console.log("getDirectory error: " + error.code);
-                alert("error: " + error.code);
-            },
-
-            // This is similar to importBooks, EXCEPT that another process is sending a file to us to
-            // open/import (rather than the user picking a file out of a list). Call
-            // ImportDocumentView::importFile() to import the file.
-            importFileFromURL: function (file) {
-                console.log("importFile: enter");
-                var proj = window.Application.currentProject;
-                if (proj !== null) {
-                    // We have a project -- load the ImportDocumentView to do the work
-                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
-                    importDocView.isLoadingFromURL = true;
-                    importDocView.delegateEvents();
-                    window.Application.main.show(importDocView);
-                    // call ImportDocumentView::importFromURL() to import the file
-                    importDocView.importFromURL(file, proj);
-                } else {
-                    alert("No current project defined -- ignoring open() call");
-                }
-            },
-
-            importFail: function () {
-                alert("Unable to open file.");
-            },
-            
+            // import doc view
             importBooks: function (id) {
                 console.log("importBooks");
                 // update the book and chapter lists, then show the import docs view
@@ -583,7 +546,7 @@ define(function (require) {
                     window.Application.main.show(importDocView);
                 }
             },
-
+            // Export doc view
             exportBooks: function (id) {
                 console.log("exportBooks");
                 var proj = window.Application.currentProject;
@@ -595,7 +558,7 @@ define(function (require) {
                     window.Application.main.show(exportDocView);
                 }
             },
-            
+            // Search / browse chapter view
             lookupChapter: function (id) {
                 console.log("lookupChapter");
                 $.when(window.Application.ProjectList.fetch({reset: true, data: {name: ""}})).done(function () {
@@ -610,7 +573,7 @@ define(function (require) {
                     });
                 });
             },
-
+            // Adapt View (the reason we're here)
             adaptChapter: function (id) {
                 console.log("adaptChapter");
                 // refresh the models
@@ -649,6 +612,44 @@ define(function (require) {
                         }
                     });
                 });
+            },
+            // ----
+            // External document route helper methods:
+            // Another process has sent us a file via URL.
+            // ----
+            // Helper method to get the File handle from the external process and send it along to
+            // importFileFromURL (below).
+            processFileEntry: function (fileEntry) {
+                console.log("processFileEntry: enter");
+                fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
+            },
+            // helper callback to process a getDirectory() error
+            processError: function (error) {
+                // log the error and continue processing
+                console.log("getDirectory error: " + error.code);
+                alert("error: " + error.code);
+            },
+            // This is similar to importBooks, EXCEPT that another process is sending a file to us to
+            // open/import (rather than the user picking a file out of a list). Call
+            // ImportDocumentView::importFile() to import the file.
+            importFileFromURL: function (file) {
+                console.log("importFile: enter");
+                var proj = window.Application.currentProject;
+                if (proj !== null) {
+                    // We have a project -- load the ImportDocumentView to do the work
+                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.isLoadingFromURL = true;
+                    importDocView.delegateEvents();
+                    window.Application.main.show(importDocView);
+                    // call ImportDocumentView::importFromURL() to import the file
+                    importDocView.importFromURL(file, proj);
+                } else {
+                    alert("No current project defined -- ignoring open() call");
+                }
+            },
+            // Helper callback for processFileEntry() failure (above)
+            importFail: function () {
+                alert("Unable to open file.");
             }
         });
     

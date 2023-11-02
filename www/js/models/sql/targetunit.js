@@ -127,6 +127,7 @@ define(function (require) {
         TargetUnitCollection = Backbone.Collection.extend({
 
             model: TargetUnit,
+            page_size: 0,
 
             resetFromDB: function () {
                 var i = 0,
@@ -226,6 +227,34 @@ define(function (require) {
                 return deferred.promise();
             },
 
+            // Return the count (only) of items in the targetunit table matching the specified projectid and isGloss setting,
+            // and optionally a source filter
+            getCount: function(options) {
+                var deferred = $.Deferred();
+                var source = "";
+                var retValue = null;
+                var sql = "SELECT COUNT(*) as tot from targetunit WHERE projectid='" + options.data.projectid + "' AND isGloss=" + options.data.isGloss;
+                if (options.data.hasOwnProperty('source')) {
+                    source = options.data.source;
+                    if (source.length > 0) {
+                        sql += " AND source LIKE '%" + source + "%'"
+                    }
+                }
+                sql += ";";
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql(sql, [], function (tx, res) {
+                        retValue = res.rows.item(0).tot;
+                        console.log("SELECT ok: " + retValue + " targetunit items");
+                        deferred.resolve(retValue);
+                    }, function (tx, err) {
+                        console.log("SELECT COUNT(*) error: " + err.message);
+                    });
+                }, function (e) {
+                    deferred.reject(e);
+                });
+                return deferred.promise();
+            },
+
             // UPDATE an array of TargetUnit objects
             updateBatch: function (models) {
                 var deferred = $.Deferred();
@@ -261,6 +290,7 @@ define(function (require) {
                 var deferred = $.Deferred();
                 var len = 0;
                 var i = 0;
+                var source = "";
                 var projectid = null;
                 var retValue = null;
                 var results = null;
@@ -270,44 +300,58 @@ define(function (require) {
                             options.success(data);
                         });
                     } else if (options.data.hasOwnProperty('projectid')) {
-                        projectid = options.data.projectid;
-                        results = targetunits.filter(function (element) {
-                            return element.attributes.projectid === projectid.toLowerCase();
-                        });
-                        if (results.length === 0) {
-                            // not in collection -- retrieve them from the db (alphabetized)
-                            window.Application.db.transaction(function (tx) {
-                                tx.executeSql("SELECT * from targetunit WHERE projectid=? ORDER BY source;", [projectid], function (tx, res) {
-                                    var tmpString = "";
-                                    for (i = 0, len = res.rows.length; i < len; ++i) {
-                                        // add the chapter
-                                        var tu = new TargetUnit();
-                                        tu.off("change");
-                                        tu.set(res.rows.item(i));
-                                        // convert refstring back into an array object
-                                        tmpString = tu.get('refstring');
-                                        tu.set('refstring', JSON.parse(tmpString));
-                                        targetunits.push(tu);
-                                        tu.on("change", tu.save, tu);
-                                    }
-                                    console.log("SELECT ok: " + res.rows.length + " targetunit items");
-                                    retValue = targetunits;
-                                    options.success(retValue);
-                                    deferred.resolve(retValue);
-                                });
-                            }, function (e) {
-                                options.error();
-                                deferred.reject(e);
-                            });
-                        } else {
-                            // results already in collection -- return them
-                            options.success(results);
-                            deferred.resolve(results);
+                        // get data in a specified projectid
+                        projectid = options.data.projectid;                        
+                        targetunits.length = 0; // reset the collection
+                        // build the sql statement
+                        var sql = "SELECT * from targetunit WHERE projectid='" + projectid + "'";
+                        if (options.data.hasOwnProperty('isGloss')) {
+                            sql += " AND isGloss=" + options.data.isGloss;
                         }
+                        if (options.data.hasOwnProperty('source')) {
+                            if (options.data.source.length > 0) {
+                                sql += " AND source LIKE '%" + options.data.source + "%'";
+                            }
+                        }
+                        sql += " ORDER BY source";
+                        if (options.data.hasOwnProperty('limit')) {
+                            sql += " LIMIT " + options.data.limit;
+                            if (options.data.hasOwnProperty('offset')) {
+                                sql += " OFFSET " + options.data.offset;
+                            }    
+                        }
+                        sql += ";";
+                        // retrieve them from the db (ordered by source)
+                        window.Application.db.transaction(function (tx) {
+                            tx.executeSql(sql, [], function (tx, res) {
+                                var tmpString = "";
+                                for (i = 0, len = res.rows.length; i < len; ++i) {
+                                    // add the chapter
+                                    var tu = new TargetUnit();
+                                    tu.off("change");
+                                    tu.set(res.rows.item(i));
+                                    // convert refstring back into an array object
+                                    tmpString = tu.get('refstring');
+                                    tu.set('refstring', JSON.parse(tmpString));
+                                    targetunits.push(tu);
+                                    tu.on("change", tu.save, tu);
+                                }
+                                console.log("SELECT ok: " + res.rows.length + " targetunit items");
+                                retValue = targetunits;
+                                options.success(retValue);
+                                deferred.resolve(retValue);
+                            }, function (tx, err) {
+                                console.log("TargetUnit SELECT error: " + err.message);
+                            });
+                        }, function (e) {
+                            options.error();
+                            deferred.reject(e);
+                        });
+                    
                         // return the promise
                         return deferred.promise();
                     } else if (options.data.hasOwnProperty('source')) {
-                        var source = options.data.source;
+                        source = options.data.source;
                         results = targetunits.filter(function (element) {
                             return element.attributes.source.toLowerCase().indexOf(source.toLowerCase()) > -1;
                         });
