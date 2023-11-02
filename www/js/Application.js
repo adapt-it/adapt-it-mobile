@@ -454,28 +454,25 @@ define(function (require) {
             // View / edit TU
             editTU: function (id) {
                 console.log("editTU");
-                // update the KB list, then show the view
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function () {
-                    var theTU = null;
-                    // show the selected TU
-                    var tu = window.Application.kbList.where({tuid: id});
-                    if (tu === null) {
-                        console.log("KB Entry not found:" + id);
-                        return; // don't do anything -- this TU is supposed to exist
-                    }
-                    theTU = tu[0];
-                    showTransView = new SearchViews.TUView({model: theTU});
-                    showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
-                    showTransView.bNewTU = false;
-                    showTransView.delegateEvents();
-                    window.Application.main.show(showTransView);
-                });
+                var theTU = null;
+                // show the selected TU
+                var tu = window.Application.kbList.where({tuid: id});
+                if (tu === null) {
+                    console.log("KB Entry not found:" + id);
+                    return; // don't do anything -- this TU is supposed to exist
+                }
+                theTU = tu[0];
+                showTransView = new SearchViews.TUView({model: theTU});
+                showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
+                showTransView.bNewTU = false;
+                showTransView.delegateEvents();
+                window.Application.main.show(showTransView);
             },
             // Show translations (edit TU, but also includes the "current translation" / SP)
             showTranslations: function (id) {
                 console.log("showTranslations");
                 // update the KB and source phrase list, then display the Translations screen with the currently-selected sourcephrase
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0}})).done(function () {
                     $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
                         var sp = window.Application.spList.where({spid: id});
                         if (sp === null || sp.length === 0) {
