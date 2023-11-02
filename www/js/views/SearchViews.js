@@ -2,13 +2,18 @@
 /*global define */
 
 // SearchViews.js
-// Passage / document lookup functionality. Allows the user to search for a document / book and chapter
-// to start adapting.
+// Meta search/lookup view functionality. Houses the following classes:
+// - TUListView: Shows the contents of the KB, with links to TUView and NewTUView
+// - TUView: View/edit individual target unit
+// - NewTUView: Create new target unit
+// - LookupView: Browse / search chapters and books, with links to AdaptView (adapt a selected passage)
+
 define(function (require) {
 
     "use strict";
 
     var $           = require('jquery'),
+        Underscore  = require('underscore'),
         Handlebars  = require('handlebars'),
         Marionette  = require('marionette'),
         i18next     = require('i18n'),
@@ -18,6 +23,7 @@ define(function (require) {
         tuModels        = require('app/models/targetunit'),
         tplChapterList  = require('text!tpl/ChapterList.html'),
         tplLookup       = require('text!tpl/Lookup.html'),
+        tplNewTU        = require('text!tpl/NewTU.html'),
         tplTargetUnit   = require('text!tpl/TargetUnit.html'),
         tplTUList       = require('text!tpl/TargetUnitList.html'),
         tplRSList       = require('text!tpl/RefStringList.html'),
@@ -27,7 +33,104 @@ define(function (require) {
         punctsTarget    = [],
         caseSource      = [],
         caseTarget      = [],
+        refstrings      = [],
+        PAGE_SIZE       = 100, // arbitrary # of search results to display at once
+        nKBTotal        = 0,
+        nFilteredTotal  = 0,
 
+        ////////
+        // STATIC METHODS
+        ////////
+
+        // helper method to add a new refstring to the static refstrings array (if it's not already there)
+        addNewRS = function (strTarget) {
+            var selectedIndex = 0,
+                i = 0,
+                curDate = new Date(),
+                timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z"),
+                found = false;
+            console.log("addNewRS - attempting to add: " + strTarget);
+            // sanity check -- is this refstring already there?
+            // add or increment the new value
+            for (i = 0; i < refstrings.length; i++) {
+                if (refstrings[i].target === strTarget) {
+                    // This RefString already exists in the KB - no work to do
+                    found = true;
+                    break;
+                }
+            }
+            if (found === false) {
+                // no entry in KB with this source/target -- add one
+                var newRS = {
+                    'target': Underscore.unescape(strTarget),  //klb
+                    'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                    'cDT': timestamp,
+                    'df': '0',
+                    'wC': ""
+                };
+                refstrings.push(newRS);
+                // re-sort the refstrings according to frequency
+                refstrings.sort(function (a, b) {
+                    // high to low
+                    return parseInt(b.n, 10) - parseInt(a.n, 10);
+                });
+                // redraw the UI (taken from showRefStrings() below)
+                $("#RefStrings").html(theRefStrings(refstrings));
+                // set the frequency meters for each refstring
+                for (i = 0; i < refstrings.length; i++) {
+                    if (strTarget.length > 0) {
+                        // looking to select a refstring after redrawing
+                        if (refstrings[i].target === strTarget) {
+                            selectedIndex = i; // found it
+                        }
+                    }
+                    if (refstrings[i].n > 0) {
+                        // normal refstring instance
+                        $("#pct-" + i).width((Math.round(refstrings[i].n / refstrings[0].n * 90) + 10) + "%");
+                    } else {
+                        // deleted refstring
+                        $("#pct-" + i).width("0%");
+                        $("#rs-" + i).addClass("deleted");
+                    }
+                }
+                if (strTarget.length > 0) {
+                    // now select the index we found
+                    $("#rs-" + selectedIndex).click();
+                }
+            } else {
+                console.log("addNewRS -- item already exists, no work to do");
+            }
+        },
+
+        // Helper method that returns the <li> elements shown in the KB list editor
+        buildTUList = function (coll) {
+            var strResult = "",
+                rs = null;
+            coll.comparator = 'source';
+            coll.sort();
+            coll.each(function (model, index) {
+                // TODO: what to do with placeholder text? Currently filtered out here
+                if (model.get("source").length > 0) {
+                    strResult += "<li class=\"topcoat-list__item li-tu\"><a class=\"big-link\" id=\"" + model.get("tuid") + "\"><span class=\"chap-list__item emphasized\">" + model.get("source") + "</span><br><span class=\"sectionStatus\">";
+                    rs = model.get("refstring");
+                    if (rs.length > 1) {
+                        // multiple translations - give a count
+                        strResult += i18next.t("view.ttlTotalTranslations", {total: rs.length});
+                    } else if (rs.length === 1) {
+                        // exactly 1 translation - just display it
+                        strResult += rs[0].target;
+                    } else {
+                        // no translations (shouldn't happen)
+                        strResult += i18next.t("view.ttlNoTranslations");
+                    }
+                    strResult += "</span><span class=\"chevron\"></span></a></li>";
+                }
+            });
+            return strResult;
+        },
+
+        // Helper method to find all items with .chk-selected UI class and delete their associated books/chapters
+        // (also does some project cleanup if the current / all books are deleted)
         deleteSelectedDocs = function () {
             var key = null;
             var doc = null;
@@ -85,34 +188,395 @@ define(function (require) {
                 }
             }
         },
+        ////////
+        // end STATIC METHODS
+        ////////
 
-        NoChildrenView = Marionette.ItemView.extend({
-            template: Handlebars.compile("<div id=\"nochildren\"></div>")
-        }),
-        
-        ChapterItemView = Marionette.ItemView.extend({
-            template: Handlebars.compile(tplChapterList)
-        }),
-
-        ChapterResultsView = Marionette.CollectionView.extend({
-            childView: ChapterItemView,
-            emptyView: NoChildrenView,
-            initialize: function () {
-                this.collection.on("reset", this.render, this);
-            }
-        }),
-        
-        KBListView = Marionette.LayoutView.extend({
+        TUListView = Marionette.ItemView.extend({
             template: Handlebars.compile(tplTUList),
+            searchCursor: 0,
             initialize: function () {
-                this.TUList = new tuModels.TargetUnitCollection();
                 this.render();
- 
+            },
+            events: {
+                "input #search":    "search",
+                "click #SearchPrev": "onSearchPrevPage",
+                "click #SearchNext": "onSearchNextPage",
+                "click .big-link": "onClickTU",
+                "click #btnNewTU": "onClickNewTU"
+            },
+            // User clicked on a TU item from the list. Show the TUView for this item.
+            onClickTU: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                var tuID = event.currentTarget.id;
+                var tu = window.Application.kbList.findWhere({tuid: tuID});
+                if (tu) {
+                    window.Application.router.navigate("tu/" + tuID, {trigger: true});
+                }
+            },
+            // User clicked on the New TU button. Show the TUView for a _new_ item, with an empty/null TU
+            onClickNewTU: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                console.log("onClickNewTU - entry");
+                window.Application.router.navigate("tu", {trigger: true});
+            },
+            // User clicked on the Previous button - retrieve the previous page of TU items
+            onSearchPrevPage: function () {
+                console.log("onSearchPrevPage: entry");
+                this.searchCursor = this.searchCursor - PAGE_SIZE;
+                // shouldn't happen, but just in case
+                if (this.searchCursor < 0) {
+                    this.searchCursor = 0;
+                }
+                var key = $('#search').val().trim(),
+                    self = this,
+                    total = 0,
+                    lstTU = "";
+                if (key.length > 0) {
+                    // filtered total
+                    total = nFilteredTotal;
+                } else {
+                    // unfiltered total
+                    total = nKBTotal;
+                }
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0, source: key, limit: PAGE_SIZE, offset: this.searchCursor}})).done(function () {
+                    // fetch the previous page, then display the results
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    if (self.searchCursor > 0) {
+                        // User can go back
+                        $("#SearchPrev").prop("disabled", false);
+                    } else {
+                        // User can't go back
+                        $("#SearchPrev").prop("disabled", true);
+                    }
+                    if (total > (self.searchCursor + PAGE_SIZE)) {
+                        // more than 1 page of results forward - enable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: (self.searchCursor + PAGE_SIZE), total: total}));
+                        $("#SearchNext").prop("disabled", false);
+                    } else {
+                        // <= 1 page of results left -- disable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: total, total: total}));
+                        $("#SearchNext").prop("disabled", true);
+                    }
+                });
+            },
+            // User clicked the Next button -- retrieve the next page of TU items
+            onSearchNextPage: function () {
+                console.log("onSearchNextPage: entry");
+                this.searchCursor = this.searchCursor + PAGE_SIZE;
+                var key = $('#search').val().trim(),
+                    self = this,
+                    total = 0,
+                    lstTU = "";
+                if (key.length > 0) {
+                    // filtered total
+                    total = nFilteredTotal;
+                } else {
+                    // unfiltered total
+                    total = nKBTotal;
+                }
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0, source: key, limit: PAGE_SIZE, offset: this.searchCursor}})).done(function () {
+                    // fetch the previous page, then display the results
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    if (self.searchCursor > 0) {
+                        // User can go back
+                        $("#SearchPrev").prop("disabled", false);
+                    } else {
+                        // User can't go back
+                        $("#SearchPrev").prop("disabled", true);
+                    }
+                    if (total > (self.searchCursor + PAGE_SIZE)) {
+                        // more than 1 page of results forward - enable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: (self.searchCursor + PAGE_SIZE), total: total}));
+                        $("#SearchNext").prop("disabled", false);
+                    } else {
+                        // <= 1 page of results left -- disable next button
+                        $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: self.searchCursor, pgEnd: total, total: total}));
+                        $("#SearchNext").prop("disabled", true);
+                    }
+                });
+            },
+            search: function (event) {
+                if (event.keycode === 13) { // enter key pressed
+                    event.preventDefault();
+                }
+                this.searchCursor = 0; // reset to page 1 of search results
+                var key = $('#search').val().trim();
+                console.log("search: looking for pattern: " + key);
+                // Get the count of items matching this filter
+                $.when(window.Application.kbList.getCount({data: {projectid: window.Application.currentProject.get('projectid'), isGloss: "0", source: key}})).done(function (n) {
+                    console.log("search: filtered total KB entries = " + n);
+                    nFilteredTotal = n; // store the total count in a static
+                });
+                $("#lstTU").html("");
+                var lstTU = "";
+                // Get the first page of filtered items
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, source: key, limit: 100}})).done(function () {
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    // nFilteredTotal from our getCount above
+                    if (nFilteredTotal === 0) {
+                        $("#lblTotals").html(i18next.t("view.lblNoEntries"));
+                        $("#SearchPrev").prop("disabled", true);
+                        $("#SearchNext").prop("disabled", true);
+                    } else {
+                        $("#SearchPrev").prop("disabled", true);
+                        if (nFilteredTotal > PAGE_SIZE) {
+                            // more than 1 page of results - enable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: nFilteredTotal}));
+                            $("#SearchNext").prop("disabled", false);
+                        } else {
+                            // <= 1 page -- disable next button 
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: nFilteredTotal, total: nFilteredTotal}));
+                            $("#SearchNext").prop("disabled", true);
+                        }
+                    }
+                });
+            },            
+            onShow: function () {
+                var lstTU = "";
+                this.searchCursor = 0;
+                // total KB count (non-gloss) for this project
+                $.when(window.Application.kbList.getCount({data: {projectid: window.Application.currentProject.get('projectid'), isGloss: "0"}})).done(function (n) {
+                    console.log("onShow: total KB entries for project (non-gloss) = " + n);
+                    nKBTotal = n; // store the total count in a static
+                    var strInfo = i18next.t("view.ttlProjectName", {name: window.Application.currentProject.get("name")}) + "<br>" + i18next.t("view.ttlTotalEntries", {total: n});
+                    $("#lblProjInfo").html(strInfo);
+                });
+                // retrieve and display first page of (unfiltered) TU entries
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid"), isGloss: 0, limit: 100}})).done(function () {
+                    lstTU = buildTUList(window.Application.kbList);
+                    $("#lstTU").html(lstTU);
+                    // are there any entries in the KB?
+                    if (window.Application.kbList.length === 0) {
+                        // KB is empty - tell the user and disable the prev/next buttons
+                        $("#lblTotals").html(i18next.t("view.lblNoEntries"));
+                        $("#SearchPrev").prop("disabled", true);
+                        $("#SearchNext").prop("disabled", true);
+                    } else {
+                        // some items to display -- give totals and enable UI
+                        $("#SearchPrev").prop("disabled", true);
+                        if (nKBTotal > PAGE_SIZE) {
+                            // more than 1 page of results - enable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: PAGE_SIZE, total: nKBTotal}));
+                            $("#SearchNext").prop("disabled", false);
+                        } else {
+                            // <= 1 page of results -- disable next button
+                            $("#lblTotals").html(i18next.t("view.lblRange", {pgStart: 1, pgEnd: nKBTotal, total: nKBTotal}));
+                            $("#SearchNext").prop("disabled", true);
+                        }
+                    }
+                });
             }
         }),
 
-        KBView = Marionette.LayoutView.extend({
+        NewTUView = Marionette.ItemView.extend({
+            bDirty: false,
+            template: Handlebars.compile(tplNewTU),
+            initialize: function () {
+                // spList is used for the "find in documents"
+                this.spList = new spModels.SourcePhraseCollection();
+                this.spList.clearLocal();
+                this.render();
+            },
+            events: {
+                "click #btnNewRS": "onNewRS",
+                "click #Done": "onDone",
+                "click #Cancel": "onCancel",
+                "input #txtSource": "onInputEditField",
+                "input #txtTarget": "onInputEditField"
+            },
+            // user clicked the Done button. Save the TU and return to the TU List page.
+            onDone: function () {
+                var txtSource = "",
+                    txtTarget = "",
+                    i = 0,
+                    found = false,
+                    curDate = new Date(),
+                    theTU = null,
+                    projectid = window.Application.currentProject.get("projectid"),
+                    timestamp = (curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-" + curDate.getDay() + "T" + curDate.getUTCHours() + ":" + curDate.getUTCMinutes() + ":" + curDate.getUTCSeconds() + "z");
+                txtSource = $("#txtSource").val().trim();
+                txtTarget = $("#txtTarget").val().trim();
+                var elts = window.Application.kbList.filter(function (element) {
+                    return (element.attributes.projectid === projectid &&
+                       element.attributes.source === txtSource && element.attributes.isGloss === 0);
+                });
+                // collect the refstrings if needed
+                if (refstrings.length > 0) {
+                    // we have some refstrings defined -- add them to txtTarget if needed
+                    for (i = 0; i < refstrings.length; i++) {
+                        if (refstrings[i].target === txtTarget) {
+                            found = true; // we already have this value
+                            break;
+                        }
+                    }
+                    if (found === false) {
+                        // txtTarget is not in the refstrings array -- add it
+                        var newRS = {
+                            'target': Underscore.unescape(txtTarget),
+                            'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                            'cDT': timestamp,
+                            'df': '0',
+                            'wC': ""
+                        };
+                        refstrings.push(newRS);
+                    }
+                } else {
+                    // we just have the target text -- add it to our refstrings value
+                    var newRS = {
+                        'target': Underscore.unescape(txtTarget),
+                        'n': '1',   // there's no real instance, but we need a valid # for it to show up in the list
+                        'cDT': timestamp,
+                        'df': '0',
+                        'wC': ""
+                    };
+                    refstrings.push(newRS);
+                }
+                // now check to see if our source is in the KB (i.e., if there's a TU matching what the user created)
+                if (elts.length > 0) {
+                    // this TU exists in the KB -- add our refstrings to it if needed
+                    theTU = elts[0];
+                    var idx = 0,
+                        tuRS = theTU.get('refstring');
+                    // save changes to tu
+                    for (i=0; i<refstrings.length; i++) {
+                        found = false; // reset flag
+                        // is this refstring in the TU already?
+                        for (idx = 0; idx < tuRS.length; idx++) {
+                            if (refstrings[i].target === tuRS[idx].target) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found === false) {
+                            // not found -- add this refstring
+                            tuRS.push(refstrings[i]); 
+                        }
+                    }
+                    // tuRS array updated. Now sort the elements and update the TU with the new data
+                    // re-sort the refstrings according to frequency
+                    tuRS.sort(function (a, b) {
+                        // high to low
+                        return parseInt(b.n, 10) - parseInt(a.n, 10);
+                    });
+                    theTU.set('refstring', tuRS, {silent: true});
+                } else {
+                    // new TU
+                    // create a new / temporary TU to pass in to the TUView
+                    // (this object isn't saved or added to the collection yet)
+                    var newID = window.Application.generateUUID();
+                    theTU = new tuModels.TargetUnit({
+                        tuid: newID,
+                        projectid: window.Application.currentProject.get("projectid"),
+                        source: txtSource,
+                        refstring: refstrings,
+                        timestamp: timestamp,
+                        user: "",
+                        isGloss: 0
+                    });
+                }
+                // done updating -- force a refresh of the KB list, then return to the TU list page
+                $.when(theTU.save()).done(function () {
+                    window.Application.kbList.clearLocal(); // clear out the kbList so it gets rebuilt
+                    $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function () {
+                        window.history.go(-1);
+                    });
+                });
+            },
+            // User clicked the Cancel button (new TU). Just return to the TU List page.
+            onCancel: function () {
+                window.history.go(-1);
+            },
+            // user clicked on the "new translation" button - prompt the user for a new translation string,
+            // and then update the refstrings list if the user clicks OK
+            onNewRS: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                console.log("onNewRS - entry");
+                var txtSource = $("#txtSource").val().trim();
+                // ask the user to provide a target / translation for the source phrase
+                if (navigator.notification) {
+                    // on mobile device
+                    navigator.notification.prompt(i18next.t('view.dscNewRS', {source: txtSource}), function (results) {
+                        if (results.buttonIndex === 1) {
+                            // add the new translation returned in results.input1
+                            addNewRS(results.input1);
+                        }
+                    }, i18next.t('view.lblNewRS'));
+                } else {
+                    // in browser
+                    var result = prompt(i18next.t('view.dscNewRS', {source: txtSource}));
+                    if (result !== null) {
+                        // add the new translation returned in result
+                        addNewRS(result);
+                    }
+                }
+            },
+            // User typed something in the source text (new TU)
+            onInputEditField: function (event) {
+                // pull out the text
+                var txtSource = "",
+                    txtTarget = "";
+                txtSource = $("#txtSource").val().trim();
+                txtTarget = $("#txtTarget").val().trim();
+                if (txtSource.length > 0 && txtTarget.length > 0) {
+                    // there's some text in the source and target fields -- enable the UI as appropriate
+                    $("#Done").prop('disabled', false);
+                    $("#btnNewRS").addClass("filter-burnt-orange");
+                    $("#btnNewRS").removeClass("filter-gray");
+                } else {
+                    $("#Done").prop('disabled', true);
+                    $("#btnNewRS").removeClass("filter-burnt-orange");
+                    $("#btnNewRS").addClass("filter-gray");
+                }
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // tab or enter key -- blur focus
+                    event.target.blur();
+                }
+            },
+            onShow: function () {
+                // load the source / target punctuation pairs
+                window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
+                    punctsSource.push(elt.s);
+                    punctsTarget.push(elt.t);
+                });
+                // load the source / target case pairs
+                window.Application.currentProject.get('CasePairs').forEach(function (elt, idx, array) {
+                    caseSource.push(elt.s);
+                    caseTarget.push(elt.t);
+                });
+                // reset the static refstrings array
+                refstrings.length = 0; 
+                // source and target languages
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                if (window.Application.currentProject.get('SourceVariant').length > 0) {
+                    srcLang += " (" + window.Application.currentProject.get('SourceVariant') + ")";
+                };
+                if (window.Application.currentProject.get('TargetVariant').length > 0) {
+                    tgtLang += " (" + window.Application.currentProject.get('TargetVariant') + ")";
+                };
+                $("#lblSource").html(srcLang);
+                $("#lblTarget").html(tgtLang);
+                $("#StepInstructions").html(i18next.t("view.dscNewSP", {src: srcLang, tgt: tgtLang}));
+                // disable the Done and new RS buttons until the user adds a source and target
+                $("#Done").prop('disabled', true);
+                $("#btnNewRS").addClass("filter-gray");
+                $("#btnNewRS").removeClass("filter-burnt-orange");
+        }
+        }),
+
+        TUView = Marionette.LayoutView.extend({
             spObj: null,
+            bNewTU: false,
             spInstances: null,
             strOldSP: "",
             bDirty: false,
@@ -121,10 +585,9 @@ define(function (require) {
                 container: "#StepContainer"
             },
             initialize: function () {
+                // spList is used for the "find in documents"
                 this.spList = new spModels.SourcePhraseCollection();
                 this.spList.clearLocal();
-                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
-                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
                 this.render();
             },
             // set the current translation to the provided text
@@ -244,10 +707,7 @@ define(function (require) {
                 }
             },
             events: {
-                "focus #tgtPhrase": "onFocusTarget",
-                "blur #tgtPhrase": "onBlurTarget",
-                "keydown #tgtphrase": "onEditTarget",
-                "click #btnUndo": "onUndoTarget",
+                "click #btnNewRS": "onNewRS",
                 "click .topcoat-list__item": "onClickRefString",
                 "keydown .refstring-list__item": "onEditRefString",
                 "blur .refstring-list__item": "onBlurRefString",
@@ -258,23 +718,51 @@ define(function (require) {
                 "click .btnSearch": "onClickSearch",
                 "click .btnSearchItem": "onClickSearchItem"
             },
-            onFocusTarget: function () {
-                // show the undo button, in case the user wants to revert  
-            },
-            onEditTarget: function () {
-                // show the undo button, in case the user wants to revert  
-            },
-            onBlurTarget: function () {
-                // hide the undo button
-            },
-            onUndoTarget: function () {
-                
+            // user clicked on the "new translation" button - prompt the user for a new translation string,
+            // and then update the refstrings list if the user clicks OK
+            onNewRS: function (event) {
+                // prevent event from bubbling up
+                event.stopPropagation();
+                event.preventDefault();
+                console.log("onNewRS - entry");
+                // the addNewRS() helper works with the static refstrings array. Copy our model's refstrings array there.
+                refstrings = this.model.get('refstring');
+                // ask the user to provide a target / translation for the source phrase
+                if (navigator.notification) {
+                    // on mobile device
+                    var obj = this.model;
+                    navigator.notification.prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}), function (results) {
+                        if (results.buttonIndex === 1) {
+                            // new translation in results.input1
+                            addNewRS(results.input1);
+                            // update our model
+                            obj.set('refstring', refstrings, {silent: true});
+                            obj.save();
+                        }
+                    }, i18next.t('view.lblNewRS'));
+                } else {
+                    // in browser
+                    var result = prompt(i18next.t('view.dscNewRS', {source: this.model.get("source")}));
+                    if (result !== null) {
+                        // new translation in result
+                        addNewRS(result);
+                        // update our model
+                        this.model.set('refstring', refstrings, {silent: true});
+                        this.model.save();
+                    }
+                }
             },
             onClickRefString: function (event) {
-                var RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>",
+                var RS_ACTIONS = "",
                     RS_HIDDEN = "<div class=\"control-row\">" + i18next.t("view.dscHiddenTranslation") + "</div><div class=\"control-row\"><button id=\"btnRSRestore\" class=\"btnRestore\" title=\"" + i18next.t("view.lblRestoreTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblRestoreTranslation") + "</button></div>",
                     refstrings = this.model.get("refstring"),
                     index = event.currentTarget.id.substr(3);
+                if (this.spObj !== null) {
+                    // only add the "select this translation" if we have a current source phrase
+                    RS_ACTIONS = "<div class=\"control-row\"><button id=\"btnRSSelect\" class=\"btnSelect\" title=\"" + i18next.t("view.lblUseTranslation") + "\"><span class=\"btn-check\" role=\"img\"></span>" + i18next.t("view.lblUseTranslation") + "</button></div>";
+                }
+                // add the rest of the actions
+                RS_ACTIONS += "<div class=\"control-row\"><button id=\"btnRSEdit\" title=\"" + i18next.t("view.lblEditTranslation") + "\" class=\"btnEdit\"><span class=\"btn-pencil\" role=\"img\"></span>" + i18next.t("view.lblEditTranslation") + "</button></div><div class=\"control-row\"><button id=\"btnRSSearch\" title=\"" + i18next.t("view.lblFindInDocuments") + "\" class=\"btnSearch\"><span class=\"btn-search\" role=\"img\"></span>" + i18next.t("view.lblFindInDocuments") + "</button></div><div id=\"rsResults\" class=\"control-group rsResults\"></div><div class=\"control-row\"><button id=\"btnRSDelete\" title=\"" + i18next.t("view.lblDeleteTranslation") + "\" class=\"btnDelete danger\"><span class=\"btn-delete\" role=\"img\"></span>" + i18next.t("view.lblDeleteTranslation") + "</button></div>";
                 // Toggle the visibility of the action menu bar
                 if ($("#lia-" + index).hasClass("show")) {
                     // hide it
@@ -511,8 +999,7 @@ define(function (require) {
                 var index = event.currentTarget.parentElement.parentElement.id.substr(4);
                 var refstrings = this.model.get("refstring");
                 var src = this.model.get("source");
-                var sp = window.Application.spList.at(0);
-                var spLength = sp.get("source").length - (sp.get("prepuncts").length + sp.get("follpuncts").length);
+                var spLength = src.length;
                 var tgt = refstrings[index].target;
                 var i = 0;
                 var count = 0;
@@ -532,7 +1019,7 @@ define(function (require) {
                         return true;
                     }
                     // do the strings differ in just punctuation?
-                    var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.target.length - element.attributes.follpuncts.length);
+                    var tmpVal = element.attributes.target.toUpperCase().substring(0, element.attributes.prepuncts.length + element.attributes.target.length - element.attributes.follpuncts.length);
                     tmpVal = tmpVal.substring(element.attributes.prepuncts.length);
                     if (tmpVal === tgt.toUpperCase()) {
                         return true; // string is the same, it just has punctuation tacked on
@@ -595,17 +1082,6 @@ define(function (require) {
 //                window.Application.router.navigate("adapt/" + cid, {trigger: true});
             },
             onShow: function () {
-                var srcLang = window.Application.currentProject.get('SourceLanguageName');
-                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
-                if (window.Application.spList.length > 0) {
-                    // found a sourcephrase -- fill out the UI
-                    var sp = window.Application.spList.at(0);
-                    $("#srcPhrase").html(sp.get("source"));
-                    $("#tgtPhrase").html(sp.get("target"));
-                }
-                // fill current translation info
-                $("#lblSourceLang").html(srcLang);
-                $("#lbltargetLang").html(tgtLang);
                 // load the source / target punctuation pairs
                 window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
                     punctsSource.push(elt.s);
@@ -616,7 +1092,35 @@ define(function (require) {
                     caseSource.push(elt.s);
                     caseTarget.push(elt.t);
                 });
-                
+                // load the chapter list
+                window.Application.ChapterList.fetch({reset: true, data: {name: ""}});
+                // display the source and target language names
+                var srcLang = window.Application.currentProject.get('SourceLanguageName');
+                var tgtLang = window.Application.currentProject.get('TargetLanguageName');
+                if (window.Application.currentProject.get('SourceVariant').length > 0) {
+                    srcLang += " (" + window.Application.currentProject.get('SourceVariant') + ")";
+                };
+                if (window.Application.currentProject.get('TargetVariant').length > 0) {
+                    tgtLang += " (" + window.Application.currentProject.get('TargetVariant') + ")";
+                };
+                $("#lblSourceLang").html(srcLang);
+                $("#lbltargetLang").html(tgtLang);
+               
+                // do a fuzzy search on the TargetUnit's source (i.e., no punctuation)
+                this.spList.fetch({reset: true, data: {source: this.model.get("source")}});
+                // source we're looking at
+                $("#srcPhrase").html(this.model.get("source"));
+                // are we looking at a current point in the translation, or just the possible TU refstrings?
+                if (this.spObj === null) {
+                    // no spObj passed in -- we're looking at the possible refstrings for a target unit,
+                    // NOT the "show translations" dialog -- hide the current translation stuff
+                    $("#lblCurrentTrans").hide();
+                    $(".tgtbox").hide();
+                } else {
+                    // looking at a current point in the translation (i.e, the Show Translations dialog) -
+                    // show what the current translation for this sourcephrase is
+                    $("#tgtPhrase").html(this.spObj.get("target"));
+                }                
                 // display the refstrings (and their relative frequency)
                 this.showRefStrings(""); // empty param --> don't select anything
             }
@@ -805,9 +1309,9 @@ define(function (require) {
         });
             
     return {
-        KBListView: KBListView,
-        KBView: KBView,
+        TUListView: TUListView,
+        TUView: TUView,
+        NewTUView: NewTUView,
         LookupView: LookupView,
-        ChapterResultsView: ChapterResultsView
     };
 });

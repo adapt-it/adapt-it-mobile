@@ -31,7 +31,8 @@ define(function (require) {
         importDocView   = null,
         exportDocView   = null,
         showTransView   = null,
-        editKBView      = null,
+        newTransView    = null,
+        editTUView      = null,
         i18n            = require('i18n'),
         lang            = "",
         models          = [],
@@ -332,7 +333,16 @@ define(function (require) {
                 // this.checkDBSchema();
             },
             
+            checkDBSchema: function () {
+                // verify we're on the latest DB schema (upgrade if necessary)
+                return projModel.checkSchema();
+            },
+
+            // -----------
             // Routes from AppRouter (router.js)
+            // -----------
+
+            // Home page (main view)
             home: function () {
                 // First, look for projects in the project list that aren't complete;
                 // this can happen if the user clicks the back button before completing the 
@@ -395,18 +405,13 @@ define(function (require) {
                     }
                 });
             },
-            
-            checkDBSchema: function () {
-                // verify we're on the latest DB schema (upgrade if necessary)
-                return projModel.checkSchema();
-            },
-            
+            // Set UI language view (language can also be set within project settings / edit project view > UI settings)
             setUILanguage: function () {
                 langView = new HomeViews.UILanguageView();
                 langView.delegateEvents();
                 window.Application.main.show(langView);
             },
-
+            // Edit project view
             editProject: function (id) {
                 // edit the selected project
                 var proj = this.ProjectList.where({projectid: id});
@@ -414,7 +419,7 @@ define(function (require) {
                     window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
                 }
             },
-
+            // Copy project view
             copyProject: function () {
                 var proj = new projModel.Project();
                 copyProjectView = new ProjectViews.CopyProjectView({model: proj});
@@ -422,7 +427,7 @@ define(function (require) {
                 this.ProjectList.add(proj);
                 this.main.show(copyProjectView);
             },
-            
+            // New Project view (wizard)
             newProject: function () {
                 var proj = new projModel.Project();
                 newProjectView = new ProjectViews.NewProjectView({model: proj});
@@ -430,71 +435,103 @@ define(function (require) {
                 this.ProjectList.add(proj);
                 this.main.show(newProjectView);
             },
-
+            // KB editor view
             editKB: function (id) {
                 console.log("editKB");
-                // update the KB and source Phrase lists, then show the KB editor view
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: id}})).done(function () {
-                    var proj = window.Application.ProjectList.where({projectid: id});
-                    editKBView = new SearchViews.KBListView({model: proj[0]});
-                    editKBView.delegateEvents();
-                    window.Application.main.show(editKBView);
-                });
+                // show the KB editor view (KB refresh happens inside the view's onShow())
+                var proj = window.Application.ProjectList.where({projectid: id});
+                editTUView = new SearchViews.TUListView({model: proj[0]});
+                editTUView.delegateEvents();
+                window.Application.main.show(editTUView);
             },
-            
-            lookupKB: function (id) {
-                console.log("lookupKB");
-                // update the KB and source phrase list, then display the Show Translations screen
-                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid')}})).done(function () {
+            // New Target Unit view
+            newTU: function() {
+                console.log("newTU");
+                newTransView = new SearchViews.NewTUView();
+                newTransView.delegateEvents();
+                window.Application.main.show(newTransView);
+            },
+            // View / edit TU
+            editTU: function (id) {
+                console.log("editTU");
+                var theTU = null;
+                // show the selected TU
+                var tu = window.Application.kbList.where({tuid: id});
+                if (tu === null) {
+                    console.log("KB Entry not found:" + id);
+                    return; // don't do anything -- this TU is supposed to exist
+                }
+                theTU = tu[0];
+                showTransView = new SearchViews.TUView({model: theTU});
+                showTransView.spObj = null; // NO current sourcephrase (this is coming from the KB editor)
+                showTransView.bNewTU = false;
+                showTransView.delegateEvents();
+                window.Application.main.show(showTransView);
+            },
+            // Show translations (edit TU, but also includes the "current translation" / SP)
+            showTranslations: function (id) {
+                console.log("showTranslations");
+                // update the KB and source phrase list, then display the Translations screen with the currently-selected sourcephrase
+                $.when(window.Application.kbList.fetch({reset: true, data: {projectid: window.Application.currentProject.get('projectid'), isGloss: 0}})).done(function () {
                     $.when(window.Application.spList.fetch({reset: true, data: {spid: window.Application.currentProject.get('lastAdaptedSPID')}})).done(function () {
-                        var tu = window.Application.kbList.where({tuid: id});
-                        if (tu === null) {
-                            console.log("KB Entry not found:" + id);
+                        var sp = window.Application.spList.where({spid: id});
+                        if (sp === null || sp.length === 0) {
+                            console.log("sp Entry not found:" + id);
+                        } else {
+                            // KB lookup involves modifying the case and stripping out the punctuation (see autoRemoveCaps()
+                            // and stripPunctuation() calls in AdaptViews and DocumentViews). 
+                            var src = sp[0].get("source"),
+                                punctsSource = [],
+                                startIdx = 0,
+                                endIdx = src.length;
+                            // First up: stripping out the punctuation
+                            window.Application.currentProject.get('PunctPairs').forEach(function (elt, idx, array) {
+                                punctsSource.push(elt.s);
+                            });
+                            // starting index
+                            while (startIdx < (src.length - 1) && punctsSource.indexOf(src.charAt(startIdx)) > -1) {
+                                startIdx++;
+                            }
+                            // ending index
+                            while (endIdx > 0 && punctsSource.indexOf(src.charAt(endIdx - 1)) > -1) {
+                                endIdx--;
+                            }
+                            if (endIdx <= startIdx) {
+                                src = "";
+                            }
+                            src = src.substr(startIdx, (endIdx) - startIdx);
+                            // Next up: set the case as appropriate
+                            if (window.Application.currentProject.get("AutoCapitalization") === "true") {
+                                // build up the caseSource array
+                                var caseSource = [];
+                                window.Application.currentProject.get('CasePairs').forEach(function (elt, idx, array) {
+                                    caseSource.push(elt.s);
+                                });
+                                // find the starting character in the source and change it if needed
+                                for (var i = 0; i < caseSource.length; i++) {
+                                    if (caseSource[i].charAt(1) === src.charAt(0)) {
+                                        // uppercase -- convert the first character to lowercase and exit the loop
+                                        src = caseSource[i].charAt(0) + src.substr(1);
+                                        break;
+                                    }
+                                }
+                            }
+                            // Okay, now look up the modified source in the KB
+                            var tu = window.Application.kbList.findWhere({'source': src, 'isGloss': 0});
+                            if (tu !== null) {
+                                showTransView = new SearchViews.TUView({model: tu});
+                                showTransView.spObj = sp[0];
+                                showTransView.delegateEvents();
+                                window.Application.main.show(showTransView);        
+                            } else {
+                                // shouldn't happen?
+                                console.log("showTranslations: source not found in KB -- ignoring call");
+                            }
                         }
-                        showTransView = new SearchViews.KBView({model: tu[0]});
-                        showTransView.spObj = window.Application.spList[0];
-                        showTransView.delegateEvents();
-                        window.Application.main.show(showTransView);
                     });
                 });
             },
-
-            // Another process has sent us a file via URL. Get the File handle and send it along to
-            // importFileFromURL (below).
-            processFileEntry: function (fileEntry) {
-                console.log("processFileEntry: enter");
-                fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
-            },
-
-            processError: function (error) {
-                // log the error and continue processing
-                console.log("getDirectory error: " + error.code);
-                alert("error: " + error.code);
-            },
-
-            // This is similar to importBooks, EXCEPT that another process is sending a file to us to
-            // open/import (rather than the user picking a file out of a list). Call
-            // ImportDocumentView::importFile() to import the file.
-            importFileFromURL: function (file) {
-                console.log("importFile: enter");
-                var proj = window.Application.currentProject;
-                if (proj !== null) {
-                    // We have a project -- load the ImportDocumentView to do the work
-                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
-                    importDocView.isLoadingFromURL = true;
-                    importDocView.delegateEvents();
-                    window.Application.main.show(importDocView);
-                    // call ImportDocumentView::importFromURL() to import the file
-                    importDocView.importFromURL(file, proj);
-                } else {
-                    alert("No current project defined -- ignoring open() call");
-                }
-            },
-
-            importFail: function () {
-                alert("Unable to open file.");
-            },
-            
+            // import doc view
             importBooks: function (id) {
                 console.log("importBooks");
                 // update the book and chapter lists, then show the import docs view
@@ -506,7 +543,7 @@ define(function (require) {
                     window.Application.main.show(importDocView);
                 }
             },
-
+            // Export doc view
             exportBooks: function (id) {
                 console.log("exportBooks");
                 var proj = window.Application.currentProject;
@@ -518,7 +555,7 @@ define(function (require) {
                     window.Application.main.show(exportDocView);
                 }
             },
-            
+            // Search / browse chapter view
             lookupChapter: function (id) {
                 console.log("lookupChapter");
                 $.when(window.Application.ProjectList.fetch({reset: true, data: {name: ""}})).done(function () {
@@ -533,7 +570,7 @@ define(function (require) {
                     });
                 });
             },
-
+            // Adapt View (the reason we're here)
             adaptChapter: function (id) {
                 console.log("adaptChapter");
                 // refresh the models
@@ -572,6 +609,44 @@ define(function (require) {
                         }
                     });
                 });
+            },
+            // ----
+            // External document route helper methods:
+            // Another process has sent us a file via URL.
+            // ----
+            // Helper method to get the File handle from the external process and send it along to
+            // importFileFromURL (below).
+            processFileEntry: function (fileEntry) {
+                console.log("processFileEntry: enter");
+                fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
+            },
+            // helper callback to process a getDirectory() error
+            processError: function (error) {
+                // log the error and continue processing
+                console.log("getDirectory error: " + error.code);
+                alert("error: " + error.code);
+            },
+            // This is similar to importBooks, EXCEPT that another process is sending a file to us to
+            // open/import (rather than the user picking a file out of a list). Call
+            // ImportDocumentView::importFile() to import the file.
+            importFileFromURL: function (file) {
+                console.log("importFile: enter");
+                var proj = window.Application.currentProject;
+                if (proj !== null) {
+                    // We have a project -- load the ImportDocumentView to do the work
+                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                    importDocView.isLoadingFromURL = true;
+                    importDocView.delegateEvents();
+                    window.Application.main.show(importDocView);
+                    // call ImportDocumentView::importFromURL() to import the file
+                    importDocView.importFromURL(file, proj);
+                } else {
+                    alert("No current project defined -- ignoring open() call");
+                }
+            },
+            // Helper callback for processFileEntry() failure (above)
+            importFail: function () {
+                alert("Unable to open file.");
             }
         });
     

@@ -6499,8 +6499,9 @@ define(function (require) {
                     caseTarget.push(elt.t);
                 });
                 // fetch the KB in case we import an AI XML document (we'll populate the KB if that happens)
+                window.Application.kbList.clearLocal(); // clear out the kbList so it gets rebuilt
                 kblist = window.Application.kbList;
-                kblist.fetch({reset: true, data: {source: ""}});
+                kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
                 // reset the isKB flag
                 isKB = false;
                 isGlossKB = false;
