@@ -9,9 +9,11 @@ date:   2020-09-17 12:21
 * [Changing the user interface language](#changing-ui-language)
 * [Working with filtered text](#filtered-text)
 * [Viewing and editing existing translations](#show-translations)
+* [Working with the Knowledge Base]({{ site.baseurl }}/working-with-knowledge-base)
 * [Searching for a specific translation](#search-for-translation)
 * [Previewing the translation](#preview-mode)
 * [Changing editor settings](#editor-settings)
+* [Working with multiple projects]({{ site.baseurl }}/managing-projects)
 
 ----
 
