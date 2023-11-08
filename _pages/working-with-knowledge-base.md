@@ -60,7 +60,7 @@ Complete the following steps to view or edit an item in the Knowledge Base.
 
 At the top of the screen, the entry's source language word/phrase appears in a darker grey box. Below that, the Add Translation... button appears:
 
-    ![Add Translation... button]({{ site.baseurl }}/assets/img/add-rs.jpg)
+![Add Translation button]({{ site.baseurl }}/assets/img/add-rs.jpg)
 
 To add a translation for this source, click this button. At the prompt, enter the translation.
 
