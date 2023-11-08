@@ -109,6 +109,8 @@ Now that you have installed Adapt It Mobile, you'll want to take a look at our s
 * [Searching for a specific translation]({{ site.baseurl }}/advanced-topics#search-for-translation)
 * [Previewing the translation]({{ site.baseurl }}/advanced-topics#preview-mode)
 * [Changing editor settings]({{ site.baseurl }}/advanced-topics#editor-settings)
+* [Working with the Knowledge Base]({{ site.baseurl }}/working-with-knowledge-base)
+* [Working with multiple projects]({{ site.baseurl }}/managing-projects)
 
 ## Troubleshooting
 
