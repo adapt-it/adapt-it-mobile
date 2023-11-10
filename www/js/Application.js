@@ -535,13 +535,18 @@ define(function (require) {
             importBooks: function (id) {
                 console.log("importBooks");
                 // update the book and chapter lists, then show the import docs view
-                var proj = window.Application.currentProject;
-                if (proj !== null) {
-                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
-                    importDocView.isLoadingFromURL = false;
-                    importDocView.delegateEvents();
-                    window.Application.main.show(importDocView);
-                }
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        if (proj !== null) {
+                            importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                            importDocView.isLoadingFromURL = false;
+                            importDocView.delegateEvents();
+                            window.Application.main.show(importDocView);
+                        } else {
+                            alert("No current project defined -- ignoring open() call");
+                        }
+                    });
+                });
             },
             // Export doc view
             exportBooks: function (id) {
@@ -632,17 +637,22 @@ define(function (require) {
             importFileFromURL: function (file) {
                 console.log("importFile: enter");
                 var proj = window.Application.currentProject;
-                if (proj !== null) {
-                    // We have a project -- load the ImportDocumentView to do the work
-                    importDocView = new DocumentViews.ImportDocumentView({model: proj});
-                    importDocView.isLoadingFromURL = true;
-                    importDocView.delegateEvents();
-                    window.Application.main.show(importDocView);
-                    // call ImportDocumentView::importFromURL() to import the file
-                    importDocView.importFromURL(file, proj);
-                } else {
-                    alert("No current project defined -- ignoring open() call");
-                }
+                // we want books and chapters to be current, in case we're merging
+                $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
+                    $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        if (proj !== null) {
+                            // We have a project -- load the ImportDocumentView to do the work
+                            importDocView = new DocumentViews.ImportDocumentView({model: proj});
+                            importDocView.isLoadingFromURL = true;
+                            importDocView.delegateEvents();
+                            window.Application.main.show(importDocView);
+                            // call ImportDocumentView::importFromURL() to import the file
+                            importDocView.importFromURL(file, proj);
+                        } else {
+                            alert("No current project defined -- ignoring open() call");
+                        }
+                    });
+                });
             },
             // Helper callback for processFileEntry() failure (above)
             importFail: function () {

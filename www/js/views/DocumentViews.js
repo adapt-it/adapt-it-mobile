@@ -6348,7 +6348,7 @@ define(function (require) {
                     var book = window.Application.BookList.where({projectid: this.model.get('projectid'), filename: fileName})[0];
                     if (book) {
                         // got as far as saving the book -- did we happen to set this to the current book?
-                        key = book.get("bookid");
+                        var key = book.get("bookid");
                         console.log("deleting bookID: " + key);
                         // are we deleting something we were just working on?
                         if (lastAdaptedBookID === key) {
