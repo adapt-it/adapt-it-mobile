@@ -3054,7 +3054,7 @@ define(function (require) {
                     // edb 4 Feb 2022 -- processing requires a possible pause to confirm the override; we'll wait on the
                     // callback results and then continue the import or exit (if the user cancels).
                     defer.then(function (msg) {
-                        console.log(msg);    
+                        console.log(msg);
                         // Continue processing the file. Note that at this point, the book and all chapters
                         // have been created for this file (either newly created or merged with an existing one)
 
