@@ -79,9 +79,9 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.13.0", // appended with Android / iOS build info
-            AndroidBuild: "46", // (was milestone release #)
-            iOSBuild: "3", // iOS uploaded build number for this release (increments from 1 for each release) 
+            version: "1.13.1", // appended with Android / iOS build info
+            AndroidBuild: "47", // (was milestone release #)
+            iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
             // Utility function from https://www.sobyte.net/post/2022-02/js-crypto-randomuuid/
