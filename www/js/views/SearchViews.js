@@ -1046,11 +1046,15 @@ define(function (require) {
                         // set the search list, in case the user decides to go looking at individual instances
                         this.spInstances = spInstances;
                         strRefStrings += "<ul class=\"topcoat-list__container\">";
+                        var cObj = null;
                         for (i = 0; i < spInstances.length; i++) {
                             if ((i > 0) && (spInstances[i].get("chapterid") !== spInstances[i - 1].get("chapterid"))) {
-                                chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[i - 1].get("chapterid")}).get("name");
-                                // add list item with count from the last grouping
-                                strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (i - count) + "'></span></div></li>";
+                                cObj = window.Application.ChapterList.findWhere({chapterid: spInstances[i - 1].get("chapterid")});
+                                if ( typeof(cObj) !== "undefined" && cObj !== null ) {
+                                    chapName = cObj.get("name");
+                                    // add list item with count from the last grouping
+                                    strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[i - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (i - count) + "'></span></div></li>";    
+                                }
                                 // reset the count
                                 count = 1;
                             } else {
@@ -1058,9 +1062,12 @@ define(function (require) {
                             }
                         }
                         // add the last item
-                        chapName = window.Application.ChapterList.findWhere({chapterid: spInstances[spInstances.length - 1].get("chapterid")}).get("name");
-                        // add list item with count from the last grouping
-                        strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[spInstances.length - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (spInstances.length - count) + "'></span></div></li>";
+                        cObj = window.Application.ChapterList.findWhere({chapterid: spInstances[spInstances.length - 1].get("chapterid")});
+                        if ( typeof(cObj) !== "undefined" && cObj !== null ) {
+                            chapName = cObj.get("name");
+                            // add list item with count from the last grouping
+                            strRefStrings += "<li class=\"topcoat-list__item\"><div class=\"big-link btnSearchItem\" id='srch-" + spInstances[spInstances.length - 1].get("chapterid") + "'>" + i18next.t("view.lblChapterInstances", {chapter: chapName, count: count}) + "<span class=\"chevron\" style=\"top:12px;\" id='idx-" + (spInstances.length - count) + "'></span></div></li>";    
+                        }
                         strRefStrings += "</ul>";
                     }
                     // populate the list

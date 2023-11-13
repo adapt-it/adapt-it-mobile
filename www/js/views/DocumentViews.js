@@ -3054,7 +3054,7 @@ define(function (require) {
                     // edb 4 Feb 2022 -- processing requires a possible pause to confirm the override; we'll wait on the
                     // callback results and then continue the import or exit (if the user cancels).
                     defer.then(function (msg) {
-                        console.log(msg);    
+                        console.log(msg);
                         // Continue processing the file. Note that at this point, the book and all chapters
                         // have been created for this file (either newly created or merged with an existing one)
 
@@ -6348,7 +6348,7 @@ define(function (require) {
                     var book = window.Application.BookList.where({projectid: this.model.get('projectid'), filename: fileName})[0];
                     if (book) {
                         // got as far as saving the book -- did we happen to set this to the current book?
-                        key = book.get("bookid");
+                        var key = book.get("bookid");
                         console.log("deleting bookID: " + key);
                         // are we deleting something we were just working on?
                         if (lastAdaptedBookID === key) {
