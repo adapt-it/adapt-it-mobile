@@ -3692,7 +3692,7 @@ define(function (require) {
                                 // special case -- blank verses
                                 console.log("Empty verse(s) at end: " + vCount);
                                 var tmpMrks, Idx1, Idx2;
-                                for (var vIdx = 0; vIdx < vCount - 1; vIdx++) {
+                                for (var vIdx = 0; vIdx < vCount; vIdx++) {
                                     // pull out the marker for this blank verse
                                     Idx1 = markers.indexOf("\\v ", 0); // _this_ verse
                                     Idx2 = markers.indexOf("\\v ", Idx1 + 1); // next verse
@@ -6402,6 +6402,11 @@ define(function (require) {
             // - If the user has changed the book name, update the name value in the book and each chapter
             // - Close out the import and move to the home page
             onOK: function () {
+                if (bookName.length === 0) {
+                    // prevent re-entry -- just go to the home page
+                    window.Application.home();
+                    return;
+                }
                 if (isKB === false) {
                     // update the book name if necessary
                     if ($("#BookName").length > 0 && $("#BookName").val() !== bookName) {
