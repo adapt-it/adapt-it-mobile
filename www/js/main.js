@@ -107,7 +107,7 @@ window.handleOpenURL = function(url) {
                 console.log("handleOpenURL: calling open app with importingURL:" + absolutePath);
                 window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
               }, function(error) {
-                console.log("handleOpenURL: error in resolveNativePath for content://path URL -- " + error.message());
+                console.log("handleOpenURL: error in resolveNativePath for content://path URL -- " + error.message);
               });
         } else {
             // not a content://path url -- resolve and process file
