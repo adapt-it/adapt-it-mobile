@@ -380,6 +380,8 @@
         "dscNewRS": "Enter a translation for \"__source__\".",
         "lblRange": "__pgStart__-__pgEnd__ of __total__",
         "lblNoEntries": "No entries found.",
+        "ErrImportDoc": "Adapt It Mobile encountered a problem trying to open / import document: \"__error__\"",
+        "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

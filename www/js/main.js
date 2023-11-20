@@ -107,7 +107,14 @@ window.handleOpenURL = function(url) {
                 console.log("handleOpenURL: calling open app with importingURL:" + absolutePath);
                 window.resolveLocalFileSystemURL(url, window.Application.processFileEntry, window.Application.processError);
               }, function(error) {
-                console.log("handleOpenURL: error in resolveNativePath for content://path URL -- " + error.message);
+                // in this case we don't want to fail silently -- tell the user what's going on, then return to the home screen.
+                if (navigator.notification) {
+                    navigator.notification.alert(("Adapt It Mobile encountered a problem trying to open / import document: handleOpenURL::resolveNativePath(): " + error.message),
+                        function () {window.Application.home();});
+                } else {
+                    alert("Adapt It Mobile encountered a problem trying to open / import document: handleOpenURL::resolveNativePath(): " + error.message);
+                    window.Application.home();
+                }
               });
         } else {
             // not a content://path url -- resolve and process file
