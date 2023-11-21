@@ -625,11 +625,17 @@ define(function (require) {
                 console.log("processFileEntry: enter");
                 fileEntry.file(window.Application.importFileFromURL, window.Application.importFail);
             },
-            // helper callback to process a getDirectory() error
+            // helper callback to report errors that happened during the open / import file process (i.e., from another process)
             processError: function (error) {
                 // log the error and continue processing
-                console.log("getDirectory error: " + error.code);
-                alert("error: " + error.code);
+                if (navigator.notification) {
+                    navigator.notification.alert(i18n.t("view.ErrImportDoc", {error: error.message}), function () {
+                        window.Application.home();
+                    });
+                } else {
+                    alert(i18n.t("view.ErrImportDoc", {error: error.message}));
+                    window.Application.home();
+                }
             },
             // This is similar to importBooks, EXCEPT that another process is sending a file to us to
             // open/import (rather than the user picking a file out of a list). Call
@@ -649,7 +655,20 @@ define(function (require) {
                             // call ImportDocumentView::importFromURL() to import the file
                             importDocView.importFromURL(file, proj);
                         } else {
-                            alert("No current project defined -- ignoring open() call");
+                            // in this case we don't want to fail silently -- tell the user what's going on.
+                            if (navigator.notification) {
+                                navigator.notification.alert(
+                                    i18n.t("view.ErrImportNoProjectDefined"),
+                                    function () {
+                                        console.log("No current project defined -- ignoring open() call");
+                                        window.Application.home();
+                                    });
+                            } else {
+                                alert(i18next.t("view.ErrImportNoProjectDefined"));
+                                i18n.log("No current project defined -- ignoring open() call");
+                                window.Application.home();
+                            }
+
                         }
                     });
                 });

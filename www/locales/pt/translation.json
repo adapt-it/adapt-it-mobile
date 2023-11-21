@@ -380,6 +380,8 @@
         "dscNewRS": "Digite uma tradução para \"__source__\".",
         "lblRange": "__pgStart__-__pgEnd__ de __total__",
         "lblNoEntries": "Nenhuma iten encontrada.",
+        "ErrImportDoc": "Adapt It Mobile encontrou um problema ao tentar abrir/importar documento: \"__error__\"",
+        "ErrImportNoProjectDefined": "O Adapt It Mobile precisa de informações sobre o seu projeto de tradução antes de importar documentos. Crie ou copie um documento e então você poderá importar documentos para o Adapt It Mobile.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
