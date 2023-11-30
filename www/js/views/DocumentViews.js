@@ -6517,7 +6517,6 @@ define(function (require) {
                         $("#browserGroup").hide();
                         $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
                         var localURLs    = [
-                            cordova.file.dataDirectory,
                             cordova.file.documentsDirectory,
                             cordova.file.sharedDirectory,
                             cordova.file.dataDirectory,

@@ -30,8 +30,8 @@
     "cordova-plugin-x-socialsharing-android12": "github:IsraelHikingMap/corodova-plugin-socialsharing-android12",
     "cordova-sqlite-evcore-extbuild-free": "^0.18.0",
     "cordova-uglify": "^0.0.8",
-    "fs": "0.0.2",
-    "gulp": "^3.9.1",
+    "fs": "^0.0.2",
+    "gulp": "^4.0.0",
     "path": "^0.12.7",
     "phonegap-plugin-mobile-accessibility": "github:phonegap/phonegap-mobile-accessibility",
     "plist": "^3.0.1"
