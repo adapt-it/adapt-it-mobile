@@ -1,8 +1,19 @@
 // Gulpfile for Adapt It Mobile builds
 var gulp = require("gulp"),
+    fs = require("fs"),
     cordova = require("cordova-lib").cordova;
 
-gulp.task("build-android", function (done) {
+// call "cordova platform add android" if needed
+gulp.task("prep-android-dir", function (done) {
+    var path = "./platforms/android";
+    if (!fs.existsSync(path)) {
+        process.stdout.write('Android dir not detected -- creating platform android\n');
+        cordova.platforms("add", "android");
+    }
+    done();
+});
+
+gulp.task("build-android", gulp.series("prep-android-dir"), function (done) {
     cordova.build({
         "platforms": ["android"],
         "options": {
@@ -11,7 +22,17 @@ gulp.task("build-android", function (done) {
     }, done());
 });
 
-gulp.task("build-ios", function (done) {
+// call "cordova platform add ios" if needed
+gulp.task("prep-ios-dir", function (done) {
+    var path = "./platforms/ios";
+    if (!fs.existsSync(path)) {
+        process.stdout.write('ios dir not detected -- creating platform ios\n');
+        cordova.platforms("add", "ios");
+    }
+    done();
+});
+
+gulp.task("build-ios", gulp.series("prep-ios-dir"), function (done) {
     cordova.build({
         "platforms": ["ios"],
         "options": {
@@ -25,5 +46,5 @@ gulp.task("build", gulp.parallel("build-android", "build-ios"));
 gulp.task("default", gulp.series("build"), function () {
     // Copy results to bin folder
     gulp.src("platforms/android/app/build/output/apk/release/*.apk").pipe(gulp.dest("bin/release/android"));         // Gradle build
-    gulp.src("platforms/ios/build/device/*.ipa").pipe(gulp.dest("bin/release/ios"));
+    // gulp.src("platforms/ios/build/device/*.ipa").pipe(gulp.dest("bin/release/ios"));
 });
