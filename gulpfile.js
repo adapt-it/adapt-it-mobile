@@ -9,8 +9,12 @@ gulp.task("prep-android-dir", function (done) {
     if (!fs.existsSync(path)) {
         process.stdout.write('Android dir not detected -- creating platform android\n');
         cordova.platforms("add", "android");
+        done();
+    } else {
+        process.stdout.write('cleaning platform android\n');
+        cordova.clean("android");
+        done();
     }
-    done();
 });
 
 gulp.task("build-android", gulp.series("prep-android-dir"), function (done) {
@@ -28,8 +32,12 @@ gulp.task("prep-ios-dir", function (done) {
     if (!fs.existsSync(path)) {
         process.stdout.write('ios dir not detected -- creating platform ios\n');
         cordova.platforms("add", "ios");
+        done();
+    } else {
+        process.stdout.write('cleaning platform ios\n');
+        cordova.clean("ios");
+        done();
     }
-    done();
 });
 
 gulp.task("build-ios", gulp.series("prep-ios-dir"), function (done) {
