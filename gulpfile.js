@@ -5,7 +5,9 @@ var gulp = require("gulp"),
 
 // call "cordova platform add android" if needed
 gulp.task("prep-android-dir", function (done) {
-    var path = "./platforms/android";
+    var path = "platforms/android";
+    // process.stdout.write('prep-android-dir - doing nothing\n');
+    // done();
     if (!fs.existsSync(path)) {
         process.stdout.write('Android dir not detected -- creating platform android\n');
         cordova.platforms("add", "android");
@@ -17,7 +19,7 @@ gulp.task("prep-android-dir", function (done) {
     }
 });
 
-gulp.task("build-android", gulp.series("prep-android-dir"), function (done) {
+gulp.task("build-android", function (done) {
     cordova.build({
         "platforms": ["android"],
         "options": {
@@ -28,7 +30,9 @@ gulp.task("build-android", gulp.series("prep-android-dir"), function (done) {
 
 // call "cordova platform add ios" if needed
 gulp.task("prep-ios-dir", function (done) {
-    var path = "./platforms/ios";
+    var path = "platforms/ios";
+    // process.stdout.write('prep-ios-dir - doing nothing\n');
+    // done();
     if (!fs.existsSync(path)) {
         process.stdout.write('ios dir not detected -- creating platform ios\n');
         cordova.platforms("add", "ios");
@@ -40,7 +44,7 @@ gulp.task("prep-ios-dir", function (done) {
     }
 });
 
-gulp.task("build-ios", gulp.series("prep-ios-dir"), function (done) {
+gulp.task("build-ios", function (done) {
     cordova.build({
         "platforms": ["ios"],
         "options": {
