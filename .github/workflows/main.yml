@@ -20,19 +20,23 @@ jobs:
     # fs-extra dependency requires node v10+
     strategy:
       matrix:
-        node-version: [16.x]
-      
+        node-version: [16.x, 18.x]
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm install
-    - run: npm install -g gulp
-    - run: npm link gulp
-    - run: gulp --debug
+    - name: CI dbg build
+      run: |
+        npm install
+        npm install -g gulp
+        npm link gulp
+        gulp prep-android-dir
+        gulp --debug
+        
       env:
         CI: true
