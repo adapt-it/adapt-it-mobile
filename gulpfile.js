@@ -12,8 +12,7 @@ gulp.task("prep-android-dir", function (done) {
         var cmd = cp.spawn('cordova', ["platform", "add", "android"], {stdio: 'inherit'}).on('exit', done);
     } else {
         process.stdout.write('cleaning platform android\n');
-        cordova.clean("android");
-        done();
+        var cmd = cp.spawn('cordova', ["clean", "android"], {stdio: 'inherit'}).on('exit', done);
     }
 });
 
@@ -35,8 +34,9 @@ gulp.task("prep-ios-dir", function (done) {
         var cmd = cp.spawn('cordova', ["platform", "add", "ios@latest"], {stdio: 'inherit'}).on('exit', done);
     } else {
         process.stdout.write('cleaning platform ios\n');
-        cordova.clean("ios");
-        done();
+        var cmd = cp.spawn('cordova', ["clean", "ios"], {stdio: 'inherit'}).on('exit', done);
+        // cordova.clean("ios", {argv: "--verbose"});
+        // done();
     }
 });
 
