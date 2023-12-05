@@ -40,6 +40,7 @@ jobs:
       run:  |
         cd ./platforms/android
         gradle wrapper
+        ./gradlew wrapper --gradle-version=7.4.2 --distribution-type=bin
         ./gradlew assembleDebug --stacktrace
         
       env:
