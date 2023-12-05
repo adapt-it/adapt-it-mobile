@@ -39,7 +39,7 @@ jobs:
     - name: Specify Gradle version
       run: ./platforms/android/gradlew wrapper --gradle-version-7.3.1
     - name: Actual Dbg build
-        gulp --debug
+      run:  gulp --debug
         
       env:
         CI: true
