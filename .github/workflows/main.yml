@@ -45,7 +45,10 @@ jobs:
       with:
         gradle-version: 7.6
     - name: Dbg cordova build
-      run: cordova build android --verbose
+      run: |
+        cordova prepare android --verbose
+        cd ./platforms/android
+        ./gradlew -b ./build.gradle cdvBuildDebug --stacktrace
     # - name: Generate APK
     #   run:  |
     #     cd ./platforms/android
