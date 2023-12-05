@@ -39,7 +39,8 @@ jobs:
     - name: Generate APK
       run:  |
         cd ./platforms/android
-        bash ./gradlew assembleDebug --stacktrace
+        gradle wrapper
+        ./gradlew assembleDebug --stacktrace
         
       env:
         CI: true
