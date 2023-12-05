@@ -43,12 +43,14 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
       with:
-        gradle-version: 7.4.2
-    - name: Generate APK
-      run:  |
-        cd ./platforms/android
-        gradle wrapper --gradle-version 7.4.2
-        ./gradlew assembleDebug --stacktrace
+        gradle-version: 7.6.0
+    - name: Dbg cordova build
+      run: cordova build android --verbose
+    # - name: Generate APK
+    #   run:  |
+    #     cd ./platforms/android
+    #     gradle wrapper --gradle-version 7.6.0
+    #     ./gradlew assembleDebug --stacktrace
         
       env:
         CI: true
