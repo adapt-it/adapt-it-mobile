@@ -36,10 +36,10 @@ jobs:
         npm install -g cordova
         npm link gulp
         gulp prep-android-dir
-    - name: Specify Gradle version
-      run: ./platforms/android/gradlew wrapper --gradle-version-7.3.1
-    - name: Actual Dbg build
-      run:  gulp --debug
+    - name: Generate APK
+      run:  |
+        cd ./platforms/android
+        bash ./gradlew assembleDebug --stacktrace
         
       env:
         CI: true
