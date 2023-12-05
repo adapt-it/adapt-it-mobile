@@ -39,8 +39,7 @@ jobs:
     - name: Generate APK
       run:  |
         cd ./platforms/android
-        gradle wrapper
-        ./gradlew wrapper --gradle-version=7.4.2 --distribution-type=bin
+        gradle wrapper --gradle-version 7.4.2
         ./gradlew assembleDebug --stacktrace
         
       env:
