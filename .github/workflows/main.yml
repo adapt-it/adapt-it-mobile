@@ -49,12 +49,7 @@ jobs:
         cordova prepare android --verbose
         cd ./platforms/android
         gradle wrapper --gradle-version 7.6
-        ./gradlew -b ./build.gradle cdvBuildDebug --stacktrace
-    # - name: Generate APK
-    #   run:  |
-    #     cd ./platforms/android
-    #     gradle wrapper --gradle-version 7.6
-    #     ./gradlew assembleDebug --stacktrace
+        # ./gradlew -b ./build.gradle cdvBuildDebug --stacktrace
         
       env:
         CI: true
