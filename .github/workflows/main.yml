@@ -37,7 +37,7 @@ jobs:
         npm install -g cordova
         npm link gulp
         gulp prep-android-dir
-        gradlew wrapper --gradle-version=7.3.1 --distribution-type=bin
+        ./gradlew wrapper --gradle-version=7.3.1
         gulp --debug
         
       env:
