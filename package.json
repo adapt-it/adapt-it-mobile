@@ -39,7 +39,6 @@
   "dependencies": {
     "cordova-lib": "^10.1.0",
     "cordova-plugin-fonts": "^0.6.5",
-    "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-statusbar": "^2.4.3",
     "crypto-randomuuid": "^1.0.0",
     "electron-builder": "^23.0.3",
@@ -92,8 +91,8 @@
       }
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
