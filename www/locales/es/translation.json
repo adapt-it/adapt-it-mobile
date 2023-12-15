@@ -210,7 +210,7 @@
         "ttlLoading": "Espere un momento, por favor.",
         "ttlImporting": "Cargando... por favor espere.",
         "dscStatusReading": "Leyendo archivo: \"__document__\"",
-        "dscErrMergeNoChapID": "Unable to merge -- cannot find existing chapter in list: __chapter__",
+        "dscErrMergeNoChapID": "No se puede importar documento -- no pudo encontrar capítulo: __chapter__",
         "dscStatusSaving": "Lectura de archivos. Guardando lote __number__ (__details__)",
         "detailWords": "palabras: __count__",
         "detailChapterVerse": "__chap__, versículo: __verse__ ",

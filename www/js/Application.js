@@ -79,8 +79,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.13.1", // appended with Android / iOS build info
-            AndroidBuild: "47", // (was milestone release #)
+            version: "1.14.0", // appended with Android / iOS build info
+            AndroidBuild: "48", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -537,6 +537,7 @@ define(function (require) {
                 // update the book and chapter lists, then show the import docs view
                 $.when(window.Application.BookList.fetch({reset: true, data: {name: ""}})).done(function () {
                     $.when(window.Application.ChapterList.fetch({reset: true, data: {name: ""}})).done(function () {
+                        var proj = window.Application.currentProject;
                         if (proj !== null) {
                             importDocView = new DocumentViews.ImportDocumentView({model: proj});
                             importDocView.isLoadingFromURL = false;

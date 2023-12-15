@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="47" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.13.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="48" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.14.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -33,6 +33,9 @@
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:largeHeap="true" />
+        </edit-config>
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
             <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -336,6 +339,7 @@
         <icon src="www/res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
         <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
     </platform>
+    <plugin name="cordova-plugin-chooser" spec="^1.3.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
     <plugin name="cordova-plugin-filepath" spec="https://github.com/VIAVI-Solutions/cordova-plugin-filepath.git" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />

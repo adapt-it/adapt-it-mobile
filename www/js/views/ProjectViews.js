@@ -103,18 +103,7 @@ define(function (require) {
             $(".bottom-tb").show();
             $("#Spacer").hide();
         },
-        
-        // Helper to import the KB file associated with the specified project
-        // (overriding any existing KB). This gets called from both mobileImportAIC
-        // and browserImportAIC
-//        importKBFile = function (file, project) {
-//            var reader = new FileReader();
-//            reader.onloadend = function (evt) {
-//                
-//            };
-//            reader.readAsText(file, "UTF-8");
-//        },
-        
+                
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
         // from both mobileImportAIC and browserImportAIC.
