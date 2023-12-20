@@ -382,6 +382,7 @@
         "lblNoEntries": "No entries found.",
         "ErrImportDoc": "Adapt It Mobile encountered a problem trying to open / import document: \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
+        "ErrNoClipboard": "No text found on the clipboard. Please copy some text to the clipboard and try importing again.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

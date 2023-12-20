@@ -382,6 +382,7 @@
         "lblNoEntries": "No se encontraron elementos.",
         "ErrImportDoc": "Adapt It Mobile encontró un problema al intentar abrir/importar un documento: \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile necesita información sobre su proyecto de traducción antes de poder importar documentos. Cree o copie un documento y luego podrá importar documentos a Adapt It Mobile.",
+        "ErrNoClipboard": "No se encontró texto en el portapapeles. Copie algo de texto en el portapapeles e intente importarlo nuevamente.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

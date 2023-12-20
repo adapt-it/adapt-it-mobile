@@ -382,6 +382,7 @@
         "lblNoEntries": "Nenhuma iten encontrada.",
         "ErrImportDoc": "Adapt It Mobile encontrou um problema ao tentar abrir/importar documento: \"__error__\"",
         "ErrImportNoProjectDefined": "O Adapt It Mobile precisa de informações sobre o seu projeto de tradução antes de importar documentos. Crie ou copie um documento e então você poderá importar documentos para o Adapt It Mobile.",
+        "ErrNoClipboard": "Nenhum texto encontrado na área de transferência. Copie algum texto para a área de transferência e tente importar novamente.",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

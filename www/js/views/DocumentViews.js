@@ -6346,6 +6346,14 @@ define(function (require) {
                             importFile(clipboardFile, model);
                         } else {
                             console.log("No data to import");
+                            // No data to import -- tell the user to copy something to the clipboard
+                            if (navigator.notification) { // just in case...
+                                // on mobile device -- use notification plugin API
+                                navigator.notification.alert(i18n.t('view.ErrNoClipboard'));
+                            } else {
+                                // fall back on webview alert
+                                alert(i18n.t('view.ErrNoClipboard'));
+                            }
                         }
                     }, function (error) {
                         // error in clipboard retrieval -- skip entry
@@ -6369,6 +6377,9 @@ define(function (require) {
                             importFile(clipboardFile, model);            
                         } else {
                             console.log("No data to import");
+                            // No data to import -- tell the user to copy something to the clipboard
+                            // in browser -- use window.confirm / window.alert
+                            alert(i18n.t('view.ErrNoClipboard'));
                         }
                     });
                 }
