@@ -201,7 +201,7 @@
         "dscErrCannotFindChapter": "ne peut pas trouver le numéro de chapitre.",
         "dscErrImportFirstChapterFirst": "il s'agit d'un document de collaboration; importe le premier chapitre avant d'importer ce chapitre.",
         "dscNoDocumentsFound": "Aucun fichier disponible trouvé sur l'appareil. Se il vous plaît copier des fichiers sur le périphérique et réessayez.",
-        "lblSelect": "Sélectionnez documents",
+        "lblSelect": "Sélectionnez document",
         "ttlReset": "Réinitialiser Adapt It Mobile",
         "dscReset": "AVERTISSEMENT: ce qui effacera tous les documents et de projets, ainsi que la Base de Connaissances. Etes-vous sûr que vous voulez réinitialiser Adapt It Mobile?",
         "dscAdaptComplete": "Traduction de __chapter__ est maintenant terminée.",

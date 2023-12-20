@@ -201,7 +201,7 @@
         "dscErrCannotFindChapter": "Não é possível encontrar informações do capítulo.",
         "dscErrImportFirstChapterFirst": "este é um documento de colaboração; importe o primeiro capítulo antes de importar este capítulo.",
         "dscNoDocumentsFound": "Nenhum arquivo disponível encontrado no dispositivo. Copie os arquivos para o dispositivo e tente novamente.",
-        "lblSelect": "Selecionar arquivos",
+        "lblSelect": "Selecionar arquivo",
         "ttlReset": "Restabelecer Adapt It Mobile",
         "dscReset": "AVISO: isso limpará todos os documentos e projetos, bem como a Base de Conhecimento. Você tem certeza?",
         "dscAdaptComplete": "Adaptação de __chapter__ completo.",

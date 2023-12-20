@@ -19,7 +19,6 @@ define(function (require) {
         i18n            = require('i18n'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
-        tplImportVerify = require('text!tpl/ImportVerify.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
         tplExportContent = require('text!tpl/ExportContent.html'),
         tplExportFormat = require('text!tpl/ExportChooseFormat.html'),
@@ -252,13 +251,11 @@ define(function (require) {
             var importSuccess = function () {
                 console.log("importSuccess()");
                 // hide unneeded UI elements
-                $("#mobileSelect").html(""); // remove mobile UI (some duplicate IDs)
-                $("#loading").hide();
-                $("#waiting").hide();
-                $("#pb-bg").hide();
-                $("#browserSelect").hide(); // hide the "choose file" button (browser)
-                // show the import status
-                $("#browserGroup").show();
+                $("#LoadingStatus").hide();
+                // show the import status and "change the filename" UI
+                $("#grpControls").show();
+                $("#OKCancelButtons").show();
+                $("#selectControls").hide();
                 // Did we just import the KB?
                 if (isKB === true) {
                     // KB file -- only display success status
@@ -270,7 +267,7 @@ define(function (require) {
                     // not a KB file:
                     // for regular document files, we did our best to guess a book name --
                     // allow the user to change it if they want
-                    $("#status").html(Handlebars.compile(tplImportVerify));
+                    $("#verifyNameControls").show();
                     $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                     $("#BookName").val(bookName);
                 }
@@ -294,8 +291,7 @@ define(function (require) {
                     $("#pb-bg").hide();
                 }
                 // display the OK button
-                $("#btnOK").removeClass("hide");
-                $("#btnOK").removeAttr("disabled");
+                $("#OKCancelButtons").show();
             };
             
             // callback method for when the FileReader has finished loading in the file
@@ -6227,8 +6223,8 @@ define(function (require) {
             ////
             events: {
                 "change #selFile": "browserImportDocs",
-                "click .topcoat-list__item": "mobileImportDocs",
-                "click #btnClipboard": "onBrowserClipboard",
+                "click #btnBrowse": "onBtnBrowse",
+                "click #btnClipboard": "onBtnClipboard",
                 "click #btnCancel": "onCancel",
                 "click #OK": "onOK"
             },
@@ -6252,8 +6248,8 @@ define(function (require) {
                 }
                 console.log("importfromURL: importing file: " + fileName);
                 // replace the selection UI with the import UI
-                $("#browserGroup").hide();
-                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
+                $("#selectControls").hide();
+                $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                 // Import can take a while, and potentially hang. Provide a way to cancel the operation
                 $("#btnCancel").show();                
                 $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
@@ -6268,73 +6264,113 @@ define(function (require) {
                 var fileindex = 0;
                 var files = event.currentTarget.files;
                 fileCount = files.length;
-                // each of the files items is a file object already; there's no need to use
-                // the file plugin like we need to below. Just call importFile() directly.
-                while (fileindex < fileCount) {
-                    fileName = files[fileindex].name;
-                    importFile(files[fileindex], this.model);
-                    fileindex++;
+                if (fileCount > 0) {
+                    isClipboard = false;
+                    // replace the selection UI with the import UI
+                    $("#selectControls").hide();
+                    $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                    // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                    $("#btnCancel").show();   
+                    // each of the files items is a file object already; call importFile() directly.
+                    while (fileindex < fileCount) {
+                        fileName = files[fileindex].name;
+                        importFile(files[fileindex], this.model);
+                        fileindex++;
+                    }
                 }
             },
-            // Handler for when the user clicks the "clipboard text" option in the browser;
-            // copy the clipboard contents, and if they're not empty, import the contents as a file
-            onBrowserClipboard: function() {
+            // User clicked on the (mobile) Select file button --
+            // call getFile() on the chooser plugin, and if we get a file back, import it
+            onBtnBrowse: function () {
                 var model = this.model;
-                navigator.clipboard.readText().then(
+                chooser.getFile('text/*', function (file) {
+                    console.log(file ? file.name : 'canceled');
+                    if (file) {
+                        isClipboard = false;
+                        // replace the selection UI with the import UI
+                        $("#selectControls").hide();
+                        $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                        // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                        $("#btnCancel").show();   
+                        fileName = file.name;
+                        window.resolveLocalFileSystemURL(file.uri,
+                            function (entry) {
+                                entry.file(
+                                    function (oFile) {
+                                        $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
+                                        importFile(oFile, model);
+                                    },
+                                    function (error) {
+                                        console.log("FileEntry.file error: " + error.code);
+                                    }
+                                );
+                            },
+                            function (error) {
+                                console.log("resolveLocalFileSystemURL error: " + error.code);
+                            });
+                            // importFile(file, model);                        
+                    }
+                }, function (error) {
+                    // error in clipboard retrieval -- skip entry
+                    // (seen this when there's data on the clipboard that isn't text/plain)
+                    console.log("Error retrieving clipboard data:" + error);
+                    DirsRemaining--;
+                });
+            },
+            // Handler for when the user clicks the "clipboard text" option;
+            // copy the clipboard contents, and if they're not empty, import the contents as a file
+            onBtnClipboard: function () {
+                var model = this.model;
+                // Are we in the browser or on a mobile device?
+                if (device && (device.platform !== "browser")) {
+                    // mobile device
+                    cordova.plugins.clipboard.paste(function (text) {
+                        if (text !== null && text.length > 0) {
+                            // paste call returned AND there's something on the clipboard
+                            console.log("Clipboard contents: " + text);
+                            isClipboard = true;
+                            // replace the selection UI with the import UI
+                            $("#selectControls").hide();
+                            $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                            // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                            $("#btnCancel").show();   
+                            // EDB 12/19/2023: ? not sure if still true - ios has wkwebview now? need to test
+                            // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
+                            // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
+                            // it places the contents in the name attribute. The FileReader does
+                            // accept a Blob (the File object derives from Blob), which is why importFile works.
+                            console.log("Clipboard selected. Creating ad hoc file from text.");
+                            var clipboardFile = new Blob([text], {type: "text/plain"});
+                            $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
+                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
+                            importFile(clipboardFile, model);
+                        } else {
+                            console.log("No data to import");
+                        }
+                    }, function (error) {
+                        // error in clipboard retrieval -- skip entry
+                        // (seen this when there's data on the clipboard that isn't text/plain)
+                        console.log("Error retrieving clipboard data:" + error);
+                    });
+                } else {
+                    // browser
+                    navigator.clipboard.readText().then(
                     (clipText) => {
                         if (clipText.length > 0) {
                             isClipboard = true;
                             console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
-                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
+                            // replace the selection UI with the import UI
+                            $("#selectControls").hide();
+                            $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                            // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                            $("#btnCancel").show();   
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
                             fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
                             importFile(clipboardFile, model);            
+                        } else {
+                            console.log("No data to import");
                         }
                     });
-            },
-            // Handler for the when the user clicks a document in the list to import (mobile only) -
-            // we gather the file path from the selection, then reconstitute file objects
-            // from the path using the cordova-plugin-file / filesystem API.
-            mobileImportDocs: function (event) {
-                // replace the selection UI with the import UI
-                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                // Import can take a while, and potentially hang. Provide a way to cancel the operation
-                $("#btnCancel").show();                
-                // find all the selected file
-                var index = $(event.currentTarget).attr('id').trim();
-                var model = this.model;
-                if (index === "clipboard") {
-                    isClipboard = true;
-                    // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
-                    // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
-                    // it places the contents in the name attribute. The FileReader does
-                    // accept a Blob (the File object derives from Blob), which is why importFile works.
-                    console.log("Clipboard selected. Creating ad hoc file from text.");
-                    var clipboardFile = new Blob([cbData], {type: "text/plain"});
-                    $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                    fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
-                    importFile(clipboardFile, model);
-                } else {
-                    isClipboard = false;
-                    // regular file
-                    console.log("index: " + index + ", FileList[index]: " + fileList[index]);
-                    // request the persistent file system
-                    window.resolveLocalFileSystemURL(fileList[index],
-                        function (entry) {
-                            entry.file(
-                                function (file) {
-                                    $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
-                                    fileName = file.name;
-                                    importFile(file, model);
-                                },
-                                function (error) {
-                                    console.log("FileEntry.file error: " + error.code);
-                                }
-                            );
-                        },
-                        function (error) {
-                            console.log("resolveLocalFileSystemURL error: " + error.code);
-                        });
                 }
             },
             // Handler for the Cancel button (in the loading / please wait template) --
@@ -6464,21 +6500,12 @@ define(function (require) {
                     window.location.replace("");
                 }
             },
-            // Show event handler (from MarionetteJS):
-            // - if we're running in a mobile device, we'll use the cordova-plugin-file
-            //   API to search through the device directories and add any valid files
-            //   to a table grid
-            // - If we're running in a mobile device, also test the clipboard for any text.
-            //   If there is any, add an option to create a new "book" from the clipboard text.
-            // - If we're in a browser, just show the html <input type=file> to allow
-            //   for file selection
+            // Show event handler (from MarionetteJS)
             onShow: function () {
                 var punctExp = "";
-//                $("#selFile").attr("accept", ".xml,.usfm");
                 $("#title").html(i18n.t('view.lblImportDocuments'));
-                $("#lblDirections").html(i18n.t('view.dscImportDocuments'));
-                $(".topcoat-progress-bar").hide();
-                $("#OK").attr("disabled", true);
+                $("#OKCancelButtons").hide();
+                $("#verifyNameControls").hide();
                 // build the regular expression to identify punctuation
                 // (this allows us to split out punctuation as separate tokens when importing
                 punctExp = "[\\s";
@@ -6510,116 +6537,12 @@ define(function (require) {
                 // reset the isKB flag
                 isKB = false;
                 isGlossKB = false;
-                
+                // show either the browser or mobile selection buttons
                 if (this.isLoadingFromURL === false) {
                     if (device && (device.platform !== "browser")) {
-                        // running on device -- use cordova file plugin to select file
-                        $("#browserGroup").hide();
-                        $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                        var localURLs    = [
-                            cordova.file.documentsDirectory,
-                            cordova.file.sharedDirectory,
-                            cordova.file.dataDirectory,
-                            cordova.file.syncedDataDirectory
-                        ];
-                        var DirsRemaining = localURLs.length + 1; // + clipboard text
-                        var index = 0;
-                        var i;
-                        var statusStr = "";
-                        // running on device -- check the clipboard for text
-                        // (note that we have to call paste to test for non-empty -- on iOS, testing for data
-                        // on the clipboard/pasteboard was only added in ios 10.)
-                        cordova.plugins.clipboard.paste(function (text) {
-                            DirsRemaining--; // done checking -- remove the placeholder "directory"
-                            console.log("Clipboard paste returned. DirsRemaining = " + DirsRemaining);
-                            if (text !== null && text.length > 0) {
-                                console.log("Clipboard contents: " + text);
-                                // something on the clipboard -- add an option to paste the text as a new Book
-                                statusStr += "<li class='topcoat-list__item' id='clipboard'><span class='topcoat-icon topcoat-icon--clipboard'></span> " + i18n.t('view.lblCopyClipboardText') + "<span class='chevron'></span></li>";
-                                index++;
-                            }
-                            cbData = text; // save, so we only call this once
-                            // This function can return first if there's a lot of data on the clipboard (think: xml file).
-                            // Check to see if we're done parsing the directory structure, and refresh the UI if so.
-                            if (DirsRemaining <= 0) {
-                                if (statusStr.length > 0) {
-                                    // display the list of files we found
-                                    $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-                                    $("#tb").html(statusStr);
-                                } else {
-                                    // nothing to select -- inform the user
-                                    $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
-                                }
-                            }
-                        }, function (error) {
-                            // error in clipboard retrieval -- skip entry
-                            // (seen this when there's data on the clipboard that isn't text/plain)
-                            console.log("Error retrieving clipboard data:" + error);
-                            DirsRemaining--;
-                        });
-                        var addFileEntry = function (entry) {
-                            console.log("addFileEntry: entry");
-                            var dirReader = entry.createReader();
-                            dirReader.readEntries(
-                                function (entries) {
-                                    var fileStr = "";
-                                    var i;
-                                    for (i = 0; i < entries.length; i++) {
-                                        console.log("addFileEntry: looking at:" + entries[i].fullPath);
-                                        if (entries[i].isDirectory === true) {
-                                            // Recursive -- call back into this subdirectory
-                                            DirsRemaining = DirsRemaining + 1;
-                                            console.log("addFileEntry: Directory found. New DirsRemaining = " + DirsRemaining);
-                                            addFileEntry(entries[i]);
-                                        } else {
-                                            console.log(entries[i].fullPath);
-                                            if ((entries[i].fullPath.match(/download/i)) || (entries[i].fullPath.match(/inbox/i)) || (entries[i].fullPath.match(/document/i)) || entries[i].fullPath.lastIndexOf('/') === 0) {
-                                                // only take files from the Download or Document directories
-                                                if ((entries[i].name.toLowerCase().indexOf(".txt") > 0) ||
-                                                    (entries[i].name.toLowerCase().indexOf(".tmx") > 0) ||
-                                                    (entries[i].name.toLowerCase().indexOf(".usx") > 0) ||
-                                                    (entries[i].name.toLowerCase().indexOf(".usfm") > 0) ||
-                                                    (entries[i].name.toLowerCase().indexOf(".sfm") > 0) ||
-                                                    (entries[i].name.toLowerCase().indexOf(".xml") > 0)) {
-                                                    fileList[index] = entries[i].toURL();
-                                                    fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
-                                                    index++;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    statusStr += fileStr;
-                                    DirsRemaining = DirsRemaining - 1;
-                                    console.log("addFileEntry: finished loop. DirsRemaining = " + DirsRemaining);
-                                    if (DirsRemaining <= 0) {
-                                        if (statusStr.length > 0) {
-                                            // display the list of files we found
-                                            $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscImportDocuments') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-                                            $("#tb").html(statusStr);
-                                        } else {
-                                            // nothing to select -- inform the user
-                                            $("#mobileSelect").html("<div class=\"vertcenter\"><div class=\"welcome-title\"><div class=\"left\"><span class=\"topcoat-icon topcoat-icon--alert\"></span></div><div id=\"status\" class=\"control-row full\">" + i18n.t('view.dscNoDocumentsFound') + "</div></div></div>");
-                                        }
-                                    }
-                                },
-                                function (error) {
-                                    console.log("readEntries error: " + error.code);
-                                    statusStr += "<p>readEntries error: " + error.code + "</p>";
-                                }
-                            );
-                        };
-                        var addError = function (error) {
-                            // log the error and continue processing
-                            console.log("getDirectory error: " + error.code);
-                            DirsRemaining--;
-                        };
-                        for (i = 0; i < localURLs.length; i++) {
-                            if (localURLs[i] !== null && localURLs[i].length > 0) {
-                                window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
-                            } else {
-                                DirsRemaining--;
-                            }
-                        }
+                        // running on device -- use choooser plugin to select file
+                        $("#browserSelect").hide();
+                        // chooser.getFile('text/*');
                     } else {
                         // running in browser -- use html <input> to select file
                         $("#mobileSelect").hide();

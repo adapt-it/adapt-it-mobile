@@ -358,81 +358,17 @@ define(function (require) {
             // - For browsers, uses the html <input type=file> element to allow the user
             //   to select an .aic file from the local PC.
             onShow: function () {
-                $("#selFile").attr("accept", ".aic");
-                $("#selFile").removeAttr("multiple");
                 $("#title").html(i18n.t('view.lblCopyProject'));
                 $(".topcoat-progress-bar").hide();
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 // cheater way to tell if running on mobile device
                 if (device && (device.platform !== "browser")) {
-                    // running on device -- use cordova file plugin to select file
-                    $("#browserGroup").hide();
-                    $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                    var DirsRemaining = window.Application.localURLs.length;
-                    var index = 0;
-                    var i;
-                    var statusStr = "";
-                    var addFileEntry = function (entry) {
-                        var dirReader = entry.createReader();
-                        dirReader.readEntries(
-                            function (entries) {
-                                var fileStr = "";
-                                var i;
-                                for (i = 0; i < entries.length; i++) {
-                                    if (entries[i].isDirectory === true) {
-                                        // Recursive -- call back into this subdirectory
-                                        DirsRemaining++;
-                                        addFileEntry(entries[i]);
-                                    } else {
-                                        if (entries[i].name.toLowerCase().indexOf(".aic") > 0) {
-                                            fileList[index] = entries[i].toURL();
-                                            fileStr += "<li class='topcoat-list__item' id=" + index + ">" + entries[i].fullPath + "<span class='chevron'></span></li>";
-                                            index++;
-                                        }
-                                    }
-                                }
-                                statusStr += fileStr;
-                                DirsRemaining--;
-                                if (DirsRemaining <= 0) {
-                                    if (statusStr.length > 0) {
-                                        $("#mobileSelect").html("<div class='wizard-instructions'>" + i18n.t('view.dscCopyProjInstructions') + "</div><div class='topcoat-list__container chapter-list'><ul class='topcoat-list__container chapter-list'>" + statusStr + "</ul></div>");
-                                        $("#OK").attr("disabled", true);
-                                    } else {
-                                        // nothing to select -- inform the user
-                                        $("#status").html(i18n.t("view.dscNoDocumentsFound"));
-                                        if ($("#loading").length) {
-                                            $("#loading").hide();
-                                            $("#waiting").hide();
-                                            $("#OK").show();
-                                        }
-                                        $("#OK").removeAttr("disabled");
-                                    }
-                                }
-                            },
-                            function (error) {
-                                console.log("readEntries error: " + error.code);
-                                statusStr += "<p>readEntries error: " + error.code + "</p>";
-                            }
-                        );
-                    };
-                    var addError = function (error) {
-                        // log the error and continue processing
-                        console.log("getDirectory error: " + error.code);
-                        DirsRemaining--;
-                    };
-                    for (i = 0; i < window.Application.localURLs.length; i++) {
-                        if (window.Application.localURLs[i] === null || window.Application.localURLs[i].length === 0) {
-                            DirsRemaining--;
-                            continue; // skip blank / non-existent paths for this platform
-                        }
-                        window.resolveLocalFileSystemURL(window.Application.localURLs[i], addFileEntry, addError);
-                    }
+                    // running on device -- use cordova chooser plugin to select file
+                    $("#browserSelect").hide();
                 } else {
                     // running in browser -- use html <input> to select file
                     $("#mobileSelect").hide();
-                    $("#btnClipboard").hide(); // for now, no clipboard .aic import for the browser
                 }
-                $("#OK").attr("disabled", true);
             }
         }),
         
