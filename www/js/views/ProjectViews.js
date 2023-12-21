@@ -109,6 +109,43 @@ define(function (require) {
         // from both mobileImportAIC and browserImportAIC.
         importSettingsFile = function (file, project) {
             var reader = new FileReader();
+            var result = false;
+            var errMsg = "";
+            // Callback for when the file is imported / saved successfully
+            var importSuccess = function () {
+                console.log("importSuccess()");
+                // hide unneeded UI elements
+                $("#LoadingStatus").hide();
+                // show the import status and "change the filename" UI
+                $("#grpControls").show();
+                $("#OKCancelButtons").show();
+                $("#selectControls").hide();
+                // TODO: just tell the user the file was imported successfully (no renaming)
+                    $("#verifyNameControls").show();
+                    $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                    $("#BookName").val(bookName);
+                // display the OK button
+                $("#OK").removeClass("hide");
+                $("#OK").removeAttr("disabled");
+            };
+            // Callback for when the file failed to import
+            var importFail = function (e) {
+                console.log("importFail(): " + e.message + " (code: " + e.code + ")");
+                // update status with the failure message and code (if available)
+                var strReason = e.message;
+                if (e.code) {
+                    strReason += " (code: " + e.code + ")";
+                }
+                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
+                if ($("#loading").length) {
+                    // mobile "please wait" UI
+                    $("#loading").hide();
+                    $("#waiting").hide();
+                    $("#pb-bg").hide();
+                }
+                // display the OK button
+                $("#OKCancelButtons").show();
+            };
             reader.onloadend = function (evt) {
                 var value = "",
                     value2 = "",
@@ -183,7 +220,6 @@ define(function (require) {
                         project.set("FilterMarkers", value, {silent: true});
                     }
                 }
-//                    value = model.get("SourceLanguageCode") + "." + model.get("TargetLanguageCode");
                 value = window.Application.generateUUID();
                 project.set("projectid", value, {silent: true});
                 // The following settings require some extra work
@@ -257,16 +293,18 @@ define(function (require) {
                 project.set("SpecialTextColor", getColorValue(getSettingValue(87, "SpecialTextColor")), {silent: true});
                 project.set("RetranslationColor", getColorValue(getSettingValue(88, "RetranslationTextColor")), {silent: true});
                 project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
-                
-                // done -- display the OK button
                 project.set("projectid", window.Application.generateUUID(), {silent: true});
+                
+                // done
                 $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
-                if ($("#loading").length) {
-                    $("#loading").hide();
-                    $("#waiting").hide();
-                    $("#btnOK").show();
+                result = true;
+
+                if (result === false) {
+                    importFail(new Error(errMsg));
+                } else {
+                    importSuccess();
                 }
-                $("#btnOK").removeAttr("disabled");
+
             };
             reader.readAsText(file, "UTF-8");
         },
@@ -285,8 +323,10 @@ define(function (require) {
             // Event Handlers
             ////
             events: {
+                "click #btnBrowse": "onBtnBrowse",
+                "click #btnClipboard": "onBtnClipboard",
+                "click #btnCancel": "onCancel",
                 "change #selFile": "browserImportAIC",
-                "click .topcoat-list__item": "mobileImportAIC",
                 "click #OK": "onOK"
             },
             // Resume handler -- user placed the app in the background, then resumed.
@@ -294,6 +334,18 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            // Handler for the Cancel button (in the loading / please wait template) --
+            // user is cancelling the import (might be hung?)
+            onCancel: function () {
+                // User is cancelling the import operation -- go home
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history (import link from outside app) -- just go home
+                    window.location.replace("");
+                }
             },
             // Handler for the OK button click -- 
             // saves any changes and goes back to the home page
@@ -315,32 +367,109 @@ define(function (require) {
                 // head back to the home page
                 window.location.replace("");
             },
-            // Handler for the click event on the project file list (mobile only) -
-            // reconstitutes the file object from the path and calls importSettingsFile()
-            mobileImportAIC: function (event) {
-                console.log("mobileImportAIC");
-                // replace the selection UI with the import UI
-                $("#mobileSelect").html(Handlebars.compile(tplLoadingPleaseWait));
-                // open selected .aic file
-                var index = $(event.currentTarget).attr('id').trim();
+            // User clicked on the (mobile) Select file button --
+            // call getFile() on the chooser plugin, and if we get a file back, import it
+            onBtnBrowse: function () {
                 var model = this.model;
-                console.log("index: " + index + ", FileList[index]: " + fileList[index]);
-                // request the persistent file system
-                window.resolveLocalFileSystemURL(fileList[index],
-                    function (entry) {
-                        entry.file(
-                            function (file) {
-                                $("#status").html(i18n.t("view.dscStatusReading", {document: file.name}));
-                                importSettingsFile(file, model);
+                chooser.getFile('text/*', function (file) {
+                    console.log(file ? file.name : 'canceled');
+                    if (file) {
+                        isClipboard = false;
+                        // replace the selection UI with the import UI
+                        $("#selectControls").hide();
+                        $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                        // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                        $("#btnCancel").show();   
+                        fileName = file.name;
+                        window.resolveLocalFileSystemURL(file.uri,
+                            function (entry) {
+                                entry.file(
+                                    function (oFile) {
+                                        $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
+                                        importSettingsFile(oFile, model);
+                                    },
+                                    function (error) {
+                                        console.log("FileEntry.file error: " + error.code);
+                                    }
+                                );
                             },
                             function (error) {
-                                console.log("FileEntry.file error: " + error.code);
+                                console.log("resolveLocalFileSystemURL error: " + error.code);
+                            });
+                            // importFile(file, model);                        
+                    }
+                }, function (error) {
+                    // Log the error
+                    console.log("CopyProjectView::onBtnBrowse getFile() error: " + error);
+                });
+            },
+            // Handler for when the user clicks the "clipboard text" option;
+            // copy the clipboard contents, and if they're not empty, try to import the contents as a file
+            onBtnClipboard: function () {
+                var model = this.model;
+                // Are we in the browser or on a mobile device?
+                if (device && (device.platform !== "browser")) {
+                    // mobile device
+                    cordova.plugins.clipboard.paste(function (text) {
+                        if (text !== null && text.length > 0) {
+                            // paste call returned AND there's something on the clipboard
+                            console.log("Clipboard contents: " + text);
+                            isClipboard = true;
+                            // replace the selection UI with the import UI
+                            $("#selectControls").hide();
+                            $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                            // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                            $("#btnCancel").show();   
+                            // EDB 12/19/2023: ? not sure if still true - ios has wkwebview now? need to test
+                            // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
+                            // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
+                            // it places the contents in the name attribute. The FileReader does
+                            // accept a Blob (the File object derives from Blob), which is why importFile works.
+                            console.log("Clipboard selected. Creating ad hoc file from text.");
+                            var clipboardFile = new Blob([text], {type: "text/plain"});
+                            $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
+                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
+                            importSettingsFile(clipboardFile, model);
+                        } else {
+                            console.log("No data to import");
+                            // No data to import -- tell the user to copy something to the clipboard
+                            if (navigator.notification) { // just in case...
+                                // on mobile device -- use notification plugin API
+                                navigator.notification.alert(i18n.t('view.ErrNoClipboard'));
+                            } else {
+                                // fall back on webview alert
+                                alert(i18n.t('view.ErrNoClipboard'));
                             }
-                        );
-                    },
-                    function (error) {
-                        console.log("resolveLocalFileSystemURL error: " + error.code);
+                        }
+                    }, function (error) {
+                        // error in clipboard retrieval -- skip entry
+                        // (seen this when there's data on the clipboard that isn't text/plain)
+                        console.log("Error retrieving clipboard data:" + error);
                     });
+                } else {
+                    // browser
+                    navigator.clipboard.readText().then(
+                    (clipText) => {
+                        if (clipText.length > 0) {
+                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
+                            isClipboard = true;
+                            console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
+                            // replace the selection UI with the import UI
+                            $("#selectControls").hide();
+                            $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
+                            // Import can take a while, and potentially hang. Provide a way to cancel the operation
+                            $("#btnCancel").show();   
+                            $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
+                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
+                            importSettingsFile(clipboardFile, model);
+                        } else {
+                            console.log("No data to import");
+                            // No data to import -- tell the user to copy something to the clipboard
+                            // in browser -- use window.confirm / window.alert
+                            alert(i18n.t('view.ErrNoClipboard'));
+                        }
+                    });
+                }
             },
             // Handler for the click event on the Select html <input type=file> button element -
             // just calls importSettingsFile() to import the selected file
@@ -351,15 +480,11 @@ define(function (require) {
                 $("#status").html(i18n.t("view.dscStatusReading", {document: event.currentTarget.files[0]}));
                 importSettingsFile(event.currentTarget.files[0], this.model);
             },
-            // Show event handler (from MarionetteJS) -
-            // - For mobile devices, uses the cordova-plugin-file API to iterate through
-            //   known directories on the mobile device in search of project settings files.
-            //   Any found files are listed as <div> elements
-            // - For browsers, uses the html <input type=file> element to allow the user
-            //   to select an .aic file from the local PC.
+            // Show event handler (from MarionetteJS) 
             onShow: function () {
                 $("#title").html(i18n.t('view.lblCopyProject'));
-                $(".topcoat-progress-bar").hide();
+                $("#OKCancelButtons").hide();
+                $("#verifyNameControls").hide();
                 $("#lblDirections").html(i18n.t('view.dscCopyProjInstructions'));
                 // cheater way to tell if running on mobile device
                 if (device && (device.platform !== "browser")) {

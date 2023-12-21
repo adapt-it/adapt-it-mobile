@@ -57,7 +57,7 @@
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />
-                <!-- our mimeType is really broad; limit to our 6 supported filetypes
+                <!-- our mimeType is really broad; limit to our 7 supported filetypes
                 (and work around Android's ugly path pattern matching system) -->
                 <data android:pathPattern=".*\\.xml" />
                 <data android:pathPattern=".*\\.tmx" />
@@ -65,24 +65,28 @@
                 <data android:pathPattern=".*\\.usfm" />
                 <data android:pathPattern=".*\\.sfm" />
                 <data android:pathPattern=".*\\.usx" />
+                <data android:pathPattern=".*\\.aic" />
                 <data android:pathPattern=".*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\.aic" />
                 <data android:pathPattern=".*\\..*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\.aic" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.aic" />
             </intent-filter>
         </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />

@@ -17,6 +17,7 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         i18n            = require('i18n'),
+        ProjectViews    = require('app/views/ProjectViews'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
@@ -30,9 +31,7 @@ define(function (require) {
         scrIDs          = require('utils/scrIDs'),
         USFM            = require('utils/usfm'),
         kblist          = null, // populated in onShow
-        isPortion       = false,    // Scripture portion support
         bookName        = "",
-        cbData          = "", // clipboard text (so we call it once)
         scrID           = "",
         fileName        = "",
         versionSpec     = "", // file type specification version (2.5, 3.0, etc.)
@@ -3081,18 +3080,6 @@ define(function (require) {
                         var tmpMk = "";
                         var num = /\d/;
 
-                        // // set the lastDocument / lastAdapted<xxx> values if not already set
-                        // if (project.get('lastDocument') === "") {
-                        //     project.set('lastDocument', bookName);
-                        // }
-                        // if (project.get('lastAdaptedBookID') === 0) {
-                        //     project.set('lastAdaptedBookID', bookID);
-                        //     project.set('lastAdaptedChapterID', chapterID);
-                        // }
-                        // if (project.get('lastAdaptedName') === "") {
-                        //     project.set('lastAdaptedName', chapterName);
-                        // }
-                        
                         // build SourcePhrases
                         arr = contents.replace(/\\/gi, " \\").split(spaceRE); // add space to make sure markers get put in a separate token
                         arrSP = contents.replace(/\\/gi, " \\").split(nonSpaceRE); // add space to make sure markers get put in a separate token
@@ -3873,6 +3860,9 @@ define(function (require) {
                             result = readTextDoc(contents);
                         }
                     }
+                } else if (fileName.toLowerCase().indexOf(".aic") > 0) {
+                    // project settings file reader is held in ProjectViews - call it
+                    result = ProjectViews.importSettingsFile({model: proj});
                 } else {
                     if (isClipboard === true) {
                         // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
@@ -6308,17 +6298,14 @@ define(function (require) {
                             function (error) {
                                 console.log("resolveLocalFileSystemURL error: " + error.code);
                             });
-                            // importFile(file, model);                        
                     }
                 }, function (error) {
-                    // error in clipboard retrieval -- skip entry
-                    // (seen this when there's data on the clipboard that isn't text/plain)
-                    console.log("Error retrieving clipboard data:" + error);
-                    DirsRemaining--;
+                    // Log the error
+                    console.log("CopyProjectView::onBtnBrowse getFile() error: " + error);
                 });
             },
             // Handler for when the user clicks the "clipboard text" option;
-            // copy the clipboard contents, and if they're not empty, import the contents as a file
+            // copy the clipboard contents, and if they're not empty, try to import the contents as a file
             onBtnClipboard: function () {
                 var model = this.model;
                 // Are we in the browser or on a mobile device?
@@ -6365,6 +6352,7 @@ define(function (require) {
                     navigator.clipboard.readText().then(
                     (clipText) => {
                         if (clipText.length > 0) {
+                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
                             isClipboard = true;
                             console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
                             // replace the selection UI with the import UI
