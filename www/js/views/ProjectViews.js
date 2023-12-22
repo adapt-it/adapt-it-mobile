@@ -114,19 +114,15 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
-                // hide unneeded UI elements
-                $("#LoadingStatus").hide();
-                // show the import status and "change the filename" UI
-                $("#grpControls").show();
-                $("#OKCancelButtons").show();
+                // hide / show UI elements
                 $("#selectControls").hide();
-                // TODO: just tell the user the file was imported successfully (no renaming)
-                    $("#verifyNameControls").show();
-                    $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
-                    $("#BookName").val(bookName);
-                // display the OK button
-                $("#OK").removeClass("hide");
-                $("#OK").removeAttr("disabled");
+                $("#LoadingStatus").hide();
+                $("#verifyNameControls").show();
+                $("#OKCancelButtons").show();
+                $("#lblVerify").hide();
+                $("#rowBookName").hide();
+                // tell the user the file was imported successfully
+                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
@@ -136,15 +132,15 @@ define(function (require) {
                 if (e.code) {
                     strReason += " (code: " + e.code + ")";
                 }
-                $("#status").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
-                if ($("#loading").length) {
-                    // mobile "please wait" UI
-                    $("#loading").hide();
-                    $("#waiting").hide();
-                    $("#pb-bg").hide();
-                }
-                // display the OK button
+                // hide / show UI elements
+                $("#selectControls").hide();
+                $("#LoadingStatus").hide();
+                $("#verifyNameControls").show();
                 $("#OKCancelButtons").show();
+                $("#lblVerify").hide();
+                $("#rowBookName").hide();
+                // tell the user what went wrong
+                $("#lblDirections").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
             };
             reader.onloadend = function (evt) {
                 var value = "",
@@ -414,7 +410,6 @@ define(function (require) {
                         if (text !== null && text.length > 0) {
                             // paste call returned AND there's something on the clipboard
                             console.log("Clipboard contents: " + text);
-                            isClipboard = true;
                             // replace the selection UI with the import UI
                             $("#selectControls").hide();
                             $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
@@ -428,7 +423,6 @@ define(function (require) {
                             console.log("Clipboard selected. Creating ad hoc file from text.");
                             var clipboardFile = new Blob([text], {type: "text/plain"});
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
                             importSettingsFile(clipboardFile, model);
                         } else {
                             console.log("No data to import");
@@ -452,7 +446,6 @@ define(function (require) {
                     (clipText) => {
                         if (clipText.length > 0) {
                             var clipboardFile = new Blob([clipText], {type: "text/plain"});
-                            isClipboard = true;
                             console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
                             // replace the selection UI with the import UI
                             $("#selectControls").hide();
@@ -460,7 +453,6 @@ define(function (require) {
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();   
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
                             importSettingsFile(clipboardFile, model);
                         } else {
                             console.log("No data to import");
