@@ -3863,6 +3863,7 @@ define(function (require) {
                 } else if (fileName.toLowerCase().indexOf(".aic") > 0) {
                     // project settings file reader is held in ProjectViews - call it
                     result = ProjectViews.importSettingsFile({model: proj});
+                    return result; // in this case, we've already notified the user in ProjectViews::importFail();
                 } else {
                     if (isClipboard === true) {
                         // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
@@ -6273,7 +6274,7 @@ define(function (require) {
             // call getFile() on the chooser plugin, and if we get a file back, import it
             onBtnBrowse: function () {
                 var model = this.model;
-                chooser.getFile('text/*', function (file) {
+                chooser.getFile('*/*', function (file) {
                     console.log(file ? file.name : 'canceled');
                     if (file) {
                         isClipboard = false;

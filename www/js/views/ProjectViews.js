@@ -189,6 +189,11 @@ define(function (require) {
                 };
                 // split out the .aic file into an array (one entry per line of the file)
                 lines = evt.target.result.split("\n");
+                // first off, a couple of sanity checks:
+                // 1. Is this .aic file an Adapt It project file?
+                // 2. Is this for a file we've already configured or imported (i.e., do the source and target languages
+                //    match a project in our project list)?
+
                 // We've successfully opened an Adapt It project file (.aic) -
                 // populate our AIM model object with values
                 // from the .aic file
@@ -297,8 +302,10 @@ define(function (require) {
 
                 if (result === false) {
                     importFail(new Error(errMsg));
+                    return false;
                 } else {
                     importSuccess();
+                    return true;
                 }
 
             };
