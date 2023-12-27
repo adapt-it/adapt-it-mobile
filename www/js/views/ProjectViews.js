@@ -191,14 +191,29 @@ define(function (require) {
                 lines = evt.target.result.split("\n");
                 // first off, a couple of sanity checks:
                 // 1. Is this .aic file an Adapt It project file?
+                var srcLangName = getSettingValue(55, "SourceLanguageName");
+                var tgtLangName = getSettingValue(56, "TargetLanguageName");
+                if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
+                    // source or target language name not found -- we can't parse this as a project file
+                    return false; // no message, as this might be parsed as just regular text later
+                }
                 // 2. Is this for a file we've already configured or imported (i.e., do the source and target languages
                 //    match a project in our project list)?
-
-                // We've successfully opened an Adapt It project file (.aic) -
-                // populate our AIM model object with values
-                // from the .aic file
-                project.set("SourceLanguageName", getSettingValue(55, "SourceLanguageName"), {silent: true});
-                project.set("TargetLanguageName", getSettingValue(56, "TargetLanguageName"), {silent: true});
+                if (window.ProjectList) {
+                    // we've got some projects -- see if our source and target match one of them
+                    window.Application.ProjectList.each(function (model, index) {
+                        if (model.get('SourceLanguageName') === srcLangName && model.get('TargetLanguageName') === tgtLangName) {
+                            // stop import -- this file matches an existing project in our list
+                            errMsg = i18n.t("view.dscErrDuplicateFile");
+                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
+                            return false;
+                        }
+                    });                    
+                }
+                // We've successfully opened an Adapt It project file (.aic), and it's not a duplicate -
+                // populate our AIM model object with values from the file
+                project.set("SourceLanguageName", srcLangName, {silent: true});
+                project.set("TargetLanguageName", tgtLangName, {silent: true});
                 project.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"), {silent: true});
                 project.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"), {silent: true});
                 project.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr", {silent: true});
