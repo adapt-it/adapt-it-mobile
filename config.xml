@@ -18,14 +18,15 @@
     <preference name="SplashMaintainAspectRatio" value="false" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
+    <!-- IMPORTANT NOTE: sqlite plugin seems to collide with the ES6 promise plugin, currently a dependency of the plain-vanilla 
+         social sharing plugin (basically, SQLite doesn't launch and the app doesn't start). As of 12/27/2023, we're using a fork
+         of the social sharing plugin from https://github.com/IsraelHikingMap/corodova-plugin-socialsharing-android12 -->
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
-        <!-- SDK 26/Android 8.x: currently 5% marketshare as of 2023;
-             Using this as lowest SDK because it supports adaptive icons (for splash / app icon) -->
+        <!-- SDK 26/Android 8.x: lowest SDK that supports adaptive icons (for splash / app icon) -->
         <preference name="android-minSdkVersion" value="26" />
         <preference name="android-targetSdkVersion" value="33" />
-        <!-- static splash resources no longer used -->
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/svg/ic_aim_adaptive_splash.xml" />
         <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#279ED8" />
         <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
