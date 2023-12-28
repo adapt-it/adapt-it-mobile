@@ -383,6 +383,7 @@
         "ErrImportDoc": "Adapt It Mobile encountered a problem trying to open / import \"__document__\": \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
         "ErrNoClipboard": "Nogat klipbot teks.",
+        "msgUseProject": "Do you want to switch to this project?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

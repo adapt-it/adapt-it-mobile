@@ -383,6 +383,7 @@
         "ErrImportDoc": "Adapt It Mobile a rencontré un problème en essayant d'ouvrir/importer un document: \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile a besoin d'informations sur votre projet de traduction avant de pouvoir importer des documents. Veuillez créer ou copier un document, puis vous pourrez importer des documents dans Adapt It Mobile.",
         "ErrNoClipboard": "Aucun texte trouvé dans le presse-papiers. Veuillez copier du texte dans le presse-papiers et réessayer d'importer.",
+        "msgUseProject": "Voulez-vous changer pour ce projet?",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

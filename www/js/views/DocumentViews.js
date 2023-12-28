@@ -3925,7 +3925,11 @@ define(function (require) {
                             result = readLIFTDoc(contents);   
                         } else if (contents.indexOf("\\lx") >= 0) {
                             // _probably_ \lx data for the KB
-                            result = readSFMLexDoc(contents); 
+                            result = readSFMLexDoc(contents);
+                        } else if (contents.indexOf("PunctuationTwoCharacterPairsSourceSet") >= 0) {
+                            // project settings file reader is held in ProjectViews - call it
+                            result = ProjectViews.importSettingsFile({model: proj});
+                            return result; // in this case, we've already notified the user in ProjectViews::importFail();
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -6245,8 +6249,14 @@ define(function (require) {
                 $("#btnCancel").show();                
                 $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
                 $("#btnOK").hide();
-                // import the specified file
-                importFile(file, this.model);
+                // is this an .aic file?
+                if (fileName.toLowerCase().indexOf(".aic") > 0) {
+                    // .aic project settings file reader is held in ProjectViews - call it
+                    ProjectViews.importSettingsFile(file, this.model);
+                } else {
+                    // import the specified file
+                    importFile(file, this.model);
+                }                
             },
             // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
