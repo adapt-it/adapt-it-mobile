@@ -17,7 +17,7 @@ define(function (require) {
         Backbone        = require('backbone'),
         Marionette      = require('marionette'),
         i18n            = require('i18n'),
-        ProjectViews    = require('app/views/ProjectViews'),
+        projModel       = require('app/models/project'),
         tplLoadingPleaseWait = require('text!tpl/LoadingPleaseWait.html'),
         tplImportDoc    = require('text!tpl/CopyOrImport.html'),
         tplExportDoc    = require('text!tpl/Export.html'),
@@ -3861,9 +3861,9 @@ define(function (require) {
                         }
                     }
                 } else if (fileName.toLowerCase().indexOf(".aic") > 0) {
-                    // project settings file reader is held in ProjectViews - call it
-                    result = ProjectViews.importSettingsFile({model: proj});
-                    return result; // in this case, we've already notified the user in ProjectViews::importFail();
+                    // create a new project object and populate it from the file contents
+                    var newProj = new projModel.Project();
+                    result = projModel.fromString(contents);
                 } else {
                     if (isClipboard === true) {
                         // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
@@ -3927,9 +3927,9 @@ define(function (require) {
                             // _probably_ \lx data for the KB
                             result = readSFMLexDoc(contents);
                         } else if (contents.indexOf("PunctuationTwoCharacterPairsSourceSet") >= 0) {
-                            // project settings file reader is held in ProjectViews - call it
-                            result = ProjectViews.importSettingsFile({model: proj});
-                            return result; // in this case, we've already notified the user in ProjectViews::importFail();
+                            // create a new project object and populate it from the clipboard contents
+                            var newProj = new projModel.Project();
+                            result = projModel.fromString(contents);
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -6249,14 +6249,8 @@ define(function (require) {
                 $("#btnCancel").show();                
                 $("#status").html(i18n.t("view.dscStatusReading", {document: fileName}));
                 $("#btnOK").hide();
-                // is this an .aic file?
-                if (fileName.toLowerCase().indexOf(".aic") > 0) {
-                    // .aic project settings file reader is held in ProjectViews - call it
-                    ProjectViews.importSettingsFile(file, this.model);
-                } else {
-                    // import the specified file
-                    importFile(file, this.model);
-                }                
+                // import the specified file
+                importFile(file, this.model);
             },
             // Handler for when the user clicks the Select button (browser only) -
             // (this is the html <input type=file> element  displayed for the browser only) --
@@ -6341,7 +6335,7 @@ define(function (require) {
                             var clipboardFile = new Blob([text], {type: "text/plain"});
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
                             fileName = i18n.t("view.lblText") + "-" + (window.Application.generateUUID());
-                            importFile(clipboardFile, model);
+                            importFile(clipboardFile, model);    
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard

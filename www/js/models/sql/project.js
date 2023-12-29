@@ -656,6 +656,179 @@ define(function (require) {
             initialize: function () {
                 this.on('change', this.save, this);
             },
+            // populate this project object from an .aic file / string
+            fromString: function (str) {
+                var value = "",
+                    value2 = "",
+                    value3 = "",
+                    value4 = "",
+                    i = 0,
+                    s = null,
+                    t = null,
+                    arrPunct = [],
+                    arrCases = [];
+                // helper method to convert .aic color values to an html hex color string:
+                // .aic  --> bbggrr (in base 10)
+                // .html --> #rrggbb  (in hex)
+                var getColorValue = function (strValue) {
+                    var intValue = parseInt(strValue, 10);
+                    var rValue = ("00" + (intValue & 0xff).toString(16)).slice(-2);
+                    var gValue = ("00" + ((intValue >> 8) & 0xff).toString(16)).slice(-2);
+                    var bValue = ("00" + ((intValue >> 16) & 0xff).toString(16)).slice(-2);
+                    // format in html hex, padded with leading zeroes
+                    var theValue = "#" + rValue + gValue + bValue;
+                    return theValue;
+                };
+                // Helper method to pull out the value corresponding to the named setting from the .aic file contents
+                // (the array "lines"). If the named setting isn't found at that line, it searches FORWARD to the end --
+                // returning an empty string if not found.
+                var getSettingValue = function (expectedIndex, aicSetting) {
+                    var i = 0,
+                        value = "";
+                    if (lines[expectedIndex].indexOf(aicSetting) !== -1) {
+                        // the value is the rest of the line AFTER the aicsetting + space
+                        value = lines[expectedIndex].substr(aicSetting.length + 1);
+                    } else {
+                        // This setting is NOT at the line we expected. It could be on a different
+                        // line, or not in the .aic file at all
+                        for (i = 0; i < lines.length; i++) {
+                            if (lines[i].indexOf(aicSetting) === 0) {
+                                // Found! The value is the rest of the line AFTER the aicsetting + space
+                                value = lines[i].substr(aicSetting.length + 1);
+                                // finish searching
+                                break;
+                            }
+                        }
+                    }
+                    return value;
+                };
+                // split out the .aic file into an array (one entry per line of the file)
+                lines = str.split("\n");
+                // first off, a couple of sanity checks:
+                // 1. Is this .aic file an Adapt It project file?
+                var srcLangName = getSettingValue(55, "SourceLanguageName");
+                var tgtLangName = getSettingValue(56, "TargetLanguageName");
+                if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
+                    // source or target language name not found -- we can't parse this as a project file
+                    return false; // no message, as this might be parsed as just regular text later
+                }
+                // 2. Is this for a file we've already configured or imported (i.e., do the source and target languages
+                //    match a project in our project list)?
+                if (window.ProjectList) {
+                    // we've got some projects -- see if our source and target match one of them
+                    window.Application.ProjectList.each(function (model, index) {
+                        if (SourceLanguageName === srcLangName && TargetLanguageName === tgtLangName) {
+                            // stop import -- this file matches an existing project in our list
+                            // errMsg = i18n.t("view.dscErrDuplicateFile");
+                            return false;
+                        }
+                    });                    
+                }
+                // We've successfully opened an Adapt It project file (.aic), and it's not a duplicate -
+                // populate our AIM model object with values from the file
+                SourceLanguageName = srcLangName;
+                TargetLanguageName = tgtLangName;
+                SourceLanguageCode = getSettingValue(59, "SourceLanguageCode");
+                TargetLanguageCode = getSettingValue(60, "TargetLanguageCode");
+                SourceDir = (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr";
+                TargetDir = (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr";
+                value = getSettingValue(124, "ProjectName");
+                if (value.length > 0) {
+                    name = value;
+                } else {
+                    // project name not found -- build it from the source & target languages
+                    name = i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (SourceVariant.length > 0) ? SourceVariant : SourceLanguageName,
+                        target: (TargetVariant.length > 0) ? TargetVariant : TargetLanguageName
+                    });
+                }
+                // filters (USFM only -- other settings are ignored)
+                value = getSettingValue(124, "UseSFMarkerSet");
+                if (value === "UsfmOnly") {
+                    value = getSettingValue(123, "UseFilterMarkers");
+                    if (value !== FilterMarkers) {
+                        UseCustomFilters = "true";
+                        FilterMarkers = value;
+                    }
+                }
+                value = window.Application.generateUUID();
+                projectid = value;
+                // The following settings require some extra work
+                // Punctuation pairs
+                value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
+                value2 = getSettingValue(80, "PunctuationPairsTargetSet(stores space for an empty cell)");
+                for (i = 0; i < value.length; i++) {
+                    s = value.charAt(i);
+                    t = value2.charAt(i);
+                    if (s && s.length > 0) {
+                        arrPunct[arrPunct.length] = {s: s, t: t};
+                    }
+                }
+                // add double punctuation pairs as well
+                value = getSettingValue(81, "PunctuationTwoCharacterPairsSourceSet(ditto)");
+                value2 = getSettingValue(82, "PunctuationTwoCharacterPairsTargetSet(ditto)");
+                i = 0;
+                while (i < value.length) {
+                    s = value.substr(i, 2);
+                    t = value2.substr(i, 2);
+                    if (s && s.length > 0) {
+                        arrPunct[arrPunct.length] = {s: s, t: t};
+                    }
+                    i = i + 2; // advance to the next item (each set is 2 chars in length)
+                }
+                PunctPairs = arrPunct;
+                // Auto capitalization
+                value = getSettingValue(115, "LowerCaseSourceLanguageChars");
+                value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
+                value3 = getSettingValue(117, "LowerCaseTargetLanguageChars");
+                value4 = getSettingValue(118, "UpperCaseTargetLanguageChars");
+                for (i = 0; i < value.length; i++) {
+                    s = value.charAt(i) + value2.charAt(i);
+                    t = value3.charAt(i) + value4.charAt(i);
+                    if (s && s.length > 0) {
+                        arrCases[arrCases.length] = {s: s, t: t};
+                    }
+                }
+                CasePairs = arrCases;
+                value = getSettingValue(121, "AutoCapitalizationFlag");
+                AutoCapitalization = (value === "1") ? "true" : "false";
+                value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
+                SourceHasUpperCase = (value === "1") ? "true" : "false";
+
+                // Fonts, if they're installed on this device (getFontList is async)
+                if (navigator.Fonts) {
+                    navigator.Fonts.getFontList(
+                        function (fontList) {
+                            if (fontList) {
+                                // Source Font
+                                value = getSettingValue(16, "FaceName");
+                                if ($.inArray(value, fontList) > -1) {
+                                    SourceFont = value;
+                                }
+                                // Target Font
+                                value = getSettingValue(34, "FaceName");
+                                if ($.inArray(value, fontList) > -1) {
+                                    TargetFont = value;
+                                }
+                            }
+                        },
+                        function (error) {
+                            console.log("FontList error: " + error);
+                        }
+                    );
+                }
+                // font colors
+                SourceColor = getColorValue(getSettingValue(17, "Color"));
+                TargetColor = getColorValue(getSettingValue(34, "Color"));
+                NavColor = getColorValue(getSettingValue(53, "Color"));
+                SpecialTextColor = getColorValue(getSettingValue(87, "SpecialTextColor"));
+                RetranslationColor = getColorValue(getSettingValue(88, "RetranslationTextColor"));
+                TextDifferencesColor = getColorValue(getSettingValue(89, "TargetDifferencesTextColor"));
+                projectid = window.Application.generateUUID();
+                
+                // succeeded -- return true
+                return true;                
+            },
             fetch: function () {
                 var deferred = $.Deferred();
                 var obj = this;
