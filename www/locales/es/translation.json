@@ -384,6 +384,8 @@
         "ErrImportNoProjectDefined": "Adapt It Mobile necesita información sobre su proyecto de traducción antes de poder importar documentos. Cree o copie un documento y luego podrá importar documentos a Adapt It Mobile.",
         "ErrNoClipboard": "No se encontró texto en el portapapeles. Copie algo de texto en el portapapeles e intente importarlo nuevamente.",
         "msgUseProject": "¿Quieres cambiar a este proyecto?",
+        "ErrNotAIC": "No se encontraron datos del proyecto. (¿Es este un archivo de proyecto Adapt It (.aic)?)",
+        "ErrCopyProjectFailed": "No se puede copiar el proyecto. Razón: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

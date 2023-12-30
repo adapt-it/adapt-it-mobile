@@ -3863,7 +3863,7 @@ define(function (require) {
                 } else if (fileName.toLowerCase().indexOf(".aic") > 0) {
                     // create a new project object and populate it from the file contents
                     var newProj = new projModel.Project();
-                    result = projModel.fromString(contents);
+                    result = newProj.fromString(contents);
                 } else {
                     if (isClipboard === true) {
                         // this came from the clipboard -- we'll need to do some tests to try to identify the content type.
@@ -3929,7 +3929,7 @@ define(function (require) {
                         } else if (contents.indexOf("PunctuationTwoCharacterPairsSourceSet") >= 0) {
                             // create a new project object and populate it from the clipboard contents
                             var newProj = new projModel.Project();
-                            result = projModel.fromString(contents);
+                            result = newProj.fromString(contents);
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);

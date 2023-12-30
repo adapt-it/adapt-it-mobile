@@ -384,6 +384,8 @@
         "ErrImportNoProjectDefined": "O Adapt It Mobile precisa de informações sobre o seu projeto de tradução antes de importar documentos. Crie ou copie um documento e então você poderá importar documentos para o Adapt It Mobile.",
         "ErrNoClipboard": "Nenhum texto encontrado na área de transferência. Copie algum texto para a área de transferência e tente importar novamente.",
         "msgUseProject": "Você quer mudar para este projeto?",
+        "ErrNotAIC": "Dados do projeto não encontrados. (Este é um arquivo de projeto Adapt It (.aic)?)",
+        "ErrCopyProjectFailed": "Não foi possível copiar o projeto. Razão: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

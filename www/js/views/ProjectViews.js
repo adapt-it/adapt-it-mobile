@@ -76,8 +76,77 @@ define(function (require) {
             }
             return fullCode;
         },
-        
-
+        // Callback for when the file is imported / saved successfully
+        importSuccess = function (project) {
+            console.log("importSuccess()");
+            // hide / show UI elements
+            $("#selectControls").hide();
+            $("#LoadingStatus").hide();
+            $("#verifyNameControls").show();
+            $("#OKCancelButtons").show();
+            $("#lblVerify").hide();
+            $("#rowBookName").hide();
+            // tell the user the file was imported successfully
+            $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
+            // is there more than one project in our project list?
+            if (window.Application.ProjectList) {
+                // YES -- ask if they want to switch
+                if (navigator.notification) {
+                    // on mobile device -- use notification plugin API
+                    navigator.notification.confirm(
+                        i18n.t('view.msgUseProject'),
+                        function (btnIndex) {
+                            if (btnIndex === 1) {
+                                window.Application.currentProject = project;
+                                localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                                // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                                // from our new project instead
+                                window.Application.BookList.length = 0;
+                                window.Application.ChapterList.length = 0;
+                                window.Application.spList.length = 0;
+                                window.Application.kbList.length = 0;
+                            } else {
+                                // No -- just exit
+                            }
+                        },
+                        i18n.t('view.ttlMain'),
+                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                    );
+                } else {
+                    // in browser -- use window.confirm / window.alert
+                    if (window.confirm(i18n.t('view.msgUseProject'))) {
+                        window.Application.currentProject = project;
+                        localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                        // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                        // from our new project instead
+                        window.Application.BookList.length = 0;
+                        window.Application.ChapterList.length = 0;
+                        window.Application.spList.length = 0;
+                        window.Application.kbList.length = 0;
+                    } else {
+                        // No -- just exit
+                    }
+                }
+            }
+        },
+        // Callback for when the file failed to import
+        importFail = function (e) {
+            console.log("importFail(): " + e.message);
+            // update status with the failure message and code (if available)
+            var strReason = e.message;
+            if (e.code) {
+                strReason += " (code: " + e.code + ")";
+            }
+            // hide / show UI elements
+            $("#selectControls").hide();
+            $("#LoadingStatus").hide();
+            $("#verifyNameControls").show();
+            $("#OKCancelButtons").show();
+            $("#lblVerify").hide();
+            $("#rowBookName").hide();
+            // tell the user what went wrong
+            $("#lblDirections").html(i18n.t("view.ErrCopyProjectFailed", {reason: strReason}));
+        },
         // Helper method to hide the prev/next buttons and increase the scroller size
         // if the screen is too small
         // (Issue #232)
@@ -132,16 +201,14 @@ define(function (require) {
                             i18n.t('view.msgUseProject'),
                             function (btnIndex) {
                                 if (btnIndex === 1) {
-                                    // window.Application.currentProject = window.Application.ProjectList.at(index);
-                                    // localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
-                                    // // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                                    // // from our new project instead
-                                    // window.Application.BookList.length = 0;
-                                    // window.Application.ChapterList.length = 0;
-                                    // window.Application.spList.length = 0;
-                                    // window.Application.kbList.length = 0;
-                                    // // head back to the home page
-                                    // window.location.replace("");
+                                    window.Application.currentProject = project;
+                                    localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                                    // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                                    // from our new project instead
+                                    window.Application.BookList.length = 0;
+                                    window.Application.ChapterList.length = 0;
+                                    window.Application.spList.length = 0;
+                                    window.Application.kbList.length = 0;
                                 } else {
                                     // No -- just exit
                                 }
@@ -152,16 +219,14 @@ define(function (require) {
                     } else {
                         // in browser -- use window.confirm / window.alert
                         if (window.confirm(i18n.t('view.msgUseProject'))) {
-                            // window.Application.currentProject = window.Application.ProjectList.at(index);
-                            // localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
-                            // // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                            // // from our new project instead
-                            // window.Application.BookList.length = 0;
-                            // window.Application.ChapterList.length = 0;
-                            // window.Application.spList.length = 0;
-                            // window.Application.kbList.length = 0;
-                            // // head back to the home page
-                            // window.location.replace("");
+                            window.Application.currentProject = project;
+                            localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                            // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                            // from our new project instead
+                            window.Application.BookList.length = 0;
+                            window.Application.ChapterList.length = 0;
+                            window.Application.spList.length = 0;
+                            window.Application.kbList.length = 0;
                         } else {
                             // No -- just exit
                         }
@@ -469,6 +534,7 @@ define(function (require) {
             // copy the clipboard contents, and if they're not empty, try to import the contents as a file
             onBtnClipboard: function () {
                 var model = this.model;
+                var errMsg = "";
                 // Are we in the browser or on a mobile device?
                 if (device && (device.platform !== "browser")) {
                     // mobile device
@@ -480,16 +546,34 @@ define(function (require) {
                             $("#selectControls").hide();
                             $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
-                            $("#btnCancel").show();   
-                            // EDB 12/19/2023: ? not sure if still true - ios has wkwebview now? need to test
-                            // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
-                            // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
-                            // it places the contents in the name attribute. The FileReader does
-                            // accept a Blob (the File object derives from Blob), which is why importFile works.
-                            console.log("Clipboard selected. Creating ad hoc file from text.");
-                            var clipboardFile = new Blob([text], {type: "text/plain"});
+                            $("#btnCancel").show();
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            importSettingsFile(clipboardFile, model);
+                            // create a new project object and populate it from the clipboard contents
+                            var newProj = new projModel.Project();
+                            result = newProj.fromString(text);
+                            if (result == false) {
+                                // this isn't project data -- error out
+                                errMsg = i18n.t("view.ErrNotAIC");
+                                importFail(new Error(errMsg));
+                            } else {
+                                // this is project data -- check to see if it's duplicate
+                                if (window.Application.ProjectList) {
+                                    window.Application.ProjectList.each(function (model, index) {
+                                        if (model.get('SourceLanguageName') === newProj.get('SourceLanguageName') && model.get('TargetLanguageName') === newProj.get('TargetLanguageName')) {
+                                            // stop import -- this file matches an existing project in our list
+                                            errMsg = i18n.t("view.dscErrDuplicateFile");
+                                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
+                                        }
+                                    });
+                                    if (errMsg.length === 0) {
+                                        // success -- let the user know
+                                        importSuccess(newProj);
+                                    }
+                                } else {
+                                    // success -- let the user know
+                                    importSuccess(newProj);
+                                }
+                            }
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard
@@ -511,15 +595,39 @@ define(function (require) {
                     navigator.clipboard.readText().then(
                     (clipText) => {
                         if (clipText.length > 0) {
-                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
-                            console.log("Non-empty clipboard selected. Creating ad hoc file from text.");
+                            console.log("Non-empty clipboard selected.");
                             // replace the selection UI with the import UI
                             $("#selectControls").hide();
                             $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();   
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            importSettingsFile(clipboardFile, model);
+                            // create a new project object and populate it from the clipboard contents
+                            var newProj = new projModel.Project();
+                            result = newProj.fromString(clipText);
+                            if (result == false) {
+                                // this isn't project data -- error out
+                                errMsg = i18n.t("view.ErrNotAIC");
+                                importFail(new Error(errMsg));
+                            } else {
+                                // this is project data -- check to see if it's duplicate
+                                if (window.Application.ProjectList) {
+                                    window.Application.ProjectList.each(function (model, index) {
+                                        if (model.get('SourceLanguageName') === newProj.get('SourceLanguageName') && model.get('TargetLanguageName') === newProj.get('TargetLanguageName')) {
+                                            // stop import -- this file matches an existing project in our list
+                                            errMsg = i18n.t("view.dscErrDuplicateFile");
+                                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
+                                        }
+                                        if (errMsg.length === 0) {
+                                            // success -- let the user know
+                                            importSuccess(newProj);
+                                        }
+                                    });
+                                } else {
+                                    // success -- let the user know
+                                    importSuccess(newProj);
+                                }
+                            }
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard
@@ -567,6 +675,8 @@ define(function (require) {
                 "click #AutoCapitalize": "onClickAutoCapitalize"
             },
             onFocusInput: function (event) {
+                // EDB - TODO: why was this cancelled out? Some weird side-effect?
+                // https://github.com/adapt-it/adapt-it-mobile/commit/fdd21f48cf30683b0ea02c02f726147b57864cc4
 //                HideTinyUI();
                 window.Application.scrollIntoViewCenter(event.currentTarget);
 //                event.currentTarget.scrollIntoView(true);

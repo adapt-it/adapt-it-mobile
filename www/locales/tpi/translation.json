@@ -384,6 +384,8 @@
         "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
         "ErrNoClipboard": "Nogat klipbot teks.",
         "msgUseProject": "Do you want to switch to this project?",
+        "ErrNotAIC": "Project data not found. (Is this an Adapt It desktop project (.aic) file?)",
+        "ErrCopyProjectFailed": "Unable to copy project. Reason: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {
