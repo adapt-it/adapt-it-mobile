@@ -266,13 +266,12 @@ define(function (require) {
                 chooser.getFile('text/*', function (file) {
                     console.log(file ? file.name : 'canceled');
                     if (file) {
-                        isClipboard = false;
                         // replace the selection UI with the import UI
                         $("#selectControls").hide();
                         $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                         // Import can take a while, and potentially hang. Provide a way to cancel the operation
                         $("#btnCancel").show();   
-                        fileName = file.name;
+                        var fileName = file.name;
                         window.resolveLocalFileSystemURL(file.uri,
                             function (entry) {
                                 entry.file(
