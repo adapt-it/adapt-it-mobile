@@ -172,6 +172,78 @@ define(function (require) {
             $(".bottom-tb").show();
             $("#Spacer").hide();
         },
+        // Callback for when the file is imported / saved successfully
+        importSuccess = function (project) {
+            console.log("importSuccess()");
+            // hide / show UI elements
+            $("#selectControls").hide();
+            $("#LoadingStatus").hide();
+            $("#verifyNameControls").show();
+            $("#OKCancelButtons").show();
+            $("#lblVerify").hide();
+            $("#rowBookName").hide();
+            // tell the user the file was imported successfully
+            $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
+            // is there more than one project in our project list?
+            if (window.Application.ProjectList) {
+                // YES -- ask if they want to switch
+                if (navigator.notification) {
+                    // on mobile device -- use notification plugin API
+                    navigator.notification.confirm(
+                        i18n.t('view.msgUseProject'),
+                        function (btnIndex) {
+                            if (btnIndex === 1) {
+                                window.Application.currentProject = project;
+                                localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                                // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                                // from our new project instead
+                                window.Application.BookList.length = 0;
+                                window.Application.ChapterList.length = 0;
+                                window.Application.spList.length = 0;
+                                window.Application.kbList.length = 0;
+                            } else {
+                                // No -- just exit
+                            }
+                        },
+                        i18n.t('view.ttlMain'),
+                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                    );
+                } else {
+                    // in browser -- use window.confirm / window.alert
+                    if (window.confirm(i18n.t('view.msgUseProject'))) {
+                        window.Application.currentProject = project;
+                        localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                        // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                        // from our new project instead
+                        window.Application.BookList.length = 0;
+                        window.Application.ChapterList.length = 0;
+                        window.Application.spList.length = 0;
+                        window.Application.kbList.length = 0;
+                    } else {
+                        // No -- just exit
+                    }
+                }
+            }
+        },
+        // Callback for when the file failed to import
+        importFail = function (fileName, e) {
+            console.log("importFail(): " + e.message + " (code: " + e.code + ")");
+            // update status with the failure message and code (if available)
+            var strReason = e.message;
+            if (e.code) {
+                strReason += " (code: " + e.code + ")";
+            }
+            // hide / show UI elements
+            $("#selectControls").hide();
+            $("#LoadingStatus").hide();
+            $("#verifyNameControls").show();
+            $("#OKCancelButtons").show();
+            $("#lblVerify").hide();
+            $("#rowBookName").hide();
+            // tell the user what went wrong
+            $("#lblDirections").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
+        },
+        
                 
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
@@ -548,32 +620,14 @@ define(function (require) {
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            // create a new project object and populate it from the clipboard contents
-                            var newProj = new projModel.Project();
-                            result = newProj.fromString(text);
-                            if (result == false) {
-                                // this isn't project data -- error out
-                                errMsg = i18n.t("view.ErrNotAIC");
-                                importFail(new Error(errMsg));
-                            } else {
-                                // this is project data -- check to see if it's duplicate
-                                if (window.Application.ProjectList) {
-                                    window.Application.ProjectList.each(function (model, index) {
-                                        if (model.get('SourceLanguageName') === newProj.get('SourceLanguageName') && model.get('TargetLanguageName') === newProj.get('TargetLanguageName')) {
-                                            // stop import -- this file matches an existing project in our list
-                                            errMsg = i18n.t("view.dscErrDuplicateFile");
-                                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
-                                        }
-                                    });
-                                    if (errMsg.length === 0) {
-                                        // success -- let the user know
-                                        importSuccess(newProj);
-                                    }
-                                } else {
-                                    // success -- let the user know
-                                    importSuccess(newProj);
-                                }
-                            }
+                            // populate the model properties from the clipboard data
+                            model.fromString(text).done(function() {
+                                // success -- save changes
+                                model.save();
+                                importSuccess(model);
+                            }).fail(function (err) {
+                                importFail(i18n.t("view.lblCopyClipboardText"), err);
+                            });
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard
@@ -602,32 +656,14 @@ define(function (require) {
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();   
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
-                            // create a new project object and populate it from the clipboard contents
-                            var newProj = new projModel.Project();
-                            result = newProj.fromString(clipText);
-                            if (result == false) {
-                                // this isn't project data -- error out
-                                errMsg = i18n.t("view.ErrNotAIC");
-                                importFail(new Error(errMsg));
-                            } else {
-                                // this is project data -- check to see if it's duplicate
-                                if (window.Application.ProjectList) {
-                                    window.Application.ProjectList.each(function (model, index) {
-                                        if (model.get('SourceLanguageName') === newProj.get('SourceLanguageName') && model.get('TargetLanguageName') === newProj.get('TargetLanguageName')) {
-                                            // stop import -- this file matches an existing project in our list
-                                            errMsg = i18n.t("view.dscErrDuplicateFile");
-                                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
-                                        }
-                                        if (errMsg.length === 0) {
-                                            // success -- let the user know
-                                            importSuccess(newProj);
-                                        }
-                                    });
-                                } else {
-                                    // success -- let the user know
-                                    importSuccess(newProj);
-                                }
-                            }
+                            // populate the model properties from the clipboard data
+                            model.fromString(clipText).done(function() {
+                                // success -- save changes
+                                model.save();
+                                importSuccess(model);
+                            }).fail(function (err) {
+                                importFail(i18n.t("view.lblCopyClipboardText"), err);
+                            });
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard

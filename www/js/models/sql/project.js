@@ -6,6 +6,7 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        i18n        = require('i18n'),
         projects    = [],
         CURRSCHEMA  = 4,
         
@@ -658,6 +659,7 @@ define(function (require) {
             },
             // populate this project object from an .aic file / string
             fromString: function (str) {
+                var deferred = $.Deferred();
                 var value = "",
                     value2 = "",
                     value3 = "",
@@ -665,6 +667,7 @@ define(function (require) {
                     i = 0,
                     s = null,
                     t = null,
+                    lines = [],
                     arrPunct = [],
                     arrCases = [];
                 // helper method to convert .aic color values to an html hex color string:
@@ -709,21 +712,36 @@ define(function (require) {
                 var tgtLangName = getSettingValue(56, "TargetLanguageName");
                 if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
                     // source or target language name not found -- we can't parse this as a project file
-                    return false; // no message, as this might be parsed as just regular text later
+                    errMsg = i18n.t("view.ErrNotAIC");
+                    deferred.reject(new Error(errMsg)); // tell the user
+                    return deferred.promise();
+                }
+                // Is this for a file we've already configured or imported (i.e., do the source and target languages
+                // match a project in our project list)?
+                if (window.Application.ProjectList) {
+                    // we've got some projects -- see if our source and target match one of them
+                    window.Application.ProjectList.each(function (model, index) {
+                        if (model.get('SourceLanguageName') === srcLangName && model.get('TargetLanguageName') === tgtLangName) {
+                            // stop import -- this file matches an existing project in our list
+                            errMsg = i18n.t("view.dscErrDuplicateFile");
+                            deferred.reject(new Error(errMsg)); // tell the user
+                            return deferred.promise();
+                        }
+                    });                    
                 }
                 // This is a project file string -- populate this project object
-                SourceLanguageName = srcLangName;
-                TargetLanguageName = tgtLangName;
-                SourceLanguageCode = getSettingValue(59, "SourceLanguageCode");
-                TargetLanguageCode = getSettingValue(60, "TargetLanguageCode");
-                SourceDir = (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr";
-                TargetDir = (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr";
+                this.SourceLanguageName = srcLangName;
+                this.TargetLanguageName = tgtLangName;
+                this.SourceLanguageCode = getSettingValue(59, "SourceLanguageCode");
+                this.TargetLanguageCode = getSettingValue(60, "TargetLanguageCode");
+                this.SourceDir = (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr";
+                this.TargetDir = (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr";
                 value = getSettingValue(124, "ProjectName");
                 if (value.length > 0) {
-                    name = value;
+                    this.name = value;
                 } else {
                     // project name not found -- build it from the source & target languages
-                    name = i18n.t("view.lblSourceToTargetAdaptations", {
+                    this.name = i18n.t("view.lblSourceToTargetAdaptations", {
                         source: (SourceVariant.length > 0) ? SourceVariant : SourceLanguageName,
                         target: (TargetVariant.length > 0) ? TargetVariant : TargetLanguageName
                     });
@@ -733,12 +751,12 @@ define(function (require) {
                 if (value === "UsfmOnly") {
                     value = getSettingValue(123, "UseFilterMarkers");
                     if (value !== FilterMarkers) {
-                        UseCustomFilters = "true";
-                        FilterMarkers = value;
+                        this.UseCustomFilters = "true";
+                        this.FilterMarkers = value;
                     }
                 }
                 value = window.Application.generateUUID();
-                projectid = value;
+                this.projectid = value;
                 // The following settings require some extra work
                 // Punctuation pairs
                 value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
@@ -762,7 +780,7 @@ define(function (require) {
                     }
                     i = i + 2; // advance to the next item (each set is 2 chars in length)
                 }
-                PunctPairs = arrPunct;
+                this.PunctPairs = arrPunct;
                 // Auto capitalization
                 value = getSettingValue(115, "LowerCaseSourceLanguageChars");
                 value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
@@ -775,11 +793,11 @@ define(function (require) {
                         arrCases[arrCases.length] = {s: s, t: t};
                     }
                 }
-                CasePairs = arrCases;
+                this.CasePairs = arrCases;
                 value = getSettingValue(121, "AutoCapitalizationFlag");
-                AutoCapitalization = (value === "1") ? "true" : "false";
+                this.AutoCapitalization = (value === "1") ? "true" : "false";
                 value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
-                SourceHasUpperCase = (value === "1") ? "true" : "false";
+                this.SourceHasUpperCase = (value === "1") ? "true" : "false";
 
                 // Fonts, if they're installed on this device (getFontList is async)
                 if (navigator.Fonts) {
@@ -789,12 +807,12 @@ define(function (require) {
                                 // Source Font
                                 value = getSettingValue(16, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    SourceFont = value;
+                                    this.SourceFont = value;
                                 }
                                 // Target Font
                                 value = getSettingValue(34, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    TargetFont = value;
+                                    this.TargetFont = value;
                                 }
                             }
                         },
@@ -804,16 +822,16 @@ define(function (require) {
                     );
                 }
                 // font colors
-                SourceColor = getColorValue(getSettingValue(17, "Color"));
-                TargetColor = getColorValue(getSettingValue(34, "Color"));
-                NavColor = getColorValue(getSettingValue(53, "Color"));
-                SpecialTextColor = getColorValue(getSettingValue(87, "SpecialTextColor"));
-                RetranslationColor = getColorValue(getSettingValue(88, "RetranslationTextColor"));
-                TextDifferencesColor = getColorValue(getSettingValue(89, "TargetDifferencesTextColor"));
-                projectid = window.Application.generateUUID();
-                
-                // succeeded -- return true
-                return true;                
+                this.SourceColor = getColorValue(getSettingValue(17, "Color"));
+                this.TargetColor = getColorValue(getSettingValue(34, "Color"));
+                this.NavColor = getColorValue(getSettingValue(53, "Color"));
+                this.SpecialTextColor = getColorValue(getSettingValue(87, "SpecialTextColor"));
+                this.RetranslationColor = getColorValue(getSettingValue(88, "RetranslationTextColor"));
+                this.TextDifferencesColor = getColorValue(getSettingValue(89, "TargetDifferencesTextColor"));
+                this.projectid = window.Application.generateUUID();
+                // succeeded -- resolve the promise
+                deferred.resolve();
+                return deferred.promise();
             },
             fetch: function () {
                 var deferred = $.Deferred();
