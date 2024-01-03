@@ -163,6 +163,20 @@
                 </dict>
                 <dict>
                     <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Adapt It Configuration Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Default</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.adapt-it.document.aic</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
                     <array>
                         <string>usfm_22.png</string>
                         <string>usfm_44.png</string>
@@ -236,6 +250,27 @@
                             <string>usfm</string>
                             <string>sfm</string>
                             <string>txt</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/*</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.text</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>Adapt It Configuration Document</string>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adapt-it.document.aic</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>aic</string>
                         </array>
                         <key>public.mime-type</key>
                         <string>text/*</string>
