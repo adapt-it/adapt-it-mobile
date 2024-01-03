@@ -659,8 +659,9 @@ define(function (require) {
             },
             // populate this project object from an .aic file / string
             fromString: function (str) {
-                var deferred = $.Deferred();
-                var value = "",
+                var deferred = $.Deferred(),
+                    errMsg = "",
+                    value = "",
                     value2 = "",
                     value3 = "",
                     value4 = "",
