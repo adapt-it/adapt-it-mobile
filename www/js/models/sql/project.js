@@ -708,8 +708,8 @@ define(function (require) {
                 // split out the .aic file into an array (one entry per line of the file)
                 lines = str.split("\n");
                 // Is this string an Adapt It project file?
-                var srcLangName = getSettingValue(55, "SourceLanguageName");
-                var tgtLangName = getSettingValue(56, "TargetLanguageName");
+                var srcLangName = getSettingValue(56, "SourceLanguageName");
+                var tgtLangName = getSettingValue(57, "TargetLanguageName");
                 if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
                     // source or target language name not found -- we can't parse this as a project file
                     errMsg = i18n.t("view.ErrNotAIC");
@@ -730,33 +730,35 @@ define(function (require) {
                     });                    
                 }
                 // This is a project file string -- populate this project object
-                this.SourceLanguageName = srcLangName;
-                this.TargetLanguageName = tgtLangName;
-                this.SourceLanguageCode = getSettingValue(59, "SourceLanguageCode");
-                this.TargetLanguageCode = getSettingValue(60, "TargetLanguageCode");
-                this.SourceDir = (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr";
-                this.TargetDir = (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr";
+                this.set('projectid', window.Application.generateUUID(), {silent: true});
+                this.set('SourceLanguageName', srcLangName, {silent: true});
+                this.set('TargetLanguageName', tgtLangName, {silent: true});
+                // EDB 3 Jan 24 - the variants don't currently exist in the .aic file, so these will = "" for now
+                this.set('SourceVariant', getSettingValue(56, "SourceVariant"), {silent: true}); 
+                this.set('TargetVariant', getSettingValue(57, "TargetVariant"), {silent: true});
+                this.set('SourceLanguageCode', getSettingValue(59, "SourceLanguageCode"), {silent: true});
+                this.set('TargetLanguageCode', getSettingValue(60, "TargetLanguageCode"), {silent: true});
+                this.set('SourceDir', ((getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr"), {silent: true});
+                this.set('TargetDir', ((getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr"), {silent: true});
                 value = getSettingValue(124, "ProjectName");
                 if (value.length > 0) {
-                    this.name = value;
+                    this.set('name', value, {silent: true});
                 } else {
                     // project name not found -- build it from the source & target languages
-                    this.name = i18n.t("view.lblSourceToTargetAdaptations", {
-                        source: (SourceVariant.length > 0) ? SourceVariant : SourceLanguageName,
-                        target: (TargetVariant.length > 0) ? TargetVariant : TargetLanguageName
-                    });
+                    this.set('name', (i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.get('SourceVariant').length > 0) ? this.get('SourceVariant') : this.get('SourceLanguageName'),
+                        target: (this.get('TargetVariant').length > 0) ? this.get('TargetVariant') : this.get('TargetLanguageName')
+                    })), {silent: true});
                 }
                 // filters (USFM only -- other settings are ignored)
                 value = getSettingValue(124, "UseSFMarkerSet");
                 if (value === "UsfmOnly") {
                     value = getSettingValue(123, "UseFilterMarkers");
-                    if (value !== FilterMarkers) {
-                        this.UseCustomFilters = "true";
-                        this.FilterMarkers = value;
+                    if (value !== this.get('FilterMarkers')) {
+                        this.set('UseCustomFilters', "true", {silent: true});
+                        this.set('FilterMarkers', value, {silent: true});
                     }
                 }
-                value = window.Application.generateUUID();
-                this.projectid = value;
                 // The following settings require some extra work
                 // Punctuation pairs
                 value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
@@ -780,7 +782,7 @@ define(function (require) {
                     }
                     i = i + 2; // advance to the next item (each set is 2 chars in length)
                 }
-                this.PunctPairs = arrPunct;
+                this.set('PunctPairs', arrPunct, {silent: true});
                 // Auto capitalization
                 value = getSettingValue(115, "LowerCaseSourceLanguageChars");
                 value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
@@ -793,11 +795,11 @@ define(function (require) {
                         arrCases[arrCases.length] = {s: s, t: t};
                     }
                 }
-                this.CasePairs = arrCases;
+                this.set('CasePairs', arrCases, {silent: true});
                 value = getSettingValue(121, "AutoCapitalizationFlag");
-                this.AutoCapitalization = (value === "1") ? "true" : "false";
+                this.set('AutoCapitalization', ((value === "1") ? "true" : "false"), {silent: true});
                 value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
-                this.SourceHasUpperCase = (value === "1") ? "true" : "false";
+                this.set('SourceHasUpperCase', ((value === "1") ? "true" : "false"), {silent: true});
 
                 // Fonts, if they're installed on this device (getFontList is async)
                 if (navigator.Fonts) {
@@ -807,12 +809,12 @@ define(function (require) {
                                 // Source Font
                                 value = getSettingValue(16, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    this.SourceFont = value;
+                                    this.set('SourceFont', value, {silent: true});
                                 }
                                 // Target Font
                                 value = getSettingValue(34, "FaceName");
                                 if ($.inArray(value, fontList) > -1) {
-                                    this.TargetFont = value;
+                                    this.set('TargetFont', value, {silent: true});
                                 }
                             }
                         },
@@ -822,13 +824,12 @@ define(function (require) {
                     );
                 }
                 // font colors
-                this.SourceColor = getColorValue(getSettingValue(17, "Color"));
-                this.TargetColor = getColorValue(getSettingValue(34, "Color"));
-                this.NavColor = getColorValue(getSettingValue(53, "Color"));
-                this.SpecialTextColor = getColorValue(getSettingValue(87, "SpecialTextColor"));
-                this.RetranslationColor = getColorValue(getSettingValue(88, "RetranslationTextColor"));
-                this.TextDifferencesColor = getColorValue(getSettingValue(89, "TargetDifferencesTextColor"));
-                this.projectid = window.Application.generateUUID();
+                this.set('SourceColor', getColorValue(getSettingValue(17, "Color")), {silent: true});
+                this.set('TargetColor', getColorValue(getSettingValue(34, "Color")), {silent: true});
+                this.set('NavColor', getColorValue(getSettingValue(53, "Color")), {silent: true});
+                this.set('SpecialTextColor', getColorValue(getSettingValue(87, "SpecialTextColor")), {silent: true});
+                this.set('RetranslationColor', getColorValue(getSettingValue(88, "RetranslationTextColor")), {silent: true});
+                this.set('TextDifferencesColor', getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
                 // succeeded -- resolve the promise
                 deferred.resolve();
                 return deferred.promise();

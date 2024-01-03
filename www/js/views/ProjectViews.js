@@ -76,77 +76,6 @@ define(function (require) {
             }
             return fullCode;
         },
-        // Callback for when the file is imported / saved successfully
-        importSuccess = function (project) {
-            console.log("importSuccess()");
-            // hide / show UI elements
-            $("#selectControls").hide();
-            $("#LoadingStatus").hide();
-            $("#verifyNameControls").show();
-            $("#OKCancelButtons").show();
-            $("#lblVerify").hide();
-            $("#rowBookName").hide();
-            // tell the user the file was imported successfully
-            $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
-            // is there more than one project in our project list?
-            if (window.Application.ProjectList) {
-                // YES -- ask if they want to switch
-                if (navigator.notification) {
-                    // on mobile device -- use notification plugin API
-                    navigator.notification.confirm(
-                        i18n.t('view.msgUseProject'),
-                        function (btnIndex) {
-                            if (btnIndex === 1) {
-                                window.Application.currentProject = project;
-                                localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                                // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                                // from our new project instead
-                                window.Application.BookList.length = 0;
-                                window.Application.ChapterList.length = 0;
-                                window.Application.spList.length = 0;
-                                window.Application.kbList.length = 0;
-                            } else {
-                                // No -- just exit
-                            }
-                        },
-                        i18n.t('view.ttlMain'),
-                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
-                    );
-                } else {
-                    // in browser -- use window.confirm / window.alert
-                    if (window.confirm(i18n.t('view.msgUseProject'))) {
-                        window.Application.currentProject = project;
-                        localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                        // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                        // from our new project instead
-                        window.Application.BookList.length = 0;
-                        window.Application.ChapterList.length = 0;
-                        window.Application.spList.length = 0;
-                        window.Application.kbList.length = 0;
-                    } else {
-                        // No -- just exit
-                    }
-                }
-            }
-        },
-        // Callback for when the file failed to import
-        importFail = function (e) {
-            console.log("importFail(): " + e.message);
-            // update status with the failure message and code (if available)
-            var strReason = e.message;
-            if (e.code) {
-                strReason += " (code: " + e.code + ")";
-            }
-            // hide / show UI elements
-            $("#selectControls").hide();
-            $("#LoadingStatus").hide();
-            $("#verifyNameControls").show();
-            $("#OKCancelButtons").show();
-            $("#lblVerify").hide();
-            $("#rowBookName").hide();
-            // tell the user what went wrong
-            $("#lblDirections").html(i18n.t("view.ErrCopyProjectFailed", {reason: strReason}));
-        },
         // Helper method to hide the prev/next buttons and increase the scroller size
         // if the screen is too small
         // (Issue #232)
@@ -172,79 +101,6 @@ define(function (require) {
             $(".bottom-tb").show();
             $("#Spacer").hide();
         },
-        // Callback for when the file is imported / saved successfully
-        importSuccess = function (project) {
-            console.log("importSuccess()");
-            // hide / show UI elements
-            $("#selectControls").hide();
-            $("#LoadingStatus").hide();
-            $("#verifyNameControls").show();
-            $("#OKCancelButtons").show();
-            $("#lblVerify").hide();
-            $("#rowBookName").hide();
-            // tell the user the file was imported successfully
-            $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
-            // is there more than one project in our project list?
-            if (window.Application.ProjectList) {
-                // YES -- ask if they want to switch
-                if (navigator.notification) {
-                    // on mobile device -- use notification plugin API
-                    navigator.notification.confirm(
-                        i18n.t('view.msgUseProject'),
-                        function (btnIndex) {
-                            if (btnIndex === 1) {
-                                window.Application.currentProject = project;
-                                localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                                // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                                // from our new project instead
-                                window.Application.BookList.length = 0;
-                                window.Application.ChapterList.length = 0;
-                                window.Application.spList.length = 0;
-                                window.Application.kbList.length = 0;
-                            } else {
-                                // No -- just exit
-                            }
-                        },
-                        i18n.t('view.ttlMain'),
-                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
-                    );
-                } else {
-                    // in browser -- use window.confirm / window.alert
-                    if (window.confirm(i18n.t('view.msgUseProject'))) {
-                        window.Application.currentProject = project;
-                        localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                        // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                        // from our new project instead
-                        window.Application.BookList.length = 0;
-                        window.Application.ChapterList.length = 0;
-                        window.Application.spList.length = 0;
-                        window.Application.kbList.length = 0;
-                    } else {
-                        // No -- just exit
-                    }
-                }
-            }
-        },
-        // Callback for when the file failed to import
-        importFail = function (fileName, e) {
-            console.log("importFail(): " + e.message + " (code: " + e.code + ")");
-            // update status with the failure message and code (if available)
-            var strReason = e.message;
-            if (e.code) {
-                strReason += " (code: " + e.code + ")";
-            }
-            // hide / show UI elements
-            $("#selectControls").hide();
-            $("#LoadingStatus").hide();
-            $("#verifyNameControls").show();
-            $("#OKCancelButtons").show();
-            $("#lblVerify").hide();
-            $("#rowBookName").hide();
-            // tell the user what went wrong
-            $("#lblDirections").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
-        },
-        
-                
         // Helper to import the selected file into the specified
         // project object (overridding any existing values). This gets called
         // from both mobileImportAIC and browserImportAIC.
@@ -323,189 +179,26 @@ define(function (require) {
                 // tell the user what went wrong
                 $("#lblDirections").html(i18n.t("view.dscCopyDocumentFailed", {document: fileName, reason: strReason}));
             };
-            reader.onloadend = function (evt) {
-                var value = "",
-                    value2 = "",
-                    value3 = "",
-                    value4 = "",
-                    i = 0,
-                    s = null,
-                    t = null,
-                    arrPunct = [],
-                    arrCases = [];
-                // helper method to convert .aic color values to an html hex color string:
-                // .aic  --> bbggrr (in base 10)
-                // .html --> #rrggbb  (in hex)
-                var getColorValue = function (strValue) {
-                    var intValue = parseInt(strValue, 10);
-                    var rValue = ("00" + (intValue & 0xff).toString(16)).slice(-2);
-                    var gValue = ("00" + ((intValue >> 8) & 0xff).toString(16)).slice(-2);
-                    var bValue = ("00" + ((intValue >> 16) & 0xff).toString(16)).slice(-2);
-                    // format in html hex, padded with leading zeroes
-                    var theValue = "#" + rValue + gValue + bValue;
-                    return theValue;
-                };
-                // Helper method to pull out the value corresponding to the named setting from the .aic file contents
-                // (the array "lines"). If the named setting isn't found at that line, it searches FORWARD to the end --
-                // returning an empty string if not found.
-                var getSettingValue = function (expectedIndex, aicSetting) {
-                    var i = 0,
-                        value = "";
-                    if (lines[expectedIndex].indexOf(aicSetting) !== -1) {
-                        // the value is the rest of the line AFTER the aicsetting + space
-                        value = lines[expectedIndex].substr(aicSetting.length + 1);
-                    } else {
-                        // This setting is NOT at the line we expected. It could be on a different
-                        // line, or not in the .aic file at all
-                        for (i = 0; i < lines.length; i++) {
-                            if (lines[i].indexOf(aicSetting) === 0) {
-                                // Found! The value is the rest of the line AFTER the aicsetting + space
-                                value = lines[i].substr(aicSetting.length + 1);
-                                // finish searching
-                                break;
-                            }
-                        }
-                    }
-                    return value;
-                };
-                // split out the .aic file into an array (one entry per line of the file)
-                lines = evt.target.result.split("\n");
-                // first off, a couple of sanity checks:
-                // 1. Is this .aic file an Adapt It project file?
-                var srcLangName = getSettingValue(55, "SourceLanguageName");
-                var tgtLangName = getSettingValue(56, "TargetLanguageName");
-                if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
-                    // source or target language name not found -- we can't parse this as a project file
-                    return false; // no message, as this might be parsed as just regular text later
+            reader.onloadend = function (e) {
+                // did the FileReader.ReadAsText() call fail?
+                if (this.error) {
+                    importFail(this.error);
+                    return false;
                 }
-                // 2. Is this for a file we've already configured or imported (i.e., do the source and target languages
-                //    match a project in our project list)?
-                if (window.ProjectList) {
-                    // we've got some projects -- see if our source and target match one of them
-                    window.Application.ProjectList.each(function (model, index) {
-                        if (model.get('SourceLanguageName') === srcLangName && model.get('TargetLanguageName') === tgtLangName) {
-                            // stop import -- this file matches an existing project in our list
-                            errMsg = i18n.t("view.dscErrDuplicateFile");
-                            importFail(new Error(errMsg)); // tell the user -- this can't be imported, period.
-                            return false;
-                        }
-                    });                    
-                }
-                // We've successfully opened an Adapt It project file (.aic), and it's not a duplicate -
-                // populate our AIM model object with values from the file
-                project.set("SourceLanguageName", srcLangName, {silent: true});
-                project.set("TargetLanguageName", tgtLangName, {silent: true});
-                project.set("SourceLanguageCode", getSettingValue(59, "SourceLanguageCode"), {silent: true});
-                project.set("TargetLanguageCode", getSettingValue(60, "TargetLanguageCode"), {silent: true});
-                project.set("SourceDir", (getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr", {silent: true});
-                project.set("TargetDir", (getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr", {silent: true});
-                value = getSettingValue(124, "ProjectName");
-                if (value.length > 0) {
-                    project.set("name", value, {silent: true});
-                } else {
-                    // project name not found -- build it from the source & target languages
-                    project.set("name", i18n.t("view.lblSourceToTargetAdaptations", {
-                        source: (project.get("SourceVariant").length > 0) ? project.get("SourceVariant") : project.get("SourceLanguageName"),
-                        target: (project.get("TargetVariant").length > 0) ? project.get("TargetVariant") : project.get("TargetLanguageName")}), {silent: true});
-                }
-                // filters (USFM only -- other settings are ignored)
-                value = getSettingValue(124, "UseSFMarkerSet");
-                if (value === "UsfmOnly") {
-                    value = getSettingValue(123, "UseFilterMarkers");
-                    if (value !== project.get("FilterMarkers")) {
-                        project.set("UseCustomFilters", "true", {silent: true});
-                        project.set("FilterMarkers", value, {silent: true});
-                    }
-                }
-                value = window.Application.generateUUID();
-                project.set("projectid", value, {silent: true});
-                // The following settings require some extra work
-                // Punctuation pairs
-                value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
-                value2 = getSettingValue(80, "PunctuationPairsTargetSet(stores space for an empty cell)");
-                for (i = 0; i < value.length; i++) {
-                    s = value.charAt(i);
-                    t = value2.charAt(i);
-                    if (s && s.length > 0) {
-                        arrPunct[arrPunct.length] = {s: s, t: t};
-                    }
-                }
-                // add double punctuation pairs as well
-                value = getSettingValue(81, "PunctuationTwoCharacterPairsSourceSet(ditto)");
-                value2 = getSettingValue(82, "PunctuationTwoCharacterPairsTargetSet(ditto)");
-                i = 0;
-                while (i < value.length) {
-                    s = value.substr(i, 2);
-                    t = value2.substr(i, 2);
-                    if (s && s.length > 0) {
-                        arrPunct[arrPunct.length] = {s: s, t: t};
-                    }
-                    i = i + 2; // advance to the next item (each set is 2 chars in length)
-                }
-                project.set({PunctPairs: arrPunct}, {silent: true});
-                // Auto capitalization
-                value = getSettingValue(115, "LowerCaseSourceLanguageChars");
-                value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
-                value3 = getSettingValue(117, "LowerCaseTargetLanguageChars");
-                value4 = getSettingValue(118, "UpperCaseTargetLanguageChars");
-                for (i = 0; i < value.length; i++) {
-                    s = value.charAt(i) + value2.charAt(i);
-                    t = value3.charAt(i) + value4.charAt(i);
-                    if (s && s.length > 0) {
-                        arrCases[arrCases.length] = {s: s, t: t};
-                    }
-                }
-                project.set({CasePairs: arrCases}, {silent: true});
-                value = getSettingValue(121, "AutoCapitalizationFlag");
-                project.set("AutoCapitalization", (value === "1") ? "true" : "false", {silent: true});
-                value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
-                project.set("SourceHasUpperCase", (value === "1") ? "true" : "false", {silent: true});
-
-                // Fonts, if they're installed on this device (getFontList is async)
-                if (navigator.Fonts) {
-                    navigator.Fonts.getFontList(
-                        function (fontList) {
-                            if (fontList) {
-                                // Source Font
-                                value = getSettingValue(16, "FaceName");
-                                if ($.inArray(value, fontList) > -1) {
-                                    project.set("SourceFont", value, {silent: true});
-                                }
-                                // Target Font
-                                value = getSettingValue(34, "FaceName");
-                                if ($.inArray(value, fontList) > -1) {
-                                    project.set("TargetFont", value, {silent: true});
-                                }
-                            }
-                        },
-                        function (error) {
-                            console.log("FontList error: " + error);
-                        }
-                    );
-                }
-                // font colors
-                project.set("SourceColor", getColorValue(getSettingValue(17, "Color")), {silent: true});
-                project.set("TargetColor", getColorValue(getSettingValue(34, "Color")), {silent: true});
-                project.set("NavColor", getColorValue(getSettingValue(53, "Color")), {silent: true});
-                project.set("SpecialTextColor", getColorValue(getSettingValue(87, "SpecialTextColor")), {silent: true});
-                project.set("RetranslationColor", getColorValue(getSettingValue(88, "RetranslationTextColor")), {silent: true});
-                project.set("TextDifferencesColor", getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
-                project.set("projectid", window.Application.generateUUID(), {silent: true});
-                
+                // convert contents to string
+                var contents = new TextDecoder('utf-8').decode((this.result));
                 // done
                 $("#status").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
-                result = true;
-
-                if (result === false) {
-                    importFail(new Error(errMsg));
-                    return false;
-                } else {
+                project.fromString(contents).done(function() {
+                    // success -- save the object
+                    project.save();
                     importSuccess();
-                    return true;
-                }
-
-            };
-            reader.readAsText(file, "UTF-8");
+                }).fail(function (err) {
+                    importFail(err);
+                });
+                return; // projects 
+        };
+            reader.readAsArrayBuffer(file);
         },
 
         // CopyProjectView
@@ -619,15 +312,16 @@ define(function (require) {
                             $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();
+                            // EDB 12/19/2023: ? not sure if still true - ios has wkwebview now? need to test
+                            // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
+                            // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
+                            // it places the contents in the name attribute. The FileReader does
+                            // accept a Blob (the File object derives from Blob), which is why importFile works.
+                            console.log("Clipboard selected. Creating ad hoc file from text.");
+                            var clipboardFile = new Blob([text], {type: "text/plain"});
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
                             // populate the model properties from the clipboard data
-                            model.fromString(text).done(function() {
-                                // success -- save changes
-                                model.save();
-                                importSuccess(model);
-                            }).fail(function (err) {
-                                importFail(i18n.t("view.lblCopyClipboardText"), err);
-                            });
+                            importSettingsFile(clipboardFile, model);
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard
@@ -655,15 +349,16 @@ define(function (require) {
                             $("#LoadingStatus").html(Handlebars.compile(tplLoadingPleaseWait));
                             // Import can take a while, and potentially hang. Provide a way to cancel the operation
                             $("#btnCancel").show();   
+                            // EDB 12/19/2023: ? not sure if still true - ios has wkwebview now? need to test
+                            // EDB 5/29 HACK: clipboard text -- create a blob instead of a file and read it:
+                            // Cordova-ios uses an older web view that has a buggy / outdated JS engine w.r.t the File object;
+                            // it places the contents in the name attribute. The FileReader does
+                            // accept a Blob (the File object derives from Blob), which is why importFile works.
+                            console.log("Clipboard selected. Creating ad hoc file from text.");
+                            var clipboardFile = new Blob([clipText], {type: "text/plain"});
                             $("#status").html(i18n.t("view.dscStatusReading", {document: i18n.t("view.lblCopyClipboardText")}));
                             // populate the model properties from the clipboard data
-                            model.fromString(clipText).done(function() {
-                                // success -- save changes
-                                model.save();
-                                importSuccess(model);
-                            }).fail(function (err) {
-                                importFail(i18n.t("view.lblCopyClipboardText"), err);
-                            });
+                            importSettingsFile(clipboardFile, model);
                         } else {
                             console.log("No data to import");
                             // No data to import -- tell the user to copy something to the clipboard
