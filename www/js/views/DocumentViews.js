@@ -274,7 +274,7 @@ define(function (require) {
                     $("#verifyNameControls").show();
                     $("#lblVerify").hide();
                     $("#rowBookName").hide();
-                    $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
+                    $("#lblDirections").html(i18n.t("view.dscStatusProjImportSuccess", {document: fileName}));
                 } else {
                     // not a KB file:
                     // for regular document files, we did our best to guess a book name --

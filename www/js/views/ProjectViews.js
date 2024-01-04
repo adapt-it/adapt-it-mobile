@@ -119,7 +119,7 @@ define(function (require) {
                 $("#lblVerify").hide();
                 $("#rowBookName").hide();
                 // tell the user the file was imported successfully
-                $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
+                $("#lblDirections").html(i18n.t("view.dscStatusProjImportSuccess", {document: project.get("name")}));
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
@@ -203,7 +203,8 @@ define(function (require) {
             // saves any changes and goes back to the home page
             onOK: function () {
                 // save the model
-                this.model.save();
+                var model = this.model;
+                model.save();
                 // is there already a current project?
                 if (window.Application.currentProject !== null) {
                     // YES -- ask if they want to switch
@@ -213,8 +214,8 @@ define(function (require) {
                             i18n.t('view.msgUseProject'),
                             function (btnIndex) {
                                 if (btnIndex === 1) {
-                                    window.Application.currentProject = this.model;
-                                    localStorage.setItem("CurrentProjectID", this.model.get("projectid"));
+                                    window.Application.currentProject = model;
+                                    localStorage.setItem("CurrentProjectID", model.get("projectid"));
                                     // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
                                     // from our new project instead
                                     window.Application.BookList.length = 0;
@@ -233,8 +234,8 @@ define(function (require) {
                     } else {
                         // in browser -- use window.confirm / window.alert
                         if (window.confirm(i18n.t('view.msgUseProject'))) {
-                            window.Application.currentProject = project;
-                            localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                            window.Application.currentProject = model;
+                            localStorage.setItem("CurrentProjectID", model.get("projectid"));
                             // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
                             // from our new project instead
                             window.Application.BookList.length = 0;

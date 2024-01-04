@@ -216,6 +216,7 @@
         "detailChapterVerse": "__chap__, verset: __verse__ ",
         "dscStatusSavingProgress": "Lot __number__ sur __total__ enregistré.",
         "dscStatusImportSuccess": "Fichier \"__document__\" lue.",
+        "dscStatusProjImportSuccess": "Projet \"__document__\" lue.",
         "ttlFilteredText": "Texte filtré",
         "dscFilterMarker": "USFM marqueur: ",
         "dscFilteredText": "Texte: ",
