@@ -254,7 +254,7 @@ define(function (require) {
             // call getFile() on the chooser plugin, and if we get a file back, import it
             onBtnBrowse: function () {
                 var model = this.model;
-                chooser.getFile('text/*', function (file) {
+                chooser.getFile('*/*', function (file) {
                     console.log(file ? file.name : 'canceled');
                     if (file) {
                         // replace the selection UI with the import UI
