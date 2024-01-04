@@ -15,8 +15,8 @@ Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](htt
 
 ## System Requirements
 
-- Android tablet or smart phone running Android 5.1 or later
-- Apple iPad, iPod or iPhone running iOS 11.x or later
+- Android tablet or smart phone running Android 8.0 or later
+- Apple iPad, iPod or iPhone running iOS 11.0 or later
 
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
@@ -30,7 +30,7 @@ For those wanting to contribute to this project, check out the [wiki pages](http
 
 ## Philosophy
 
-Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of plain text and [USFM](http://paratext.ubs-translations.org/about/usfm) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](http://adapt-it.org/) as well as [UBS Paratext](http://paratext.ubs-translations.org/) and [Bibledit](http://bibledit.org/).
+Adapt It Mobile is a free open source tool for quickly translating between related languages. We seek to create, as a community, an adaptation tool that will run on all major mobile platforms and facilitate translation of plain text and [USFM](https://ubsicap.github.io/usfm/) text, and support collaboration between other translation tools such as the desktop version of [Adapt It](https://adapt-it.org/) as well as [Paratext](https://paratext.org/) and [Bibledit](https://bibledit.org/).
 
 ## License
 
