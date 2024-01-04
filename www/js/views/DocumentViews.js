@@ -38,6 +38,7 @@ define(function (require) {
         isClipboard     = false,
         isKB            = false,
         isGlossKB       = false,
+        isProjectFile   = false,
         fileList        = [],
         fileCount       = 0,
         batchesSent     = 0,
@@ -258,10 +259,22 @@ define(function (require) {
                 // Did we just import the KB?
                 if (isKB === true) {
                     // KB file -- only display success status
+                    $("#verifyNameControls").show();
+                    $("#lblVerify").hide();
+                    $("#rowBookName").hide();
                     $("#lblDirections").html(i18n.t("view.dscStatusKBImportSuccess"));
                 } else if (isGlossKB === true) {
                     // Gloss KB file -- only display success status
+                    $("#verifyNameControls").show();
+                    $("#lblVerify").hide();
+                    $("#rowBookName").hide();
                     $("#lblDirections").html(i18n.t("view.dscStatusGlossKBImportSuccess"));
+                } else if (isProjectFile === true) {
+                    // project file -- only display success status
+                    $("#verifyNameControls").show();
+                    $("#lblVerify").hide();
+                    $("#rowBookName").hide();
+                    $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                 } else {
                     // not a KB file:
                     // for regular document files, we did our best to guess a book name --
@@ -3862,11 +3875,13 @@ define(function (require) {
                     }
                 } else if (fileName.toLowerCase().indexOf(".aic") > 0) {
                     // create a new project object and populate it from the file contents
+                    isProjectFile = true;
                     var newProj = new projModel.Project();
                     newProj.fromString(contents).done(function() {
                         // success -- save the object and add to the collection
                         newProj.save();
                         window.Application.ProjectList.add(newProj);
+                        fileName = newProj.get('name');
                         importSuccess();
                     }).fail(function (err) {
                         importFail(err);
@@ -3917,6 +3932,20 @@ define(function (require) {
                                 }
                             }
                             result = readUSXDoc(contents);
+                        } else if (contents.indexOf("PunctuationTwoCharacterPairsSourceSet") >= 0) {
+                            // _probably adapt it configuration (aic) file contents
+                            // create a new project object and populate it from the clipboard contents
+                            isProjectFile = true;
+                            var newProj = new projModel.Project();
+                            newProj.fromString(contents).done(function() {
+                                // success -- save the object and add to the collection
+                                newProj.save();
+                                window.Application.ProjectList.add(newProj);
+                                fileName = newProj.get('name');
+                                importSuccess();
+                            }).fail(function (err) {
+                                importFail(err);
+                            });
                         } else if (contents.indexOf("\\id") >= 0) {
                             // _probably_ USFM under the hood
                             index = contents.indexOf("\\h ");
@@ -3934,17 +3963,6 @@ define(function (require) {
                         } else if (contents.indexOf("\\lx") >= 0) {
                             // _probably_ \lx data for the KB
                             result = readSFMLexDoc(contents);
-                        } else if (contents.indexOf("PunctuationTwoCharacterPairsSourceSet") >= 0) {
-                            // create a new project object and populate it from the clipboard contents
-                            var newProj = new projModel.Project();
-                            newProj.fromString(contents).done(function() {
-                                // success -- save the object and add to the collection
-                                newProj.save();
-                                window.Application.ProjectList.add(newProj);
-                                importSuccess();
-                            }).fail(function (err) {
-                                importFail(err);
-                            });
                         } else {
                             // unknown -- try reading it as a text document
                             result = readTextDoc(contents);
@@ -6553,9 +6571,10 @@ define(function (require) {
                 window.Application.kbList.clearLocal(); // clear out the kbList so it gets rebuilt
                 kblist = window.Application.kbList;
                 kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}});
-                // reset the isKB flag
+                // reset the file type flags
                 isKB = false;
                 isGlossKB = false;
+                isProjectFile = false;
                 // show either the browser or mobile selection buttons
                 if (this.isLoadingFromURL === false) {
                     if (device && (device.platform !== "browser")) {

@@ -120,46 +120,6 @@ define(function (require) {
                 $("#rowBookName").hide();
                 // tell the user the file was imported successfully
                 $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: project.get("name")}));
-                // is there more than one project in our project list?
-                if (window.ProjectList) {
-                    // YES -- ask if they want to switch
-                    if (navigator.notification) {
-                        // on mobile device -- use notification plugin API
-                        navigator.notification.confirm(
-                            i18n.t('view.msgUseProject'),
-                            function (btnIndex) {
-                                if (btnIndex === 1) {
-                                    window.Application.currentProject = project;
-                                    localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                                    // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                                    // from our new project instead
-                                    window.Application.BookList.length = 0;
-                                    window.Application.ChapterList.length = 0;
-                                    window.Application.spList.length = 0;
-                                    window.Application.kbList.length = 0;
-                                } else {
-                                    // No -- just exit
-                                }
-                            },
-                            i18n.t('view.ttlMain'),
-                            [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
-                        );
-                    } else {
-                        // in browser -- use window.confirm / window.alert
-                        if (window.confirm(i18n.t('view.msgUseProject'))) {
-                            window.Application.currentProject = project;
-                            localStorage.setItem("CurrentProjectID", project.get("projectid"));
-                            // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
-                            // from our new project instead
-                            window.Application.BookList.length = 0;
-                            window.Application.ChapterList.length = 0;
-                            window.Application.spList.length = 0;
-                            window.Application.kbList.length = 0;
-                        } else {
-                            // No -- just exit
-                        }
-                    }
-                }
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
@@ -244,20 +204,50 @@ define(function (require) {
             onOK: function () {
                 // save the model
                 this.model.save();
+                // is there already a current project?
                 if (window.Application.currentProject !== null) {
-                    // There's already a project defined, so there might be some local
-                    // chapter/book/sourcephrase/KB stuff -- clear it out so it reloads info from
-                    // our new project instead.
-                    window.Application.BookList.length = 0;
-                    window.Application.ChapterList.length = 0;
-                    window.Application.spList.length = 0;
-                    window.Application.kbList.length = 0;
+                    // YES -- ask if they want to switch
+                    if (navigator.notification) {
+                        // on mobile device -- use notification plugin API
+                        navigator.notification.confirm(
+                            i18n.t('view.msgUseProject'),
+                            function (btnIndex) {
+                                if (btnIndex === 1) {
+                                    window.Application.currentProject = this.model;
+                                    localStorage.setItem("CurrentProjectID", this.model.get("projectid"));
+                                    // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                                    // from our new project instead
+                                    window.Application.BookList.length = 0;
+                                    window.Application.ChapterList.length = 0;
+                                    window.Application.spList.length = 0;
+                                    window.Application.kbList.length = 0;
+                                } else {
+                                    // No -- just exit
+                                }
+                                // head back to the home page
+                                window.location.replace("");
+                            },
+                            i18n.t('view.ttlMain'),
+                            [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                        );
+                    } else {
+                        // in browser -- use window.confirm / window.alert
+                        if (window.confirm(i18n.t('view.msgUseProject'))) {
+                            window.Application.currentProject = project;
+                            localStorage.setItem("CurrentProjectID", project.get("projectid"));
+                            // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
+                            // from our new project instead
+                            window.Application.BookList.length = 0;
+                            window.Application.ChapterList.length = 0;
+                            window.Application.spList.length = 0;
+                            window.Application.kbList.length = 0;
+                        } else {
+                            // No -- just exit
+                        }
+                        // head back to the home page
+                        window.location.replace("");
+                    }
                 }
-                // Set the current project to our new one
-                window.Application.currentProject = this.model;
-                localStorage.setItem("CurrentProjectID", window.Application.currentProject.get("projectid"));
-                // head back to the home page
-                window.location.replace("");
             },
             // User clicked on the (mobile) Select file button --
             // call getFile() on the chooser plugin, and if we get a file back, import it
