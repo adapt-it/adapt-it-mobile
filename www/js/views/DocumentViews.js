@@ -6580,7 +6580,6 @@ define(function (require) {
                     if (device && (device.platform !== "browser")) {
                         // running on device -- use choooser plugin to select file
                         $("#browserSelect").hide();
-                        // chooser.getFile('text/*');
                     } else {
                         // running in browser -- use html <input> to select file
                         $("#mobileSelect").hide();
