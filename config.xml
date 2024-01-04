@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="47" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.13.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="48" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.14.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -18,14 +18,15 @@
     <preference name="SplashMaintainAspectRatio" value="false" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
+    <!-- IMPORTANT NOTE: sqlite plugin seems to collide with the ES6 promise plugin, currently a dependency of the plain-vanilla 
+         social sharing plugin (basically, SQLite doesn't launch and the app doesn't start). As of 12/27/2023, we're using a fork
+         of the social sharing plugin from https://github.com/IsraelHikingMap/corodova-plugin-socialsharing-android12 -->
     <platform name="android">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
-        <!-- SDK 26/Android 8.x: currently 5% marketshare as of 2023;
-             Using this as lowest SDK because it supports adaptive icons (for splash / app icon) -->
+        <!-- SDK 26/Android 8.x: lowest SDK that supports adaptive icons (for splash / app icon) -->
         <preference name="android-minSdkVersion" value="26" />
         <preference name="android-targetSdkVersion" value="33" />
-        <!-- static splash resources no longer used -->
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/svg/ic_aim_adaptive_splash.xml" />
         <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#279ED8" />
         <preference name="CustomURLSchemePluginClearsAndroidIntent" value="true" />
@@ -33,6 +34,9 @@
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
         <preference name="AndroidPersistentFileLocation" value="Internal" />
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:largeHeap="true" />
+        </edit-config>
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
             <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -54,7 +58,7 @@
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />
-                <!-- our mimeType is really broad; limit to our 6 supported filetypes
+                <!-- our mimeType is really broad; limit to our 7 supported filetypes
                 (and work around Android's ugly path pattern matching system) -->
                 <data android:pathPattern=".*\\.xml" />
                 <data android:pathPattern=".*\\.tmx" />
@@ -62,24 +66,28 @@
                 <data android:pathPattern=".*\\.usfm" />
                 <data android:pathPattern=".*\\.sfm" />
                 <data android:pathPattern=".*\\.usx" />
+                <data android:pathPattern=".*\\.aic" />
                 <data android:pathPattern=".*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\.aic" />
                 <data android:pathPattern=".*\\..*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\.aic" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.tmx" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.txt" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.usfm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.sfm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.usx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.aic" />
             </intent-filter>
         </config-file>
         <icon density="ldpi" src="www/res/icon/android/ldpi.png" />
@@ -151,6 +159,20 @@
                     <key>LSItemContentTypes</key>
                     <array>
                         <string>public.xml</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>CFBundleTypeName</key>
+                    <string>Adapt It Configuration Document</string>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>LSHandlerRank</key>
+                    <string>Default</string>
+                    <key>LSItemContentTypes</key>
+                    <array>
+                        <string>org.adapt-it.document.aic</string>
                     </array>
                 </dict>
                 <dict>
@@ -228,6 +250,27 @@
                             <string>usfm</string>
                             <string>sfm</string>
                             <string>txt</string>
+                        </array>
+                        <key>public.mime-type</key>
+                        <string>text/*</string>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.text</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>Adapt It Configuration Document</string>
+                    <key>CFBundleTypeIconFiles</key>
+                    <array />
+                    <key>UTTypeIdentifier</key>
+                    <string>org.adapt-it.document.aic</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>aic</string>
                         </array>
                         <key>public.mime-type</key>
                         <string>text/*</string>
@@ -321,21 +364,7 @@
         <preference name="www/res/icon/electron/icon.png" />
         <preference name="www/res/icon/electron/icon@2x.png" target="installer" />
     </platform>
-    <platform name="windows">
-        <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
-        <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
-        <preference name="WindowsStoreDisplayName" value="Adapt It Mobile" />
-        <preference name="StatusBarOverlaysWebView" value="true" />
-        <icon src="www/res/icon/windows/storelogo.png" target="StoreLogo" />
-        <icon src="www/res/icon/windows/Square30x30Logo.png" target="Square30x30Logo" />
-        <icon src="www/res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
-        <icon src="www/res/icon/windows/Square70x70Logo.png" target="Square70x70Logo" />
-        <icon src="www/res/icon/windows/Square71x71Logo.png" target="Square71x71Logo" />
-        <icon src="www/res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
-        <icon src="www/res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
-        <icon src="www/res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
-        <splash src="www/res/screen/windows/splashscreen.png" target="SplashScreen" />
-    </platform>
+    <plugin name="cordova-plugin-chooser" spec="^1.3.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
     <plugin name="cordova-plugin-filepath" spec="https://github.com/VIAVI-Solutions/cordova-plugin-filepath.git" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />

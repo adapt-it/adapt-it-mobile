@@ -201,7 +201,7 @@
         "dscErrCannotFindChapter": "Não é possível encontrar informações do capítulo.",
         "dscErrImportFirstChapterFirst": "este é um documento de colaboração; importe o primeiro capítulo antes de importar este capítulo.",
         "dscNoDocumentsFound": "Nenhum arquivo disponível encontrado no dispositivo. Copie os arquivos para o dispositivo e tente novamente.",
-        "lblSelect": "Selecionar arquivos",
+        "lblSelect": "Selecionar arquivo",
         "ttlReset": "Restabelecer Adapt It Mobile",
         "dscReset": "AVISO: isso limpará todos os documentos e projetos, bem como a Base de Conhecimento. Você tem certeza?",
         "dscAdaptComplete": "Adaptação de __chapter__ completo.",
@@ -216,6 +216,7 @@
         "detailChapterVerse": "__chap__, versículo: __verse__ ",
         "dscStatusSavingProgress": "Lote __number__ de __total__ salvo.",
         "dscStatusImportSuccess": "Arquivo \"__document__\" foi lido com sucesso.",
+        "dscStatusProjImportSuccess": "Projeto \"__document__\" foi lido com sucesso.",
         "ttlFilteredText": "Texto filtrado",
         "dscFilterMarker": "Marcador USFM: ",
         "dscFilteredText": "Texto para marcador filtrado: ",
@@ -382,6 +383,10 @@
         "lblNoEntries": "Nenhuma iten encontrada.",
         "ErrImportDoc": "Adapt It Mobile encontrou um problema ao tentar abrir/importar documento: \"__error__\"",
         "ErrImportNoProjectDefined": "O Adapt It Mobile precisa de informações sobre o seu projeto de tradução antes de importar documentos. Crie ou copie um documento e então você poderá importar documentos para o Adapt It Mobile.",
+        "ErrNoClipboard": "Nenhum texto encontrado na área de transferência. Copie algum texto para a área de transferência e tente importar novamente.",
+        "msgUseProject": "Você quer mudar para este projeto?",
+        "ErrNotAIC": "Dados do projeto não encontrados. (Este é um arquivo de projeto Adapt It (.aic)?)",
+        "ErrCopyProjectFailed": "Não foi possível copiar o projeto. Razão: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

@@ -201,7 +201,7 @@
         "dscErrCannotFindChapter": "ne peut pas trouver le numéro de chapitre.",
         "dscErrImportFirstChapterFirst": "il s'agit d'un document de collaboration; importe le premier chapitre avant d'importer ce chapitre.",
         "dscNoDocumentsFound": "Aucun fichier disponible trouvé sur l'appareil. Se il vous plaît copier des fichiers sur le périphérique et réessayez.",
-        "lblSelect": "Sélectionnez documents",
+        "lblSelect": "Sélectionnez document",
         "ttlReset": "Réinitialiser Adapt It Mobile",
         "dscReset": "AVERTISSEMENT: ce qui effacera tous les documents et de projets, ainsi que la Base de Connaissances. Etes-vous sûr que vous voulez réinitialiser Adapt It Mobile?",
         "dscAdaptComplete": "Traduction de __chapter__ est maintenant terminée.",
@@ -216,6 +216,7 @@
         "detailChapterVerse": "__chap__, verset: __verse__ ",
         "dscStatusSavingProgress": "Lot __number__ sur __total__ enregistré.",
         "dscStatusImportSuccess": "Fichier \"__document__\" lue.",
+        "dscStatusProjImportSuccess": "Projet \"__document__\" lue.",
         "ttlFilteredText": "Texte filtré",
         "dscFilterMarker": "USFM marqueur: ",
         "dscFilteredText": "Texte: ",
@@ -382,6 +383,10 @@
         "lblNoEntries": "Aucune entrée trouvée.",
         "ErrImportDoc": "Adapt It Mobile a rencontré un problème en essayant d'ouvrir/importer un document: \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile a besoin d'informations sur votre projet de traduction avant de pouvoir importer des documents. Veuillez créer ou copier un document, puis vous pourrez importer des documents dans Adapt It Mobile.",
+        "ErrNoClipboard": "Aucun texte trouvé dans le presse-papiers. Veuillez copier du texte dans le presse-papiers et réessayer d'importer.",
+        "msgUseProject": "Voulez-vous changer pour ce projet?",
+        "ErrNotAIC": "Données du projet introuvables. (Est-ce un fichier de projet Adapt It (.aic)?)",
+        "ErrCopyProjectFailed": "Impossible de copier le projet. Raison: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

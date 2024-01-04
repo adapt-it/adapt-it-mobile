@@ -216,6 +216,7 @@
         "detailChapterVerse": "__chap__, verse: __verse__",
         "dscStatusSavingProgress": "Batch __number__ of __total__ saved.",
         "dscStatusImportSuccess": "File \"__document__\" read successfully.",
+        "dscStatusProjImportSuccess": "Project \"__document__\" read successfully.",
         "ttlFilteredText": "Filtered Text",
         "dscFilterMarker": "USFM marker: ",
         "dscFilteredText": "Text for filtered marker: ",
@@ -382,6 +383,10 @@
         "lblNoEntries": "No entries found.",
         "ErrImportDoc": "Adapt It Mobile encountered a problem trying to open / import document: \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
+        "ErrNoClipboard": "No text found on the clipboard. Please copy some text to the clipboard and try importing again.",
+        "msgUseProject": "Do you want to switch to this project?",
+        "ErrNotAIC": "Project data not found. (Is this an Adapt It desktop project (.aic) file?)",
+        "ErrCopyProjectFailed": "Unable to copy project. Reason: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

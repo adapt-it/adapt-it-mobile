@@ -195,7 +195,7 @@
         "dscCopyProjectFound": "Painim projek: \"__project__.\"",
         "dscCopyDocumentFound": "Painim dokumen: \"__document__.\"",
         "dscCopyDocumentFailed": "Impot no inap kisim \"__document__\". As em olsem: __reason__",
-        "dscExportFailed": "Export failed for \"__document__\". Reason: __reason__",
+        "dscExportFailed": "Export failed for \"__document__\". As em olsem: __reason__",
         "dscErrDuplicateFile": "wanpela fail i stap pinis.",
         "dscErrCannotFindID": "no save long dispela buk ID.",
         "dscErrCannotFindChapter": "no inap painim sapta namba.",
@@ -216,6 +216,7 @@
         "detailChapterVerse": "__chap__, verse: __verse__ ",
         "dscStatusSavingProgress": "Sevim deta __number__ / __total__ .",
         "dscStatusImportSuccess": "Fail \"__document__\" ritim gut pinis.",
+        "dscStatusProjImportSuccess": "Projek \"__document__\" ritim gut pinis.",
         "ttlFilteredText": "Filta (hait) teks",
         "dscFilterMarker": "USFM Maka: ",
         "dscFilteredText": "Teks bilong filta maka: ",
@@ -382,6 +383,10 @@
         "lblNoEntries": "No entries found.",
         "ErrImportDoc": "Adapt It Mobile encountered a problem trying to open / import \"__document__\": \"__error__\"",
         "ErrImportNoProjectDefined": "Adapt It Mobile needs information about your translation project before you can import documents. Please create or copy a document, and then import documents into Adapt It Mobile.",
+        "ErrNoClipboard": "Nogat klipbot teks.",
+        "msgUseProject": "Do you want to switch to this project?",
+        "ErrNotAIC": "Project data not found. (Is this an Adapt It desktop project (.aic) file?)",
+        "ErrCopyProjectFailed": "Unable to copy project. Reason: __reason__",
         "_comment" : "****Add new strings BEFORE this line!****"
     },
     "help": {

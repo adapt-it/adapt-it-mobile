@@ -1,5 +1,6 @@
 {{! CopyOrImport.html
-    Template for rendering the Copy Project and Import Documents pages. 
+    Template for rendering the Copy Project and Import Documents pages. Includes selection buttons 
+    for both browser (using input type=file) and mobile (regular button w/cordova chooser plugin logic in js files)
     Used by ProjectViews.js and DocumentViews.js.
 }}
 
@@ -19,13 +20,18 @@
     </div>
 </div>
 <div class="scroller-notb">
-<div id="mobileSelect"></div>
-<div class="control-group" id="browserGroup">
-    <div class="control-row" id="lblDirections"></div>
-    <div class="control-row full" id="status"></div>
-    <div id="WizardSteps">
-        <div id="browserSelect" style="display:inline-block"><label for="selFile" class="topcoat-button">{{t 'view.lblSelect'}}</label><input type="file" value="" id="selFile" multiple><button class="topcoat-button" id="btnClipboard">{{t 'view.lblCopyClipboardText'}}</button></div>
-        <button class="topcoat-button" id="OK">{{t 'view.lblOK'}}</button>
+    <ul id="selectControls" class='topcoat-list__container chapter-list'>
+        <li class="topcoat-list__item"><a class="big-link" id="btnClipboard" title="{{t 'view.lblCopyClipboardText'}}"><span class="btn-clipboard"></span>{{ t 'view.lblCopyClipboardText'}}<span class="chevron"></span></a></li>
+        <li class="topcoat-list__item" id="mobileSelect" ><a class="big-link" id="btnBrowse" title="{{ t 'view.lblSelect'}}"><span class="btn-file"></span>{{ t 'view.lblSelect'}}<span class="chevron"></span></a></li>
+        <li class="topcoat-list__item" id="browserSelect"><a class="big-link" title="{{ t 'view.lblSelect'}}"><span class="btn-file"></span><label for="selFile" class="topcoat-button">{{t 'view.lblSelect'}}</label><input type="file" value="" id="selFile" multiple><span class="chevron"></span></a></li>
+    </ul>
+    <div class="control-group" id="verifyNameControls">
+        <div class="control-row" id="lblDirections"></div>
+        <div class="control-row" id="lblVerify">{{ t 'view.dscBookName'}}</div>
+        <div class="control-row" id="rowBookName"><label for="BookName">{{ t 'view.lblBookName'}}</label><input type="text" id="BookName" class="topcoat-text-input full"></div>        
+        <div id="OKCancelButtons" style="margin-top: 1em;">
+            <button class="topcoat-button" id="OK"><span id="lblOK">{{t 'view.lblOK'}}</span></button>
+        </div>
     </div>
-</div>
+    <div id="LoadingStatus"></div>
 </div>

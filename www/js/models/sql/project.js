@@ -6,6 +6,7 @@ define(function (require) {
 
     var $           = require('jquery'),
         Backbone    = require('backbone'),
+        i18n        = require('i18n'),
         projects    = [],
         CURRSCHEMA  = 4,
         
@@ -655,6 +656,184 @@ define(function (require) {
             },
             initialize: function () {
                 this.on('change', this.save, this);
+            },
+            // populate this project object from an .aic file / string
+            fromString: function (str) {
+                var deferred = $.Deferred(),
+                    errMsg = "",
+                    value = "",
+                    value2 = "",
+                    value3 = "",
+                    value4 = "",
+                    i = 0,
+                    s = null,
+                    t = null,
+                    lines = [],
+                    arrPunct = [],
+                    arrCases = [];
+                // helper method to convert .aic color values to an html hex color string:
+                // .aic  --> bbggrr (in base 10)
+                // .html --> #rrggbb  (in hex)
+                var getColorValue = function (strValue) {
+                    var intValue = parseInt(strValue, 10);
+                    var rValue = ("00" + (intValue & 0xff).toString(16)).slice(-2);
+                    var gValue = ("00" + ((intValue >> 8) & 0xff).toString(16)).slice(-2);
+                    var bValue = ("00" + ((intValue >> 16) & 0xff).toString(16)).slice(-2);
+                    // format in html hex, padded with leading zeroes
+                    var theValue = "#" + rValue + gValue + bValue;
+                    return theValue;
+                };
+                // Helper method to pull out the value corresponding to the named setting from the .aic file contents
+                // (the array "lines"). If the named setting isn't found at that line, it searches FORWARD to the end --
+                // returning an empty string if not found.
+                var getSettingValue = function (expectedIndex, aicSetting) {
+                    var i = 0,
+                        value = "";
+                    if (lines[expectedIndex].indexOf(aicSetting) !== -1) {
+                        // the value is the rest of the line AFTER the aicsetting + space
+                        value = lines[expectedIndex].substr(aicSetting.length + 1);
+                    } else {
+                        // This setting is NOT at the line we expected. It could be on a different
+                        // line, or not in the .aic file at all
+                        for (i = 0; i < lines.length; i++) {
+                            if (lines[i].indexOf(aicSetting) === 0) {
+                                // Found! The value is the rest of the line AFTER the aicsetting + space
+                                value = lines[i].substr(aicSetting.length + 1);
+                                // finish searching
+                                break;
+                            }
+                        }
+                    }
+                    return value;
+                };
+                // split out the .aic file into an array (one entry per line of the file)
+                lines = str.split("\n");
+                // Is this string an Adapt It project file?
+                var srcLangName = getSettingValue(56, "SourceLanguageName");
+                var tgtLangName = getSettingValue(57, "TargetLanguageName");
+                if ((srcLangName.length === 0) || (tgtLangName.length === 0)) {
+                    // source or target language name not found -- we can't parse this as a project file
+                    errMsg = i18n.t("view.ErrNotAIC");
+                    deferred.reject(new Error(errMsg)); // tell the user
+                    return deferred.promise();
+                }
+                // Is this for a file we've already configured or imported (i.e., do the source and target languages
+                // match a project in our project list)?
+                if (window.Application.ProjectList) {
+                    // we've got some projects -- see if our source and target match one of them
+                    window.Application.ProjectList.each(function (model, index) {
+                        if (model.get('SourceLanguageName') === srcLangName && model.get('TargetLanguageName') === tgtLangName) {
+                            // stop import -- this file matches an existing project in our list
+                            errMsg = i18n.t("view.dscErrDuplicateFile");
+                            deferred.reject(new Error(errMsg)); // tell the user
+                            return deferred.promise();
+                        }
+                    });                    
+                }
+                // This is a project file string -- populate this project object
+                this.set('projectid', window.Application.generateUUID(), {silent: true});
+                this.set('SourceLanguageName', srcLangName, {silent: true});
+                this.set('TargetLanguageName', tgtLangName, {silent: true});
+                // EDB 3 Jan 24 - the variants don't currently exist in the .aic file, so these will = "" for now
+                this.set('SourceVariant', getSettingValue(56, "SourceVariant"), {silent: true}); 
+                this.set('TargetVariant', getSettingValue(57, "TargetVariant"), {silent: true});
+                this.set('SourceLanguageCode', getSettingValue(59, "SourceLanguageCode"), {silent: true});
+                this.set('TargetLanguageCode', getSettingValue(60, "TargetLanguageCode"), {silent: true});
+                this.set('SourceDir', ((getSettingValue(115, "SourceIsRTL") === "1") ? "rtl" : "ltr"), {silent: true});
+                this.set('TargetDir', ((getSettingValue(116, "TargetIsRTL") === "1") ? "rtl" : "ltr"), {silent: true});
+                value = getSettingValue(124, "ProjectName");
+                if (value.length > 0) {
+                    this.set('name', value, {silent: true});
+                } else {
+                    // project name not found -- build it from the source & target languages
+                    this.set('name', (i18n.t("view.lblSourceToTargetAdaptations", {
+                        source: (this.get('SourceVariant').length > 0) ? this.get('SourceVariant') : this.get('SourceLanguageName'),
+                        target: (this.get('TargetVariant').length > 0) ? this.get('TargetVariant') : this.get('TargetLanguageName')
+                    })), {silent: true});
+                }
+                // filters (USFM only -- other settings are ignored)
+                value = getSettingValue(124, "UseSFMarkerSet");
+                if (value === "UsfmOnly") {
+                    value = getSettingValue(123, "UseFilterMarkers");
+                    if (value !== this.get('FilterMarkers')) {
+                        this.set('UseCustomFilters', "true", {silent: true});
+                        this.set('FilterMarkers', value, {silent: true});
+                    }
+                }
+                // The following settings require some extra work
+                // Punctuation pairs
+                value = getSettingValue(79, "PunctuationPairsSourceSet(stores space for an empty cell)");
+                value2 = getSettingValue(80, "PunctuationPairsTargetSet(stores space for an empty cell)");
+                for (i = 0; i < value.length; i++) {
+                    s = value.charAt(i);
+                    t = value2.charAt(i);
+                    if (s && s.length > 0) {
+                        arrPunct[arrPunct.length] = {s: s, t: t};
+                    }
+                }
+                // add double punctuation pairs as well
+                value = getSettingValue(81, "PunctuationTwoCharacterPairsSourceSet(ditto)");
+                value2 = getSettingValue(82, "PunctuationTwoCharacterPairsTargetSet(ditto)");
+                i = 0;
+                while (i < value.length) {
+                    s = value.substr(i, 2);
+                    t = value2.substr(i, 2);
+                    if (s && s.length > 0) {
+                        arrPunct[arrPunct.length] = {s: s, t: t};
+                    }
+                    i = i + 2; // advance to the next item (each set is 2 chars in length)
+                }
+                this.set('PunctPairs', arrPunct, {silent: true});
+                // Auto capitalization
+                value = getSettingValue(115, "LowerCaseSourceLanguageChars");
+                value2 = getSettingValue(116, "UpperCaseSourceLanguageChars");
+                value3 = getSettingValue(117, "LowerCaseTargetLanguageChars");
+                value4 = getSettingValue(118, "UpperCaseTargetLanguageChars");
+                for (i = 0; i < value.length; i++) {
+                    s = value.charAt(i) + value2.charAt(i);
+                    t = value3.charAt(i) + value4.charAt(i);
+                    if (s && s.length > 0) {
+                        arrCases[arrCases.length] = {s: s, t: t};
+                    }
+                }
+                this.set('CasePairs', arrCases, {silent: true});
+                value = getSettingValue(121, "AutoCapitalizationFlag");
+                this.set('AutoCapitalization', ((value === "1") ? "true" : "false"), {silent: true});
+                value = getSettingValue(122, "SourceHasUpperCaseAndLowerCase");
+                this.set('SourceHasUpperCase', ((value === "1") ? "true" : "false"), {silent: true});
+
+                // Fonts, if they're installed on this device (getFontList is async)
+                if (navigator.Fonts) {
+                    navigator.Fonts.getFontList(
+                        function (fontList) {
+                            if (fontList) {
+                                // Source Font
+                                value = getSettingValue(16, "FaceName");
+                                if ($.inArray(value, fontList) > -1) {
+                                    this.set('SourceFont', value, {silent: true});
+                                }
+                                // Target Font
+                                value = getSettingValue(34, "FaceName");
+                                if ($.inArray(value, fontList) > -1) {
+                                    this.set('TargetFont', value, {silent: true});
+                                }
+                            }
+                        },
+                        function (error) {
+                            console.log("FontList error: " + error);
+                        }
+                    );
+                }
+                // font colors
+                this.set('SourceColor', getColorValue(getSettingValue(17, "Color")), {silent: true});
+                this.set('TargetColor', getColorValue(getSettingValue(34, "Color")), {silent: true});
+                this.set('NavColor', getColorValue(getSettingValue(53, "Color")), {silent: true});
+                this.set('SpecialTextColor', getColorValue(getSettingValue(87, "SpecialTextColor")), {silent: true});
+                this.set('RetranslationColor', getColorValue(getSettingValue(88, "RetranslationTextColor")), {silent: true});
+                this.set('TextDifferencesColor', getColorValue(getSettingValue(89, "TargetDifferencesTextColor")), {silent: true});
+                // succeeded -- resolve the promise
+                deferred.resolve();
+                return deferred.promise();
             },
             fetch: function () {
                 var deferred = $.Deferred();
