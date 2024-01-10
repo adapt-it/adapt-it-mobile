@@ -41,8 +41,7 @@ define(function (require) {
         USFMMarkers = null,
         theFont     = null,
         template    = null,
-        lines       = [],
-        fileList    = [],
+        projid      = "",
  
         ////
         // Helper methods
@@ -120,6 +119,7 @@ define(function (require) {
                 $("#rowBookName").hide();
                 // tell the user the file was imported successfully
                 $("#lblDirections").html(i18n.t("view.dscStatusProjImportSuccess", {document: project.get("name")}));
+                projid = project.get("projectid");
             };
             // Callback for when the file failed to import
             var importFail = function (e) {
@@ -214,8 +214,10 @@ define(function (require) {
                             i18n.t('view.msgUseProject'),
                             function (btnIndex) {
                                 if (btnIndex === 1) {
-                                    window.Application.currentProject = model;
-                                    localStorage.setItem("CurrentProjectID", model.get("projectid"));
+                                    if (projid.length > 0) {
+                                        localStorage.setItem("CurrentProjectID", projid);
+                                        window.Application.currentProject = window.Application.ProjectList.where({projectid: projid});;
+                                    }
                                     // Clear out any local chapter/book/sourcephrase/KB stuff so it loads 
                                     // from our new project instead
                                     window.Application.BookList.length = 0;
