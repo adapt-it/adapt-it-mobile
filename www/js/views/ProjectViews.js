@@ -250,6 +250,14 @@ define(function (require) {
                         // head back to the home page
                         window.location.replace("");
                     }
+                } else {
+                    // no current project -- set it now
+                    if (projid.length > 0) {
+                        localStorage.setItem("CurrentProjectID", projid);
+                        window.Application.currentProject = window.Application.ProjectList.where({projectid: projid});;
+                    }
+                    // head back to the home page
+                    window.location.replace("");
                 }
             },
             // User clicked on the (mobile) Select file button --
