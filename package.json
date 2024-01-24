@@ -41,6 +41,7 @@
   "dependencies": {
     "cordova-lib": "^10.1.0",
     "cordova-plugin-fonts": "^0.6.5",
+    "cordova-plugin-save-dialog": "2.0.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "crypto-randomuuid": "^1.0.0",
     "electron-builder": "^23.0.3",
@@ -91,7 +92,8 @@
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
       },
-      "cordova-plugin-chooser": {}
+      "cordova-plugin-chooser": {},
+      "cordova-plugin-save-dialog": {}
     },
     "platforms": [
       "android",
