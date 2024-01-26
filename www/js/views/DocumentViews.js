@@ -3989,6 +3989,7 @@ define(function (require) {
             var writer = null;
             var exportDirectory = "";
             var subdir = "AIM_Exports_";
+            var sType = "text/plain"; // default MIME type (text)
             var bResult = true;
             var onShareSuccess = function (result) {
                 console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
@@ -5879,24 +5880,30 @@ define(function (require) {
                         break;
                     case FileTypeEnum.USX:
                         bResult = buildUSX();
+                        sType = "text/xml"; // XML under the hood
                         break;
                     case FileTypeEnum.XML:
                         bResult = buildAIDocXML();
+                        sType = "text/xml";
                         break;
                     case FileTypeEnum.KBXML:
                         bResult = buildKBXML();
+                        sType = "text/xml";
                         break;
                     case FileTypeEnum.KBTMX:
                         bResult = buildTMX();
+                        sType = "text/xml"; // xml under the hood
                         break;
                     case FileTypeEnum.GLOSSKBXML:
                         bResult = exportGlossKB();
+                        sType = "text/xml";
                         break;
                     case FileTypeEnum.SFM_KB:
                         bResult = buildSFMKB();
                         break;
                     case FileTypeEnum.LIFT:
                         bResult = buildLIFT();
+                        sType = "text/xml"; // XML under the hood
                         break;
                 }
                 if (bResult === false) {
@@ -5914,7 +5921,7 @@ define(function (require) {
                 } else {
                     // To FILE -- Create a Blob from strContents and ask the user
                     // to pick a destination (and optionally change the filename), then do the export
-                    let blob = new Blob(strContents, {type: "text/plain"});
+                    let blob = new Blob([strContents], {type: sType});
                     cordova.plugins.saveDialog.saveFile(blob, filename).then(uri => {
                         console.info("The file has been successfully saved to", uri);
                         exportSuccess();
@@ -5961,21 +5968,26 @@ define(function (require) {
                                     break;
                                 case FileTypeEnum.USX:
                                     bResult = buildUSX();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.XML:
                                     bResult = buildAIDocXML();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.KBXML:
                                     bResult = buildKBXML();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.KBTMX:
                                     bResult = buildTMX();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.SFM_KB:
                                     bResult = buildSFMKB();
                                     break;
                                 case FileTypeEnum.LIFT:
                                     bResult = buildLIFT();
+                                    sType = "text/xml";
                                     break;
                                 }
                                 if (bResult === false) {
@@ -5991,7 +6003,7 @@ define(function (require) {
                                 } else {
                                     // to file -- create a blob for the fileWriter
                                     // (exportSuccess and exportFail are called from the onwriteend/onwritefail calls above)
-                                    var blob = new Blob([strContents], {type: 'text/plain'});
+                                    var blob = new Blob([strContents], {type: sType});
                                     writer.write(blob);
                                 }
                                 strContents = ""; // clear out the content string
@@ -6373,9 +6385,6 @@ define(function (require) {
             ////
             events: {
                 "click .docListItem": "selectDoc",
-                "mouseup #Filename": "editFilename",
-                "blur #Filename": "blurFilename",
-                "change .topcoat-radio-button": "changeType",
                 "click #toClipboard": "onToClipboard",
                 "click #toFile": "onToFile",
                 "click #exportAdaptation": "onExportAdaptation",
@@ -6391,14 +6400,6 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
-            },
-            editFilename: function (event) {
-                console.log("editFilename");
-                // scroll up if there's not enough room for the keyboard
-                if (($(window).height() - $(".control-group").height()) < 300) {
-                    var top = event.currentTarget.offsetTop - $("#Filename").outerHeight();
-                    $("#mobileSelect").scrollTop(top);
-                }
             },
             // User wants to export the adaptation / target text. For Adapt It (.xml) format, this includes the gloss and FT data.
             onExportAdaptation: function () {
@@ -6416,9 +6417,7 @@ define(function (require) {
                     $("#grpFilename").hide();
                 }
                 // select a default of TXT for the export format (for now)
-                $("#exportTXT").prop("checked", true);
-                bookName += ".txt";
-                $("#Filename").val(bookName);
+                $("#buildTXT").prop("checked", true);
             },
             // User wants to export the glosses. This exports to USFM.
             onExportGloss: function () {
@@ -6436,8 +6435,6 @@ define(function (require) {
                 }
                 // SFM for the export format
                 $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblbuildUSFM'));
-                bookName += ".sfm";
-                $("#Filename").val(bookName);
             },
             // User wants to export the free translation data. This exports to USFM.
             onExportFT: function () {
@@ -6455,48 +6452,6 @@ define(function (require) {
                 }
                 // SFM for the export format
                 $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblbuildUSFM'));
-                bookName += ".sfm";
-                $("#Filename").val(bookName);
-            },
-            blurFilename: function () {
-                $("#mobileSelect").scrollTop(0);
-            },
-            // User changed the export format type. Add the appropriate extension
-            changeType: function () {
-                // strip any existing trailing extension from the filename
-                // enable the filename edit field (only disable for KB XML)
-                var project = window.Application.currentProject;
-                $("#Filename").prop('disabled', false);
-                var filename = $("#Filename").val().trim();
-                if (filename.length > 0) {
-                    if ((filename.indexOf(".xml") > -1) || (filename.indexOf(".txt") > -1) || (filename.indexOf(".sfm") > -1) || (filename.indexOf(".tmx") > -1) || (filename.indexOf(".usx") > -1)) {
-                        filename = filename.substr(0, filename.length - 4);
-                    }
-                }
-                // get the desired format
-                if ($("#buildAIDocXML").is(":checked")) {
-                    filename += ".xml";
-                } else if ($("#buildUSX").is(":checked")) {
-                    filename += ".usx";
-                } else if ($("#buildUSFM").is(":checked")) {
-                    filename += ".sfm";
-                } else if ($("#buildKBXMLTMX").is(":checked")) {
-                    filename += ".tmx";
-                } else if ($("#buildKBXMLSFM").is(":checked")) {
-                    filename += ".sfm";
-                } else if ($("#buildKBXMLLIFT").is(":checked")) {
-                    filename += ".lift";
-                } else if ($("#buildKBXMLXML").is(":checked")) {
-                    // special case -- AI requires a special filename
-                    // Note: hard-coded (do not localize)
-                    filename = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
-                    $("#Filename").prop('disabled', true);
-                } else {
-                    // fallback to plain text
-                    filename += ".txt";
-                }
-                // replace the filename text
-                $("#Filename").val(filename);
             },
             // User selected export to a file
             onToFile: function () {
@@ -6529,13 +6484,38 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function () {
+                var filename = bookName;
+                var project = window.Application.currentProject;
                 if ($("#buildAIDocXML").length === 0) {
                     // if this is the export complete page,
                     // go back to the previous page
                     window.history.go(-1);
                 } else {
                     var format = FileTypeEnum.TXT;
-                    var filename = $("#Filename").val().trim();
+                    // build the suggested filename based on the file type
+                    if ($("#buildAIDocXML").is(":checked")) {
+                        filename += ".xml";
+                    } else if ($("#buildUSX").is(":checked")) {
+                        filename += ".usx";
+                    } else if ($("#buildUSFM").is(":checked")) {
+                        filename += ".sfm";
+                    } else if ($("#buildKBXMLTMX").is(":checked")) {
+                        filename += ".tmx";
+                    } else if ($("#buildKBXMLSFM").is(":checked")) {
+                        filename += ".sfm";
+                    } else if ($("#buildKBXMLLIFT").is(":checked")) {
+                        filename += ".lift";
+                    } else if ($("#buildGlossKBXML").is(":checked")) {
+                        // overwrite to hard-coded string (do not localize)
+                        filename = "Glossing.xml";
+                    } else if ($("#buildKBXMLXML").is(":checked")) {
+                        // overwrite to hard-coded string (do not localize)
+                        filename = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
+                    } else {
+                        // fallback to plain text
+                        filename += ".txt";
+                    }
+
                     // validate input
                     if ((filename.length === 0) && (this.destination !== DestinationEnum.CLIPBOARD)) {
                         // user didn't type anything in
@@ -6547,7 +6527,6 @@ define(function (require) {
                             // in browser -- use window.confirm / window.alert
                             alert(i18n.t('view.errNoFilename'));
                         }
-                        $("#Filename").focus();
                     } else {
                         // get the desired format
                         if ($("#buildAIDocXML").is(":checked")) {
@@ -6564,7 +6543,7 @@ define(function (require) {
                             format = FileTypeEnum.SFM_KB;
                         } else if ($("#buildKBXMLLIFT").is(":checked")) {
                             format = FileTypeEnum.LIFT;
-                        } else if ($("#exportGlossKBXML").is(":checked")) {
+                        } else if ($("#buildGlossKBXML").is(":checked")) {
                             format = FileTypeEnum.GLOSSKBXML;
                         } else {
                             if (this.content !== contentEnum.ADAPTATION) {
@@ -6640,17 +6619,13 @@ define(function (require) {
                     $("#glossKBFormat").hide();
                     // select a default of XML for the export format (for now)
                     $("#buildKBXMLXML").prop("checked", true);
-                    bookName = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
-                    $("#Filename").prop('disabled', true); // can't change the filename for KB XML
                 } else if (bookid === "glosskb") {
                     console.log("User exporting GLOSS KB");
                     // exporting the gloss KB (really only one option here -- "Glossing.xml")
                     $("#FileFormats").hide();
                     $("#KBFormats").hide();
                     $("#glossKBFormat").show();
-                    $("#exportGlossKBXML").prop("checked", true);
-                    bookName = "Glossing.xml"; // hard coded (no il8n)
-                    $("#Filename").prop('disabled', true); // can't change the filename for KB XML
+                    $("#buildGlossKBXML").prop("checked", true);
                 } else {
                     console.log("User exporting a document");
                     // exporting a book
@@ -6686,11 +6661,10 @@ define(function (require) {
                             }
                         }
                         // select a default of TXT for the export format (for now)
-                        $("#exportTXT").prop("checked", true);
+                        $("#buildTXT").prop("checked", true);
                         bookName += ".txt";
                     }
                 }
-                $("#Filename").val(bookName);
             },
             onShow: function () {
                 kblist = window.Application.kbList;
