@@ -2936,7 +2936,14 @@ define(function (require) {
                     index = contents.indexOf("\\ide");
                     if (index !== -1) {
                         // encoding is specified -- what is it?
-                        encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5));
+                        encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5)).trim();
+                        // special case -- an older AIM export with a missing \\ide value
+                        if (encoding === "") {
+                            // this is really UTF-8, but let's make it explicit
+                            contents.replace("\\ide ", "\\ide UTF-8 ");
+                            encoding = "UTF-8"; 
+                        }
+                        // okay, check the encoding
                         if (encoding !== "UTF-8") { // nope -- error out
                             errMsg = i18n.t("view.dscErrUnsupportedEncoding");
                             return false;
@@ -4202,46 +4209,50 @@ define(function (require) {
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
                                 markers = value.get("markers");
-                                // check to see if this sourcephrase is filtered (only looking at the top level)
-                                if (filtered === false) {
-                                    for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
-                                        // sanity check for blank filter strings
-                                        if (filterAry[idxFilters].trim().length > 0) {
-                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
-                                                // this is a filtered sourcephrase -- do not export it
-                                                console.log("filtered: " + markers);
-                                                // however, if there are some markers before we hit our filtered one, 
-                                                // make sure they get exported now
-                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
-                                                if (markers.length > 0) {
-                                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
-                                                            (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) ||
-                                                            (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                                        // pretty-printing -- add a newline so the output looks better
-                                                        chapterString += "\n"; // newline
+                                if (markers !== "") {
+                                    // filter processing
+                                    markers += " "; // add trailing space to handle last marker
+                                    // check to see if this sourcephrase is filtered (only looking at the top level)
+                                    if (filtered === false) {
+                                        for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                            // sanity check for blank filter strings
+                                            if (filterAry[idxFilters].trim().length > 0) {
+                                                if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                                    // this is a filtered sourcephrase -- do not export it
+                                                    console.log("filtered: " + markers);
+                                                    // however, if there are some markers before we hit our filtered one, 
+                                                    // make sure they get exported now
+                                                    markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
+                                                    if (markers.length > 0) {
+                                                        if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
+                                                                (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id ") > -1) ||
+                                                                (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                                            // pretty-printing -- add a newline so the output looks better
+                                                            chapterString += "\n"; // newline
+                                                        }
+                                                        // now add the markers and a space
+                                                        chapterString += markers + " ";
                                                     }
-                                                    // now add the markers and a space
-                                                    chapterString += markers + " ";
+                                                    chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
+                                                    // if there is an end marker associated with this marker,
+                                                    // do not export any source phrases until we come across the end marker
+                                                    mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                    if (mkr[0].get("endMarker")) {
+                                                        needsEndMarker = mkr[0].get("endMarker");
+                                                    }
+                                                    filtered = true;
                                                 }
-                                                chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
-                                                // if there is an end marker associated with this marker,
-                                                // do not export any source phrases until we come across the end marker
-                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
-                                                if (mkr[0].get("endMarker")) {
-                                                    needsEndMarker = mkr[0].get("endMarker");
-                                                }
-                                                filtered = true;
                                             }
                                         }
                                     }
-                                }
-                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
-                                    // found our ending marker -- this sourcephrase is not filtered
-                                    // first, remove the marker from the markers string so it doesn't print out
-                                    markers = markers.replace(("\\" + needsEndMarker), '');
-                                    // now clear our flags so the sourcephrase exports
-                                    needsEndMarker = "";
-                                    filtered = false;
+                                    if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                        // found our ending marker -- this sourcephrase is not filtered
+                                        // first, remove the marker from the markers string so it doesn't print out
+                                        markers = markers.replace(("\\" + needsEndMarker), '');
+                                        // now clear our flags so the sourcephrase exports
+                                        needsEndMarker = "";
+                                        filtered = false;
+                                    }
                                 }
                                 if (filtered === false) {
                                     // add markers, and if needed, pretty-print the text on a newline
@@ -4257,6 +4268,11 @@ define(function (require) {
                                     if (value.get("source").length > 0 && value.get("target").length > 0) {
                                         chapterString += value.get("target") + " ";
                                     }
+                                }
+                                if (filtered === true && needsEndMarker === "") {
+                                    // one-off filter -- turn off filtering
+                                    console.log("one-off filter, disabling after: " + value.get("source"));
+                                    filtered = false;
                                 }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
@@ -5586,10 +5602,13 @@ define(function (require) {
                     return true;
                 }
             };
-            
-            // exportGlossKB
+            // ** end Doc formats
+
+            // ------------------
+            // ** KB FORMATS
+            // buildGlossKB
             // AI glossing KB XML file format
-            var exportGlossKB = function () {
+            var buildGlossKB = function () {
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var i = 0;
                 var mn = 1;
@@ -5895,7 +5914,7 @@ define(function (require) {
                         sType = "text/xml"; // xml under the hood
                         break;
                     case FileTypeEnum.GLOSSKBXML:
-                        bResult = exportGlossKB();
+                        bResult = buildGlossKB();
                         sType = "text/xml";
                         break;
                     case FileTypeEnum.SFM_KB:
