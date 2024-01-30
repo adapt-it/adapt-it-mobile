@@ -3,7 +3,7 @@
     container -- the toolbar and menus, etc -- but the individual strips are rendered by the template SourcePhrase.html.
 }}
 <div id="title" class="topcoat-navigation-bar main_title bg-lightblue">
-    <div class="topcoat-navigation-bar__item left"><a id="back" class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a></div>
+    <div class="topcoat-navigation-bar__item left"><a id="back" aria-label="{{ t 'view.dscBack'}}" class="topcoat-icon-button--quiet back-button" href="index.html"><span class="topcoat-icon topcoat-icon--back"></span></a></div>
     <div class="topcoat-navigation-bar__item left">
         <button id="Undo" title="{{ t 'view.dscUndo'}}" class="topcoat-icon-button--quiet toolbar-button" disabled><span  class="topcoat-icon topcoat-icon--undo"></span><span class="side-nav__list__item__label">{{ t 'view.lblUndo'}}</span></button>
     </div>
