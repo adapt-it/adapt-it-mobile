@@ -3998,24 +3998,9 @@ define(function (require) {
             var subdir = "AIM_Exports_";
             var sType = "text/plain"; // default MIME type (text)
             var bResult = true;
-            var onShareSuccess = function (result) {
-                console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-                console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-            };
-            var onShareError = function (msg) {
-                console.log("Sharing failed with message: " + msg);
-            };
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
-                if (isClipboard === false && (device && (device.platform !== "browser"))) {
-                    // mobile device, going to a file. Show the sharing dialog...
-                    // fill sharing info
-                    shareOptions.subject = i18n.t("view.lblExport");
-                    shareOptions.message = i18n.t("view.dscFile", {file: filename});
-                    shareOptions.files.push(exportDirectory + subdir + "/" + filename);
-                    window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);
-                }
                 // update status
                 if (isClipboard === true) {
                     // just tell the user it succeeded

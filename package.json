@@ -29,7 +29,6 @@
     "cordova-plugin-filepath": "github:VIAVI-Solutions/cordova-plugin-filepath",
     "cordova-plugin-keyboard": "github:sinn1/cordova-plugin-keyboard",
     "cordova-plugin-network-information": "github:apache/cordova-plugin-network-information",
-    "cordova-plugin-x-socialsharing-android12": "github:IsraelHikingMap/corodova-plugin-socialsharing-android12",
     "cordova-sqlite-evcore-extbuild-free": "^0.18.0",
     "cordova-uglify": "^0.0.8",
     "fs": "^0.0.2",
@@ -82,10 +81,6 @@
         "ANDROID_PATHPREFIX": "/"
       },
       "cordova-plugin-keyboard": {},
-      "cordova-plugin-x-socialsharing-android12": {
-        "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
-      },
       "cordova-clipboard": {},
       "cordova-plugin-filepath": {},
       "cordova-sqlite-evcore-extbuild-free": {},
