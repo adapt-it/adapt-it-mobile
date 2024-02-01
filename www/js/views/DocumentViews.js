@@ -50,6 +50,11 @@ define(function (require) {
         caseSource      = [],
         caseTarget      = [],
         deferreds       = [],
+        strContents     = "",
+        // EDB 1 Feb 2024: static for the export wizard, to ignore the app process pause/resume events: on Android, the
+        // Open and Save plugins pause the app process, so when we get back the "operation succeeded / failed" status messages
+        // get knocked out and replaced by the wizard restarting (ugh). I removed the resume handler from the import side completely.
+        bOperationDone  = false, 
         END_FT_BIT      = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
         bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
                                 // in the database?
@@ -2935,7 +2940,14 @@ define(function (require) {
                     index = contents.indexOf("\\ide");
                     if (index !== -1) {
                         // encoding is specified -- what is it?
-                        encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5));
+                        encoding = contents.substring(index + 5, contents.indexOf("\n", index + 5)).trim();
+                        // special case -- an older AIM export with a missing \\ide value
+                        if (encoding === "") {
+                            // this is really UTF-8, but let's make it explicit
+                            contents.replace("\\ide ", "\\ide UTF-8 ");
+                            encoding = "UTF-8"; 
+                        }
+                        // okay, check the encoding
                         if (encoding !== "UTF-8") { // nope -- error out
                             errMsg = i18n.t("view.dscErrUnsupportedEncoding");
                             return false;
@@ -3986,35 +3998,19 @@ define(function (require) {
         exportDocument = function (bookid, format, filename, content) {
             var status = "";
             var writer = null;
-            var errMsg = "";
-            var sourcephrases = null;
-            var exportDirectory = "";
-            var subdir = "AIM_Exports_";
-            var onShareSuccess = function (result) {
-                console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-                console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-            };
-            var onShareError = function (msg) {
-                console.log("Sharing failed with message: " + msg);
-            };
+            var sType = "text/plain"; // default MIME type (text)
+            var bResult = true;
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
-                if (isClipboard === false && (device && (device.platform !== "browser"))) {
-                    // mobile device, going to a file. Show the sharing dialog...
-                    // fill sharing info
-                    shareOptions.subject = i18n.t("view.lblExport");
-                    shareOptions.message = i18n.t("view.dscFile", {file: filename});
-                    shareOptions.files.push(exportDirectory + subdir + "/" + filename);
-                    window.plugins.socialsharing.shareWithOptions(shareOptions, onShareSuccess, onShareError);
-                }
+                bOperationDone = true;
                 // update status
                 if (isClipboard === true) {
                     // just tell the user it succeeded
                     status = "<p>" + i18n.t("view.dscStatusExportSuccess") + "</p>";
                 } else {
                     // tell the user it succeeded, and also the file path / name
-                    status = "<p>" + i18n.t("view.dscFile", {file: (subdir + "/" + filename)}) + "</p><p>" +
+                    status = "<p>" + i18n.t("view.dscFile", {file: (filename)}) + "</p><p>" +
                         i18n.t("view.dscStatusExportSuccess") + "</p>";
                 }
                 isClipboard = false; // reset the clipboard flag
@@ -4022,12 +4018,14 @@ define(function (require) {
                 // display the OK button
                 $("#loading").hide();
                 $("#waiting").hide();
+                $("#btnCancel").hide();
                 $("#btnOK").removeClass("hide");
                 $("#btnOK").removeAttr("disabled");
             };
             // Callback for when the file failed to import
             var exportFail = function (e) {
                 console.log("exportFail(): " + e.message);
+                bOperationDone = true;
                 isClipboard = false; // reset the clipboard flag
                 // update status
                 $("#status").html(i18n.t("view.dscExportFailed", {document: filename, reason: e.message}));
@@ -4040,7 +4038,10 @@ define(function (require) {
             
             ///
             // FILE TYPE WRITERS
-            // 2 loops for each file type -- a chapter and source phrase loop.
+            // These populate the static strContents variable with the document contents in the specified file format --
+            // the caller (exportDocument) then copies the result to the clipboard or saves it to a file (cleaning out the static before/after).
+            //
+            // There are 2 loops for each file type -- a chapter and source phrase loop.
             // The AI XML export will dump out the entire book; the others use the following logic:
             // - If the chapter has at least some adaptations in it, we'll export it
             // - If we encounter the lastSPID, we'll break out of the export loop of the chapter.
@@ -4049,14 +4050,14 @@ define(function (require) {
             //
             // Also note that the non-AI XML document exports can have empty content if no translations have been done --
             // we use a flag (bDirty) to track this condition and tell the user if there was nothing to export.
+            // Each method returns true for success, false for failure
             ///
 
             // Plain Text document
             // We assume these are just text with no markup,
             // in a single chapter (this could change if needed)
-            var exportText = function () {
+            var buildText = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var content = "";
                 var spList = new spModel.SourcePhraseCollection();
                 var markerList = new USFM.MarkerCollection();
                 var i = 0;
@@ -4069,16 +4070,6 @@ define(function (require) {
                 var needsEndMarker = "";
                 var mkr = "";
                 var bDirty = false;
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
@@ -4090,7 +4081,7 @@ define(function (require) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
                         bDirty = true;
-                        content += "**" + entry.get("chapterid") + "**";
+                        strContents += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
@@ -4139,28 +4130,12 @@ define(function (require) {
                                 }
                             }
                             // Now take the string from this chapter's sourcephrases that we've just built and
-                            // insert them into the correct location in the file's content string
-                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // insert them into the correct location in the file's strContents string
+                            strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
-                                // done with the chapters
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // ** we are now done with all the chapters -- write out the file
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
                             }
                         });
                     } else {
@@ -4171,37 +4146,29 @@ define(function (require) {
                             if (bDirty === false) {
                                 // didn't export anything
                                 exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
-                            } else {
-                                // done with the chapters
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
-                                content = ""; // clear out the content string
-                            }
+                                return false;
+                            } 
                         }
                     }
                     if (bDirty === false) {
                         // didn't export anything
-                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                        return false;                  
                     }
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
 
             // USFM document export (target text)
-            var exportUSFM = function () {
+            var buildUSFM = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var content = "";
                 var spList = new spModel.SourcePhraseCollection();
                 var markerList = new USFM.MarkerCollection();
                 var markers = "";
@@ -4215,17 +4182,7 @@ define(function (require) {
                 var bDirty = false;
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
-                console.log("exportUSFM: entry");
+                console.log("buildUSFM: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -4235,53 +4192,57 @@ define(function (require) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
                         bDirty = true;
-                        content += "**" + entry.get("chapterid") + "**";
+                        strContents += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
                             for (i = 0; i < spList.length; i++) {
                                 value = spList.at(i);
                                 markers = value.get("markers");
-                                // check to see if this sourcephrase is filtered (only looking at the top level)
-                                if (filtered === false) {
-                                    for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
-                                        // sanity check for blank filter strings
-                                        if (filterAry[idxFilters].trim().length > 0) {
-                                            if (markers.indexOf(filterAry[idxFilters]) >= 0) {
-                                                // this is a filtered sourcephrase -- do not export it
-                                                console.log("filtered: " + markers);
-                                                // however, if there are some markers before we hit our filtered one, 
-                                                // make sure they get exported now
-                                                markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
-                                                if (markers.length > 0) {
-                                                    if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
-                                                            (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id") > -1) ||
-                                                            (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
-                                                        // pretty-printing -- add a newline so the output looks better
-                                                        chapterString += "\n"; // newline
+                                if (markers !== "") {
+                                    // filter processing
+                                    markers += " "; // add trailing space to handle last marker
+                                    // check to see if this sourcephrase is filtered (only looking at the top level)
+                                    if (filtered === false) {
+                                        for (idxFilters = 0; idxFilters < filterAry.length; idxFilters++) {
+                                            // sanity check for blank filter strings
+                                            if (filterAry[idxFilters].trim().length > 0) {
+                                                if (markers.indexOf(filterAry[idxFilters]) >= 0) {
+                                                    // this is a filtered sourcephrase -- do not export it
+                                                    console.log("filtered: " + markers);
+                                                    // however, if there are some markers before we hit our filtered one, 
+                                                    // make sure they get exported now
+                                                    markers = markers.substr(0, markers.indexOf(filterAry[idxFilters]) - 1);
+                                                    if (markers.length > 0) {
+                                                        if ((markers.indexOf("\\v") > -1) || (markers.indexOf("\\c") > -1) ||
+                                                                (markers.indexOf("\\p") > -1) || (markers.indexOf("\\id ") > -1) ||
+                                                                (markers.indexOf("\\h") > -1) || (markers.indexOf("\\toc") > -1) || (markers.indexOf("\\mt") > -1)) {
+                                                            // pretty-printing -- add a newline so the output looks better
+                                                            chapterString += "\n"; // newline
+                                                        }
+                                                        // now add the markers and a space
+                                                        chapterString += markers + " ";
                                                     }
-                                                    // now add the markers and a space
-                                                    chapterString += markers + " ";
+                                                    chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
+                                                    // if there is an end marker associated with this marker,
+                                                    // do not export any source phrases until we come across the end marker
+                                                    mkr = markerList.where({name: filterAry[idxFilters].trim()});
+                                                    if (mkr[0].get("endMarker")) {
+                                                        needsEndMarker = mkr[0].get("endMarker");
+                                                    }
+                                                    filtered = true;
                                                 }
-                                                chapterString += (markers.substr(0, markers.indexOf(filterAry[idxFilters]))) + " ";
-                                                // if there is an end marker associated with this marker,
-                                                // do not export any source phrases until we come across the end marker
-                                                mkr = markerList.where({name: filterAry[idxFilters].trim()});
-                                                if (mkr[0].get("endMarker")) {
-                                                    needsEndMarker = mkr[0].get("endMarker");
-                                                }
-                                                filtered = true;
                                             }
                                         }
                                     }
-                                }
-                                if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
-                                    // found our ending marker -- this sourcephrase is not filtered
-                                    // first, remove the marker from the markers string so it doesn't print out
-                                    markers = markers.replace(("\\" + needsEndMarker), '');
-                                    // now clear our flags so the sourcephrase exports
-                                    needsEndMarker = "";
-                                    filtered = false;
+                                    if ((needsEndMarker.length > 0) && (markers.indexOf(needsEndMarker) >= 0)) {
+                                        // found our ending marker -- this sourcephrase is not filtered
+                                        // first, remove the marker from the markers string so it doesn't print out
+                                        markers = markers.replace(("\\" + needsEndMarker), '');
+                                        // now clear our flags so the sourcephrase exports
+                                        needsEndMarker = "";
+                                        filtered = false;
+                                    }
                                 }
                                 if (filtered === false) {
                                     // add markers, and if needed, pretty-print the text on a newline
@@ -4298,6 +4259,11 @@ define(function (require) {
                                         chapterString += value.get("target") + " ";
                                     }
                                 }
+                                if (filtered === true && needsEndMarker === "") {
+                                    // one-off filter -- turn off filtering
+                                    console.log("one-off filter, disabling after: " + value.get("source"));
+                                    filtered = false;
+                                }
                                 if (value.get('spid') === lastSPID) {
                                     // done -- quit after this sourcePhrase
                                     console.log("Found last SPID: " + lastSPID);
@@ -4305,28 +4271,12 @@ define(function (require) {
                                 }
                             }
                             // Now take the string from this chapter's sourcephrases that we've just built and
-                            // insert them into the correct location in the file's content string
-                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // insert them into the correct location in the file's strContents string
+                            strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
-                                // done with the chapters
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // ** we are now done with all the chapters -- write out the file
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
                             }
                         });
                     } else {
@@ -4337,37 +4287,29 @@ define(function (require) {
                             if (bDirty === false) {
                                 // didn't export anything
                                 exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
-                            } else {
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // done with the chapters
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
-                                content = ""; // clear out the content string
-                            }
+                                return false;
+                            } 
                         }
                     }
                     if (bDirty === false) {
                         // didn't export anything
-                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));      
+                        return false;                  
                     }
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
 
             // USFM, but gloss export only
-            var exportUSFMGloss = function () {
+            var buildUSFMGloss = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var content = "";
                 var spList = new spModel.SourcePhraseCollection();
                 var markerList = new USFM.MarkerCollection();
                 var markers = "";
@@ -4381,17 +4323,7 @@ define(function (require) {
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var bDirty = false;
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
-                console.log("exportUSFMGloss: entry");
+                console.log("buildUSFMGloss: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -4401,7 +4333,7 @@ define(function (require) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
                         bDirty = true; // we're exporting something
-                        content += "**" + entry.get("chapterid") + "**";
+                        strContents += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
@@ -4471,28 +4403,12 @@ define(function (require) {
                                 }
                             }
                             // Now take the string from this chapter's sourcephrases that we've just built and
-                            // insert them into the correct location in the file's content string
-                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // insert them into the correct location in the file's strContents string
+                            strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
-                                // done with the chapters
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // ** we are now done with all the chapters -- write out the file
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
                             }
                         });
                     } else {
@@ -4503,37 +4419,29 @@ define(function (require) {
                             if (bDirty === false) {
                                 // didn't export anything
                                 exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
-                            } else {
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // done with the chapters
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
-                                content = ""; // clear out the content string
-                            }
+                                return false;
+                            } 
                         }
                     }
                     if (bDirty === false) {
                         // didn't export anything
-                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                        return false;                      
                     }
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
 
             // USFM, but free translation only
-            var exportUSFMFT = function () {
+            var buildUSFMFT = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
-                var content = "";
                 var spList = new spModel.SourcePhraseCollection();
                 var markerList = new USFM.MarkerCollection();
                 var markers = "";
@@ -4547,17 +4455,7 @@ define(function (require) {
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
                 var lastSPID = window.Application.currentProject.get('lastAdaptedSPID');
                 var bDirty = false;
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
-                console.log("exportUSFMFT: entry");
+                console.log("buildUSFMFT: entry");
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
                 //lastSPID = lastSPID.substring(lastSPID.lastIndexOf("-") + 1);
@@ -4567,7 +4465,7 @@ define(function (require) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
                         bDirty = true; // we're actually writing something
-                        content += "**" + entry.get("chapterid") + "**";
+                        strContents += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
@@ -4637,28 +4535,12 @@ define(function (require) {
                                 }
                             }
                             // Now take the string from this chapter's sourcephrases that we've just built and
-                            // insert them into the correct location in the file's content string
-                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // insert them into the correct location in the file's strContents string
+                            strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
                                 console.log("finished within sp block");
-                                // done with the chapters
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // ** we are now done with all the chapters -- write out the file
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
                             }
                         });
                     } else {
@@ -4669,39 +4551,31 @@ define(function (require) {
                             if (bDirty === false) {
                                 // didn't export anything
                                 exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
-                            } else {
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // done with the chapters
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
-                                content = ""; // clear out the content string    
+                                return false;
                             }
                         }
                     }
                     if (bDirty === false) {
                         // didn't export anything
-                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));                        
+                        exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                        return false;      
                     }
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
 
             // USX document
-            var exportUSX = function () {
+            var buildUSX = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var book = window.Application.BookList.where({bookid: bookid})[0];
                 var bookID = book.get('scrid');
-                var content = "";
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
                 var spList = new spModel.SourcePhraseCollection();
                 var markerList = new USFM.MarkerCollection();
@@ -4729,19 +4603,9 @@ define(function (require) {
                 var strMarker = "";
                 var strOptions = "";
                 var chaptersLeft = chapters.length;
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
                 // starting material -- xml prolog and usx tag
                 // using USX 3.0 (https://ubsicap.github.io/usx/v3.0.0/index.html)
-                content = XML_PROLOG + "\n<usx version=\"3.0\">";
+                strContents = XML_PROLOG + "\n<usx version=\"3.0\">";
                 // get the chapters belonging to our book
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
@@ -4751,7 +4615,7 @@ define(function (require) {
                     if (entry.get('lastadapted') !== 0) {
                         // add a placeholder string for this chapter, so that it ends up in order (the call to
                         // fetch() is async, and sometimes the chapters are returned out of order)
-                        content += "**" + entry.get("chapterid") + "**";
+                        strContents += "**" + entry.get("chapterid") + "**";
                         spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                             var chapterString = "";
                             console.log("spList: " + spList.length + " items, last id = " + lastSPID);
@@ -5265,8 +5129,8 @@ define(function (require) {
                                 }
                             }
                             // Now take the string from this chapter's sourcephrases that we've just built and
-                            // insert them into the correct location in the file's content string
-                            content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                            // insert them into the correct location in the file's strContents string
+                            strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                             // decrement the chapter count, closing things out if needed
                             chaptersLeft--;
                             if (chaptersLeft === 0) {
@@ -5274,44 +5138,31 @@ define(function (require) {
                                 // done with the chapters
                                 // add a closing paragraph if necessary
                                 if (closeNode.length > 0) {
-                                    content += closeNode;
+                                    strContents += closeNode;
                                 }
                                 if (tableBlockLevel > 0) {
                                     // close out table tags
                                     if (tableBlockLevel === 2) {
-                                        content += "</cell>\n </row>\n<table>";
+                                        strContents += "</cell>\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     } else {
-                                        content += "\n </row>\n<table>";
+                                        strContents += "\n </row>\n<table>";
                                         tableBlockLevel = 0;
                                     }
                                 }
                                 if (isParaBlock === true) {
                                     // close out the old para
-                                    content += "</para>";
+                                    strContents += "</para>";
                                     isParaBlock = false;
                                 }
                                 if (isPeriphBlock === true) {
                                     // close out old periph block
-                                    content += "\n  </periph>";
+                                    strContents += "\n  </periph>";
                                 }
                                 // add the ending node
-                                content += "\n</usx>\n";
-                                if (isClipboard === true) {
-                                    if (device && (device.platform ==="browser")) {
-                                        // browser -- use clipboard API
-                                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                    } else {
-                                        // write (copy) text to clipboard
-                                        cordova.plugins.clipboard.copy(content);
-                                        // directly call success (it's a callback for the file writer)
-                                        exportSuccess();
-                                    }
-                                } else {
-                                    // ** we are now done with all the chapters -- write out the file
-                                    var blob = new Blob([content], {type: 'text/plain'});
-                                    writer.write(blob);
-                                }
+                                strContents += "\n</usx>\n";
+                                // done writing out strContents string -- return
+                                return;
                             }
                         });
                     } else {
@@ -5323,47 +5174,42 @@ define(function (require) {
                             // done with the chapters
                             // add a closing paragraph if necessary
                             if (closeNode.length > 0) {
-                                content += closeNode;
+                                strContents += closeNode;
                             }
                             if (tableBlockLevel > 0) {
                                 // close out table tags
                                 if (tableBlockLevel === 2) {
-                                    content += "</cell>\n </row>\n<table>";
+                                    strContents += "</cell>\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 } else {
-                                    content += "\n </row>\n<table>";
+                                    strContents += "\n </row>\n<table>";
                                     tableBlockLevel = 0;
                                 }
                             }
                             if (isParaBlock === true) {
                                 // close out the old para
-                                content += "</para>";
+                                strContents += "</para>";
                                 isParaBlock = false;
                             }
                             if (isPeriphBlock === true) {
                                 // close out periph block
-                                content += "\n  </periph>";
+                                strContents += "\n  </periph>";
                             }
                             // add the ending node
-                            content += "\n</usx>\n";
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
-                            } else {
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
-                            }
-                            content = ""; // clear out the content string for the next chapter
+                            strContents += "\n</usx>\n";
+                            // done writing content string -- return
+                            return;
                         }
                     }
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
 
             // XML document
@@ -5372,11 +5218,10 @@ define(function (require) {
             // EDB 8/13/16: partially working. Still need:
             // - ~FILTER text folded in
             // -- lower priority, but need for AI compatibility: other bits implemented
-            var exportXML = function () {
+            var buildAIDocXML = function () {
                 var chapters = window.Application.ChapterList.where({bookid: bookid});
                 var markerList = new USFM.MarkerCollection();
                 var filterAry = window.Application.currentProject.get('FilterMarkers').split("\\");
-                var content = "";
                 var words = [];
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var spList = new spModel.SourcePhraseCollection();
@@ -5475,44 +5320,34 @@ define(function (require) {
                     }
                     return val;
                 };
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    if (chaptersLeft === 0) {
-                        exportSuccess();
-                    }
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
                 // build the USFM marker list
                 markerList.fetch({reset: true, data: {name: ""}});
                 console.log("markerList count: " + markerList.length);
-                // opening content
-                content = XML_PROLOG;
-                content += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
+                // opening strContents
+                strContents = XML_PROLOG;
+                strContents += "\n<!--\n     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file.\n     Instead, use NotePad or WordPad. -->\n<AdaptItDoc>\n";
                 // Settings: AIM doesn't do per-document settings; just copy over the project settings
-                content += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
+                strContents += "<Settings docVersion=\"9\" bookName=\"" + bookName + "\" owner=\"";
                 if (device && (device.platform !== "browser")) {
-                    content += device.uuid;
+                    strContents += device.uuid;
                 } else {
-                    content += "Browser";
+                    strContents += "Browser";
                 }
-                content += "\" commitcnt=\"****\" revdate=\"\" actseqnum=\"0\" sizex=\"553\" sizey=\"62464\" ftsbp=\"1\"";
+                strContents += "\" commitcnt=\"****\" revdate=\"\" actseqnum=\"0\" sizex=\"553\" sizey=\"62464\" ftsbp=\"1\"";
                 // colors
-                content += " specialcolor=\"" + hexToWXColor(project.get('SpecialTextColor')) + "\" retranscolor=\"" + hexToWXColor(project.get('RetranslationColor')) + "\" navcolor=\"" + hexToWXColor(project.get('NavigationColor')) + "\"";
+                strContents += " specialcolor=\"" + hexToWXColor(project.get('SpecialTextColor')) + "\" retranscolor=\"" + hexToWXColor(project.get('RetranslationColor')) + "\" navcolor=\"" + hexToWXColor(project.get('NavigationColor')) + "\"";
                 // project info
-                content += " curchap=\"1:\" srcname=\"" + project.get('SourceLanguageName') + "\" tgtname=\"" + project.get('TargetLanguageName') + "\" srccode=\"" + project.get('SourceLanguageCode') + "\" tgtcode=\"" + project.get('TargetLanguageCode') + "\"";
+                strContents += " curchap=\"1:\" srcname=\"" + project.get('SourceLanguageName') + "\" tgtname=\"" + project.get('TargetLanguageName') + "\" srccode=\"" + project.get('SourceLanguageCode') + "\" tgtcode=\"" + project.get('TargetLanguageCode') + "\"";
                 // filtering
-                content += " others=\"@#@#:F:-1:0:";
-                content += project.get('FilterMarkers');
-                content += "::\"/>\n";
+                strContents += " others=\"@#@#:F:-1:0:";
+                strContents += project.get('FilterMarkers');
+                strContents += "::\"/>\n";
                 // END settings xml node
-                // CONTENT PART: get the chapters belonging to our book
+                // strContents PART: get the chapters belonging to our book
                 chapters.forEach(function (entry) {
                     // add a placeholder string for this chapter, so that it ends up in order (the call to
                     // fetch() is async, and sometimes the chapters are returned out of order)
-                    content += "**" + entry.get("chapterid") + "**";
+                    strContents += "**" + entry.get("chapterid") + "**";
                     // for each chapter (regardless of whether there's some adaptation done), get the sourcephrases
                     spList.fetch({reset: true, data: {chapterid: entry.get("chapterid")}}).done(function () {
                         var chapterString = "";
@@ -5737,36 +5572,33 @@ define(function (require) {
                             }
                         }
                         // Now take the string from this chapter's sourcephrases that we've just built and
-                        // insert them into the correct location in the file's content string
-                        content = content.replace(("**" + entry.get("chapterid") + "**"), chapterString);
+                        // insert them into the correct location in the file's strContents string
+                        strContents = strContents.replace(("**" + entry.get("chapterid") + "**"), chapterString);
                         chaptersLeft--;
                         if (chaptersLeft === 0) {
                             // done with the chapters -- add the ending node
-                            content += "</AdaptItDoc>\n";
-                            if (isClipboard === true) {
-                                if (device && (device.platform ==="browser")) {
-                                    // browser -- use clipboard API
-                                    navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                                } else {
-                                    // write (copy) text to clipboard
-                                    cordova.plugins.clipboard.copy(content);
-                                    // directly call success (it's a callback for the file writer)
-                                    exportSuccess();
-                                }
-                            } else {
-                                var blob = new Blob([content], {type: 'text/plain'});
-                                writer.write(blob);
-                            }
-                            content = ""; // clear out the content string for the next chapter
+                            strContents += "</AdaptItDoc>\n";
+                            // done writing the content string -- return
+                            return;
                         }
                     });
                 });
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
+                } else {
+                    // success
+                    return true;
+                }
             };
-            
-            // exportGlossKB
+            // ** end Doc formats
+
+            // ------------------
+            // ** KB FORMATS
+            // buildGlossKB
             // AI glossing KB XML file format
-            var exportGlossKB = function () {
-                var content = "";
+            var buildGlossKB = function () {
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var i = 0;
                 var mn = 1;
@@ -5777,23 +5609,15 @@ define(function (require) {
                     return (model.get("mn") && (model.get("isGloss") === 1));
                 };
                 kblist.sort();
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    exportSuccess();
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
-                // opening content
-                content = XML_PROLOG;
-                content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
+                // opening strContents
+                strContents = XML_PROLOG;
+                strContents += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
                 // KB line -- project info
                 // (Note that we are including scrCode, which is not included in the Glossing.xml file that AI exports at the moment)
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
+                strContents += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"1\">" + CRLF;
                 // END settings xml node
-                // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
-                content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
+                // strContents PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
+                strContents += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -5806,11 +5630,11 @@ define(function (require) {
                     // did the map number change? If so, emit a new <MAP> element
                     if (tu.get('mn') > mn) {
                         // create a new MAP element
-                        content += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
+                        strContents += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
                         mn = tu.get('mn'); // update the map #
                     }
                     // create the <TU> element
-                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
+                    strContents += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
                     // create any refstring elements
                     refstrings = tu.get('refstring');
                     // sort the refstrings on "n" (refcount)
@@ -5820,44 +5644,36 @@ define(function (require) {
                     });
                     // write them out
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
+                        strContents += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
                         if (refstrings[i].mDT || refstrings[i].dDT) {
                             // optional datetime info
-                            content += CRLF + "       ";
+                            strContents += CRLF + "       ";
                             if (refstrings[i].mDT) {
-                                content += " mDT=\"" + refstrings[i].mDT + "\"";
+                                strContents += " mDT=\"" + refstrings[i].mDT + "\"";
                             }
                             if (refstrings[i].dDT) {
-                                content += " dDT=\"" + refstrings[i].dDT + "\"";
+                                strContents += " dDT=\"" + refstrings[i].dDT + "\"";
                             }
                         }
-                        content += "/>" + CRLF;
+                        strContents += "/>" + CRLF;
                     }
-                    content += "     </TU>" + CRLF;
+                    strContents += "     </TU>" + CRLF;
                 });
-                // done CONTENT PART -- close out the file
-                content += "     </MAP>" + CRLF + "</KB>" + CRLF;
-                if (isClipboard === true) {
-                    if (device && (device.platform ==="browser")) {
-                        // browser -- use clipboard API
-                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                    } else {
-                        // write (copy) text to clipboard
-                        cordova.plugins.clipboard.copy(content);
-                        // directly call success (it's a callback for the file writer)
-                        exportSuccess();
-                    }
+                // done strContents PART -- close out the file
+                strContents += "     </MAP>" + CRLF + "</KB>" + CRLF;
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
                 } else {
-                    var blob = new Blob([content], {type: 'text/plain'});
-                    writer.write(blob);
+                    // success
+                    return true;
                 }
-                content = ""; // clear out the content string for the next chapter
             };
 
-            // exportKB
+            // buildKBXML
             // AI knowledge base XML file export
-            var exportKB = function () {
-                var content = "";
+            var buildKBXML = function () {
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var i = 0;
                 var mn = 1;
@@ -5868,22 +5684,14 @@ define(function (require) {
                     return model.get("mn");
                 };
                 kblist.sort();
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    exportSuccess();
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
                 // opening content
-                content = XML_PROLOG;
-                content += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
+                strContents = XML_PROLOG;
+                strContents += CRLF + "<!--" + CRLF + "     Note: Using Microsoft WORD 2003 or later is not a good way to edit this xml file." + CRLF + "     Instead, use NotePad or WordPad. -->" + CRLF;
                 // KB line -- project info
-                content += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"0\">" + CRLF;
+                strContents += "<KB kbVersion=\"3\" srcName=\"" + project.get('SourceLanguageName') + "\" tgtName=\"" + project.get('TargetLanguageName') + "\" srcCode=\"" + project.get('SourceLanguageCode') + "\" tgtCode=\"" + project.get('TargetLanguageCode') + "\" max=\"" + kblist.at(kblist.length - 1).get('mn') + "\" glossingKB=\"0\">" + CRLF;
                 // END settings xml node
-                // CONTENT PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
-                content += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
+                // strContents PART: target units, sorted by MAP number (words in string / "mn" in the attributes)
+                strContents += "     <MAP mn=\"1\">" + CRLF; // starting MAP node
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -5896,11 +5704,11 @@ define(function (require) {
                     // did the map number change? If so, emit a new <MAP> element
                     if (tu.get('mn') > mn) {
                         // create a new MAP element
-                        content += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
+                        strContents += "     </MAP>" + CRLF + "     <MAP mn=\"" + tu.get('mn') + "\">" + CRLF;
                         mn = tu.get('mn'); // update the map #
                     }
                     // create the <TU> element
-                    content += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
+                    strContents += "     <TU f=\"" + tu.get('f') + "\" k=\"" + tu.get('source') + "\">" + CRLF;
                     // create any refstring elements
                     refstrings = tu.get('refstring');
                     // sort the refstrings on "n" (refcount)
@@ -5910,46 +5718,38 @@ define(function (require) {
                     });
                     // write them out
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
+                        strContents += "       <RS n=\"" + refstrings[i].n + "\" a=\"" + refstrings[i].target + "\" df=\"" + refstrings[i].df + "\"" + CRLF + "       cDT=\"" + refstrings[i].cDT + "\" wC=\"" + refstrings[i].wC + "\"";
                         if (refstrings[i].mDT || refstrings[i].dDT) {
                             // optional datetime info
-                            content += CRLF + "       ";
+                            strContents += CRLF + "       ";
                             if (refstrings[i].mDT) {
-                                content += " mDT=\"" + refstrings[i].mDT + "\"";
+                                strContents += " mDT=\"" + refstrings[i].mDT + "\"";
                             }
                             if (refstrings[i].dDT) {
-                                content += " dDT=\"" + refstrings[i].dDT + "\"";
+                                strContents += " dDT=\"" + refstrings[i].dDT + "\"";
                             }
                         }
-                        content += "/>" + CRLF;
+                        strContents += "/>" + CRLF;
                     }
-                    content += "     </TU>" + CRLF;
+                    strContents += "     </TU>" + CRLF;
                 });
-                // done CONTENT PART -- close out the file
-                content += "     </MAP>" + CRLF + "</KB>" + CRLF;
-                if (isClipboard === true) {
-                    if (device && (device.platform ==="browser")) {
-                        // browser -- use clipboard API
-                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                    } else {
-                        // write (copy) text to clipboard
-                        cordova.plugins.clipboard.copy(content);
-                        // directly call success (it's a callback for the file writer)
-                        exportSuccess();
-                    }
+                // done strContents PART -- close out the file
+                strContents += "     </MAP>" + CRLF + "</KB>" + CRLF;
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
                 } else {
-                    var blob = new Blob([content], {type: 'text/plain'});
-                    writer.write(blob);
+                    // success
+                    return true;
                 }
-                content = ""; // clear out the content string for the next chapter
             };
 
             // KB keyword export in SFM format (these use the \lx and \ge markers)
             // Note that this is SFM, not USFM. It's a pretty bare-bones export.
-            var exportSFMKB = function () {
+            var buildSFMKB = function () {
                 var refstrings = null;
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
-                var content = "";
                 var i = 0;
                 kblist.forEach(function (tu) { 
                     if (tu.get('source') === "**ImportedKBFile**") {
@@ -5957,35 +5757,27 @@ define(function (require) {
                         return; // continue
                     }
                     // source line
-                    content += "\\lx " + tu.get('source') + CRLF;
+                    strContents += "\\lx " + tu.get('source') + CRLF;
                     refstrings = tu.get('refstring');
                     // emit each TU as a \lx line item, and each refstring as a \ge line item
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "\\ge " + refstrings[i].target + CRLF;
+                        strContents += "\\ge " + refstrings[i].target + CRLF;
                     }
 
                 });
-                // done creating data -- now export
-                if (isClipboard === true) {
-                    if (device && (device.platform ==="browser")) {
-                        // browser -- use clipboard API
-                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                    } else {
-                        // write (copy) text to clipboard
-                        cordova.plugins.clipboard.copy(content);
-                        // directly call success (it's a callback for the file writer)
-                        exportSuccess();
-                    }
+                // is there something in strContents?
+                if (strContents === "") {
+                    // didn't export anything
+                    exportFail(new Error(i18n.t('view.dscErrNothingToExport')));
+                    return false;
                 } else {
-                    var blob = new Blob([content], {type: 'text/plain'});
-                    writer.write(blob);
+                    // success
+                    return true;
                 }
-                content = ""; // clear out the content string
             };
 
             // LIFT format (https://github.com/sillsdev/lift-standard)
-            var exportLIFT = function () {
-                var content = "";
+            var buildLIFT = function () {
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
                 var XML_PROLOG = "<?xml version=\"1.0\"?>" + CRLF + "<lift version=\"0.15\">" + CRLF;
                 var curDate = new Date();
@@ -5993,8 +5785,8 @@ define(function (require) {
                 var project = window.Application.currentProject;
                 var i = 0;
                 var refstrings = null;
-                // opening content / LIFT file identification and version
-                content = XML_PROLOG;
+                // opening strContents / LIFT file identification and version
+                strContents = XML_PROLOG;
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -6006,38 +5798,24 @@ define(function (require) {
                         // high to low
                         return parseInt(b.n, 10) - parseInt(a.n, 10);
                     });
-                    content += "<entry id=\"" + tu.get('source') + "\" dateModified=\"" + timestamp + "\">" + CRLF;
+                    strContents += "<entry id=\"" + tu.get('source') + "\" dateModified=\"" + timestamp + "\">" + CRLF;
                     // source info -- single "lexical-unit" node
-                    content += "  <lexical-unit>" + CRLF + "    <form lang=\"" + project.get('SourceLanguageCode') + "\"><text>"+ tu.get('source') +"</text></form>" + CRLF + "  </lexical-unit>" + CRLF;
+                    strContents += "  <lexical-unit>" + CRLF + "    <form lang=\"" + project.get('SourceLanguageCode') + "\"><text>"+ tu.get('source') +"</text></form>" + CRLF + "  </lexical-unit>" + CRLF;
                     for (i = 0; i < refstrings.length; i++) {
                         // refstring info -- 1+ "sense/gloss" node(s) under each entry
-                        content += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
-                        content += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\"><text>" + refstrings[i].target + "</text></gloss>" + CRLF;
-                        content += "  </sense>" + CRLF;
+                        strContents += "  <sense id=\"" + window.Application.generateUUID() + "\">" + CRLF;
+                        strContents += "    <gloss lang=\"" + project.get('TargetLanguageCode') + "\"><text>" + refstrings[i].target + "</text></gloss>" + CRLF;
+                        strContents += "  </sense>" + CRLF;
                     }
-                    content += "</entry>" + CRLF;
+                    strContents += "</entry>" + CRLF;
                 });
-                // done CONTENT PART -- close out the file
-                content += "</lift>" + CRLF;
-                if (isClipboard === true) {
-                    if (device && (device.platform ==="browser")) {
-                        // browser -- use clipboard API
-                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                    } else {
-                        // write (copy) text to clipboard
-                        cordova.plugins.clipboard.copy(content);
-                        // directly call success (it's a callback for the file writer)
-                        exportSuccess();
-                    }
-                } else {
-                    var blob = new Blob([content], {type: 'text/plain'});
-                    writer.write(blob);
-                }
-                content = ""; // clear out the content string
+                // done strContents PART -- close out the file
+                strContents += "</lift>" + CRLF;
+                // success
+                return true;
             };
 
-            var exportTMX = function () {
-                var content = "";
+            var buildTMX = function () {
                 var CRLF = "\r\n"; // windows line ending (carriage return + line feed)
                 var XML_PROLOG = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>";
                 var curDate = new Date();
@@ -6049,20 +5827,12 @@ define(function (require) {
                     return model.get("mn");
                 };
                 kblist.sort();
-                writer.onwriteend = function () {
-                    console.log("write completed.");
-                    exportSuccess();
-                };
-                writer.onerror = function (e) {
-                    console.log("write failed: " + e.toString());
-                    exportFail(e);
-                };
-                // opening content
-                content = XML_PROLOG;
+                // opening strContents
+                strContents = XML_PROLOG;
                 // version and header
-                content += "<tmx version=\"1.4\">" + CRLF + "<header creationtool=\"Adapt It Mobile\" creationtoolversion=\"" + window.Application.version + "\" datatype=\"plaintext\" segtype=\"sentence\" adminlang=\"en\" srclang=\"" + project.get('SourceLanguageCode') + "\" o-tmf=\"AI-XML\" creationdate=\"" + timestamp + "\">" + CRLF + "</header>" + CRLF;
+                strContents += "<tmx version=\"1.4\">" + CRLF + "<header creationtool=\"Adapt It Mobile\" creationtoolversion=\"" + window.Application.version + "\" datatype=\"plaintext\" segtype=\"sentence\" adminlang=\"en\" srclang=\"" + project.get('SourceLanguageCode') + "\" o-tmf=\"AI-XML\" creationdate=\"" + timestamp + "\">" + CRLF + "</header>" + CRLF;
                 // body
-                content += "<body>" + CRLF;
+                strContents += "<body>" + CRLF;
                 kblist.forEach(function (tu) {
                     if (tu.get('source') === "**ImportedKBFile**") {
                         // skip this entry -- this is our internal "imported KB file" flag
@@ -6076,153 +5846,176 @@ define(function (require) {
                     });
                     // emit each source/target refstring as a separate <tu> with a <tuv> for source, target
                     for (i = 0; i < refstrings.length; i++) {
-                        content += "  <tu tuid=\"" + window.Application.generateUUID() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
+                        strContents += "  <tu tuid=\"" + window.Application.generateUUID() + "\" datatype=\"Text\" usagecount=\"" + refstrings[i].n + "\">" + CRLF;
                         // source tuv
-                        content += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
-                        content += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>" + CRLF;
+                        strContents += "    <tuv xml:lang=\"" + project.get('SourceLanguageCode') + "\">" + CRLF;
+                        strContents += "      <seg>" + tu.get('source') + "</seg>" + CRLF + "    </tuv>" + CRLF;
                         // target tuv
-                        content += "    <tuv xml:lang=\"" + project.get('TargetLanguageCode') + "\" creationdate=\"" + refstrings[i].cDT + "\" creationid=\"" + refstrings[i].wC + "\"";
+                        strContents += "    <tuv xml:lang=\"" + project.get('TargetLanguageCode') + "\" creationdate=\"" + refstrings[i].cDT + "\" creationid=\"" + refstrings[i].wC + "\"";
                         if (refstrings[i].mDT) {
                             // optional datetime info
                             if (refstrings[i].mDT) {
-                                content += " changedate=\"" + refstrings[i].mDT + "\"";
+                                strContents += " changedate=\"" + refstrings[i].mDT + "\"";
                             }
                         }
-                        content += ">" + CRLF;
-                        content += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>" + CRLF;
+                        strContents += ">" + CRLF;
+                        strContents += "      <seg>" + refstrings[i].target + "</seg>" + CRLF + "    </tuv>" + CRLF + "  </tu>" + CRLF;
                     }
                 });
-                // done CONTENT PART -- close out the file
-                content += "     </body>" + CRLF + "</tmx>" + CRLF;
-                if (isClipboard === true) {
-                    if (device && (device.platform ==="browser")) {
-                        // browser -- use clipboard API
-                        navigator.clipboard.writeText(content).then(exportSuccess, exportFail);
-                    } else {
-                        // write (copy) text to clipboard
-                        cordova.plugins.clipboard.copy(content);
-                        // directly call success (it's a callback for the file writer)
-                        exportSuccess();
-                    }
-                } else {
-                    var blob = new Blob([content], {type: 'text/plain'});
-                    writer.write(blob);
-                }
-                content = ""; // clear out the content string
+                // done strContents PART -- close out the file
+                strContents += "     </body>" + CRLF + "</tmx>" + CRLF;
+                // success
+                return true;
             };
             //// *** END export functions
             
-            // add the project's target language code to the subdirectory
-            subdir += window.Application.currentProject.get("TargetLanguageCode");
 
+            strContents = ""; // clear out any old cruft
             if (device && (device.platform !== "browser")) {
-                // mobile device
-                if (cordova.file.documentsDirectory !== null) {
-                    // iOS, OSX
-                    exportDirectory = cordova.file.documentsDirectory;
-                } else if (cordova.file.sharedDirectory !== null) {
-                    // BB10
-                    exportDirectory = cordova.file.sharedDirectory;
-                } else if (cordova.file.externalDataDirectory !== null) {
-                    // Android (external sandbox directory)
-                    exportDirectory = cordova.file.externalDataDirectory;
-                } else {
-                    // iOS, Android, BlackBerry 10, windows
-                    exportDirectory = cordova.file.DataDirectory;
+                // generate the document in the specified format
+                switch (format) {
+                    case FileTypeEnum.TXT:
+                        bResult = buildText();
+                        break;
+                    case FileTypeEnum.USFM:
+                        // User could be exporting the translation, gloss, or free translation
+                        if (content === contentEnum.GLOSS) {
+                            bResult = buildUSFMGloss();
+                        } else if (content === contentEnum.FT) {
+                            bResult = buildUSFMFT();
+                        } else { // (content === contentEnum.ADAPTATION)
+                            bResult = buildUSFM();
+                        }
+                        break;
+                    case FileTypeEnum.USX:
+                        bResult = buildUSX();
+                        sType = "text/xml"; // XML under the hood
+                        break;
+                    case FileTypeEnum.XML:
+                        bResult = buildAIDocXML();
+                        sType = "text/xml";
+                        break;
+                    case FileTypeEnum.KBXML:
+                        bResult = buildKBXML();
+                        sType = "text/xml";
+                        break;
+                    case FileTypeEnum.KBTMX:
+                        bResult = buildTMX();
+                        sType = "text/xml"; // xml under the hood
+                        break;
+                    case FileTypeEnum.GLOSSKBXML:
+                        bResult = buildGlossKB();
+                        sType = "text/xml";
+                        break;
+                    case FileTypeEnum.SFM_KB:
+                        bResult = buildSFMKB();
+                        break;
+                    case FileTypeEnum.LIFT:
+                        bResult = buildLIFT();
+                        sType = "text/xml"; // XML under the hood
+                        break;
                 }
-                window.resolveLocalFileSystemURL(exportDirectory, function (directoryEntry) {
-                    console.log("Got directoryEntry. Attempting to open / create subdirectory:" + subdir);
-                    directoryEntry.getDirectory(subdir, {create: true}, function (subdirEntry) {
-                        subdirEntry.getFile(filename, {create: true}, function (fileEntry) {
-                            console.log("Got fileEntry for: " + filename);
-                            fileEntry.createWriter(function (fileWriter) {
-                                console.log("Got fileWriter");
-                                writer = fileWriter;
-                                // now export based on the specified format
-                                switch (format) {
-                                case FileTypeEnum.TXT:
-                                    exportText();
-                                    break;
-                                case FileTypeEnum.USFM:
-                                    // User could be exporting the translation, gloss, or free translation
-                                    if (content === contentEnum.GLOSS) {
-                                        exportUSFMGloss();
-                                    } else if (content === contentEnum.FT) {
-                                        exportUSFMFT();
-                                    } else { // (content === contentEnum.ADAPTATION)
-                                        exportUSFM();
-                                    }
-                                    break;
-                                case FileTypeEnum.USX:
-                                    exportUSX();
-                                    break;
-                                case FileTypeEnum.XML:
-                                    exportXML();
-                                    break;
-                                case FileTypeEnum.KBXML:
-                                    exportKB();
-                                    break;
-                                case FileTypeEnum.KBTMX:
-                                    exportTMX();
-                                    break;
-                                case FileTypeEnum.GLOSSKBXML:
-                                    exportGlossKB();
-                                    break;
-                                case FileTypeEnum.SFM_KB:
-                                    exportSFMKB();
-                                    break;
-                                case FileTypeEnum.LIFT:
-                                    exportLIFT();
-                                    break;
-                                }
-                            }, exportFail);
-                        }, exportFail);
-                    }, exportFail);
-                }, exportFail);
+                if (bResult === false) {
+                    // Problem creating the file to export, but we've already called exportFail --
+                    // just clear our static strContents and return
+                    strContents = "";
+                    return;
+                }
+                // strContents now has the selected book in the selected format. Export it to the proper location
+                if (isClipboard === true) {
+                    // to Clipboard
+                    cordova.plugins.clipboard.copy(strContents);
+                    // directly call success (it's a callback for the file writer)
+                    exportSuccess();
+                } else {
+                    // To FILE -- Create a Blob from strContents and ask the user
+                    // to pick a destination (and optionally change the filename), then do the export
+                    let blob = new Blob([strContents], {type: sType});
+                    cordova.plugins.saveDialog.saveFile(blob, filename).then(uri => {
+                        console.info("The file has been successfully saved to", uri);
+                        exportSuccess();
+                    }).catch(reason => {
+                        exportFail(reason);
+                    });    
+                }
+                strContents = ""; // clear out the content string
             } else {
-                // browser
+                // browser works a little differently --
+                // Here we don't use the saveDialog plugin, but rather request the persistent storage.
                 var requestedBytes = 10 * 1024 * 1024; // 10MB
                 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
                 navigator.webkitPersistentStorage.requestQuota(requestedBytes, function (grantedBytes) {
                     window.requestFileSystem(window.PERSISTENT, grantedBytes, function (fs) {
                         fs.root.getFile(filename, {create: true}, function (fileEntry) {
                             fileEntry.createWriter(function (fileWriter) {
-                                console.log("Got fileWriter");
                                 writer = fileWriter;
-                                // now export based on the specified format
+                                writer.onwriteend = function() {
+                                    console.log("write completed.");
+                                    if (chaptersLeft === 0) {
+                                        exportSuccess();
+                                    }
+                                };                        
+                                writer.onerror = function (e) {
+                                    console.log("write failed: " + e.toString());
+                                    exportFail(e);
+                                };
+                                console.log("Got fileWriter");
+                                // generate the document in the specified format
                                 switch (format) {
                                 case FileTypeEnum.TXT:
-                                    exportText();
+                                    bResult = buildText();
                                     break;
                                 case FileTypeEnum.USFM:
                                     // User could be exporting the translation, gloss, or free translation
                                     if (content === contentEnum.GLOSS) {
-                                        exportUSFMGloss();
+                                        bResult = buildUSFMGloss();
                                     } else if (content === contentEnum.FT) {
-                                        exportUSFMFT();
+                                        bResult = buildUSFMFT();
                                     } else { // (content === contentEnum.ADAPTATION)
-                                        exportUSFM();
+                                        bResult = buildUSFM();
                                     }
                                     break;
                                 case FileTypeEnum.USX:
-                                    exportUSX();
+                                    bResult = buildUSX();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.XML:
-                                    exportXML();
+                                    bResult = buildAIDocXML();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.KBXML:
-                                    exportKB();
+                                    bResult = buildKBXML();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.KBTMX:
-                                    exportTMX();
+                                    bResult = buildTMX();
+                                    sType = "text/xml";
                                     break;
                                 case FileTypeEnum.SFM_KB:
-                                    exportSFMKB();
+                                    bResult = buildSFMKB();
                                     break;
                                 case FileTypeEnum.LIFT:
-                                    exportLIFT();
+                                    bResult = buildLIFT();
+                                    sType = "text/xml";
                                     break;
                                 }
+                                if (bResult === false) {
+                                    // Problem creating the file to export, but we've already called exportFail --
+                                    // just clear our static strContents and return
+                                    strContents = "";
+                                    return;
+                                }
+                                // strContents now has the selected book in the selected format. Export it to the proper location
+                                if (isClipboard === true) {
+                                    // browser -- use clipboard API
+                                    navigator.clipboard.writeText(strContents).then(exportSuccess, exportFail);
+                                } else {
+                                    // to file -- create a blob for the fileWriter
+                                    // (exportSuccess and exportFail are called from the onwriteend/onwritefail calls above)
+                                    var blob = new Blob([strContents], {type: sType});
+                                    writer.write(blob);
+                                }
+                                strContents = ""; // clear out the content string
                             }, exportFail);
                         }, exportFail);
                     }, exportFail);
@@ -6242,7 +6035,6 @@ define(function (require) {
             isLoadingFromURL: false,
             
             initialize: function () {
-                document.addEventListener("resume", this.onResume, false);
                 this.bookList = new bookModel.BookCollection();
             },
             
@@ -6255,12 +6047,6 @@ define(function (require) {
                 "click #btnClipboard": "onBtnClipboard",
                 "click #btnCancel": "onCancel",
                 "click #OK": "onOK"
-            },
-            // Resume handler -- user placed the app in the background, then resumed.
-            // Assume the file list could have changed, and reload this page
-            onResume: function () {
-                // refresh the view
-                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             // Handler for when another process sends us a file to import. The logic is in
             // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
@@ -6592,18 +6378,17 @@ define(function (require) {
             destination: DestinationEnum.FILE,
             content: contentEnum.ADAPTATION,
             template: Handlebars.compile(tplExportDoc),
+
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
+                this.bookList = new bookModel.BookCollection();
             },
-
+            
             ////
             // Event Handlers
             ////
             events: {
                 "click .docListItem": "selectDoc",
-                "mouseup #Filename": "editFilename",
-                "blur #Filename": "blurFilename",
-                "change .topcoat-radio-button": "changeType",
                 "click #toClipboard": "onToClipboard",
                 "click #toFile": "onToFile",
                 "click #exportAdaptation": "onExportAdaptation",
@@ -6615,17 +6400,10 @@ define(function (require) {
                 "click #Cancel": "onCancel"
             },
             // Resume handler -- user placed the app in the background, then resumed.
-            // Assume the file list could have changed, and reload this page
             onResume: function () {
-                // refresh the view
-                Backbone.history.loadUrl(Backbone.history.fragment);
-            },
-            editFilename: function (event) {
-                console.log("editFilename");
-                // scroll up if there's not enough room for the keyboard
-                if (($(window).height() - $(".control-group").height()) < 300) {
-                    var top = event.currentTarget.offsetTop - $("#Filename").outerHeight();
-                    $("#mobileSelect").scrollTop(top);
+                // reload the Export wizard, UNLESS we got bumped out by the doc Save process
+                if (bOperationDone === false) {
+                    Backbone.history.loadUrl(Backbone.history.fragment);
                 }
             },
             // User wants to export the adaptation / target text. For Adapt It (.xml) format, this includes the gloss and FT data.
@@ -6644,9 +6422,7 @@ define(function (require) {
                     $("#grpFilename").hide();
                 }
                 // select a default of TXT for the export format (for now)
-                $("#exportTXT").prop("checked", true);
-                bookName += ".txt";
-                $("#Filename").val(bookName);
+                $("#buildTXT").prop("checked", true);
             },
             // User wants to export the glosses. This exports to USFM.
             onExportGloss: function () {
@@ -6663,9 +6439,7 @@ define(function (require) {
                     $("#grpFilename").hide();
                 }
                 // SFM for the export format
-                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblExportUSFM'));
-                bookName += ".sfm";
-                $("#Filename").val(bookName);
+                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblbuildUSFM'));
             },
             // User wants to export the free translation data. This exports to USFM.
             onExportFT: function () {
@@ -6682,49 +6456,7 @@ define(function (require) {
                     $("#grpFilename").hide();
                 }
                 // SFM for the export format
-                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblExportUSFM'));
-                bookName += ".sfm";
-                $("#Filename").val(bookName);
-            },
-            blurFilename: function () {
-                $("#mobileSelect").scrollTop(0);
-            },
-            // User changed the export format type. Add the appropriate extension
-            changeType: function () {
-                // strip any existing trailing extension from the filename
-                // enable the filename edit field (only disable for KB XML)
-                var project = window.Application.currentProject;
-                $("#Filename").prop('disabled', false);
-                var filename = $("#Filename").val().trim();
-                if (filename.length > 0) {
-                    if ((filename.indexOf(".xml") > -1) || (filename.indexOf(".txt") > -1) || (filename.indexOf(".sfm") > -1) || (filename.indexOf(".tmx") > -1) || (filename.indexOf(".usx") > -1)) {
-                        filename = filename.substr(0, filename.length - 4);
-                    }
-                }
-                // get the desired format
-                if ($("#exportXML").is(":checked")) {
-                    filename += ".xml";
-                } else if ($("#exportUSX").is(":checked")) {
-                    filename += ".usx";
-                } else if ($("#exportUSFM").is(":checked")) {
-                    filename += ".sfm";
-                } else if ($("#exportKBTMX").is(":checked")) {
-                    filename += ".tmx";
-                } else if ($("#exportKBSFM").is(":checked")) {
-                    filename += ".sfm";
-                } else if ($("#exportKBLIFT").is(":checked")) {
-                    filename += ".lift";
-                } else if ($("#exportKBXML").is(":checked")) {
-                    // special case -- AI requires a special filename
-                    // Note: hard-coded (do not localize)
-                    filename = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
-                    $("#Filename").prop('disabled', true);
-                } else {
-                    // fallback to plain text
-                    filename += ".txt";
-                }
-                // replace the filename text
-                $("#Filename").val(filename);
+                $("#ttlFormat").html(i18n.t('view.lblExportSelectFormat') + " " + i18n.t('view.lblbuildUSFM'));
             },
             // User selected export to a file
             onToFile: function () {
@@ -6757,13 +6489,39 @@ define(function (require) {
             },
             // User clicked the OK button. Export the selected document to the specified format.
             onOK: function () {
-                if ($("#exportXML").length === 0) {
+                var filename = bookName;
+                var project = window.Application.currentProject;
+                if ($("#buildAIDocXML").length === 0) {
                     // if this is the export complete page,
                     // go back to the previous page
+                    bOperationDone = false;
                     window.history.go(-1);
                 } else {
                     var format = FileTypeEnum.TXT;
-                    var filename = $("#Filename").val().trim();
+                    // build the suggested filename based on the file type
+                    if ($("#buildAIDocXML").is(":checked")) {
+                        filename += ".xml";
+                    } else if ($("#buildUSX").is(":checked")) {
+                        filename += ".usx";
+                    } else if ($("#buildUSFM").is(":checked")) {
+                        filename += ".sfm";
+                    } else if ($("#buildKBXMLTMX").is(":checked")) {
+                        filename += ".tmx";
+                    } else if ($("#buildKBXMLSFM").is(":checked")) {
+                        filename += ".sfm";
+                    } else if ($("#buildKBXMLLIFT").is(":checked")) {
+                        filename += ".lift";
+                    } else if ($("#buildGlossKBXML").is(":checked")) {
+                        // overwrite to hard-coded string (do not localize)
+                        filename = "Glossing.xml";
+                    } else if ($("#buildKBXMLXML").is(":checked")) {
+                        // overwrite to hard-coded string (do not localize)
+                        filename = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
+                    } else {
+                        // fallback to plain text
+                        filename += ".txt";
+                    }
+
                     // validate input
                     if ((filename.length === 0) && (this.destination !== DestinationEnum.CLIPBOARD)) {
                         // user didn't type anything in
@@ -6775,24 +6533,23 @@ define(function (require) {
                             // in browser -- use window.confirm / window.alert
                             alert(i18n.t('view.errNoFilename'));
                         }
-                        $("#Filename").focus();
                     } else {
                         // get the desired format
-                        if ($("#exportXML").is(":checked")) {
+                        if ($("#buildAIDocXML").is(":checked")) {
                             format = FileTypeEnum.XML;
-                        } else if ($("#exportUSX").is(":checked")) {
+                        } else if ($("#buildUSX").is(":checked")) {
                             format = FileTypeEnum.USX;
-                        } else if ($("#exportUSFM").is(":checked")) {
+                        } else if ($("#buildUSFM").is(":checked")) {
                             format = FileTypeEnum.USFM;
-                        } else if ($("#exportKBXML").is(":checked")) {
+                        } else if ($("#buildKBXMLXML").is(":checked")) {
                             format = FileTypeEnum.KBXML;
-                        } else if ($("#exportKBTMX").is(":checked")) {
+                        } else if ($("#buildKBXMLTMX").is(":checked")) {
                             format = FileTypeEnum.KBTMX;
-                        } else if ($("#exportKBSFM").is(":checked")) {
+                        } else if ($("#buildKBXMLSFM").is(":checked")) {
                             format = FileTypeEnum.SFM_KB;
-                        } else if ($("#exportKBLIFT").is(":checked")) {
+                        } else if ($("#buildKBXMLLIFT").is(":checked")) {
                             format = FileTypeEnum.LIFT;
-                        } else if ($("#exportGlossKBXML").is(":checked")) {
+                        } else if ($("#buildGlossKBXML").is(":checked")) {
                             format = FileTypeEnum.GLOSSKBXML;
                         } else {
                             if (this.content !== contentEnum.ADAPTATION) {
@@ -6820,6 +6577,7 @@ define(function (require) {
             // User clicked the Cancel button DURING EXPORT. This is probably due to a hung export process
             onBtnCancel: function () {
                 // TODO: roll back any changes?
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6831,6 +6589,7 @@ define(function (require) {
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
             onCancel: function () {
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6842,6 +6601,7 @@ define(function (require) {
             },
             // User clicked the OK button AFTER EXPORT success/fail. Here we don't do anything -- just return
             onBtnOK: function () {
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6867,18 +6627,14 @@ define(function (require) {
                     $("#KBFormats").show();
                     $("#glossKBFormat").hide();
                     // select a default of XML for the export format (for now)
-                    $("#exportKBXML").prop("checked", true);
-                    bookName = project.get('SourceLanguageName') + " to " + project.get('TargetLanguageName') + " adaptations.xml";
-                    $("#Filename").prop('disabled', true); // can't change the filename for KB XML
+                    $("#buildKBXMLXML").prop("checked", true);
                 } else if (bookid === "glosskb") {
                     console.log("User exporting GLOSS KB");
                     // exporting the gloss KB (really only one option here -- "Glossing.xml")
                     $("#FileFormats").hide();
                     $("#KBFormats").hide();
                     $("#glossKBFormat").show();
-                    $("#exportGlossKBXML").prop("checked", true);
-                    bookName = "Glossing.xml"; // hard coded (no il8n)
-                    $("#Filename").prop('disabled', true); // can't change the filename for KB XML
+                    $("#buildGlossKBXML").prop("checked", true);
                 } else {
                     console.log("User exporting a document");
                     // exporting a book
@@ -6914,13 +6670,13 @@ define(function (require) {
                             }
                         }
                         // select a default of TXT for the export format (for now)
-                        $("#exportTXT").prop("checked", true);
+                        $("#buildTXT").prop("checked", true);
                         bookName += ".txt";
                     }
                 }
-                $("#Filename").val(bookName);
             },
             onShow: function () {
+                bOperationDone = false; // reset the operation done flag
                 kblist = window.Application.kbList;
                 $.when(kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function() {
                     // first step -- clipboard or file?

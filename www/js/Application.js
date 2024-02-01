@@ -79,8 +79,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.14.0", // appended with Android / iOS build info
-            AndroidBuild: "48", // (was milestone release #)
+            version: "1.15.0", // appended with Android / iOS build info
+            AndroidBuild: "49", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -190,13 +190,6 @@ define(function (require) {
                         cordova.file.dataDirectory,
                         cordova.file.syncedDataDirectory
                     ];
-                }
-                // social sharing plugin / iPad popover coords
-                if (device && (device.platform !== "browser")) {
-                    window.plugins.socialsharing.iPadPopupCoordinates = function () {
-                        var rect = document.getElementById('share_button').getBoundingClientRect();
-                        return rect.left + "," + rect.top + "," + rect.width + "," + rect.height;
-                    };
                 }
                 // create / open the database
                 if (device && (device.platform !== "browser")) {

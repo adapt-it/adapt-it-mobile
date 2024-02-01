@@ -1,6 +1,6 @@
 {
   "name": "adapt-it-mobile",
-  "version": "1.13.1",
+  "version": "1.15.0",
   "description": "Adapt It Mobile",
   "repository": {
     "type": "git",
@@ -29,7 +29,6 @@
     "cordova-plugin-filepath": "github:VIAVI-Solutions/cordova-plugin-filepath",
     "cordova-plugin-keyboard": "github:sinn1/cordova-plugin-keyboard",
     "cordova-plugin-network-information": "github:apache/cordova-plugin-network-information",
-    "cordova-plugin-x-socialsharing-android12": "github:IsraelHikingMap/corodova-plugin-socialsharing-android12",
     "cordova-sqlite-evcore-extbuild-free": "^0.18.0",
     "cordova-uglify": "^0.0.8",
     "fs": "^0.0.2",
@@ -41,6 +40,7 @@
   "dependencies": {
     "cordova-lib": "^10.1.0",
     "cordova-plugin-fonts": "^0.6.5",
+    "cordova-plugin-save-dialog": "2.0.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "crypto-randomuuid": "^1.0.0",
     "electron-builder": "^23.0.3",
@@ -81,17 +81,14 @@
         "ANDROID_PATHPREFIX": "/"
       },
       "cordova-plugin-keyboard": {},
-      "cordova-plugin-x-socialsharing-android12": {
-        "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
-      },
       "cordova-clipboard": {},
       "cordova-plugin-filepath": {},
       "cordova-sqlite-evcore-extbuild-free": {},
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
       },
-      "cordova-plugin-chooser": {}
+      "cordova-plugin-chooser": {},
+      "cordova-plugin-save-dialog": {}
     },
     "platforms": [
       "android",

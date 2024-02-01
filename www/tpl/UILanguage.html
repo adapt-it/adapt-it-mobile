@@ -4,7 +4,7 @@
 
 <div class="topcoat-navigation-bar main_title bg-lightblue">
     <div class="topcoat-navigation-bar__item">
-        <a class="topcoat-icon-button--quiet back-button" href="index.html">
+        <a class="topcoat-icon-button--quiet back-button" aria-label="{{ t 'view.dscBack'}}" href="index.html">
             <span class="topcoat-icon topcoat-icon--back"></span>
         </a>
     </div>
@@ -21,7 +21,7 @@
 <div class="control-row"><label class="topcoat-radio-button"><input type="radio" id="customLanguage" name="topcoat">
     <div class="topcoat-radio-button__checkmark"></div> {{ t 'view.lblUseCustomLanguage'}} 
     </label>
-    <select id="language" class="docNav" style="margin-left:2em; margin=top: 6px;">
+    <select id="language" class="docNav" style="margin-left:2em; margin-top: 6px;">
         <option value="en">{{ t 'view.lblEnglish'}}</option>
         <option value="es">{{ t 'view.lblSpanish'}}</option>
         <option value="fr">{{ t 'view.lblFrench'}}</option>
