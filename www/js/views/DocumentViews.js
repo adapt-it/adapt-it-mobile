@@ -3994,8 +3994,6 @@ define(function (require) {
         exportDocument = function (bookid, format, filename, content) {
             var status = "";
             var writer = null;
-            var exportDirectory = "";
-            var subdir = "AIM_Exports_";
             var sType = "text/plain"; // default MIME type (text)
             var bResult = true;
             // Callback for when the file is imported / saved successfully
@@ -4007,7 +4005,7 @@ define(function (require) {
                     status = "<p>" + i18n.t("view.dscStatusExportSuccess") + "</p>";
                 } else {
                     // tell the user it succeeded, and also the file path / name
-                    status = "<p>" + i18n.t("view.dscFile", {file: (subdir + "/" + filename)}) + "</p><p>" +
+                    status = "<p>" + i18n.t("view.dscFile", {file: (filename)}) + "</p><p>" +
                         i18n.t("view.dscStatusExportSuccess") + "</p>";
                 }
                 isClipboard = false; // reset the clipboard flag
