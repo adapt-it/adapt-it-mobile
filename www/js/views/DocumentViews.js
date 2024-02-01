@@ -51,6 +51,10 @@ define(function (require) {
         caseTarget      = [],
         deferreds       = [],
         strContents     = "",
+        // EDB 1 Feb 2024: static for the export wizard, to ignore the app process pause/resume events: on Android, the
+        // Open and Save plugins pause the app process, so when we get back the "operation succeeded / failed" status messages
+        // get knocked out and replaced by the wizard restarting (ugh). I removed the resume handler from the import side completely.
+        bOperationDone  = false, 
         END_FT_BIT      = "0000000010000000000000", // pos 13 (4096 in decimal), per Adapt It Desktop
         bOverride       = false,  // if we are merging, do we want to automatically choose this data over what's
                                 // in the database?
@@ -3999,6 +4003,7 @@ define(function (require) {
             // Callback for when the file is imported / saved successfully
             var exportSuccess = function () {
                 console.log("exportSuccess()");
+                bOperationDone = true;
                 // update status
                 if (isClipboard === true) {
                     // just tell the user it succeeded
@@ -4013,12 +4018,14 @@ define(function (require) {
                 // display the OK button
                 $("#loading").hide();
                 $("#waiting").hide();
+                $("#btnCancel").hide();
                 $("#btnOK").removeClass("hide");
                 $("#btnOK").removeAttr("disabled");
             };
             // Callback for when the file failed to import
             var exportFail = function (e) {
                 console.log("exportFail(): " + e.message);
+                bOperationDone = true;
                 isClipboard = false; // reset the clipboard flag
                 // update status
                 $("#status").html(i18n.t("view.dscExportFailed", {document: filename, reason: e.message}));
@@ -6028,7 +6035,6 @@ define(function (require) {
             isLoadingFromURL: false,
             
             initialize: function () {
-                document.addEventListener("resume", this.onResume, false);
                 this.bookList = new bookModel.BookCollection();
             },
             
@@ -6041,12 +6047,6 @@ define(function (require) {
                 "click #btnClipboard": "onBtnClipboard",
                 "click #btnCancel": "onCancel",
                 "click #OK": "onOK"
-            },
-            // Resume handler -- user placed the app in the background, then resumed.
-            // Assume the file list could have changed, and reload this page
-            onResume: function () {
-                // refresh the view
-                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             // Handler for when another process sends us a file to import. The logic is in
             // window.handleOpenURL (main.js) and Application::importFileFromURL() (Application.js).
@@ -6378,10 +6378,12 @@ define(function (require) {
             destination: DestinationEnum.FILE,
             content: contentEnum.ADAPTATION,
             template: Handlebars.compile(tplExportDoc),
+
             initialize: function () {
                 document.addEventListener("resume", this.onResume, false);
+                this.bookList = new bookModel.BookCollection();
             },
-
+            
             ////
             // Event Handlers
             ////
@@ -6398,10 +6400,11 @@ define(function (require) {
                 "click #Cancel": "onCancel"
             },
             // Resume handler -- user placed the app in the background, then resumed.
-            // Assume the file list could have changed, and reload this page
             onResume: function () {
-                // refresh the view
-                Backbone.history.loadUrl(Backbone.history.fragment);
+                // reload the Export wizard, UNLESS we got bumped out by the doc Save process
+                if (bOperationDone === false) {
+                    Backbone.history.loadUrl(Backbone.history.fragment);
+                }
             },
             // User wants to export the adaptation / target text. For Adapt It (.xml) format, this includes the gloss and FT data.
             onExportAdaptation: function () {
@@ -6491,6 +6494,7 @@ define(function (require) {
                 if ($("#buildAIDocXML").length === 0) {
                     // if this is the export complete page,
                     // go back to the previous page
+                    bOperationDone = false;
                     window.history.go(-1);
                 } else {
                     var format = FileTypeEnum.TXT;
@@ -6573,6 +6577,7 @@ define(function (require) {
             // User clicked the Cancel button DURING EXPORT. This is probably due to a hung export process
             onBtnCancel: function () {
                 // TODO: roll back any changes?
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6584,6 +6589,7 @@ define(function (require) {
             },
             // User clicked the Cancel button. Here we don't do anything -- just return
             onCancel: function () {
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6595,6 +6601,7 @@ define(function (require) {
             },
             // User clicked the OK button AFTER EXPORT success/fail. Here we don't do anything -- just return
             onBtnOK: function () {
+                bOperationDone = false;
                 // go back to the previous page
                 if (window.history.length > 1) {
                     // there actually is a history -- go back
@@ -6669,6 +6676,7 @@ define(function (require) {
                 }
             },
             onShow: function () {
+                bOperationDone = false; // reset the operation done flag
                 kblist = window.Application.kbList;
                 $.when(kblist.fetch({reset: true, data: {projectid: window.Application.currentProject.get("projectid")}})).done(function() {
                     // first step -- clipboard or file?
