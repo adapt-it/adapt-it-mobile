@@ -107,6 +107,7 @@ define(function (require) {
             var reader = new FileReader();
             var result = false;
             var errMsg = "";
+            var fileName = file.name;
             // Callback for when the file is imported / saved successfully
             var importSuccess = function () {
                 console.log("importSuccess()");
@@ -168,7 +169,6 @@ define(function (require) {
             localURLs: null,
 
             initialize: function () {
-                document.addEventListener("resume", this.onResume, false);
             },
                         
             ////
@@ -180,12 +180,6 @@ define(function (require) {
                 "click #btnCancel": "onCancel",
                 "change #selFile": "browserImportAIC",
                 "click #OK": "onOK"
-            },
-            // Resume handler -- user placed the app in the background, then resumed.
-            // Assume the file list could have changed, and reload this page
-            onResume: function () {
-                // refresh the view
-                Backbone.history.loadUrl(Backbone.history.fragment);
             },
             // Handler for the Cancel button (in the loading / please wait template) --
             // user is cancelling the import (might be hung?)
