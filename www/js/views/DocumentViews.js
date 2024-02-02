@@ -1122,7 +1122,6 @@ define(function (require) {
                             // pull out the attributes from the TU element
                             f = this.getAttribute('f');
                             src = stripPunctuation(autoRemoveCaps(this.getAttribute('k'), true), true);
-                            tgt = stripPunctuation(autoRemoveCaps(this.getAttribute('a'), false), false);
                             tuCount++;
                             if (bMerge === true) {
                                 // Merging with an existing KB -- search for this TU in kbList
@@ -1134,7 +1133,8 @@ define(function (require) {
                                     // found a matching TU -- merge the refstrings with the existing ones
                                     $(this).children("RS").each(function (refstring) {
                                         // Does our TU have this refstring?
-                                        theRS = theTU.get("refstring");
+                                        theRS = theTU.get("refstring"); // refstring in our KB
+                                        tgt = stripPunctuation(autoRemoveCaps(refstring.getAttribute('a'), false), false); // target from the file
                                         for (i=0; i< theRS.length; i++) {
                                             if (tgt === theRS[i].target) {
                                                 // found the refstring -- add this refcount to the one in our KB
@@ -6263,7 +6263,7 @@ define(function (require) {
             onOK: function () {
                 if (bookName.length === 0) {
                     // prevent re-entry -- just go to the home page
-                    window.Application.home();
+                    window.location.replace("");
                     return;
                 }
                 if (isKB === false) {
