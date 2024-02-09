@@ -19,6 +19,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
     <platform name="android">
+        <hook type="before_build" src="scripts/before-build.js" />
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
         <!-- SDK 26/Android 8.x: lowest SDK that supports adaptive icons (for splash / app icon) -->

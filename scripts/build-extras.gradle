@@ -1,0 +1,13 @@
+// This file is included at the beginning of `build.gradle`
+
+// Here we'll only add one item to the build.gradle file -- whether or not to add the dependencies blob to the app
+android {
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        // This is for the signed .apk that we post to GitHub, so the dependency metadata isn't relevant.
+        includeInApk = false
+        // Enable dependency metadata when building Android App Bundles.
+        // This is for the Google Play Store, so we'll want the metadata.
+        includeInBundle = true
+    }
+}
