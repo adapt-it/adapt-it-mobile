@@ -7,8 +7,9 @@ date:   2017-01-03 12:21
 ---
 
 * [Supported file types](#supported-file-types)
-* [Opening a document from another app](#opening-a-document)
 * [Importing a document](#importing-a-document)
+* [Importing text from the clipboard](#importing-from-clipboard)
+* [Opening a document from another app](#opening-a-document)
 * [Exporting a document](#exporting-a-document)
 
 ----
@@ -33,9 +34,68 @@ In addition, Adapt It Mobile can also import and export Knowledge Base / transla
 
 ----
 
+<a id="importing-a-document"></a>
+
+## Importing a document 
+
+Complete the following steps to import documents into Adapt It Mobile.
+
+1. Make sure your mobile device can access the files you want to import. You can either copy the files to your mobile device, or use a cloud service such as Google Drive or iCloud.
+2. Open Adapt It Mobile on your device. If you haven't already, [create]({{ site.baseurl }}/Working-with-projects#creating-a-project) or [copy]({{ site.baseurl }}/Working-with-projects#copying-a-project) a project to manage the translation work you'll be doing.
+3. On the main screen, you should see a list of available tasks for your translation project. The second item should be "Import":
+
+    ![Import]({{ site.baseurl }}/assets/img/import.png)
+    
+  Click the Import button to display the import document screen. 
+
+4. Tap on the Select File button to select a file:
+
+    ![Select File]({{ site.baseurl }}/assets/img/import-file.png)
+
+   Adapt It Mobile will display the file chooser dialog.
+   
+7. Navigate to and select the document you would like to import. Adapt It Mobile will attempt to import the file.
+
+8. When Adapt It Mobile finishes importing, it will return the status of the import (either success or failure). If you are importing a document, you can either accept the name that it has suggested or specify another name for the document:
+
+    ![Specify name for the imported document]({{ site.baseurl }}/assets/img/import-name.png)
+
+9. Click the OK button to return to the home page.
+
+----
+
+<a id="importing-from-clipboard"></a>
+
+## Importing text from the clipboard
+
+Adapt It Mobile can also import text from the clipboard as a document. This can be useful if you need to translate a smaller portion of unformatted text, or if you have [formatted text](#supported-file-types) in another program that you want to just copy in via the clipboard. 
+
+Complete the following steps to import text from the clipboard.
+
+1. Open Adapt It Mobile on your device. If you haven't already, [create]({{ site.baseurl }}/Working-with-projects#creating-a-project) or [copy]({{ site.baseurl }}/Working-with-projects#copying-a-project) a project to manage the translation work you'll be doing.
+2. On the main screen, you should see a list of available tasks for your translation project. The second item should be "Import":
+
+    ![Import]({{ site.baseurl }}/assets/img/import.png)
+    
+  Click the Import button to display the import document screen. 
+
+3. Tap on the Import Clipboard Text button to copy from the clipboard:
+
+    ![Select File]({{ site.baseurl }}/assets/img/import-file.png)
+
+   If necessary, Adapt It Mobile will ask you for permission to copy text from the clipboard. Tap the Allow button to allow Adapt It Mobile to copy from the clipboard.
+
+5. When Adapt It Mobile finishes importing, it will return the status of the import (either success or failure). If you are importing a document, you can either accept the name that it has suggested or specify another name for the document:
+
+    ![Specify name for the imported document]({{ site.baseurl }}/assets/img/import-name.png)
+
+6. Click the OK button to return to the home page.
+
+----
+
 <a id="opening-a-document"></a>
 
-## Opening a document
+## Opening a document from another app
 
 When you install Adapt It Mobile, it registers itself on your mobile device that can edit any document of the [supported file types](#supported-file-types). You can use the Share functionality on your device to share the document with Adapt It Mobile. To so this, complete the following steps:
 
@@ -47,44 +107,6 @@ When you install Adapt It Mobile, it registers itself on your mobile device that
 
    ***Note:*** If you do not see the Adapt It Mobile icon in the share panel, verify that the selected document is one of the supported file types](#supported-file-types).
    
-----
-
-<a id="importing-a-document"></a>
-
-## Importing a document 
-
-Complete the following steps to import documents into Adapt It Mobile.
-
-1. Copy the files to your mobile device. These files must be placed in the appropriate documents directory for Adapt It Mobile to see them:
-  - On iOS, you must use the [Finder on your Mac](#https://support.apple.com/en-us/HT210598) (macOS Catalina or later), or [iTunes File Sharing](#https://support.apple.com/en-us/HT201301) (Mojave or earlier) to copy files to Adapt It Mobile's documents directory.
-  - On Android, you can use a utility such as Android File Transfer to copy the documents into one of the following directories:
-    
-    - `/data/Android/org.adaptit.adaptitmobile/files`
-    - `/sdcard/data/Android/org.adaptit.adaptitmobile/files`
-    
-  ***TIP:*** You can also use your device's Cut / Copy functionality to place snippets of text on the Clipboard -- Adapt It Mobile will recognize that there is text on the clipboard and will add an entry to the list of available documents (see step 4 below).
-
-2. Open Adapt It Mobile on your device. If you haven't already, [create]({{ site.baseurl }}/Working-with-projects#creating-a-project) or [copy]({{ site.baseurl }}/Working-with-projects#copying-a-project) a project to manage the translation work you'll be doing.
-3. On the main screen, you should see a list of available tasks for your translation project. The second item should be "Import":
-
-    ![Import]({{ site.baseurl }}/assets/img/import.png)
-    
-4. Click the Import button to display the import document screen. Here Adapt It Mobile will automatically scan your mobile device, displaying any documents that Adapt It Mobile can import. If there is text on your device's clipboard, Adapt It Mobile will add an entry titled "Clipboard text...". 
-  
-    ***Note:*** If you see a warning message instead of a list of available documents, Adapt It Mobile has not found any documents on your device that it can import. If this is the case, copy the files to your mobile device using one of the methods in step 1 and retry this operation.
-    
-5. Select the document you would like to import. 
-
-    ![Select documents and Import]({{ site.baseurl }}/assets/img/import-docs.png)
-
-    Adapt It Mobile will import the document.
-
-6. When Adapt It Mobile finishes importing, it will prompt you to enter a name for the imported text (or clipboard snippet). You can either accept the name that it has suggested, or specify another name for the document.
-
-    ![Specify name for the imported document]({{ site.baseurl }}/assets/img/import-name.png)
-
-7. Click the OK button to return to the home page.
-
 ----
 
 <a id="exporting-a-document"></a>
@@ -141,7 +163,7 @@ Complete the following steps to import documents into Adapt It Mobile.
 5. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
 
    - If you selected Copy to Clipboard, Adapt It Mobile will copy the document to the Clipboard.
-   - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device (see [Exported File Location](#exported-file-location) for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
+   - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
     
     - SMS (text messaging)
     - email
@@ -153,12 +175,3 @@ Complete the following steps to import documents into Adapt It Mobile.
 
 6. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
 
----
-
-<a id="exported-file-location"></a>
-
-#### Exported File location
-When you Export a document to a file, Adapt It Mobile saves a copy on the local mobile device:
-
-- For iOS, documents are saved in the Documents folder for Adapt It Mobile. You can use the [Apple File Sharing](https://support.apple.com/en-us/HT201301) feature to transfer these files to your computer for forther processing.
-- For Android, documents are stored on the SD card (if available) or the Internal Storage -- in a directory labeled `AIM_Exports_<language code>`, where `<language code>` is the RFC 5646 language code of the *target language*. These files can be copied over to your computer using the [Android File Transfer utility](https://www.android.com/filetransfer/).
