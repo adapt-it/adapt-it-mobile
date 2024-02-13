@@ -22,15 +22,17 @@ To create a new project, complete the following steps:
 
 1. Open Adapt It Mobile on your device.
 
-2. On the Welcome screen, click the Continue button.
+2. On the Welcome screen, tap the Continue button.
 
-3. On the Get Started screen, click the Create Project icon: ![Create Project]({{ site.baseurl }}/assets/img/project-new.png)
+3. On the Get Started screen, tap the Create Project button:
+   
+    ![Create Project]({{ site.baseurl }}/assets/img/project-new.png)
 
     This will start the Create Project wizard, which will guide you through the following steps:
 
 ### Step 1: Source Language 
 
-- Enter the name of the source language in the Source Language Name field. If you are unsure of the spelling, type in a few letters of the name and click on the correct entry in the list of suggestions that appears:
+- Enter the name of the source language in the Source Language Name field. If you are unsure of the spelling, type in a few letters of the name and tap on the correct entry in the list of suggestions that appears:
 
     ![Language Name and suggestions]({{ site.baseurl }}/assets/img/language-name.png)
 - If this language is a _dialect_, type in the name of the dialect:
@@ -39,11 +41,11 @@ To create a new project, complete the following steps:
 - If the language reads right-to-left, select the Language reads right-to-left checkbox:
 
     ![Language reads right to left checkbox]({{ site.baseurl }}/assets/img/language-rtl.png)
-- Click the Next button to continue.
+- tap the Next button to continue.
 
 ### Step 2: Target Language
 
-- Enter the name of the target language in the Target Language Name field. If you are unsure of the spelling, type in a few letters of the name and click on the correct entry in the list of suggestions that appears.
+- Enter the name of the target language in the Target Language Name field. If you are unsure of the spelling, type in a few letters of the name and tap on the correct entry in the list of suggestions that appears.
 
     ![Language Name and suggestions]({{ site.baseurl }}/assets/img/language-name.png)
 - If this language is a _dialect_, type in the name of the dialect.
@@ -52,29 +54,29 @@ To create a new project, complete the following steps:
 - If the language reads right-to-left, select the Language reads right-to-left checkbox. 
 
     ![Language reads right to left checkbox]({{ site.baseurl }}/assets/img/language-rtl.png)
-- Click the Next button to continue.
+- tap the Next button to continue.
 
 ### Step 3: Fonts
 
 Some languages need a specific font in order to display properly on the screen. Adapt It Mobile uses [Source Sans Pro](https://store1.adobe.com/cfusion/store/html/index.cfm?event=displayFontPackage&code=1959) by default for the source, target and navigation font. This font covers Cyrillic, Cyrillic Extended, Greek, Latin Extended, Polytonic, and Vietnamese languages. If you know that your source or target font will not display correctly -- or if you would like to change the font size or color, perform the following steps:
 
-- Click on the Source Font, Target Font, or Navigation Font lines in the list. This brings up the Font Selection window:
+- tap on the Source Font, Target Font, or Navigation Font lines in the list. This brings up the Font Selection window:
 
     ![Font selection window]({{ site.baseurl }}/assets/img/font.png)
-- Click on the Font drop-down list and select the appropriate font from the list. Note that these are the fonts that are installed on your mobile device -- if you don't see the font you need in the list, close Adapt It Mobile and verify that the font is indeed installed on your device.
+- tap on the Font drop-down list and select the appropriate font from the list. Note that these are the fonts that are installed on your mobile device -- if you don't see the font you need in the list, close Adapt It Mobile and verify that the font is indeed installed on your device.
 - Drag the Size slider to the desired size of text.
-- Click on the Color drop-down and select the desired text color from the palette.
-- Click on the OK button to accept the changes, or the Cancel button to go back to the original font.
+- tap on the Color drop-down and select the desired text color from the palette.
+- tap on the OK button to accept the changes, or the Cancel button to go back to the original font.
 
-When finished on the Font step, click Next to continue.
+When finished on the Font step, tap Next to continue.
 
 ### Step 4: Punctuation
 
 - Select the Automatically copy punctuation checkbox if you would like Adapt It Mobile to copy punctuation from the source to the target language.
 
     ![Copy Punctuation]({{ site.baseurl }}/assets/img/punct-copy.png)
-- If you select the Automatically copy punctuation checkbox, you will need to specify what characters are considered punctuation in the source language, and what the equivalent punctuation character is in the target language. A default set of source and target "pairs" is provided for you. You can remove punctuation that doesn't apply in your source/target languages by clicking on the minus (-) sign button. You can also add punctuation by typing in the last (empty) row.
-- Click the Next button to continue to the next step.
+- If you select the Automatically copy punctuation checkbox, you will need to specify what characters are considered punctuation in the source language, and what the equivalent punctuation character is in the target language. A default set of source and target "pairs" is provided for you. You can remove punctuation that doesn't apply in your source/target languages by tapping on the minus (-) sign button. You can also add punctuation by typing in the last (empty) row.
+- tap the Next button to continue to the next step.
 
 ### Step 5: Cases
 
@@ -82,8 +84,8 @@ When finished on the Font step, click Next to continue.
 - If you would like Adapt It Mobile to automatically capitalize the target text, select the Automatically capitalize target when appropriate checkbox:
 
     ![Cases checkboxes]({{ site.baseurl }}/assets/img/cases.png)
-- If you do select the Automatically capitalize target when appropriate checkbox, you will need to specify the lower and upper case characters in the source language, and the corresponding lower/uppercase characters in the target language. A default set of source and target lower/uppercase equivalencies is provided for you. You can remove a character that doesn't apply in your source/target languages by clicking on the minus (-) sign button. You can also add a lower/uppercase character by typing in the last (empty) row.
-- Click the Next button to continue to the next step.
+- If you do select the Automatically capitalize target when appropriate checkbox, you will need to specify the lower and upper case characters in the source language, and the corresponding lower/uppercase characters in the target language. A default set of source and target lower/uppercase equivalencies is provided for you. You can remove a character that doesn't apply in your source/target languages by tapping on the minus (-) sign button. You can also add a lower/uppercase character by typing in the last (empty) row.
+- tap the Next button to continue to the next step.
 
 ***Automatic Capitalization Note***: Both Android and iOS have system settings that control the capitalization of text input. If you are having problems with the on-screen keyboard automatically capitalizing each word of text, you can turn this feature off for your mobile device:
 
@@ -98,7 +100,7 @@ If you are importing .usfm document files from Paratext or Bibledit, you can fil
     ![USFM]({{ site.baseurl }}/assets/img/usfm.png)
     
 - If you do select the Use custom USFM filter set checkbox, you will need to specify which USFM markers to display. A default set of markers is specified for you; you can select and unselect the various markers as appropriate for your translation.
-- Click the Finish button to complete the Create Project wizard. Adapt It Mobile will close the wizard and display the main screen.
+- tap the Finish button to complete the Create Project wizard. Adapt It Mobile will close the wizard and display the main screen.
 
 ----
  
@@ -106,42 +108,26 @@ If you are importing .usfm document files from Paratext or Bibledit, you can fil
 
 ## Copying a project 
 
-If you have already created an adaptation project in Adapt It desktop with the same source and target languages you will be using for your adaptation, you can copy the project file from your computer to your mobile device and use it in Adapt It Mobile. The project file is named `AI-ProjectConfiguration.aic` and will be located under the directory:
+If you have already created an adaptation project in Adapt It desktop with the same source and target languages you will be using for your adaptation, you can copy / import the project file from your computer to your mobile device and use it in Adapt It Mobile. The project file is named `AI-ProjectConfiguration.aic` and will be located under the directory:
 
     Adapt It Unicode Work / <project name> / AI-ProjectConfiguration.aic
 
+You can copy this file to the mobile device, or to a cloud service--such as Google Drive or iCloud--that your phone can access.
+
 **NOTE**: if you don't have an existing project file from Adapt It desktop, you can create one within Adapt It Mobile. [Refer to these instructions for more information](#creating-a-new-project).
 
-#### Step 1: Copy the file to the device
-
-- On Android devices, you can directly transfer files to your device using one of the following programs:
-
-  - [Android File Transfer](https://www.android.com/intl/en_us/filetransfer/) 
-  - [Superbeam](https://play.google.com/store/apps/details?id=com.majedev.superbeam&hl=en)
-  - [ES File Explorer](https://play.google.com/store/apps/details?id=com.estrongs.android.pop&hl=en)
-
-  The Adapt It desktop project file files MUST be placed in one of the following directories on your Android device:
-  
-  - `/data/Android/org.adaptit.adaptitmobile/files`
-  - `/sdcard/data/Android/org.adaptit.adaptitmobile/files` (if you have an external / sdcard installed on your device)
-
-- On Apple devices, you can use the [Apple File Sharing](https://support.apple.com/en-us/HT201301) capability to directly transfer files to your device.
-
 **Important:** only project files created using the Unicode version of Adapt It desktop are compatible with Adapt It Mobile.
-
-#### Step 2: Import (copy) the file into Adapt It Mobile
 
 Complete the following steps to copy a project file into Adapt It Mobile:
 
 1. Open Adapt It Mobile.
-2. On the Welcome screen, click the Continue button.
-3. On the Get Started screen, click the Copy project icon: ![Copy Project]({{ site.baseurl }}/assets/img//project-copy.png)
-4. Select the project file from the list that appears:
-
-![Project File]({{ site.baseurl }}/assets/img/AIproject.png)
-
-If no files are listed and a warning displays instead, verify that you have successfully copied the project file to the mobile device, and that it is in the proper directory. Also verify that you have allowed Adapt It Mobile read permissions on your device.
-5. Click the OK button to return to the main window.
+2. On the Welcome screen, tap the Continue button.
+3. On the Get Started screen, tap the Copy project icon:
+   
+    ![Copy Project]({{ site.baseurl }}/assets/img//project-copy.png)
+  
+4. Navigate to and select the project file (`AI-ProjectConfiguration.aic`) from the chooser dialog. Adapt It Mobile will attempt to import the file.
+5. tap the OK button to return to the main window.
 
 ----
 
@@ -152,13 +138,13 @@ If no files are listed and a warning displays instead, verify that you have succ
 Complete the following steps to view or edit a project's settings:
 
 1. Open Adapt It Mobile.
-2. On the main screen, click the Project Settings button. The project settings screen displays, giving an overview of the current project's settings. 
-3. To view or edit a specific setting, click on that setting in the list. An editor will display the current settings. You can make changes here to the selected setting.
+2. On the main screen, tap the Project Settings button. The project settings screen displays, giving an overview of the current project's settings. 
+3. To view or edit a specific setting, tap on that setting in the list. An editor will display the current settings. You can make changes here to the selected setting.
 
-- Click the OK button to accept changes made to the current screen and return to the general settings.
-- Click the Cancel button to discard any changes made to the current screen and return to the general settings.
+- tap the OK button to accept changes made to the current screen and return to the general settings.
+- tap the Cancel button to discard any changes made to the current screen and return to the general settings.
 
-When you are done viewing or modifying the settings for the project, click on the Left arrow button in the upper left corner of the title bar to return to the main screen.
+When you are done viewing or modifying the settings for the project, tap on the Left arrow button in the upper left corner of the title bar to return to the main screen.
 
 
 
