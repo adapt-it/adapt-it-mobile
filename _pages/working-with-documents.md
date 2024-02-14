@@ -81,7 +81,7 @@ Complete the following steps to import text from the clipboard.
 
 3. Tap on the Import Clipboard Text button to copy from the clipboard:
 
-    ![Select File]({{ site.baseurl }}/assets/img/import-file.png)
+    ![Select File]({{ site.baseurl }}/assets/img/import-clipboard.png)
 
    If necessary, Adapt It Mobile will ask you for permission to copy text from the clipboard. Tap the Allow button to allow Adapt It Mobile to copy from the clipboard.
 
@@ -122,9 +122,14 @@ When you install Adapt It Mobile, it registers itself on your mobile device that
 2. Select where you would like to send the file:
 
    - If you want to copy the content of the document to another app on the mobile device, select Copy to Clipboard.
-   - If you want to export the document to a file and optionally send it to another device (via email or Bluetooth, for example), select Export to File.
 
-3. Select the document you would like to export. You can also select the Knowledge Base for export if desired.
+   ![Copy to Clipboard]({{ site.baseurl }}/assets/img/export-clipboard.png)
+   
+   - If you want to export the document as a file, select Export to File.
+
+   ![Export to File]({{ site.baseurl }}/assets/img/export-file.png)
+
+4. Select the document you would like to export. You can also select the Knowledge Base or Glossing Knowledge Base for export if they are not empty.
 
    ![Export select document]({{ site.baseurl }}/assets/img/export-sel-doc.png)
    
@@ -132,11 +137,13 @@ When you install Adapt It Mobile, it registers itself on your mobile device that
    
    If you have the "Show Gloss and Free Translation Modes" option checked in the Editor and User Interface Settings screen _and_ select a document, you will then be prompted to select either the translation, gloss, or free translation data to export from that document. Select the type of data you want to export to continue.
 
-4. Select the format you would like to export the document to, and the filename to export to (if you selected Export to File). 
+   ![Select data to export]({{ site.baseurl }}/assets/img/export-sel-data.png)
 
-   ![Export File format]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
+5. Select the format you would like to export the document to, depending on the type of data being exported. 
 
     __Translation document export__
+
+   ![Export File format]({{ site.baseurl }}/assets/img//export-sel-fmt.png)
     
    Adapt It Mobile currently supports the following file formats for translated documents:
 
@@ -144,34 +151,30 @@ When you install Adapt It Mobile, it registers itself on your mobile device that
    - [USFM](http://paratext.org/about/usfm) (.sfm)
    - [USX](https://app.thedigitalbiblelibrary.org/static/docs/usx/index.html) (.usx)
    - Plain text (.txt) with no formatting
-  
-    __Gloss and Free Translation document export__
-  
-     If you selected gloss or free translation data to export in the previous step, USFM is the only file format available. You can keep the default file name for export, or specify a different file name.
+    
+     If you selected gloss or free translation data to export in the previous step, USFM is the only file format available.
    
     __Knowledge Base document export__
    
     If you selected the Knowledge Base for export, Adapt It Mobile will display options for the file format:
   
-   ![KB Format]({{ site.baseurl }}/assets/img//export-kb-sel-fmt.png)
+   ![KB Format]({{ site.baseurl }}/assets/img/export-kb-sel-fmt.png)
 
-   - Adapt It desktop (.xml) (you cannot modify the file name for this file, as it includes the source and target language info for the project)
+   - Adapt It desktop (.xml)
    - Translation Memory Exchange (.tmx)
    - Lexical Interchange (.LIFT)
    - \lx keyword data (.sfm)
 
-5. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
+    __Glossing Knowledge Base document export__
+   
+    If you selected the Glossing Knowledge Base for export, Adapt It Desktop (.xml) is the only file format available:
+  
+   ![KB Format]({{ site.baseurl }}/assets/img/export-gloss-kb-fmt.png)
+
+6. Click OK to start the export process. Adapt It Mobile will convert the document to the specified format.
 
    - If you selected Copy to Clipboard, Adapt It Mobile will copy the document to the Clipboard.
-   - If you selected Export to File, Adapt It Mobile will export a copy of the document to the local device for details on where these files are stored). Adapt It Mobile will then display a file sharing popup, to allow you to export the file via one of a number of options. Several outputs are supported, including:
-    
-    - SMS (text messaging)
-    - email
-    - WhatsApp
-    - Bluetooth (Android)
-    - AirDrop (iOS)
-    
-   Note that these export options require you to configure them before exporting (for example, you need to turn Bluetooth on and pair with a computer before attempting to export).
+   - If you selected Export to File, Adapt It Mobile will display the file chooser dialog. Here you can navigate to the directory where you want to export the file to, as well as specify a different name if desired.
 
-6. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
+7. When Adapt It Mobile finishes exporting, an OK button will display. Click the OK button to return to the home page.
 
