@@ -24,7 +24,7 @@ Adapt It Mobile is designed for translation between related languages. This sect
 2. Start Adapt It Mobile. On the main screen, you should see a list of available actions.
 3. Tap on the Browse / Search button:
 
-    ![Search button]({{ site.baseurl }}/assets/img/Search.png)
+    ![Search button]({{ site.baseurl }}/assets/img/search.png)
 
     If you do not see the Browse / Search button, verify that you have [imported some documents](https://github.com/adapt-it/adapt-it-mobile/wiki/Importing-a-document) into Adapt It Mobile. Once you have tapped the Browse / Search button, the Browse / Search screen displays.
 
