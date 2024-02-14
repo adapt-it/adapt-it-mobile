@@ -8,7 +8,7 @@ date:   2017-01-03 12:21
 
 Adapt It Mobile is designed for translation between related languages. This section gives step-by-step instructions on how to use Adapt It Mobile to perform the translations.
 
-* [Searching for a document of chapter to adapt](#search-page)
+* [Selecting a chapter to adapt](#browse-search-page)
 * [Adapting from where you left off](#adapting-from-where-you-left-off)
 * [Adapting basics](#adapting-basics)
 * [Inserting a placeholder](#inserting-a-placeholder)
@@ -16,27 +16,27 @@ Adapt It Mobile is designed for translation between related languages. This sect
 
 ----
 
-<a id="search-page"></a>
+<a id="browse-search-page"></a>
 
-## Searching for a document or chapter to adapt 
+## Selecting a chapter to adapt 
 
 1. Make sure you have followed the steps to [Create](https://github.com/adapt-it/adapt-it-mobile/wiki/Creating-a-new-project) or [Copy](https://github.com/adapt-it/adapt-it-mobile/wiki/Copying-a-project) a project, and have [imported some documents](https://github.com/adapt-it/adapt-it-mobile/wiki/Importing-a-document) into Adapt It Mobile.
 2. Start Adapt It Mobile. On the main screen, you should see a list of available actions.
-3. Click on the Search button:
+3. Tap on the Browse / Search button:
 
     ![Search button]({{ site.baseurl }}/assets/img/Search.png)
 
-    If you do not see a Search button, verify that you have [imported some documents](https://github.com/adapt-it/adapt-it-mobile/wiki/Importing-a-document) into Adapt It Mobile. Once you have clicked the Search button, the Search screen displays.
+    If you do not see the Browse / Search button, verify that you have [imported some documents](https://github.com/adapt-it/adapt-it-mobile/wiki/Importing-a-document) into Adapt It Mobile. Once you have tapped the Browse / Search button, the Browse / Search screen displays.
 
     ![Search screen]({{ site.baseurl }}/assets/img/search-1.png)
 
 4. On this screen you can either search by book or chapter name, or browse the imported book list to find the chapter you want to adapt.
 
-  - To Search for a book or chapter name, click on the Search tab to make sure its selected. Then click in the search edit field and start typing in the name of the book. As you do, matching chapters will display in the search results. Click on the chapter you want to adapt.
+  - To Search for a book or chapter name, tap in the Search edit field and start typing in the name of the book. As you do, matching chapters will display in the search results. Tap on the chapter you want to adapt.
 
     ![Search for a book or chapter]({{ site.baseurl }}/assets/img/search-2.png)
 
-  - To browse the imported book list to find a chapter, click on the Select Document tab to make sure it has the focus. Then click on the document you want to adapt. A list of chapters in that document will display below the selected document. Click on the chapter you want to adapt.
+  - To browse the imported book list to find a chapter, clear out the Search edit field if needed. Then tap on the document you want to adapt. A list of chapters in that document will display below the selected document. Tap on the chapter you want to adapt.
 
     ![Browse for a book or chapter]({{ site.baseurl }}/assets/img/search-3.png)
 
@@ -54,7 +54,9 @@ Adapt It Mobile is designed for translation between related languages. This sect
 
     ![Adapt]({{ site.baseurl }}/assets/img/Adapt.png)
 
-    If this is your first time opening the project actions after importing documents, this will be the first chapter of the first document you imported (or the first document, if this was a text file). Otherwise, it will be the document and chapter you last adapted. Click on this link to open that chapter and start adapting.
+    If this is your first time opening the project actions after importing documents, this will be the first chapter of the first document you imported (or the first document, if this was a text file). Otherwise, it will be the document and chapter you last adapted. tap on this link to open that chapter and start adapting.
+
+   Tap on this button to adapt from where you left off.
     
 ----
 
@@ -66,12 +68,12 @@ Adapting is the heart of the Adapt It Mobile program. If you are familiar with t
 
 Adapt It Mobile allows you to translate a single chapter at a time. The text is laid out with the source text just above the corresponding target text, and any markers just above the source text. As you add target text translations, Adapt It Mobile will remember the words and phrases you've used. If you come across a word or phrase you've translated before, Adapt It Mobile will suggest that same word or phrase.
 
-For a quick walkthrough of the controls on the Adaptation page, click on the More Actions menu button in the upper right hand side of the screen and click on the Help menu command.
+For a quick walkthrough of the controls on the Adaptation page, tap on the More Actions menu button in the upper right hand side of the screen and tap on the Help menu command.
 
    ![More Actions menu]({{ site.baseurl }}/assets/img/menu-130.png)
 
 ## To translate a word
-Click on the area just below the source word. You should see an edit box display (and the software keyboard open up if you don't have an external keyboard attached). Type in the equivalent word in the target language.
+Tap on the area just below the source word. You should see an edit box display (and the software keyboard open up if you don't have an external keyboard attached). Type in the equivalent word in the target language.
 
 ## To translate a phrase
 To create a translation for a phrase of text, you will need to select that text. There are a couple ways to do this:
@@ -86,11 +88,11 @@ The following animation shows these two methods of selection:
 
 ![Selection]({{ site.baseurl }}/assets/img/sel.gif)
 
-Once you have selected the words you want to translate, click the Phrase button in either the title bar or from the More Actions (...) dropdown menu. You should see the words combine into a single phrase, with a new target edit field just below it. Type in the equivalent phrase in the target language.
+Once you have selected the words you want to translate, tap the Phrase button in either the title bar or from the More Actions (...) dropdown menu. You should see the words combine into a single phrase, with a new target edit field just below it. Type in the equivalent phrase in the target language.
 
 ## To move to the next / previous edit field
 
-Click on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to the previous and next untranslated fields, respectively.
+Tap on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to the previous and next untranslated fields, respectively.
 
 ----
 
@@ -100,8 +102,8 @@ Click on the Next [ <- ] and Previous [ -> ] buttons, that allow you to go to th
 
 Placeholders are used when there is a word or phrase in the target language that is *not* in the source language. To insert a placeholder, follow these steps:
 
-1. Click on the source word (or phrase) just after where you need to insert a placeholder.
-2. Click on the Placeholder button in either the title bar or from the More Actions (...) dropdown menu. You should see an extra place to the left of your old selection, with an edit field. Enter in the word or phrase in the target language.
+1. Tap on the source word (or phrase) just after where you need to insert a placeholder.
+2. Tap on the Placeholder button in either the title bar or from the More Actions (...) dropdown menu. You should see an extra place to the left of your old selection, with an edit field. Enter in the word or phrase in the target language.
 
 ----
 
@@ -113,7 +115,7 @@ Retranslations are used when the syntax or exegesis of the adaptation is incorre
 
 To create a retranslation, complete the following steps:
 
-1. Click or drag over the word(s) in the source language that you'll be providing a retranslation for.
-2. Click on the Retranslation button in either the title bar or from the More Actions (...) dropdown menu. You'll see the words combine into one unit, with an edit field below it. Type in the retranslation.
+1. Tap or drag over the word(s) in the source language that you'll be providing a retranslation for.
+2. Tap on the Retranslation button in either the title bar or from the More Actions (...) dropdown menu. You'll see the words combine into one unit, with an edit field below it. Type in the retranslation.
 
 ![Retranslation]({{ site.baseurl }}/assets/img/ret.gif)
