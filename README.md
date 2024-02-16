@@ -1,22 +1,22 @@
 ![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png)
 
-| iOS        | Android           |
-|:-------------:|:-------------:| 
-| <a href='https://itunes.apple.com/us/app/adapt-it-mobile/id1031605993?ls=1&mt=8'><img alt='Download on the App Store' src='https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png' /></a>     | <a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a> |
+| iOS        | Android           | Android (F-Droid client or .apk for side-loading)  |
+|:-------------:|:-------------:|:-------------:|
+| <a href='https://itunes.apple.com/us/app/adapt-it-mobile/id1031605993?ls=1&mt=8'><img alt='Download on the App Store' src='https://raw.githubusercontent.com/adapt-it/adapt-it-mobile/gh-pages/assets/img/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png' /></a>     | <a href='https://play.google.com/store/apps/details?id=org.adaptit.adaptitmobile'><img alt='Get it on Google Play' height='60' width='155' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a> | ![https://img.shields.io/badge/:badgeContent](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/org.adaptit.adaptitmobile) |
 
 
 [![CI Debug Build Status](https://github.com/adapt-it/adapt-it-mobile/workflows/CI%20Debug%20Build/badge.svg)](https://github.com/adapt-it/adapt-it-mobile/actions)
 
 User site: [https://adapt-it.github.io/adapt-it-mobile/](https://adapt-it.github.io/adapt-it-mobile/)
 
-Adapt It Mobile is a **simple related language translation editor** designed specifically for mobile devices. Using a tablet or smartphone, you can use Adapt It Mobile to quickly translate text from one language to another related language. Previous translations are stored in a translation memory called a _Knowledge Base_, and are suggested the next time that particular word or phrase is encountered.
+Adapt It Mobile is a **simple related language translation editor** designed specifically for mobile devices. Using a tablet or smartphone, you can use Adapt It Mobile to quickly translate text from one language to another related language. Previous translations are stored in a translation memory called a _Knowledge Base_, and are suggested the next time that particular word or phrase is encountered. All data is stored in a local SQLite database, but can be exported into any of the [supported file formats](https://adapt-it.github.io/adapt-it-mobile/working-with-documents/#supported-file-types).
 
 Adapt It Mobile is a ground-up rewrite of the [Adapt It desktop application](http://adapt-it.org/), written -- by the same developers -- specifically for mobile devices.
 
 ## System Requirements
 
 - Android tablet or smart phone running Android 8.0 or later
-- Apple iPad, iPod or iPhone running iOS 11.0 or later
+- Apple iPad, iPod or iPhone running iOS 12.0 or later
 
 
 ## ![Users Guide](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/tablet.png) Getting Started
