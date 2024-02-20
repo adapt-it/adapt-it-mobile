@@ -167,12 +167,20 @@ define(function (require) {
                 window.Application.currentProject.set('lastDocument', "");
                 window.Application.currentProject.set('lastAdaptedBookID', 0);
                 window.Application.currentProject.set('lastAdaptedChapterID', 0);
+                window.Application.currentProject.set('lastAdaptedName', "");
                 window.Application.currentProject.save();
             } else if (deletedCurrentDoc === true) {
                 // We just deleted the current Document/book;
-                // reset the current chapter and book to the first book in our collection                
+                // reset the current chapter and book to the first book in our collection
+                // fall back on clearing out the lastAdapted stuff
+                window.Application.currentProject.set('lastDocument', "");
+                window.Application.currentProject.set('lastAdaptedBookID', 0);
+                window.Application.currentProject.set('lastAdaptedChapterID', 0);
+                window.Application.currentProject.set('lastAdaptedName', "");
+                // now try to get the first book in the book list              
                 var bk = window.Application.BookList.at(0);
                 if (bk) {
+                    // got it -- set the lastAdapted stuff to the first chapter
                     var cid = bk.get("chapters")[0];
                     window.Application.currentProject.set('lastDocument', bk.get("name"));
                     window.Application.currentProject.set('lastAdaptedBookID', bk.get("bookid"));
@@ -184,8 +192,8 @@ define(function (require) {
                         // can't get the chapter -- just clear out the lastAdaptedName value
                         window.Application.currentProject.set('lastAdaptedName', "");
                     }
-                    window.Application.currentProject.save();
                 }
+                window.Application.currentProject.save();
             }
         },
         ////////
