@@ -287,6 +287,9 @@ define(function (require) {
                     $("#verifyNameControls").show();
                     $("#lblDirections").html(i18n.t("view.dscStatusImportSuccess", {document: fileName}));
                     $("#BookName").val(bookName);
+                    // select the book name text
+                    $("#BookName").trigger("focus");
+                    $("#BookName").trigger("select");
                 }
                 // display the OK button
                 $("#OK").removeClass("hide");
