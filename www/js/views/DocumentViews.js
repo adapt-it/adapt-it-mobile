@@ -6294,6 +6294,11 @@ define(function (require) {
                             chap.save({name: newChapterName});
                             if (firstChapWithVerses === null && chap.get('versecount') !== 0) {
                                 firstChapWithVerses = chap;
+                                // it's possible we also need to change the lastAdaptedName for this chapter book
+                                if (this.model.get("lastAdaptedName").indexOf(bookName) > -1) {
+                                    // we have chapters -- use the first one that has some verses
+                                    this.model.set('lastAdaptedName', chap.get('name'));
+                                }
                             }
                         }
                         // last document and chapter (if the first import)
@@ -6301,8 +6306,10 @@ define(function (require) {
                         if (this.model.get('lastDocument') === bookName) {
                             this.model.set('lastDocument', newName);
                         }
-                        if (this.model.get('lastAdaptedName') === "" && firstChapWithVerses !== null) {
-                            this.model.set('lastAdaptedName', firstChapWithVerses.get('name'));
+                        // test for lastAdaptedName === bookName (first import for a plain text file)  
+                        if (this.model.get("lastAdaptedName") === bookName) {
+                            // no chapter -- set to newName
+                            this.model.set('lastAdaptedName', newName);
                         }
                         if (this.model.get('lastAdaptedBookID') === 0) {
                             this.model.set('lastAdaptedBookID', book.get("bookid"));
