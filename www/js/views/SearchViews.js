@@ -1235,6 +1235,7 @@ define(function (require) {
             onShow: function () {
                 var lstBooks = "";
                 this.bookList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                this.chapterList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
                 // initial sort - name
                 this.bookList.comparator = 'name';
                 this.bookList.sort();
@@ -1254,24 +1255,28 @@ define(function (require) {
                     event.preventDefault();
                 }
                 var key = $('#search').val();
-                if (key.length > 0 && $("#lstSearch").hasClass("hide")) {
-                    // we have something to search for -- show the search UI
-                    this.toggleSearchBrowse();
-                    // search for the string provided
-                    this.chapterList.fetch({reset: true, data: {name: key}});
-                    this.chapterList.each(function (model) {
-                        lstChapters += chapTemplate(model.attributes);
-                    });
-                    if (this.chapterList.length > 0) {
-                        $("#lstSearchResults").html(lstChapters);
-                        $("#lblSearchResults").removeAttr("style");
-                    } else {
-                        $("#lblSearchResults").attr("style", "display:none");
-                    }
-                }
                 if (key.length === 0 && $("#lstBooks").hasClass("hide")) {
                     // search is cleared out -- show the books UI
                     this.toggleSearchBrowse();
+                    return;
+                }
+                if (key.length > 0 && $("#lstSearch").hasClass("hide")) {
+                    // we have something to search for -- show the search UI
+                    this.chapterList.fetch({reset: true, data: {projectid: this.model.get('projectid')}});
+                    this.toggleSearchBrowse();
+                }
+                // search for the string provided (case-insensitive)
+                this.chapterList.each(function (model) {
+                    if (model.get("name").toLowerCase().indexOf(key.toLowerCase()) > -1) {
+                        lstChapters += chapTemplate(model.attributes);
+                    }
+                });
+                if (lstChapters.length > 0) {
+                    $("#lstSearchResults").html(lstChapters);
+                    $("#lblSearchResults").removeAttr("style");
+                } else {
+                    $("#lblSearchResults").attr("style", "display:none");
+                    $("#lstSearchResults").html("");
                 }
             },
 

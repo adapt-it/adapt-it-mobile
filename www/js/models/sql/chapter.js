@@ -163,8 +163,16 @@ define(function (require) {
                         // results already in collection -- return them
                         options.success(results);
                         deferred.resolve(results);
+                    } else if (options.data.hasOwnProperty('projectid')) {
+                        // find projectid matches
+                        var projectid = options.data.projectid;
+                        results = chapters.filter(function (element) {
+                            return element.attributes.projectid === projectid;
+                        });
+                        // results already in collection -- return them
+                        options.success(results);
+                        deferred.resolve(results);
                     } else if (options.data.hasOwnProperty('name')) {
-
                         // special case -- empty name query ==> reset local copy so we force a retrieve
                         // from the database
                         if (name === "") {
