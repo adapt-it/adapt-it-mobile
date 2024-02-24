@@ -1133,6 +1133,7 @@ define(function (require) {
                 "touchmove .pile": "selectingPilesMove",
                 "mouseup .pile": "selectingPilesEnd",
                 "touchend .pile": "selectingPilesEnd",
+                "keydown .pile": "mergeAndReplace",
                 "doubletap .pile": "onDblTapPile",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
@@ -2775,6 +2776,18 @@ define(function (require) {
 //                console.log("selectedGloss exit / isDirty = " + isDirty + ", origText = " + origText);
             },
 
+            // keydown event handler for the _pile_: this is the "select and type"
+            // shortcut / use case (#109), and requires a bluetooth keyboard to operate
+            // (i.e., there will not be a soft keyboard displayed if the pile has focus).
+            // Our goal here is to merge the selection (if there is more than one pile), and replace the resulting
+            // target texts with whatever the user just typed in.  
+            mergeAndReplace: function (event) {
+                console.log("mergeAndReplace(): entry");
+                // don't bubble this event up to the parent
+                // event.stopPropagation();
+                // event.preventDefault();
+            },
+
             // keydown event handler for the target field
             editAdaptation: function (event) {
                 var strID = null,
@@ -3192,6 +3205,16 @@ define(function (require) {
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         $(".gloss").prop('contenteditable', true); // set target to read-write
                     } else {
+                        // free translation edit mode
+                        // show the edit text area if necessary
+                        if (!($("#freetrans").hasClass("show-flex"))) {
+                            $("#freetrans").addClass("show-flex");
+                            $("#content").addClass("with-ft");
+                        }
+                        // enable FT toolbar buttons
+                        $("#mnuGrowFT").prop('disabled', false);
+                        $("#mnuShrinkFT").prop('disabled', false);
+                        $("#mnuClearFT").prop('disabled', false);
                         $(".freetrans").prop('contenteditable', true); // set target to read-write
                     }
                     $("#lblPreview").html(i18next.t("view.lblShowPreview"));
@@ -3230,6 +3253,14 @@ define(function (require) {
                             $(".target").addClass("hide");
                             $(".gloss").addClass("hide");
                             $(".freetrans").addClass("hide");
+                            if (($("#freetrans").hasClass("show-flex"))) {
+                                $("#freetrans").removeClass("show-flex");
+                                $("#content").removeClass("with-ft");
+                            }
+                            // disable FT toolbar buttons
+                            $("#mnuGrowFT").prop('disabled', true);
+                            $("#mnuShrinkFT").prop('disabled', true);
+                            $("#mnuClearFT").prop('disabled', true);
                             break;
                     }
                 }
@@ -3317,30 +3348,47 @@ define(function (require) {
                 if (!$(".target").hasClass("hide")) {
                     $(".target").addClass("hide");
                 }
-                // show the free translation editor area
-                if (!($("#freetrans").hasClass("show-flex"))) {
-                    $("#freetrans").addClass("show-flex");
-                    $("#content").addClass("with-ft");
-                }
                 $("div").removeClass("ui-selecting ui-selected");
-                // is there a current selection?
-                if (selectedStart === null) {
-                    // no current selection -- see if there's a lastAdaptedPile
-                    if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
-                        selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                if (inPreview === true) {
+                    // preview mode -- read-only, no text edit area
+                    if (($("#freetrans").hasClass("show-flex"))) {
+                        $("#freetrans").removeClass("show-flex");
+                        $("#content").removeClass("with-ft");
                     }
+                    // disable FT toolbar buttons
+                    $("#mnuGrowFT").prop('disabled', true);
+                    $("#mnuShrinkFT").prop('disabled', true);
+                    $("#mnuClearFT").prop('disabled', true);
+                } else {
+                    // edit mode
+                    // show the free translation editor area
+                    if (!($("#freetrans").hasClass("show-flex"))) {
+                        $("#freetrans").addClass("show-flex");
+                        $("#content").addClass("with-ft");
+                    }
+                    // is there a current selection?
                     if (selectedStart === null) {
-                        // no luck -- just grab the first pile
-                        selectedStart = $(".pile").first().get(0);
+                        // no current selection -- see if there's a lastAdaptedPile
+                        if ($('#pile-' + project.get('lastAdaptedSPID')).length !== 0) {
+                            selectedStart = $('#pile-' + project.get('lastAdaptedSPID')).get(0);
+                        }
+                        if (selectedStart === null) {
+                            // no luck -- just grab the first pile
+                            selectedStart = $(".pile").first().get(0);
+                        }
                     }
+                    selectedEnd = null; // clear out the end selection so it can be reset
+                    // enable prev / next buttons
+                    $("#PrevSP").prop('disabled', false); // enable toolbar button
+                    $("#NextSP").prop('disabled', false); // enable toolbar button
+                    // enable FT toolbar buttons
+                    $("#mnuGrowFT").prop('disabled', false);
+                    $("#mnuShrinkFT").prop('disabled', false);
+                    $("#mnuClearFT").prop('disabled', false);
+                    // fire a focus event for the FT editor
+                    $("#fteditor").focus();
+                    $("#fteditor").mouseup();
                 }
-                selectedEnd = null; // clear out the end selection so it can be reset
-                // enable prev / next buttons
-                $("#PrevSP").prop('disabled', false); // enable toolbar button
-                $("#NextSP").prop('disabled', false); // enable toolbar button
-                // fire a focus event for the FT editor
-                $("#fteditor").focus();
-                $("#fteditor").mouseup();
             },
             // User clicked on the Placeholder _before_ button
             togglePHBefore: function () {
