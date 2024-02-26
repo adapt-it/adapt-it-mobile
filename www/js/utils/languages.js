@@ -10,7 +10,8 @@ define(function (require) {
     "use strict";
 
     // iso 639-3 codes from http://www-01.sil.org/iso639-3/download.asp
-    var $ = require('jquery'),
+    // Native_Name data refactored from Phile Teare / https://pastebin.com/raw/ppdMS687
+        var $ = require('jquery'),
         Backbone = require('backbone'),
         Underscore = require('underscore'),
         languages = [
@@ -165,6 +166,7 @@ define(function (require) {
                 "Part1": "aa",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Afaraf",
                 "Ref_Name": "Afar"
             },
             {
@@ -318,6 +320,7 @@ define(function (require) {
                 "Part1": "ab",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "аҧсуа",
                 "Ref_Name": "Abkhazian"
             },
             {
@@ -1091,6 +1094,7 @@ define(function (require) {
                 "Part1": "af",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Afrikaans",
                 "Ref_Name": "Afrikaans"
             },
             {
@@ -1775,6 +1779,7 @@ define(function (require) {
                 "Part1": "ak",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Akan",
                 "Ref_Name": "Akan"
             },
             {
@@ -2260,6 +2265,7 @@ define(function (require) {
                 "Part1": "am",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "አማርኛ",
                 "Ref_Name": "Amharic"
             },
             {
@@ -3150,6 +3156,7 @@ define(function (require) {
                 "Part1": "ar",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "العربية",
                 "Ref_Name": "Arabic"
             },
             {
@@ -3194,6 +3201,7 @@ define(function (require) {
                 "Part1": "an",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Aragonés",
                 "Ref_Name": "Aragonese"
             },
             {
@@ -3464,6 +3472,7 @@ define(function (require) {
                 "Part1": "as",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "অসমীয়া",
                 "Ref_Name": "Assamese"
             },
             {
@@ -4013,6 +4022,7 @@ define(function (require) {
                 "Part1": "av",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "авар мацӀ, магӀарул мацӀ",
                 "Ref_Name": "Avaric"
             },
             {
@@ -4039,6 +4049,7 @@ define(function (require) {
                 "Part2T": "ave",
                 "Part1": "ae",
                 "Scope": "I",
+                "Native_Name": "avesta",
                 "Ref_Name": "Avestan"
             },
             {
@@ -4460,6 +4471,7 @@ define(function (require) {
                 "Part1": "ay",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "aymar aru",
                 "Ref_Name": "Aymara"
             },
             {
@@ -4586,6 +4598,7 @@ define(function (require) {
                 "Part1": "az",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "azərbaycan dili",
                 "Ref_Name": "Azerbaijani"
             },
             {
@@ -4730,6 +4743,7 @@ define(function (require) {
                 "Part1": "ba",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "башҡорт теле",
                 "Ref_Name": "Bashkir"
             },
             {
@@ -4748,6 +4762,7 @@ define(function (require) {
                 "Part1": "bm",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "bamanankan",
                 "Ref_Name": "Bambara"
             },
             {
@@ -5639,6 +5654,7 @@ define(function (require) {
                 "Part1": "be",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Беларуская",
                 "Ref_Name": "Belarusian"
             },
             {
@@ -5657,6 +5673,7 @@ define(function (require) {
                 "Part1": "bn",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "বাংলা",
                 "Ref_Name": "Bengali"
             },
             {
@@ -6584,6 +6601,7 @@ define(function (require) {
                 "Part1": "bi",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Bislama",
                 "Ref_Name": "Bislama"
             },
             {
@@ -7781,6 +7799,7 @@ define(function (require) {
                 "Part1": "bo",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "བོད་ཡིག",
                 "Ref_Name": "Tibetan"
             },
             {
@@ -7916,6 +7935,7 @@ define(function (require) {
                 "Part1": "bs",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "bosanski jezik",
                 "Ref_Name": "Bosnian"
             },
             {
@@ -8456,6 +8476,7 @@ define(function (require) {
                 "Part1": "br",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "brezhoneg",
                 "Ref_Name": "Breton"
             },
             {
@@ -9185,6 +9206,7 @@ define(function (require) {
                 "Part1": "bg",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "български език",
                 "Ref_Name": "Bulgarian"
             },
             {
@@ -10597,6 +10619,7 @@ define(function (require) {
                 "Part1": "ca",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Català",
                 "Ref_Name": "Catalan"
           },
             {
@@ -11101,6 +11124,7 @@ define(function (require) {
                 "Part1": "cs",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "česky, čeština",
                 "Ref_Name": "Czech"
           },
             {
@@ -11191,6 +11215,7 @@ define(function (require) {
                 "Part1": "ch",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Chamoru",
                 "Ref_Name": "Chamorro"
           },
             {
@@ -11227,6 +11252,7 @@ define(function (require) {
                 "Part1": "ce",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "нохчийн мотт",
                 "Ref_Name": "Chechen"
           },
             {
@@ -11352,6 +11378,7 @@ define(function (require) {
                 "Part2T": "chu",
                 "Part1": "cu",
                 "Scope": "I",
+                "Native_Name": "ѩзыкъ словѣньскъ",
                 "Ref_Name": "Church Slavic"
           },
             {
@@ -11361,6 +11388,7 @@ define(function (require) {
                 "Part1": "cv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "чӑваш чӗлхи",
                 "Ref_Name": "Chuvash"
           },
             {
@@ -12258,6 +12286,7 @@ define(function (require) {
                 "Part1": "kw",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Kernewek",
                 "Ref_Name": "Cornish"
           },
             {
@@ -12267,6 +12296,7 @@ define(function (require) {
                 "Part1": "co",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "corsu, lingua corsa",
                 "Ref_Name": "Corsican"
           },
             {
@@ -12492,6 +12522,7 @@ define(function (require) {
                 "Part1": "cr",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "ᓀᐦᐃᔭᐍᐏᐣ",
                 "Ref_Name": "Cree"
           },
             {
@@ -13275,6 +13306,7 @@ define(function (require) {
                 "Part1": "cy",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Cymraeg",
                 "Ref_Name": "Welsh"
           },
             {
@@ -13437,6 +13469,7 @@ define(function (require) {
                 "Part1": "da",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "dansk",
                 "Ref_Name": "Danish"
           },
             {
@@ -13959,6 +13992,7 @@ define(function (require) {
                 "Part1": "de",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Deutsch",
                 "Ref_Name": "German"
           },
             {
@@ -14454,6 +14488,7 @@ define(function (require) {
                 "Part1": "dv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ދިވެހި",
                 "Ref_Name": "Dhivehi"
           },
             {
@@ -16285,6 +16320,7 @@ define(function (require) {
                 "Part1": "el",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Ελληνικά",
                 "Ref_Name": "Modern Greek (1453-)"
           },
             {
@@ -16500,6 +16536,7 @@ define(function (require) {
                 "Part1": "en",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "English",
                 "Ref_Name": "English"
           },
             {
@@ -16624,6 +16661,7 @@ define(function (require) {
                 "Part2T": "epo",
                 "Part1": "eo",
                 "Scope": "I",
+                "Native_Name": "Esperanto",
                 "Ref_Name": "Esperanto"
           },
             {
@@ -16813,6 +16851,7 @@ define(function (require) {
                 "Part1": "et",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "eesti, eesti keel",
                 "Ref_Name": "Estonian"
           },
             {
@@ -16938,6 +16977,7 @@ define(function (require) {
                 "Part1": "eu",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "euskara, euskera",
                 "Ref_Name": "Basque"
           },
             {
@@ -16974,6 +17014,7 @@ define(function (require) {
                 "Part1": "ee",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Eʋegbe",
                 "Ref_Name": "Ewe"
           },
             {
@@ -17145,6 +17186,7 @@ define(function (require) {
                 "Part1": "fo",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "føroyskt",
                 "Ref_Name": "Faroese"
           },
             {
@@ -17172,6 +17214,7 @@ define(function (require) {
                 "Part1": "fa",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "فارسی",
                 "Ref_Name": "Persian"
           },
             {
@@ -17298,6 +17341,7 @@ define(function (require) {
                 "Part1": "fj",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "vosa Vakaviti",
                 "Ref_Name": "Fijian"
           },
             {
@@ -17316,6 +17360,7 @@ define(function (require) {
                 "Part1": "fi",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "suomi, suomen kieli",
                 "Ref_Name": "Finnish"
           },
             {
@@ -17550,6 +17595,7 @@ define(function (require) {
                 "Part1": "fr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "français",
                 "Ref_Name": "French"
           },
             {
@@ -17647,6 +17693,7 @@ define(function (require) {
                 "Part1": "fy",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Frysk",
                 "Ref_Name": "Western Frisian"
           },
             {
@@ -17755,6 +17802,7 @@ define(function (require) {
                 "Part1": "ff",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Fulfulde, Pulaar, Pular",
                 "Ref_Name": "Fulah"
           },
             {
@@ -19212,6 +19260,7 @@ define(function (require) {
                 "Part1": "gd",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Gàidhlig",
                 "Ref_Name": "Scottish Gaelic"
           },
             {
@@ -19239,6 +19288,7 @@ define(function (require) {
                 "Part1": "ga",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Gaeilge",
                 "Ref_Name": "Irish"
           },
             {
@@ -19248,6 +19298,7 @@ define(function (require) {
                 "Part1": "gl",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Galego",
                 "Ref_Name": "Galician"
           },
             {
@@ -19329,6 +19380,7 @@ define(function (require) {
                 "Part1": "gv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Gaelg, Gailck",
                 "Ref_Name": "Manx"
           },
             {
@@ -20016,6 +20068,7 @@ define(function (require) {
                 "Part1": "gn",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Avañeẽ",
                 "Ref_Name": "Guarani"
           },
             {
@@ -20313,6 +20366,7 @@ define(function (require) {
                 "Part1": "gu",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ગુજરાતી",
                 "Ref_Name": "Gujarati"
           },
             {
@@ -21033,6 +21087,7 @@ define(function (require) {
                 "Part1": "ht",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Kreyòl ayisyen",
                 "Ref_Name": "Haitian"
           },
             {
@@ -21042,6 +21097,7 @@ define(function (require) {
                 "Part1": "ha",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Hausa, هَوُسَ",
                 "Ref_Name": "Hausa"
           },
             {
@@ -21204,6 +21260,7 @@ define(function (require) {
                 "Part1": "he",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "עברית",
                 "Ref_Name": "Hebrew"
           },
             {
@@ -21258,6 +21315,7 @@ define(function (require) {
                 "Part1": "hz",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Otjiherero",
                 "Ref_Name": "Herero"
           },
             {
@@ -21402,6 +21460,7 @@ define(function (require) {
                 "Part1": "hi",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "हिन्दी, हिंदी",
                 "Ref_Name": "Hindi"
           },
             {
@@ -21679,6 +21738,7 @@ define(function (require) {
                 "Part1": "ho",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Hiri Motu",
                 "Ref_Name": "Hiri Motu"
           },
             {
@@ -22138,6 +22198,7 @@ define(function (require) {
                 "Part1": "hr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "hrvatski",
                 "Ref_Name": "Croatian"
           },
             {
@@ -22371,6 +22432,7 @@ define(function (require) {
                 "Part1": "hu",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Magyar",
                 "Ref_Name": "Hungarian"
           },
             {
@@ -22569,6 +22631,7 @@ define(function (require) {
                 "Part1": "hy",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Հայերեն",
                 "Ref_Name": "Armenian"
           },
             {
@@ -22686,6 +22749,7 @@ define(function (require) {
                 "Part1": "ig",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Asụsụ Igbo",
                 "Ref_Name": "Igbo"
           },
             {
@@ -22811,6 +22875,7 @@ define(function (require) {
                 "Part2T": "ido",
                 "Part1": "io",
                 "Scope": "I",
+                "Native_Name": "Ido",
                 "Ref_Name": "Ido"
           },
             {
@@ -23044,6 +23109,7 @@ define(function (require) {
                 "Part1": "ii",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ꆈꌠ꒿ Nuosuhxop",
                 "Ref_Name": "Sichuan Yi"
           },
             {
@@ -23179,6 +23245,7 @@ define(function (require) {
                 "Part1": "iu",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "ᐃᓄᒃᑎᑐᑦ",
                 "Ref_Name": "Inuktitut"
           },
             {
@@ -23241,6 +23308,7 @@ define(function (require) {
                 "Part2T": "ile",
                 "Part1": "ie",
                 "Scope": "I",
+                "Native_Name": "Interlingue",
                 "Ref_Name": "Interlingue"
           },
             {
@@ -23400,6 +23468,7 @@ define(function (require) {
                 "Part2T": "ina",
                 "Part1": "ia",
                 "Scope": "I",
+                "Native_Name": "Interlingua",
                 "Ref_Name": "Interlingua (International Auxiliary Language Association)"
           },
             {
@@ -23418,6 +23487,7 @@ define(function (require) {
                 "Part1": "id",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Bahasa Indonesia",
                 "Ref_Name": "Indonesian"
           },
             {
@@ -23561,6 +23631,7 @@ define(function (require) {
                 "Part1": "ik",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Iñupiaq, Iñupiatun",
                 "Ref_Name": "Inupiaq"
           },
             {
@@ -23750,6 +23821,7 @@ define(function (require) {
                 "Part1": "is",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Íslenska",
                 "Ref_Name": "Icelandic"
           },
             {
@@ -23813,6 +23885,7 @@ define(function (require) {
                 "Part1": "it",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Italiano",
                 "Ref_Name": "Italian"
           },
             {
@@ -24245,6 +24318,7 @@ define(function (require) {
                 "Part1": "jv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "basa Jawa",
                 "Ref_Name": "Javanese"
           },
             {
@@ -24999,6 +25073,7 @@ define(function (require) {
                 "Part1": "ja",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "日本語 (にほんご／にっぽんご)",
                 "Ref_Name": "Japanese"
           },
             {
@@ -25395,6 +25470,7 @@ define(function (require) {
                 "Part1": "kl",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "kalaallisut, kalaallit oqaasii",
                 "Ref_Name": "Kalaallisut"
           },
             {
@@ -25413,6 +25489,7 @@ define(function (require) {
                 "Part1": "kn",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ಕನ್ನಡ",
                 "Ref_Name": "Kannada"
           },
             {
@@ -25449,6 +25526,8 @@ define(function (require) {
                 "Part1": "ks",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "कश्मीरी, كشميري",
+                "Native_Name": "অসমীয়া",
                 "Ref_Name": "Kashmiri"
           },
             {
@@ -25458,6 +25537,7 @@ define(function (require) {
                 "Part1": "ka",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ქართული",
                 "Ref_Name": "Georgian"
           },
             {
@@ -25467,6 +25547,7 @@ define(function (require) {
                 "Part1": "kr",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Kanuri",
                 "Ref_Name": "Kanuri"
           },
             {
@@ -25511,6 +25592,7 @@ define(function (require) {
                 "Part1": "kk",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Қазақ тілі",
                 "Ref_Name": "Kazakh"
           },
             {
@@ -26969,6 +27051,7 @@ define(function (require) {
                 "Part1": "km",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ភាសាខ្មែរ",
                 "Ref_Name": "Central Khmer"
           },
             {
@@ -27184,6 +27267,7 @@ define(function (require) {
                 "Part1": "ki",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Gĩkũyũ",
                 "Ref_Name": "Kikuyu"
           },
             {
@@ -27211,6 +27295,7 @@ define(function (require) {
                 "Part1": "rw",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Ikinyarwanda",
                 "Ref_Name": "Kinyarwanda"
           },
             {
@@ -27247,6 +27332,7 @@ define(function (require) {
                 "Part1": "ky",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "кыргыз тили",
                 "Ref_Name": "Kirghiz"
           },
             {
@@ -28570,6 +28656,7 @@ define(function (require) {
                 "Part1": "kv",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "коми кыв",
                 "Ref_Name": "Komi"
           },
             {
@@ -28579,6 +28666,7 @@ define(function (require) {
                 "Part1": "kg",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "KiKongo",
                 "Ref_Name": "Kongo"
           },
             {
@@ -28615,6 +28703,7 @@ define(function (require) {
                 "Part1": "ko",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "한국어 (韓國語), 조선말 (朝鮮語)",
                 "Ref_Name": "Korean"
           },
             {
@@ -29830,6 +29919,7 @@ define(function (require) {
                 "Part1": "kj",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Kuanyama",
                 "Ref_Name": "Kuanyama"
           },
             {
@@ -29983,6 +30073,7 @@ define(function (require) {
                 "Part1": "ku",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Kurdî, كوردی",
                 "Ref_Name": "Kurdish"
           },
             {
@@ -31341,6 +31432,7 @@ define(function (require) {
                 "Part1": "lo",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ພາສາລາວ",
                 "Ref_Name": "Lao"
           },
             {
@@ -31385,6 +31477,7 @@ define(function (require) {
                 "Part2T": "lat",
                 "Part1": "la",
                 "Scope": "I",
+                "Native_Name": "latine, lingua latina",
                 "Ref_Name": "Latin"
           },
             {
@@ -31403,6 +31496,7 @@ define(function (require) {
                 "Part1": "lv",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "latviešu valoda",
                 "Ref_Name": "Latvian"
           },
             {
@@ -32436,6 +32530,7 @@ define(function (require) {
                 "Part1": "li",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Limburgs",
                 "Ref_Name": "Limburgan"
           },
             {
@@ -32445,6 +32540,7 @@ define(function (require) {
                 "Part1": "ln",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Lingála",
                 "Ref_Name": "Lingala"
           },
             {
@@ -32499,6 +32595,7 @@ define(function (require) {
                 "Part1": "lt",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "lietuvių kalba",
                 "Ref_Name": "Lithuanian"
           },
             {
@@ -33883,6 +33980,7 @@ define(function (require) {
                 "Part1": "lb",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Lëtzebuergesch",
                 "Ref_Name": "Luxembourgish"
           },
             {
@@ -33946,6 +34044,7 @@ define(function (require) {
                 "Part1": "lg",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Luganda",
                 "Ref_Name": "Ganda"
           },
             {
@@ -34350,6 +34449,7 @@ define(function (require) {
                 "Part1": "mh",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Kajin M̧ajeļ",
                 "Ref_Name": "Marshallese"
           },
             {
@@ -34386,6 +34486,7 @@ define(function (require) {
                 "Part1": "ml",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "മലയാളം",
                 "Ref_Name": "Malayalam"
           },
             {
@@ -34422,6 +34523,7 @@ define(function (require) {
                 "Part1": "mr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "मराठी",
                 "Ref_Name": "Marathi"
           },
             {
@@ -36526,6 +36628,7 @@ define(function (require) {
                 "Part1": "mk",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "македонски јазик",
                 "Ref_Name": "Macedonian"
           },
             {
@@ -36769,6 +36872,7 @@ define(function (require) {
                 "Part1": "mg",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Malagasy fiteny",
                 "Ref_Name": "Malagasy"
           },
             {
@@ -36886,6 +36990,7 @@ define(function (require) {
                 "Part1": "mt",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Malti",
                 "Ref_Name": "Maltese"
           },
             {
@@ -37471,6 +37576,7 @@ define(function (require) {
                 "Part1": "mn",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "монгол",
                 "Ref_Name": "Mongolian"
           },
             {
@@ -38110,6 +38216,7 @@ define(function (require) {
                 "Part1": "mi",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "te reo Māori",
                 "Ref_Name": "Maori"
           },
             {
@@ -38272,6 +38379,7 @@ define(function (require) {
                 "Part1": "ms",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "bahasa Melayu, بهاس ملايو",
                 "Ref_Name": "Malay (macrolanguage)"
           },
             {
@@ -39603,6 +39711,7 @@ define(function (require) {
                 "Part1": "my",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ဗမာစာ",
                 "Ref_Name": "Burmese"
           },
             {
@@ -40196,6 +40305,7 @@ define(function (require) {
                 "Part1": "na",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Ekakairũ Naoero",
                 "Ref_Name": "Nauru"
           },
             {
@@ -40205,6 +40315,7 @@ define(function (require) {
                 "Part1": "nv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Diné bizaad, Dinékʼehǰí",
                 "Ref_Name": "Navajo"
           },
             {
@@ -40340,6 +40451,7 @@ define(function (require) {
                 "Part1": "nr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "isiNdebele",
                 "Ref_Name": "South Ndebele"
           },
             {
@@ -40690,6 +40802,7 @@ define(function (require) {
                 "Part1": "nd",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "isiNdebele",
                 "Ref_Name": "North Ndebele"
           },
             {
@@ -40780,6 +40893,7 @@ define(function (require) {
                 "Part1": "ng",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Owambo",
                 "Ref_Name": "Ndonga"
           },
             {
@@ -41013,6 +41127,7 @@ define(function (require) {
                 "Part1": "ne",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "नेपाली",
                 "Ref_Name": "Nepali (macrolanguage)"
           },
             {
@@ -42191,6 +42306,7 @@ define(function (require) {
                 "Part1": "nl",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Nederlands, Vlaams",
                 "Ref_Name": "Dutch"
           },
             {
@@ -42686,6 +42802,7 @@ define(function (require) {
                 "Part1": "nn",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Norsk nynorsk",
                 "Ref_Name": "Norwegian Nynorsk"
           },
             {
@@ -42803,6 +42920,7 @@ define(function (require) {
                 "Part1": "nb",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Norsk bokmål",
                 "Ref_Name": "Norwegian Bokmål"
           },
             {
@@ -42937,6 +43055,7 @@ define(function (require) {
                 "Part1": "no",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Norsk",
                 "Ref_Name": "Norwegian"
           },
             {
@@ -44128,6 +44247,7 @@ define(function (require) {
                 "Part1": "ny",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "chiCheŵa, chinyanja",
                 "Ref_Name": "Nyanja"
           },
             {
@@ -44554,6 +44674,7 @@ define(function (require) {
                 "Part1": "oc",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Occitan",
                 "Ref_Name": "Occitan (post 1500)"
           },
             {
@@ -44755,6 +44876,7 @@ define(function (require) {
                 "Part1": "oj",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "ᐊᓂᔑᓈᐯᒧᐎᓐ",
                 "Ref_Name": "Ojibwa"
           },
             {
@@ -45456,6 +45578,7 @@ define(function (require) {
                 "Part1": "or",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "ଓଡ଼ିଆ",
                 "Ref_Name": "Oriya (macrolanguage)"
           },
             {
@@ -45465,6 +45588,7 @@ define(function (require) {
                 "Part1": "om",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Afaan Oromoo",
                 "Ref_Name": "Oromo"
           },
             {
@@ -45615,6 +45739,7 @@ define(function (require) {
                 "Part1": "os",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ирон æвзаг",
                 "Ref_Name": "Ossetian"
           },
             {
@@ -46021,6 +46146,7 @@ define(function (require) {
                 "Part1": "pa",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ਪੰਜਾਬੀ, پنجابی",
                 "Ref_Name": "Panjabi"
           },
             {
@@ -47302,6 +47428,7 @@ define(function (require) {
                 "Part2T": "pli",
                 "Part1": "pi",
                 "Scope": "I",
+                "Native_Name": "पाऴि",
                 "Ref_Name": "Pali"
           },
             {
@@ -47939,6 +48066,7 @@ define(function (require) {
                 "Part1": "pl",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "polski",
                 "Ref_Name": "Polish"
           },
             {
@@ -48819,6 +48947,7 @@ define(function (require) {
                 "Part1": "ps",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "پښتو",
                 "Ref_Name": "Pushto"
           },
             {
@@ -50570,6 +50699,7 @@ define(function (require) {
                 "Part1": "ro",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "română",
                 "Ref_Name": "Romanian"
           },
             {
@@ -50840,6 +50970,7 @@ define(function (require) {
                 "Part1": "ru",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "русский язык",
                 "Ref_Name": "Russian"
           },
             {
@@ -51029,6 +51160,7 @@ define(function (require) {
                 "Part1": "sg",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "yângâ tî sängö",
                 "Ref_Name": "Sango"
           },
             {
@@ -51073,6 +51205,7 @@ define(function (require) {
                 "Part2T": "san",
                 "Part1": "sa",
                 "Scope": "I",
+                "Native_Name": "संस्कृतम्",
                 "Ref_Name": "Sanskrit"
           },
             {
@@ -52528,6 +52661,7 @@ define(function (require) {
                 "Part1": "si",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "සිංහල",
                 "Ref_Name": "Sinhala"
           },
             {
@@ -53067,6 +53201,7 @@ define(function (require) {
                 "Part1": "sk",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "slovenčina",
                 "Ref_Name": "Slovak"
           },
             {
@@ -53238,6 +53373,7 @@ define(function (require) {
                 "Part1": "se",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Davvisámegiella",
                 "Ref_Name": "Northern Sami"
           },
             {
@@ -53319,6 +53455,7 @@ define(function (require) {
                 "Part1": "sm",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "gagana faa Samoa",
                 "Ref_Name": "Samoan"
           },
             {
@@ -53427,6 +53564,7 @@ define(function (require) {
                 "Part1": "sn",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "chiShona",
                 "Ref_Name": "Shona"
           },
             {
@@ -53454,6 +53592,7 @@ define(function (require) {
                 "Part1": "sd",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "सिन्धी, سنڌي، سندھی",
                 "Ref_Name": "Sindhi"
           },
             {
@@ -53750,6 +53889,7 @@ define(function (require) {
                 "Part1": "so",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Soomaaliga, af Soomaali",
                 "Ref_Name": "Somali"
           },
             {
@@ -53804,6 +53944,7 @@ define(function (require) {
                 "Part1": "st",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Sesotho",
                 "Ref_Name": "Southern Sotho"
           },
             {
@@ -53867,6 +54008,7 @@ define(function (require) {
                 "Part1": "es",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Español",
                 "Ref_Name": "Spanish"
           },
             {
@@ -54073,6 +54215,7 @@ define(function (require) {
                 "Part1": "sq",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Shqip",
                 "Ref_Name": "Albanian"
           },
             {
@@ -54189,6 +54332,7 @@ define(function (require) {
                 "Part1": "sc",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "sardu",
                 "Ref_Name": "Sardinian"
           },
             {
@@ -54288,6 +54432,7 @@ define(function (require) {
                 "Part1": "sr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "српски језик",
                 "Ref_Name": "Serbian"
           },
             {
@@ -54576,6 +54721,7 @@ define(function (require) {
                 "Part1": "ss",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "SiSwati",
                 "Ref_Name": "Swati"
           },
             {
@@ -54891,6 +55037,7 @@ define(function (require) {
                 "Part1": "su",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Basa Sunda",
                 "Ref_Name": "Sundanese"
           },
             {
@@ -55061,6 +55208,7 @@ define(function (require) {
                 "Part1": "sw",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Kiswahili",
                 "Ref_Name": "Swahili (macrolanguage)"
           },
             {
@@ -55088,6 +55236,7 @@ define(function (require) {
                 "Part1": "sv",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "svenska",
                 "Ref_Name": "Swedish"
           },
             {
@@ -55670,6 +55819,7 @@ define(function (require) {
                 "Part1": "ty",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Reo Tahiti",
                 "Ref_Name": "Tahitian"
           },
             {
@@ -55706,6 +55856,7 @@ define(function (require) {
                 "Part1": "ta",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "தமிழ்",
                 "Ref_Name": "Tamil"
           },
             {
@@ -55769,6 +55920,7 @@ define(function (require) {
                 "Part1": "tt",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "татарча, tatarça, تاتارچا",
                 "Ref_Name": "Tatar"
           },
             {
@@ -56552,6 +56704,7 @@ define(function (require) {
                 "Part1": "te",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "తెలుగు",
                 "Ref_Name": "Telugu"
           },
             {
@@ -56804,6 +56957,7 @@ define(function (require) {
                 "Part1": "tg",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "тоҷикӣ, toğikī, تاجیکی",
                 "Ref_Name": "Tajik"
           },
             {
@@ -56813,6 +56967,7 @@ define(function (require) {
                 "Part1": "tl",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔",
                 "Ref_Name": "Tagalog"
           },
             {
@@ -56939,6 +57094,7 @@ define(function (require) {
                 "Part1": "th",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ไทย",
                 "Ref_Name": "Thai"
           },
             {
@@ -57272,6 +57428,7 @@ define(function (require) {
                 "Part1": "ti",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "ትግርኛ",
                 "Ref_Name": "Tigrinya"
           },
             {
@@ -58360,6 +58517,7 @@ define(function (require) {
                 "Part1": "to",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "faka Tonga",
                 "Ref_Name": "Tonga (Tonga Islands)"
           },
             {
@@ -59107,6 +59265,7 @@ define(function (require) {
                 "Part1": "tn",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Setswana",
                 "Ref_Name": "Tswana"
           },
             {
@@ -59116,6 +59275,7 @@ define(function (require) {
                 "Part1": "ts",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Xitsonga",
                 "Ref_Name": "Tsonga"
           },
             {
@@ -59539,6 +59699,7 @@ define(function (require) {
                 "Part1": "tk",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Türkmen, Түркмен",
                 "Ref_Name": "Turkmen"
           },
             {
@@ -59593,6 +59754,7 @@ define(function (require) {
                 "Part1": "tr",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Türkçe",
                 "Ref_Name": "Turkish"
           },
             {
@@ -59845,6 +60007,7 @@ define(function (require) {
                 "Part1": "tw",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Twi",
                 "Ref_Name": "Twi"
           },
             {
@@ -60559,6 +60722,7 @@ define(function (require) {
                 "Part1": "ug",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Uyƣurqə, ئۇيغۇرچە",
                 "Ref_Name": "Uighur"
           },
             {
@@ -60649,6 +60813,7 @@ define(function (require) {
                 "Part1": "uk",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "українська",
                 "Ref_Name": "Ukrainian"
           },
             {
@@ -61070,6 +61235,7 @@ define(function (require) {
                 "Part1": "ur",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "اردو",
                 "Ref_Name": "Urdu"
           },
             {
@@ -61430,6 +61596,7 @@ define(function (require) {
                 "Part1": "uz",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "zbek, Ўзбек, أۇزبېك",
                 "Ref_Name": "Uzbek"
           },
             {
@@ -61664,6 +61831,7 @@ define(function (require) {
                 "Part1": "ve",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Tshivenḓa",
                 "Ref_Name": "Venda"
           },
             {
@@ -61736,6 +61904,7 @@ define(function (require) {
                 "Part1": "vi",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Tiếng Việt",
                 "Ref_Name": "Vietnamese"
           },
             {
@@ -62149,6 +62318,7 @@ define(function (require) {
                 "Part2T": "vol",
                 "Part1": "vo",
                 "Scope": "I",
+                "Native_Name": "Volapük",
                 "Ref_Name": "Volapük"
           },
             {
@@ -63255,6 +63425,7 @@ define(function (require) {
                 "Part1": "wa",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Walon",
                 "Ref_Name": "Walloon"
           },
             {
@@ -63669,6 +63840,7 @@ define(function (require) {
                 "Part1": "wo",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Wollof",
                 "Ref_Name": "Wolof"
           },
             {
@@ -65008,6 +65180,7 @@ define(function (require) {
                 "Part1": "xh",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "isiXhosa",
                 "Ref_Name": "Xhosa"
           },
             {
@@ -67637,6 +67810,7 @@ define(function (require) {
                 "Part1": "yi",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "ייִדיש",
                 "Ref_Name": "Yiddish"
           },
             {
@@ -68365,6 +68539,7 @@ define(function (require) {
                 "Part1": "yo",
                 "Scope": "I",
                 "Language_Type": "L",
+                "Native_Name": "Yorùbá",
                 "Ref_Name": "Yoruba"
           },
             {
@@ -69489,6 +69664,7 @@ define(function (require) {
                 "Part1": "za",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "Saɯ cueŋƅ, Saw cuengh",
                 "Ref_Name": "Zhuang"
           },
             {
@@ -69534,6 +69710,7 @@ define(function (require) {
                 "Part1": "zh",
                 "Scope": "M",
                 "Language_Type": "L",
+                "Native_Name": "中文 (Zhōngwén), 汉语, 漢語",
                 "Ref_Name": "Chinese"
           },
             {
@@ -70742,7 +70919,8 @@ define(function (require) {
         findByName = function (searchKey) {
             var deferred = $.Deferred();
             var fullresults = languages.filter(function (element) {
-                return (element.Ref_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
+                return (element.Native_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
+                    (element.Ref_Name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
                     (element.Id.toLowerCase().indexOf(searchKey.toLowerCase()) > -1) ||
                     (element.Part1.toLowerCase().indexOf(searchKey.toLowerCase()) > -1);
             });
@@ -70761,7 +70939,8 @@ define(function (require) {
                 "Part1": "",
                 "Scope": "",
                 "Language_Type": "",
-                "Ref_Name": ""
+                "Native_Name": "",  // Where possible, display language name in native language 
+                "Ref_Name": ""      // fall back on language name in English
             },
 
             sync: function (method, model, options) {
