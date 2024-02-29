@@ -32,7 +32,7 @@ define(function (require) {
         projList    = Handlebars.compile(tplProjList),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
-        langs       = require('utils/languages'),
+        langs       = require('langtags'),
         fontModel   = require('app/models/font'),
         innerHtml   = "",
         step        = 1,
@@ -686,15 +686,10 @@ define(function (require) {
             languageMatches: function(coll) {
                 return function findMatches(query, callback) {
                     var theQuery = query.toLowerCase();
-                    coll.fetch({reset: true, data: {name: theQuery}});
-                    var matches = coll.filter(function (item) {
-                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
+                    $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
+                        // convert to Array for the typeahead to consume
+                        callback(coll.toArray());
                     });
-                    coll.comparator = function (model) {
-                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
-                    }
-                    coll.sort();
-                    callback(matches);
                 };
             },
             template: Handlebars.compile(tplSourceLanguage),
@@ -711,19 +706,38 @@ define(function (require) {
                     {
                         name: 'languages',
                         display: function (data) {
-                            return data.attributes.Ref_Name;
+                            // try localized language name (autonym), then fall back on language name in English
+                            if (data.attributes.localname) {
+                                return data.attributes.localname;
+                            }
+                            if (data.attributes.localnames) {
+                                return data.attributes.localnames[0];
+                            }
+                            if (data.attributes.names) {
+                                return data.attributes.names[0];
+                            }
+                            return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 20,
+                        limit: 25,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
-                                if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
+                                var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
+                                // try autonym, fall back on language name in English
+                                if (data.attributes.localname) {
+                                    strSuggestion += data.attributes.localname;
+                                } else if (data.attributes.localnames) {
+                                    strSuggestion += data.attributes.localnames[0];
+                                } else if (data.attributes.names) {
+                                    strSuggestion += data.attributes.names[0];
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
+                                    strSuggestion += data.attributes.name;
                                 }
+                                // close out and return the suggestion
+                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                return strSuggestion;
                             }
                         }
                     });
@@ -737,15 +751,10 @@ define(function (require) {
             languageMatches: function(coll) {
                 return function findMatches(query, callback) {
                     var theQuery = query.toLowerCase();
-                    coll.fetch({reset: true, data: {name: theQuery}});
-                    var matches = coll.filter(function (item) {
-                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
+                    $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
+                        // convert to Array for the typeahead to consume
+                        callback(coll.toArray());
                     });
-                    coll.comparator = function (model) {
-                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
-                    }
-                    coll.sort();
-                    callback(matches);
                 };
             },
             template: Handlebars.compile(tplTargetLanguage),
@@ -762,19 +771,38 @@ define(function (require) {
                     {
                         name: 'languages',
                         display: function (data) {
-                            return data.attributes.Ref_Name;
+                            // try localized language name (autonym), then fall back on language name in English
+                            if (data.attributes.localname) {
+                                return data.attributes.localname;
+                            }
+                            if (data.attributes.localnames) {
+                                return data.attributes.localnames[0];
+                            }
+                            if (data.attributes.names) {
+                                return data.attributes.names[0];
+                            }
+                            return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 20,
+                        limit: 25,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
-                                if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
+                                var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
+                                // try autonym, fall back on language name in English
+                                if (data.attributes.localname) {
+                                    strSuggestion += data.attributes.localname;
+                                } else if (data.attributes.localnames) {
+                                    strSuggestion += data.attributes.localnames[0];
+                                } else if (data.attributes.names) {
+                                    strSuggestion += data.attributes.names[0];
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
+                                    strSuggestion += data.attributes.name;
                                 }
+                                // close out and return the suggestion
+                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                return strSuggestion;
                             }
                         }
                     });
@@ -1133,8 +1161,17 @@ define(function (require) {
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
                     var newLangCode = "";
-                    currentView.langName = suggestion.attributes.Ref_Name;
-                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    // try autonym, fall back on language name in English
+                    if (suggestion.attributes.localname) {
+                        currentView.langName = suggestion.attributes.localname;
+                    } else if (suggestion.attributes.localnames) {
+                        currentView.langName = suggestion.attributes.localnames[0];
+                    } else if (suggestion.attributes.names) {
+                        currentView.langName = suggestion.attributes.names[0];
+                    } else {
+                        currentView.langName = suggestion.attributes.name;
+                    }
+                    newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                     $('#LanguageCode').val(currentView.langCode);
                 } else {
@@ -1597,8 +1634,17 @@ define(function (require) {
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
                     var newLangCode = "";
-                    currentView.langName = suggestion.attributes.Ref_Name;
-                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    // try autonym, fall back on language name in English
+                    if (suggestion.attributes.localname) {
+                        currentView.langName = suggestion.attributes.localname;
+                    } else if (suggestion.attributes.localnames) {
+                        currentView.langName = suggestion.attributes.localnames[0];
+                    } else if (suggestion.attributes.names) {
+                        currentView.langName = suggestion.attributes.names[0];
+                    } else {
+                        currentView.langName = suggestion.attributes.name;
+                    }
+                    newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                     $('#LanguageCode').val(currentView.langCode);
                 } else {

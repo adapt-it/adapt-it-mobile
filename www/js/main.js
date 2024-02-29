@@ -17,6 +17,7 @@ require.config({
     //                          ** This is for hopscotch on smaller screens, issue #30 on hopscotch, or #189 on AIM 
     // i18next          1.9.0
     // jquery           3.6.0
+    // langtags         1.3.1   ** refactored and minimized (see before-build.js)
     // marionette       2.4.2
     // require          2.3.6
     // spectrum         1.8.1
@@ -39,7 +40,7 @@ require.config({
         typeahead: 'typeahead.bundle',
         'i18n': 'i18next.amd.withJQuery.min', //'jquery-i18next.min',//
         'jquery': 'jquery-3.6.0.min',
-        'languages': '../js/utils/languages',
+        'langtags': 'langtags.min',
         marionette: 'backbone.marionette',
         'featherlight': 'featherlight.min',
         'underscore': 'underscore-min',
