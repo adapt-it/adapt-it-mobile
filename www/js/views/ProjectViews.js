@@ -41,6 +41,7 @@ define(function (require) {
         USFMMarkers = null,
         theFont     = null,
         template    = null,
+        firstLang   = null,
         projid      = "",
  
         ////
@@ -48,6 +49,7 @@ define(function (require) {
         ////
         
         // Helper method that returns the RFC5646 code based on the ISO639 code and variant
+        // See https://www.rfc-editor.org/rfc/rfc5646
         buildFullLanguageCode = function (langCode, langVariant) {
             var fullCode = "";
             // only build if there's a language code defined
@@ -688,12 +690,14 @@ define(function (require) {
                     var theQuery = query.toLowerCase();
                     $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
                         // convert to Array for the typeahead to consume
+                        firstLang = (coll.length > 0) ? coll.at(0) : null; // set our static "first language suggestion"
                         callback(coll.toArray());
                     });
                 };
             },
             template: Handlebars.compile(tplSourceLanguage),
             onShow: function () {
+                firstLang = null; // clear out static language suggestion
                 this.theLangs = new langs.LanguageCollection();
                 this.theLangs.fetch({reset: true, data: {name: ""}});
 
@@ -753,12 +757,14 @@ define(function (require) {
                     var theQuery = query.toLowerCase();
                     $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
                         // convert to Array for the typeahead to consume
+                        firstLang = (coll.length > 0) ? coll.at(0) : null; // set our static "first language suggestion"
                         callback(coll.toArray());
                     });
                 };
             },
             template: Handlebars.compile(tplTargetLanguage),
             onShow: function () {
+                firstLang = null; // clear out static language suggestion
                 this.theLangs = new langs.LanguageCollection();
                 this.theLangs.fetch({reset: true, data: {name: ""}});
 
@@ -1105,11 +1111,13 @@ define(function (require) {
                 "click #Cases": "OnEditCases",
                 "click #Filtering": "OnEditFiltering",
                 "focus #LanguageName": "onFocusLanguageName",
+                "keydown #LanguageName": "onKeydownLanguageName",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "focus #LanguageCode": "onFocusLanguageCode",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
+                "typeahead:autocomplete .typeahead": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -1157,6 +1165,30 @@ define(function (require) {
             },
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
+            },
+            onKeydownLanguageName: function (event) {
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // if there was a suggestion in the typeahead, assume the user wanted it
+                    if (firstLang) {
+                        var newLangCode = "";
+                        // try autonym, fall back on language name in English
+                        if (firstLang.attributes.localname) {
+                            currentView.langName = firstLang.attributes.localname;
+                        } else if (firstLang.attributes.localnames) {
+                            currentView.langName = firstLang.attributes.localnames[0];
+                        } else if (firstLang.attributes.names) {
+                            currentView.langName = firstLang.attributes.names[0];
+                        } else {
+                            currentView.langName = firstLang.attributes.name;
+                        }
+                        newLangCode = firstLang.attributes.tag;
+                        currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                        $('#LanguageCode').val(currentView.langCode);
+
+                    }
+                    // blur the edit field
+                    $("#LanguageName").trigger("blur");
+                }
             },
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
@@ -1550,8 +1582,10 @@ define(function (require) {
                 "click #navFont": "OnEditNavFont",
                 "focus #LanguageName": "onFocusLanguageName",
                 "blur #LanguageName": "onBlurLanguageName",
+                "keydown #LanguageName": "onKeydownLanguageName",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
+                "typeahead:autocomplete .typeahead": "selectLanguage",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "focus #LanguageCode": "onFocusLanguageCode",
@@ -1630,6 +1664,30 @@ define(function (require) {
             },
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
+            },
+            onKeydownLanguageName: function (event) {
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // if there was a suggestion in the typeahead, assume the user wanted it
+                    if (firstLang) {
+                        var newLangCode = "";
+                        // try autonym, fall back on language name in English
+                        if (firstLang.attributes.localname) {
+                            currentView.langName = firstLang.attributes.localname;
+                        } else if (firstLang.attributes.localnames) {
+                            currentView.langName = firstLang.attributes.localnames[0];
+                        } else if (firstLang.attributes.names) {
+                            currentView.langName = firstLang.attributes.names[0];
+                        } else {
+                            currentView.langName = firstLang.attributes.name;
+                        }
+                        newLangCode = firstLang.attributes.tag;
+                        currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                        $('#LanguageCode').val(currentView.langCode);
+
+                    }
+                    // blur the edit field
+                    $("#LanguageName").trigger("blur");
+                }
             },
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
@@ -1830,55 +1888,52 @@ define(function (require) {
                     var value = null;
                     if (currentView.langName.trim().length === 0) {
                         // fail - no language set
-                        // Is there something in the language edit field?
-                        if ($("#LanguageName").val().length > 0) {
-                            // something in the language field -- attempt to get the nearest match in the languages list
-                            value = languages.at(0);
-                            if (languages.length > 0) {
-                                // found something that matches the search text -- suggest it
-                                if (navigator.notification) {
-                                    // on mobile device -- use notification plugin API
-                                    navigator.notification.confirm(
-                                        i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}),
-                                        function (btnIndex) {
-                                            if (btnIndex === 1) {
-                                                // set the language and ID
-                                                currentView.langName = value.get("Ref_Name");
-                                                currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
-                                            } else {
-                                                // user rejected this suggestion -- tell them to enter
-                                                // a language name and finish up
-                                                navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
-                                            }
-                                        },
-                                        i18n.t('view.ttlMain'),
-                                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
-                                    );
-                                } else {
-                                    // in browser -- use window.confirm / window.alert
-                                    if (window.confirm(i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}))) {
-                                        // use the suggested language
-                                        currentView.langName = value.get("Ref_Name");
-                                        currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
-                                    } else {
-                                        // user rejected this suggestion -- tell them to enter
-                                        // a language name and finish up
-                                        alert(i18n.t('view.errEnterLanguageName'));
-                                    }
-                                }
+                        // is there a suggested language?
+                        if (firstLang) {
+                            var strLangName = "";
+                            // try autonym, fall back on language name in English
+                            if (firstLang.attributes.localname) {
+                                strLangName = firstLang.attributes.localname;
+                            } else if (firstLang.attributes.localnames) {
+                                strLangName = firstLang.attributes.localnames[0];
+                            } else if (firstLang.attributes.names) {
+                                strLangName = firstLang.attributes.names[0];
                             } else {
-                                // no suggestion found (user fell on his keyboard?)
-                                // just tell them to enter something
-                                if (navigator.notification) {
-                                    // on mobile device -- use notification plugin API
-                                    navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                strLangName = firstLang.attributes.name;
+                            }
+                            // found something that matches the search text -- suggest it
+                            if (navigator.notification) {
+                                // on mobile device -- use notification plugin API
+                                navigator.notification.confirm(
+                                    i18n.t('view.lblUseLanguage', {language: strLangName}),
+                                    function (btnIndex) {
+                                        if (btnIndex === 1) {
+                                            // set the language and ID
+                                            currentView.langName = strLangName;
+                                            currentView.langCode = buildFullLanguageCode(firstLang.attributes.tag, $('#LanguageVariant').val().trim());
+                                        } else {
+                                            // user rejected this suggestion -- tell them to enter
+                                            // a language name and finish up
+                                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                        }
+                                    },
+                                    i18n.t('view.ttlMain'),
+                                    [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                                );
+                            } else {
+                                // in browser -- use window.confirm / window.alert
+                                if (window.confirm(i18n.t('view.lblUseLanguage', {language: strLangName}))) {
+                                    // use the suggested language
+                                    currentView.langName = strLangName;
+                                    currentView.langCode = buildFullLanguageCode(firstLang.attributes.tag, $('#LanguageVariant').val().trim());
                                 } else {
-                                    // in browser -- use window.confirm / window.alert
+                                    // user rejected this suggestion -- tell them to enter
+                                    // a language name and finish up
                                     alert(i18n.t('view.errEnterLanguageName'));
                                 }
                             }
                         } else {
-                            // user didn't type anything in
+                            // no suggestion found (user fell on their keyboard?)
                             // just tell them to enter something
                             if (navigator.notification) {
                                 // on mobile device -- use notification plugin API
@@ -1892,6 +1947,7 @@ define(function (require) {
                     // return whatever we got (could be empty)
                     return currentView.langName;
                 };
+                
                 switch (step) {
                 case 1: // source language
                     // get / validate the language string
