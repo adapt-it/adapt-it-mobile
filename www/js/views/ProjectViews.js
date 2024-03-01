@@ -32,7 +32,7 @@ define(function (require) {
         projList    = Handlebars.compile(tplProjList),
         i18n        = require('i18n'),
         usfm        = require('utils/usfm'),
-        langs       = require('utils/languages'),
+        langs       = require('langtags'),
         fontModel   = require('app/models/font'),
         innerHtml   = "",
         step        = 1,
@@ -41,6 +41,7 @@ define(function (require) {
         USFMMarkers = null,
         theFont     = null,
         template    = null,
+        firstLang   = null,
         projid      = "",
  
         ////
@@ -48,6 +49,7 @@ define(function (require) {
         ////
         
         // Helper method that returns the RFC5646 code based on the ISO639 code and variant
+        // See https://www.rfc-editor.org/rfc/rfc5646
         buildFullLanguageCode = function (langCode, langVariant) {
             var fullCode = "";
             // only build if there's a language code defined
@@ -686,19 +688,16 @@ define(function (require) {
             languageMatches: function(coll) {
                 return function findMatches(query, callback) {
                     var theQuery = query.toLowerCase();
-                    coll.fetch({reset: true, data: {name: theQuery}});
-                    var matches = coll.filter(function (item) {
-                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
+                    $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
+                        // convert to Array for the typeahead to consume
+                        firstLang = (coll.length > 0) ? coll.at(0) : null; // set our static "first language suggestion"
+                        callback(coll.toArray());
                     });
-                    coll.comparator = function (model) {
-                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
-                    }
-                    coll.sort();
-                    callback(matches);
                 };
             },
             template: Handlebars.compile(tplSourceLanguage),
             onShow: function () {
+                firstLang = null; // clear out static language suggestion
                 this.theLangs = new langs.LanguageCollection();
                 this.theLangs.fetch({reset: true, data: {name: ""}});
 
@@ -711,19 +710,38 @@ define(function (require) {
                     {
                         name: 'languages',
                         display: function (data) {
-                            return data.attributes.Ref_Name;
+                            // try localized language name (autonym), then fall back on language name in English
+                            if (data.attributes.localname) {
+                                return data.attributes.localname;
+                            }
+                            if (data.attributes.localnames) {
+                                return data.attributes.localnames[0];
+                            }
+                            if (data.attributes.names) {
+                                return data.attributes.names[0];
+                            }
+                            return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 20,
+                        limit: 25,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
-                                if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
+                                var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
+                                // try autonym, fall back on language name in English
+                                if (data.attributes.localname) {
+                                    strSuggestion += data.attributes.localname;
+                                } else if (data.attributes.localnames) {
+                                    strSuggestion += data.attributes.localnames[0];
+                                } else if (data.attributes.names) {
+                                    strSuggestion += data.attributes.names[0];
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
+                                    strSuggestion += data.attributes.name;
                                 }
+                                // close out and return the suggestion
+                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                return strSuggestion;
                             }
                         }
                     });
@@ -737,19 +755,16 @@ define(function (require) {
             languageMatches: function(coll) {
                 return function findMatches(query, callback) {
                     var theQuery = query.toLowerCase();
-                    coll.fetch({reset: true, data: {name: theQuery}});
-                    var matches = coll.filter(function (item) {
-                        return (item.attributes.Ref_Name.toLowerCase().indexOf(theQuery) !== -1);
+                    $.when(coll.fetch({reset: true, data: {name: theQuery}})).done(function () {
+                        // convert to Array for the typeahead to consume
+                        firstLang = (coll.length > 0) ? coll.at(0) : null; // set our static "first language suggestion"
+                        callback(coll.toArray());
                     });
-                    coll.comparator = function (model) {
-                        return [((model.get("Part1").length === 0) ? "zzz" : model.get("Part1")), model.get("Ref_Name")]
-                    }
-                    coll.sort();
-                    callback(matches);
                 };
             },
             template: Handlebars.compile(tplTargetLanguage),
             onShow: function () {
+                firstLang = null; // clear out static language suggestion
                 this.theLangs = new langs.LanguageCollection();
                 this.theLangs.fetch({reset: true, data: {name: ""}});
 
@@ -762,19 +777,38 @@ define(function (require) {
                     {
                         name: 'languages',
                         display: function (data) {
-                            return data.attributes.Ref_Name;
+                            // try localized language name (autonym), then fall back on language name in English
+                            if (data.attributes.localname) {
+                                return data.attributes.localname;
+                            }
+                            if (data.attributes.localnames) {
+                                return data.attributes.localnames[0];
+                            }
+                            if (data.attributes.names) {
+                                return data.attributes.names[0];
+                            }
+                            return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 20,
+                        limit: 25,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
                             suggestion: function (data) {
-                                if (data.attributes.Part1.length > 0) {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Part1 + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Part1 + ')</div>';
+                                var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
+                                // try autonym, fall back on language name in English
+                                if (data.attributes.localname) {
+                                    strSuggestion += data.attributes.localname;
+                                } else if (data.attributes.localnames) {
+                                    strSuggestion += data.attributes.localnames[0];
+                                } else if (data.attributes.names) {
+                                    strSuggestion += data.attributes.names[0];
                                 } else {
-                                    return '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.Id + '\">' + data.attributes.Ref_Name + '&nbsp;(' + data.attributes.Id + ')</div>';
+                                    strSuggestion += data.attributes.name;
                                 }
+                                // close out and return the suggestion
+                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                return strSuggestion;
                             }
                         }
                     });
@@ -1077,11 +1111,13 @@ define(function (require) {
                 "click #Cases": "OnEditCases",
                 "click #Filtering": "OnEditFiltering",
                 "focus #LanguageName": "onFocusLanguageName",
+                "keydown #LanguageName": "onKeydownLanguageName",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "focus #LanguageCode": "onFocusLanguageCode",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
+                "typeahead:autocomplete .typeahead": "selectLanguage",
                 "click .delete-row": "onClickDeleteRow",
                 "keyup .new-row": "addNewRow",
                 "click #CopyPunctuation": "OnClickCopyPunctuation",
@@ -1130,11 +1166,44 @@ define(function (require) {
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
             },
+            onKeydownLanguageName: function (event) {
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // if there was a suggestion in the typeahead, assume the user wanted it
+                    if (firstLang) {
+                        var newLangCode = "";
+                        // try autonym, fall back on language name in English
+                        if (firstLang.attributes.localname) {
+                            currentView.langName = firstLang.attributes.localname;
+                        } else if (firstLang.attributes.localnames) {
+                            currentView.langName = firstLang.attributes.localnames[0];
+                        } else if (firstLang.attributes.names) {
+                            currentView.langName = firstLang.attributes.names[0];
+                        } else {
+                            currentView.langName = firstLang.attributes.name;
+                        }
+                        newLangCode = firstLang.attributes.tag;
+                        currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                        $('#LanguageCode').val(currentView.langCode);
+
+                    }
+                    // blur the edit field
+                    $("#LanguageName").trigger("blur");
+                }
+            },
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
                     var newLangCode = "";
-                    currentView.langName = suggestion.attributes.Ref_Name;
-                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    // try autonym, fall back on language name in English
+                    if (suggestion.attributes.localname) {
+                        currentView.langName = suggestion.attributes.localname;
+                    } else if (suggestion.attributes.localnames) {
+                        currentView.langName = suggestion.attributes.localnames[0];
+                    } else if (suggestion.attributes.names) {
+                        currentView.langName = suggestion.attributes.names[0];
+                    } else {
+                        currentView.langName = suggestion.attributes.name;
+                    }
+                    newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                     $('#LanguageCode').val(currentView.langCode);
                 } else {
@@ -1513,8 +1582,10 @@ define(function (require) {
                 "click #navFont": "OnEditNavFont",
                 "focus #LanguageName": "onFocusLanguageName",
                 "blur #LanguageName": "onBlurLanguageName",
+                "keydown #LanguageName": "onKeydownLanguageName",
                 "typeahead:select .typeahead": "selectLanguage",
                 "typeahead:cursorchange .typeahead": "selectLanguage",
+                "typeahead:autocomplete .typeahead": "selectLanguage",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
                 "keyup #LanguageVariant": "onkeyupLanguageVariant",
                 "focus #LanguageCode": "onFocusLanguageCode",
@@ -1594,11 +1665,44 @@ define(function (require) {
             onkeypressTargetName: function (event) {
                 currentView.onkeypress(event);
             },
+            onKeydownLanguageName: function (event) {
+                if ((event.keyCode === 9) || (event.keyCode === 13)) {
+                    // if there was a suggestion in the typeahead, assume the user wanted it
+                    if (firstLang) {
+                        var newLangCode = "";
+                        // try autonym, fall back on language name in English
+                        if (firstLang.attributes.localname) {
+                            currentView.langName = firstLang.attributes.localname;
+                        } else if (firstLang.attributes.localnames) {
+                            currentView.langName = firstLang.attributes.localnames[0];
+                        } else if (firstLang.attributes.names) {
+                            currentView.langName = firstLang.attributes.names[0];
+                        } else {
+                            currentView.langName = firstLang.attributes.name;
+                        }
+                        newLangCode = firstLang.attributes.tag;
+                        currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
+                        $('#LanguageCode').val(currentView.langCode);
+
+                    }
+                    // blur the edit field
+                    $("#LanguageName").trigger("blur");
+                }
+            },
             selectLanguage: function (event, suggestion) {
                 if (suggestion) {
                     var newLangCode = "";
-                    currentView.langName = suggestion.attributes.Ref_Name;
-                    newLangCode = (suggestion.attributes.Part1.length > 0) ? suggestion.attributes.Part1 : suggestion.attributes.Id;
+                    // try autonym, fall back on language name in English
+                    if (suggestion.attributes.localname) {
+                        currentView.langName = suggestion.attributes.localname;
+                    } else if (suggestion.attributes.localnames) {
+                        currentView.langName = suggestion.attributes.localnames[0];
+                    } else if (suggestion.attributes.names) {
+                        currentView.langName = suggestion.attributes.names[0];
+                    } else {
+                        currentView.langName = suggestion.attributes.name;
+                    }
+                    newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
                     $('#LanguageCode').val(currentView.langCode);
                 } else {
@@ -1784,55 +1888,52 @@ define(function (require) {
                     var value = null;
                     if (currentView.langName.trim().length === 0) {
                         // fail - no language set
-                        // Is there something in the language edit field?
-                        if ($("#LanguageName").val().length > 0) {
-                            // something in the language field -- attempt to get the nearest match in the languages list
-                            value = languages.at(0);
-                            if (languages.length > 0) {
-                                // found something that matches the search text -- suggest it
-                                if (navigator.notification) {
-                                    // on mobile device -- use notification plugin API
-                                    navigator.notification.confirm(
-                                        i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}),
-                                        function (btnIndex) {
-                                            if (btnIndex === 1) {
-                                                // set the language and ID
-                                                currentView.langName = value.get("Ref_Name");
-                                                currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
-                                            } else {
-                                                // user rejected this suggestion -- tell them to enter
-                                                // a language name and finish up
-                                                navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
-                                            }
-                                        },
-                                        i18n.t('view.ttlMain'),
-                                        [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
-                                    );
-                                } else {
-                                    // in browser -- use window.confirm / window.alert
-                                    if (window.confirm(i18n.t('view.lblUseLanguage', {language: value.get("Ref_Name")}))) {
-                                        // use the suggested language
-                                        currentView.langName = value.get("Ref_Name");
-                                        currentView.langCode = buildFullLanguageCode(value.get("Id"), $('#LanguageVariant').val().trim());
-                                    } else {
-                                        // user rejected this suggestion -- tell them to enter
-                                        // a language name and finish up
-                                        alert(i18n.t('view.errEnterLanguageName'));
-                                    }
-                                }
+                        // is there a suggested language?
+                        if (firstLang) {
+                            var strLangName = "";
+                            // try autonym, fall back on language name in English
+                            if (firstLang.attributes.localname) {
+                                strLangName = firstLang.attributes.localname;
+                            } else if (firstLang.attributes.localnames) {
+                                strLangName = firstLang.attributes.localnames[0];
+                            } else if (firstLang.attributes.names) {
+                                strLangName = firstLang.attributes.names[0];
                             } else {
-                                // no suggestion found (user fell on his keyboard?)
-                                // just tell them to enter something
-                                if (navigator.notification) {
-                                    // on mobile device -- use notification plugin API
-                                    navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                strLangName = firstLang.attributes.name;
+                            }
+                            // found something that matches the search text -- suggest it
+                            if (navigator.notification) {
+                                // on mobile device -- use notification plugin API
+                                navigator.notification.confirm(
+                                    i18n.t('view.lblUseLanguage', {language: strLangName}),
+                                    function (btnIndex) {
+                                        if (btnIndex === 1) {
+                                            // set the language and ID
+                                            currentView.langName = strLangName;
+                                            currentView.langCode = buildFullLanguageCode(firstLang.attributes.tag, $('#LanguageVariant').val().trim());
+                                        } else {
+                                            // user rejected this suggestion -- tell them to enter
+                                            // a language name and finish up
+                                            navigator.notification.alert(i18n.t('view.errEnterLanguageName'));
+                                        }
+                                    },
+                                    i18n.t('view.ttlMain'),
+                                    [i18n.t('view.lblYes'), i18n.t('view.lblNo')]
+                                );
+                            } else {
+                                // in browser -- use window.confirm / window.alert
+                                if (window.confirm(i18n.t('view.lblUseLanguage', {language: strLangName}))) {
+                                    // use the suggested language
+                                    currentView.langName = strLangName;
+                                    currentView.langCode = buildFullLanguageCode(firstLang.attributes.tag, $('#LanguageVariant').val().trim());
                                 } else {
-                                    // in browser -- use window.confirm / window.alert
+                                    // user rejected this suggestion -- tell them to enter
+                                    // a language name and finish up
                                     alert(i18n.t('view.errEnterLanguageName'));
                                 }
                             }
                         } else {
-                            // user didn't type anything in
+                            // no suggestion found (user fell on their keyboard?)
                             // just tell them to enter something
                             if (navigator.notification) {
                                 // on mobile device -- use notification plugin API
@@ -1846,6 +1947,7 @@ define(function (require) {
                     // return whatever we got (could be empty)
                     return currentView.langName;
                 };
+                
                 switch (step) {
                 case 1: // source language
                     // get / validate the language string
