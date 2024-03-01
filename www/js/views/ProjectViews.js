@@ -730,17 +730,23 @@ define(function (require) {
                             suggestion: function (data) {
                                 var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
                                 // try autonym, fall back on language name in English
-                                if (data.attributes.localname) {
-                                    strSuggestion += data.attributes.localname;
-                                } else if (data.attributes.localnames) {
+                                if (data.attributes.localname != null && data.attributes.localname.length > 0) {
+                                    strSuggestion += data.attributes.localname
+                                    strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += '</span>';
+                                } else if (data.attributes.localnames != null && data.attributes.localnames.length > 0) {
                                     strSuggestion += data.attributes.localnames[0];
-                                } else if (data.attributes.names) {
-                                    strSuggestion += data.attributes.names[0];
+                                    strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += '</span>';
+                                } else if (data.attributes.name != null && data.attributes.name.length > 0) {
+                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')';
                                 } else {
-                                    strSuggestion += data.attributes.name;
+                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')';
                                 }
                                 // close out and return the suggestion
-                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                strSuggestion += '</div>';;
                                 return strSuggestion;
                             }
                         }
@@ -797,17 +803,23 @@ define(function (require) {
                             suggestion: function (data) {
                                 var strSuggestion = '<div class=\"autocomplete-suggestion\" id=\"' + data.attributes.tag + '\">';
                                 // try autonym, fall back on language name in English
-                                if (data.attributes.localname) {
-                                    strSuggestion += data.attributes.localname;
-                                } else if (data.attributes.localnames) {
+                                if (data.attributes.localname != null && data.attributes.localname.length > 0) {
+                                    strSuggestion += data.attributes.localname
+                                    strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += '</span>';
+                                } else if (data.attributes.localnames != null && data.attributes.localnames.length > 0) {
                                     strSuggestion += data.attributes.localnames[0];
-                                } else if (data.attributes.names) {
-                                    strSuggestion += data.attributes.names[0];
+                                    strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += '</span>';
+                                } else if (data.attributes.name != null && data.attributes.name.length > 0) {
+                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')';
                                 } else {
-                                    strSuggestion += data.attributes.name;
+                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')';
                                 }
                                 // close out and return the suggestion
-                                strSuggestion += '&nbsp;(' + data.attributes.tag + ')</div>';;
+                                strSuggestion += '</div>';;
                                 return strSuggestion;
                             }
                         }
