@@ -1367,6 +1367,11 @@ div.preview div.pile {
 .autocomplete-suggestion:hover {
     background: #ccc;
 }
+.subtext {
+    display: block;
+    font-size: 0.6rem;
+    color: #999;
+}
 .topcoat-checkbox__checkmark {
     margin-right: 6px;
 }
