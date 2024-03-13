@@ -22,14 +22,15 @@ Here you will find step-by-step instructions for setting up Adapt It Mobile on y
 
 Note that the following training videos are available for getting started with Adapt It Mobile:
 
-- [Creating a new translation project](https://vimeo.com/286247732)
-- [Copying documents to your device and importing them into Adapt It Mobile](https://vimeo.com/286247997)
-- [Adapting text](https://vimeo.com/286248259)
-- [Exporting your translated documents from Adapt It Mobile and copying them to a computer](https://vimeo.com/287095922)
+- [Creating a new translation project](https://vimeo.com/923013861)
+- [Importing Documents](https://vimeo.com/923019424)
+- [Translating your Documents](https://vimeo.com/923022890)
+- [Checking your Translations](https://vimeo.com/923027149)
+- [Exporting your Translations](https://vimeo.com/923028924)
 
-These training videos contain the instructions needed to install, configure, and use Adapt It Mobile 1.0.0; the instructions will be similar to those found below. Here's a direct link, if you'd rather watch the videos here:
+These training videos contain the instructions needed to install, configure, and use Adapt It Mobile; the instructions will be similar to those found below. Here's a direct link, if you'd rather watch the videos here:
 
-<div style='padding:75% 0 0 0;position:relative;'><iframe src='https://vimeo.com/showcase/5368477/embed' allowfullscreen frameborder='0' style='position:absolute;top:0;left:0;width:100%;height:100%;'></iframe></div>
+<div style='padding:75% 0 0 0;position:relative;'><iframe src='https://vimeo.com/showcase/11035505/embed' allowfullscreen frameborder='0' style='position:absolute;top:0;left:0;width:100%;height:100%;'></iframe></div>
 
 ----
 
