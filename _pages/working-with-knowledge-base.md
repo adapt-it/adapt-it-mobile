@@ -6,9 +6,9 @@ desc:   How to manage the available translations in your project.
 date:   2023-11-08 12:21
 ---
 
-The translations you create in Adapt It Mobile are stored in a **knowledge base**, also known as a translation memory. The knowledge base contains words or phrases in the source language, and one or more translations in the target language. The next time you translate that word or phrase, Adapt It Mobile will suggest the previous translation -- you can either use that translation or type in a new one as appropriate.
+The translations you create in Adapt It Mobile are stored in a **knowledge base**, also known as a translation memory. The knowledge base contains words or phrases in the source language, and one or more translations in the target language. The next time you translate that word or phrase, Adapt It Mobile will suggest the previous translation. If there is more than one translation, Adapt It Mobile will display the most frequently used translation first in a drop-down list. You can either use an existing translation or type in a new one as appropriate.
 
-In addition to the normal process of translating text, there are 3 oher ways to build up the knowledge base:
+In addition to the normal process of translating text, there are 3 other ways to build up the knowledge base:
 
 - You can [import data from a Rapid Word Collection workshop](#rwc-file)
 - You can [import a key word (sfm) file](#keyword-file)
