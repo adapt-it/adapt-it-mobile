@@ -6,15 +6,25 @@ desc:   How to manage the available translations in your project.
 date:   2023-11-08 12:21
 ---
 
-The translations you create in Adapt It Mobile are stored in a **knowledge base**, also known as a translation memory. The knowledge base contains words or phrases in the source language, and one or more translations in the target language.
+The translations you create in Adapt It Mobile are stored in a **knowledge base**, also known as a translation memory. The knowledge base contains words or phrases in the source language, and one or more translations in the target language. The next time you translate that word or phrase, Adapt It Mobile will suggest the previous translation -- you can either use that translation or type in a new one as appropriate.
 
-In addition to this method of building up the knowledge base, you can also import knowledge base data, and manually add translations using the Knowledge Base editor, even if the words or phrases are not in the text yet. Following are some use cases:
-  
+In addition to the normal process of translating text, there are 3 oher ways to build up the knowledge base:
+
+- You can [import data from a Rapid Word Collection workshop](#rwc-file)
+- You can [import a key word (sfm) file](#keyword-file)
+- You can [directly add translations using the knowledge base editor](#kb-editor)
+
+The following sections describe these methods in more detail.
+
+<a id="rwc-file"></a>
+
 ## Importing data from a Rapid Word Collection workshop
 
-The [Rapid Word Collection](https://rapidwords.net) method was developed to help translation teams quickly collect words for language documentation and translation. 
+The [Rapid Word Collection](https://rapidwords.net) method was developed to help translation teams quickly collect words for language documentation and translation. Using a set of prompts in a workshop setting, attendees can build up a lexicon of 10,000 words in a matter of weeks.
 
 If your translation team has gone through the RWC process, you can export the collected data in LIFT format, and then [import the data into Adapt It Mobile]({{ site.baseurl }}/working-with-documents#importing-a-document). The Knowledge Base will then be pre-filled with entries that can be used to translate literacy materials, Scriptures, etc.
+
+<a id="keyword-file"></a>
 
 ## Importing key words
 
