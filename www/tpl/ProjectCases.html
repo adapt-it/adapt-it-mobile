@@ -8,7 +8,7 @@
 {{#each CasePairs}}
     <tr id="r-{{@index}}"><td><input type="text" id="s-{{@index}}" class="topcoat-text-input s" style="width:100%;" maxlength="2" value="{{this.s}}"></td><td><input type="text" id="t-{{@index}}" class="topcoat-text-input t" style="width:100%;" maxlength="2" value="{{this.t}}"></td><td><button title="{{t 'view.ttlDelete'}}" class="topcoat-icon-button--quiet delete-row" id="d-{{@index}}"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
 {{/each}}
-<tr id="r-999"><td><input type="text" id="s-999" class="topcoat-text-input new-row s" style="width:100%;" maxlength="2" value=""></td><td><input type="text" id="t-999" class="topcoat-text-input new-row t" style="width:100%;" maxlength="2" value=""></td><td><button title="{{t 'view.ttlDelete'}}" id="d-999" class="topcoat-icon-button--quiet delete-row hide"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
+<tr id="r-999"><td><input type="text" id="s-999" class="topcoat-text-input new-row s" style="width:100%;" autocapitalize="off" maxlength="2" value=""></td><td><input type="text" id="t-999" class="topcoat-text-input new-row t" style="width:100%;" maxlength="2" autocapitalize="off" value=""></td><td><button title="{{t 'view.ttlDelete'}}" id="d-999" class="topcoat-icon-button--quiet delete-row hide"><span class="topcoat-icon topcoat-icon--item-delete"></span></button></td></tr>
 </table></div>
 </div><div class="control-row"></div>
 
