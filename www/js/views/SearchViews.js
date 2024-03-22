@@ -668,18 +668,10 @@ define(function (require) {
                     sp.save({target: target});
                 }
             },
-            // Edit the spelling of a RefString instance. This does a couple things:
-            // - Creates a copy of the original RefString (with a N count of -(n) / not used)
-            // - Change the spelling of the RefString (with N = the old N), so it shows up with the same frequency
+            // Edit the spelling of a RefString instance. 
             editTranslation: function (index, newRS) {
                 var refstrings = this.model.get("refstring");
                 console.log("editTranslation - old target: " + refstrings[index].target + ", n: " + refstrings[index].n + ", new value: " + newRS);
-                // create a copy with the old value
-                var copyRS = {
-                        'target': refstrings[index].target,
-                        'n': -(refstrings[index].n)
-                    };
-                refstrings.push(copyRS);
                 // set the new value
                 refstrings[index].target = newRS;
                 // save the changes
@@ -965,21 +957,22 @@ define(function (require) {
                         return;
                     }
                     // Now ask if they want to accept the change
+                    var that = this;
                     strConfirmText = i18next.t('view.lblOldTranslation') + " " + this.strOldSP + "\n\n" + i18next.t('view.lblNewTranslation') + " " + newSP;
                     if (navigator.notification) {
                         // on mobile device
                         navigator.notification.confirm(strConfirmText, function (buttonIndex) {
                             if (buttonIndex === 1) {
                                 // update the KB
-                                this.editTranslation(index, newSP);
+                                that.editTranslation(index, newSP);
                                 // reset the dirty bit
-                                this.bDirty = false;
-                                this.strOldSP = "";
+                                that.bDirty = false;
+                                that.strOldSP = "";
                             } else {
                                 // User cancelled -- reset the text and dirty bit
-                                $("#rs-" + index).html(this.strOldSP);
-                                this.bDirty = false;
-                                this.strOldSP = "";
+                                $("#rs-" + index).html(that.strOldSP);
+                                that.bDirty = false;
+                                that.strOldSP = "";
                             }
                         }, i18next.t('view.lblEditTranslation'));
                     } else {
@@ -988,15 +981,15 @@ define(function (require) {
                         strConfirmText = i18next.t('view.lblEditTranslation') + "\n\n" + strConfirmText;
                         if (confirm(strConfirmText)) {
                             // update the KB
-                            this.editTranslation(index, newSP);
+                            that.editTranslation(index, newSP);
                             // reset the dirty bit
-                            this.bDirty = false;
-                            this.strOldSP = "";
+                            that.bDirty = false;
+                            that.strOldSP = "";
                         } else {
                             // User cancelled -- reset the text and dirty bit
-                            $("#rs-" + index).html(this.strOldSP);
-                            this.bDirty = false;
-                            this.strOldSP = "";
+                            $("#rs-" + index).html(that.strOldSP);
+                            that.bDirty = false;
+                            that.strOldSP = "";
                         }
                     }
                 }
