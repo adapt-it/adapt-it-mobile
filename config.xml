@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="52" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.16.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="53" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.16.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -353,8 +353,9 @@
     </platform>
     <platform name="electron">
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
-        <preference name="www/res/icon/electron/icon.png" />
+        <preference name="www/res/icon/electron/icon.png" target="app" />
         <preference name="www/res/icon/electron/icon@2x.png" target="installer" />
+        <preference name="ElectronSettingsFilePath" value="res/electron/settings.json" />
     </platform>
     <plugin name="cordova-plugin-chooser" spec="^1.3.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
