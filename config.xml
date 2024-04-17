@@ -99,6 +99,42 @@
         <resource-file src="www/res/icon/ios/usx_44.png" />
         <resource-file src="www/res/icon/ios/usx_64.png" />
         <resource-file src="www/res/icon/ios/usx_320.png" />
+        <!-- EDB 5 Apr 2024: new privacy API requirement for iOS / this fills in PrivacyInfo.xcprivacy template -->
+        <privacy-manifest>
+          <key>NSPrivacyTracking</key>
+          <false />
+          <key>NSPrivacyTrackingDomains</key>
+          <array />
+          <key>NSPrivacyCollectedDataTypes</key>
+          <array/>
+          <key>NSPrivacyAccessedAPITypes</key>
+          <array>
+          <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>0A2A.1</string>
+            </array>
+          </dict>
+          <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>E174.1</string>
+            </array>
+          </dict>
+          <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>CA92.1</string>
+            </array>
+          </dict>
+          </array>
+        </privacy-manifest>
         <!-- EDB 8/16/21 TODO: config-file items are up to date, but some icon files do need to be
         manually copied over into the XCode project before releasing. -->
         <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">

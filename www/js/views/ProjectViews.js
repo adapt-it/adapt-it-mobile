@@ -705,7 +705,7 @@ define(function (require) {
                     {
                         hint: true,
                         highlight: true,
-                        minLength: 1
+                        minLength: 2
                     },
                     {
                         name: 'languages',
@@ -723,7 +723,7 @@ define(function (require) {
                             return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 25,
+                        limit: 200,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
@@ -734,16 +734,22 @@ define(function (require) {
                                     strSuggestion += data.attributes.localname
                                     strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
                                     strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += (data.attributes.regionname != null) ? (" / " + data.attributes.regionname) : "";
                                     strSuggestion += '</span>';
                                 } else if (data.attributes.localnames != null && data.attributes.localnames.length > 0) {
                                     strSuggestion += data.attributes.localnames[0];
                                     strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
                                     strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += (data.attributes.regionname != null) ? (" / " + data.attributes.regionname) : "";
                                     strSuggestion += '</span>';
                                 } else if (data.attributes.name != null && data.attributes.name.length > 0) {
-                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')';
+                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.regionname != null) ? data.attributes.regionname : "";
+                                    strSuggestion += '</span>';
                                 } else {
-                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')';
+                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.regionname != null) ? data.attributes.regionname : "";
+                                    strSuggestion += '</span>';
                                 }
                                 // close out and return the suggestion
                                 strSuggestion += '</div>';;
@@ -778,7 +784,7 @@ define(function (require) {
                     {
                         hint: true,
                         highlight: true,
-                        minLength: 1
+                        minLength: 2
                     },
                     {
                         name: 'languages',
@@ -796,7 +802,7 @@ define(function (require) {
                             return data.attributes.name;
                         },
                         source: this.languageMatches(this.theLangs),
-                        limit: 25,
+                        limit: 200,
                         templates: {
                             empty: ['<div>No languages found</div>'].join('\n'),
                             pending: ['<div>Searching...</div>'].join('\n'),
@@ -807,16 +813,22 @@ define(function (require) {
                                     strSuggestion += data.attributes.localname
                                     strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
                                     strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += (data.attributes.regionname != null) ? (" / " + data.attributes.regionname) : "";
                                     strSuggestion += '</span>';
                                 } else if (data.attributes.localnames != null && data.attributes.localnames.length > 0) {
                                     strSuggestion += data.attributes.localnames[0];
                                     strSuggestion += '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
                                     strSuggestion += (data.attributes.name != null) ? data.attributes.name : data.attributes.names[0];
+                                    strSuggestion += (data.attributes.regionname != null) ? (" / " + data.attributes.regionname) : "";
                                     strSuggestion += '</span>';
                                 } else if (data.attributes.name != null && data.attributes.name.length > 0) {
-                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')';
+                                    strSuggestion += data.attributes.name + '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.regionname != null) ? data.attributes.regionname : "";
+                                    strSuggestion += '</span>';
                                 } else {
-                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')';
+                                    strSuggestion += data.attributes.names[0] + '&nbsp;(' + data.attributes.tag + ')<span class=\"subtext\">';
+                                    strSuggestion += (data.attributes.regionname != null) ? data.attributes.regionname : "";
+                                    strSuggestion += '</span>';
                                 }
                                 // close out and return the suggestion
                                 strSuggestion += '</div>';;
