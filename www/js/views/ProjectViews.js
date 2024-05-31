@@ -714,13 +714,13 @@ define(function (require) {
                             if (data.attributes.localname) {
                                 return data.attributes.localname;
                             }
-                            if (data.attributes.localnames) {
+                            if (data.attributes.localnames && data.attributes.localnames.length > 0) {
                                 return data.attributes.localnames[0];
                             }
-                            if (data.attributes.names) {
-                                return data.attributes.names[0];
+                            if (data.attributes.name) {
+                                return data.attributes.name;
                             }
-                            return data.attributes.name;
+                            return data.attributes.names[0];
                         },
                         source: this.languageMatches(this.theLangs),
                         limit: 200,
@@ -793,13 +793,13 @@ define(function (require) {
                             if (data.attributes.localname) {
                                 return data.attributes.localname;
                             }
-                            if (data.attributes.localnames) {
+                            if (data.attributes.localnames && data.attributes.localnames.length > 0) {
                                 return data.attributes.localnames[0];
                             }
-                            if (data.attributes.names) {
-                                return data.attributes.names[0];
+                            if (data.attributes.name) {
+                                return data.attributes.name;
                             }
-                            return data.attributes.name;
+                            return data.attributes.names[0];
                         },
                         source: this.languageMatches(this.theLangs),
                         limit: 200,
@@ -1198,9 +1198,9 @@ define(function (require) {
                         // try autonym, fall back on language name in English
                         if (firstLang.attributes.localname) {
                             currentView.langName = firstLang.attributes.localname;
-                        } else if (firstLang.attributes.localnames) {
+                        } else if (firstLang.attributes.localnames && firstLang.attributes.localnames.length > 0) {
                             currentView.langName = firstLang.attributes.localnames[0];
-                        } else if (firstLang.attributes.names) {
+                        } else if (firstLang.attributes.names && firstLang.attributes.names.length > 0) {
                             currentView.langName = firstLang.attributes.names[0];
                         } else {
                             currentView.langName = firstLang.attributes.name;
@@ -1220,12 +1220,12 @@ define(function (require) {
                     // try autonym, fall back on language name in English
                     if (suggestion.attributes.localname) {
                         currentView.langName = suggestion.attributes.localname;
-                    } else if (suggestion.attributes.localnames) {
+                    } else if (suggestion.attributes.localnames && suggestion.attributes.localnames.length > 0) {
                         currentView.langName = suggestion.attributes.localnames[0];
-                    } else if (suggestion.attributes.names) {
-                        currentView.langName = suggestion.attributes.names[0];
-                    } else {
+                    } else if (suggestion.attributes.name) {
                         currentView.langName = suggestion.attributes.name;
+                    } else {
+                        currentView.langName = suggestion.attributes.names[0];
                     }
                     newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
@@ -1697,9 +1697,9 @@ define(function (require) {
                         // try autonym, fall back on language name in English
                         if (firstLang.attributes.localname) {
                             currentView.langName = firstLang.attributes.localname;
-                        } else if (firstLang.attributes.localnames) {
+                        } else if (firstLang.attributes.localnames && firstLang.attributes.localnames.length > 0) {
                             currentView.langName = firstLang.attributes.localnames[0];
-                        } else if (firstLang.attributes.names) {
+                        } else if (firstLang.attributes.names && firstLang.attributes.names.length > 0) {
                             currentView.langName = firstLang.attributes.names[0];
                         } else {
                             currentView.langName = firstLang.attributes.name;
@@ -1719,12 +1719,12 @@ define(function (require) {
                     // try autonym, fall back on language name in English
                     if (suggestion.attributes.localname) {
                         currentView.langName = suggestion.attributes.localname;
-                    } else if (suggestion.attributes.localnames) {
+                    } else if (suggestion.attributes.localnames && suggestion.attributes.localnames.length > 0) {
                         currentView.langName = suggestion.attributes.localnames[0];
-                    } else if (suggestion.attributes.names) {
-                        currentView.langName = suggestion.attributes.names[0];
-                    } else {
+                    } else if (suggestion.attributes.name) {
                         currentView.langName = suggestion.attributes.name;
+                    } else {
+                        currentView.langName = suggestion.attributes.names[0];
                     }
                     newLangCode = suggestion.attributes.tag;
                     currentView.langCode = buildFullLanguageCode(newLangCode, $('#LanguageVariant').val().trim().replace(/\s+/g, ''));
@@ -1918,9 +1918,9 @@ define(function (require) {
                             // try autonym, fall back on language name in English
                             if (firstLang.attributes.localname) {
                                 strLangName = firstLang.attributes.localname;
-                            } else if (firstLang.attributes.localnames) {
+                            } else if (firstLang.attributes.localnames && firstLang.attributes.localnames.length > 0) {
                                 strLangName = firstLang.attributes.localnames[0];
-                            } else if (firstLang.attributes.names) {
+                            } else if (firstLang.attributes.names && firstLang.attributes.names.length > 0) {
                                 strLangName = firstLang.attributes.names[0];
                             } else {
                                 strLangName = firstLang.attributes.name;
