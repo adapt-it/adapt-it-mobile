@@ -1,4 +1,6 @@
-![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png)
+<a href='https://adapt-it.github.io/adapt-it-mobile/'><img alt="Adapt It Mobile' src='https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png'/></a>
+
+[![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png)](https://adapt-it.github.io/adapt-it-mobile/](https://adapt-it.github.io/adapt-it-mobile/)
 
 | iOS        | Android           | Android (F-Droid client)  |
 |:-------------:|:-------------:|:-------------:|
