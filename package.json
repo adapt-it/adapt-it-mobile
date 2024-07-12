@@ -1,6 +1,6 @@
 {
   "name": "adapt-it-mobile",
-  "version": "1.16.3",
+  "version": "1.16.4",
   "description": "Adapt It Mobile",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "adaptation"
   ],
   "devDependencies": {
-    "cordova-android": "^12.0.1",
+    "cordova-android": "^13.0.0",
     "cordova-clipboard": "github:ihadeed/cordova-clipboard",
     "cordova-ios": "^7.1.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
@@ -91,8 +91,8 @@
       "cordova-plugin-save-dialog": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
