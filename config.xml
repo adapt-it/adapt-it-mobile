@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="57" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.16.4" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget android-versionCode="58" defaultlocale="en" id="org.adaptit.adaptitmobile" ios-CFBundleVersion="1" version="1.16.5" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name short="Adapt It Mobile" xml:lang="en">Adapt It Mobile</name>
     <description xml:lang="en">
         An open source application for translating between related languages.
@@ -19,10 +19,9 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="AutoHideSplashScreen" value="true" />
     <platform name="android">
-        <hook type="before_build" src="scripts/before-build.js" />
+        <hook src="scripts/before-build.js" type="before_build" />
         <plugin name="cordova-sqlite-evcore-extbuild-free" spec="^0.15.1" />
         <plugin name="cordova-plugin-statusbar" spec="^2.4.3" />
-        <!-- min SDK 26/Android 8.x: lowest SDK that supports adaptive icons (for splash / app icon) -->
         <preference name="android-minSdkVersion" value="26" />
         <preference name="android-targetSdkVersion" value="34" />
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/res/svg/ic_aim_adaptive_splash.xml" />
@@ -36,12 +35,6 @@
             <application android:largeHeap="true" />
         </edit-config>
         <config-file mode="replace" parent="/manifest" target="AndroidManifest.xml">
-            <!-- permissions move from READ_EXTERNAL_STORAGE to the more granular ones in API 30; unfortunately the FilePath plugin requires
-                all 3 new permissions before it returns the correct path to us. See issue #581. -->
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
-            <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-            <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-            <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
             <uses-feature android:name="android.hardware.faketouch" android:required="false" />
         </config-file>
         <config-file mode="replace" parent="./application/activity" target="AndroidManifest.xml">
@@ -56,8 +49,6 @@
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />
-                <!-- our mimeType is really broad; limit to our 7 supported filetypes
-                (and work around Android's ugly path pattern matching system) -->
                 <data android:pathPattern=".*\\.xml" />
                 <data android:pathPattern=".*\\.tmx" />
                 <data android:pathPattern=".*\\.txt" />
@@ -105,44 +96,41 @@
         <resource-file src="www/res/icon/ios/usx_44.png" />
         <resource-file src="www/res/icon/ios/usx_64.png" />
         <resource-file src="www/res/icon/ios/usx_320.png" />
-        <!-- EDB 5 Apr 2024: new privacy API requirement for iOS / this fills in PrivacyInfo.xcprivacy template -->
         <privacy-manifest>
-          <key>NSPrivacyTracking</key>
-          <false />
-          <key>NSPrivacyTrackingDomains</key>
-          <array />
-          <key>NSPrivacyCollectedDataTypes</key>
-          <array/>
-          <key>NSPrivacyAccessedAPITypes</key>
-          <array>
-          <dict>
-            <key>NSPrivacyAccessedAPIType</key>
-            <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <key>NSPrivacyTracking</key>
+            <false />
+            <key>NSPrivacyTrackingDomains</key>
+            <array />
+            <key>NSPrivacyCollectedDataTypes</key>
+            <array />
+            <key>NSPrivacyAccessedAPITypes</key>
             <array>
-                <string>0A2A.1</string>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>0A2A.1</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>E174.1</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>CA92.1</string>
+                    </array>
+                </dict>
             </array>
-          </dict>
-          <dict>
-            <key>NSPrivacyAccessedAPIType</key>
-            <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
-            <array>
-                <string>E174.1</string>
-            </array>
-          </dict>
-          <dict>
-            <key>NSPrivacyAccessedAPIType</key>
-            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
-            <array>
-                <string>CA92.1</string>
-            </array>
-          </dict>
-          </array>
         </privacy-manifest>
-        <!-- EDB 8/16/21 TODO: config-file items are up to date, but some icon files do need to be
-        manually copied over into the XCode project before releasing. -->
         <config-file mode="replace" parent="UISupportedInterfaceOrientations" target="*-Info.plist">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
@@ -378,7 +366,7 @@
         <icon height="80" src="www/res/icon/ios/icon-40@2x.png" width="80" />
         <icon height="50" src="www/res/icon/ios/icon-50.png" width="50" />
         <icon height="100" src="www/res/icon/ios/icon-50@2x.png" width="100" />
-        <icon src="www/res/icon/ios/icon-1024.png" width="1024" height="1024" />
+        <icon height="1024" src="www/res/icon/ios/icon-1024.png" width="1024" />
         <splash src="www/res/screen/ios/Default@2x~universal~anyany.png" />
         <splash src="www/res/screen/ios/Default@3x~universal~anyany.png" />
     </platform>
@@ -401,7 +389,6 @@
     </platform>
     <plugin name="cordova-plugin-chooser" spec="^1.3.1" />
     <plugin name="cordova-plugin-fonts" spec="^0.6.5" />
-    <plugin name="cordova-plugin-filepath" spec="https://github.com/VIAVI-Solutions/cordova-plugin-filepath.git" />
     <plugin name="cordova-plugin-keyboard" spec="https://github.com/sinn1/cordova-plugin-keyboard.git" />
     <plugin name="phonegap-plugin-mobile-accessibility" spec="https://github.com/phonegap/phonegap-mobile-accessibility.git" />
     <plugin name="cordova-clipboard" spec="https://github.com/ihadeed/cordova-clipboard.git" />

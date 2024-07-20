@@ -1,6 +1,6 @@
 {
   "name": "adapt-it-mobile",
-  "version": "1.16.4",
+  "version": "1.16.5",
   "description": "Adapt It Mobile",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "cordova-plugin-device": "github:apache/cordova-plugin-device",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^8.0.0",
-    "cordova-plugin-filepath": "github:VIAVI-Solutions/cordova-plugin-filepath",
+    "cordova-plugin-filepath": "github:adapt-it/cordova-plugin-filepath",
     "cordova-plugin-keyboard": "github:sinn1/cordova-plugin-keyboard",
     "cordova-plugin-network-information": "github:apache/cordova-plugin-network-information",
     "cordova-sqlite-evcore-extbuild-free": "^0.18.0",
@@ -82,13 +82,13 @@
       },
       "cordova-plugin-keyboard": {},
       "cordova-clipboard": {},
-      "cordova-plugin-filepath": {},
       "cordova-sqlite-evcore-extbuild-free": {},
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
       },
       "cordova-plugin-chooser": {},
-      "cordova-plugin-save-dialog": {}
+      "cordova-plugin-save-dialog": {},
+      "cordova-plugin-filepath": {}
     },
     "platforms": [
       "ios",
