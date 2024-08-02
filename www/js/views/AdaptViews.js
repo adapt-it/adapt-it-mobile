@@ -2336,17 +2336,14 @@ define(function (require) {
                         }
                     } else {
                         // nothing in the KB
-                        // if this isn't a phrase, populate the target with the source text as the next best guess
-                        // (if this is a phrase, we just finished an auto-create phrase, and we want a blank field)
-                        if (strID.indexOf("phr") === -1) {
-                            // not a phrase. Do we want to copy the source over?
-                            if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
-                                console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
-                                $(event.currentTarget).html("");
-                            } else {
-                                // copy the source text
-                                $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
-                            }
+                        // Populate the target with the source text as the next best guess
+                        // Do we want to copy the source over?
+                        if (localStorage.getItem("CopySource") && localStorage.getItem("CopySource") === "false") {
+                            console.log("No KB entry on an empty field, BUT the user does not want to copy source text: " + sourceText);
+                            $(event.currentTarget).html("");
+                        } else {
+                            // copy the source text
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -3692,7 +3689,7 @@ define(function (require) {
                     phObj.save();
                     this.collection.add(phObj);
                     // also save in KB
-                    saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'), 0);
+                    // saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'), 0);
                     // UI representation
                     // marker, source divs
                     phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
@@ -3718,20 +3715,20 @@ define(function (require) {
                                 isDirty = true;
                             }
                         } else {
-                            // nothing in the KB -- 
-                            // next check is to see if the user selected a phrase and
-                            // started typing (isAutoPhrase). If so, only add the target from the selected start
-                            console.log("isAutoPhrase: " + isAutoPhrase);
-                            if (isAutoPhrase === false) {
-                                // if there's something already in the target, use it instead
-                                phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                                isDirty = false; // don't save (original sourcephrase is now gone)
-                            } else {
-                                // autophrase -- add the target for the selected start ONLY
-                                phraseHtml += $(selectedStart).find(".target").html();
-                                isDirty = true; // save
-                            }
-                            isAutoPhrase = false; // clear the autophrase flag
+                            // nothing in the KB -- leave the target field blank. We will trigger the target selection below; the selection even handler will fill in
+                            // the source from this newly-merged phrase.
+                            // TODO: autophrase / select and type mechanism...
+                            // console.log("isAutoPhrase: " + isAutoPhrase);
+                            // if (isAutoPhrase === false) {
+                            //     // if there's something already in the target, use it instead
+                            //     phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
+                            //     isDirty = false; // don't save (original sourcephrase is now gone)
+                            // } else {
+                            //     // autophrase -- add the target for the selected start ONLY
+                            //     phraseHtml += $(selectedStart).find(".target").html();
+                            //     isDirty = true; // save
+                            // }
+                            // isAutoPhrase = false; // clear the autophrase flag
                         }
                     }
                     phraseHtml += PhraseLine4;
@@ -3827,7 +3824,13 @@ define(function (require) {
                         $('#pile-' + phObj.get('spid')).append(newView.render().el.childNodes);
                     });
                     // now delete the phrase itself
-                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid'), 0); // remove from KB
+                    // remove from the KB
+                    removeFromKB(this.stripPunctuation(this.autoRemoveCaps(selectedObj.get('source'), true), true),
+                                this.stripPunctuation(this.autoRemoveCaps(selectedObj.get('target'), false).trim(), false),
+                                project.get('projectid'), 0);
+
+
+//                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid'), 0); // remove from KB
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
