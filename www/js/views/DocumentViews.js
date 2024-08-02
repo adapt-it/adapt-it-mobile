@@ -3573,13 +3573,17 @@ define(function (require) {
                                         verseID = window.Application.generateUUID(); // new verse in a new chapter -- create a new verse ID
                                         norder += 100;
                                     }
-                                    // EDB 30 Aug 2021: add blank verses
+                                    // EDB 30 Aug 2021: add blank verses (middle of content)
                                     var vCount = (markers.match(/\\v /g) || []).length;
                                     verseCount = verseCount + vCount; // most of the time, this will just increment by 1
                                     if (vCount > 1) {
                                         // special case -- blank verses
                                         console.log("Blank verses found: " + vCount);
                                         var tmpMrks, Idx1, Idx2;
+                                        if (spsExisting.length === 0) {
+                                            // new content -- give this verse some room, in case we come back and merge data in a subsequent import
+                                            norder = norder + 200;
+                                        }
                                         for (var vIdx = 0; vIdx < (vCount - 1); vIdx++) {
                                             // pull out the marker for this blank verse
                                             Idx1 = markers.indexOf("\\v ", 0); // _this_ verse
@@ -3730,6 +3734,9 @@ define(function (require) {
                                                 break; // exit the for loop
                                             }
                                         }
+                                    } else {
+                                        // no source phrases -- just add space so we can go back in and fill in the verse in a subsequent merge
+                                        norder = norder + 200; // en/KJV longest is 90 words/verse (Esther 8:9)
                                     }
                                     sp = new spModel.SourcePhrase({
                                         spid: spID,
@@ -3747,7 +3754,6 @@ define(function (require) {
                                     prepuncts = "";
                                     follpuncts = "";
                                     punctIdx = 0;
-                                    norder = norder + 100; // en/KJV longest is 90 words/verse (Esther 8:9)
                                     sps.push(sp);
                                     // if necessary, send the next batch of SourcePhrase INSERT transactions
                                     if ((sps.length % MAX_BATCH) === 0) {
