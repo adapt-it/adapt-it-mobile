@@ -388,6 +388,7 @@ define(function (require) {
                 // place two calls to render:
                 // - one deferred, when we get all the source phrases for the chapter back from the DB 
                 // - one right now to say "please wait..."
+                this.collection.comparator = 'norder'; // sort by norder
                 this.collection.fetch({reset: true, data: {chapterid: this.options.chapterid}}).done(this.render);
                 this.render();
                 // AIM 1.6.0 - user setting to allow editing blank/empty verses
