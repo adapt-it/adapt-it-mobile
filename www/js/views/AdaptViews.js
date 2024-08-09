@@ -789,52 +789,61 @@ define(function (require) {
                 var keep_going = true;
                 var FTEmpty = true;
                 var top = 0;
-                console.log("moveCursor");
+                var strID = $(selectedStart).attr('id');
+                if (strID === undefined) {
+                    // this might be the tt-input div if we are in a typeahead (multiple KB) input -
+                    // if so, go up one more level to find the pile
+                    strID = $(selectedStart.parentElement).attr('id');
+                }
+                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                console.log("moveCursor: forward: " + moveForward + ", id: " + strID);
                 event.stopPropagation();
                 event.preventDefault();
-                // unselect the current edit field before moving
+                // unfocus any current selection (both the nav button that triggered the event and the selected start)
                 $(event.currentTarget).blur();
+                $(selectedStart).find(".target").blur();
+                // find the model object associated with this edit field
+                var curSP = this.collection.findWhere({spid: strID});
                 if (editorMode === editorModeEnum.FREE_TRANSLATING) {
                     // if we're doing free translation, blur the editor field so it gets saved as well
                     $("#fteditor").blur();
                 }
                 if (moveForward === false) {
-                    // *** move backwards
-                    if ((selectedStart.previousElementSibling !== null) && ($(selectedStart.previousElementSibling).hasClass('pile')) && (!$(selectedStart.previousElementSibling).hasClass('filter'))) {
-                        // there is a previous sibling, and it is a non-filtered pile
-                        next_edit = selectedStart.previousElementSibling;
+                    // ** BACKWARDS **
+                    // jump to previous empty target, then select it
+                    var idx = this.collection.indexOf(curSP) - 1;
+                    if (idx < 0) {
+                        // stop at the first item
+                        curSP = null;
                     } else {
-                        // No previous sibling OR we've reached something we need to skip:
-                        // - a filter
-                        // - a header (chapter or verse)
-                        // - a strip marker
-                        // try skipping this item to see if we can find a "real" pile to move to
-                        if (selectedStart.previousElementSibling !== null) {
-                            temp_cursor = selectedStart.previousElementSibling;
-                            // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
-                                // continue on to the previous item that ISN'T a strip header or filtered out of the UI
-                                while (temp_cursor && keep_going === true) {
-                                    temp_cursor = temp_cursor.previousElementSibling; // backwards one more strip
-                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
-                                        // found a stopping point
-                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
-                                        keep_going = false;
-                                    }
-                                }
-                            }
-                            if (temp_cursor) {
-                                next_edit = temp_cursor;
-                            } else {
-                                next_edit = null;
-                                console.log("reached first pile.");
-                            }
-                        } else {
-                            next_edit = null;
-                            console.log("reached first pile.");
-                        }
+                        curSP = this.collection.at(idx);
                     }
+                    while (curSP) {
+                        if (curSP.get('target') === '') {
+                            console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
+                            // found an empty target -- is it filtered?
+                            if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
+                            {
+                                // looks like a non-filtered pile -- break out of the while loop
+                                break; // found the next slot
+                            }
+                        }
+                        idx--;
+                        if (idx < 0) {
+                            // first pile
+                            curSP = null;
+                            break;
+                        }
+                        curSP = this.collection.at(idx);
+                    }
+                    if (curSP) {
+                        if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                            // everything's okay -- select the SourcePhrase
+                            next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                            keep_going = false;
+                        }
+                    } // note - first node is handled at the bottom of this function
+                    // Free Translation processing
                     if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
                         selectedEnd = lastSelectedFT = next_edit; // free translation -- lastSelectedFT is the END of the selection
                         temp_cursor = next_edit;
@@ -886,111 +895,98 @@ define(function (require) {
                         selectedStart = next_edit;
                     }
                 } else {
-                    // *** move forwards
-                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                        selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
-                    }
-                    if ((selectedStart.nextElementSibling !== null) && ($(selectedStart.nextElementSibling).hasClass('pile')) && (!$(selectedStart.nextElementSibling).hasClass('filter'))) {
-                        // there is a next element (not a strip header is assumed -- strip headers will always be the first child)
-                        next_edit = selectedStart.nextElementSibling;
-                    } else {
-                        // no next sibling in this strip -- see if you can go to the next strip
-                        if (selectedStart.nextElementSibling !== null) {
-                            temp_cursor = selectedStart.nextElementSibling;
-                            // handle filtered strips and strip header elements
-                            if (($(temp_cursor).hasClass("filter")) || ($(temp_cursor).hasClass("strip-header")) || ($(temp_cursor).hasClass("strip"))) {
-                                // continue on to the next strip that ISN'T filtered out of the UI
-                                while (temp_cursor && keep_going === true) {
-                                    temp_cursor = temp_cursor.nextElementSibling; // forward one more strip
-                                    console.log("movecursor: looking at item: " + $(temp_cursor).attr('id'));
-                                    if (temp_cursor && ($(temp_cursor).hasClass("filter") === false) && ($(temp_cursor).hasClass("pile"))) {
-                                        // found a stopping point
-                                        console.log("found stopping point: " + $(temp_cursor).attr('id'));
-                                        keep_going = false;
-                                    }
-                                }
+                    // *** FORWARDS **
+                    // edb 8/8/24: reworked to iterate through SP model list instead of DOM, and only stop when there's an empty target 
+                    var idx = this.collection.indexOf(curSP) + 1;
+                    curSP = this.collection.at(idx);
+                    while (curSP) {
+                        if (curSP.get('target') === '') {
+                            console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
+                            // found an empty target -- is it filtered?
+                            if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
+                            {
+                                // looks like a non-filtered pile -- break out of the while loop
+                                break; // found the next slot
                             }
-                            if (temp_cursor) {
-                                // found a strip that doesn't have a filter -- select the first pile
-                                // (note that this will also skip the strip header div, which is what we want)
-                                next_edit = temp_cursor;
-                            } else {
-                                next_edit = null;
-                                console.log("reached last pile.");
-                            }
-                        } else {
-                            // no more piles
-                            next_edit = null;
-                            console.log("reached last pile.");
                         }
-                        // if we reached the last pile, check to see if there's another chapter to adapt
-                        if (next_edit === null) {
-                            // Check for a chapter after the current one in the current book
-                            var nextChapter = "";
-                            var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
-                            var chaps = book[0].get('chapters');
-                            if (chaps.length > 1) {
-                                if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
-                                        (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
-                                    // There is a chapter after this one
-                                    nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
-                                }
+                        idx++;
+                        curSP = this.collection.at(idx);
+                    }
+                    if (curSP) {
+                        if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                            // everything's okay -- select the SourcePhrase
+                            next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                            keep_going = false;
+                        }
+                    } else {
+                        // reached the last pile
+                        next_edit = null;
+                        // Check for a chapter after the current one in the current book
+                        var nextChapter = "";
+                        var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
+                        var chaps = book[0].get('chapters');
+                        if (chaps.length > 1) {
+                            if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
+                                    (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
+                                // There is a chapter after this one
+                                nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
                             }
-
-                            // If there is a next chapter, let the user continue or exit;
-                            // if there isn't one, just allow them to exit
-                            if (navigator.notification) {
-                                // on mobile device
-                                navigator.notification.beep(1);
-                                if (nextChapter.length > 0) {
-                                    navigator.notification.confirm(
-                                        i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
-                                        function (buttonIndex) {
-                                            if (buttonIndex === 1) {
-                                                // Next chapter
-                                                // update the URL, but replace the history (so we go back to the welcome screen)
-                                                window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-
-                                            } else {
-                                                // exit
-                                                // save the model
-                                                chapter.trigger('change');
-                                                // head back to the home page
-                                                window.Application.home();
-                                            }
-                                        },
-                                        i18next.t('view.ttlMain'),
-                                        [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
-                                    );
-                                } else {
-                                    // no option to continue, just one to exit
-                                    navigator.notification.alert(
-                                        i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
-                                        function () {
+                        }
+                        // If there is a next chapter, let the user continue or exit;
+                        // if there isn't one, just allow them to exit
+                        if (navigator.notification) {
+                            // on mobile device
+                            navigator.notification.beep(1);
+                            if (nextChapter.length > 0) {
+                                navigator.notification.confirm(
+                                    i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                                    function (buttonIndex) {
+                                        if (buttonIndex === 1) {
+                                            // Next chapter
+                                            // update the URL, but replace the history (so we go back to the welcome screen)
+                                            window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+                                        } else {
                                             // exit
                                             // save the model
                                             chapter.trigger('change');
                                             // head back to the home page
                                             window.Application.home();
                                         }
-                                    );
-                                }
+                                    },
+                                    i18next.t('view.ttlMain'),
+                                    [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
+                                );
                             } else {
-                                // in browser
-                                if (nextChapter > 0) {
-                                    if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
-                                        // update the URL, but replace the history (so we go back to the welcome screen)
-                                        window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-                                    } else {
+                                // no option to continue, just one to exit
+                                navigator.notification.alert(
+                                    i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
+                                    function () {
+                                        // exit
+                                        // save the model
+                                        chapter.trigger('change');
+                                        // head back to the home page
                                         window.Application.home();
                                     }
+                                );
+                            }
+                        } else {
+                            // in browser
+                            if (nextChapter > 0) {
+                                if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
+                                    // update the URL, but replace the history (so we go back to the welcome screen)
+                                    window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
                                 } else {
-                                    alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
                                     window.Application.home();
                                 }
+                            } else {
+                                alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
+                                window.Application.home();
                             }
-
                         }
+                    }
+                    // Free Translation processing
+                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                        selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
                     }
                     if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
                         // in FT mode, we need to also find the end of the selection
@@ -1038,7 +1034,8 @@ define(function (require) {
                         // Set selectedEnd and lastSelectedFT to the end of the selection
                         selectedEnd = lastSelectedFT = next_edit;
                     }
-                }
+                } 
+                // done moving the cursor -- now select it if possible
                 if (next_edit) {
                     // simulate a click on the next edit field
                     console.log("next edit: " + next_edit.id);
@@ -3828,9 +3825,6 @@ define(function (require) {
                     removeFromKB(this.stripPunctuation(this.autoRemoveCaps(selectedObj.get('source'), true), true),
                                 this.stripPunctuation(this.autoRemoveCaps(selectedObj.get('target'), false).trim(), false),
                                 project.get('projectid'), 0);
-
-
-//                    removeFromKB(this.autoRemoveCaps(selectedObj.get("source")), selectedObj.get("target"), project.get('projectid'), 0); // remove from KB
                     this.collection.remove(selectedObj); // remove from collection
                     selectedObj.destroy(); // delete the object from the database
                     $(selectedStart).remove();
