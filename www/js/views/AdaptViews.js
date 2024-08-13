@@ -58,6 +58,7 @@ define(function (require) {
         isDrafting = true,
         isMergingFromKB = false,
         isAutoPhrase = false,
+        kbEvent = null,
         isSelectingKB = false,  // is the user working with a select target text dropdown?
         MovingDir = 0, // -1 = backwards, 0 = not moving, 1 = forwards
         idx = 1,
@@ -554,19 +555,11 @@ define(function (require) {
                     startIdx = 0,
                     endIdx = content.length;
                 // check for empty string
+                console.log("stripPunctuation - content: \"" + content + "\", isSource: " + isSource);
                 if (endIdx === 0) {
                     return result;
                 }
-                if (isSource === false) {
-                    // starting index
-                    while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
-                        startIdx++;
-                    }
-                    // ending index
-                    while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
-                        endIdx--;
-                    }
-                } else {
+                if (isSource && isSource === true) {
                     // starting index
                     while (startIdx < (content.length - 1) && punctsSource.indexOf(content.charAt(startIdx)) > -1) {
                         startIdx++;
@@ -575,7 +568,17 @@ define(function (require) {
                     while (endIdx > 0 && punctsSource.indexOf(content.charAt(endIdx - 1)) > -1) {
                         endIdx--;
                     }
-                }
+                    
+                } else {
+                    // starting index
+                    while (startIdx < (content.length - 1) && punctsTarget.indexOf(content.charAt(startIdx)) > -1) {
+                        startIdx++;
+                    }
+                    // ending index
+                    while (endIdx > 0 && punctsTarget.indexOf(content.charAt(endIdx - 1)) > -1) {
+                        endIdx--;
+                    }
+                } 
                 // sanity check for all punctuation
                 if (endIdx <= startIdx) {
                     return "";
@@ -1131,7 +1134,6 @@ define(function (require) {
                 "touchmove .pile": "selectingPilesMove",
                 "mouseup .pile": "selectingPilesEnd",
                 "touchend .pile": "selectingPilesEnd",
-                "keydown .pile": "mergeAndReplace",
                 "doubletap .pile": "onDblTapPile",
                 "mouseup .filter": "showFilter",
                 "touchend .filter": "showFilter",
@@ -2180,6 +2182,30 @@ define(function (require) {
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
                 $("#NextSP").prop('disabled', false); // enable toolbar button
                 isEditing = true;
+                // Is this an auto-merge?
+                if (isAutoPhrase === true) {
+                    isAutoPhrase = false; // clear out flag
+                    // clear out the existing text (if any)
+                    $(event.currentTarget).html("");
+                    isDirty = true;
+                    // select any text in the edit field
+                    if (document.body.createTextRange) {
+                        range = document.body.createTextRange();
+                        range.moveToElementText($(event.currentTarget));
+                        range.select();
+                    } else if (window.getSelection) {
+                        selection = window.getSelection();
+                        selection.removeAllRanges();
+                        range = document.createRange();
+                        range.selectNodeContents($(event.currentTarget)[0]);
+                        selection.addRange(range);
+                    }                    
+                    // send our pocketed keydown character event to the target field
+                    var e = jQuery.Event( "keydown", { keyCode: kbEvent.keyCode, key : kbEvent.key, code: kbEvent.code, shiftKey: kbEvent.shiftKey } );
+                    $(event.currentTarget).trigger(e);
+                    kbEvent = null; // clear out event
+                    return; // don't continue processing here
+                }
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
                     // target is empty -- attempt to populate it
@@ -2293,7 +2319,7 @@ define(function (require) {
                                 range.selectNodeContents($(event.currentTarget)[0]);
                                 selection.addRange(range);
                             }
-                            if (navigator.notification && Keyboard) {
+                            if (Keyboard && typeof Keyboard.show === 'function') {
                                 Keyboard.show();
                             }
                             // it's possible that we went offscreen while looking for the next available slot to adapt.
@@ -2341,7 +2367,7 @@ define(function (require) {
                             $(event.currentTarget).html("");
                         } else {
                             // copy the source text
-                            $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText, true));
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -2657,7 +2683,7 @@ define(function (require) {
                             $(event.currentTarget).html("");
                         } else {
                             // copy the source text
-                            $(event.currentTarget).html(this.stripPunctuation(sourceText), true);
+                            $(event.currentTarget).html(this.stripPunctuation(sourceText, true));
                         }
                         MovingDir = 0; // stop here
                         clearKBInput = true;
@@ -2771,18 +2797,6 @@ define(function (require) {
 //                console.log("selectedGloss exit / isDirty = " + isDirty + ", origText = " + origText);
             },
 
-            // keydown event handler for the _pile_: this is the "select and type"
-            // shortcut / use case (#109), and requires a bluetooth keyboard to operate
-            // (i.e., there will not be a soft keyboard displayed if the pile has focus).
-            // Our goal here is to merge the selection (if there is more than one pile), and replace the resulting
-            // target texts with whatever the user just typed in.  
-            mergeAndReplace: function (event) {
-                console.log("mergeAndReplace(): entry");
-                // don't bubble this event up to the parent
-                // event.stopPropagation();
-                // event.preventDefault();
-            },
-
             // keydown event handler for the target field
             editAdaptation: function (event) {
                 var strID = null,
@@ -2813,11 +2827,9 @@ define(function (require) {
                         selectedEnd = selectedStart;
                     }
                     if (event.shiftKey) {
-                        MovingDir = -1;
-                        this.moveCursor(event, false);  // shift tab/enter -- move backwards
+                        $("#PrevSP").mouseup(); // trigger prev SP button event
                     } else {
-                        MovingDir = 1;
-                        this.moveCursor(event, true);   // normal tab/enter -- move forwards
+                        $("#NextSP").mouseup(); // trigger next SP button event
                     }
                 } else {
                     // any other key - set the dirty bit
@@ -3006,8 +3018,8 @@ define(function (require) {
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
                             saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false)).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false), false).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('target'), false), false).trim(), false),
                                      project.get('projectid'), 0);
                         }
                         // add any punctuation back to the target field
@@ -3148,8 +3160,8 @@ define(function (require) {
                             console.log("Dirty bit set. Saving KB value: " + trimmedValue);
                             // something has changed -- update the KB
                             saveInKB(this.stripPunctuation(this.autoRemoveCaps(model.get('source'), true), true),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false)).trim(), false),
-                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('gloss'), false)).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(trimmedValue, false), false).trim(), false),
+                                     Underscore.escape(this.stripPunctuation(this.autoRemoveCaps(model.get('gloss'), false), false).trim(), false),
                                      project.get('projectid'), 1);
                         }
                         // add any punctuation back to the target field
@@ -3696,7 +3708,7 @@ define(function (require) {
                     if (isMergingFromKB === false) {
                         // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
                         // is there something in the KB that matches this phrase?
-                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true)), 0);
+                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true), true), 0);
                         if (tu !== null) {
                             // found at least one match -- populate the target with the first match
                             refstrings = tu.get('refstring');
@@ -3712,22 +3724,7 @@ define(function (require) {
                                 phraseHtml += this.stripPunctuation(this.autoAddCaps(phObj, refstrings[0].target), false);
                                 isDirty = true;
                             }
-                        } else {
-                            // nothing in the KB -- leave the target field blank. We will trigger the target selection below; the selection even handler will fill in
-                            // the source from this newly-merged phrase.
-                            // TODO: autophrase / select and type mechanism...
-                            // console.log("isAutoPhrase: " + isAutoPhrase);
-                            // if (isAutoPhrase === false) {
-                            //     // if there's something already in the target, use it instead
-                            //     phraseHtml += (phraseTarget.trim().length > 0) ? phraseTarget : phraseSource;
-                            //     isDirty = false; // don't save (original sourcephrase is now gone)
-                            // } else {
-                            //     // autophrase -- add the target for the selected start ONLY
-                            //     phraseHtml += $(selectedStart).find(".target").html();
-                            //     isDirty = true; // save
-                            // }
-                            // isAutoPhrase = false; // clear the autophrase flag
-                        }
+                        } 
                     }
                     phraseHtml += PhraseLine4;
                     console.log("phrase: " + phraseHtml);
@@ -4063,6 +4060,7 @@ define(function (require) {
                 kblist = new kbModels.TargetUnitCollection();
                 document.addEventListener("pause", this.onPause, false);
                 document.addEventListener("resume", this.onResume, false);
+                window.addEventListener("keydown", this.checkAutoMerge, false);
                 USFMMarkers = new usfm.MarkerCollection();
                 USFMMarkers.fetch({reset: true, data: {name: ""}}); // return all results
             },
@@ -4089,6 +4087,32 @@ define(function (require) {
             onResume: function () {
                 // refresh the view
                 Backbone.history.loadUrl(Backbone.history.fragment);
+            },
+            checkAutoMerge: function () {
+                console.log("checkAutoMerge / keydown event");
+                if (!(event.target.id === "main")) {
+                    // not our event (we want the window event)-- exit
+                    return;
+                }
+                if (editorMode !== editorModeEnum.ADAPTING) {
+                    // we only care if the user is trying to adapt
+                    return;
+                }
+                if ((selectedStart !== null) && (selectedEnd !== null) && (selectedStart !== selectedEnd)) {
+                    // user has selected more than one pile, then pressed a key -
+                    // if it's a "normal" key, pocket the event and merge the piles (we'll handle the keydown event
+                    // in the selectedAdaptation() handler)
+                    if ((event.keyCode === 27) || (event.keyCode === 9) || (event.keyCode === 13)) {
+                        // ignore special chars (Esc, enter, return)
+                    } else {
+                        // any other key - keep the keypress event and trigger a merge
+                        isAutoPhrase = true;
+                        kbEvent = event;
+                        // this.togglePhrase();
+                        // attempt to jump back into proper "this" context (we're currently under the window object)
+                        window.Application.main.currentView.listView.togglePhrase(event);
+                    }
+                }
             },
             onShow: function () {
                 console.log("ChapterView::onShow");
