@@ -26,6 +26,15 @@ define(function (require) {
             return deferred.promise();
         },
 
+        cleanDuplicates = function() {
+            //DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);
+            window.Application.db.transaction(function (tx) {
+                tx.executeSql("DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);");
+            }, function (err) {
+                console.log("cleanDuplicates() error: " + err.message);
+            });            
+        },
+
         SourcePhrase = Backbone.Model.extend({
             // default values
             defaults: {
