@@ -746,6 +746,10 @@ define(function (require) {
                     // move to the next pile and append the source
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
+                        if ($(nextObj).children(".target").html().length > 0) {
+                            // exit -- we hit some target text in our processing
+                            break;
+                        }
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
                         sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true), true);
                         // is there a match for this phrase?
@@ -2182,7 +2186,7 @@ define(function (require) {
                 $("#PrevSP").prop('disabled', false); // enable toolbar button
                 $("#NextSP").prop('disabled', false); // enable toolbar button
                 isEditing = true;
-                // Is this an auto-merge?
+                // auto-phrase (select and start typing) handling - target text is just whatever the user typed in.
                 if (isAutoPhrase === true) {
                     isAutoPhrase = false; // clear out flag
                     // clear out the existing text (if any)
@@ -2204,7 +2208,8 @@ define(function (require) {
                     var e = jQuery.Event( "keydown", { keyCode: kbEvent.keyCode, key : kbEvent.key, code: kbEvent.code, shiftKey: kbEvent.shiftKey } );
                     $(event.currentTarget).trigger(e);
                     kbEvent = null; // clear out event
-                    return; // don't continue processing here
+                    // we're done with auto-phrase processing -- exit
+                    return;
                 }
                 // Is the target field empty?
                 if ($(event.currentTarget).text().trim().length === 0) {
@@ -2227,7 +2232,7 @@ define(function (require) {
                         isMergingFromKB = false;
                     } else {
                         // check for a possible KB phrase that needs merging
-                        if ((this.possibleKBPhrase(this.autoRemoveCaps(sourceText, true), 0) === true) && (selectedEnd === selectedStart)) {
+                        if ((this.possibleKBPhrase(this.stripPunctuation(this.autoRemoveCaps(sourceText, true), true), 0) === true) && (selectedEnd === selectedStart)) {
                             // we have a possible phrase -- see if it's a real one
                             selectedEnd = this.findLargestPhrase(selectedStart, 0);
                             if (selectedEnd !== selectedStart) {
@@ -2239,7 +2244,7 @@ define(function (require) {
                             }
                         }
                     }
-                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 0);
+                    tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(sourceText, true), true), 0);
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
@@ -2419,7 +2424,7 @@ define(function (require) {
                         // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
                             // not a retranslation or placeholder
-                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 0);
+                            tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(sourceText, true), true), 0);
                             if (tu !== null) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
@@ -2557,7 +2562,8 @@ define(function (require) {
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     model = this.collection.findWhere({spid: strID});
                     sourceText = model.get('source');
-                    tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 1);
+                    // find in the glossing KB
+                    tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(sourceText, true), true), 1);
                     console.log("Target is empty; tu for \"" + this.autoRemoveCaps(sourceText, true) + "\" = " + tu);
                     if (tu !== null) {
                         // found at least one match -- populate the target with the first match
@@ -2734,8 +2740,8 @@ define(function (require) {
                         sourceText = model.get('source');
                         // skip the KB check if this is a retranslation or placeholder (there won't be a KB entry)
                         if ((strID.indexOf("ret") === -1) && (strID.indexOf("plc") === -1)) {
-                            // not a retranslation or placeholder
-                            tu = this.findInKB(this.autoRemoveCaps(sourceText, true), 1);
+                            // find in the glossing KB
+                            tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(sourceText, true), true), 1);
                             if (tu !== null) {
                                 refstrings = tu.get('refstring');
                                 // first, make sure these refstrings are actually being used
@@ -2994,7 +3000,7 @@ define(function (require) {
                 model = this.collection.findWhere({spid: strID});
                 // re-add autocaps if necessary
                 if (trimmedValue.length > 0) {
-                    trimmedValue = this.autoAddCaps(model, trimmedValue);
+                    trimmedValue = this.stripPunctuation(this.autoAddCaps(model, trimmedValue), false);
                 }
                 // check for changes in the edit field
                 isEditing = false;

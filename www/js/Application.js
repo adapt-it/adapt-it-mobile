@@ -79,7 +79,7 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.16.6", // appended with Android / iOS build info
+            version: "1.17.0", // appended with Android / iOS build info
             AndroidBuild: "59", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
