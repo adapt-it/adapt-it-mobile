@@ -1968,8 +1968,8 @@ define(function (require) {
                             $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                         }
                         $("#phBefore").prop('disabled', false);
-                        $("#mnuPHBefore").prop('disabled', false);
                         $("#phAfter").prop('disabled', false);
+                        $("#mnuPHBefore").prop('disabled', false);
                         $("#mnuPHAfter").prop('disabled', false);
                         event.stopPropagation();
                     } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
@@ -2986,18 +2986,25 @@ define(function (require) {
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
                 if (strID === undefined) {
-                    console.log("value: " + value);
-                    // make sure the typeahead gets cleaned out and the value saved
-                    isDirty = true;
+                    // no strID (typeahead) - pull the model from the parent element (which has an ID)
+                    console.log("Typeahead value: " + value);
                     isSelectingKB = false;
                     // this might be the tt-input div if we are in a typeahead (multiple KB) input -
                     // if so, go up one more level to find the pile
                     strID = $(event.currentTarget.parentElement.parentElement).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                     // destroy the typeahead control in the edit field
                     $(event.currentTarget).typeahead('destroy');
+                    // did the value change?
+                    if (model.get('target') !== value) {
+                        isDirty = true;
+                    }
+                } else {
+                    // "normal" pile with a valid strID -- get the model
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                 }
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                model = this.collection.findWhere({spid: strID});
                 // re-add autocaps if necessary
                 if (trimmedValue.length > 0) {
                     trimmedValue = this.stripPunctuation(this.autoAddCaps(model, trimmedValue), false);
@@ -3031,6 +3038,7 @@ define(function (require) {
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
+                        console.log("unselectedAdaptation - saving model source: " + model.get('source'));
                         model.save({target: this.copyPunctuation(model, trimmedValue)});
                         // if the target differs from the source, make it display in green
                         if (model.get('source') === model.get('target')) {
@@ -3072,9 +3080,16 @@ define(function (require) {
                 if (selectedStart !== null) {
                     // there was an old selection -- remove the ui-selected class
                     $("div").removeClass("ui-selecting ui-selected");
-//                    $("#Placeholder").prop('disabled', true);
-//                    $("#Retranslation").prop('disabled', true);
-//                    $("#Phrase").prop('disabled', true);
+                    // $("#phBefore").prop('disabled', true);
+                    // $("#phAfter").prop('disabled', true);
+                    // $("#Retranslation").prop('disabled', true);
+                    // $("#Phrase").prop('disabled', true);
+                    // $("#mnuPHBefore").prop('disabled', true);
+                    // $("#mnuPHAfter").prop('disabled', true);
+                    // $("#mnuRetranslation").prop('disabled', true);
+                    // $("#mnuPhrase").prop('disabled', true);
+                    // $("#PrevSP").prop('disabled', true);
+                    // $("#NextSP").prop('disabled', true);
                 }
                 // remove any old selection ranges
                 if (window.getSelection) {
@@ -3462,6 +3477,7 @@ define(function (require) {
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
                     $("#mnuPHBefore").prop('disabled', true);
@@ -4588,11 +4604,14 @@ define(function (require) {
                     if (selectedStart !== null) {
                         $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
                         $("#phBefore").prop('disabled', true);
+                        $("#phAfter").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
                         $("#mnuPHBefore").prop('disabled', true);
                         $("#mnuRetranslation").prop('disabled', true);
                         $("#mnuPhrase").prop('disabled', true);
+                        $("#PrevSP").prop('disabled', true);
+                        $("#NextSP").prop('disabled', true);
                     }
                     // disable the "more translations" menu
                     if (!$("#mnuTranslations").hasClass("menu-disabled")) {
