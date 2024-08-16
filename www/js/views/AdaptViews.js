@@ -632,7 +632,7 @@ define(function (require) {
                     targetIdx = 0,
                     optionsIdx = 0,
                     result = null,
-                    source = model.get('source');
+                    source = this.stripPunctuation(model.get('source'), true); // strip any leading puncts
                 // If we aren't capitalizing for this project, just return the target (unaltered)
                 if (project.get('AutoCapitalization') === 'false' || project.get('SourceHasUpperCase') === 'false') {
                     return target;
