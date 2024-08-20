@@ -1050,18 +1050,18 @@ define(function (require) {
                     if (editorMode === editorModeEnum.ADAPTING) {
                         // adapting
                         selectedEnd = selectedStart = next_edit;
-                        $(next_edit).find(".target").focus();
-                        $(next_edit).find(".target").mouseup();    
+                        $(next_edit).find(".target").trigger('focus');
+                        $(next_edit).find(".target").trigger('mouseup');
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         // glossing
                         selectedEnd = selectedStart = next_edit;
-                        $(next_edit).find(".gloss").focus();
-                        $(next_edit).find(".gloss").mouseup();    
+                        $(next_edit).find(".gloss").trigger('focus');
+                        $(next_edit).find(".gloss").trigger('mouseup');
                     } else {
                         // free translation
                         // set focus on the FT text area
-                        $("#fteditor").focus();
-                        $("#fteditor").mouseup();
+                        $("#fteditor").trigger('focus');
+                        $("#fteditor").trigger('mouseup');
                     }
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -2833,9 +2833,9 @@ define(function (require) {
                         selectedEnd = selectedStart;
                     }
                     if (event.shiftKey) {
-                        $("#PrevSP").mouseup(); // trigger prev SP button event
+                        $("#PrevSP").trigger('mouseup'); // trigger prev SP button event
                     } else {
-                        $("#NextSP").mouseup(); // trigger next SP button event
+                        $("#NextSP").trigger('mouseup'); // trigger next SP button event
                     }
                 } else {
                     // any other key - set the dirty bit
@@ -3469,6 +3469,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find(".target").html(selectedObj.get('target'));
                     }
+                    console.log("togglePHBefore - creating spid: plc-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -3564,6 +3565,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find('.source').html(selectedObj.get('source'));
                     }
+                    console.log("togglePHAfter - creating spid: pla-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
                     // add to the model and UI _after_ the selected position
@@ -3711,6 +3713,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
+                    console.log("togglePhrase - creating spid: phr-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -3823,6 +3826,7 @@ define(function (require) {
                         theSource = value; // don't strip punctuation
                         // theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
+                        console.log("togglePhrase - creating (rebuilt) spid: " + newID);
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
@@ -3950,6 +3954,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
+                    console.log("toggleRetranslation - creating spid: ret-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource, true), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -4037,6 +4042,7 @@ define(function (require) {
                         }
                         theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
+                        console.log("toggleRetranslation - creating (rebuilt) spid: " + newID);
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: RetTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
@@ -4111,7 +4117,6 @@ define(function (require) {
                 Backbone.history.loadUrl(Backbone.history.fragment);
             },
             checkAutoMerge: function () {
-                console.log("checkAutoMerge / keydown event");
                 if (!(event.target.id === "main")) {
                     // not our event (we want the window event)-- exit
                     return;
@@ -4120,6 +4125,7 @@ define(function (require) {
                     // we only care if the user is trying to adapt
                     return;
                 }
+                console.log("checkAutoMerge / keydown event");
                 if ((selectedStart !== null) && (selectedEnd !== null) && (selectedStart !== selectedEnd)) {
                     // user has selected more than one pile, then pressed a key -
                     // if it's a "normal" key, pocket the event and merge the piles (we'll handle the keydown event
