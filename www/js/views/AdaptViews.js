@@ -555,7 +555,7 @@ define(function (require) {
                     startIdx = 0,
                     endIdx = content.length;
                 // check for empty string
-                console.log("stripPunctuation - content: \"" + content + "\", isSource: " + isSource);
+                // console.log("stripPunctuation - content: \"" + content + "\", isSource: " + isSource);
                 if (endIdx === 0) {
                     return result;
                 }
@@ -632,7 +632,7 @@ define(function (require) {
                     targetIdx = 0,
                     optionsIdx = 0,
                     result = null,
-                    source = model.get('source');
+                    source = this.stripPunctuation(model.get('source'), true); // strip any leading puncts
                 // If we aren't capitalizing for this project, just return the target (unaltered)
                 if (project.get('AutoCapitalization') === 'false' || project.get('SourceHasUpperCase') === 'false') {
                     return target;
@@ -1050,18 +1050,18 @@ define(function (require) {
                     if (editorMode === editorModeEnum.ADAPTING) {
                         // adapting
                         selectedEnd = selectedStart = next_edit;
-                        $(next_edit).find(".target").focus();
-                        $(next_edit).find(".target").mouseup();    
+                        $(next_edit).find(".target").trigger('focus');
+                        $(next_edit).find(".target").trigger('mouseup');
                     } else if (editorMode === editorModeEnum.GLOSSING) {
                         // glossing
                         selectedEnd = selectedStart = next_edit;
-                        $(next_edit).find(".gloss").focus();
-                        $(next_edit).find(".gloss").mouseup();    
+                        $(next_edit).find(".gloss").trigger('focus');
+                        $(next_edit).find(".gloss").trigger('mouseup');
                     } else {
                         // free translation
                         // set focus on the FT text area
-                        $("#fteditor").focus();
-                        $("#fteditor").mouseup();
+                        $("#fteditor").trigger('focus');
+                        $("#fteditor").trigger('mouseup');
                     }
                 } else {
                     // the user is either at the first or last pile. Select it,
@@ -1968,8 +1968,8 @@ define(function (require) {
                             $("#mnuRetranslation .topcoat-icon").addClass("topcoat-icon--retranslation-new");
                         }
                         $("#phBefore").prop('disabled', false);
-                        $("#mnuPHBefore").prop('disabled', false);
                         $("#phAfter").prop('disabled', false);
+                        $("#mnuPHBefore").prop('disabled', false);
                         $("#mnuPHAfter").prop('disabled', false);
                         event.stopPropagation();
                     } else if (editorMode === editorModeEnum.FREE_TRANSLATING) {
@@ -2259,6 +2259,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
+                            foundInKB = true;
                             targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
                             console.log("selectedAdaptation: populating field from KB: " + targetText);
                             $(event.currentTarget).html(targetText);
@@ -2286,8 +2287,8 @@ define(function (require) {
                                 $(event.currentTarget).addClass('fromkb');
                                 clearKBInput = false;
                                 this.moveCursor(event, true);
+                                return;
                             }
-                            foundInKB = true;
                         } else if (options.length > 1) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
@@ -2833,9 +2834,9 @@ define(function (require) {
                         selectedEnd = selectedStart;
                     }
                     if (event.shiftKey) {
-                        $("#PrevSP").mouseup(); // trigger prev SP button event
+                        $("#PrevSP").trigger('mouseup'); // trigger prev SP button event
                     } else {
-                        $("#NextSP").mouseup(); // trigger next SP button event
+                        $("#NextSP").trigger('mouseup'); // trigger next SP button event
                     }
                 } else {
                     // any other key - set the dirty bit
@@ -2986,18 +2987,25 @@ define(function (require) {
                 // find the model object associated with this edit field
                 strID = $(event.currentTarget.parentElement).attr('id');
                 if (strID === undefined) {
-                    console.log("value: " + value);
-                    // make sure the typeahead gets cleaned out and the value saved
-                    isDirty = true;
+                    // no strID (typeahead) - pull the model from the parent element (which has an ID)
+                    console.log("Typeahead value: " + value);
                     isSelectingKB = false;
                     // this might be the tt-input div if we are in a typeahead (multiple KB) input -
                     // if so, go up one more level to find the pile
                     strID = $(event.currentTarget.parentElement.parentElement).attr('id');
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                     // destroy the typeahead control in the edit field
                     $(event.currentTarget).typeahead('destroy');
+                    // did the value change?
+                    if (model.get('target') !== value) {
+                        isDirty = true;
+                    }
+                } else {
+                    // "normal" pile with a valid strID -- get the model
+                    strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                    model = this.collection.findWhere({spid: strID});
                 }
-                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                model = this.collection.findWhere({spid: strID});
                 // re-add autocaps if necessary
                 if (trimmedValue.length > 0) {
                     trimmedValue = this.stripPunctuation(this.autoAddCaps(model, trimmedValue), false);
@@ -3031,6 +3039,7 @@ define(function (require) {
                         // add any punctuation back to the target field
                         $(event.currentTarget).html(this.copyPunctuation(model, trimmedValue));
                         // update the model with the new target text
+                        console.log("unselectedAdaptation - saving model source: " + model.get('source'));
                         model.save({target: this.copyPunctuation(model, trimmedValue)});
                         // if the target differs from the source, make it display in green
                         if (model.get('source') === model.get('target')) {
@@ -3072,9 +3081,16 @@ define(function (require) {
                 if (selectedStart !== null) {
                     // there was an old selection -- remove the ui-selected class
                     $("div").removeClass("ui-selecting ui-selected");
-//                    $("#Placeholder").prop('disabled', true);
-//                    $("#Retranslation").prop('disabled', true);
-//                    $("#Phrase").prop('disabled', true);
+                    // $("#phBefore").prop('disabled', true);
+                    // $("#phAfter").prop('disabled', true);
+                    // $("#Retranslation").prop('disabled', true);
+                    // $("#Phrase").prop('disabled', true);
+                    // $("#mnuPHBefore").prop('disabled', true);
+                    // $("#mnuPHAfter").prop('disabled', true);
+                    // $("#mnuRetranslation").prop('disabled', true);
+                    // $("#mnuPhrase").prop('disabled', true);
+                    // $("#PrevSP").prop('disabled', true);
+                    // $("#NextSP").prop('disabled', true);
                 }
                 // remove any old selection ranges
                 if (window.getSelection) {
@@ -3454,6 +3470,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find(".target").html(selectedObj.get('target'));
                     }
+                    console.log("togglePHBefore - creating spid: plc-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("plc-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, markers: mkrs, prepuncts: prePuncts});
                     phObj.save();
                     this.collection.add(phObj, {at: this.collection.indexOf(selectedObj)});
@@ -3462,6 +3479,7 @@ define(function (require) {
                     // start adapting at this location
                     $("div").removeClass("ui-selecting ui-selected");
                     $("#phBefore").prop('disabled', true);
+                    $("#phAfter").prop('disabled', true);
                     $("#Retranslation").prop('disabled', true);
                     $("#Phrase").prop('disabled', true);
                     $("#mnuPHBefore").prop('disabled', true);
@@ -3548,6 +3566,7 @@ define(function (require) {
                         selectedObj.save();
                         $(selectedStart).find('.source').html(selectedObj.get('source'));
                     }
+                    console.log("togglePHAfter - creating spid: pla-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("pla-" + newID), source: src, chapterid: selectedObj.get('chapterid'), vid: selectedObj.get('vid'), norder: nOrder, follpuncts: follPuncts});
                     phObj.save();
                     // add to the model and UI _after_ the selected position
@@ -3695,6 +3714,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
+                    console.log("togglePhrase - creating spid: phr-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -3807,6 +3827,7 @@ define(function (require) {
                         theSource = value; // don't strip punctuation
                         // theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
+                        console.log("togglePhrase - creating (rebuilt) spid: " + newID);
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: phraseTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
@@ -3934,6 +3955,7 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object
+                    console.log("toggleRetranslation - creating spid: ret-" + newID);
                     phObj = new spModels.SourcePhrase({ spid: ("ret-" + newID), markers: retMarkers.trim(), source: this.stripPunctuation(RetSource, true), target: RetSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
@@ -4021,6 +4043,7 @@ define(function (require) {
                         }
                         theSource = value.substr(startIdx, (endIdx) - startIdx);
                         // recreate the sourcephrase
+                        console.log("toggleRetranslation - creating (rebuilt) spid: " + newID);
                         phObj = new spModels.SourcePhrase({ spid: (newID), norder: nOrder, source: theSource, target: RetTarget, chapterid: selectedObj.get('chapterid'), prepuncts: prepuncts, follpuncts: follpuncts});
                         if (index === 0) {
                             // transfer any marker back (would be the first in the list)
@@ -4095,7 +4118,6 @@ define(function (require) {
                 Backbone.history.loadUrl(Backbone.history.fragment);
             },
             checkAutoMerge: function () {
-                console.log("checkAutoMerge / keydown event");
                 if (!(event.target.id === "main")) {
                     // not our event (we want the window event)-- exit
                     return;
@@ -4104,6 +4126,7 @@ define(function (require) {
                     // we only care if the user is trying to adapt
                     return;
                 }
+                console.log("checkAutoMerge / keydown event");
                 if ((selectedStart !== null) && (selectedEnd !== null) && (selectedStart !== selectedEnd)) {
                     // user has selected more than one pile, then pressed a key -
                     // if it's a "normal" key, pocket the event and merge the piles (we'll handle the keydown event
@@ -4588,11 +4611,14 @@ define(function (require) {
                     if (selectedStart !== null) {
                         $("div").removeClass("ui-selecting ui-selected ui-longSelecting");
                         $("#phBefore").prop('disabled', true);
+                        $("#phAfter").prop('disabled', true);
                         $("#Retranslation").prop('disabled', true);
                         $("#Phrase").prop('disabled', true);
                         $("#mnuPHBefore").prop('disabled', true);
                         $("#mnuRetranslation").prop('disabled', true);
                         $("#mnuPhrase").prop('disabled', true);
+                        $("#PrevSP").prop('disabled', true);
+                        $("#NextSP").prop('disabled', true);
                     }
                     // disable the "more translations" menu
                     if (!$("#mnuTranslations").hasClass("menu-disabled")) {

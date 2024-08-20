@@ -26,15 +26,6 @@ define(function (require) {
             return deferred.promise();
         },
 
-        cleanDuplicates = function() {
-            //DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);
-            window.Application.db.transaction(function (tx) {
-                tx.executeSql("DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);");
-            }, function (err) {
-                console.log("cleanDuplicates() error: " + err.message);
-            });            
-        },
-
         SourcePhrase = Backbone.Model.extend({
             // default values
             defaults: {
@@ -71,27 +62,37 @@ define(function (require) {
                 
             },
             create: function () {
+                var deferred = $.Deferred();
                 var attributes = this.attributes;
                 var sql = "INSERT INTO sourcephrase (spid, norder, chapterid, vid, markers, orig, prepuncts, midpuncts, follpuncts, flags, texttype, gloss, freetrans, note, srcwordbreak, tgtwordbreak, source, target) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
-//                        console.log("INSERT ok: " + res.toString());
+                        console.log("sourcephrase INSERT ok.");
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.message);
+                        console.log("sourcephrase INSERT error: " + err.message);
                     });
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
                 });
             },
             update: function () {
+                var deferred = $.Deferred();
                 var attributes = this.attributes;
                 var sql = 'UPDATE sourcephrase SET norder=?, chapterid=?, vid=?, markers=?, orig=?, prepuncts=?, midpuncts=?, follpuncts=?, flags=?, texttype=?, gloss=?, freetrans=?, note=?, srcwordbreak=?, tgtwordbreak=?, source=?, target=? WHERE spid=?;';
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql(sql, [attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target, attributes.spid], function (tx, res) {
-//                        console.log("INSERT ok: " + res.toString());
+                        console.log("sourcephrase UPDATE ok.");
                     }, function (tx, err) {
-                        console.log("SELECT error: " + err.message);
+                        console.log("sourcephrase UPDATE error: " + err.message);
                     });
-                });
+                }, function (e) {
+                    deferred.reject(e);
+                }, function () {
+                    deferred.resolve();
+                });                    
             },
             destroy: function (options) {
                 var attributes = this.attributes;
@@ -172,6 +173,16 @@ define(function (require) {
                 }
             },
 
+            // Deletes all duplicate entries from the table
+            cleanDuplicates: function() {
+                //DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);
+                window.Application.db.transaction(function (tx) {
+                    tx.executeSql("DELETE FROM sourcephrase WHERE rowid NOT IN (SELECT min(rowid) FROM sourcephrase GROUP BY spid);");
+                }, function (err) {
+                    console.log("cleanDuplicates() error: " + err.message);
+                });            
+            },
+    
             // Removes all sourcephrases from the collection (and database)
             clearAll: function () {
                 window.Application.db.transaction(function (tx) {
