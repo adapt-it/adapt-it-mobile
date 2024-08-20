@@ -555,7 +555,7 @@ define(function (require) {
                     startIdx = 0,
                     endIdx = content.length;
                 // check for empty string
-                console.log("stripPunctuation - content: \"" + content + "\", isSource: " + isSource);
+                // console.log("stripPunctuation - content: \"" + content + "\", isSource: " + isSource);
                 if (endIdx === 0) {
                     return result;
                 }
@@ -2259,6 +2259,7 @@ define(function (require) {
                         }
                         if (options.length === 1) {
                             // exactly one entry in KB -- populate the field
+                            foundInKB = true;
                             targetText = this.stripPunctuation(this.autoAddCaps(model, refstrings[0].target), false);
                             console.log("selectedAdaptation: populating field from KB: " + targetText);
                             $(event.currentTarget).html(targetText);
@@ -2286,8 +2287,8 @@ define(function (require) {
                                 $(event.currentTarget).addClass('fromkb');
                                 clearKBInput = false;
                                 this.moveCursor(event, true);
+                                return;
                             }
-                            foundInKB = true;
                         } else if (options.length > 1) {
                             // more than one entry in KB -- stop here so the user can choose
                             MovingDir = 0;
