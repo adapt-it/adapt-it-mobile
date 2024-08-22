@@ -20,7 +20,6 @@ define(function (require) {
         spModel         = require('app/models/sourcephrase'),
         kbModels        = require('app/models/targetunit'),
         AppRouter       = require('app/router'),
-        FastClick       = require('fastclick'),
         PageSlider      = require('app/utils/pageslider'),
         slider          = new PageSlider($('body')),
         lookupView      = null,
@@ -306,12 +305,6 @@ define(function (require) {
 
                 // initialize the router
                 this.router = new AppRouter({controller: this});
-
-                
-                // Attach touch screen function to avoid delay in double-click
-                $(function () {
-                    FastClick.attach(document.body);
-                });
 
                 // Process back arrow button event 
                 // (not the one in the browser, the one we render on our html page).
