@@ -120,9 +120,13 @@ define(function (require) {
                 switch (method) {
                 case 'create':
                     // model.create();
-                    $.when(model.create()).done(function() {
+                    $.when(model.create())
+                      .done(function() {
                         options.success(model);
-                    });
+                      })
+                      .fail(function() {
+                        options.error;
+                      });
                     break;
                         
                 case 'read':
