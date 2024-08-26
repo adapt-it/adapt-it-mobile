@@ -69,14 +69,19 @@ define(function (require) {
                     tx.executeSql(sql, [attributes.spid, attributes.norder, attributes.chapterid, attributes.vid, attributes.markers, attributes.orig, attributes.prepuncts, attributes.midpuncts, attributes.follpuncts, attributes.flags, attributes.texttype, attributes.gloss, attributes.freetrans, attributes.note, attributes.srcwordbreak, attributes.tgtwordbreak, attributes.source, attributes.target], function (tx, res) {
                         attributes.id = res.insertId;
                         console.log("sourcephrase INSERT ok.");
+                        deferred.resolve();
                     }, function (tx, err) {
                         console.log("sourcephrase INSERT error: " + err.message);
+                        deferred.reject(err);
                     });
                 }, function (e) {
+                    console.log("sourcephrase create: transation error:" + e.message);
                     deferred.reject(e);
                 }, function () {
-                    deferred.resolve();
+                    console.log("sourcephrase create: transaction OK.");
                 });
+                return deferred.promise();
+
             },
             update: function () {
                 var deferred = $.Deferred();
@@ -92,7 +97,8 @@ define(function (require) {
                     deferred.reject(e);
                 }, function () {
                     deferred.resolve();
-                });                    
+                });
+                return deferred.promise();
             },
             destroy: function (options) {
                 var attributes = this.attributes;
@@ -113,8 +119,14 @@ define(function (require) {
                 }
                 switch (method) {
                 case 'create':
-                    model.create();
-//                    options.success(model);
+                    // model.create();
+                    $.when(model.create())
+                      .done(function() {
+                        options.success(model);
+                      })
+                      .fail(function() {
+                        options.error;
+                      });
                     break;
                         
                 case 'read':
@@ -125,12 +137,12 @@ define(function (require) {
                         
                 case 'update':
                     model.update();
-//                    options.success(model);
+                    // options.success(model);
                     break;
                         
                 case 'delete':
                     model.destroy(options);
-//                    options.success(model);
+                    // options.success(model);
                     break;
                 }
             }

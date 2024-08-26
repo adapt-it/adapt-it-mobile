@@ -4,11 +4,10 @@
 require.config({
     
     // 3rd party lib versions:
-    // backbone         1.5.0
+    // backbone         1.6.0
     // backbone.babysitter 0.1.12
     // backbone.wreqr   1.4.0
     // circular-progress-bar 1.0.6
-    // fastclick        1.0.6
     // featherlight     1.7.6
     // featherlight.gallery 1.7.6
     // hammer           2.0.8
@@ -19,11 +18,11 @@ require.config({
     // jquery           3.6.0
     // langtags         1.3.1   ** refactored and minimized (see before-build.js)
     // marionette       2.4.2
-    // require          2.3.6
+    // require          2.3.7
     // spectrum         1.8.1
     // text             2.0.15
     // typeahead        0.11.1
-    // underscore       1.9.1
+    // underscore       1.13.7
 
     baseUrl: 'lib',
 

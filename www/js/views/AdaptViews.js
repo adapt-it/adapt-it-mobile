@@ -734,6 +734,8 @@ define(function (require) {
                     exactMatch = pile,
                     thisObj = pile,
                     tmpStr = "",
+                    done = false,
+                    stopAtBoundaries = false,
                     nextObj = pile;
                 // find the source
                 console.log("findLargestPhrase: entry");
@@ -741,15 +743,25 @@ define(function (require) {
                 // initial values
                 idxStart = $(pile).index();
                 idxEnd = idxStart;
+                if ((!localStorage.getItem("StopAtBoundaries")) || (localStorage.getItem("StopAtBoundaries") === "true")) {
+                    stopAtBoundaries = true;
+                }
                 // run until we hit the end of the strip OR we don't match anything
-                while (tu !== null && nextObj !== null) {
+                while (done === false && tu !== null && nextObj !== null) {
                     // move to the next pile and append the source
                     nextObj = thisObj.nextElementSibling;
                     if (nextObj !== null) {
+                        if ($(nextObj).hasClass("strip")) {
+                            // we went beyond the current strip -- exit the while loop
+                            break;
+                        }
                         if ($(nextObj).children(".target").html().length > 0) {
                             // exit -- we hit some target text in our processing
                             break;
                         }
+                        if ((stopAtBoundaries === true) && ($(nextObj).children(".source").first().hasClass("fp"))) {
+                            done = true; // current node is a boundary AND we want to stop there; we're done after this iteration
+                        }                        
                         tmpStr = sourceText + ONE_SPACE + $(nextObj).children(".source").html();
                         sourceText = this.stripPunctuation(this.autoRemoveCaps(tmpStr, true), true);
                         // is there a match for this phrase?
@@ -3714,84 +3726,92 @@ define(function (require) {
                     follpuncts = selectedObj.get('follpuncts');
                     // now build the new sourcephrase from the string
                     // model object itself
-                    console.log("togglePhrase - creating spid: phr-" + newID);
+                    console.log("togglePhrase - creating spid: phr-" + newID + " for source: " + phraseSource);
                     phObj = new spModels.SourcePhrase({ spid: ("phr-" + newID), markers: phraseMarkers.trim(), source: phraseSource, target: phraseSource, orig: origTarget, prepuncts: prepuncts, follpuncts: follpuncts});
                     strID = $(selectedStart).attr('id');
                     strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
                     selectedObj = this.collection.findWhere({spid: strID});
-                    phObj.set('chapterid', selectedObj.get('chapterid'), {silent: true});
-                    phObj.set('vid', selectedObj.get('vid'), {silent: true});
-                    phObj.set('norder', selectedObj.get('norder'), {silent: true}); // phrase just takes same order # as first selected object
-                    phObj.save();
-                    this.collection.add(phObj);
-                    // also save in KB
-                    // saveInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource), true), phraseSource, "", project.get('projectid'), 0);
-                    // UI representation
-                    // marker, source divs
-                    phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
-                    // if we're merging because of our lookahead KB parse, skip adding the target -- we want to 
-                    // populate the target from the KB instead
-                    if (isMergingFromKB === false) {
-                        // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
-                        // is there something in the KB that matches this phrase?
-                        tu = this.findInKB(this.stripPunctuation(this.autoRemoveCaps(phraseSource, true), true), 0);
-                        if (tu !== null) {
-                            // found at least one match -- populate the target with the first match
-                            refstrings = tu.get('refstring');
-                            // first, make sure these refstrings are actually being used
-                            options.length = 0; // clear out any old cruft
-                            for (i = 0; i < refstrings.length; i++) {
-                                if (refstrings[i].n > 0) {
-                                    options.push(Underscore.unescape(refstrings[i].target));
+                    // save the model
+                    // (further processing needs to wait on the async save / db INSERT)
+                    var _this = this;
+                    phObj.save(
+                     {  'chapterid': selectedObj.get('chapterid'),
+                        'vid': selectedObj.get('vid'),
+                        'norder': selectedObj.get('norder')},
+                     {  silent: true,
+                        success: function() {
+                        // add to the collection
+                        _this.collection.add(phObj);
+                        // UI representation
+                        // marker, source divs
+                        phraseHtml = PhraseLine0 + "phr-" + newID + PhraseLine1 + phraseMarkers + PhraseLine2 + phraseSource + PhraseLine3;
+                        // if we're merging because of our lookahead KB parse, skip adding the target -- we want to 
+                        // populate the target from the KB instead
+                        if (isMergingFromKB === false) {
+                            // NOT merging from the KB (i.e., an automatic merge); so the user has merged this phrase --
+                            // is there something in the KB that matches this phrase?
+                            tu = _this.findInKB(_this.stripPunctuation(_this.autoRemoveCaps(phraseSource, true), true), 0);
+                            if (tu !== null) {
+                                // found at least one match -- populate the target with the first match
+                                refstrings = tu.get('refstring');
+                                // first, make sure these refstrings are actually being used
+                                options.length = 0; // clear out any old cruft
+                                for (i = 0; i < refstrings.length; i++) {
+                                    if (refstrings[i].n > 0) {
+                                        options.push(Underscore.unescape(refstrings[i].target));
+                                    }
                                 }
-                            }
-                            if (options.length === 1) {
-                                // exactly one entry in KB -- populate the field
-                                phraseHtml += this.stripPunctuation(this.autoAddCaps(phObj, refstrings[0].target), false);
-                                isDirty = true;
-                            }
-                        } 
-                    }
-                    phraseHtml += PhraseLine4;
-                    console.log("phrase: " + phraseHtml);
-                    isDirty = false;
-                    $(selectedStart).before(phraseHtml);
-                    // finally, remove the selected piles (they were merged into this one)
-                    done = false;
-                    tmpNode = selectedStart;
-                    while (!done) {
-                        tmpNextNode = tmpNode.nextElementSibling;
-                        // delete the current item
-                        strID = $(tmpNode).attr('id');
-                        // skip our phrase
-                        if (strID.indexOf("phr") === -1) {
-                            strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                            selectedObj = coll.findWhere({spid: strID});
-                            coll.remove(selectedObj); // remove from collection
-                            selectedObj.destroy(); // remove from database
-                            $(tmpNode).remove(); // remove from the UI
+                                if (options.length === 1) {
+                                    // exactly one entry in KB -- populate the field
+                                    phraseHtml += _this.stripPunctuation(_this.autoAddCaps(phObj, refstrings[0].target), false);
+                                    isDirty = true;
+                                }
+                            } 
                         }
-                        // are we done yet?
-                        if (tmpNode === selectedEnd) {
-                            done = true;
+                        phraseHtml += PhraseLine4;
+                        console.log("phrase: " + phraseHtml);
+                        isDirty = false;
+                        $(selectedStart).before(phraseHtml);
+                        // finally, remove the selected piles (they were merged into this one)
+                        done = false;
+                        tmpNode = selectedStart;
+                        var coll = _this.collection;
+                        while (!done) {
+                            tmpNextNode = tmpNode.nextElementSibling;
+                            // delete the current item
+                            strID = $(tmpNode).attr('id');
+                            // skip our phrase
+                            if (strID.indexOf("phr") === -1) {
+                                strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
+                                selectedObj = coll.findWhere({spid: strID});
+                                coll.remove(selectedObj); // remove from collection
+                                selectedObj.destroy(); // remove from database
+                                $(tmpNode).remove(); // remove from the UI
+                            }
+                            // are we done yet?
+                            if (tmpNode === selectedEnd) {
+                                done = true;
+                            }
+                            // move to the next item
+                            tmpNode = tmpNextNode;
                         }
-                        // move to the next item
-                        tmpNode = tmpNextNode;
-                    }
-                    // update the toolbar UI
-                    $("div").removeClass("ui-selecting ui-selected");
-                    $("#phBefore").prop('disabled', true);
-                    $("#phAfter").prop('disabled', true);
-                    $("#Retranslation").prop('disabled', true);
-                    $("#Phrase").prop('disabled', true);
-                    $("#mnuPHBefore").prop('disabled', true);
-                    $("#mnuPHAfter").prop('disabled', true);
-                    $("#mnuRetranslation").prop('disabled', true);
-                    $("#mnuPhrase").prop('disabled', true);
-                    // start adapting the new Phrase
-                    next_edit = $('#pile-phr-' + newID);
-                    selectedStart = next_edit;
-                    $(next_edit).find('.target').mouseup();
+
+                        // update the toolbar UI
+                        $("div").removeClass("ui-selecting ui-selected");
+                        $("#phBefore").prop('disabled', true);
+                        $("#phAfter").prop('disabled', true);
+                        $("#Retranslation").prop('disabled', true);
+                        $("#Phrase").prop('disabled', true);
+                        $("#mnuPHBefore").prop('disabled', true);
+                        $("#mnuPHAfter").prop('disabled', true);
+                        $("#mnuRetranslation").prop('disabled', true);
+                        $("#mnuPhrase").prop('disabled', true);
+                        // start adapting the new Phrase
+                        next_edit = $('#pile-phr-' + newID);
+                        selectedStart = next_edit;
+                        $(next_edit).find('.target').mouseup();
+                    }});
+                    // end post async save() processing on sourcephrase
                 } else {
                     // selection is a phrase -- delete it from the model and the DOM
                     // first, re-create the original sourcephrase piles and add them to the collection and UI
