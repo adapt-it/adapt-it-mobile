@@ -3084,11 +3084,11 @@ define(function (require) {
                         // reset the objects to the beginning of this book (chapter 1)
                         chapterID = book.get("chapters")[0]; // first chapter of the current book (UUID string)
                         chapter = chapters.where({chapterid: chapterID})[0]; // chapter object from chapters list
-                        if (chapter === null) {
+                        if (typeof(chapter) === "undefined" || chapter === null) {
                             // Ugh. Can't find the chapter in the list. This _might_ mean that we had a corruption
                             // when deleting a chapter / book earlier -- error out.
                             errMsg = i18n.t("view.dscErrMergeNoChapID", {chapter: chapterID});
-                            return false;
+                            importFail(new Error(errMsg));
                         }
                         chapterName = chapter.get("name");
                         // get the existing source phrases in this chapter (empty if this is a new import)
