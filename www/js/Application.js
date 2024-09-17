@@ -405,6 +405,15 @@ define(function (require) {
                     window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
                 }
             },
+            editProjectPage: function (id, page) {
+                // edit the selected project
+                var proj = this.ProjectList.where({projectid: id});
+                var projView = new ProjectViews.EditProjectView({model: proj[0]});
+                if (proj !== null) {
+                    window.Application.main.show(projView);
+                    projView.ShowView(parseInt(page, 10));
+                }
+            },
             // Copy project view
             copyProject: function () {
                 var proj = new projModel.Project();

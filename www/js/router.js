@@ -17,6 +17,7 @@ define(function (require) {
             "copy":        "copyProject",       // #copy
             "project":      "newProject",       // #project
             "project/:id":  "editProject",      // #project/projectID
+            "project/:id/:page":  "editProjectPage",    // #project/projectID/page number (detail view for edit project)
             "search/:id":   "lookupChapter",    // #search/projectID
             "kb/:id":       "editKB",           // #kb/projectID (KB editor)
             "tu":           "newTU",            // #tu (create a new TU)
