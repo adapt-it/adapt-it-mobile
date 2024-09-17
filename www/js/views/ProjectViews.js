@@ -1123,17 +1123,7 @@ define(function (require) {
                 'change': 'render'
             },
             events: {
-                "click #EditorUIPrefs": "OnEditorUIPrefs",
-                "click #CurrentProject": "OnCurrentProject",
                 "click #KBEditor": "OnKBEditor",
-                "click #SourceLanguage": "OnEditSourceLanguage",
-                "click #TargetLanguage": "OnEditTargetLanguage",
-                "click #sourceFont": "OnEditSourceFont",
-                "click #targetFont": "OnEditTargetFont",
-                "click #navFont": "OnEditNavFont",
-                "click #Punctuation": "OnEditPunctuation",
-                "click #Cases": "OnEditCases",
-                "click #Filtering": "OnEditFiltering",
                 "focus #LanguageName": "onFocusLanguageName",
                 "keydown #LanguageName": "onKeydownLanguageName",
                 "focus #LanguageVariant": "onFocusLanguageVariant",
@@ -1151,17 +1141,10 @@ define(function (require) {
                 "click #Cancel": "OnCancel",
                 "click #OK": "OnOK"
             },
-            OnEditorUIPrefs: function () {
-                step = 9;
-                this.ShowView(step);
-            },
-            OnCurrentProject: function () {
-                step = 10;
-                this.ShowView(step);
-            },
             OnKBEditor: function () {
                 // KB editor is on a separate screen; tell the application to display it
-                window.Application.editKB(window.Application.currentProject.get("projectid"));
+                // URL is: kb/:projectid
+                window.Application.router.navigate("kb/" + window.Application.currentProject.get("projectid"), {trigger: true});
             },
             onFocusLanguageName: function (event) {
                 window.Application.scrollIntoViewCenter(event.currentTarget);
@@ -1252,63 +1235,27 @@ define(function (require) {
             OnClickCustomFilters: function (event) {
                 currentView.onClickCustomFilters(event);
             },
-            OnEditSourceLanguage: function () {
-                step = 1;
-                this.ShowView(step);
-            },
-            OnEditTargetLanguage: function () {
-                step = 2;
-                this.ShowView(step);
-            },
-            OnEditSourceFont: function () {
-                step = 3;
-                this.ShowView(step);
-            },
-            OnEditTargetFont: function () {
-                step = 4;
-                this.ShowView(step);
-            },
-            OnEditNavFont: function () {
-                step = 5;
-                this.ShowView(step);
-            },
-            OnEditPunctuation: function () {
-                step = 6;
-                this.ShowView(step);
-            },
-            OnEditCases: function () {
-                step = 7;
-                this.ShowView(step);
-            },
-            OnEditFiltering: function () {
-                step = 8;
-                this.ShowView(step);
-            },
             OnCancel: function () {
-                // just display the project settings list (don't save)
-                $("#WizStepTitle").hide();
-                $("#StepInstructions").addClass("hide");
-                $("#tbBottom").addClass("hide");
-                $('#ProjectItems').removeClass("hide");
-                $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
-                $(".container").attr("style", "height: calc(100% - 70px);");
-                $("#editor").removeClass("scroller-bottom-tb");
-                $("#editor").addClass("scroller-notb");
-                this.removeRegion("container");
+                // just go back (don't save)
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history (import link from outside app) -- just go home
+                    window.location.replace("");
+                }
             },
             OnOK: function () {
                 // save the info from the current step
                 this.UpdateProject(step);
-                // show / hide the appropriate UI elements
-                $("#WizStepTitle").hide();
-                $("#StepInstructions").addClass("hide");
-                $("#tbBottom").addClass("hide");
-                $('#ProjectItems').removeClass("hide");
-                $("#StepTitle").html(i18n.t('view.lblProjectSettings'));
-                $(".container").attr("style", "height: calc(100% - 70px);");
-                $("#editor").removeClass("scroller-bottom-tb");
-                $("#editor").addClass("scroller-notb");
-                this.removeRegion("container");
+                // go back
+                if (window.history.length > 1) {
+                    // there actually is a history -- go back
+                    window.history.back();
+                } else {
+                    // no history (import link from outside app) -- just go home
+                    window.location.replace("");
+                }
             },
 
             UpdateProject: function (step) {
@@ -1465,6 +1412,8 @@ define(function (require) {
                 this.addRegions({
                     container: "#StepContainer"
                 });
+                // set the current step #
+                step = number;
                 // hide the project list items
                 $("#WizStepTitle").show();
                 $("#StepInstructions").removeClass("hide");

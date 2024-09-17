@@ -78,8 +78,8 @@ define(function (require) {
             searchIndex: 0,
             currentProject: null,
             localURLs: [],
-            version: "1.17.1", // appended with Android / iOS build info
-            AndroidBuild: "60", // (was milestone release #)
+            version: "1.17.2", // appended with Android / iOS build info
+            AndroidBuild: "61", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 
@@ -403,6 +403,15 @@ define(function (require) {
                 var proj = this.ProjectList.where({projectid: id});
                 if (proj !== null) {
                     window.Application.main.show(new ProjectViews.EditProjectView({model: proj[0]}));
+                }
+            },
+            editProjectPage: function (id, page) {
+                // edit the selected project
+                var proj = this.ProjectList.where({projectid: id});
+                var projView = new ProjectViews.EditProjectView({model: proj[0]});
+                if (proj !== null) {
+                    window.Application.main.show(projView);
+                    projView.ShowView(parseInt(page, 10));
                 }
             },
             // Copy project view
