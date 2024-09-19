@@ -17,7 +17,7 @@ With Adapt It Mobile's Gloss editor, you can:
 
 The glossing editor mode is similar to the adaptation editor mode. The text is laid out with the source text just above the corresponding target text, and the corresponding gloss text just below the target text. As with the adaptation mode editor, Adapt It Mobile maintains a knowledge base (translation memory) of previously entered glosses. These glosses are automatically inserted when the source word is encountered again.
 
-### Free translation editor
+## Free translation editor
 
 Adapt It Mobile also supports the creation of an idiomatic translation of the adapted target text, called a _free translation_.
 
