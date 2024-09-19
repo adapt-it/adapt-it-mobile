@@ -13,10 +13,10 @@ Adapt It Mobile can also help you collect lexical data that can be used to creat
 <h2>Creating lexical data</h2>
 As you translate words and phrases into the target language, Adapt It Mobile stores the translations in a translation memory (called a Knowledge Base). 
 
-<h2>Export lexical data</h2>
+<h2>Exporting lexical data</h2>
 Once several books have been translated, this translation memory can contain valuable lexical data that can be exported into tools such as <a href="https://software.sil.org/fieldworks">SIL FieldWorks Language Explorer</a> and used as the basis for a dictionary in the target language. Adapt It Mobile can export into the Translation Memory Exchange (.tmx) standard format, as well as the Lexicon Interchange format (LIFT) supported by SIL Fieldworks.
 
-<h2>Import lexical data</h2>
+<h2>Importing lexical data</h2>
 If your translation team already has lexical data, for example from a <a href="https://rapidwords.net/">Rapid Word Collection</a> workshop, you can export the collected data to a LIFT format file and then import the file into Adapt It Mobile. The translation memory (Knowledge Base) will then be pre-filled with entries that can be used to jump-start your translation projects
 
 </div>
