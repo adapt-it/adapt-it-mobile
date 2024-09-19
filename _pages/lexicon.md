@@ -13,7 +13,7 @@ Adapt It Mobile can also help you collect lexical data that can be used to creat
 <h2>Create and export lexical data</h2>
 
 As you translate words and phrases into the target language, Adapt It Mobile stores the translations in a translation memory (called a Knowledge Base). 
-Once several books have been translated, this translation memory can contain valuable lexical data that can be exported into tools such as [SIL FieldWorks Language Explorer](https://software.sil.org/fieldworks/) and used as the basis for a dictionary in the target language.
+Once several books have been translated, this translation memory can contain valuable lexical data that can be exported into tools such as <a href="https://software.sil.org/fieldworks">SIL FieldWorks Language Explorer</a> and used as the basis for a dictionary in the target language.
           
 </div><div class="hero-line"><img src='{{ site.baseurl }}/assets/img/kb-main.png' alt='Example Knowledge Base'><br>Example Knowledge Base, taken after translating 4 chapters of the book of John from Catalan to Spanish.</div></div>
 
