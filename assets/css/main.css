@@ -135,8 +135,12 @@
   width: 100%; }
 
 .benefit {
+  border: 1px solid #eee;
+  border-radius: 25px;
+  box-shadow: 0 3px 6px #ccc;
   display: inline-block;
   margin: 6px;
+  padding: 12px 6px;
   vertical-align: top;
   width: 31%; }
 
