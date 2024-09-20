@@ -122,7 +122,7 @@
   margin-bottom: 0; }
 
 .promo {
-  background-color: white;
+  background-color: #279ED8;
   border-bottom: 1px solid #279ED8;
   padding: 3rem 6px 3rem 6px; }
 
@@ -135,6 +135,7 @@
   width: 100%; }
 
 .benefit {
+  background-color: #fff;
   border: 1px solid #eee;
   border-radius: 25px;
   box-shadow: 0 3px 6px #ccc;
