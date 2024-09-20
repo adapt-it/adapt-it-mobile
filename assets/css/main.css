@@ -136,9 +136,9 @@
 
 .benefit {
   background-color: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #333;
   border-radius: 25px;
-  box-shadow: 0 3px 6px #ccc;
+  box-shadow: 0 3px 6px #1F7BA5;
   display: inline-block;
   margin: 6px;
   padding: 12px 6px;
