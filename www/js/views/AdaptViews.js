@@ -818,12 +818,13 @@ define(function (require) {
                     strID = $(selectedStart.parentElement).attr('id');
                 }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                console.log("moveCursor: forward: " + moveForward + ", id: " + strID);
+                console.log("moveCursor: forward: " + moveForward + ", selectedStart: " + strID + ", editorMode: " + editorMode);
                 // for free translations, figure out where the end of the selection is before blurring
                 // (this is needed for going forwards only)
                 if (editorMode === editorModeEnum.FREE_TRANSLATING && moveForward === true) {
                     if (selectedEnd === null) {
                         // make sure we have a selectedEnd
+                        console.log("moveCursor: no selectedEnd defined -- using selectedStart");
                         selectedEnd = selectedStart;
                     }
                     endID = $(selectedEnd).attr('id');
@@ -832,6 +833,7 @@ define(function (require) {
                         // if so, go up one more level to find the pile
                         endID = $(selectedEnd.parentElement).attr('id');
                     }
+                    endID = endID.substr(endID.indexOf("-") + 1); // remove "pile-"
                     console.log("moveCursor: endID for free translation: " + endID);
                     endSP = this.collection.findWhere({spid: endID});
                 }
@@ -1040,7 +1042,7 @@ define(function (require) {
                     }
                     // Free Translation processing
                     if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                        // select the sourcephrase after the END of the last selection
+                        // select the sourcephrase after the END of the last selection endID
                         var idx = this.collection.indexOf(endSP) + 1;
                         curSP = this.collection.at(idx);
                         while (curSP) {
@@ -4399,7 +4401,6 @@ define(function (require) {
                         return;
                     }
                 }
-                console.log("goPrevPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
@@ -4443,7 +4444,6 @@ define(function (require) {
                         return;
                     }
                 }
-                console.log("goNextPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
