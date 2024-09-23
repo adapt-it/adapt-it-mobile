@@ -4878,6 +4878,9 @@ define(function (require) {
                 lastOffset = top;
                 // add the FT text
                 $("#fteditor").html(strFT.trim());
+                // enable prev / next buttons
+                $("#PrevSP").prop('disabled', false); // enable toolbar button
+                $("#NextSP").prop('disabled', false); // enable toolbar button
             },
 
             // user pressed a key in the Free Translation edit field
@@ -5021,6 +5024,10 @@ define(function (require) {
                 } else if (document.selection) {  // IE?
                     document.selection.empty();
                 }
+                // disable prev / next buttons
+                $("#PrevSP").prop('disabled', true); // disable toolbar button
+                $("#NextSP").prop('disabled', true); // disable toolbar button
+
             },
             
             // User clicked on the grow Free Translation button
