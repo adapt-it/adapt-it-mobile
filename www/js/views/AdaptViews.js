@@ -806,6 +806,8 @@ define(function (require) {
             moveCursor: function (event, moveForward) {
                 var next_edit = null;
                 var temp_cursor = null;
+                var endID = null;
+                var endSP = null;
                 var keep_going = true;
                 var FTEmpty = true;
                 var top = 0;
@@ -816,7 +818,25 @@ define(function (require) {
                     strID = $(selectedStart.parentElement).attr('id');
                 }
                 strID = strID.substr(strID.indexOf("-") + 1); // remove "pile-"
-                console.log("moveCursor: forward: " + moveForward + ", id: " + strID);
+                console.log("moveCursor: forward: " + moveForward + ", selectedStart: " + strID + ", editorMode: " + editorMode);
+                // for free translations, figure out where the end of the selection is before blurring
+                // (this is needed for going forwards only)
+                if (editorMode === editorModeEnum.FREE_TRANSLATING && moveForward === true) {
+                    if (selectedEnd === null) {
+                        // make sure we have a selectedEnd
+                        console.log("moveCursor: no selectedEnd defined -- using selectedStart");
+                        selectedEnd = selectedStart;
+                    }
+                    endID = $(selectedEnd).attr('id');
+                    if (endID === undefined) {
+                        // this might be the tt-input div if we are in a typeahead (multiple KB) input -
+                        // if so, go up one more level to find the pile
+                        endID = $(selectedEnd.parentElement).attr('id');
+                    }
+                    endID = endID.substr(endID.indexOf("-") + 1); // remove "pile-"
+                    console.log("moveCursor: endID for free translation: " + endID);
+                    endSP = this.collection.findWhere({spid: endID});
+                }
                 event.stopPropagation();
                 event.preventDefault();
                 // unfocus any current selection (both the nav button that triggered the event and the selected start)
@@ -838,33 +858,45 @@ define(function (require) {
                     } else {
                         curSP = this.collection.at(idx);
                     }
-                    while (curSP) {
-                        if (curSP.get('target') === '') {
-                            console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
-                            // found an empty target -- is it filtered?
-                            if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
-                            {
-                                // looks like a non-filtered pile -- break out of the while loop
-                                break; // found the next slot
+                    if (editorMode !== editorModeEnum.FREE_TRANSLATING) {
+                        // adapting or glossing -- find the previous empty slot
+                        while (curSP) {
+                            if ((editorMode === editorModeEnum.ADAPTING && curSP.get('target') === '') ||
+                                (editorMode === editorModeEnum.GLOSSING && curSP.get('gloss') === '')) {
+                                console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
+                                // found an empty slot -- is it filtered?
+                                if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
+                                {
+                                    // looks like a non-filtered pile -- break out of the while loop
+                                    break; // found the next slot
+                                }
                             }
+                            idx--;
+                            if (idx < 0) {
+                                // first pile
+                                curSP = null;
+                                break;
+                            }
+                            curSP = this.collection.at(idx);
                         }
-                        idx--;
-                        if (idx < 0) {
-                            // first pile
-                            curSP = null;
-                            break;
-                        }
-                        curSP = this.collection.at(idx);
+                        if (curSP) {
+                            if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                                // everything's okay -- select the SourcePhrase
+                                next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                                keep_going = false;
+                            }
+                        } // note - first node is handled at the bottom of this function    
                     }
-                    if (curSP) {
-                        if ($('#pile-' + curSP.get('spid')).length !== 0) {
-                            // everything's okay -- select the SourcePhrase
-                            next_edit = $('#pile-' + curSP.get('spid')).get(0);
-                            keep_going = false;
-                        }
-                    } // note - first node is handled at the bottom of this function
                     // Free Translation processing
-                    if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
+                    if (editorMode === editorModeEnum.FREE_TRANSLATING) {
+                        // select the previous sourcephrase
+                        if (curSP) {
+                            if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                                // everything's okay -- select the SourcePhrase
+                                next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                                keep_going = false;
+                            }
+                        }                        
                         selectedEnd = lastSelectedFT = next_edit; // free translation -- lastSelectedFT is the END of the selection
                         temp_cursor = next_edit;
                         // keep going backwards until we hit punctuation, the first pile, or a free translation
@@ -919,140 +951,226 @@ define(function (require) {
                     // edb 8/8/24: reworked to iterate through SP model list instead of DOM, and only stop when there's an empty target 
                     var idx = this.collection.indexOf(curSP) + 1;
                     curSP = this.collection.at(idx);
-                    while (curSP) {
-                        if (curSP.get('target') === '') {
-                            console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
-                            // found an empty target -- is it filtered?
-                            if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
-                            {
-                                // looks like a non-filtered pile -- break out of the while loop
-                                break; // found the next slot
+                    if (editorMode !== editorModeEnum.FREE_TRANSLATING) {
+                        // adapting or glossing -- find next empty slot
+                        while (curSP) {
+                            if ((editorMode === editorModeEnum.ADAPTING && curSP.get('target') === '') ||
+                                (editorMode === editorModeEnum.GLOSSING && curSP.get('gloss') === '')) {
+                                console.log("possible SP slot: "+ curSP.get('spid') + " -- " + curSP.get('source'));
+                                // found an empty slot -- is it filtered?
+                                if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
+                                {
+                                    // looks like a non-filtered pile -- break out of the while loop
+                                    break; // found the next slot
+                                }
                             }
+                            idx++;
+                            curSP = this.collection.at(idx);
                         }
-                        idx++;
-                        curSP = this.collection.at(idx);
-                    }
-                    if (curSP) {
-                        if ($('#pile-' + curSP.get('spid')).length !== 0) {
-                            // everything's okay -- select the SourcePhrase
-                            next_edit = $('#pile-' + curSP.get('spid')).get(0);
-                            keep_going = false;
-                        }
-                    } else {
-                        // reached the last pile
-                        next_edit = null;
-                        // Check for a chapter after the current one in the current book
-                        var nextChapter = "";
-                        var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
-                        var chaps = book[0].get('chapters');
-                        if (chaps.length > 1) {
-                            if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
-                                    (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
-                                // There is a chapter after this one
-                                nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
+                        if (curSP) {
+                            if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                                // everything's okay -- select the SourcePhrase
+                                next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                                keep_going = false;
                             }
-                        }
-                        // If there is a next chapter, let the user continue or exit;
-                        // if there isn't one, just allow them to exit
-                        if (navigator.notification) {
-                            // on mobile device
-                            navigator.notification.beep(1);
-                            if (nextChapter.length > 0) {
-                                navigator.notification.confirm(
-                                    i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
-                                    function (buttonIndex) {
-                                        if (buttonIndex === 1) {
-                                            // Next chapter
-                                            // update the URL, but replace the history (so we go back to the welcome screen)
-                                            window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-                                        } else {
+                        } else {
+                            // reached the last pile (adapting or gloss mode)
+                            next_edit = null;
+                            // Check for a chapter after the current one in the current book
+                            var nextChapter = "";
+                            var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
+                            var chaps = book[0].get('chapters');
+                            if (chaps.length > 1) {
+                                if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
+                                        (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
+                                    // There is a chapter after this one
+                                    nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
+                                }
+                            }
+                            // If there is a next chapter, let the user continue or exit;
+                            // if there isn't one, just allow them to exit
+                            if (navigator.notification) {
+                                // on mobile device
+                                navigator.notification.beep(1);
+                                if (nextChapter.length > 0) {
+                                    navigator.notification.confirm(
+                                        i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                                        function (buttonIndex) {
+                                            if (buttonIndex === 1) {
+                                                // Next chapter
+                                                // update the URL, but replace the history (so we go back to the welcome screen)
+                                                window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+                                            } else {
+                                                // exit
+                                                // save the model
+                                                chapter.trigger('change');
+                                                // head back to the home page
+                                                window.Application.home();
+                                            }
+                                        },
+                                        i18next.t('view.ttlMain'),
+                                        [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
+                                    );
+                                } else {
+                                    // no option to continue, just one to exit
+                                    navigator.notification.alert(
+                                        i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
+                                        function () {
                                             // exit
                                             // save the model
                                             chapter.trigger('change');
                                             // head back to the home page
                                             window.Application.home();
                                         }
-                                    },
-                                    i18next.t('view.ttlMain'),
-                                    [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
-                                );
-                            } else {
-                                // no option to continue, just one to exit
-                                navigator.notification.alert(
-                                    i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
-                                    function () {
-                                        // exit
-                                        // save the model
-                                        chapter.trigger('change');
-                                        // head back to the home page
-                                        window.Application.home();
-                                    }
-                                );
-                            }
-                        } else {
-                            // in browser
-                            if (nextChapter > 0) {
-                                if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
-                                    // update the URL, but replace the history (so we go back to the welcome screen)
-                                    window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
-                                } else {
-                                    window.Application.home();
+                                    );
                                 }
                             } else {
-                                alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
-                                window.Application.home();
+                                // in browser
+                                if (nextChapter > 0) {
+                                    if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
+                                        // update the URL, but replace the history (so we go back to the welcome screen)
+                                        window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+                                    } else {
+                                        window.Application.home();
+                                    }
+                                } else {
+                                    alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
+                                    window.Application.home();
+                                }
                             }
                         }
                     }
                     // Free Translation processing
                     if (editorMode === editorModeEnum.FREE_TRANSLATING) {
-                        selectedStart = lastSelectedFT; // move from the end (not the start) of the selection
-                    }
-                    if ((editorMode === editorModeEnum.FREE_TRANSLATING) && (next_edit !== null)) {
-                        // in FT mode, we need to also find the end of the selection
-                        selectedStart = selectedEnd = lastSelectedFT = temp_cursor = next_edit; // initial value
-                        // first, find out whether the start of our selection has a free translation defined
-                        var ft = $(next_edit).find(".ft").html();
-                        if (ft.length > 0) {
-                            FTEmpty = false;
-                            console.log("moveCursor (forwards) - not empty; FT at selection: " + ft);
+                        // select the sourcephrase after the END of the last selection endID
+                        var idx = this.collection.indexOf(endSP) + 1;
+                        curSP = this.collection.at(idx);
+                        while (curSP) {
+                                // Move forwards some more if we picked a filtered SP
+                                if ($('#pile-' + curSP.get('spid')).hasClass("filter") === false && ($('#pile-' + curSP.get('spid')).hasClass("pile")))
+                                {
+                                    // non-filtered pile -- stop here / break out of the while loop
+                                    break; // found the next slot
+                                }
+                                idx++;
+                                curSP = this.collection.at(idx);
                         }
-                        // now find the end of the selection
-                        keep_going = true;
-                        while (keep_going === true) {
-                            // move forwards
-                            if (temp_cursor !== null) {
-                                next_edit = temp_cursor;
-                                if ((next_edit.nextElementSibling !== null) && ($(next_edit.nextElementSibling).hasClass('pile')) && (!$(next_edit.nextElementSibling).hasClass('filter'))) {
-                                    // there is a next sibling, and it is a non-filtered pile
-                                    temp_cursor = next_edit.nextElementSibling;
-                                    // does it have a free translation?
-                                    var ft = $(temp_cursor).find(".ft").html();
-                                    if (ft.length > 0) {
-                                        // found the next free translation -- stop moving forward
-                                        console.log("moveCursor (forwards) - stopping BEFORE next FT: " + ft);
-                                        keep_going = false;
-                                    }
-                                    // check for punctuation (go from the inside out)
-                                    if ($(temp_cursor).children(".source").first().hasClass("pp")) {
-                                        // comes before -- don't include
-                                        keep_going = false;
-                                    } else if ($(temp_cursor).children(".source").first().hasClass("fp")) {
-                                        // comes after -- include
-                                        next_edit = temp_cursor; 
+                        if (curSP) {
+                            if ($('#pile-' + curSP.get('spid')).length !== 0) {
+                                // everything's okay -- select the SourcePhrase
+                                next_edit = $('#pile-' + curSP.get('spid')).get(0);
+                                keep_going = false;
+                            }
+                            // in FT mode, we need to also find the end of the selection
+                            selectedStart = selectedEnd = lastSelectedFT = temp_cursor = next_edit; // initial value
+                            // first, find out whether the start of our selection has a free translation defined
+                            var ft = $(next_edit).find(".ft").html();
+                            if (ft.length > 0) {
+                                FTEmpty = false;
+                                console.log("moveCursor (forwards) - not empty; FT at selection: " + ft);
+                            }
+                            // now find the end of the selection
+                            keep_going = true;
+                            while (keep_going === true) {
+                                // move forwards
+                                if (temp_cursor !== null) {
+                                    next_edit = temp_cursor;
+                                    if ((next_edit.nextElementSibling !== null) && ($(next_edit.nextElementSibling).hasClass('pile')) && (!$(next_edit.nextElementSibling).hasClass('filter'))) {
+                                        // there is a next sibling, and it is a non-filtered pile
+                                        temp_cursor = next_edit.nextElementSibling;
+                                        // does it have a free translation?
+                                        var ft = $(temp_cursor).find(".ft").html();
+                                        if (ft.length > 0) {
+                                            // found the next free translation -- stop moving forward
+                                            console.log("moveCursor (forwards) - stopping BEFORE next FT: " + ft);
+                                            keep_going = false;
+                                        }
+                                        // check for punctuation (go from the inside out)
+                                        if ($(temp_cursor).children(".source").first().hasClass("pp")) {
+                                            // comes before -- don't include
+                                            keep_going = false;
+                                        } else if ($(temp_cursor).children(".source").first().hasClass("fp")) {
+                                            // comes after -- include
+                                            next_edit = temp_cursor; 
+                                            keep_going = false;
+                                        }
+                                    } else {
+                                        // reached a stopping point
                                         keep_going = false;
                                     }
                                 } else {
-                                    // reached a stopping point
+                                    // no temp_cursor -- stop backing up
                                     keep_going = false;
                                 }
-                            } else {
-                                // no temp_cursor -- stop backing up
-                                keep_going = false;
                             }
-                        }
-                        // Set selectedEnd and lastSelectedFT to the end of the selection
-                        selectedEnd = lastSelectedFT = next_edit;
+                            // Set selectedEnd and lastSelectedFT to the end of the selection
+                            selectedEnd = lastSelectedFT = next_edit;
+                        } else {
+                            // reached the last pile (FT mode)
+                            next_edit = null;
+                            // Check for a chapter after the current one in the current book
+                            var nextChapter = "";
+                            var book = window.Application.BookList.where({bookid: chapter.get('bookid')});
+                            var chaps = book[0].get('chapters');
+                            if (chaps.length > 1) {
+                                if ((chaps.indexOf(chapter.get('chapterid')) !== -1) &&
+                                        (chaps.indexOf(chapter.get('chapterid')) < (chaps.length - 1))) {
+                                    // There is a chapter after this one
+                                    nextChapter = chaps[chaps.indexOf(chapter.get('chapterid')) + 1];
+                                }
+                            }
+                            // If there is a next chapter, let the user continue or exit;
+                            // if there isn't one, just allow them to exit
+                            if (navigator.notification) {
+                                // on mobile device
+                                navigator.notification.beep(1);
+                                if (nextChapter.length > 0) {
+                                    navigator.notification.confirm(
+                                        i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}),
+                                        function (buttonIndex) {
+                                            if (buttonIndex === 1) {
+                                                // Next chapter
+                                                // update the URL, but replace the history (so we go back to the welcome screen)
+                                                window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+                                            } else {
+                                                // exit
+                                                // save the model
+                                                chapter.trigger('change');
+                                                // head back to the home page
+                                                window.Application.home();
+                                            }
+                                        },
+                                        i18next.t('view.ttlMain'),
+                                        [i18next.t('view.lblNext'), i18next.t('view.lblFinish')]
+                                    );
+                                } else {
+                                    // no option to continue, just one to exit
+                                    navigator.notification.alert(
+                                        i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}),
+                                        function () {
+                                            // exit
+                                            // save the model
+                                            chapter.trigger('change');
+                                            // head back to the home page
+                                            window.Application.home();
+                                        }
+                                    );
+                                }
+                            } else {
+                                // in browser
+                                if (nextChapter > 0) {
+                                    if (confirm(i18next.t('view.dscAdaptContinue', {chapter: chapter.get('name')}))) {
+                                        // update the URL, but replace the history (so we go back to the welcome screen)
+                                        window.Application.router.navigate("adapt/" + nextChapter, {trigger: true, replace: true});
+                                    } else {
+                                        window.Application.home();
+                                    }
+                                } else {
+                                    alert(i18next.t('view.dscAdaptComplete', {chapter: chapter.get('name')}));
+                                    window.Application.home();
+                                }
+                            }
+                        }                    
                     }
                 } 
                 // done moving the cursor -- now select it if possible
@@ -4283,7 +4401,6 @@ define(function (require) {
                         return;
                     }
                 }
-                console.log("goPrevPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
@@ -4327,7 +4444,6 @@ define(function (require) {
                         return;
                     }
                 }
-                console.log("goNextPile: selectedStart = " + selectedStart);
                 // dismiss the Plus and More menu if visible
                 if ($("#adapt-actions-menu").hasClass("show")) {
                     $("#adapt-actions-menu").toggleClass("show");
@@ -4726,6 +4842,9 @@ define(function (require) {
                     // found the selection end -- set the value
                     selectedEnd = next_edit;
                 }
+                // keep a copy of the ending ID we're working on
+                $("#fteditor").attr("data-endid", $(selectedEnd).attr('id'));
+
                 // set the last selected FT slot to then END of our selection
                 lastSelectedFT = selectedEnd;
                 // we're also working on a specific source phrase (the FT gets saved there) -
@@ -4759,6 +4878,9 @@ define(function (require) {
                 lastOffset = top;
                 // add the FT text
                 $("#fteditor").html(strFT.trim());
+                // enable prev / next buttons
+                $("#PrevSP").prop('disabled', false); // enable toolbar button
+                $("#NextSP").prop('disabled', false); // enable toolbar button
             },
 
             // user pressed a key in the Free Translation edit field
@@ -4781,6 +4903,8 @@ define(function (require) {
                     $(event.currentTarget).html(model.get('freetrans')); // original FT value for the selected pile
                     event.stopPropagation();
                     event.preventDefault();
+                    // reset the dirty bit
+                    isDirty = false;
                     $(event.currentTarget).blur();
                 } else if ((event.keyCode === 9) || (event.keyCode === 13)) {
                     // tab or enter key -- accept the edit and move the cursor
@@ -4900,6 +5024,10 @@ define(function (require) {
                 } else if (document.selection) {  // IE?
                     document.selection.empty();
                 }
+                // disable prev / next buttons
+                $("#PrevSP").prop('disabled', true); // disable toolbar button
+                $("#NextSP").prop('disabled', true); // disable toolbar button
+
             },
             
             // User clicked on the grow Free Translation button
@@ -4912,6 +5040,9 @@ define(function (require) {
                 if (selectedStart === null) {
                     // selectedStart got cleared out -- set it to the one we kept in the editor field
                     selectedStart = $("#fteditor").attr('data-spid');
+                }
+                if (selectedEnd === null) {
+                    selectedEnd = $("fteditor").attr('data-endid');
                 }
                 if (selectedEnd) {
                     // there is an end selection set -- move it forwards if possible
@@ -4963,6 +5094,10 @@ define(function (require) {
                                 $(value).addClass("ui-selected");
                                 // also build a default FT in case we need it below
                                 strFT += $(value).find(".target").html() + " ";
+                                if (index > idxStart) {
+                                    // clear out any existing ft text in the UI (model gets cleared on blur)
+                                    $(value).find(".ft").html("");
+                                }
                             }
                         });
                         // do we need to change the selection in the FT editor field?
@@ -4990,6 +5125,9 @@ define(function (require) {
                 if (selectedStart === null) {
                     // selectedStart got cleared out -- set it to the one we kept in the editor field
                     selectedStart = $("#fteditor").attr('data-spid');
+                }
+                if (selectedEnd === null) {
+                    selectedEnd = $("fteditor").attr('data-endid');
                 }
                 if (selectedEnd && selectedEnd !== selectedStart) {
                     // there is an end selection still set -- move it back one if possible
