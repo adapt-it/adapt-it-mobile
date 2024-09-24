@@ -5024,10 +5024,6 @@ define(function (require) {
                 } else if (document.selection) {  // IE?
                     document.selection.empty();
                 }
-                // disable prev / next buttons
-                $("#PrevSP").prop('disabled', true); // disable toolbar button
-                $("#NextSP").prop('disabled', true); // disable toolbar button
-
             },
             
             // User clicked on the grow Free Translation button
