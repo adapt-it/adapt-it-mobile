@@ -1,4 +1,5 @@
-[![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png)](https://adapt-it.github.io/adapt-it-mobile/)
+[![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo_dark.png#gh-dark-mode-only)](https://adapt-it.github.io/adapt-it-mobile/)
+[![Adapt It Mobile](https://github.com/adapt-it/adapt-it-mobile/blob/master/docs/aim_logo.png#gh-light-mode-only)](https://adapt-it.github.io/adapt-it-mobile/)
 
 | iOS        | Android           | Android (F-Droid client)  |
 |:-------------:|:-------------:|:-------------:|
