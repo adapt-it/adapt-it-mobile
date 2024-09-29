@@ -136,14 +136,13 @@
 
 .benefit {
   background-color: #fff;
-  border: 1px solid #333;
   border-radius: 25px;
   box-shadow: 0 3px 6px #1F7BA5;
   display: inline-block;
-  margin: 6px;
-  padding: 12px 6px;
+  margin: 3px;
+  padding: 12px;
   vertical-align: top;
-  width: 31%; }
+  width: 32%; }
 
 .b-img {
   margin-bottom: 6px; }
