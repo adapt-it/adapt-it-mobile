@@ -53,13 +53,19 @@ define(function (require) {
                 this.on('change', this.save, this);
             },
             fetch: function () {
+                var deferred = $.Deferred();
+                var obj = this; // model instance
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * FROM sourcephrase WHERE spid=?;", [attributes.spid], function (tx, res) {
-                        this.set(res.rows.item(0));
+                        obj.set(res.rows.item(0));
+                        deferred.resolve(obj);
                     });
+                }, function (err) {
+                    console.log("SELECT error: " + err.message);
+                    deferred.reject(err);
                 });
-                
+                return deferred.promise();
             },
             create: function () {
                 var deferred = $.Deferred();

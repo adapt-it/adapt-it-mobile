@@ -36,15 +36,20 @@ define(function (require) {
             },
 
             fetch: function () {
+                var deferred = $.Deferred();
+                var obj = this; // model instance
                 var attributes = this.attributes;
                 window.Application.db.transaction(function (tx) {
                     tx.executeSql("SELECT * from targetunit WHERE tuid=?;", [attributes.tuid], function (tx, res) {
                         console.log("SELECT ok: " + res.rows);
-                        this.set(res.rows.item(0));
+                        obj.set(res.rows.item(0));
+                        deferred.resolve(obj);
                     });
                 }, function (tx, err) {
                     console.log("SELECT error: " + err.message);
+                    deferred.reject(err);
                 });
+                return deferred.promise();
             },
             create: function () {
                 var attributes = this.attributes;
