@@ -1944,16 +1944,14 @@ define(function (require) {
                         idxStart = $(selectedStart).index();
                         idxEnd = $(selectedEnd).index();
                         isSelecting = true; // change the UI color                        
-                    } else {
-                        // console.log("selectedstart == LongPressSectionStart - start of long press");
-                        return;
-                    }
-                    if ((idxStart !== idxEnd) && (selectedStart !== LongPressSectionStart)) {
                         // done with long press selection -- clear out values and styling
                         // console.log("done with long press selection - clearing out");
                         LongPressSectionStart = null; // clear out the long press value
                         isLongPressSelection = false;
                         $("div").removeClass("ui-longSelecting");
+                    } else {
+                        console.log("selectedstart == LongPressSectionStart - start of long press");
+                        return;
                     }
                 }
                 

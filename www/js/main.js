@@ -94,6 +94,13 @@ require.config({
 
 });
 
+// set to false for production build
+let _DEBUG_ = false;
+
+if (_DEBUG_ === false) {
+    console.log = function () {};
+}
+
 // Handler for opening / importing a file from another process. This could be called when AIM
 // is up and running, or the OS could be sending us this file before we've initialized
 // (i.e., on startup). Check to see if there's an Application; if there isn't one yet, store

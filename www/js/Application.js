@@ -81,8 +81,8 @@ define(function (require) {
             currentBookmark: null,
             user: null,
             localURLs: [],
-            version: "1.19.0", // appended with Android / iOS build info
-            AndroidBuild: "66", // (was milestone release #)
+            version: "1.20.0", // appended with Android / iOS build info
+            AndroidBuild: "67", // (was milestone release #)
             iOSBuild: "1", // iOS uploaded build number for this release (increments from 1 for each release) 
             importingURL: "", // for other apps in Android-land sending us files to import
 

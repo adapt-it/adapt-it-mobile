@@ -1340,6 +1340,7 @@ define(function (require) {
                     tempSize = "",
                     tempColor = "",
                     loc = "",
+                    lang = null,
                     locale = "";
                 
                 switch (step) {
@@ -1452,7 +1453,7 @@ define(function (require) {
                             });
                         } else {
                             // fallback - use web browser's language metadata
-                            var lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
+                            lang = (navigator.languages) ? navigator.languages[0] : (navigator.language || navigator.userLanguage);
                             locale = lang.split("-")[0];
                             // set the locale, then return
                             i18n.setLng(locale, function (err, t) {
@@ -1947,6 +1948,7 @@ define(function (require) {
             // (currently just checks for non-null language names in source/target language)
             GetProjectInfo: function (step) {
                 var value = null,
+                    bookmarks = null,
                     langstr = "";
                 var getLanguageString = function () {
                     var value = null;
@@ -2044,7 +2046,7 @@ define(function (require) {
                         value = window.Application.generateUUID();
                         this.model.set("projectid", value, {silent: true});
                         // also set the bookmark's values (projectid, bookmarkid)
-                        var bookmarks = window.Application.user.get("bookmarks");
+                        bookmarks = window.Application.user.get("bookmarks");
                         this.bookmark.set("projectid", value, {silent: true});
                         value = window.Application.generateUUID();
                         this.bookmark.set("bookmarkid", value, {silent: true});
@@ -2147,10 +2149,10 @@ define(function (require) {
                 case 3: // fonts
                     currentView = new FontsView({ model: this.model});
                     // title
-                    $("#StepTitle").html(i18n.t('view.lblCreateProject'));
+                    this.$("#StepTitle").html(i18n.t('view.lblCreateProject'));
                     // instructions
-                    $("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
-                    $("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
+                    this.$("#WizStepTitle").html(i18n.t('view.ttlProjectFonts'));
+                    this.$("#StepInstructions").html(i18n.t('view.dscProjectFonts'));
                     break;
                 case 4: // punctuation
                     currentView = new PunctuationView({ model: this.model});

@@ -23,16 +23,16 @@ define(function (require) {
         // Helper method to completely reset AIM. Called when the user clicks on the
         // title ("Adapt It Mobile") 5 TIMES on the Home View without clicking elsewhere,
         // and then confirming the action in a popup dialog.
-        resetAIM = function () {
+        resetAIM = async function () {
             // clear all documents
-            window.Application.spList.clearAll();
+            await window.Application.spList.clearAll();
             window.Application.spList.reset();
-            window.Application.ChapterList.clearAll();
+            await window.Application.ChapterList.clearAll();
             window.Application.ChapterList.reset();
-            window.Application.BookList.clearAll();
+            await window.Application.BookList.clearAll();
             window.Application.BookList.reset();
             // clear KB
-            window.Application.kbList.clearAll();
+            await window.Application.kbList.clearAll();
             window.Application.kbList.reset();
             // clear all project data
             localStorage.removeItem("CurrentProjectID");
@@ -40,7 +40,7 @@ define(function (require) {
             window.Application.currentBookmark = null;
             window.Application.currentProject = null;
             // clear out the bookmarks
-            window.Application.bookmarkList.clearAll();
+            await window.Application.bookmarkList.clearAll();
             window.Application.bookmarkList.reset();
             var bookmarks = window.Application.user.get("bookmarks");
             bookmarks.length = 0;
